@@ -1,0 +1,271 @@
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   11 Dec 05  Brian Frank  Creation
+//
+
+**
+** Range represents a contiguous range of integers from start to
+** end.  Ranges may be represented as literals in Fantom source code as
+** "start..end" for an inclusive end or "start..<end" for an exlusive
+** range.
+**
+@Serializable { simple = true }
+const struct class Range
+{
+
+//////////////////////////////////////////////////////////////////////////
+// Constructor
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Convenience for make(start, end, false).
+  **
+  new makeInclusive(Int start, Int end) {
+    this._start = start
+    this._end = end
+    _exclusive = false
+  }
+
+  **
+  ** Convenience for make(start, end, true).
+  **
+  new makeExclusive(Int start, Int end) {
+    this._start = start
+    this._end = end
+    _exclusive = true
+  }
+
+  **
+  ** Constructor with start, end, and exclusive flag (all must be non-null).
+  **
+  new make(Int start, Int end, Bool exclusive) {
+    this._start = start
+    this._end = end
+    this._exclusive = exclusive
+  }
+
+  **
+  ** Parse from string format - inclusive is "start..end", or
+  ** exclusive is "start..<end".  If invalid format then
+  ** throw ParseErr or return null based on checked flag.
+  **
+  static new fromStr(Str s, Bool checked := true) {
+    //TODO
+    throw ParseErr()
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Obj Overrides
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Return true if same start, end, and exclusive.
+  **
+  override Bool equals(Obj? obj) {
+    if (obj == null) return false
+    if (obj isnot Range) return false
+    other := obj as Range
+    if (start != other.start) return false
+    if (end != other.end) return false
+    if (exclusive != other.exclusive) return false
+    return true
+  }
+
+  **
+  ** Return start ^ end.
+  **
+  override Int hash() {
+    return start.xor(end)
+  }
+
+  **
+  ** If inclusive return "start..end", if exclusive return "start..<end".
+  **
+  override Str toStr() {
+    if (exclusive) {
+      return "${start}..<$end"
+    } else {
+      return "${start}..$end"
+    }
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Methods
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Return start index.
+  **
+  ** Example:
+  **   (1..3).start  =>  1
+  **
+  Int start() { _start }
+  private const Int _start
+
+  **
+  ** Return end index.
+  **
+  ** Example:
+  **   (1..3).end  =>  3
+  **
+  Int end() { _end }
+  private const Int _end
+
+  **
+  ** Is the end index inclusive.
+  **
+  ** Example:
+  **   (1..3).inclusive   =>  true
+  **   (1..<3).inclusive  =>  false
+  **
+  Bool inclusive() { !exclusive }
+
+  **
+  ** Is the end index exclusive.
+  **
+  ** Example:
+  **   (1..3).exclusive   =>  false
+  **   (1..<3).exclusive  =>  true
+  **
+  Bool exclusive() { _exclusive }
+  private const Bool _exclusive
+
+  **
+  ** Return if this range contains no integer values.
+  ** Equivalent to 'toList.isEmpty'.
+  **
+  Bool isEmpty() { toList.isEmpty }
+
+  **
+  ** Get the minimum value of the range. If range contains
+  ** no values then return null.  Equivalent to 'toList.min'.
+  **
+  Int? min() { toList.min }
+
+  **
+  ** Get the maximum value of the range. If range contains
+  ** no values then return null.  Equivalent to 'toList.max'.
+  **
+  Int? max() { toList.max }
+
+  **
+  ** Get the first value of the range.   If range contains
+  ** no values then return null.  Equivalent to 'toList.first'.
+  **
+  Int? first() { toList.first }
+
+  **
+  ** Get the last value of the range.   If range contains
+  ** no values then return null.  Equivalent to 'toList.last'.
+  **
+  Int? last() { toList.last }
+
+  **
+  ** Return if this range contains the specified integer.
+  **
+  ** Example:
+  **   (1..3).contains(2)  =>  true
+  **   (1..3).contains(4)  =>  false
+  **
+  Bool contains(Int i) {
+    if (i < start) return false
+    if (exclusive) {
+      if (i >= end) return false
+    } else {
+      if (i > end) return false
+    }
+    return true
+  }
+
+  **
+  ** Create a new range by adding offset to this range's
+  ** start and end values.
+  **
+  ** Example:
+  **   (3..5).offset(2)   =>  5..7
+  **   (3..<5).offset(-2) =>  1..<3
+  **
+  Range offset(Int offset) {
+    return Range(start-offset, end-offset, exclusive)
+  }
+
+  **
+  ** Call the specified function for each integer in the range.
+  ** Also see `Int.times`.
+  **
+  ** Example:
+  **   (1..3).each |i| { echo(i) }          =>  1, 2, 3
+  **   (1..<3).each |i| { echo(i) }         => 1, 2
+  **   ('a'..'z').each |Int i| { echo(i) }  => 'a', 'b', ... 'z'
+  **
+  Void each(|Int i| c) {
+    len := exclusive ? end : end +1
+    for (i:=start; i<len; ++i) {
+      c(i)
+    }
+  }
+
+  **
+  ** Create a new list which is the result of calling c for
+  ** every integer in the range.  The new list is typed based on
+  ** the return type of c.
+  **
+  ** Example:
+  **   (10..15).map |i->Str| { i.toHex }  =>  Str[a, b, c, d, e, f]
+  **
+  Obj?[] map(|Int i->Obj?| c) {
+    nlist := Obj?[,]
+    len := exclusive ? end : end +1
+    for (i:=start; i<len; ++i) {
+      nlist.add(c(i))
+    }
+    return nlist
+  }
+
+  **
+  ** Convert this range into a list of Ints.
+  **
+  ** Example:
+  **   (2..4).toList   =>  [2,3,4]
+  **   (2..<4).toList  =>  [2,3]
+  **   (10..8).toList  =>  [10,9,8]
+  **
+  Int[] toList() {
+    nlist := Int[,]
+    len := exclusive ? end : end +1
+    for (i:=start; i<len; ++i) {
+      nlist.add(i)
+    }
+    return nlist
+  }
+
+  **
+  ** Convenience for [Int.random(this)]`Int.random`.
+  ** Also see `Int.random`, `Float.random`, `List.random`,
+  ** and `util::Random`.
+  **
+  Int random() {
+    Int.random(this)
+  }
+
+
+  Int startIndex(Int size)
+  {
+    x := start
+    if (x < 0) x = size + x
+    if (x > size) throw IndexErr.make("Range: $this, $size")
+    return x
+  }
+
+  Int endIndex(Int size)
+  {
+    x := end
+    if (x < 0) x = size + x
+    if (exclusive) x--
+    if (x >= size) throw IndexErr.make("Range: $this, $size")
+    return x
+  }
+}
