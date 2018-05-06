@@ -1,0 +1,64 @@
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   15 Sep 05  Brian Frank  Creation
+//
+package fanx.emit;
+
+import java.util.*;
+import fanx.util.*;
+
+/**
+ * AttrEmit is used to emit attribute sections on either
+ * the class, field, or method level.  Once an AttrEmit has
+ * been defined using emitAttr() at the appropiate level,
+ * then the value can populated using the info Box field.
+ */
+public class AttrEmit
+  implements EmitConst
+{
+
+//////////////////////////////////////////////////////////////////////////
+// Construction
+//////////////////////////////////////////////////////////////////////////
+
+  AttrEmit(Emitter emit, int name)
+  {
+    this.emit  = emit;
+    this.name  = name;
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Access
+//////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get top level Emitter instance.
+   */
+  public Emitter getEmitter()
+  {
+    return emit;
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Pack
+//////////////////////////////////////////////////////////////////////////
+
+  void pack(Box box)
+  {
+    box.u2(name);
+    box.u4(info.len);
+    box.append(info);
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Fields
+//////////////////////////////////////////////////////////////////////////
+
+  final Emitter emit;
+  final int name;
+  public final Box info = new Box();
+
+}
