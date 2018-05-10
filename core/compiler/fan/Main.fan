@@ -14,43 +14,56 @@
 **
 class Main
 {
-
   **
   ** mini build for boost
   **
   virtual Void main(Str[] args)
   {
+    file := args.first.toUri.toFile
+    props := file.in.readProps
 
-    scriptDir := args.first.toUri.toFile
+    podName := props.get("podName", file.basename)
+    summary := props.get("summary","$podName lib")
 
-    podName := scriptDir.name
-    summary := podName + " lib"
-
-    Depend[]? depends := null
-    if (podName == "sys") {
-      depends = [,]
+    //get depends
+    dependsStr := props.get("depends", null)
+    Depend[]? depends
+    if (dependsStr == null) {
+      if (podName == "sys") depends = Depend[,]
+      else depends = [Depend("sys 1.0")]
     }
     else {
-      depends = [Depend("sys 1.0")]
+      depends = dependsStr.split(',').map{ Depend(it) }
     }
 
-    srcDirs := allDir(scriptDir.uri, `fan/`)
-    if (podName == "std") {
-      srcDirs = [
-        scriptDir.uri+`fan/collection/`,
-        scriptDir.uri+`fan/time/`,
-        scriptDir.uri+`fan/io/`,
-        scriptDir.uri+`fan/util/`,
-      ]
+    //get srcDirs
+    srcDirs := Uri[,]
+    props.get("srcDirs", null)?.split(',')?.each |d| {
+      if (d.endsWith("*")) {
+        srcUri := d[0..<-1].toUri
+        dirs := allDir(file.uri, srcUri)
+        srcDirs.addAll(dirs)
+      }
+      else {
+        srcDirs.add(d.toUri)
+      }
     }
-    else if (podName == "testlib") {
-      srcDirs = [ scriptDir.uri+`test/` ]
+    if (srcDirs.isEmpty) {
+      srcDirs = allDir(file.uri, `fan/`)
     }
 
+    //get outPodDir
+    Uri? outPodDir
+    outPodDirStr := props.get("outPodDir", null)
+    if (outPodDirStr != null) outPodDir = outPodDirStr.toUri
+    else {
+      devHomeDir := Pod.find("build").config("devHome")
+      if (devHomeDir != null) outPodDir = devHomeDir.toUri + `lib/fan/`
+      if (outPodDir == null) {
+        outPodDir = Env.cur.workDir.plus(`lib/fan/`).uri
+      }
+    }
     echo("src:$srcDirs")
-
-    devHomeDir := Pod.find("build").config("devHome")
-    outPodDir := devHomeDir.toUri + `lib/fan/`
 
     // map my config to CompilerInput structure
     ci := CompilerInput()
@@ -59,7 +72,7 @@ class Main
     ci.summary     = summary
     ci.version     = Version("1.0")
     ci.depends     = depends
-    ci.baseDir     = scriptDir
+    ci.baseDir     = file.parent
     ci.srcFiles    = srcDirs
     //ci.resFiles    = resDirs
     //ci.jsFiles     = jsDirs
@@ -67,7 +80,7 @@ class Main
     ci.outDir      = outPodDir.toFile
     ci.output      = CompilerOutputMode.podFile
 
-    echo("namespace: $ci.ns")
+    //echo("namespace: $ci.ns")
 
     try
     {

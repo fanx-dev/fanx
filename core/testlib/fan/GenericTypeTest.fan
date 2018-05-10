@@ -9,7 +9,7 @@ class GenericType<T> {
   GenericType self() { return this }
 
   Void say(|T|? f) {
-    if (f != null) f(t)
+    if (f != null) f(bar)
   }
 
   GenericType<Int>? self2() { null }

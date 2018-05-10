@@ -1,0 +1,6 @@
+
+podName = std
+summary = system std lib
+depends = sys 1.0
+srcDirs = fan/collection/,fan/io/,fan/time/,fan/util/
+

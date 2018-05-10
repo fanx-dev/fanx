@@ -1,0 +1,6 @@
+
+podName = sys
+summary = system core lib
+//depends = [,]
+srcDirs = fan/*
+

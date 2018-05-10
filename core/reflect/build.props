@@ -1,0 +1,6 @@
+
+podName = reflect
+summary = system reflect lib
+depends = sys 1.0
+srcDirs = fan/
+

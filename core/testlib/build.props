@@ -1,0 +1,6 @@
+
+podName = testlib
+summary = "test lib"
+srcDirs = fan/
+depends = sys 1.0
+
