@@ -1,9 +1,10 @@
 
 fan compiler/build.fan
 
-NEW_FAN=../../../fantom/fan/bin/fan
+fanc='../../../fantom/fan/bin/fan compiler::Main'
 
-$NEW_FAN compiler::Main sys/build.props
-$NEW_FAN compiler::Main std/build.props
-$NEW_FAN compiler::Main reflect/build.props
-$NEW_FAN compiler::Main testlib/build.props
+$fanc sys/pod.props
+$fanc std/pod.props
+$fanc reflect/pod.props
+$fanc testlib/pod.props
+

@@ -1,6 +1,6 @@
 
 podName = sys
 summary = system core lib
-//depends = [,]
+//depends =
 srcDirs = fan/*
 
