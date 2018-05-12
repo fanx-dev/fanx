@@ -62,6 +62,9 @@ A struct type is a value type
 The Fantom sys pod divided into three pod: sys, std, reflect
 They written in Fantom with little native code.
 
+It's more portable to write a new backend platforms.
+Future targets might include Objective-C for the iPhone, the LLVM, WebAssembly.
+
 ### Static Namespace ###
 FanCore allow same name static slots through inheritance.
 ```
@@ -77,9 +80,10 @@ FanCore allow same name static slots through inheritance.
      }
    }
 ```
+The static constructor still work for compatibility.
 
 ### Return From Void ###
-FanCore not allow return a value from Void method, except return Void.
+FanCore not allow return a value from Void method, except return a Void type.
 
 ### Float Literals ###
 The Default Number is Float
@@ -147,7 +151,7 @@ We solve it in the following:
   }
 ```
 
-Math methods:
+Math Methods:
 ```
   mixin Math {
     extensiosn static Float cos(Float self) { ... }
@@ -167,6 +171,7 @@ Math methods:
   }
 ```
 
-
-
+### Deprecated Boxing ###
+Some Fantom API return nullable Int, for example: InStrem.read(), Str.index().
+To avoid int boxing, prefer -1 instead of null.
 
