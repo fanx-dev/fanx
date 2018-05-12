@@ -358,7 +358,7 @@ class ParameterizedField : CField
   override Bool isParameterized() { true }
 
   override CType parent { private set }
-  CField generic { private set }
+  private CField generic { private set }
 }
 
 **************************************************************************
@@ -398,7 +398,7 @@ class ParameterizedMethod : CMethod
 
   override CType parent     { private set }
   override Str signature    { private set }
-  override CMethod? generic { private set }
+  private CMethod? generic { private set }
   override CType returnType { private set }
   override CParam[] params  { private set }
 }
@@ -420,5 +420,5 @@ class ParameterizedMethodParam : CParam
   override Str toStr() { "$paramType $name" }
 
   override CType paramType { private set }
-  CParam generic { private set }
+  private CParam generic { private set }
 }

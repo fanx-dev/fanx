@@ -1513,7 +1513,7 @@ class CheckErrors : CompilerStep
     newArgs := args.dup
     isErr := false
     params := method.params
-    genericParams := method.isParameterized ? method.generic.params : null
+    //genericParams := method.isParameterized ? method.generic.params : null
 
     // if we are calling call(A, B...) on a FuncType, then
     // use the first class Func signature rather than the
@@ -1564,7 +1564,7 @@ class CheckErrors : CompilerStep
           // if this a parameterized generic, then we need to box
           // even if the expected type is a value-type (since the
           // actual implementation methods are all Obj based)
-          if (!isErr && genericParams != null && genericParams[i].paramType.isGenericParameter)
+          if (!isErr && p.paramType.isParameterized)
             newArgs[i] = box(newArgs[i])
         }
       }

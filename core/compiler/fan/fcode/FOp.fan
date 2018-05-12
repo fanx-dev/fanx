@@ -66,7 +66,8 @@ enum class FOp
   CatchErrStart      (FOpArg.TypeRef),    //  52  start catch block - leave typed Err on stack
   CatchEnd           (),                  //  53  start catch block - leave typed Err on stack
   FinallyStart       (),                  //  54  starting instruction of a finally block
-  FinallyEnd         ()                   //  55  ending instruction of a finally block
+  FinallyEnd         (),                  //  55  ending instruction of a finally block
+  CallSuper          (FOpArg.MethodRef)   //  56  call super method. it's only for JVM
 
   private new make(FOpArg arg := FOpArg.None) { this.arg = arg }
 

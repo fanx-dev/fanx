@@ -1301,11 +1301,22 @@ class CodeAsm : CompilerSupport
       // any Obj methods since those are implemented as static wrappers
       // in the Java/.NET runtime
       targetId := call.target.id
-      if (targetId == ExprId.superExpr ||
-          (targetId == ExprId.thisExpr && !m.isVirtual && !m.parent.isObj))
+      if (targetId == ExprId.superExpr) {
+        op(FOp.CallSuper, index)
+      }
+      else if (m.isVirtual || m.isAbstract) {
+        op(FOp.CallVirtual, index)
+      }
+      else {
+        op(FOp.CallNonVirtual, index)
+      }
+
+      /*Why this?
+      if (targetId == ExprId.thisExpr && !m.isVirtual && !m.parent.isObj))
         op(FOp.CallNonVirtual, index)
       else
         op(FOp.CallVirtual, index)
+      */
     }
 
     // if we are leaving a value on the stack of a method which
@@ -1319,8 +1330,8 @@ class CodeAsm : CompilerSupport
     {
       if (m.isParameterized)
       {
-        ret := m.generic.returnType
-        if (ret.isGenericParameter)
+        ret := m.returnType
+        if (ret.isParameterized)
           coerceOp(ns.objType, m.returnType)
       }
       else if (m.isCovariant)
@@ -1334,7 +1345,8 @@ class CodeAsm : CompilerSupport
     if (!leave)
     {
       // note we need to use the actual method signature (not parameterized)
-      x := m.isParameterized ? m.generic : m
+      //x := m.isParameterized ? m.generic : m
+      x := m
       if (!x.returnType.isVoid || x.isInstanceCtor)
         opType(FOp.Pop, x.returnType)
     }
@@ -1486,7 +1498,7 @@ class CodeAsm : CompilerSupport
         storeField((FieldExpr)var)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
-        setParam := (set.isParameterized ? set.generic : set).params[1].paramType
+        setParam := (set).params[1].paramType
         // if calling setter check if we need to boxed
         if (c.ctype.isVal && !setParam.isVal && coerce == null) coerceOp(c.ctype, setParam)
         op(FOp.CallVirtual, fpod.addMethodRef(set, 2))
