@@ -1,6 +1,6 @@
 
 podName = testlib
 summary = test lib
-srcDirs = fan/
+srcDirs = test/
 depends = sys 1.0
 

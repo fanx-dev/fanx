@@ -1,27 +1,20 @@
 
 
-class Bar<T> {
-  T? t
-  Void say(|T|? f) {
-    if (f != null) f(t)
-  }
-
-  Bar<Int>? self() { null }
+mixin Mix {
+  static Void foo() {}
 }
 
-class Main {
+class Base {
+  static Void foo() {}
+}
+
+class Main : Base, Mix {
+  //static Void foo() {
+  //}
+
   static Void main() {
-    //Str[] t := Str["a", "b", "c"]
-    //echo(t[0].size)
-    //t.each |x|{ echo(x.size) }
-    //b := Bar<Str>()
-    //s := b.self
-    //s.t = "hi"
-    //echo(s.t.size)
-    //b.say |x| { echo(x.size) }
-    b := Bar<Str>()
-    b.t = "hi"
-    echo(b.t.size)
+    //m := Main()
+    Mix.foo()
   }
 }
 

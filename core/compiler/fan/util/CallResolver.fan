@@ -186,6 +186,17 @@ class CallResolver : CompilerSupport
       }
     }
 
+    if (found == null) {
+      founds := CSlot[,]
+      findInheritedStatic(base, founds)
+      if (founds.size > 1) {
+        throw err("Ambiguous static methods: $founds", loc)
+      }
+      else if (founds.size == 1) {
+        found = founds.first
+      }
+    }
+
     //try find extesion methods
     if (found == null) {
       findExtesion(base)
@@ -244,6 +255,20 @@ class CallResolver : CompilerSupport
     return found
   }
 
+  private Void findInheritedStatic(CType type, CSlot[] founds) {
+    found := type.slot(name)
+    if (found != null && found.isStatic) founds.add(found)
+
+    if (type.isObj) return
+    if (type.base != null) {
+      findInheritedStatic(type.base, founds)
+    }
+
+    type.mixins.each {
+      findInheritedStatic(it, founds)
+    }
+  }
+
   private Bool findExtesion(CType base) {
     call := expr as CallExpr
     if (call == null) return false
@@ -253,7 +278,7 @@ class CallResolver : CompilerSupport
     meths.each |m| {
       if (m.name != name) return
       param := m.params.first
-      if (param == null) return false
+      if (param == null) return
       CType paramType := param.paramType
       while (true) {
         if (paramType == base) {
