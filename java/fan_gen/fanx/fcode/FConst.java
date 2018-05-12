@@ -125,7 +125,8 @@ public interface FConst
   public static final int CatchEnd        =  53; // ()        start catch block - leave typed Err on stack
   public static final int FinallyStart    =  54; // ()        starting instruction of a finally block
   public static final int FinallyEnd      =  55; // ()        ending instruction of a finally block
-
+  public static final int CallSuper       =  56; // (method)  call super method. it's only for JVM
+  
   public static final String[] OpNames =
   {
     "Nop",                //   0
@@ -184,6 +185,7 @@ public interface FConst
     "CatchEnd",           //  53
     "FinallyStart",       //  54
     "FinallyEnd",         //  55
+    "CallSuper",         //  56
   };
 
   public static final int[] OpSkips =
@@ -244,6 +246,7 @@ public interface FConst
     0,  //  53 CatchEnd
     0,  //  54 FinallyStart
     0,  //  55 FinallyEnd
+    2,  //  56 CallSuper
   };
 
   public static final String[] OpSigs =
@@ -304,6 +307,7 @@ public interface FConst
     "()",         //  53 CatchEnd
     "()",         //  54 FinallyStart
     "()",         //  55 FinallyEnd
+    "(method)",   //  56 CallSuper
   };
 
 }

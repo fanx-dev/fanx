@@ -160,6 +160,22 @@ public class FMethodRef
   static {
     try { Class.forName("android.app.Activity"); isAndroid = true; } catch (Throwable e) { isAndroid = false; }
   }
+  
+  public void emitCallSuper(CodeEmit code, FType selfType) {
+	if (jsigAlt == null)
+    {
+      StringBuilder s = new StringBuilder();
+      String jname = parent.jname();
+      String jimpl = parent.jimpl();
+      s.append(jimpl).append('.').append(name).append('(');
+      for (int i=0; i<params.length; ++i) params[i].jsig(s);
+      s.append(')');
+      ret.jsig(s);
+      jsigAlt = s.toString();
+    }
+	int method = code.emit().method(jsigAlt);
+	code.op2(INVOKESPECIAL, method);
+  }
 
   public void emitCallNonVirtual(CodeEmit code, FType selfType)
   {
@@ -180,16 +196,8 @@ public class FMethodRef
     }
 
     int method = code.emit().method(jsigAlt);
-
     if (isAndroid) {
-      //call in self class
-      if (selfType.self == parent.id) {
-        code.op2(INVOKEVIRTUAL, method);
-      }
-      //call super
-      else {
-        code.op2(INVOKESPECIAL, method);
-      }
+      code.op2(INVOKEVIRTUAL, method);
     }
     else {
       code.op2(INVOKESPECIAL, method);

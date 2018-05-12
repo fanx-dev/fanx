@@ -102,6 +102,7 @@ public class FCodeEmit
         case CallStatic:          pod.methodRef(u2()).emitCallStatic(code); break;
         case CallVirtual:         pod.methodRef(u2()).emitCallVirtual(code); break;
         case CallNonVirtual:      pod.methodRef(u2()).emitCallNonVirtual(code, parent.type); break;
+        case CallSuper:           pod.methodRef(u2()).emitCallSuper(code, parent.type); break;
         case CallMixinStatic:     pod.methodRef(u2()).emitCallMixinStatic(code); break;
         case CallMixinVirtual:    pod.methodRef(u2()).emitCallMixinVirtual(code); break;
         case CallMixinNonVirtual: pod.methodRef(u2()).emitCallMixinNonVirtual(code); break;
