@@ -21,7 +21,7 @@ Pod Naming
 Pod names are lower snake case.
 Prefix with an organization or domain name, for example:
 ```
-  google_produceName_modleName
+  google_produce_module
 ```
 don't include the "com" in your pod names.
 

@@ -1,11 +1,9 @@
 
 # Different From Fantom #
 
-Language Diff
-=======
+## Language Diff ##
 
-Generics
-------
+### Generics ###
 ```
   class Foo<T> {
     T? t
@@ -16,8 +14,7 @@ Generics
   foo.t = "abc"
 ```
 
-Extension method
-------
+### Extension Method ###
 To add methods out side the class
 ```
   class Whatever {
@@ -30,8 +27,7 @@ To add methods out side the class
   fs := str.splitBy("::", 3)
 ```
 
-Numeric Precision
-------
+### Numeric Precision ###
 Support Numeric Precision by Facets
 ```
   Point {
@@ -41,8 +37,7 @@ Support Numeric Precision by Facets
   }
 ```
 
-Struct Type
-------
+### Struct Type ###
 A struct type is a value type
 ```
   const struct class Point {
@@ -52,8 +47,7 @@ A struct type is a value type
   p := Point{ x=1; y=2 }
 ```
 
-RunTime Immutable
-------
+### RunTime Immutable ###
 ```
   rtconst Buf {
     override Bool isImmutable() { ... }
@@ -62,16 +56,13 @@ RunTime Immutable
 ```
 
 
-Little Things
-======
+## Little Things ##
 
-Light-Weight 'sys' Library
-------
+### Light-Weight 'sys' Library ###
 The Fantom sys pod divided into three pod: sys, std, reflect
 They written in Fantom with little native code.
 
-Static Namespace
-------
+### Static Namespace ###
 FanCore allow same name static slots through inheritance.
 ```
    class Base {
@@ -87,21 +78,18 @@ FanCore allow same name static slots through inheritance.
    }
 ```
 
-Return From Void
--------
+### Return From Void ###
 FanCore not allow return a value from Void method, except return Void.
 
-Float Literals
--------
+### Float Literals ###
 The Default Number is Float
 ```
   f := 0.1   //Float
   f := 0.2f  //Float
-  f := 0.3D  //Decimal
+  f := 0.3d  //Decimal
 ```
 
-Native Methods
---------
+### Native Methods ###
 Fantom's Way:
 ```
   // Fantom
@@ -134,6 +122,51 @@ If you want a peer field to hold data:
     static native Void b(Int x)
   }
 ```
+
+### Build Script ###
+The pod.props file:
+```
+  podName = testlib
+  summary = test lib
+  srcDirs = fan/*
+  depends = sys 1.0
+```
+Run build:
+```
+  fanc yourPath/pod.props
+```
+
+
+### Extension Methods API ###
+Most Convenience methods changed to extension methods for break depends.
+For example: Str.toRegex bring to the Str class depend on Regex module.
+We solve it in the following:
+```
+  mixin StrUil {
+    extensiosn static Regex toRegex(Str self) { Regex(self) }
+  }
+```
+
+Math methods:
+```
+  mixin Math {
+    extensiosn static Float cos(Float self) { ... }
+    extensiosn static Float sin(Float self) { ... }
+  }
+
+  class Main : Math {
+    Void main() {
+      f := 0.1
+
+      //Fantom compatible style
+      r := f.cos * f.sin
+
+      //mathematics familiar style
+      r := cos(f) * sin(f)
+    }
+  }
+```
+
 
 
 
