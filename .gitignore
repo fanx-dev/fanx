@@ -1,4 +1,6 @@
 sys.jar
 java/fan_gen/bin
 *.prefs
+*.class
 java/libs
+core/testlib/test

@@ -234,25 +234,21 @@ class Tokenizer : CompilerSupport
 
     try
     {
-      // float literal
-      if (floatSuffix)
-      {
-        num := Float.fromStr(str)
-        return TokenVal(Token.floatLiteral, num)
+      // decimal literal
+      if (decimalSuffix) {
+        num := Decimal.fromStr(str)
+        return TokenVal(Token.decimalLiteral, num)
       }
 
-      // decimal literal
-      if (decimalSuffix || dot || exp)
+      // float literal
+      if (floatSuffix || dot || exp)
       {
-        num := Decimal.fromStr(str)
-        if (dur != null)
-        {
-          return TokenVal(Token.durationLiteral, Duration((num*dur.toDecimal).toInt))
+        num := Float.fromStr(str)
+        if (dur != null) {
+          return TokenVal(Token.durationLiteral, Duration((num*dur.toFloat).toInt))
         }
-        else
-        {
-          if (!decimalSuffix) err("Float/Decimal literal must have f/d suffix")
-          return TokenVal(Token.decimalLiteral, num)
+        else {
+          return TokenVal(Token.floatLiteral, num)
         }
       }
 

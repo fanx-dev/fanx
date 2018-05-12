@@ -130,6 +130,10 @@ enum class Token
   whileKeyword,
   extensionKeyword,
   rtconstKeyword,
+  varKeyword,
+  defKeyword,
+  refKeyword,
+  retKeyword,
 
   // misc
   eof("eof");

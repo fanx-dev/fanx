@@ -1585,8 +1585,10 @@ public class Parser : CompilerSupport
 
     if (curt == Token.pipe)
       throw err("Invalid closure expression (check types)")
-    else
-      throw err("Expected expression, not '" + cur + "'")
+    else {
+      if (cur.kind.keyword) throw err("Expected expression, not keyword '" + cur + "'")
+      else throw err("Expected expression, not '" + cur + "'")
+    }
   }
 
   **

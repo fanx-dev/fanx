@@ -1,14 +1,13 @@
 
-
-mixin Mix {
+mixin SMix {
   static Void foo() {}
 }
 
-class Base {
+class SBase {
   static Void foo() {}
 }
 
-class Main : Base, Mix {
+class StaticTest : SBase, SMix {
   //static Void foo() {
   //}
 
@@ -17,5 +16,4 @@ class Main : Base, Mix {
     Mix.foo()
   }
 }
-
 
