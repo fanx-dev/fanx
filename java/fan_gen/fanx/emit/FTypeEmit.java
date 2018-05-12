@@ -118,8 +118,8 @@ public abstract class FTypeEmit
     code.emitLineNumber(lineNum);
 
     // if native generate peer field and peer() override
-    if (isNative)
-      peerField = emitField("peer", "L" + className + "Peer;", EmitConst.PUBLIC);
+//    if (isNative)
+//      peerField = emitField("peer", "L" + className + "Peer;", EmitConst.PUBLIC);
   }
 
   /**
@@ -222,13 +222,13 @@ public abstract class FTypeEmit
     }
 
     // make peer
-    if (isNative)
-    {
-      code.op(ALOAD_0);  // for putfield
-      code.op(DUP);      // for arg to make
-      code.op2(INVOKESTATIC, method(selfName + "Peer.make(L" + className + ";)L" + className + "Peer;"));
-      code.op2(PUTFIELD, peerField.ref());
-    }
+//    if (isNative)
+//    {
+//      code.op(ALOAD_0);  // for putfield
+//      code.op(DUP);      // for arg to make
+//      code.op2(INVOKESTATIC, method(selfName + "Peer.make(L" + className + ";)L" + className + "Peer;"));
+//      code.op2(PUTFIELD, peerField.ref());
+//    }
 
     if (m == null)
     {
@@ -482,7 +482,7 @@ public abstract class FTypeEmit
   FType type;
   String selfName;               // class name to use as self (for mixin body - this is interface)
   FieldEmit typeField;           // private static final Type $Type
-  FieldEmit peerField;           // public static final TypePeer peer
+//  FieldEmit peerField;           // public static final TypePeer peer
   boolean hasInstanceInit;       // true if we already emitted <init>
   boolean hasStaticInit;         // true if we already emitted <clinit>
 //  FuncType funcType;             // if type is a function
