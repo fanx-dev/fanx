@@ -10,10 +10,9 @@ package fanx.main;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.*;
-import java.security.*;
-import java.util.*;
 import fanx.emit.*;
 import fanx.fcode.FPod;
+import fanx.fcode.FType;
 import fanx.util.*;
 
 /**
@@ -23,6 +22,7 @@ import fanx.util.*;
 public class PodClassLoader
   extends URLClassLoader
 {
+	private FPod pod;
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -30,43 +30,13 @@ public class PodClassLoader
 
   public PodClassLoader(FPod pod)
   {
-    super(new URL[0], extClassLoader);
-    try
-    {
-//      pod = Sys.findPod(podName);
-      this.pod = pod;
-      this.allPermissions = new AllPermission().newPermissionCollection();
-      this.codeSource = new CodeSource(new java.net.URL("file://"), (CodeSigner[])null);
-    }
-    catch (Throwable e)
-    {
-      e.printStackTrace();
-    }
+    super(new URL[0], PodClassLoader.class.getClassLoader());
+    addFanDir(new File(Sys.homeDir));
+    this.pod = pod;
   }
 
-//////////////////////////////////////////////////////////////////////////
-// Load Fan
-//////////////////////////////////////////////////////////////////////////
-
-//  public Class loadFan(String name, Box classfile)
-//  {
-//    try
-//    {
-//      synchronized(pendingClasses)
-//      {
-//        pendingClasses.put(name, classfile);
-//      }
-//      return loadClass(name);
-//    }
-//    catch (ClassNotFoundException e)
-//    {
-//      e.printStackTrace();
-//      throw new RuntimeException("Cannot load class: " + name, e);
-//    }
-//  }
-  
-  private final Class<?> loadDefineClass(String name, Box classfile) {
-	  return defineClass(name, classfile.buf, 0, classfile.len, codeSource);
+  private final Class<?> doDefineClass(String name, Box classfile) {
+	  return defineClass(name, classfile.buf, 0, classfile.len);
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,12 +45,7 @@ public class PodClassLoader
 
   public String toString()
   {
-    return "FanClassLoader[" + pod.podName + "]";
-  }
-
-  protected PermissionCollection getPermissions(CodeSource src)
-  {
-    return allPermissions;
+    return "PodClassLoader[" + pod.podName + "]";
   }
 
   @Override
@@ -89,11 +54,13 @@ public class PodClassLoader
   {
     try
     {
-      Class cls;
-
-      // first check if the classfile in my pending queue
-//      cls = findPendingClass(name);
-//      if (cls != null) return cls;
+//      System.out.println("loading:"+name);
+      Class cls = null;
+//      try {
+//    	  cls = super.findClass(name);
+//    	  if (cls != null) return cls;
+//      } catch (Exception e) {
+//      }
 
       // anything starting with "fan." maps to a Fantom Type (or native peer code)
       cls = loadClassData(name);
@@ -112,7 +79,7 @@ public class PodClassLoader
     	  
     	  PodClassLoader d = (PodClassLoader)Sys.findPod(podName).podClassLoader;
     	  
-    	  if (d.findPrecompiledClassFile(name) != null) {
+    	  if (d.findPrecompiledFile(name) != null) {
     		  return d.loadClass(name);
     	  }
       }
@@ -120,6 +87,7 @@ public class PodClassLoader
       // fallback to default URLClassLoader loader
       // implementation which searches my ext jars
       return super.findClass(name);
+//      throw new ClassNotFoundException(name);
     }
     catch (Exception e)
     {
@@ -132,19 +100,6 @@ public class PodClassLoader
       throw new RuntimeException(e);
     }
   }
-
-//  private Class findPendingClass(String name)
-//  {
-//    Box pending = null;
-//    synchronized(pendingClasses)
-//    {
-//      pending = (Box)pendingClasses.get(name);
-//      if (pending != null) pendingClasses.remove(name);
-//    }
-//    if (pending == null) return null;
-////if (name.indexOf("Foo") > 0) dumpToFile(name, pending);
-//    return defineClass(name, pending.buf, 0, pending.len, codeSource);
-//  }
 
   private Class loadClassData(String name)
     throws Exception
@@ -163,7 +118,7 @@ public class PodClassLoader
       FPod pod = Sys.findPod(podName);
       return pod.podClassLoader.loadClass(name);
     }
-
+    
     // see if we can find a precompiled class
     Class cls = findPrecompiledClass(name, typeName);
     if (cls != null) return cls;
@@ -173,7 +128,7 @@ public class PodClassLoader
     // actual class to load, then we are done)
     if (typeName.equals("$Pod")) {
     	FPodEmit podEmit = FPodEmit.emit(pod);
-    	Class podClz = loadDefineClass(name, podEmit.classFile);
+    	Class podClz = doDefineClass(name, podEmit.classFile);
     	FPodEmit.initFields(pod, podClz);
     	return podClz;
     }
@@ -185,25 +140,32 @@ public class PodClassLoader
     {
       int strip = typeName.endsWith("$") ? 1 : 4;
       String tname = typeName.substring(0, typeName.length()-strip);
-      FTypeEmit[] emitted = FTypeEmit.emit(pod.type(tname));
+      FType ft = pod.type(tname, false);
+      if (ft == null) return null;
+      if (ft.isNative()) return null;
+      FTypeEmit[] emitted = FTypeEmit.emit(ft);
       Class c = null;
       for (int j=0; j<emitted.length; ++j)
       {
         FTypeEmit emit = emitted[j];
-        c = loadDefineClass(name, emit.classFile);
+        c = doDefineClass(name, emit.classFile);
       }
       if (c != null) return c;
     }
 
     // if there wasn't a precompiled class, then this must
     // be a normal fcode type which we need to emit
-    FTypeEmit[] emitted = FTypeEmit.emit(pod.type(typeName));
+    FType ft = pod.type(typeName, false);
+    if (ft == null) return null;
+    if (ft.hollow) ft.read();
+    if (ft.isNative()) return null;
+    FTypeEmit[] emitted = FTypeEmit.emit(ft);
     FTypeEmit emit = emitted[0];
-    cls = loadDefineClass(name, emit.classFile);
+    cls = doDefineClass(name, emit.classFile);
     return cls;
   }
 
-  private Box findPrecompiledClassFile(String name)
+  private Box findPrecompiledFile(String name)
   {
     try
     {
@@ -222,7 +184,7 @@ public class PodClassLoader
   {
     try
     {
-      Box precompiled = findPrecompiledClassFile(name);
+      Box precompiled = findPrecompiledFile(name);
       if (precompiled == null) return null;
 
       // definePackage before defineClass
@@ -235,7 +197,7 @@ public class PodClassLoader
       }
 
       // defineClass
-      Class cls = loadDefineClass(name, precompiled);
+      Class cls = doDefineClass(name, precompiled);
 
       // if the precompiled class is a fan type, then we need
       // to finish the emit process since we skipped the normal
@@ -292,54 +254,39 @@ public class PodClassLoader
 // ExtClassLoader
 //////////////////////////////////////////////////////////////////////////
 
-  static final ExtClassLoader extClassLoader = new ExtClassLoader();
-
-  static class ExtClassLoader extends URLClassLoader
+  /**
+   * Given a home or working directory, add the following directories  to the path:
+   *    {fanDir}/lib/java/ext/
+   *    {fanDir}/lib/java/ext/{platform}/
+   */
+  void addFanDir(java.io.File fanDir)
   {
-    public ExtClassLoader()
+    try
     {
-      super(new URL[0], PodClassLoader.class.getClassLoader());
-      addFanDir(new File(Sys.homeDir));
+      String sep = java.io.File.separator;
+      java.io.File extDir = new java.io.File(fanDir, "lib" + sep + "java" + sep + "ext");
+      java.io.File platDir = new java.io.File(extDir, Sys.platform);
+      addExtJars(extDir);
+      addExtJars(platDir);
+      
+      //temp
+      addURL(new File("../sys_nat/bin").toURI().toURL());
+//      addExtJars(new File("../libs"));
     }
-
-    /**
-     * Given a home or working directory, add the following directories  to the path:
-     *    {fanDir}/lib/java/ext/
-     *    {fanDir}/lib/java/ext/{platform}/
-     */
-    void addFanDir(java.io.File fanDir)
+    catch (Exception e)
     {
-      try
-      {
-        String sep = java.io.File.separator;
-        java.io.File extDir = new java.io.File(fanDir, "lib" + sep + "java" + sep + "ext");
-        java.io.File platDir = new java.io.File(extDir, Sys.platform);
-        addExtJars(extDir);
-        addExtJars(platDir);
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
-    }
-
-    private void addExtJars(java.io.File extDir) throws Exception
-    {
-      java.io.File[] list = extDir.listFiles();
-      for (int i=0; list != null && i<list.length; ++i)
-      {
-        if (list[i].getName().endsWith(".jar"))
-          addURL(list[i].toURI().toURL());
-      }
+      e.printStackTrace();
     }
   }
 
-//////////////////////////////////////////////////////////////////////////
-// Fields
-//////////////////////////////////////////////////////////////////////////
+  private void addExtJars(java.io.File extDir) throws Exception
+  {
+    java.io.File[] list = extDir.listFiles();
+    for (int i=0; list != null && i<list.length; ++i)
+    {
+      if (list[i].getName().endsWith(".jar"))
+        addURL(list[i].toURI().toURL());
+    }
+  }
 
-  private FPod pod;
-  private PermissionCollection allPermissions;
-  private CodeSource codeSource;
-//  private HashMap pendingClasses = new HashMap(); // name -> Box
 }

@@ -46,7 +46,9 @@ public final class FPod
 // Lookup
 //////////////////////////////////////////////////////////////////////////
 
-  public FType type(String name)
+  public FType type(String name) { return type(name, true); }
+  
+  public FType type(String name, boolean checked)
   {
 	  if (typeMap == null) {
 		Map<String, FType> map = new HashMap<String, FType>();
@@ -56,7 +58,9 @@ public final class FPod
 	  }
 	  FType t = typeMap.get(name);
 	  if (t != null) return t;
-      throw new RuntimeException("UnknownTypeErr:"+name);
+	  
+	  if (checked) throw new RuntimeException("UnknownTypeErr:"+name);
+	  else return null;
   }
 
 //////////////////////////////////////////////////////////////////////////

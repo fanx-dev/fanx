@@ -33,7 +33,17 @@ public class Sys {
 	private static Map<String, FPod> pods = new HashMap<String, FPod>();
 	
 	public static Type findType(String signature) {
-		return null;
+		int pos = signature.indexOf("::");
+		String podName = signature.substring(0, pos);
+//		int pos2 = signature.lastIndexOf('<');
+		String typeName = signature.substring(pos+2);
+		FType ftype = findFType(podName, typeName);
+		
+		if (ftype.reflectType == null) {
+			ClassType ct = new ClassType(ftype);
+			ftype.reflectType = ct;
+		}
+		return (Type)ftype.reflectType;
 	}
 	
 	public static FType findFType(String podName, String typeName) {

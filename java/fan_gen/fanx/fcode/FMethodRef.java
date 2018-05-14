@@ -183,24 +183,56 @@ public class FMethodRef
     // route to static helpers like we do for call virtual
     //  - CallVirtual:     Obj.toStr => static FanObj.toStr(Object)
     //  - CallNonVirtual:  Obj.toStr => FanObj.toStr()
-    if (jsigAlt == null)
+//    if (jsigAlt == null)
+//    {
+//      StringBuilder s = new StringBuilder();
+//      String jname = parent.jname();
+//      String jimpl = parent.jimpl();
+//      s.append(jimpl).append('.').append(name).append('(');
+//      for (int i=0; i<params.length; ++i) params[i].jsig(s);
+//      s.append(')');
+//      ret.jsig(s);
+//      jsigAlt = s.toString();
+//    }
+//
+//    int method = code.emit().method(jsigAlt);
+//    if (isAndroid) {
+//      code.op2(INVOKEVIRTUAL, method);
+//    }
+//    else {
+//      code.op2(INVOKESPECIAL, method);
+//    }
+	if (special != null) { special.emit(this, code); return; }
+
+    if (jsig == null)
     {
       StringBuilder s = new StringBuilder();
       String jname = parent.jname();
       String jimpl = parent.jimpl();
       s.append(jimpl).append('.').append(name).append('(');
+      if (jname != jimpl)
+      {
+        // if the implementation class is different than the representation
+        // class then we route to static such as FanFloat.abs(double self)
+        mask |= INVOKE_VIRT_AS_STATIC;
+        parent.jsig(s);
+      }
       for (int i=0; i<params.length; ++i) params[i].jsig(s);
       s.append(')');
       ret.jsig(s);
-      jsigAlt = s.toString();
+      jsig = s.toString();
     }
 
-    int method = code.emit().method(jsigAlt);
-    if (isAndroid) {
-      code.op2(INVOKEVIRTUAL, method);
-    }
+    int method = code.emit().method(jsig);
+    if ((mask & INVOKE_VIRT_AS_STATIC) != 0)
+      code.op2(INVOKESTATIC, method);
     else {
-      code.op2(INVOKESPECIAL, method);
+    	if (isAndroid) {
+          code.op2(INVOKEVIRTUAL, method);
+        }
+        else {
+          code.op2(INVOKESPECIAL, method);
+        }
     }
   }
 

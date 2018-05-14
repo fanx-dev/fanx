@@ -186,18 +186,18 @@ final rtconst class Map<K,V>
   ** it defaults to the `def` field.  This method is readonly safe.
   ** Shortcut is 'a[key]'.
   **
-  @Operator Obj? get(Obj key, Obj? def := this.def) {
+  @Operator Obj? get(Obj key, Obj? defV := this.defV) {
     hash := getHash(key)
     l := array[hash]
     if (l == null) {
-      return def
+      return defV
     }
 
     entry := l.findByKey(key)
     if (entry != null) {
       return entry.value
     } else {
-      return def
+      return defV
     }
   }
 
@@ -492,7 +492,7 @@ final rtconst class Map<K,V>
   ** or NotImmutableErr is thrown.  Getting this field is readonly safe.
   ** Throw ReadonlyErr if set when readonly.
   **
-  Obj? def { set { modify; &def = it } }
+  Obj? defV { set { modify; &defV = it } }
 
 //////////////////////////////////////////////////////////////////////////
 // Str

@@ -11,6 +11,7 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import fanx.fcode.FPod;
 import fanx.util.*;
 
 /**
@@ -137,11 +138,19 @@ public class Fan
 //  }
   
   private java.lang.reflect.Method findMethod(Class clz, String name) {
-	  java.lang.reflect.Method[] ms = clz.getDeclaredMethods();
-	  for (java.lang.reflect.Method m : ms) {
-		  if (m.getName().equals(name)) {
-			  return m;
-		  }
+	  try {
+		  java.lang.reflect.Method met = clz.getMethod(name);
+		  if (met != null) return met;
+		  
+//		  java.lang.reflect.Method[] ms = clz.getDeclaredMethods();
+////		  java.lang.reflect.Method[] ms = clz.getMethods();
+//		  for (java.lang.reflect.Method m : ms) {
+//			  if (m.getName().equals(name)) {
+//				  return m;
+//			  }
+//		  }
+	  } catch (Throwable e) {
+		  e.printStackTrace();
 	  }
 	  return null;
   }
@@ -154,17 +163,24 @@ public class Fan
 
     try
     {
+      int c = target.indexOf("::");
       int dot = target.lastIndexOf('.');
-      Type type = Sys.findType(target.substring(0, dot));
-      Class jclass = type.getJavaClass();
+      String podName = target.substring(0, c);
+      String typeName = target.substring(c+2, dot);
       String methodName = target.substring(dot+1);
+      
+      FPod pod = Sys.findPod(podName);
+      Class jclass = pod.podClassLoader.loadClass("fan."+podName+"."+typeName);
+//      System.out.println(jclass.getClassLoader());
       java.lang.reflect.Method m = findMethod(jclass, methodName);
       
       Object res = null;
       if ((m.getModifiers() * Modifier.STATIC) != 0) {
     	  res = m.invoke(null);
       } else {
-    	  Object instance = jclass.newInstance();
+    	  java.lang.reflect.Method ctor = findMethod(jclass, "make");
+    	  Object instance = ctor.invoke(null);
+//    	  Object instance = jclass.newInstance();
     	  res = m.invoke(instance);
       }
       

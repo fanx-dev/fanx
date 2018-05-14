@@ -125,7 +125,7 @@ public class FType
 //////////////////////////////////////////////////////////////////////////
   
   	public FTypeRef selfRef;
-  	public Object ReflectType = null;
+  	public Object reflectType = null;
 	
 	public boolean baseIsJava() {
 		FTypeRef ref = pod.typeRef(base);
