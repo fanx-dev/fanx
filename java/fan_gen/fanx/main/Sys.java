@@ -32,6 +32,11 @@ public class Sys {
 	
 	private static Map<String, FPod> pods = new HashMap<String, FPod>();
 	
+	
+	public static Type findType(String signature, boolean checked) {
+		return findType(signature);
+	}
+	
 	public static Type findType(String signature) {
 		int pos = signature.indexOf("::");
 		String podName = signature.substring(0, pos);

@@ -30,9 +30,13 @@ public class PodClassLoader
 
   public PodClassLoader(FPod pod)
   {
-    super(new URL[0], PodClassLoader.class.getClassLoader());
-    addFanDir(new File(Sys.homeDir));
+    super(new URL[0], extClassLoader);
     this.pod = pod;
+    try {
+		addURL(new File("../sys_nat/bin").toURI().toURL());
+	} catch (MalformedURLException e) {
+		e.printStackTrace();
+	}
   }
 
   private final Class<?> doDefineClass(String name, Box classfile) {
@@ -253,39 +257,46 @@ public class PodClassLoader
 //////////////////////////////////////////////////////////////////////////
 // ExtClassLoader
 //////////////////////////////////////////////////////////////////////////
+  
+  static final ExtClassLoader extClassLoader = new ExtClassLoader();
 
-  /**
-   * Given a home or working directory, add the following directories  to the path:
-   *    {fanDir}/lib/java/ext/
-   *    {fanDir}/lib/java/ext/{platform}/
-   */
-  void addFanDir(java.io.File fanDir)
+  static class ExtClassLoader extends URLClassLoader
   {
-    try
+    public ExtClassLoader()
     {
-      String sep = java.io.File.separator;
-      java.io.File extDir = new java.io.File(fanDir, "lib" + sep + "java" + sep + "ext");
-      java.io.File platDir = new java.io.File(extDir, Sys.platform);
-      addExtJars(extDir);
-      addExtJars(platDir);
-      
-      //temp
-      addURL(new File("../sys_nat/bin").toURI().toURL());
-//      addExtJars(new File("../libs"));
+      super(new URL[0], ExtClassLoader.class.getClassLoader());
+      this.addFanDir(new File(Sys.homeDir));
     }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-  }
 
-  private void addExtJars(java.io.File extDir) throws Exception
-  {
-    java.io.File[] list = extDir.listFiles();
-    for (int i=0; list != null && i<list.length; ++i)
+    /**
+     * Given a home or working directory, add the following directories  to the path:
+     *    {fanDir}/lib/java/ext/
+     *    {fanDir}/lib/java/ext/{platform}/
+     */
+    void addFanDir(java.io.File fanDir)
     {
-      if (list[i].getName().endsWith(".jar"))
-        addURL(list[i].toURI().toURL());
+      try
+      {
+        String sep = java.io.File.separator;
+        java.io.File extDir = new java.io.File(fanDir, "lib" + sep + "java" + sep + "ext");
+        java.io.File platDir = new java.io.File(extDir, Sys.platform);
+        addExtJars(extDir);
+        addExtJars(platDir);
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
+
+    private void addExtJars(java.io.File extDir) throws Exception
+    {
+      java.io.File[] list = extDir.listFiles();
+      for (int i=0; list != null && i<list.length; ++i)
+      {
+        if (list[i].getName().endsWith(".jar"))
+          addURL(list[i].toURI().toURL());
+      }
     }
   }
 

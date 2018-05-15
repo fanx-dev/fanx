@@ -212,9 +212,11 @@ public abstract class FTypeEmit
     // if func, push FuncType static field
     if (isFuncType)
     {
-      code.op2(GETSTATIC, typeField.ref());
-      code.op2(CHECKCAST, cls("fan/sys/FuncType"));
-      code.op2(INVOKESPECIAL, method(superClassName +".<init>(Lfan/sys/FuncType;)V"));
+//      code.op2(GETSTATIC, typeField.ref());
+//      code.op2(CHECKCAST, cls("fan/sys/FuncType"));
+//      code.op2(INVOKESPECIAL, method(superClassName +".<init>(Lfan/sys/FuncType;)V"));
+//      
+      code.op2(INVOKESPECIAL, method(superClassName +".<init>()V"));
     }
     else
     {

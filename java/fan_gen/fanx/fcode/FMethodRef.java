@@ -227,7 +227,7 @@ public class FMethodRef
     if ((mask & INVOKE_VIRT_AS_STATIC) != 0)
       code.op2(INVOKESTATIC, method);
     else {
-    	if (isAndroid) {
+    	if (isAndroid || this.parent.id != selfType.self) {
           code.op2(INVOKEVIRTUAL, method);
         }
         else {

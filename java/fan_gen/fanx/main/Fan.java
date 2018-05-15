@@ -137,8 +137,7 @@ public class Fan
 //    }
 //  }
   
-  private java.lang.reflect.Method findMethod(Class clz, String name) {
-	  try {
+  private java.lang.reflect.Method findMethod(Class clz, String name) throws NoSuchMethodException, SecurityException {
 		  java.lang.reflect.Method met = clz.getMethod(name);
 		  if (met != null) return met;
 		  
@@ -149,10 +148,7 @@ public class Fan
 //				  return m;
 //			  }
 //		  }
-	  } catch (Throwable e) {
-		  e.printStackTrace();
-	  }
-	  return null;
+		  return null;
   }
 
   private int executeType(String target, String[] args)
