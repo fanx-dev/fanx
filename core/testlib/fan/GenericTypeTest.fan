@@ -20,6 +20,12 @@ class GenericTypeTest
   //GenericType<Str> x := GenericType<Str>()
   Str[] fs := ["a", "b"]
 
+  Int get() {
+    x := GenericType<Int>()
+    x.bar = 10
+    return x.bar
+  }
+
   Void main() {
     //Fix this
     x := GenericType<Str>()

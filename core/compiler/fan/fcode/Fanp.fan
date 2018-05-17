@@ -20,11 +20,21 @@ class Fanp
   {
     colon := target.index(":")
     dot   := target.index(".")
-    if (colon  == null) printPod(Pod.find(target))
-    else if (dot < 0) printType(Type.find(target))
-    else printSlot(Slot.find(target))
+    if (colon  == null) printPod(target)
+    else if (dot < 0) {
+      podName := target[0..<colon]
+      typeName := target[colon+2..-1]
+      printType(podName, typeName)
+    }
+    else {
+      podName := target[0..<colon]
+      typeName := target[colon+2..<dot]
+      slotName := target[dot+1..-1]
+      printSlot(podName, typeName, slotName)
+    }
   }
 
+  //TODO support transientPod
   Void executeFile(Str? target)
   {
     scriptFile := File.os(file)
@@ -48,43 +58,43 @@ class Fanp
 
     if (target == null)
     {
-      printPod(pod)
+      printPod(pod.name)
       return
     }
 
     dot := target.index(".")
     if (dot < 0)
     {
-      printType(pod.type(target))
+      printType(pod.name, pod.type(target).name)
     }
     else
     {
       typeName := target[0..<dot]
       slotName := target[dot+1..-1]
-      printSlot(pod.type(typeName).slot(slotName))
+      printSlot(pod.name, typeName, slotName)
     }
   }
 
-  Void printPod(Pod pod)
+  Void printPod(Str podName)
   {
-    p := printer(pod)
+    p := printer(podName)
     if (showTables) { p.tables; return }
     p.ftypes
   }
 
-  Void printType(Type t)
+  Void printType(Str podName, Str typeName)
   {
-    p := printer(t.pod)
+    p := printer(podName)
     if (showTables) { p.tables; return }
-    ftype := ftype(p.pod, t.name)
+    ftype := ftype(p.pod, typeName)
     p.ftype(ftype)
   }
 
-  Void printSlot(Slot slot)
+  Void printSlot(Str podName, Str typeName, Str slotName)
   {
-    p := printer(slot.parent.pod)
+    p := printer(podName)
     if (showTables) { p.tables; return }
-    fslot := fslot(ftype(p.pod, slot.parent.name), slot.name)
+    fslot := fslot(ftype(p.pod, typeName), slotName)
     p.slot(fslot)
   }
 
@@ -92,9 +102,9 @@ class Fanp
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
-  FPrinter printer(Pod pod)
+  FPrinter printer(Str podName)
   {
-    printer := FPrinter(fpod(pod.name))
+    printer := FPrinter(fpod(podName))
     printer.showCode  = showCode
     printer.showLines = showLines
     printer.showIndex = showIndex

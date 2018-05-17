@@ -257,7 +257,9 @@ class CallResolver : CompilerSupport
 
   private Void findInheritedStatic(CType type, CSlot[] founds) {
     found := type.slot(name)
-    if (found != null && found.isStatic) founds.add(found)
+    if (found != null && found.isStatic && !founds.contains(found)) {
+      founds.add(found)
+    }
 
     if (type.isObj) return
     if (type.base != null) {

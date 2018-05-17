@@ -13,7 +13,7 @@ class StaticTest : SBase, SMix {
 
   static Void main() {
     //m := Main()
-    Mix.foo()
+    SMix.foo()
   }
 }
 

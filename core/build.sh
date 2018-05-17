@@ -1,4 +1,4 @@
-
+set -e
 fan compiler/build.fan
 
 fanc='../../../fantom/fan/bin/fan compiler::Main'
