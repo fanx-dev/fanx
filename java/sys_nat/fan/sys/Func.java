@@ -83,31 +83,31 @@ public abstract class Func extends FanObj {
 	}
 
 	public Object call() {
-		return call(null);
+		return call(null, null, null, null, null, null, null, null);
 	}
 
 	public Object call(Object a) {
-		return call(a, null);
+		return call(a, null, null, null, null, null, null, null);
 	}
 
 	public Object call(Object a, Object b) {
-		return call(a, b, null);
+		return call(a, b, null, null, null, null, null, null);
 	}
 
 	public Object call(Object a, Object b, Object c) {
-		return call(a, b, c, null);
+		return call(a, b, c, null, null, null, null, null);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d) {
-		return call(a, b, c, d, null);
+		return call(a, b, c, d, null, null, null, null);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e) {
-		return call(a, b, c, d, e, null);
+		return call(a, b, c, d, e, null, null, null);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f) {
-		return call(a, b, c, d, e, f, null);
+		return call(a, b, c, d, e, f, null, null);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {

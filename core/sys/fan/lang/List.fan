@@ -196,13 +196,13 @@ final rtconst class List<V>
   ** used according to the same semantics as `get`.  This method
   ** is readonly safe.
   **
-  V? getSafe(Int index, Obj? def := null) {
+  V? getSafe(Int index, Obj? defV := null) {
     if (index < 0) {
       index += size
     }
 
     if (index >= size) {
-      return def
+      return defV
     }
 
     return array[index]

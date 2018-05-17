@@ -157,10 +157,10 @@ native final const class Pod
   **
   ** Convenience for `Env.config`.
   **
-  Str? config(Str name, Str? def := null)
+  Str? config(Str name, Str? defV := null)
 
   **
   ** Convenience for `Env.locale` using `Locale.cur`.
   **
-  Str? locale(Str name, Str? def := "pod::name")
+  Str? locale(Str name, Str? defV := "pod::name")
 }

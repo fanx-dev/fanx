@@ -185,7 +185,7 @@ public interface FConst
     "CatchEnd",           //  53
     "FinallyStart",       //  54
     "FinallyEnd",         //  55
-    "CallSuper",         //  56
+    "CallSuper",         //   56
   };
 
   public static final int[] OpSkips =

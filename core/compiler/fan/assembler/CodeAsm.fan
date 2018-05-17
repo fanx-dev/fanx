@@ -1330,9 +1330,9 @@ class CodeAsm : CompilerSupport
     {
       if (m.isParameterized)
       {
-        ret := m.returnType
-        if (ret.isParameterized)
-          coerceOp(ns.objType, m.returnType)
+        ret := m.generic.returnType
+        if (ret.isGenericParameter)
+          coerceOp(ret.raw, m.returnType)
       }
       else if (m.isCovariant)
       {
@@ -1345,10 +1345,9 @@ class CodeAsm : CompilerSupport
     if (!leave)
     {
       // note we need to use the actual method signature (not parameterized)
-      //x := m.isParameterized ? m.generic : m
-      x := m
+      x := m.isParameterized ? m.generic : m
       if (!x.returnType.isVoid || x.isInstanceCtor)
-        opType(FOp.Pop, x.returnType)
+        opType(FOp.Pop, x.returnType.raw)
     }
   }
 
@@ -1498,7 +1497,8 @@ class CodeAsm : CompilerSupport
         storeField((FieldExpr)var)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
-        setParam := (set).params[1].paramType
+        setParam := (set.isParameterized ? set.generic : set).params[1].paramType.raw
+        //setParam := (set).params[1].paramType
         // if calling setter check if we need to boxed
         if (c.ctype.isVal && !setParam.isVal && coerce == null) coerceOp(c.ctype, setParam)
         op(FOp.CallVirtual, fpod.addMethodRef(set, 2))

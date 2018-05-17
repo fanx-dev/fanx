@@ -98,6 +98,8 @@ public class FCodePrinter
       case Field:    print(field()); break;
       case Method:   print(method()); break;
       case Jmp:      print(jmp()); break;
+      case Deciaml:  print(deciaml()); break;
+      case Other: print("OTHER"); break;
       default: throw new IllegalStateException(op.sig);
     }
     println();
@@ -129,6 +131,8 @@ public class FCodePrinter
   static final int Field    = 7;
   static final int Method   = 8;
   static final int Jmp      = 9;
+  static final int Deciaml = 10;
+  static final int Other = 11;
 
   static final Op[] ops;
   static
@@ -167,7 +171,9 @@ public class FCodePrinter
     if (sig.equals("(field)"))  return Field;
     if (sig.equals("(method)")) return Method;
     if (sig.equals("(jmp)"))    return Jmp;
-    throw new IllegalStateException(sig);
+    if (sig.equals("(decimal)"))    return Deciaml;
+    return Other;
+    //throw new IllegalStateException(sig);
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -241,6 +247,20 @@ public class FCodePrinter
     try
     {
       return pod.literals.uri(index).toString() + showIndex(index);
+    }
+    catch (Exception e)
+    {
+      return "Error [" + index + "]";
+    }
+  }
+  
+  private String deciaml()
+    throws IOException
+  {
+    int index = u2();
+    try
+    {
+      return pod.literals.decimals(index).toString() + showIndex(index);
     }
     catch (Exception e)
     {

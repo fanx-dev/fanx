@@ -191,7 +191,7 @@ native const final class Str
   ** Unlike `get`, this method does not throw IndexErr when the index
   ** is out or range, instead it returns 'def'.
   **
-  Int getSafe(Int index, Int def := 0)
+  Int getSafe(Int index, Int defV := 0)
 
   **
   ** Return a substring based on the specified range.  Negative indexes

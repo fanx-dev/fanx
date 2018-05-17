@@ -146,7 +146,8 @@ class InitClosures : CompilerStep
     //   callList(List)             // if > MaxIndirectParams
     //   call(Obj p0, Obj p1, ...)  // if <= MaxIndirectParams
     paramCount := signature.params.size
-    useListArgs := paramCount > 8
+    MaxIndirectParams := 8
+    useListArgs := paramCount > MaxIndirectParams
     if (useListArgs)
     {
       m.name  = "callList"
@@ -156,7 +157,7 @@ class InitClosures : CompilerStep
     else
     {
       m.name = "call"
-      paramCount.times |Int i|
+      MaxIndirectParams.times |Int i|
       {
         p := ParamDef(loc, ns.objType.toNullable, "p$i")
         m.paramDefs.add(p)

@@ -184,7 +184,7 @@ mixin CMethod : CSlot
   ** If isParameterized is true, then return the generic
   ** method which this method parameterizes, otherwise null
   **
-  //virtual CMethod? generic() { null }
+  virtual CMethod? generic() { null }
 
   internal static Bool calcGeneric(CMethod m)
   {

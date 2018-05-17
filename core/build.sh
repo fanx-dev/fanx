@@ -8,3 +8,4 @@ $fanc std/pod.props
 $fanc reflect/pod.props
 $fanc testlib/pod.props
 
+#../../../fantom/fan/bin/fanp -c sys::List

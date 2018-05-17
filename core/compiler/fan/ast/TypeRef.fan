@@ -53,6 +53,7 @@ class TypeRef : Node, CType
   override CType toNonNullable() { t.toNonNullable }
 
   override CType inferredAs() { t.inferredAs }
+  override CType raw() { t.raw }
 
   override Bool isGeneric() { t.isGeneric }
   override Bool isParameterized() { t.isParameterized }

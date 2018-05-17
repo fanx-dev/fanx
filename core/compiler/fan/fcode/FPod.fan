@@ -131,7 +131,7 @@ final class FPod : CPod, FConst
     // against the original generic method using it's raw
     // types, since that is how the system library will
     // implement the type
-    //if (method.isParameterized) method = method.generic
+    if (method.isParameterized) method = method.generic
 
     p := addTypeRef(method.parent)
     n := addName(method.name)

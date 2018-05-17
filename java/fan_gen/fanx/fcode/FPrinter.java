@@ -91,6 +91,8 @@ public class FPrinter
     }
     attrs(type.attrs);
     println();
+    
+    if (type.isNative()) return;
     for (int i=0; i<type.fields.length; ++i)  field(type.fields[i]);
     for (int i=0; i<type.methods.length; ++i) method(type.methods[i]);
     flush();

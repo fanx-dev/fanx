@@ -398,7 +398,7 @@ class ParameterizedMethod : CMethod
 
   override CType parent     { private set }
   override Str signature    { private set }
-  private CMethod? generic { private set }
+  override CMethod? generic { private set }
   override CType returnType { private set }
   override CParam[] params  { private set }
 }
