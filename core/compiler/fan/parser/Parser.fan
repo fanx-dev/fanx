@@ -194,6 +194,29 @@ public class Parser : CompilerSupport
     def.flags  = flags
     if (def.isFacet) def.mixins.add(ns.facetType)
 
+    //GenericType Param
+    if (curt == Token.lt) {
+      consume
+      gparams := GenericParamType[,]
+      while (true) {
+        paramName := consumeId
+        param := GenericParamType(ns, paramName, ns.objType, def, gparams.size)
+        gparams.add(param)
+        if (curt === Token.comma) {
+          consume
+          continue
+        }
+        else if (curt === Token.gt) {
+          consume
+          break
+        }
+        else {
+          err("Error token: $curt")
+        }
+      }
+      def.genericParameters = gparams
+    }
+
     // inheritance
     if (curt === Token.colon)
     {
@@ -221,29 +244,6 @@ public class Parser : CompilerSupport
         def.base = ns.enumType
       else if (def.qname != "sys::Obj")
         def.base = ns.objType
-    }
-
-    //GenericType
-    if (curt == Token.lt) {
-      consume
-      gparams := GenericParamType[,]
-      while (true) {
-        paramName := consumeId
-        param := GenericParamType(ns, paramName, ns.objType, def, gparams.size)
-        gparams.add(param)
-        if (curt === Token.comma) {
-          consume
-          continue
-        }
-        else if (curt === Token.gt) {
-          consume
-          break
-        }
-        else {
-          err("Error token: $curt")
-        }
-      }
-      def.genericParameters = gparams
     }
 
     // start class body

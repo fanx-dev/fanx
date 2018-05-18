@@ -204,6 +204,24 @@ mixin CMethod : CSlot
       ")"
   }
 
+  static Bool sameType(CType ai, CType bi) {
+    if (ai === bi) return true
+    ai = ai.deref.toNonNullable
+    bi = bi.deref.toNonNullable
+    if (ai == bi) return true
+
+    if (ai.isNullable != bi.isNullable) return false
+    if (ai.qname == bi.qname) return true
+    //echo("$ai $bi $ai.typeof, $bi.typeof $ai->paramName $bi->paramName")
+
+    if (ai is GenericParamType && bi is GenericParamType) {
+      ag := (GenericParamType)ai
+      bg := (GenericParamType)bi
+      return ag.paramName == bg.paramName
+    }
+    return false
+  }
+
   **
   ** Return if this method has the exact same parameters as
   ** the specified method.
@@ -214,9 +232,9 @@ mixin CMethod : CSlot
     b := that.params
 
     if (a.size != b.size) return false
-    for (i:=0; i<a.size; ++i)
-      if (a[i].paramType != b[i].paramType) return false
-
+    for (i:=0; i<a.size; ++i) {
+      if (!sameType(a[i].paramType, b[i].paramType)) return false
+    }
     return true
   }
 

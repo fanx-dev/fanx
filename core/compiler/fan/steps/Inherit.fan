@@ -369,7 +369,7 @@ class Inherit : CompilerStep
     loc := def.loc
 
     // check that types match
-    if (base.fieldType != def.fieldType)
+    if (!CMethod.sameType(base.fieldType, def.fieldType))
       throw err("Type mismatch in override of '$base.qname' - '$base.fieldType' != '$def.fieldType'", loc)
 
     // if overriding a field which has storage, then don't duplicate storage

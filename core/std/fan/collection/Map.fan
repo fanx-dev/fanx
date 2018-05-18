@@ -6,120 +6,14 @@
 //   30 Jan 06  Brian Frank  Creation
 //
 
-internal class MapEntry {
-  Obj? key
-  Obj? value
-
-  MapEntry? next
-  MapEntry? previous
-}
-
-internal class MapEntryList {
-  private MapEntry head := MapEntry()
-  private MapEntry tail := head
-  Int size { private set }
-
-  new make() {
-    head.next = tail
-    tail.previous = head
-  }
-
-  Bool isEmtpy() { head == tail }
-
-  Void clear() {
-    tail = head
-    size = 0
-  }
-
-  This add(MapEntry entry) {
-    entry.previous = tail.previous
-    entry.next = tail
-    tail.previous.next = entry
-    tail.previous = entry
-    ++size
-    return this
-  }
-
-  Void remove(MapEntry entry) {
-    entry.previous.next = entry.next
-    entry.next.previous = entry.previous
-    entry.next = null
-    entry.previous = null
-    --size
-  }
-
-  MapEntry begin() { head }
-  MapEntry end() { tail }
-
-  MapEntry? findByKey(Obj? key) {
-    MapEntry entry := begin
-    while (entry != end) {
-      if (entry.key == key) {
-        return entry
-      }
-      entry = entry.next
-    }
-    return null
-  }
-
-  Obj? removeByKey(Obj? key) {
-    entry := findByKey(key)
-    if (entry == null) {
-      return null
-    }
-    old := entry.value
-    remove(entry)
-    return old
-  }
-
-  Obj? setByKey(Obj? key, Obj? value) {
-    entry := findByKey(key)
-    if (entry == null) {
-      entry = MapEntry()
-      entry.key = key
-      entry.value = value
-      this.add(entry)
-      return null
-    }
-    old := entry.value
-    entry.value = value
-    return old
-  }
-
-  Void addByKey(Obj? key, Obj? value) {
-    entry := findByKey(key)
-    if (entry == null) {
-      entry = MapEntry()
-      entry.key = key
-      entry.value = value
-      this.add(entry)
-      return
-    }
-    else {
-      throw ArgErr("$key already exits")
-    }
-  }
-}
-
 **
 ** Map is a hash map of key/value pairs.
 **
 ** See [examples]`examples::sys-maps`.
 **
 @Serializable
-final rtconst class Map<K,V>
+rtconst mixin Map<K,V>
 {
-  private MapEntryList?[] array
-  private Type type
-  private Bool readOnly
-  private Bool immutable
-
-  private Void modify() {
-    if (readOnly) {
-      throw ReadonlyErr()
-    }
-  }
-
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -127,10 +21,12 @@ final rtconst class Map<K,V>
   **
   ** Constructor with of type (must be Map type).
   **
-  new make(Type type) {
-    this.type = type
-    array = MapEntryList[,] { it.size = 100 }
+  static new make(Type? type := null, Int capacity := 16) {
+    return HashMap(capacity)
   }
+
+  //on modify
+  protected abstract Void modify()
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -147,18 +43,12 @@ final rtconst class Map<K,V>
   **   a == b  =>  true
   **   a == c  =>  false
   **
-  override Bool equals(Obj? that) {
-    //TODO
-    this == that
-  }
+  override abstract Bool equals(Obj? that)
 
   **
   ** Return platform dependent hashcode based on hash of the keys and values.
   **
-  override Int hash() {
-    //TODO
-    return array.hash
-  }
+  override abstract Int hash()
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -173,12 +63,7 @@ final rtconst class Map<K,V>
   ** Get the number of key/value pairs in the list.  This
   ** method is readonly safe.
   **
-  Int size { private set }
-
-  private Int getHash(Obj key) {
-    hash := key.hash % array.size
-    return hash.abs
-  }
+  abstract Int size { protected set }
 
   **
   ** Get the value for the specified key.  If key is not mapped,
@@ -186,109 +71,43 @@ final rtconst class Map<K,V>
   ** it defaults to the `def` field.  This method is readonly safe.
   ** Shortcut is 'a[key]'.
   **
-  @Operator Obj? get(Obj key, Obj? defV := this.defV) {
-    hash := getHash(key)
-    l := array[hash]
-    if (l == null) {
-      return defV
-    }
-
-    entry := l.findByKey(key)
-    if (entry != null) {
-      return entry.value
-    } else {
-      return defV
-    }
-  }
+  @Operator abstract V? get(K key, V? defV := this.defV)
 
   **
   ** Get the value for the specified key or if key is not mapped
   ** then raise UnknownKeyErr.  This method is readonly safe.
   **
-  Obj? getOrThrow(Obj key) {
-    hash := getHash(key)
-    l := array[hash]
+  V getOrThrow(Obj key) {
+    l := get(key, null)
     if (l == null) {
       throw UnknownKeyErr(key)
     }
-
-    entry := l.findByKey(key)
-    if (entry != null) {
-      return entry.value
-    } else {
-      throw UnknownKeyErr(key)
-    }
+    return l
   }
 
   **
   ** Return if the specified key is mapped.
   ** This method is readonly safe.
   **
-  Bool containsKey(Obj? key) {
-    hash := getHash(key)
-    l := array[hash]
-    if (l == null) {
-      return false
-    }
-
-    obj := l.findByKey(key)
-    return obj != null
+  Bool containsKey(K? key) {
+    return get(key, null) != null
   }
 
   **
   ** Get a list of all the mapped keys.  This method is readonly safe.
   **
-  Obj?[] keys() {
-    list := Obj?[,]
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        list.add(itr.key)
-        itr = itr.next
-      }
-    }
-    return list
-  }
+  abstract K[] keys()
 
   **
   ** Get a list of all the mapped values.  This method is readonly safe.
   **
-  Obj?[] vals() {
-    list := Obj?[,]
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        list.add(itr.value)
-        itr = itr.next
-      }
-    }
-    return list
-  }
+  abstract V[] vals()
 
   **
   ** Create a shallow duplicate copy of this Map.  The keys and
   ** values themselves are not duplicated.  This method is readonly safe.
   **
-  Map dup() {
-    nmap := Map.make(type)
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        nmap[itr.key] = itr.value
-        itr = itr.next
-      }
-    }
-    return nmap
-  }
+  abstract This dup()
 
   **
   ** Set the value for the specified key.  If the key is already
@@ -297,18 +116,7 @@ final rtconst class Map<K,V>
   ** does not return true for Obj.isImmutable, then throw NotImmutableErr.
   ** If key is null throw NullErr.  Throw ReadonlyErr if readonly.
   **
-  @Operator Map set(Obj? key, Obj? val) {
-    modify
-    hash := getHash(key)
-    l := array[hash]
-    if (l == null) {
-      l = MapEntryList()
-      array[hash] = l
-    }
-
-    l.setByKey(key, val)
-    return this
-  }
+  @Operator abstract This set(K key, V val)
 
   **
   ** Add the specified key/value pair to the map.  If the key is
@@ -316,18 +124,7 @@ final rtconst class Map<K,V>
   ** does not return true for Obj.isImmutable, then throw NotImmutableErr.
   ** If key is null throw NullErr.  Throw ReadonlyErr if readonly.
   **
-  Map add(Obj? key, Obj? val) {
-    modify
-    hash := getHash(key)
-    l := array[hash]
-    if (l == null) {
-      l = MapEntryList()
-      array[hash] = l
-    }
-
-    l.addByKey(key, val)
-    return this
-  }
+  abstract This add(K key, V val)
 
   **
   ** Get the value for the specified key, or if it doesn't exist
@@ -335,14 +132,10 @@ final rtconst class Map<K,V>
   ** get the value to add, it is only called if the key is not
   ** mapped. Throw ReadonlyErr if readonly only if add is required.
   **
-  Obj? getOrAdd(Obj? key, |Obj?->Obj?| valFunc) {
-    hash := getHash(key)
-    l := array[hash]
+  V getOrAdd(K key, |K->V| valFunc) {
+    l := get(key)
     if (l != null) {
-      entry := l.findByKey(key)
-      if (entry != null) {
-        return entry.value
-      }
+      return l
     }
     modify
     val := valFunc(key)
@@ -357,7 +150,7 @@ final rtconst class Map<K,V>
   ** Also see `addAll`.  This method is semanatically equivalent to:
   **   m.each |v, k| { this.set(k, v) }
   **
-  Map setAll(Map m) {
+  This setAll(Map m) {
     modify
     m.each |v, k| { this.set(k, v) }
     return this
@@ -371,7 +164,7 @@ final rtconst class Map<K,V>
   ** readonly.  Also see `setAll`. This method is semanatically equivalent to:
   **   m.each |v, k| { this.add(k, v) }
   **
-  Map addAll(Map m) {
+  This addAll(Map m) {
     modify
     m.each |v, k| { this.add(k, v) }
     return this
@@ -389,7 +182,7 @@ final rtconst class Map<K,V>
   **   m.setList(["1","2"]) |Str s->Int| { return s.toInt }
   **   m  =>  [0:0, 1:1, 2:2]
   **
-  Map setList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
+  This setList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
     modify
     for (i:=0; i<list.size; ++i) {
       key := list[i]
@@ -415,7 +208,7 @@ final rtconst class Map<K,V>
   **   m.addList(["1","2"]) |Str s->Int| { return s.toInt }
   **   m  =>  [0:0, 1:1, 2:2]
   **
-  Map addList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
+  This addList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
     modify
     for (i:=0; i<list.size; ++i) {
       key := list[i]
@@ -433,30 +226,13 @@ final rtconst class Map<K,V>
   ** from the map and return the value.   If the key was not mapped
   ** then return null.  Throw ReadonlyErr if readonly.
   **
-  Obj? remove(Obj? key) {
-    modify
-    hash := getHash(key)
-    l := array[hash]
-    if (l == null) {
-      return null
-    }
-
-    return l.removeByKey(key)
-  }
+  abstract V? remove(K key)
 
   **
   ** Remove all key/value pairs from the map.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  Map clear() {
-    modify
-    size = 0
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      l.clear
-    }
-    return this
-  }
+  abstract This clear()
 
   **
   ** This field configures case sensitivity for maps with Str keys.  When
@@ -471,7 +247,7 @@ final rtconst class Map<K,V>
   ** UnsupportedOperation.  Throw ReadonlyErr if set when readonly.  This
   ** mode cannot be used concurrently with `ordered`.
   **
-  Bool caseInsensitive := false { set { modify; &caseInsensitive = it } }
+  abstract Bool caseInsensitive
 
   **
   ** When set to true, the map maintains the order in which key/value
@@ -484,7 +260,7 @@ final rtconst class Map<K,V>
   ** ReadonlyErr if set when readonly.  This mode cannot be used concurrently
   ** with `caseInsensitive`.
   **
-  Bool ordered := false { set { modify; &ordered = it } }
+  abstract Bool ordered
 
   **
   ** The default value to use for `get` when a key isn't mapped.
@@ -492,7 +268,7 @@ final rtconst class Map<K,V>
   ** or NotImmutableErr is thrown.  Getting this field is readonly safe.
   ** Throw ReadonlyErr if set when readonly.
   **
-  Obj? defV { set { modify; &defV = it } }
+  abstract V? defV
 
 //////////////////////////////////////////////////////////////////////////
 // Str
@@ -501,28 +277,7 @@ final rtconst class Map<K,V>
   **
   ** Return a string representation the Map.  This method is readonly safe.
   **
-  override Str toStr() {
-    buf := StrBuf()
-    buf.add("[")
-    first := true
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        if (first == false) {
-          buf.add(",")
-        } else {
-          first = false
-        }
-        buf.add("$itr.key:$itr.value")
-        itr = itr.next
-      }
-    }
-    buf.add("]")
-    return buf.toStr
-  }
+  override Str toStr() { toCode }
 
   **
   ** Return a string by concatenating each key/value pair using
@@ -532,28 +287,21 @@ final rtconst class Map<K,V>
   **
   ** Example:
   **
-  Str join(Str separator, |Obj? val, Obj? key->Str|? c := null){
+  virtual Str join(Str separator, |Obj? val, Obj? key->Str|? c := null){
     buf := StrBuf()
     buf.add("[")
     first := true
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
+    this.each |v, k| {
+      if (!first) {
+        buf.add(",")
+      } else {
+        first = false
+      }
 
-      itr := l.begin
-      while (itr != l.end) {
-        if (first == false) {
-          buf.add(",")
-        } else {
-          first = false
-        }
-
-        if (c != null) {
-          buf.add(c(itr.value, itr.key))
-        } else {
-          buf.add("$itr.key:$itr.value")
-        }
-        itr = itr.next
+      if (c != null) {
+        buf.add(c(v, k))
+      } else {
+        buf.add("$k:$v")
       }
     }
     buf.add("]")
@@ -568,24 +316,13 @@ final rtconst class Map<K,V>
     buf := StrBuf()
     buf.add("[")
     first := true
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        if (first == false) {
-          buf.add(",")
-        } else {
-          first = false
-        }
-        key := itr.key
-        val := itr.value
-        if (key != null) key = key->toCode
-        if (val != null) val = val->toCode
-        buf.add("$key:$val")
-        itr = itr.next
+    this.each |v, k| {
+      if (!first) {
+        buf.add(",")
+      } else {
+        first = false
       }
+      buf.add("$k:$v")
     }
     buf.add("]")
     return buf.toStr
@@ -599,18 +336,7 @@ final rtconst class Map<K,V>
   ** Call the specified function for every key/value in the list.
   ** This method is readonly safe.
   **
-  Void each(|Obj? val, Obj? key| c) {
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        c(itr.value, itr.key)
-        itr = itr.next
-      }
-    }
-  }
+  abstract Void each(|V val, K key| c)
 
   **
   ** Iterate every key/value pair in the map until the function
@@ -619,39 +345,15 @@ final rtconst class Map<K,V>
   ** if the function returns null for every key/value pair.
   ** This method is readonly safe.
   **
-  Obj? eachWhile(|Obj? val, Obj? key->Obj?| c) {
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        result := c(itr.value, itr.key)
-        if (result != null) return result
-        itr = itr.next
-      }
-    }
-    return null
-  }
+  abstract Obj? eachWhile(|V val, K key->Obj?| c)
 
   **
   ** Return the first value in the map for which c returns true.
   ** If c returns false for every pair, then return null.  This
   ** method is readonly safe.
   **
-  Obj? find(|Obj? val, Obj? key->Bool| c) {
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        r := c(itr.value, itr.key)
-        if (r) return itr.value
-        itr = itr.next
-      }
-    }
-    return null
+  V? find(|V val, K key->Bool| c) {
+    return eachWhile |v,k| { c(v, k) ? v : null }
   }
 
   **
@@ -661,19 +363,11 @@ final rtconst class Map<K,V>
   ** this map is `ordered` or `caseInsensitive`, then the resulting
   ** map is too.  This method is readonly safe.
   **
-  Map findAll(|Obj? val, Obj? key->Bool| c) {
-    nmap := Map.make(type)
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        r := c(itr.value, itr.key)
-        if (r) {
-          nmap[itr.key] = itr.value
-        }
-        itr = itr.next
+  This findAll(|V val, K key->Bool| c) {
+    nmap := Map.make()
+    this.each |v,k| {
+      if (c(v,k)) {
+        nmap[k] = v
       }
     }
     return nmap
@@ -690,19 +384,11 @@ final rtconst class Map<K,V>
   **   map := ["off":0, "slow":50, "fast":100]
   **   map.exclude |Int v->Bool| { return v == 0 } => ["slow":50, "fast":100]
   **
-  Map exclude(|Obj? val, Obj? key->Bool| c) {
-    nmap := Map.make(type)
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        r := c(itr.value, itr.key)
-        if (!r) {
-          nmap[itr.key] = itr.value
-        }
-        itr = itr.next
+  This exclude(|V val, K key->Bool| c) {
+    nmap := Map.make()
+    this.each |v,k| {
+      if (!c(v,k)) {
+        nmap[k] = v
       }
     }
     return nmap
@@ -713,19 +399,8 @@ final rtconst class Map<K,V>
   ** in the map.  If the map is empty, return false.  This method
   ** is readonly safe.
   **
-  Bool any(|Obj? val, Obj? key->Bool| c) {
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        r := c(itr.value, itr.key)
-        if (r) return true
-        itr = itr.next
-      }
-    }
-    return false
+  Bool any(|V val, K key->Bool| c) {
+    return find(c) != null
   }
 
   **
@@ -733,19 +408,8 @@ final rtconst class Map<K,V>
   ** in the map.  If the list is empty, return true.  This method
   ** is readonly safe.
   **
-  Bool all(|Obj? val, Obj? key->Bool| c) {
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        r := c(itr.value, itr.key)
-        if (!r) return false
-        itr = itr.next
-      }
-    }
-    return true
+  Bool all(|V val, K key->Bool| c) {
+    return eachWhile |v, k|{ c(v, k) ? null : "" } == null
   }
 
   **
@@ -759,17 +423,10 @@ final rtconst class Map<K,V>
   **   m := ["2":2, "3":3, "4":4]
   **   m.reduce(100) |Obj r, Int v->Obj| { return (Int)r + v } => 109
   **
-  Obj? reduce(Obj? init, |Obj? reduction, Obj? val, Obj? key->Obj?| c) {
+  Obj? reduce(Obj? init, |Obj? reduction, V val, K key->Obj?| c) {
     reduction := init
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        reduction = c(reduction, itr.value, itr.key)
-        itr = itr.next
-      }
+    this.each |v, k| {
+        reduction = c(reduction, v, k)
     }
     return reduction
   }
@@ -786,18 +443,11 @@ final rtconst class Map<K,V>
   **   x := m.map |Int v->Int| { return v*2 }
   **   x => [2:4, 3:6, 4:8]
   **
-  Obj:Obj? map(|Obj? val, Obj? key->Obj?| c) {
-    nmap := Obj:Obj[:]
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        nval := c(itr.value, itr.key)
-        nmap[itr.key] = nval
-        itr = itr.next
-      }
+  Map map(|V val, K key->Obj?| c) {
+    nmap := K:Obj[:]
+    this.each |v,k| {
+        nval := c(v, k)
+        nmap[k] = nval
     }
     return nmap
   }
@@ -814,14 +464,14 @@ final rtconst class Map<K,V>
   ** documented as "readonly safe" may be used safely with a readonly Map.
   ** This method is readonly safe.
   **
-  Bool isRO() { readOnly }
+  abstract Bool isRO()
 
   **
   ** Return if this Map is read-write.  A read-write Map is mutable
   ** and may be modified.  Use r`o` to get a readonly Map from a
   ** read-write Map.  This method is readonly safe.
   **
-  Bool isRW() { !readOnly }
+  Bool isRW() { !isRO }
 
   **
   ** Get a readonly Map instance with the same contents as this
@@ -831,22 +481,12 @@ final rtconst class Map<K,V>
   ** Map, all others will throw ReadonlyErr.  This method is
   ** readonly safe.
   **
-  Map ro() {
-    if (isRO) return this
-    nmap := dup
-    nmap.readOnly = true
-    return nmap
-  }
+  abstract This ro()
 
   **
   ** Get a read-write, mutable Map instance with the same contents
   ** as this Map.  If this Map is already read-write, then return this.
   ** This method is readonly safe.
   **
-  Map rw() {
-    if (isRW) return this
-    nmap := dup
-    nmap.readOnly = false
-    return nmap
-  }
+  abstract This rw()
 }

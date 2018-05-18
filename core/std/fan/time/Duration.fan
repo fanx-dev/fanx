@@ -14,7 +14,7 @@
 @Serializable { simple = true }
 const struct class Duration
 {
-  ** micro second
+  ** nano second
   private const Int ticks
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,21 @@ const struct class Duration
     this.ticks = ticks
   }
 
-  new fromDateTime(Int t) { ticks = t / 1000 }
+  new fromDateTime(Int t) { ticks = t }
 
-  new fromNanaos(Int nanao) { ticks = nanao / 1000 }
+  new fromNanaos(Int nanao) { ticks = nanao }
 
-  new fromMicros(Int s) { ticks = s }
+  new fromMicros(Int s) { ticks = s * 1000 }
 
-  new fromMillis(Int s) { ticks = s * 1000 }
+  new fromMillis(Int s) { ticks = s * 1000_000 }
 
-  new fromSec(Int s) { ticks = s * micrsPerSec }
+  new fromSec(Int s) { ticks = s * nsPerSec }
 
-  new fromDay(Int s) { ticks = s * micrsPerDay }
+  new fromDay(Int s) { ticks = s * nsPerDay }
 
-  new fromMin(Int s) { ticks = s * micrsPerMin }
+  new fromMin(Int s) { ticks = s * nsPerMin }
 
-  new fromHour(Int s) { ticks = s * micrsPerHr }
+  new fromHour(Int s) { ticks = s * nsPerHr }
 
   **
   ** Parse a Str into a Duration according to the Fantom
@@ -284,41 +284,41 @@ const struct class Duration
   **
   ** Return number of nanosecond ticks.
   **
-  Int toNanos() { ticks * 1000 }
+  Int toNanos() { ticks }
 
   **
   ** Return number of microsecond ticks.
   **
-  Int toMicros() { ticks }
+  Int toMicros() { ticks / 1000 }
 
   **
   ** Get this duration in milliseconds.  Any fractional
   ** milliseconds are truncated with a loss of precision.
   **
-  Int toMillis() { ticks / 1000 }
+  Int toMillis() { ticks / 1000_1000 }
 
   **
   ** Get this duration in seconds.  Any fractional
   ** seconds are truncated with a loss of precision.
   **
-  Int toSec() { ticks / 1000_000  }
+  Int toSec() { ticks / 1000_000_000  }
 
   **
   ** Get this duration in minutes.  Any fractional
   ** minutes are truncated with a loss of precision.
-  Int toMin() { ticks / micrsPerMin }
+  Int toMin() { ticks / nsPerMin }
 
   **
   ** Get this duration in hours.  Any fractional
   ** hours are truncated with a loss of precision.
   **
-  Int toHour() { ticks / micrsPerHr }
+  Int toHour() { ticks / nsPerHr }
 
   **
   ** Get this duration in 24 hour days.  Any fractional
   ** days are truncated with a loss of precision.
   **
-  Int toDay() { ticks / micrsPerDay }
+  Int toDay() { ticks / nsPerDay }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale

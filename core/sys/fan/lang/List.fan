@@ -12,18 +12,8 @@
 ** See [examples]`examples::sys-lists`.
 **
 @Serializable
-final rtconst class List<V>
+rtconst mixin List<V>
 {
-  private ObjArray array
-  private Type type
-  private Bool readOnly
-  private Bool immutable
-
-  private Void modify() {
-    if (readOnly) {
-      throw ReadonlyErr()
-    }
-  }
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -32,17 +22,16 @@ final rtconst class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  new make(Type of, Int capacity) {
-    type = of
-    array = ObjArray(capacity)
+  static new make(Type? of, Int capacity) {
+    return ArrayList(of, capacity)
   }
 
   **
   ** Constructor for Obj?[] with initial capacity.
   **
-  new makeObj(Int capacity) {
-    type = Obj?#
-    array = ObjArray(capacity)
+  static new makeObj(Int capacity) {
+    type := Obj?#
+    return ArrayList(type, capacity)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,19 +50,7 @@ final rtconst class List<V>
   **   Str[,] == [,]        =>  false
   **   Str[,] == Str?[,]    =>  false
   **
-  override Bool equals(Obj? other) {
-    if (other == null) return false
-    if (other isnot List) return false
-    that := other as List
-
-    if (this.of != that.of) return false
-    if (this.size != that.size) return false
-
-    for (Int i:=0; i<size; ++i) {
-      if (this[i] != that[i]) return false
-    }
-    return true
-  }
+  override abstract Bool equals(Obj? other)
 
   **
   ** Return platform dependent hashcode based a hash of the items
@@ -81,9 +58,7 @@ final rtconst class List<V>
   **
   override Int hash() {
     Int hash := 33
-    for (Int i:=0; i<size; ++i)
-    {
-      obj := array[i]
+    each |obj| {
       hash = (31*hash) + (obj == null ? 0 : (obj.hash))
     }
     return hash
@@ -96,7 +71,7 @@ final rtconst class List<V>
   **   ["hi"].of    =>  Str#
   **   [[2, 3]].of  =>  Int[]#
   **
-  Type of() { type }
+  abstract Type? of()
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -121,28 +96,7 @@ final rtconst class List<V>
   ** automatically allocates new storage so that capacity exactly matches
   ** the new size.
   **
-  Int size {
-    set {
-      modify
-      if (it == &size) {
-        return
-      }
-      else if (it < &size) {
-        for (i := it; i<&size; ++i) {
-          array[i] = null
-        }
-        &size = it
-      } else if (it > &size) {
-        if (type.isNullable == false) {
-          throw ArgErr("growing non-nullable list")
-        }
-        if (it > capacity) {
-          capacity = it
-        }
-        &size = it
-      }
-    }
-  }
+  abstract Int size
 
   **
   ** The number of items this list can hold without allocating more memory.
@@ -152,24 +106,7 @@ final rtconst class List<V>
   ** ArgErr if attempting to set capacity less than size.  Getting capacity
   ** is readonly safe, setting capacity throws ReadonlyErr if readonly.
   **
-  Int capacity {
-    set {
-      modify
-      if (it < size) {
-        throw ArgErr("attempting to set capacity less than size")
-      }
-
-      if (it == array.size) {
-        return
-      }
-
-      array.realloc(it)
-      //&capacity = it
-    }
-    get {
-      return array.size
-    }
-  }
+  abstract Int capacity
 
   **
   ** Get is used to return the item at the specified the index.  A
@@ -178,17 +115,7 @@ final rtconst class List<V>
   ** get method is accessed via the [] shortcut operator.  Throw
   ** IndexErr if index is out of range.  This method is readonly safe.
   **
-  @Operator V? get(Int index) {
-    if (index < 0) {
-      index += size
-    }
-
-    if (index >= size) {
-      throw IndexErr("index is out of range. size:$size, index:$index")
-    }
-
-    return array[index]
-  }
+  @Operator abstract V get(Int index)
 
   **
   ** Get the item at the specified index, but if index is out of
@@ -196,7 +123,7 @@ final rtconst class List<V>
   ** used according to the same semantics as `get`.  This method
   ** is readonly safe.
   **
-  V? getSafe(Int index, Obj? defV := null) {
+  V? getSafe(Int index, V? defV := null) {
     if (index < 0) {
       index += size
     }
@@ -205,7 +132,7 @@ final rtconst class List<V>
       return defV
     }
 
-    return array[index]
+    return this[index]
   }
 
   **
@@ -222,66 +149,27 @@ final rtconst class List<V>
   **   list[0..<2]  => [0, 1]
   **   list[1..-2]  => [1, 2]
   **
-  @Operator List getRange(Range r) {
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
-    len := end - start
-    if (len < 0) throw IndexErr("range illegal")
-
-    nlist := List.make(of, len)
-    nlist.array.copyFrom(array, 0, start, len)
-    nlist.size = len
-    return nlist
-  }
+  @Operator abstract List getRange(Range r)
 
   **
   ** Return if this list contains the specified item.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
   Bool contains(Obj? item) {
-    for (i:=0; i<size; ++i) {
-      obj := array[i]
-      if (item == obj) {
-        return true
-      }
-    }
-    return false
+    eachWhile |v,i->Obj?| { v == item ? v : null } != null
   }
 
   **
   ** Return if this list contains every item in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  Bool containsAll(List list) {
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
-      if (!contains(obj)) {
-        return false
-      }
-    }
-    return true
-  }
+  abstract Bool containsAll(List list)
 
   **
   ** Return if this list contains any one of the items in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  Bool containsAny(List list) {
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
-      if (contains(obj)) {
-        return true
-      }
-    }
-    return false
-  }
+  abstract Bool containsAny(List list)
 
   **
   ** Return the integer index of the specified item using
@@ -294,13 +182,7 @@ final rtconst class List<V>
   ** is readonly safe.
   **
   Int? index(Obj? item, Int offset := 0) {
-    for (i:=offset; i<size; ++i) {
-      obj := array[i]
-      if (item == obj) {
-        return i
-      }
-    }
-    return null
+    eachWhile( |v,i->Obj?| { v == item ? i : null }, offset)
   }
 
   **
@@ -308,15 +190,7 @@ final rtconst class List<V>
   ** except that it searches backward from the starting offset.
   **
   Int? indexr(Obj? item, Int offset := -1) {
-    if (offset < 0) offset += size
-
-    for (i:=offset; i>=0; --i) {
-      obj := array[i]
-      if (item == obj) {
-        return i
-      }
-    }
-    return null
+    eachrWhile( |v,i->Obj?| { v == item ? i : null }, offset)
   }
 
   **
@@ -324,43 +198,26 @@ final rtconst class List<V>
   ** use '===' same operator instead of the '==' equals operator.
   **
   Int? indexSame(Obj? item, Int offset := 0) {
-    for (i:=offset; i<size; ++i) {
-      obj := array[i]
-      if (item === obj) {
-        return i
-      }
-    }
-    return null
+    eachWhile( |v,i->Obj?| { v === item ? i : null }, offset)
   }
 
   **
   ** Return the item at index 0, or if empty return null.
   ** This method is readonly safe.
   **
-  V? first() {
-    if (size == 0) return null
-    return this[0]
-  }
+  abstract V? first()
 
   **
   ** Return the item at index-1, or if empty return null.
   ** This method is readonly safe.
   **
-  V? last() {
-    if (size == 0) return null
-    return this[size-1]
-  }
+  abstract V? last()
 
   **
   ** Create a shallow duplicate copy of this List.  The items
   ** themselves are not duplicated.  This method is readonly safe.
   **
-  List dup() {
-    nlist := List.make(of, size)
-    nlist.array.copyFrom(array, 0, 0, size)
-    nlist.size = size
-    return nlist
-  }
+  abstract This dup()
 
 //////////////////////////////////////////////////////////////////////////
 // Modification
@@ -374,50 +231,21 @@ final rtconst class List<V>
   ** then size, then manually set size larger.  Return this.  Throw
   ** IndexErr if index is out of range.  Throw ReadonlyErr if readonly.
   **
-  @Operator List set(Int index, Obj? item) {
-    modify
-    if (index < 0) {
-      index = size + index
-    }
-    if (index >= size) {
-      throw IndexErr("index is out of range. size:$size, index:$index")
-    }
-    array[index] = item
-    return this
-  }
-
-  private Void grow(Int desiredSize) {
-    modify
-    if (desiredSize <= capacity) return
-    newSize := desiredSize.max(capacity*2)
-    capacity = newSize
-  }
+  @Operator abstract This set(Int index, Obj? item)
 
   **
   ** Add the specified item to the end of the list.  The item will have
   ** an index of size.  Size is incremented by 1.  Return this.  Throw
   ** ReadonlyErr if readonly.
   **
-  @Operator This add(V? item) {
-    modify
-    grow(size + 1)
-    array[size] = item
-    &size += 1
-    return this
-  }
+  @Operator abstract This add(V? item)
 
   **
   ** Add all the items in the specified list to the end of this list.
   ** Size is incremented by list.size.  Return this.  Throw ReadonlyErr
   ** if readonly.
   **
-  List addAll(List list) {
-    modify
-    grow(size + list.size)
-    array.copyFrom(list.array, 0, size, list.size)
-    size = size + list.size
-    return this
-  }
+  abstract This addAll(List list)
 
   **
   ** Insert the item at the specified index.  A negative index may be
@@ -425,17 +253,7 @@ final rtconst class List<V>
   ** by 1.  Return this.  Throw IndexErr if index is out of range.  Throw
   ** ReadonlyErr if readonly.
   **
-  List insert(Int index, V? item) {
-    modify
-    if (index < 0) index += size
-    if (index > size) throw IndexErr("index is out of range")
-
-    grow(size + 1)
-    array.copyFrom(array, index, index+1, size-index)
-    array[index] = item
-    size += 1
-    return this
-  }
+  abstract This insert(Int index, V? item)
 
   **
   ** Insert all the items in the specified list into this list at the
@@ -444,17 +262,7 @@ final rtconst class List<V>
   ** this.  Throw IndexErr if index is out of range.  Throw ReadonlyErr
   ** if readonly.
   **
-  List insertAll(Int index, List list) {
-    modify
-    if (index < 0) index += size
-    if (index > size) throw IndexErr("index is out of range")
-
-    grow(size + list.size)
-    array.copyFrom(array, index, index+list.size, size-index)
-    array.copyFrom(list.array, 0, index, list.size)
-    size = size + list.size
-    return this
-  }
+  abstract This insertAll(Int index, List list)
 
   **
   ** Remove the specified value from the list.  The value is compared
@@ -463,23 +271,13 @@ final rtconst class List<V>
   ** decrement size by 1.  If the value is not found, then return null.
   ** Throw ReadonlyErr if readonly.
   **
-  V? remove(V? item) {
-    modify
-    index := index(item)
-    if (index == null) return null
-    return removeAt(index)
-  }
+  abstract V? remove(V? item)
 
   **
   ** Remove the item just like `remove` except use
   ** the === operator instead of the == equals operator.
   **
-  V? removeSame(V? item) {
-    modify
-    index := indexSame(item)
-    if (index == null) return null
-    return removeAt(index)
-  }
+  abstract V? removeSame(V? item)
 
   **
   ** Remove the object at the specified index.  A negative index may be
@@ -487,14 +285,7 @@ final rtconst class List<V>
   ** by 1.  Return the item removed.  Throw IndexErr if index is out of
   ** range.  Throw ReadonlyErr if readonly.
   **
-  V? removeAt(Int index) {
-    modify
-    obj := array[index]
-    array.copyFrom(array, index+1, index, size-index-1)
-    array[size-1] = null
-    size = size-1
-    return obj
-  }
+  abstract V? removeAt(Int index)
 
   **
   ** Remove a range of indices from this list.  Negative indexes
@@ -502,26 +293,7 @@ final rtconst class List<V>
   ** ReadonlyErr if readonly.  Throw IndexErr if range illegal.
   ** Return this (*not* the removed items).
   **
-  List removeRange(Range r) {
-    modify
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
-    len := end - start
-    if (len < 0) throw IndexErr("range illegal")
-
-    if (len == 0) return this
-
-    array.copyFrom(array, end, start, size-end)
-    size = size - len
-    return this
-  }
+  abstract This removeRange(Range r)
 
   **
   ** Remove every item in this list which is found in the 'toRemove' list using
@@ -529,10 +301,9 @@ final rtconst class List<V>
   ** If any value is not found, it is ignored.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  List removeAll(List list) {
-    modify
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
+  virtual This removeAll(List list) {
+    //modify
+    each |obj| {
       remove(obj)
     }
     return this
@@ -542,13 +313,13 @@ final rtconst class List<V>
   ** Remove all items from the list and set size to 0.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  List clear() { modify; size = 0; return this }
+  abstract This clear()
 
   **
   ** Trim the capacity such that the underlying storage is optimized
   ** for the current size.  Return this.  Throw ReadonlyErr if readonly.
   **
-  List trim() { modify; capacity = size; return this }
+  abstract This trim()
 
   **
   ** Append a value to the end of the list the given number of times.
@@ -557,14 +328,7 @@ final rtconst class List<V>
   ** Example:
   **   Int[,].fill(0, 3)  =>  [0, 0, 0]
   **
-  List fill(V? val, Int times) {
-    modify
-    grow(size + times)
-    for (i:=0; i<times; ++i) {
-      add(val)
-    }
-    return this
-  }
+  abstract This fill(V? val, Int times)
 
 //////////////////////////////////////////////////////////////////////////
 // Stack
@@ -583,20 +347,14 @@ final rtconst class List<V>
   ** the exception of has an empty list is handled.  Throw ReadonlyErr
   ** if readonly.
   **
-  V? pop() {
-    modify
-    if (size == 0) return null
-    obj := last
-    removeAt(size-1)
-    return obj
-  }
+  abstract V? pop()
 
   **
   ** Add the specified item to the end of the list.  Return this.
   ** This method has the same semantics as add(item).  Throw ReadonlyErr
   ** if readonly.
   **
-  List push(V item) { modify; return add(item) }
+  This push(V item) { return add(item) }
 
 //////////////////////////////////////////////////////////////////////////
 // Iterators
@@ -610,12 +368,7 @@ final rtconst class List<V>
   ** Example:
   **   ["a", "b", "c"].each |Str s| { echo(s) }
   **
-  Void each(|V item, Int index| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      c(obj, i)
-    }
-  }
+  abstract Void each(|V item, Int index| c)
 
   **
   ** Reverse each - call the specified function for every item in
@@ -625,38 +378,14 @@ final rtconst class List<V>
   ** Example:
   **   ["a", "b", "c"].eachr |Str s| { echo(s) }
   **
-  Void eachr(|V item, Int index| c){
-    for (i:=size-1; i>=0; --i) {
-      obj := this[i]
-      c(obj, i)
-    }
-  }
+  abstract Void eachr(|V item, Int index| c)
 
   **
   ** Iterate the list usnig the specified range.   Negative indexes
   ** may be used to access from the end of the list.  This method is
   ** readonly safe.  Throw IndexErr if range is invalid.
   **
-  Void eachRange(Range r, |V? item, Int index| c) {
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
-    len := end - start
-    if (len < 0) throw IndexErr("range illegal")
-
-    if (len == 0) return
-
-    for (i:=start; i<end; ++i) {
-      obj := this[i]
-      c(obj, i)
-    }
-  }
+  abstract Void eachRange(Range r, |V item, Int index| c)
 
   **
   ** Iterate every item in the list starting with index 0 up to
@@ -665,16 +394,7 @@ final rtconst class List<V>
   ** resulting object.  Return null if the function returns
   ** null for every item.  This method is readonly safe.
   **
-  V? eachWhile(|V? item, Int index->Obj?| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result != null) {
-        return result
-      }
-    }
-    return null
-  }
+  abstract Obj? eachWhile(|V item, Int index->Obj?| c, Int offset := 0)
 
   **
   ** Reverse `eachWhile`.  Iterate every item in the list starting
@@ -683,16 +403,7 @@ final rtconst class List<V>
   ** null if the function returns null for every item.  This method
   ** is readonly safe.
   **
-  V? eachrWhile(|V? item, Int index->Obj?| c) {
-    for (i:=size-1; i>=0; --i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result != null) {
-        return result
-      }
-    }
-    return null
-  }
+  abstract Obj? eachrWhile(|V item, Int index->Obj?| c, Int offset := -1)
 
   **
   ** Return the first item in the list for which c returns true.
@@ -704,15 +415,8 @@ final rtconst class List<V>
   **   list.find |Int v->Bool| { return v.toStr == "3" } => 3
   **   list.find |Int v->Bool| { return v.toStr == "7" } => null
   **
-  V? find(|V? item, Int index->Bool| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result) {
-        return obj
-      }
-    }
-    return null
+  V? find(|V item, Int index->Bool| c) {
+    eachWhile |v,i->Obj?| { c(v,i) ? v : null }
   }
 
   **
@@ -725,15 +429,8 @@ final rtconst class List<V>
   **   list.findIndex |Int v->Bool| { return v.toStr == "7" } => 2
   **   list.findIndex |Int v->Bool| { return v.toStr == "9" } => null
   **
-  Int? findIndex(|V? item, Int index->Bool| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result) {
-        return i
-      }
-    }
-    return null
+  Int? findIndex(|V item, Int index->Bool| c) {
+    eachWhile |v,i->Obj?| { c(v,i) ? i : null }
   }
 
   **
@@ -748,8 +445,7 @@ final rtconst class List<V>
   **
   List findAll(|V item, Int index->Bool| c) {
     nlist := List.make(of, 1)
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj, i| {
       result := c(obj, i)
       if (result) {
         nlist.add(obj)
@@ -771,8 +467,7 @@ final rtconst class List<V>
   **
   List findType(Type t) {
     nlist := List.make(of, 1)
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj| {
       result := obj.typeof.fits(t)
       if (result) {
         nlist.add(obj)
@@ -791,10 +486,9 @@ final rtconst class List<V>
   **   list := [0, 1, 2, 3, 4]
   **   list.exclude |Int v->Bool| { return v%2==0 } => [1, 3]
   **
-  List exclude(|V? item, Int index->Bool| c) {
+  List exclude(|V item, Int index->Bool| c) {
     nlist := List.make(of, 1)
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj, i| {
       result := c(obj, i)
       if (!result) {
         nlist.add(obj)
@@ -813,15 +507,8 @@ final rtconst class List<V>
   **   list.any |Str v->Bool| { return v.size >= 4 } => true
   **   list.any |Str v->Bool| { return v.size >= 5 } => false
   **
-  Bool any(|V? item, Int index->Bool| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result) {
-        return true
-      }
-    }
-    return false
+  Bool any(|V item, Int index->Bool| c) {
+    eachWhile |v,i->Obj?| { c(v,i) ? v : null } != null
   }
 
   **
@@ -834,15 +521,8 @@ final rtconst class List<V>
   **   list.all |Str v->Bool| { return v.size >= 3 } => true
   **   list.all |Str v->Bool| { return v.size >= 4 } => false
   **
-  Bool all(|V? item, Int index->Bool| c) {
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (!result) {
-        return false
-      }
-    }
-    return true
+  Bool all(|V item, Int index->Bool| c) {
+    eachWhile |v,i->Obj?| { c(v,i) ? null : v } == null
   }
 
   **
@@ -854,10 +534,9 @@ final rtconst class List<V>
   **   list := [3, 4, 5]
   **   list.map |Int v->Int| { return v*2 } => [6, 8, 10]
   **
-  Obj?[] map(|V? item, Int index->Obj?| c) {
+  Obj?[] map(|V item, Int index->Obj?| c) {
     nlist := Obj?[,]
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj, i| {
       result := c(obj, i)
       nlist.add(result)
     }
@@ -875,10 +554,9 @@ final rtconst class List<V>
   **   list := [1, 2, 3]
   **   list.reduce(0) |Obj r, Int v->Obj| { return (Int)r + v } => 6
   **
-  Obj? reduce(Obj? init, |Obj? reduction, V? item, Int index->Obj?| c) {
+  Obj? reduce(Obj? init, |Obj? reduction, V item, Int index->Obj?| c) {
     Obj? reduction := init
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj, i| {
       reduction = c(reduction, obj, i)
     }
     return reduction
@@ -897,8 +575,7 @@ final rtconst class List<V>
   **
   V? min(|V a, V b->Int|? c := null) {
     Obj? min
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj| {
       if (min == null) min = obj
       Int result
       if (c!=null) result = c(min, obj)
@@ -924,8 +601,7 @@ final rtconst class List<V>
   **
   V? max(|V a, V b->Int|? c := null) {
     Obj? max
-    for (i:=0; i<size; ++i) {
-      obj := this[i]
+    each |obj| {
       if (max == null) max = obj
       Int result
       if (c!=null) result = c(max, obj)
@@ -947,10 +623,7 @@ final rtconst class List<V>
   ** Example:
   **   ["a", "a", "b", "c", "b", "b"].unique => ["a", "b", "c"]
   **
-  List unique() {
-    //TODO
-    throw Err()
-  }
+  abstract This unique()
 
   **
   ** Return a new list which is the union of this list and the given list.
@@ -963,10 +636,7 @@ final rtconst class List<V>
   ** Example:
   **   [1, 2].union([3, 2]) => [1, 2, 3]
   **
-  List union(List that) {
-    //TODO
-    throw Err()
-  }
+  abstract This union(List that)
 
   **
   ** Return a new list which is the intersection of this list and the
@@ -980,10 +650,7 @@ final rtconst class List<V>
   **   [0, 1, 2, 3].intersection([5, 3, 1]) => [1, 3]
   **   [0, null, 2].intersection([null, 0, 1, 2, 3]) => [0, null, 2]
   **
-  List intersection(List that) {
-    //TODO
-    throw Err()
-  }
+  abstract This intersection(List that)
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -1005,10 +672,7 @@ final rtconst class List<V>
   **   s.sort |Str a, Str b->Int| { return a.size <=> b.size }
   **   // s now evaluates to ["he", "ate", "candy"]
   **
-  List sort(|V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
-  }
+  abstract This sort(|V? a, V? b->Int|? c := null)
 
   **
   ** Reverse sort - perform an in-place reverse sort on this list.  If
@@ -1020,10 +684,7 @@ final rtconst class List<V>
   ** Example:
   **   [3, 2, 4, 1].sortr =>  [4, 3, 2, 1]
   **
-  List sortr(|V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
-  }
+  abstract This sortr(|V? a, V? b->Int|? c := null)
 
   **
   ** Search the list for the index of the specified key using a binary
@@ -1034,10 +695,7 @@ final rtconst class List<V>
   ** operator (shortcut for the 'compare' method).  If the key is not found,
   ** then return a negative value which is '-(insertation point) - 1'.
   **
-  Int binarySearch(V? key, |V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
-  }
+  abstract Int binarySearch(V? key, |V? a, V? b->Int|? c := null)
 
   **
   ** Find an element in the list using a binary search algorithm. The specified
@@ -1047,10 +705,7 @@ final rtconst class List<V>
   ** comparator function. If the key is not found, then return a negative value
   ** which is '-(insertation point) - 1'.
   **
-  Int binaryFind(|V? item, Int index->Int| c) {
-    //TODO
-    throw Err()
-  }
+  abstract Int binaryFind(|V? item, Int index->Int| c)
 
   **
   ** Reverse the order of the items of this list in-place.  Return this.
@@ -1059,34 +714,14 @@ final rtconst class List<V>
   ** Example:
   **   [1, 2, 3, 4].reverse  =>  [4, 3, 2, 1]
   **
-  List reverse() {
-    modify
-    mid := size / 2
-    for (i:=0; i<mid; ++i) {
-      a := array[i]
-      b := array[size-i]
-      array[size-i] = a
-      array[i] = b
-    }
-    return this
-  }
+  abstract This reverse()
 
   **
   ** Swap the items at the two specified indexes.  Negative indexes may
   ** used to access an index from the end of the list.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  List swap(Int indexA, Int indexB) {
-    modify
-    if (indexA < 0) indexA += size
-    if (indexB < 0) indexB += size
-
-    a := array[indexA]
-    b := array[indexB]
-    array[indexB] = a
-    array[indexA] = b
-    return this
-  }
+  abstract This swap(Int indexA, Int indexB)
 
   **
   ** Find the given item, and move it to the given index.  All the
@@ -1099,16 +734,7 @@ final rtconst class List<V>
   **   [10, 11, 12].moveTo(11, 0)  =>  [11, 10, 12]
   **   [10, 11, 12].moveTo(11, -1) =>  [10, 12, 11]
   **
-  List moveTo(V? item, Int toIndex) {
-    modify
-    if (item == null) return this
-    i := index(item)
-    if (i == null) return this
-
-    removeAt(i)
-    insert(i, item)
-    return this
-  }
+  abstract This moveTo(V? item, Int toIndex)
 
   **
   ** Return a new list which recursively flattens any list items into
@@ -1121,8 +747,7 @@ final rtconst class List<V>
   **
   List<Obj?> flatten() {
     nlist := List<Obj?>(Obj#,size)
-    for (i:=0; i<size; ++i) {
-      item := array[i]
+    each |item| {
       if (item is List) {
         f := (item as List)?.flatten
         if (f != null) {
@@ -1143,16 +768,16 @@ final rtconst class List<V>
   V? random() {
     if (size == 0) return null
     r := Range(0, size, true)
-    return array[r.random]
+    return this[r.random]
   }
 
   **
   ** Shuffle this list's items into a randomized order.
   ** Return this.  Throw ReadonlyErr if readonly.
   **
-  List shuffle() {
-    modify
-    for (i:=0; i<size; ++i) {
+  This shuffle() {
+    //modify
+    each |v, i| {
       swap(i, random)
     }
     return this
@@ -1168,8 +793,8 @@ final rtconst class List<V>
   override Str toStr() {
     buf := StrBuf()
     buf.add("[")
-    for (i:=0; i<size; ++i) {
-      item := array[i]
+    each |item, i| {
+      if (i != 0) buf.add(",")
       buf.add(item)
     }
     buf.add("]")
@@ -1189,10 +814,8 @@ final rtconst class List<V>
   **
   Str join(Str separator := "", |V? item, Int index->Str|? c := null) {
     buf := StrBuf()
-    for (i:=0; i<size; ++i) {
-      item := array[i]
-      if (i !=0 ) buf.add(separator)
-
+    each |item, i| {
+      if (i != 0) buf.add(separator)
       if (c != null) {
         buf.add(c(item, i))
       } else {
@@ -1209,8 +832,8 @@ final rtconst class List<V>
   Str toCode() {
     buf := StrBuf()
     buf.add("[")
-    for (i:=0; i<size; ++i) {
-      item := array[i]
+    each |item, i| {
+      if (i != 0) buf.add(",")
       buf.add(item->toCode)
     }
     buf.add("]")
@@ -1229,14 +852,14 @@ final rtconst class List<V>
   ** documented as "readonly safe" may be used safely with a readonly List.
   ** This method is readonly safe.
   **
-  Bool isRO() { readOnly }
+  abstract Bool isRO()
 
   **
   ** Return if this List is read-write.  A read-write List is mutable
   ** and may be modified.  Use `ro` to get a readonly List from a
   ** read-write List.  This method is readonly safe.
   **
-  Bool isRW() { !readOnly }
+  Bool isRW() { !isRO }
 
   **
   ** Get a readonly List instance with the same contents as this
@@ -1247,23 +870,13 @@ final rtconst class List<V>
   ** safe.  See `Obj.isImmutable` and `Obj.toImmutable` for deep
   ** immutability.
   **
-  List ro() {
-    if (isRO) return this
-    nlist := dup
-    nlist.readOnly = true
-    return nlist
-  }
+  abstract This ro()
 
   **
   ** Get a read-write, mutable List instance with the same contents
   ** as this List.  If this List is already read-write, then return this.
   ** This method is readonly safe.
   **
-  List rw() {
-    if (isRW) return this
-    nlist := dup
-    nlist.readOnly = false
-    return nlist
-  }
+  abstract This rw()
 
 }
