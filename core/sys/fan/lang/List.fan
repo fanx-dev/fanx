@@ -12,7 +12,7 @@
 ** See [examples]`examples::sys-lists`.
 **
 @Serializable
-rtconst mixin List<V>
+rtconst abstract class List<V>
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,6 +33,8 @@ rtconst mixin List<V>
     type := Obj?#
     return ArrayList(type, capacity)
   }
+
+  protected new privateMake() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Identity

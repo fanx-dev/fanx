@@ -4,3 +4,6 @@ $jstub sys
 $jstub std
 $jstub reflect
 $jstub testlib
+
+
+#javap -c -s -v -constants -l -public -sysinfo -cp sys.jar  fan.sys.List

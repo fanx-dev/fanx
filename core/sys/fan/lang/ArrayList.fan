@@ -19,12 +19,12 @@ rtconst class ArrayList<V> : List
     }
   }
 
-  new make(Type? of, Int capacity) {
+  new make(Type? of, Int capacity) : super.privateMake() {
     type = of
     array = ObjArray(capacity)
   }
 
-  new makeObj(Int capacity) {
+  new makeObj(Int capacity) : super.privateMake() {
     type = Obj?#
     array = ObjArray(capacity)
   }
