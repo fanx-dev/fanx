@@ -610,6 +610,9 @@ rtconst mixin Buf
   **
   native Buf hmac(Str algorithm, Buf key)
 
+
+  protected abstract Void writeTo(OutStream out, Int len)
+  protected abstract Int readFrom(InStream in, Int len)
 }
 
 **************************************************************************
@@ -681,6 +684,9 @@ internal class MemBuf : Buf
 
   once override OutStream out() { createOut }
   once override InStream in() { createIn }
+
+  protected override Void writeTo(OutStream out, Int len) { out.writeByteArray(buf, pos, len) }
+  protected override Int readFrom(InStream in, Int len) { in.readByteArray(buf, pos, len) }
 }
 
 **************************************************************************
@@ -724,5 +730,8 @@ internal class FileBuf : Buf
 
   once override OutStream out() { createOut }
   once override InStream in() { createIn }
+
+  protected override native Void writeTo(OutStream out, Int len)
+  protected override native Int readFrom(InStream in, Int len)
 }
 

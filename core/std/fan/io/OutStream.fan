@@ -45,7 +45,15 @@ mixin OutStream
   ** The buf's position is advanced n bytes upon return.  Throw
   ** IOErr on error.  Return this.
   **
-  abstract This writeBuf(Buf buf, Int n := buf.remaining)
+  This writeBuf(Buf buf, Int n := buf.remaining) {
+    buf.writeTo(this, n)
+    return this
+  }
+
+  **
+  ** Writes len bytes from the specified byte array starting at offset off to this output stream.
+  **
+  abstract This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
 
   **
   ** Flush the stream so any buffered bytes are written out.  Default
@@ -273,7 +281,7 @@ class ProxyOutStream : OutStream
   }
 
   override This write(Int byte) { out.write(byte); return this }
-  override This writeBuf(Buf buf, Int n := buf.remaining) { out.writeBuf(buf, n); return this }
+  override This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size) { out.writeByteArray(ba, off, len); return this }
   override This sync() { out.sync; return this }
   override This flush() { out.flush; return this }
   override Bool close() { out.close }
@@ -288,4 +296,25 @@ class ProxyOutStream : OutStream
   override This writeUtf(Str s) { out.writeUtf(s) }
   override This writeChar(Int char) { out.writeChar(char) }
   override This writeChars(Str str, Int off := 0, Int len := str.size-off) { out.writeChars(str, off, len) }
+}
+
+internal class SysOutStream : OutStream {
+  protected Obj? peer
+  override Endian endian
+  override Charset charset
+
+  new make(Endian e, Charset c) {
+    endian = e
+    charset = c
+  }
+
+  native override This write(Int byte)
+  native override This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override This sync()
+  native override This flush()
+  native override Bool close()
+
+  native override This writeUtf(Str s)
+  native override This writeChar(Int char)
+  native override This writeChars(Str str, Int off := 0, Int len := str.size-off)
 }

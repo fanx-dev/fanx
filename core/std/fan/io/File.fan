@@ -142,10 +142,10 @@ abstract const class File
   abstract Bool exists()
 
   **
-  ** Return the size of the file in bytes otherwise null if a
+  ** Return the size of the file in bytes otherwise 0 if a
   ** directory or unknown.
   **
-  abstract Int? size()
+  abstract Int size()
 
   **
   ** If this is a file return if the file size is zero or null.
@@ -155,7 +155,7 @@ abstract const class File
   virtual Bool isEmpty() {
     if (isDir) return list.isEmpty
     size := this.size()
-    return size == null || size <= 0
+    return size <= 0
   }
 
   **
@@ -393,14 +393,14 @@ abstract const class File
   **   - "p": private read/write mode will not propagate changes
   **     to other processes which have mapped the file.
   **
-  abstract Buf mmap(Str mode := "rw", Int pos := 0, Int? size := null)
+  abstract Buf mmap(Str mode := "rw", Int pos := 0, Int size := 0)
 
   **
   ** Open a new buffered InStream used to read from this file.  A
   ** bufferSize of null or zero will return an unbuffered input stream.
   ** Throw IOErr on error.
   **
-  abstract InStream in(Int? bufferSize := 4096)
+  abstract InStream in(Int bufferSize := 4096)
 
   **
   ** Open a new buffered OutStream used to write to this file.  If append is
@@ -408,7 +408,7 @@ abstract const class File
   ** opened as an empty file.  A bufferSize of null or zero will return an
   ** unbuffered output stream.  Throw IOErr on error.
   **
-  abstract OutStream out(Bool append := false, Int? bufferSize := 4096)
+  abstract OutStream out(Bool append := false, Int bufferSize := 4096)
 
   **
   ** Convenience for [in.readAllBuf]`File.readAllBuf`.
@@ -478,27 +478,27 @@ abstract const class File
 
 internal const class LocalFile : File
 {
+  protected const Obj? peer
   native private Void init()
   new make(Uri uri) : super.privateMake(uri) { init }
   native override FileStore? store()
   native override File copyTo(File to, [Str:Obj]? options := null)
 
   native override Bool exists()
-  native override Int? size()
+  native override Int size()
   native override DateTime? modified
   native override Str? osPath()
   native override File? parent()
   native override File[] list()
   native override File normalize()
-  native override File plus(Uri uri, Bool checkSlash := true)
   native override File create()
   native override File moveTo(File to)
   native override Void delete()
   native override File deleteOnExit()
   native override Buf open(Str mode := "rw")
-  native override Buf mmap(Str mode := "rw", Int pos := 0, Int? size := this.size)
-  native override InStream in(Int? bufferSize := 4096)
-  native override OutStream out(Bool append := false, Int? bufferSize := 4096)
+  native override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size)
+  native override InStream in(Int bufferSize := 4096)
+  native override OutStream out(Bool append := false, Int bufferSize := 4096)
 }
 
 **************************************************************************
@@ -514,21 +514,20 @@ internal const class ZipEntryFile : File
   native override File copyTo(File to, [Str:Obj]? options := null)
 
   native override Bool exists()
-  native override Int? size()
+  native override Int size()
   native override DateTime? modified
   native override Str? osPath()
   native override File? parent()
   native override File[] list()
   native override File normalize()
-  native override File plus(Uri uri, Bool checkSlash := true)
   native override File create()
   native override File moveTo(File to)
   native override Void delete()
   native override File deleteOnExit()
   native override Buf open(Str mode := "rw")
-  native override Buf mmap(Str mode := "rw", Int pos := 0, Int? size := this.size)
-  native override InStream in(Int? bufferSize := 4096)
-  native override OutStream out(Bool append := false, Int? bufferSize := 4096)
+  native override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size)
+  native override InStream in(Int bufferSize := 4096)
+  native override OutStream out(Bool append := false, Int bufferSize := 4096)
 }
 
 

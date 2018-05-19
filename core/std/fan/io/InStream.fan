@@ -42,7 +42,7 @@ mixin InStream
   ** Read the next unsigned byte from the input stream.
   ** Return null if at end of stream.  Throw IOErr on error.
   **
-  virtual Int? read() { res := r; return res == -1 ? null : res }
+  virtual Int read() { r }
   abstract Int r()
 
   **
@@ -54,7 +54,14 @@ mixin InStream
   ** `readBufFully` if you must block until all n bytes read.
   ** Throw IOErr on error.
   **
-  abstract Int? readBuf(Buf buf, Int n)
+  Int readBuf(Buf buf, Int n) {
+    buf.readFrom(this, n)
+  }
+
+  **
+  ** Reads up to len bytes of data from the input stream into an array of bytes.
+  **
+  abstract Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
 
   **
   ** Pushback a byte so that it is the next byte to be read.  There
@@ -92,7 +99,7 @@ mixin InStream
     {
       size := chunkSize;
       Buf buf := Buf.make(size)
-      while (readBuf(buf, size) != null) {}
+      while (readBuf(buf, size) != -1) {}
       buf.flip
       return buf
     }
@@ -119,7 +126,7 @@ mixin InStream
     while (got < total)
     {
       r := readBuf(buf, total-got)
-      if (r == null || r == 0) throw IOErr("Unexpected end of stream")
+      if (r == -1 || r == 0) throw IOErr("Unexpected end of stream")
       got += r
     }
 
@@ -143,7 +150,7 @@ mixin InStream
   ** it.  Peek has the same semantics as a read/unread.  Return
   ** null if at end of stream.
   **
-  abstract Int? peek()
+  abstract Int peek()
 
   **
   ** Read the next byte as an unsigned 8-bit number.  This method may
@@ -300,8 +307,8 @@ mixin InStream
   ** Throw IOErr if there is a problem reading the stream, or
   ** an invalid character encoding is encountered.
   **
-  Int? readChar() { res := rChar; return res < 0 ? null : res }
-  abstract Int rChar()
+  Int readChar() { rChar }
+  protected abstract Int rChar()
 
   **
   ** Pushback a char so that it is the next char to be read.  This
@@ -315,7 +322,7 @@ mixin InStream
   ** it.  Peek has the same semantics as a readChar/unreadChar.
   ** Return null if at end of stream.
   **
-  abstract Int? peekChar()
+  abstract Int peekChar()
 
   **
   ** Read the next n chars from the stream as a Str using the
@@ -359,7 +366,27 @@ mixin InStream
   ** if there is a problem reading the stream or an invalid character
   ** encoding is encountered.
   **
-  abstract Str? readStrToken(Int? max := null, |Int ch->Bool|? c := null)
+  Str? readStrToken(Int max := -1, |Int ch->Bool|? callback := null) {
+    if (max == -1) max = Int.maxVal
+    sb := StrBuf()
+    while (true) {
+      c := rChar
+      if (c < 0) break
+      terminate := false
+      if (callback == null)
+        terminate = c.isSpace
+      else
+        terminate = callback.call(c)
+      if (terminate)
+      {
+        unreadChar(c)
+        break
+      }
+      sb.add(c)
+      if (sb.size >= max) break
+    }
+    return sb.toStr
+  }
 
   **
   ** Read the entire stream into a list of Str lines based on the
@@ -483,7 +510,7 @@ mixin InStream
         while (true)
         {
           n := readBuf(buf.clear(), bufSize);
-          if (n == null) break;
+          if (n == -1) break;
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }
@@ -495,7 +522,7 @@ mixin InStream
         {
           if (toPipeVal - total < bufSize) bufSize = toPipeVal - total;
           n := readBuf(buf.clear(), bufSize);
-          if (n == null) throw IOErr.make("Unexpected end of stream");
+          if (n == -1) throw IOErr.make("Unexpected end of stream");
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }
@@ -524,19 +551,46 @@ class ProxInStream : InStream
   override Int avail() { in.avail }
   override Int r() { in.r }
   override Int skip(Int n) { in.skip(n) }
-  override Int? readBuf(Buf buf, Int n) { in.readBuf(buf, n) }
+  override Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size) { in.readByteArray(ba, off, len) }
   override This unread(Int n) { in.unread(n) }
   override Bool close() { in.close }
 
   override Endian endian { set{ in.endian = it } get{ in.endian } }
-  override Int? peek() { in.peek }
+  override Int peek() { in.peek }
   override Str readUtf() { in.readUtf }
   override Charset charset { set{ in.charset = it } get { in.charset } }
   override Int rChar() { in.rChar }
   override This unreadChar(Int b) { in.unreadChar(b) }
-  override Int? peekChar() { in.peekChar }
+  override Int peekChar() { in.peekChar }
   override Str readChars(Int n) { in.readChars(n) }
   override Str? readLine(Int? max := null) { in.readLine(max) }
-  override Str? readStrToken(Int? max := 4096, |Int ch->Bool|? c := null) { in.readStrToken(max, c) }
   override Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
+}
+
+internal class SysInStream : InStream
+{
+  protected Obj? peer
+  override Endian endian
+  override Charset charset
+
+  new make(Endian e, Charset c) {
+    endian = e
+    charset = c
+  }
+
+  native override Int avail()
+  native override Int r()
+  native override Int skip(Int n)
+  native override Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override This unread(Int n)
+  native override Bool close()
+
+  native override Int peek()
+  native override Str readUtf()
+  native override Int rChar()
+  native override This unreadChar(Int b)
+  native override Int peekChar()
+  native override Str readChars(Int n)
+  native override Str? readLine(Int? max := null)
+  native override Str readAllStr(Bool normalizeNewlines := true)
 }

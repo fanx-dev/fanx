@@ -13,6 +13,14 @@ public class ByteArray {
 	public static ByteArray make(long size) {
 		return new ByteArray(size);
 	}
+	
+	public byte[] array() {
+		return array;
+	}
+	
+	public Object raw() {
+		return array;
+	}
 
 	public Object get(long pos) {
 		return array[(int)pos];
