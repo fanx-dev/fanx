@@ -65,6 +65,7 @@ const class LogRec
   **
   ** Print to the specified output stream.
   **
-  native Void print(OutStream out := Env.cur.out)
-
+  Void print(OutStream out := Env.cur.out) {
+    Log.printLogRec(this, out)
+  }
 }

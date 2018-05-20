@@ -54,7 +54,11 @@ internal const class FanScheme : UriScheme
 
 internal const class FileScheme : UriScheme
 {
-  native override Obj? get(Uri uri, Obj? base)
+  override Obj? get(Uri uri, Obj? base) {
+    File f := File.make(uri, false)
+    if (f.exists()) return f
+    throw UnresolvedErr(uri.toStr)
+  }
 }
 
 

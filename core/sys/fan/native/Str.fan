@@ -653,5 +653,9 @@ native const final class Str
   **
   //Buf toBuf(Charset charset := Charset.utf8)
 
+  ByteArray toUtf8()
+
+  static new fromUtf8(ByteArray ba)
+
   protected override Void finalize()
 }

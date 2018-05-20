@@ -10,6 +10,10 @@ public class ByteArray {
 		array = new byte[(int)size];
 	}
 	
+	public ByteArray(byte[] bs) {
+		array = bs;
+	}
+	
 	public static ByteArray make(long size) {
 		return new ByteArray(size);
 	}

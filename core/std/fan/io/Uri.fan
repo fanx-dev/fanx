@@ -6,6 +6,124 @@
 //   28 Jun 06  Brian Frank  Creation
 //
 
+internal class UriParser {
+  Str? scheme
+  Str? userInfo
+  Str? host
+  Int? port
+  Str path := ""
+  [Str:Str]? query
+  Str? frag
+
+  Void parse(Str s) {
+    buf := StrBuf()
+    state := 0
+    i := 0
+    tempKey := ""
+    ch := 0
+    while (true) {
+      if (i<s.size) {
+        if (ch != 0) ch = 0
+        else break
+      } else {
+        ch = s[i]
+      }
+      switch (state) {
+      //scheme
+      case 0:
+        if (ch == ':') {
+          if (buf.size > 0) scheme = buf.toStr
+          buf.clear
+          state = 1
+        }
+        else if (ch == '/') {
+          buf.addChar(ch)
+          state = 3
+        }
+        else if (ch == 0) {
+          throw ParseErr("uri: $s at $i")
+        }
+        else {
+          buf.addChar(ch)
+        }
+      //host
+      case 1:
+        if (ch == ':' || ch == '/' || ch == '?' || ch == '#') {
+          if (buf.size > 0) host = buf.toStr
+          buf.clear
+          if (ch == ':') state = 2
+          else if (ch == '/') state = 3
+          else if (ch == '?') state = 4
+          else if (ch == '#') state = 5
+        }
+        else if (ch == '@') {
+          if (buf.size > 0) userInfo = buf.toStr
+          buf.clear
+        }
+        else if (ch == 0) {
+          throw ParseErr("uri: $s at $i")
+        }
+        else {
+          buf.addChar(ch)
+        }
+      //port
+      case 2:
+        if (ch == '?' || ch == '#') {
+          if (buf.size > 0) port = buf.toStr.toInt
+          buf.clear
+          state = 3
+        }
+        else if (ch == 0) {
+          throw ParseErr("uri: $s at $i")
+        }
+        else {
+          buf.addChar(ch)
+        }
+      //path
+      case 3:
+        if (ch == '?' || ch == '#' || ch == 0) {
+          if (buf.size > 0) path = buf.toStr
+          buf.clear
+          state = 3
+        }
+        else {
+          buf.addChar(ch)
+        }
+      //query
+      case 4:
+        if (ch == '&') {
+          val := buf.toStr
+          buf.clear
+          if (query == null) query = Str:Str[:]
+          query[tempKey] = val
+        }
+        else if (ch == '=') {
+          tempKey = buf.toStr
+          buf.clear
+        }
+        else if (ch == '#' || ch == 0) {
+          val := buf.toStr
+          buf.clear
+          if (query == null) query = Str:Str[:]
+          query[tempKey] = val
+          state = 5
+        }
+        else {
+          buf.addChar(ch)
+        }
+      //fragment
+      case 5:
+        if (ch == 0) {
+          if (buf.size > 0) frag = buf.toStr
+        } else {
+          buf.addChar(ch)
+        }
+      }
+      ++i
+    }
+  }
+}
+
 **
 ** Uri is used to immutably represent a Universal Resource Identifier
 ** according to [RFC 3986]`http://tools.ietf.org/html/rfc3986`.
@@ -79,7 +197,16 @@ const final class Uri
   **   - If http then port 80 normalizes to null
   **   - If http then a null path normalizes to /
   **
-  native static new fromStr(Str s, Bool checked := true)
+  static new fromStr(Str s, Bool checked := true) {
+    try {
+      parser := UriParser()
+      parser.parse(s)
+      return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, parser.query, parser.frag)
+    } catch (Err e) {
+      if (checked) throw ParseErr("uri:$s", e)
+      return null
+    }
+  }
 
   **
   ** Parse an ASCII percent encoded string into a Uri according to
@@ -90,18 +217,40 @@ const final class Uri
   ** URI or if not encoded correctly, otherwise return null. Refer
   ** to `fromStr` for normalization rules.
   **
-  native static Uri? decode(Str s, Bool checked := true)
+  static Uri? decode(Str s, Bool checked := true) {
+    try {
+      parser := UriParser()
+      parser.parse(s)
+
+      parser.scheme = decodeToken(parser.scheme, false)
+      parser.userInfo = decodeToken(parser.userInfo, false)
+      parser.host = decodeToken(parser.host, false)
+      parser.path = decodeToken(parser.path, false)
+
+      query2 := Str:Str[:]
+      parser.query.each |v,k| {
+        query2[decodeToken(k, true)] = decodeToken(v, true)
+      }
+      parser.frag = decodeToken(parser.frag, false)
+
+      return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, query2, parser.frag)
+    } catch (Err e) {
+      if (checked) throw ParseErr("uri:$s", e)
+      return null
+    }
+  }
 
   **
   ** Default value is '``'.
   **
   static const Uri defVal := ``
+  private static const Str:Str emptyMap := [:]
 
   **
   ** Private constructor
   **
-  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, Str:Str query, Str? frag, Str str) {
-    this.str = str
+  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str path, [Str:Str]? query, Str? frag) {
+    if (query == null) query = emptyMap
     this.scheme = scheme
     this.userInfo = userInfo
     this.host = host
@@ -109,6 +258,104 @@ const final class Uri
     this.pathStr = path
     this.query = query
     this.frag = frag
+    this.str = partsToStr(scheme, userInfo, host, port, path, query, frag, false)
+  }
+
+  private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, Str:Str query, Str? frag, Bool encode) {
+    buf := StrBuf()
+    if (scheme != null) {
+      if (encode) scheme = encodeToken(scheme, false)
+      buf.add(scheme).add("://")
+    }
+    if (userInfo != null) {
+      if (encode) userInfo = encodeToken(userInfo, false)
+      buf.add(userInfo).addChar('@')
+    }
+    if (host != null) {
+      if (encode) host = encodeToken(host, false)
+      buf.add(host)
+    }
+    if (port != null) {
+      buf.addChar(':').add(port)
+    }
+    if (path != null) {
+      if (encode) path = encodeToken(path, false)
+      buf.add(path)
+    }
+    if (query.size > 0) {
+      if (path != null) buf.addChar('?')
+      i := 0
+      query.each |v, k| {
+        if (i>0) buf.addChar('&')
+        if (encode) {
+          k = encodeToken(k, true)
+          v = encodeToken(v, true)
+        }
+        buf.add(k).addChar('=').add(v)
+        ++i
+      }
+    }
+    if (frag != null) {
+      if (encode) frag = encodeToken(frag, false)
+      buf.addChar('#').add(frag)
+    }
+    return buf.toStr
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Encode/Decode
+//////////////////////////////////////////////////////////////////////////
+
+  private static Void percentEncodeByte(StrBuf buf, Int c)
+  {
+    buf.add('%')
+    Int hi := (c.shiftr(4)).and(0xf)
+    Int lo := c.and(0xf)
+    buf.addChar((hi < 10 ? '0'+hi : 'A'+(hi-10)))
+    buf.addChar((lo < 10 ? '0'+lo : 'A'+(lo-10)))
+  }
+
+  static Str decodeToken(Str s, Bool isQuery) {
+    sb := Buf()
+    for (i:=0; i<s.size; ++i) {
+      ch := s[i]
+      if (ch == '%') {
+        hi := s[++i]
+        lo := s[++i]
+        h := hi.fromDigit(16)
+        l := lo.fromDigit(16)
+        c := h.shiftl(4).or(l)
+        sb.write(c)
+      }
+      else if (isQuery && ch == '+') {
+        sb.write(' ')
+      }
+      else {
+        sb.write(ch)
+      }
+    }
+    sb.flip
+    return sb.readAllStr
+  }
+
+  static Str encodeToken(Str s, Bool isQuery) {
+    sb := StrBuf()
+    ba := s.toUtf8
+    for (i:=0; i<ba.size; ++i) {
+      ch := ba[i]
+      if (ch < 127) {
+        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~') {
+          sb.addChar(ch)
+          continue
+        }
+        if (isQuery && ch == ' ') {
+          sb.addChar('+')
+          continue
+        }
+      }
+      percentEncodeByte(sb, ch)
+    }
+    return sb.toStr
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,15 +369,39 @@ const final class Uri
   ** are parsed into map using the same semantics as `Uri.query`.  Throw
   ** ArgErr is the string is malformed.  See `encodeQuery`.
   **
-  native static Str:Str decodeQuery(Str s)
+  static Str:Str decodeQuery(Str s) {
+    query := Str:Str[:]
+    fs := s.split('&')
+    fs.each {
+      qs := it.split('=')
+      k := qs.first
+      v := qs.last
+      k = decodeToken(k, true)
+      v = decodeToken(v, true)
+      query[k] = v
+    }
+    return query
+  }
 
   **
   ** Encode a map of query parameters into URL percent encoding
   ** according to the "application/x-www-form-urlencoded" MIME type.
   ** See `decodeQuery`.
   **
-  native static Str encodeQuery(Str:Str q)
+  static Str encodeQuery(Str:Str q) {
+    buf := StrBuf()
+    first := true
+    q.each |v, k| {
+      ks := encodeToken(k, true)
+      vs := encodeToken(v, true)
+      if (first) first = false
+      else buf.addChar('&')
+      buf.add(ks).addChar('=').add(vs)
+    }
+    return buf.toStr
+  }
 
+/* Need this?
   **
   ** Return if the specified string is an valid name segment to
   ** use in an unencoded URI.  The name must be at least one char
@@ -145,7 +416,11 @@ const final class Uri
   ** special characters such as 'sub-delims', Fantom takes a strict
   ** approach to names to be used in URIs.
   **
-  native static Bool isName(Str name)
+  static Bool isName(Str name) {
+    name.all |ch| {
+      ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~'
+    }
+  }
 
   **
   ** If the specified string is not a valid name according
@@ -155,7 +430,7 @@ const final class Uri
     if (!isName(name))
       throw NameErr.make(name)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Identity
 //////////////////////////////////////////////////////////////////////////
@@ -192,7 +467,9 @@ const final class Uri
   ** and then percent encoded according to its valid character set.
   ** Spaces in the query section are encoded as '+'.
   **
-  native Str encode()
+  Str encode() {
+    partsToStr(scheme, userInfo, host, port, pathStr, query, frag, true)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Components
@@ -206,7 +483,7 @@ const final class Uri
   **
   ** Return if a relative Uri which means it has a null scheme.
   **
-  Bool isRel() { scheme == null }
+  Bool isRel() { !isAbs }
 
   **
   ** A Uri represents a directory if it has a non-null path which
@@ -345,9 +622,9 @@ const final class Uri
   **
   Bool isPathAbs() {
     if (pathStr.size == 0)
-      return false;
+      return false
     else
-      return pathStr.get(0) == '/';
+      return pathStr.get(0) == '/'
   }
 
   **
@@ -356,7 +633,7 @@ const final class Uri
   ** be null.
   **
   Bool isPathOnly() { scheme == null && host == null && port == null &&
-           userInfo == null && queryStr == null && frag == null }
+           userInfo == null && query.size == 0 && frag == null }
 
   **
   ** Return simple file name which is path.last or ""
@@ -368,7 +645,17 @@ const final class Uri
   **   `/a/file`.name      =>  "file"
   **   `somedir/`.name     =>  "somedir"
   **
-  Str name() { path.size == 0 ? "" : path.last }
+  Str name() {
+    if (pathStr.size == 0) return ""
+    len := pathStr.size
+    if (len == 0) return ""
+    start := pathStr.indexr("/", -2)
+    end := len
+    if (pathStr[len-1] == '/') {
+      end = len-1
+    }
+    return pathStr[start..end]
+  }
 
   **
   ** Return file name without the extension (everything up
@@ -466,8 +753,8 @@ const final class Uri
   **   `../foo?a=b&c=d`.queryStr              =>  "a=b&c=d"
   **   `?a=b;c;`.queryStr                     =>  "a=b;c;"
   **
-  Str? queryStr() {
-    query.join("&") |v,k|{ "$k=$v" }
+  Str queryStr() {
+    encodeQuery(query)
   }
 
   **
@@ -499,14 +786,21 @@ const final class Uri
   **   `a.txt`.parent    =>   null
   **
   Uri? parent() {
-    // if no path bail
-    if (path.size == 0) return null;
+    if (pathStr == "/") return null
+    p := parentPathStr(pathStr)
+    return privateMake(scheme, userInfo, host, port, p, query, frag)
+  }
 
-    // if just a simple filename, then no parent
-    if (path.size == 1 && !isPathAbs() && !isDir()) return null;
-
-    // use slice
-    return slice(0..-2, false);
+  private Str parentPathStr(Str pathStr) {
+    len := pathStr.size
+    if (len == 0) return ""
+    if (len == 1) {
+      if (pathStr[0] == '/') return ""
+      return "/"
+    }
+    end := pathStr.indexr("/", -2)
+    if (end == -1) return "/"
+    return pathStr[0..<end]
   }
 
   **
@@ -519,7 +813,9 @@ const final class Uri
   **   `/a/b/c`.pathOnly                  =>  `/a/b/c`
   **   `file.txt`.pathOnly                =>  `file.txt`
   **
-  native Uri pathOnly()
+  Uri pathOnly() {
+    return privateMake(null, null, null, null, pathStr, null, null)
+  }
 
   **
   ** Return a new Uri based on a slice of this Uri's path.  If the
@@ -545,9 +841,9 @@ const final class Uri
   **   `/a/b/c/`[1..<2]              =>  `b/`
   **   `/a`[0..-2]                   =>  `/`
   **
-  @Operator Uri getRange(Range r) { slice(r, false) }
+  //@Operator Uri getRange(Range r) { slice(r, false) }
 
-  native private Uri slice(Range range, Bool forcePathAbs)
+  //native private Uri slice(Range range, Bool forcePathAbs)
 
   **
   ** Return a slice of this Uri's path using the same semantics
@@ -559,7 +855,7 @@ const final class Uri
   **   `/a/b/c/`.getRangeToPathAbs(1..2)  =>  `/b/c/`
   **   `/a/b/c/`.getRangeToPathAbs(1..<2) =>  `/b/`
   **
-  Uri getRangeToPathAbs(Range r) { slice(r, true) }
+  //Uri getRangeToPathAbs(Range r) { slice(r, true) }
 
   **
   ** Return a new Uri with the specified Uri appended to this Uri.
@@ -575,7 +871,22 @@ const final class Uri
   **   `a/b/c`  + `../../../d`            =>  `../d`
   **   `a/b/c/` + `../../../d`            =>  `d`
   **
-  @Operator native Uri plus(Uri toAppend)
+  @Operator Uri plus(Uri toAppend) {
+    if (toAppend.pathStr.size == 0) return this
+    if (toAppend.pathStr == "/") return this
+
+    toAppPath := toAppend.pathStr
+    if (isDir) {
+      if (toAppPath[0] == '/') toAppPath = toAppPath[1..-1]
+      return privateMake(scheme, userInfo, host, port, pathStr+toAppPath, query, frag)
+    }
+    if (toAppPath[0] == '/') {
+      return privateMake(scheme, userInfo, host, port, pathStr+toAppPath, query, frag)
+    }
+    else {
+      return privateMake(scheme, userInfo, host, port, "$pathStr/$toAppPath", query, frag)
+    }
+  }
 
   **
   ** Return a new Uri with a single path name appended to this
@@ -590,7 +901,11 @@ const final class Uri
   **   `/dir/file`.plusName("foo")   =>  `/dir/foo`
   **   `/dir/#frag`.plusName("foo")  =>  `/dir/foo`
   **
-  native Uri plusName(Str name, Bool asDir := false)
+  Uri plusName(Str name, Bool asDir := false) {
+    if (asDir) name += "/"
+    if (isDir) return privateMake(scheme, userInfo, host, port, pathStr+name, query, frag)
+    return privateMake(scheme, userInfo, host, port, pathStr+"/", query, frag)
+  }
 
   **
   ** Add a trailing slash to the path string of this Uri
@@ -603,7 +918,10 @@ const final class Uri
   **   `/a/b`.plusSlash          =>  `/a/b/`
   **   `/a?q`.plusSlash          =>  `/a/?q`
   **
-  native Uri plusSlash()
+  Uri plusSlash() {
+    if (isDir) return this
+    return privateMake(scheme, userInfo, host, port, pathStr+"/", query, frag)
+  }
 
   **
   ** Add the specified query key/value pairs to this Uri.
@@ -618,7 +936,12 @@ const final class Uri
   **   `/foo?a=b`.plusQuery(["k":"v"])          =>  `/foo?a=b&k=v`
   **   `?a=b`.plusQuery(["k1":"v1", "k2":"v2"]) =>  `?a=b&k1=v1&k2=v2`
   **
-  native Uri plusQuery([Str:Str]? query)
+  Uri plusQuery([Str:Str]? query) {
+    if (query == null || query.size == 0) return this
+    nq := this.query.dup
+    query.each |v,k| { nq[k] = v }
+    return privateMake(scheme, userInfo, host, port, pathStr, nq, frag)
+  }
 
   **
   ** Relativize this uri against the specified base.
@@ -631,7 +954,14 @@ const final class Uri
   **   `/a/b/c?q`.relTo(`/`)                        => `a/b/c?q`
   **   `/a/x`.relTo(`/a/b/c`)                       => `../x`
   **
-  native Uri relTo(Uri base)
+  Uri relTo(Uri base) {
+    pos := pathStr.index(base.pathStr)
+    path := pathStr[pos..-1]
+    if (path.size > 0 && path[0] == '/') {
+      path = path[1..-1]
+    }
+    return privateMake(null, null, null, null, path, query, frag)
+  }
 
   **
   ** Relativize this uri against its authority.  This method
@@ -646,7 +976,9 @@ const final class Uri
   **   `/a/b/c/`.relToAuth                   => `/a/b/c/`
   **   `logo.png`.relToAuth                  => `logo.png`
   **
-  native Uri relToAuth()
+  Uri relToAuth() {
+    return privateMake(null, null, null, null, pathStr, query, frag)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Resolution
@@ -662,7 +994,20 @@ const final class Uri
   ** Resolve this Uri into an Fantom object.
   ** See [docLang]`docLang::Naming#resolving` for the resolve process.
   **
-  native Obj? get(Obj? base := null, Bool checked := true)
+  Obj? get(Obj? base := null, Bool checked := true) {
+    try {
+      uri := this
+      if (base != null) {
+        Uri baseUri := base->uri
+        uri = baseUri + this
+      }
+      us := UriScheme.find(uri.scheme, checked)
+      return us.get(this, base)
+    } catch (Err e) {
+      if (checked) throw UnresolvedErr("resolve uri: $this", e)
+      return null
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion

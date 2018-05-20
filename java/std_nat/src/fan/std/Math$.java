@@ -9,6 +9,9 @@ package fan.std;
 
 import java.lang.Math;
 
+import fanx.main.Sys;
+import fanx.main.Type;
+
 public class Math$ {
 	public static double pi() {
 		return Math.PI;
@@ -17,6 +20,9 @@ public class Math$ {
 	public static double e() {
 		return Math.E;
 	}
+	
+	private static Type type = null;
+	public Type typeof() { if (type == null) { type = Sys.findType("std::Math"); } return type;  }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Math

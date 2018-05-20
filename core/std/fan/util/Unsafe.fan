@@ -10,17 +10,17 @@
 ** Unsafe is used to wrap a non-const mutable objects so that
 ** it can be passed as an immutable reference.
 **
-native const final class Unsafe
+native const final class Unsafe<T>
 {
 
   **
   ** Wrap specified object.
   **
-  new make(Obj? val)
+  new make(T val)
 
   **
   ** Get the wrapped object.
   **
-  Obj? val()
+  T val()
 
 }

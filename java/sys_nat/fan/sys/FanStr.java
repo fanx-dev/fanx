@@ -8,6 +8,7 @@
 //
 package fan.sys;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import fanx.main.*;
@@ -983,6 +984,24 @@ public class FanStr
 //    buf.print(self);
 //    return buf.flip();
 //  }
+  
+  public ByteArray toUtf8(String self) {
+	  byte[] bs;
+	try {
+		bs = self.getBytes("UTF-8");
+		return new ByteArray(bs);
+	} catch (UnsupportedEncodingException e) {
+		throw UnsupportedErr.make(e);
+	}
+  }
+  
+  public static String fromUtf8(ByteArray ba) {
+	try {
+		return new String(ba.array(), "UTF-8");
+	} catch (UnsupportedEncodingException e) {
+		throw UnsupportedErr.make(e);
+	}
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

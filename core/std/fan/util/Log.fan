@@ -27,7 +27,7 @@ enum class LogLevel
 **
 const class Log
 {
-
+  protected const Obj? peer
 //////////////////////////////////////////////////////////////////////////
 // Factory
 //////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,13 @@ const class Log
   ** Name must be valid according to `Uri.isName` otherwise
   ** NameErr is thrown.
   **
-  native static Log get(Str name)
+  static Log get(Str name) {
+    l := find(name, false)
+    if (l == null) {
+      l = make(name, true)
+    }
+    return l
+  }
 
   **
   ** Create a new log by name.  The log is added to the VM log registry
@@ -60,7 +66,10 @@ const class Log
   **
   new make(Str name, Bool register) {
     this.name = name
+    if (register) doRegister(this)
   }
+
+  private native static Void doRegister(Log log)
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -86,7 +95,7 @@ const class Log
   ** the log level is logged.  Anything less severe is ignored.
   ** If the level is set to silent, then logging is disabled.
   **
-  const LogLevel level := LogLevel.info
+  native LogLevel level()
   native Void setLevel(LogLevel level)
 
   **
@@ -174,4 +183,6 @@ const class Log
   **
   native static Void removeHandler(|LogRec rec| handler)
 
+
+  internal native static Void printLogRec(LogRec rec, OutStream out)
 }
