@@ -125,7 +125,7 @@ native const final class Str
   **
   ** Return the first occurance of the specified substring searching
   ** forward, starting at the specified offset index.  A negative offset
-  ** may be used to access from the end of string.  Return null if no
+  ** may be used to access from the end of string.  Return Int.invalidVal if no
   ** occurences are found.
   **
   ** Examples:
@@ -133,21 +133,25 @@ native const final class Str
   **   "abcabc".index("b", 1)  => 1
   **   "abcabc".index("b", 3)  => 4
   **   "abcabc".index("b", -3) => 4
-  **   "abcabc".index("x")     => null
+  **   "abcabc".index("x")     => -1
   **
+  Int find(Str s, Int offset := 0)
+  @Deprecated { msg = "use find" }
   Int? index(Str s, Int offset := 0)
 
   **
   ** Reverse index - return the first occurance of the specified
   ** substring searching backward, starting at the specified offset
   ** index.  A negative offset may be used to access from the end
-  ** of string.  Return null if no occurences are found.
+  ** of string.  Return Int.invalidVal if no occurences are found.
   **
   ** Examples:
   **   "abcabc".indexr("b")     => 4
   **   "abcabc".indexr("b", -3) => 1
-  **   "abcabc".indexr("b", 0)  => null
+  **   "abcabc".indexr("b", 0)  => -1
   **
+  Int findr(Str s, Int offset := s.size-1)
+  @Deprecated { msg = "use findr" }
   Int? indexr(Str s, Int offset := -1)
 
   **
@@ -179,7 +183,6 @@ native const final class Str
 
   **
   ** Get the character at the zero based index as a Unicode code point.
-  ** Negative indexes may be used to access from the end of the string.
   ** This method is accessed via the [] operator.  Throw IndexErr if the
   ** index is out of range.
   **
@@ -593,17 +596,17 @@ native const final class Str
   **
   ** Convenience for `Bool.fromStr` using this string.
   **
-  Bool? toBool(Bool checked := true)
+  Bool toBool(Bool checked := true)
 
   **
   ** Convenience for `Int.fromStr` using this string.
   **
-  Int? toInt(Int radix := 10, Bool checked := true)
+  Int toInt(Int radix := 10, Bool checked := true)
 
   **
   ** Convenience for `Float.fromStr` using this string.
   **
-  Float? toFloat(Bool checked := true)
+  Float toFloat(Bool checked := true)
 
   **
   ** Convenience for `Decimal.fromStr` using this string.
@@ -620,7 +623,7 @@ native const final class Str
   ** less than 0x20 are escaped as '\uXXXX'.  If 'escapeUnicode' is
   ** true then any char over 0x7F it is escaped as '\uXXXX'.
   **
-  Str toCode(Int? quote := '"', Bool escapeUnicode := false)
+  Str toCode(Int quote := '"', Bool escapeUnicode := false)
 
   **
   ** Return this string as valid XML text.  The special control

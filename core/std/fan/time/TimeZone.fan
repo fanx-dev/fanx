@@ -62,7 +62,7 @@ const class TimeZone
   **
   static new fromStr(Str name, Bool checked := true) {
     if (name == "UTC") return utc
-    return null
+    return defVal
   }
 
   **

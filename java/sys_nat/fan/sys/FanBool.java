@@ -22,12 +22,12 @@ public final class FanBool
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  public static Boolean fromStr(String s) { return fromStr(s, true); }
-  public static Boolean fromStr(String s, boolean checked)
+  public static boolean fromStr(String s) { return fromStr(s, true); }
+  public static boolean fromStr(String s, boolean checked)
   {
-    if (s.equals("true")) return Boolean.TRUE;
-    if (s.equals("false")) return Boolean.FALSE;
-    if (!checked) return null;
+    if (s.equals("true")) return true;
+    if (s.equals("false")) return false;
+    if (!checked) return false;
     throw ParseErr.make("Bool:" + s);
   }
 

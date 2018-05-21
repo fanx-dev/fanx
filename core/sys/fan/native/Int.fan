@@ -71,6 +71,8 @@ native const struct class Int : Num
   **
   const static Int minVal
 
+  //const static Int invalidVal
+
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides
 //////////////////////////////////////////////////////////////////////////
@@ -396,7 +398,7 @@ native const struct class Int : Num
   **   255.toHex     =>  "ff"
   **   255.toHex(4)  =>  "00ff"
   **
-  Str toHex(Int? width := null)
+  Str toHex(Int width := 0)
 
   **
   ** Return string representation in given radix.  If width is non-null,
@@ -406,7 +408,7 @@ native const struct class Int : Num
   **   255.toRadix(8)    =>  "ff"
   **   255.toRadix(8, 3) =>  "00ff"
   **
-  Str toRadix(Int radix, Int? width := null)
+  Str toRadix(Int radix, Int width := 0)
 
   **
   ** Map as a Unicode code point to a single character Str.

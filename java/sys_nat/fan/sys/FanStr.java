@@ -139,7 +139,8 @@ public class FanStr
     try
     {
       int i = (int)index;
-      if (i < 0) i = self.length()+i;
+      //I don't want a bug sine the find/index return -1
+//      if (i < 0) i = self.length()+i;
       return self.charAt(i);
     }
     catch (IndexOutOfBoundsException e)
@@ -221,9 +222,18 @@ public class FanStr
   {
     return self.indexOf((int)ch) >= 0;
   }
-
+  
   public static Long index(String self, String s) { return index(self, s, 0L); }
-  public static Long index(String self, String s, long off)
+  public static Long index(String self, String s, long off){
+	  long res = find(self, s, off);
+	  if (res == -1) {
+		  return null;
+	  }
+	  return res;
+  }
+
+  public static long find(String self, String s) { return find(self, s, 0L); }
+  public static long find(String self, String s, long off)
   {
     int i = (int)off;
     if (i < 0) i = self.length()+i;
@@ -234,12 +244,22 @@ public class FanStr
     else
       r = self.indexOf(s, i);
 
-    if (r < 0) return null;
-    return Long.valueOf(r);
+//    if (r < 0) return -1;
+    return r;
+  }
+  
+  public static Long indexr(String self, String s) { return indexr(self, s, s.length()-1L); }
+  public static Long indexr(String self, String s, long off)
+  {
+    long res = findr(self, s, off);
+    if (res == -1) {
+    	return null;
+    }
+    return res;
   }
 
-  public static Long indexr(String self, String s) { return indexr(self, s, -1L); }
-  public static Long indexr(String self, String s, long off)
+  public static long findr(String self, String s) { return indexr(self, s, s.length()-1L); }
+  public static long findr(String self, String s, long off)
   {
     int i = (int)off;
     if (i < 0) i = self.length()+i;
@@ -250,8 +270,8 @@ public class FanStr
     else
       r = self.lastIndexOf(s, i);
 
-    if (r < 0) return null;
-    return Long.valueOf(r);
+//    if (r < 0) return -1;
+    return r;
   }
 
   public static Long indexIgnoreCase(String self, String s) { return indexIgnoreCase(self, s, 0L); }
@@ -856,15 +876,15 @@ public class FanStr
 // Conversion
 //////////////////////////////////////////////////////////////////////////
 
-  public static Boolean toBool(String self) { return FanBool.fromStr(self, true); }
-  public static Boolean toBool(String self, boolean checked) { return FanBool.fromStr(self, checked); }
+  public static boolean toBool(String self) { return FanBool.fromStr(self, true); }
+  public static boolean toBool(String self, boolean checked) { return FanBool.fromStr(self, checked); }
 
-  public static Long toInt(String self) { return FanInt.fromStr(self, 10, true); }
-  public static Long toInt(String self, long radix) { return FanInt.fromStr(self, radix, true); }
-  public static Long toInt(String self, long radix, boolean checked) { return FanInt.fromStr(self, radix, checked); }
+  public static long toInt(String self) { return FanInt.fromStr(self, 10, true); }
+  public static long toInt(String self, long radix) { return FanInt.fromStr(self, radix, true); }
+  public static long toInt(String self, long radix, boolean checked) { return FanInt.fromStr(self, radix, checked); }
 
-  public static Double toFloat(String self) { return FanFloat.fromStr(self, true); }
-  public static Double toFloat(String self, boolean checked) { return FanFloat.fromStr(self, checked); }
+  public static double toFloat(String self) { return FanFloat.fromStr(self, true); }
+  public static double toFloat(String self, boolean checked) { return FanFloat.fromStr(self, checked); }
 
 //  public static BigDecimal toDecimal(String self) { return FanDecimal.fromStr(self, true); }
 //  public static BigDecimal toDecimal(String self, boolean checked) { return FanDecimal.fromStr(self, checked); }
@@ -874,17 +894,17 @@ public class FanStr
 //  public static Regex toRegex(String self) { return Regex.fromStr(self); }
 
   public static String toCode(String self) { return toCode(self, FanInt.pos['"'], false); }
-  public static String toCode(String self, Long quote) { return toCode(self, quote, false); }
-  public static String toCode(String self, Long quote, boolean escapeUnicode)
+  public static String toCode(String self, long quote) { return toCode(self, quote, false); }
+  public static String toCode(String self, long quote, boolean escapeUnicode)
   {
     StringBuilder s = new StringBuilder(self.length()+10);
 
     // opening quote
     boolean escu = escapeUnicode;
     int q = 0;
-    if (quote != null)
+    if (quote != 0)
     {
-      q = quote.intValue();
+      q = (char)quote;
       s.append((char)q);
     }
 

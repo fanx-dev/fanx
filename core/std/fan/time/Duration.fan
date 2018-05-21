@@ -116,7 +116,7 @@ const struct class Duration
     }
     catch (Err e)
     {
-      if (!checked) return null
+      if (!checked) return defVal
       throw ParseErr.make("Duration:$s")
     }
   }

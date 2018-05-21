@@ -16,29 +16,29 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 
 import fan.sys.ByteArray;
+import fan.sys.FanInt;
 import fan.sys.IOErr;
 
 public class SysInStreamPeer {
-	static class Peer {
-		java.nio.charset.Charset jcharset;
-		final InputStream originalStream;
+	
+	java.nio.charset.Charset jcharset;
+	final InputStream originalStream;
 
-		// PushbackInputStream
-		InputStream inputStream;
+	// PushbackInputStream
+	InputStream inputStream;
 
-		Reader inputReader;// read chars
-		DataInputStream dataStream;// read utf8
+	Reader inputReader;// read chars
+	DataInputStream dataStream;// read utf8
 
-		Peer(InputStream orig) {
-			originalStream = orig;
-		}
+	SysInStreamPeer(InputStream orig) {
+		originalStream = orig;
+	}
 
-		void init(InputStream in, java.nio.charset.Charset cs) {
-			inputStream = in;
-			jcharset = cs;
-			inputReader = new InputStreamReader(in, jcharset);
-			dataStream = new DataInputStream(in);
-		}
+	void init(InputStream in, java.nio.charset.Charset cs) {
+		inputStream = in;
+		jcharset = cs;
+		inputReader = new InputStreamReader(in, jcharset);
+		dataStream = new DataInputStream(in);
 	}
 	
 	public static InStream make(InputStream in, long bufSize) {
@@ -46,7 +46,7 @@ public class SysInStreamPeer {
 	}
 
 	public static InStream make(InputStream in, Endian e, Charset c, long bufSize) {
-		Peer peer = new Peer(in);
+		SysInStreamPeer peer = new SysInStreamPeer(in);
 		SysInStream sin = SysInStream.make(e, c);
 		sin.peer = peer;
 		java.nio.charset.Charset jcharset = java.nio.charset.Charset.forName(c.name);
@@ -58,7 +58,7 @@ public class SysInStreamPeer {
 	}
 
 	static long avail(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			return peer.inputStream.available();
 		} catch (IOException e) {
@@ -67,16 +67,18 @@ public class SysInStreamPeer {
 	}
 
 	static long r(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
-			return peer.inputStream.read();
+			long res = peer.inputStream.read();
+//			if (res == -1) return FanInt.invalidVal;
+			return res;
 		} catch (IOException e) {
 			throw IOErr.make(e);
 		}
 	}
 
 	static long skip(SysInStream self, long n) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			return peer.inputStream.skip(n);
 		} catch (IOException e) {
@@ -85,7 +87,7 @@ public class SysInStreamPeer {
 	}
 
 	long readByteArray(SysInStream self, ByteArray ba, long off, long len) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			return peer.inputStream.read(ba.array(), (int)off, (int)len);
 		} catch (IOException e) {
@@ -101,7 +103,7 @@ public class SysInStreamPeer {
 		return readByteArray(self, ba, 0, ba.size());
 	}
 
-	private static void unreadF(Peer peer, int n) throws IOException {
+	private static void unreadF(SysInStreamPeer peer, int n) throws IOException {
 		if (peer.inputStream instanceof PushbackInputStream) {
 			((PushbackInputStream) peer.inputStream).unread(n);
 		} else {
@@ -112,7 +114,7 @@ public class SysInStreamPeer {
 	}
 
 	static InStream unread(SysInStream self, long n) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			unreadF(peer, (int) n);
 			return self;
@@ -122,7 +124,7 @@ public class SysInStreamPeer {
 	}
 
 	static boolean close(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			peer.inputStream.close();
 			return true;
@@ -132,7 +134,7 @@ public class SysInStreamPeer {
 	}
 
 	static long peek(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		int x;
 		try {
 			x = peer.inputStream.read();
@@ -145,7 +147,7 @@ public class SysInStreamPeer {
 	}
 
 	static String readUtf(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			return peer.dataStream.readUTF();
 		} catch (IOException e) {
@@ -154,7 +156,7 @@ public class SysInStreamPeer {
 	}
 
 	static long rChar(SysInStream self) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			return peer.inputReader.read();
 		} catch (IOException e) {
@@ -163,7 +165,7 @@ public class SysInStreamPeer {
 	}
 
 	static InStream unreadChar(SysInStream self, long b) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			char[] cs = new char[1];
 			cs[0] = (char) b;
@@ -186,7 +188,7 @@ public class SysInStreamPeer {
 	}
 
 	static String readChars(SysInStream self, long n) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		char[] cbuf = new char[(int) n];
 		try {
 			peer.inputReader.read(cbuf, 0, (int) n);
@@ -198,7 +200,7 @@ public class SysInStreamPeer {
 
 	static String readLine(SysInStream self, long max) {
 		try {
-			Peer peer = (Peer) self.peer;
+			SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 			StringBuilder sb = new StringBuilder();
 			if (max < 0) {
 				while (true) {
@@ -229,7 +231,7 @@ public class SysInStreamPeer {
 	}
 
 	static String readAllStr(SysInStream self, boolean normalizeNewlines) {
-		Peer peer = (Peer) self.peer;
+		SysInStreamPeer peer = (SysInStreamPeer) self.peer;
 		try {
 			char[] buf = new char[4096];
 			int n = 0;

@@ -95,6 +95,8 @@ rtconst class ArrayList<V> : List
   }
 
   @Operator override V get(Int index) {
+    /*
+    I think JVM already do this
     if (index < 0) {
       index += size
     }
@@ -102,7 +104,7 @@ rtconst class ArrayList<V> : List
     if (index >= size) {
       throw IndexErr("index is out of range. size:$size, index:$index")
     }
-
+    */
     return array[index]
   }
 

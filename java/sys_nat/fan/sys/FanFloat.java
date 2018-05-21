@@ -23,19 +23,19 @@ public final class FanFloat
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  public static Double fromStr(String s) { return fromStr(s, true); }
-  public static Double fromStr(String s, boolean checked)
+  public static double fromStr(String s) { return fromStr(s, true); }
+  public static double fromStr(String s, boolean checked)
   {
     try
     {
       if (s.equals("NaN"))  return nan;
       if (s.equals("INF"))  return posInf;
       if (s.equals("-INF")) return negInf;
-      return Double.valueOf(s);
+      return Double.parseDouble(s);
     }
     catch (NumberFormatException e)
     {
-      if (!checked) return null;
+      if (!checked) return 0;
       throw ParseErr.make("Float:"+ s);
     }
   }

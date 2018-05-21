@@ -92,7 +92,7 @@ const struct class Time
     }
     catch (Err e)
     {
-      if (!checked) return null;
+      if (!checked) return defVal;
       throw ParseErr.make("Time:$s");
     }
   }

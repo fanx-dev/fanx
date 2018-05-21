@@ -48,7 +48,7 @@ const class Locale
     }
     catch (Err e) {
     }
-    if (!checked) return null;
+    if (!checked) return en;
     throw ParseErr.make("Locale:$s");
   }
 

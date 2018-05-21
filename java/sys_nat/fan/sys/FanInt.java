@@ -23,25 +23,25 @@ public final class FanInt
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  public static Long fromStr(String s) { return fromStr(s, 10, true); }
-  public static Long fromStr(String s, long radix) { return fromStr(s, radix, true); }
-  public static Long fromStr(String s, long radix, boolean checked)
+  public static long fromStr(String s) { return fromStr(s, 10, true); }
+  public static long fromStr(String s, long radix) { return fromStr(s, radix, true); }
+  public static long fromStr(String s, long radix, boolean checked)
   {
     try
     {
       if (radix == 16) return parseHex(s);
-      if (radix == 10) return Long.valueOf(s);
+      if (radix == 10) return Long.parseLong(s);
       if (s.charAt(0) == '-') throw new NumberFormatException();
-      return Long.valueOf(s, (int)radix);
+      return Long.parseLong(s, (int)radix);
     }
     catch (NumberFormatException e)
     {
-      if (!checked) return null;
+      if (!checked) return 0;
       throw ParseErr.make("Int:"+ s);
     }
   }
 
-  private static Long parseHex(String s)
+  private static long parseHex(String s)
   {
     long r = 0;
     for (int i=0; i<s.length(); ++i)
@@ -54,7 +54,7 @@ public final class FanInt
       else throw new NumberFormatException();
       r = (r << 4) | nib;
     }
-    return Long.valueOf(r);
+    return r;
   }
 
   public static long random() { return random(null); }
@@ -447,23 +447,23 @@ public final class FanInt
     return String.valueOf((char)self);
   }
 
-  public static String toHex(long self) { return toHex(self, null); }
-  public static String toHex(long self, Long width)
+  public static String toHex(long self) { return toHex(self, 0); }
+  public static String toHex(long self, long width)
   {
-    return pad(Long.toHexString(self), width);
+    return pad(Long.toHexString(self), (int)width);
   }
 
-  public static String toRadix(long self, long radix) { return toRadix(self, radix, null); }
-  public static String toRadix(long self, long radix, Long width)
+  public static String toRadix(long self, long radix) { return toRadix(self, radix, 0); }
+  public static String toRadix(long self, long radix, long width)
   {
-    return pad(Long.toString(self, (int)radix), width);
+    return pad(Long.toString(self, (int)radix), (int)width);
   }
 
-  private static String pad(String s, Long width)
+  private static String pad(String s, int width)
   {
-    if (width == null || s.length() >= width.intValue()) return s;
-    StringBuilder sb = new StringBuilder(width.intValue());
-    int zeros = width.intValue() - s.length();
+    if (width == 0 || s.length() >= width) return s;
+    StringBuilder sb = new StringBuilder(width);
+    int zeros = width - s.length();
     for (int i=0; i<zeros; ++i) sb.append('0');
     sb.append(s);
     return sb.toString();
@@ -515,9 +515,11 @@ public final class FanInt
 
   /** sys::Int.defVal */
   public static final long defVal = 0L;
+  
+//  public static final long invalidVal = minVal;
 
   // default chunk size for IO buffering (defaults to 4KB)
-  public static final Long Chunk = Long.valueOf(4096);
+//  public static final Long Chunk = Long.valueOf(4096);
 
   // internalized boxed Longs used for byte IO
   static final Long[] pos = new Long[256];

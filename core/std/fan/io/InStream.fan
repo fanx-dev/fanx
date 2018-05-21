@@ -40,7 +40,7 @@ mixin InStream
 
   **
   ** Read the next unsigned byte from the input stream.
-  ** Return null if at end of stream.  Throw IOErr on error.
+  ** Return -1 if at end of stream.  Throw IOErr on error.
   **
   virtual Int read() { r }
   abstract Int r()
@@ -148,7 +148,7 @@ mixin InStream
   **
   ** Peek at the next byte to be read without actually consuming
   ** it.  Peek has the same semantics as a read/unread.  Return
-  ** null if at end of stream.
+  ** -1 if at end of stream.
   **
   abstract Int peek()
 
@@ -303,7 +303,7 @@ mixin InStream
 
   **
   ** Read a single Unicode character from the stream using the
-  ** current charset encoding.  Return null if at end of stream.
+  ** current charset encoding.  Return -1 if at end of stream.
   ** Throw IOErr if there is a problem reading the stream, or
   ** an invalid character encoding is encountered.
   **
@@ -345,7 +345,7 @@ mixin InStream
   ** if there is a problem reading the stream or an invalid character
   ** encoding is encountered.
   **
-  abstract Str? readLine(Int? max := null)
+  abstract Str? readLine(Int max := -1)
 
   **
   ** Read a Str token from the input stream which is terminated
@@ -499,13 +499,13 @@ mixin InStream
   ** upon return (the OutStream is never closed).  Return the number
   ** of bytes piped to the output stream.
   **
-  Int pipe(OutStream out, Int? toPipe := null, Bool close := true) {
+  Int pipe(OutStream out, Int toPipe := -1, Bool close := true) {
     try
     {
       bufSize := chunkSize
       Buf buf := Buf.make(bufSize);
       total := 0;
-      if (toPipe == null)
+      if (toPipe == -1)
       {
         while (true)
         {
@@ -533,6 +533,14 @@ mixin InStream
     {
       if (close) this.close
     }
+  }
+
+  **
+  ** This InStream is guaranteed to be closed upon return
+  **
+  Void use(|InStream| f) {
+    try f(this)
+    finally this.close
   }
 
 }
@@ -563,7 +571,7 @@ class ProxInStream : InStream
   override This unreadChar(Int b) { in.unreadChar(b) }
   override Int peekChar() { in.peekChar }
   override Str readChars(Int n) { in.readChars(n) }
-  override Str? readLine(Int? max := null) { in.readLine(max) }
+  override Str? readLine(Int max := -1) { in.readLine(max) }
   override Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
 }
 
@@ -591,6 +599,6 @@ internal class SysInStream : InStream
   native override This unreadChar(Int b)
   native override Int peekChar()
   native override Str readChars(Int n)
-  native override Str? readLine(Int? max := null)
+  native override Str? readLine(Int max := -1)
   native override Str readAllStr(Bool normalizeNewlines := true)
 }

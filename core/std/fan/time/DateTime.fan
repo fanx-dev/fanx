@@ -206,12 +206,12 @@ const struct class DateTime
     }
     catch (ParseErr e)
     {
-      if (!checked) return null;
+      if (!checked) return defVal;
       throw e;
     }
     catch (Err e)
     {
-      if (!checked) return null;
+      if (!checked) return defVal;
       throw ParseErr.make("DateTime:$s");
     }
   }

@@ -468,7 +468,7 @@ public class Parser : CompilerSupport
       name := consumeId
       returns := flags.and(FConst.Static) == 0 ?
                  TypeRef(loc, ns.voidType) :
-                 TypeRef(loc, parent.toNullable)
+                 TypeRef(loc, parent) //remove 'toNullable' sine we don't want boxing for struct type
       return methodDef(loc, parent, doc, facets, flags, returns, name)
     }
 

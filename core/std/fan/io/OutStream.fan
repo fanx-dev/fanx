@@ -267,6 +267,13 @@ mixin OutStream
   ** XML escape any character greater then 0x7f.  See `writeXml`.
   //static const Int xmlEscUnicode := 0x04
 
+  **
+  ** This OutStream is guaranteed to be closed upon return
+  **
+  Void use(|OutStream| f) {
+    try f(this)
+    finally this.close
+  }
 }
 
 **************************************************************************

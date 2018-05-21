@@ -113,8 +113,7 @@ rtconst abstract class List<V>
   **
   ** Get is used to return the item at the specified the index.  A
   ** negative index may be used to access an index from the end of the
-  ** list.  For example get(-1) is translated into get(size()-1).  The
-  ** get method is accessed via the [] shortcut operator.  Throw
+  ** list.  The get method is accessed via the [] shortcut operator.  Throw
   ** IndexErr if index is out of range.  This method is readonly safe.
   **
   @Operator abstract V get(Int index)

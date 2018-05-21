@@ -204,7 +204,7 @@ const final class Uri
       return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, parser.query, parser.frag)
     } catch (Err e) {
       if (checked) throw ParseErr("uri:$s", e)
-      return null
+      return defVal
     }
   }
 
