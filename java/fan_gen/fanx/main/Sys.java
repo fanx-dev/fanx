@@ -20,7 +20,12 @@ public class Sys {
 	
 	public static String homeDir = initHomeDir();
 	public static String workDir = homeDir;
-	public static String platform = initOs() + "_" + initArch();
+	
+	public static String os = initOs();
+	public static String arch = initArch();
+	public static String platform = os + "_" + arch;
+	public static String host = initHost();
+	public static String user = initUser();
 	
 	private static String initHomeDir() {
 		homeDir = System.getenv("FAN_HOME");
