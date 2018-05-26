@@ -301,7 +301,7 @@ const struct class Date
   **
   ** Combine this Date with the given Time to return a DateTime.
   **
-  DateTime toDateTime(Time t, TimeZone tz := TimeZone.cur) { DateTime(year, month, day, t.hour, t.min, t.sec, t.nanoSec, tz) }
+  DateTime toDateTime(TimeOfDay t, TimeZone tz := TimeZone.cur) { DateTime(year, month, day, t.hour, t.min, t.sec, t.nanoSec, tz) }
 
   **
   ** Return a DateTime for the beginning of the this day at midnight.

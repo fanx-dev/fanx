@@ -294,7 +294,7 @@ const struct class DateTime
   **
   ** Get the time component of this timestamp.
   **
-  Time time() { Time(hour, min, sec, nanoSec) }
+  TimeOfDay time() { TimeOfDay(hour, min, sec, nanoSec) }
 
   **
   ** Get the year as a number such as 2007.

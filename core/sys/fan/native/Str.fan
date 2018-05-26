@@ -136,7 +136,7 @@ native const final class Str
   **   "abcabc".index("x")     => -1
   **
   Int find(Str s, Int offset := 0)
-  @Deprecated { msg = "use find" }
+  @NoDoc
   Int? index(Str s, Int offset := 0)
 
   **
@@ -151,7 +151,7 @@ native const final class Str
   **   "abcabc".indexr("b", 0)  => -1
   **
   Int findr(Str s, Int offset := s.size-1)
-  @Deprecated { msg = "use findr" }
+  @NoDoc
   Int? indexr(Str s, Int offset := -1)
 
   **

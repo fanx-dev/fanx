@@ -11,7 +11,7 @@
 ** date or timezone.
 **
 @Serializable { simple = true }
-const struct class Time
+const struct class TimeOfDay
 {
   private const DateTime datetime
 //////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ const struct class Time
   ** This method may use `DateTime.now` with the default
   ** tolerance 250ms.
   **
-  static Time now(TimeZone tz := TimeZone.cur) {
+  static new now(TimeZone tz := TimeZone.cur) {
     fromDateTime(DateTime.now.toTimeZone(tz))
   }
 
@@ -88,7 +88,7 @@ const struct class Time
       // verify everything has been parsed
       if (i < s.size) throw Err();
 
-      return Time(hour, min, sec, ns);
+      return make(hour, min, sec, ns);
     }
     catch (Err e)
     {
@@ -100,7 +100,7 @@ const struct class Time
   **
   ** Default value is "00:00:00".
   **
-  const static Time defVal := Time(0, 0, 0, 0)
+  const static TimeOfDay defVal := make(0, 0, 0, 0)
 
   **
   ** Private constructor.
@@ -115,8 +115,8 @@ const struct class Time
   ** Two times are equal if have identical hour, min, sec, and ns values.
   **
   override Bool equals(Obj? that) {
-    if (that is Time) {
-      return datetime == ((Time)that).datetime
+    if (that is TimeOfDay) {
+      return datetime == ((TimeOfDay)that).datetime
     }
     return false
   }
@@ -130,7 +130,7 @@ const struct class Time
   ** Compare based on hour, min, sec, and ns values.
   **
   override Int compare(Obj obj) {
-    datetime <=> ((Time)obj).datetime
+    datetime <=> ((TimeOfDay)obj).datetime
   }
 
   **
@@ -203,7 +203,7 @@ const struct class Time
   ** string is not a valid format then return null or raise ParseErr
   ** based on checked flag.  See `toLocale` for pattern syntax.
   **
-  native static Time? fromLocale(Str str, Str pattern, Bool checked := true)
+  native static TimeOfDay? fromLocale(Str str, Str pattern, Bool checked := true)
 
 //////////////////////////////////////////////////////////////////////////
 // ISO 8601
@@ -217,7 +217,7 @@ const struct class Time
   **
   ** Also see `toIso` and `fromStr`.
   **
-  static Time? fromIso(Str s, Bool checked := true) { fromStr(s, checked) }
+  static TimeOfDay? fromIso(Str s, Bool checked := true) { fromStr(s, checked) }
 
   **
   ** Format this instance according to ISO 8601 using the pattern:
@@ -238,9 +238,9 @@ const struct class Time
   ** Example:
   **   Time(5,0,0) + 30min  =>  05:30:00
   **
-  @Operator Time plus(Duration dur) {
+  @Operator TimeOfDay plus(Duration dur) {
     dt := datetime + dur
-    return Time.fromDateTime(dt)
+    return fromDateTime(dt)
   }
 
   ** Subtract the specified duration to this time. Throw ArgErr if 'dur' is
@@ -249,9 +249,9 @@ const struct class Time
   ** Example:
   **   Time(5,0,0) - 30min  =>  04:30:00
   **
-  @Operator Time minus(Duration dur) {
+  @Operator TimeOfDay minus(Duration dur) {
     dt := datetime - dur
-    return Time.fromDateTime(dt)
+    return fromDateTime(dt)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,7 +266,7 @@ const struct class Time
   ** Example:
   **   Time.fromDuration(150min)  =>  02:30:00
   **
-  static Time fromDuration(Duration d) {
+  static new fromDuration(Duration d) {
     ticks := d.toNanos
     if (ticks == 0) return defVal
 
@@ -278,7 +278,7 @@ const struct class Time
     sec  := (ticks / Duration.nsPerSec); ticks %= Duration.nsPerSec;
     ns   := ticks;
 
-    return Time(hour, min, sec, ns)
+    return make(hour, min, sec, ns)
   }
 
   **
