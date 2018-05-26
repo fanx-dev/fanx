@@ -119,9 +119,9 @@ internal rtconst class HashMap<K,V> : Map
     }
   }
 
-  new make(Int capacity:=16, Float loadFactor:=0.75) {
+  new make(Int capacity:=16, Float loadFactor:=0.75) : super.privateMake() {
     //this.type = type
-    array = MapEntryList[,] { it.size = capacity }
+    array = MapEntryList?[,] { it.size = capacity }
     this.loadFactor = loadFactor
   }
 
@@ -299,6 +299,27 @@ internal rtconst class HashMap<K,V> : Map
     if (isRW) return this
     HashMap nmap := dup
     nmap.readOnly = false
+    return nmap
+  }
+
+  override Bool isImmutable() {
+    return immutable
+  }
+
+  override This toImmutable() {
+    if (immutable) return this
+    nmap := HashMap()
+    for (i:=0; i<array.size; ++i) {
+      l := array[i]
+      if (l == null) continue
+
+      itr := l.begin
+      while (itr != l.end) {
+        nmap[itr.key?.toImmutable] = itr.value?.toImmutable
+        itr = itr.next
+      }
+    }
+    nmap.immutable = true
     return nmap
   }
 }

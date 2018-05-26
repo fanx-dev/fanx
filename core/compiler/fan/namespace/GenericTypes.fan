@@ -326,6 +326,8 @@ class GenericParamType : ProxyType {
     return raw
   }
 
+  override Bool isNullable() { return true }
+
   override Bool isGenericParameter() { true }
 }
 

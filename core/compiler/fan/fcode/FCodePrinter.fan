@@ -58,10 +58,10 @@ class FCodePrinter : FConst
       case FOpArg.None:      print
       case FOpArg.Int:       i := buf.readU2; print(pod.integer(i).toStr + index(i))
       case FOpArg.Float:     i := buf.readU2; print(pod.float(i).toStr + index(i))
-      case FOpArg.Decimal:   i := buf.readU2; print(pod.decimal(i).toStr + index(i))
+      //case FOpArg.Decimal:   i := buf.readU2; print(pod.decimal(i).toStr + index(i))
       case FOpArg.Str:       i := buf.readU2; print(pod.str(i).toStr + index(i))
-      case FOpArg.Duration:  i := buf.readU2; print(pod.duration(i).toStr + index(i))
-      case FOpArg.Uri:       i := buf.readU2; print(pod.uri(i).toStr + index(i))
+      //case FOpArg.Duration:  i := buf.readU2; print(pod.duration(i).toStr + index(i))
+      //case FOpArg.Uri:       i := buf.readU2; print(pod.uri(i).toStr + index(i))
       case FOpArg.Register:  i := buf.readU2; print(i)
       case FOpArg.TypeRef:   i := buf.readU2; print(pod.typeRefStr(i) + index(i))
       case FOpArg.FieldRef:  i := buf.readU2; print(pod.fieldRefStr(i) + index(i))

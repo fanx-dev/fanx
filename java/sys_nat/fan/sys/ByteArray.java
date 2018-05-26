@@ -40,7 +40,8 @@ public class ByteArray {
 
 	public boolean realloc(long newSize) {
 		byte[] na = new byte[(int)newSize];
-		System.arraycopy(array, 0, na, 0, na.length);
+		int len = array.length > na.length ? na.length : array.length;
+		System.arraycopy(array, 0, na, 0, len);
 		array = na;
 		return true;
 	}

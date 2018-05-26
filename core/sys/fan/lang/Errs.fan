@@ -175,6 +175,8 @@ const class NullErr : Err
   new make(Str msg := "", Err? cause := null) : super(msg, cause) {
   }
 
+  @NoDoc
+  static NullErr makeCoerce() { make("Coerce to non-null") }
 }
 
 

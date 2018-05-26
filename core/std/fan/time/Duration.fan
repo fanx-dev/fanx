@@ -41,6 +41,8 @@ const struct class Duration
     this.ticks = ticks
   }
 
+  new fromTicks(Int t) { ticks = t }
+
   new fromDateTime(Int t) { ticks = t }
 
   new fromNanaos(Int nanao) { ticks = nanao }

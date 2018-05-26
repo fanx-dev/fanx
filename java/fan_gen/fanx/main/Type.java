@@ -42,5 +42,10 @@ public abstract class Type {
 	public boolean isGenericType() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return signature();
+	}
 
 }

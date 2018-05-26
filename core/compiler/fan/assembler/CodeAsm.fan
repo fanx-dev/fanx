@@ -703,7 +703,8 @@ class CodeAsm : CompilerSupport
 
   private Void decimalLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadDecimal, fpod.decimals.add(expr.val))
+    op(FOp.LoadStr, fpod.strs.add(expr.val.toStr))
+    op(FOp.CallStatic, fpod.addMethodRef(ns.decimalMakeMethod, 1))
   }
 
   private Void strLiteral(LiteralExpr expr)
@@ -713,12 +714,14 @@ class CodeAsm : CompilerSupport
 
   private Void durationLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadDuration, fpod.durations.add(expr.val))
+    op(FOp.LoadInt, fpod.ints.add(expr.val->ticks))
+    op(FOp.CallStatic, fpod.addMethodRef(ns.durationMakeMethod, 1))
   }
 
   private Void uriLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadUri, fpod.uris.add(expr.val))
+    op(FOp.LoadStr, fpod.strs.add(expr.val.toStr))
+    op(FOp.CallStatic, fpod.addMethodRef(ns.uriMakeMethod, 1))
   }
 
   private Void typeLiteral(LiteralExpr expr)
@@ -768,7 +771,7 @@ class CodeAsm : CompilerSupport
   private Void mapLiteral(MapLiteralExpr map)
   {
     op(FOp.LoadType, fpod.addTypeRef(map.ctype))
-    op(FOp.CallNew,  fpod.addMethodRef(ns.mapMake))
+    op(FOp.CallNew,  fpod.addMethodRef(ns.mapMake, 1))
 
     set := fpod.addMethodRef(ns.mapSet)
     for (i:=0; i<map.keys.size; ++i)

@@ -143,10 +143,10 @@ public final class FPod
       else if (name.equals("fcode/types.def")) readTypeMeta(in);
       else if (name.equals("fcode/ints.def")) literals.ints.read(in);
       else if (name.equals("fcode/floats.def")) literals.floats.read(in);
-      else if (name.equals("fcode/decimals.def")) literals.decimals.read(in);
+//      else if (name.equals("fcode/decimals.def")) literals.decimals.read(in);
       else if (name.equals("fcode/strs.def")) literals.strs.read(in);
-      else if (name.equals("fcode/durations.def")) literals.durations.read(in);
-      else if (name.equals("fcode/uris.def")) literals.uris.read(in);
+//      else if (name.equals("fcode/durations.def")) literals.durations.read(in);
+//      else if (name.equals("fcode/uris.def")) literals.uris.read(in);
       else System.out.println("WARNING: unexpected file in pod: " + name);
     }
   }

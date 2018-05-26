@@ -18,7 +18,7 @@ class NullableType : ProxyType
 
   new make(CType root) : super(root)
   {
-    if (root.isNullable) throw Err("Cannot wrap $root as NullableType")
+    if (root.isNullable && !root.isGenericParameter) throw Err("Cannot wrap $root as NullableType")
     this.extName = root.extName + "?"
   }
 

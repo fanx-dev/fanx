@@ -136,6 +136,7 @@ public class FanObj implements IObj
   public Object toImmutable()
   {
     if (typeof().isConst()) return this;
+//    throw NotImmutableErr.make(this.getClass().toString());
     throw NotImmutableErr.make(typeof().toString());
   }
 

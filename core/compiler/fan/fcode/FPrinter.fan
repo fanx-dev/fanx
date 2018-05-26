@@ -48,8 +48,8 @@ class FPrinter : FConst
     table("--- ints ---",       pod.ints)
     table("--- floats ---",     pod.floats)
     table("--- strs ---",       pod.strs)
-    table("--- durations ---",  pod.durations)
-    table("--- uris ---",       pod.uris)
+    //table("--- durations ---",  pod.durations)
+    //table("--- uris ---",       pod.uris)
     out.flush
   }
 

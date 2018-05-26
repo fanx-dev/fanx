@@ -79,10 +79,10 @@ public class FCodeEmit
         case LoadTrue:            loadTrue(); break;
         case LoadInt:             loadInt(); break;
         case LoadFloat:           loadFloat(); break;
-        case LoadDecimal:         loadDecimal(); break;
+//        case LoadDecimal:         loadDecimal(); break;
         case LoadStr:             loadStr(); break;
-        case LoadDuration:        loadDuration(); break;
-        case LoadUri:             loadUri(); break;
+//        case LoadDuration:        loadDuration(); break;
+//        case LoadUri:             loadUri(); break;
         case LoadType:            loadType(); break;
 
         case LoadVar:             loadVar(); break;

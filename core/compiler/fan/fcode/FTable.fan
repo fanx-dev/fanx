@@ -58,7 +58,7 @@ class FTable
       |OutStream out, Obj obj| { out.writeF8((Float)obj) },
       |InStream in->Obj| { in.readF8 })
   }
-
+/*
   static FTable makeDecimals(FPod pod)
   {
     return make(pod,
@@ -72,6 +72,7 @@ class FTable
       |OutStream out, Obj obj| { out.writeI8(((Duration)obj).ticks) },
       |InStream in->Obj| { Duration(in.readS8) })
   }
+  */
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor

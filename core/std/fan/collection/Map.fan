@@ -12,7 +12,7 @@
 ** See [examples]`examples::sys-maps`.
 **
 @Serializable
-rtconst mixin Map<K,V>
+rtconst abstract class Map<K,V>
 {
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -27,6 +27,9 @@ rtconst mixin Map<K,V>
 
   //on modify
   protected abstract Void modify()
+
+
+  protected new privateMake() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -444,7 +447,7 @@ rtconst mixin Map<K,V>
   **   x => [2:4, 3:6, 4:8]
   **
   Map map(|V val, K key->Obj?| c) {
-    nmap := K:Obj[:]
+    nmap := [K:Obj][:]
     this.each |v,k| {
         nval := c(v, k)
         nmap[k] = nval
@@ -489,4 +492,9 @@ rtconst mixin Map<K,V>
   ** This method is readonly safe.
   **
   abstract This rw()
+
+
+  override abstract Bool isImmutable()
+
+  override abstract This toImmutable()
 }

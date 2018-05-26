@@ -23,10 +23,10 @@ internal class UriParser {
     ch := 0
     while (true) {
       if (i<s.size) {
+        ch = s[i]
+      } else {
         if (ch != 0) ch = 0
         else break
-      } else {
-        ch = s[i]
       }
       switch (state) {
       //scheme
@@ -41,7 +41,9 @@ internal class UriParser {
           state = 3
         }
         else if (ch == 0) {
-          throw ParseErr("uri: $s at $i")
+          if (buf.size > 0) path = buf.toStr
+          buf.clear
+          break
         }
         else {
           buf.addChar(ch)
@@ -199,10 +201,14 @@ const final class Uri
   **
   static new fromStr(Str s, Bool checked := true) {
     try {
+      if (s == "") {
+        return privateMake(null, null, null, null, "", null, null)
+      }
       parser := UriParser()
       parser.parse(s)
       return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, parser.query, parser.frag)
     } catch (Err e) {
+      //e.trace
       if (checked) throw ParseErr("uri:$s", e)
       return defVal
     }
@@ -228,7 +234,7 @@ const final class Uri
       parser.path = decodeToken(parser.path, false)
 
       query2 := Str:Str[:]
-      parser.query.each |v,k| {
+      parser.query?.each |v,k| {
         query2[decodeToken(k, true)] = decodeToken(v, true)
       }
       parser.frag = decodeToken(parser.frag, false)
@@ -244,13 +250,11 @@ const final class Uri
   ** Default value is '``'.
   **
   static const Uri defVal := ``
-  private static const Str:Str emptyMap := [:]
 
   **
   ** Private constructor
   **
   private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str path, [Str:Str]? query, Str? frag) {
-    if (query == null) query = emptyMap
     this.scheme = scheme
     this.userInfo = userInfo
     this.host = host
@@ -261,7 +265,7 @@ const final class Uri
     this.str = partsToStr(scheme, userInfo, host, port, path, query, frag, false)
   }
 
-  private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, Str:Str query, Str? frag, Bool encode) {
+  private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, [Str:Str]? query, Str? frag, Bool encode) {
     buf := StrBuf()
     if (scheme != null) {
       if (encode) scheme = encodeToken(scheme, false)
@@ -282,7 +286,7 @@ const final class Uri
       if (encode) path = encodeToken(path, false)
       buf.add(path)
     }
-    if (query.size > 0) {
+    if (query != null && query.size > 0) {
       if (path != null) buf.addChar('?')
       i := 0
       query.each |v, k| {
@@ -633,7 +637,7 @@ const final class Uri
   ** be null.
   **
   Bool isPathOnly() { scheme == null && host == null && port == null &&
-           userInfo == null && query.size == 0 && frag == null }
+           userInfo == null && (query == null || query.size == 0) && frag == null }
 
   **
   ** Return simple file name which is path.last or ""
@@ -738,7 +742,7 @@ const final class Uri
   **   `?a=b;;c`.query                 =>  ["a":"b", "c":"true"]
   **   `?x=1&x=2&x=3`.query            =>  ["x":"1,2,3"]
   **
-  const Str:Str query
+  const [Str:Str]? query
 
   **
   ** Return the query component of the Uri which is everything
@@ -938,7 +942,7 @@ const final class Uri
   **
   Uri plusQuery([Str:Str]? query) {
     if (query == null || query.size == 0) return this
-    nq := this.query.dup
+    nq := this.query != null ? this.query.dup : [Str:Str][:]
     query.each |v,k| { nq[k] = v }
     return privateMake(scheme, userInfo, host, port, pathStr, nq, frag)
   }

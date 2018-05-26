@@ -40,19 +40,19 @@ public class FPodEmit
     // NOTE: ints, floats, and strings use direct Java constants
 
     // decimals
-    for (int i=0; i<literals.decimals.size(); ++i)
-      cls.getField("D"+i).set(null, literals.decimals.get(i));
-    literals.decimals = null;
+//    for (int i=0; i<literals.decimals.size(); ++i)
+//      cls.getField("D"+i).set(null, literals.decimals.get(i));
+//    literals.decimals = null;
 
     // durations
-    for (int i=0; i<literals.durations.size(); ++i)
-      cls.getField("Dur"+i).set(null, literals.durations.get(i));
-    literals.durations = null;
+//    for (int i=0; i<literals.durations.size(); ++i)
+//      cls.getField("Dur"+i).set(null, literals.durations.get(i));
+//    literals.durations = null;
 
     // uris
-    for (int i=0; i<literals.uris.size(); ++i)
-      cls.getField("U"+i).set(null, literals.uris.get(i));
-    literals.uris = null;
+//    for (int i=0; i<literals.uris.size(); ++i)
+//      cls.getField("U"+i).set(null, literals.uris.get(i));
+//    literals.uris = null;
 
     // we only generate type fields for [java] types
     for (int i=0; i<fpod.typeRefs.size(); ++i)
@@ -86,12 +86,12 @@ public class FPodEmit
 
     // generate constant fields other types will reference, we don't
     // initialize them, rather we do that later via reflection
-    for (int i=0; i<literals.decimals.size(); ++i)
-      emitField("D" + i, "Ljava/math/BigDecimal;", EmitConst.PUBLIC | EmitConst.STATIC);
-    for (int i=0; i<literals.durations.size(); ++i)
-      emitField("Dur" + i, "Lfan/sys/Duration;", EmitConst.PUBLIC | EmitConst.STATIC);
-    for (int i=0; i<literals.uris.size(); ++i)
-      emitField("U" + i, "Lfan/sys/Uri;", EmitConst.PUBLIC | EmitConst.STATIC);
+//    for (int i=0; i<literals.decimals.size(); ++i)
+//      emitField("D" + i, "Ljava/math/BigDecimal;", EmitConst.PUBLIC | EmitConst.STATIC);
+//    for (int i=0; i<literals.durations.size(); ++i)
+//      emitField("Dur" + i, "Lfan/sys/Duration;", EmitConst.PUBLIC | EmitConst.STATIC);
+//    for (int i=0; i<literals.uris.size(); ++i)
+//      emitField("U" + i, "Lfan/sys/Uri;", EmitConst.PUBLIC | EmitConst.STATIC);
 
     // we only generate type fields for [java] types
     for (int i=0; i<pod.typeRefs.size(); ++i)

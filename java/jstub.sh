@@ -5,5 +5,4 @@ $jstub std
 $jstub reflect
 $jstub testlib
 
-
-#javap -c -s -v -constants -l -public -sysinfo -cp sys.jar  fan.sys.List
+#javap -c -s -v -constants -l -public -sysinfo -cp libs/testlib.jar fan.testlib.Main

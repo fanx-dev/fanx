@@ -268,6 +268,9 @@ abstract class CNamespace
   once CMethod? funcCall           () { sysMethod(funcType,    "call") }
   once CMethod? fieldNotSetErrMake () { sysMethod(fieldNotSetErrType,    "make") }
   once CMethod? notImmutableErrMake() { sysMethod(notImmutableErrType,    "make") }
+  once CMethod decimalMakeMethod   () { sysMethod(decimalType,  "fromStr") }
+  once CMethod uriMakeMethod       () { sysMethod(uriType,  "fromStr") }
+  once CMethod durationMakeMethod  () { sysMethod(durationType,  "fromTicks") }
 
   once CMethod? funcEnterCtor() {
     mockFlags := FConst.Public + FConst.Virtual

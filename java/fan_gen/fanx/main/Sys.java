@@ -43,17 +43,30 @@ public class Sys {
 	}
 	
 	public static Type findType(String signature) {
+		int len = signature.length();
+		boolean nullable = false;
+		if (signature.charAt(len-1) == '?') {
+			nullable = true;
+			signature = signature.substring(0, len-1);
+		}
+		
 		int pos = signature.indexOf("::");
 		String podName = signature.substring(0, pos);
-//		int pos2 = signature.lastIndexOf('<');
-		String typeName = signature.substring(pos+2);
+		int pos2 = signature.lastIndexOf('<');
+		if (pos2 < 0) pos2 = signature.length();
+		String typeName = signature.substring(pos+2, pos2);
 		FType ftype = findFType(podName, typeName);
 		
 		if (ftype.reflectType == null) {
 			ClassType ct = new ClassType(ftype);
 			ftype.reflectType = ct;
 		}
-		return (Type)ftype.reflectType;
+		
+		Type res = (Type)ftype.reflectType;
+		if (nullable) {
+			return res.toNullable();
+		}
+		return res;
 	}
 	
 	public static FType findFType(String podName, String typeName) {
