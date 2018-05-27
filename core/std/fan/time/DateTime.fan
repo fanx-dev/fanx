@@ -22,7 +22,8 @@ const struct class DateTime
   // Fields Bitmask
   //   Field       Width    Mask   Start Bit
   //   ---------   ------   -----  ---------
-  //   year-1900   8 bits   0xff   0
+  //   unused      2 bits   0xff   0
+  //   sec         6 bits   0xff   2
   //   month       4 bits   0xf    8
   //   day         5 bits   0x1f   12
   //   hour        5 bits   0x1f   17
@@ -30,12 +31,14 @@ const struct class DateTime
   //   weekday     3 bits   0x7    28
   //   dst         1 bit    0x1    31
 
-  private static const Int minTicks   := -3124137600000000000 // 1901
-  private static const Int maxTicks   := 3155760000000000000  // 2100
+  @I32 private const Int fields     // bitmask month, day, etc
+  @I32 private const Int yearField // year
 
-  private const Int ticks      // ns ticks from 1-Jan-2000 UTC
-  private const Int fields     // bitmask of year, month, day, etc
-  private const TimeZone tz    // time used to resolve fields
+  private static const Int minTicks   := Int.minVal
+  private static const Int maxTicks   := Int.maxVal
+
+  private const Int ticks           // millis since 1970
+  private const TimeZone timeZone   // timezone used to resolve fields
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -62,12 +65,12 @@ const struct class DateTime
   native static DateTime nowUtc(Duration? tolerance := 250ms)
 
   **
-  ** Return the current time as nanosecond ticks since 1 Jan 2000 UTC.
+  ** Return the current time as millisecond ticks since 1 Jan 1970 UTC.
   **
-  private native static Int nowTicks()
+  //private static Int nowTicks() { TimeUtil.currentTimeMillis }
 
   **
-  ** Return the current time as nanosecond ticks since 1 Jan 2000 UTC,
+  ** Return the current time as nanosecond ticks since 1 Jan 1970 UTC,
   ** but with the guarantee that every call returns a unique value for
   ** the lifetime of this VM.  Since most platforms don't actually support
   ** nanosecond resolution, the unused nanoseconds are used as a counter
@@ -77,14 +80,16 @@ const struct class DateTime
   ** more than one million time within a millisecond will introduce
   ** a millisecond drift (1,000,000ns in a ms).
   **
-  native static Int nowUnique()
+  static Int nowUnique() { TimeUtil.nowUnique }
 
   **
   ** Make for nanosecond ticks since 1 Jan 2000 UTC.  Throw
   ** ArgErr if ticks represent a year out of the range 1901
   ** to 2099.
   **
-  native static DateTime makeTicks(Int ticks, TimeZone tz := TimeZone.cur)
+  native static DateTime fromTicks(Int ticks, TimeZone tz := TimeZone.cur)
+
+  private native static Int[] getTicks(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 
   **
   ** Make for the specified date and time values:
@@ -99,14 +104,13 @@ const struct class DateTime
   **
   ** Throw ArgErr is any of the parameters are out of range.
   **
-  native static Int[] create(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
   new make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur) {
-    res := create(year, month, day, hour, min, sec, ns, tz)
+    res := getTicks(year, month, day, hour, min, sec, ns, tz)
     Int ticks := res[0]
     Int dst := res[1]
     Int weekday := res[2]
 
-    if (year < 1901 || year > 2099) throw ArgErr.make("year " + year.toStr);
+    //if (year < 1901 || year > 2099) throw ArgErr.make("year " + year.toStr);
     if (month.ordinal < 0 || month.ordinal > 11)    throw ArgErr.make("month " + month.toStr);
     if (day < 1 || day > numDaysInMonth(year, month.ordinal)) throw ArgErr.make("day " + day);
     if (hour < 0 || hour > 23)      throw ArgErr.make("hour " + hour);
@@ -116,7 +120,7 @@ const struct class DateTime
 
     // fields
     Int fields := 0
-    fields = fields.or(((year-1900).and(0xff)).shiftl(0))
+    fields = fields.or(((sec).and(0x3f)).shiftl(2))
     fields = fields.or((month.ordinal.and(0xf)).shiftl(8))
     fields = fields.or((day.and(0x1f)).shiftl(12))
     fields = fields.or((hour.and(0x1f)).shiftl(17))
@@ -126,7 +130,8 @@ const struct class DateTime
 
     // commit
     this.ticks = ticks;
-    this.tz    = tz;
+    this.timeZone    = tz;
+    this.yearField  = year;
     this.fields   = fields;
   }
 
@@ -219,7 +224,7 @@ const struct class DateTime
   **
   ** Get the boot time of the Fantom VM with `TimeZone.cur`
   **
-  native static DateTime boot()
+  //native static DateTime boot()
 
   **
   ** Default value is "2000-01-01T00:00:00Z UTC".
@@ -299,7 +304,7 @@ const struct class DateTime
   **
   ** Get the year as a number such as 2007.
   **
-  Int year() { (fields.and(0xff)) + 1900 }
+  Int year() { yearField }
 
   **
   ** Get the month of this date.
@@ -321,13 +326,12 @@ const struct class DateTime
   **
   Int min() { fields.shiftr(22).and(0x3f) }
 
-  native private Int yearTicks()
+  //native private Int yearTicks()
   **
   ** Get the whole seconds of the time as a number between 0 and 59.
   **
   Int sec() {
-    rem := ticks >= 0 ? ticks : ticks - yearTicks
-    return ((rem % Duration.nsPerMin) / Duration.nsPerSec);
+    fields.shiftr(2).and(0x3f)
   }
 
   **
@@ -335,8 +339,7 @@ const struct class DateTime
   ** a number between 0 and 999,999,999.
   **
   Int nanoSec() {
-    rem := ticks >= 0 ? ticks : ticks - yearTicks
-    return (rem % Duration.nsPerSec);
+    return (ticks % Duration.milliPerSec) * 1000_1000
   }
 
   **
@@ -347,7 +350,7 @@ const struct class DateTime
   **
   ** Get the time zone associated with this date time.
   **
-  //TimeZone tz()
+  TimeZone tz() { timeZone }
 
   **
   ** Return if this time is within daylight savings time
@@ -395,7 +398,7 @@ const struct class DateTime
   ** one timezone "Lord_Howe" which has a 30min offset which is
   ** not handled by this method (WTF).
   **
-  Int hoursInDay() { 24 }
+  native Int hoursInDay()
 
 //////////////////////////////////////////////////////////////////////////
 // Locale
@@ -467,7 +470,7 @@ const struct class DateTime
   ** hour such as GMT-3:30, then result will have ticks, but its
   ** tz will be floored hour based GMT timezone such as GMT-3.
   **
-  native static DateTime? fromLocale(Str str, Str pattern, TimeZone tz := TimeZone.cur, Bool checked := true)
+  native static DateTime? fromLocale(Str str, Str pattern, TimeZone? tz := TimeZone.cur, Bool checked := true)
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -495,7 +498,7 @@ const struct class DateTime
     }
     else
     {
-      return makeTicks(ticks, tz);
+      return fromTicks(ticks, tz);
     }
   }
 
@@ -527,7 +530,7 @@ const struct class DateTime
   ** Example:
   **   nextHour := DateTime.now + 1hr
   **
-  @Operator DateTime plus(Duration duration) { DateTime.makeTicks(ticks+duration.toNanos, tz); }
+  @Operator DateTime plus(Duration duration) { fromTicks(ticks+duration.toMillis, tz); }
 
   **
   ** Subtract a duration to compute a new time.  This method works
@@ -538,7 +541,7 @@ const struct class DateTime
   ** Example:
   **   prevHour := DateTime.now - 1hr
   **
-  @Operator DateTime minus(Duration duration) { DateTime.makeTicks(ticks-duration.toNanos); }
+  @Operator DateTime minus(Duration duration) { fromTicks(ticks-duration.toMillis); }
 
   **
   ** Return a new DateTime with this time's nanosecond ticks truncated
@@ -548,8 +551,8 @@ const struct class DateTime
   ** it does not take into account wall-time rollovers.
   **
   DateTime floor(Duration accuracy) {
-    if (ticks % accuracy.toNanos == 0) return this;
-    return makeTicks(ticks - (ticks % accuracy.toNanos), tz);
+    if (ticks % accuracy.toMillis == 0) return this;
+    return fromTicks(ticks - (ticks % accuracy.toMillis), tz);
   }
 
   **
@@ -595,12 +598,16 @@ const struct class DateTime
   ** using the specified timezone (defaults to current).  If millis
   ** are less than or equal to zero then return null.
   **
-  native static DateTime? fromJava(Int millis, TimeZone tz := TimeZone.cur)
+  static DateTime? fromJava(Int millis, TimeZone tz := TimeZone.cur) { fromTicks(millis, tz) }
 
   **
   ** Get this date in Java milliseconds since the epoch of 1 Jan 1970.
   **
-  native Int toJava()
+  Int toJava() { ticks }
+
+  TimePoint toTimePoint() { TimePoint.fromMillis(ticks) }
+
+  static DateTime fromTimePoint(TimePoint tp, TimeZone tz := TimeZone.cur) { fromTicks(tp.toMillis, tz) }
 
 //////////////////////////////////////////////////////////////////////////
 // ISO 8601
@@ -644,7 +651,15 @@ const struct class DateTime
   **   Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
   **   Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
   **
-  native static DateTime? fromHttpStr(Str s, Bool checked := true)
+  static DateTime? fromHttpStr(Str s, Bool checked := true) {
+    for (i:=0; i<httpFormats.size; ++i) {
+      dt := fromLocale(s, httpFormats[i], null, false)
+      if (dt != null) return dt
+    }
+    if (checked) throw ParseErr("Invalid HTTP DateTime: '$s'")
+    return null
+  }
+  static const Str[] httpFormats := ["EEE, dd MMM yyyy HH:mm:ss zzz", "EEEEEE, dd-MMM-yy HH:mm:ss zzz", "EEE MMMM d HH:mm:ss yyyy"]
 
   **
   ** Format this time for use in an MIME or HTTP message

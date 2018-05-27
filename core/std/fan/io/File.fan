@@ -161,7 +161,7 @@ abstract const class File
   **
   ** Get time the file was last modified or null if unknown.
   **
-  abstract DateTime? modified
+  abstract TimePoint? modified
 
   **
   ** Get this File as an operating system specific path on
@@ -486,7 +486,7 @@ internal const class LocalFile : File
 
   native override Bool exists()
   native override Int size()
-  native override DateTime? modified
+  native override TimePoint? modified
   native override Str? osPath()
   native override File? parent()
   native override File[] list()
@@ -515,7 +515,7 @@ internal const class ZipEntryFile : File
 
   native override Bool exists()
   native override Int size()
-  native override DateTime? modified
+  native override TimePoint? modified
   native override Str? osPath()
   native override File? parent()
   native override File[] list()

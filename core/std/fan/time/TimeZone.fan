@@ -37,7 +37,7 @@ const class TimeZone
   ** list contains only the simple names such as "New_York"
   ** and "London".
   **
-  //static Str[] listNames()
+  static Str[] listNames() { TimeUtil.listTimeZoneNames }
 
   **
   ** List all zoneinfo (Olson database) full names of the
@@ -62,8 +62,17 @@ const class TimeZone
   **
   static new fromStr(Str name, Bool checked := true) {
     if (name == "UTC") return utc
-    return defVal
+    tz := fromName(name)
+    if (tz == null) {
+      if (checked)
+        throw ArgErr("unknow time zone $name")
+      else
+        return defVal
+    }
+    return tz
   }
+
+  static TimeZone? fromName(Str name) { TimeUtil.findTimeZone(name) }
 
   **
   ** UTC time zone instance is "Etc/Utc".
@@ -85,7 +94,7 @@ const class TimeZone
   ** key "timezone" and any value accepted by `fromStr`.  Once
   ** Fantom is booted, the default timezone cannot be changed.
   **
-  static native TimeZone cur()
+  static TimeZone cur() { TimeUtil.curTimeZone }
 
   **
   ** Default value is UTC.
@@ -147,7 +156,7 @@ const class TimeZone
   ** time to get wall time during daylight savings time (often 1hr).
   ** If daylight savings time is not observed then return null.
   **
-  Duration? dstOffset(Int year) { null }
+  Duration? dstOffset(Int year) { TimeUtil.daylightSavingsOffset(this, year) }
 
   **
   ** Get the abbreviated name during standard time.

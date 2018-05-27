@@ -14,7 +14,7 @@
 @Serializable { simple = true }
 const struct class Duration
 {
-  ** nano second
+  ** milli second
   private const Int ticks
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,12 +27,15 @@ const struct class Duration
   ** it is the number of nanosecond ticks which have elapsed since system
   ** startup.
   **
-  native static Duration now()
+  //static Duration now()
 
   **
-  ** Convenience for 'now.ticks'.
+  ** Get the current value of the system timer.  This method returns
+  ** a relative time unrelated to system or wall-clock time.  Typically
+  ** it is the number of nanosecond ticks which have elapsed since system
+  ** startup.
   **
-  private static Int nowTicks() { now.ticks }
+  private static Int nowTicks() { TimeUtil.nanoTicks }
 
   **
   ** Create a Duration which represents the specified number of nanosecond ticks.
@@ -41,23 +44,25 @@ const struct class Duration
     this.ticks = ticks
   }
 
-  new fromTicks(Int t) { ticks = t }
+  Int toTicks() { ticks }
 
-  new fromDateTime(Int t) { ticks = t }
+  static new fromTicks(Int t) { make(t) }
 
-  new fromNanaos(Int nanao) { ticks = nanao }
+  internal static new fromDateTime(Int t) { make(t) }
 
-  new fromMicros(Int s) { ticks = s * 1000 }
+  static new fromNanos(Int nanao) { make(nanao / 1000_000) }
 
-  new fromMillis(Int s) { ticks = s * 1000_000 }
+  static new fromMicros(Int s) { make(s / 1000) }
 
-  new fromSec(Int s) { ticks = s * nsPerSec }
+  static new fromMillis(Int s) { make(s) }
 
-  new fromDay(Int s) { ticks = s * nsPerDay }
+  static new fromSec(Int s) { make(s * milliPerSec) }
 
-  new fromMin(Int s) { ticks = s * nsPerMin }
+  static new fromDay(Int s) { make(s * milliPerDay) }
 
-  new fromHour(Int s) { ticks = s * nsPerHr }
+  static new fromMin(Int s) { make(s * milliPerMin) }
+
+  static new fromHour(Int s) { make(s * milliPerHr) }
 
   **
   ** Parse a Str into a Duration according to the Fantom
@@ -86,35 +91,32 @@ const struct class Duration
       x3 := s.get(len-3)
       dot := s.index(".") > 0
 
-      mult := -1
+      Float mult := -1.0
       suffixLen  := -1
       switch (x1)
       {
         case 's':
-          if (x2 == 'n') { mult=1; suffixLen=2; } // ns
-          if (x2 == 'm') { mult=1000000; suffixLen=2; } // ms
+          if (x2 == 'n') { mult=1.0/1000_000; suffixLen=2; } // ns
+          if (x2 == 'm') { mult=1.0; suffixLen=2; } // ms
           //break;
         case 'c':
-          if (x2 == 'e' && x3 == 's') { mult=1000000000; suffixLen=3; } // sec
+          if (x2 == 'e' && x3 == 's') { mult=milliPerSec.toFloat; suffixLen=3; } // sec
           //break;
         case 'n':
-          if (x2 == 'i' && x3 == 'm') { mult=60000000000; suffixLen=3; } // min
+          if (x2 == 'i' && x3 == 'm') { mult=milliPerMin.toFloat; suffixLen=3; } // min
           //break;
         case 'r':
-          if (x2 == 'h') { mult=3600000000000; suffixLen=2; } // hr
+          if (x2 == 'h') { mult=milliPerHr.toFloat; suffixLen=2; } // hr
           //break;
         case 'y':
-          if (x2 == 'a' && x3 == 'd') { mult=86400000000000; suffixLen=3; } // day
+          if (x2 == 'a' && x3 == 'd') { mult=milliPerDay.toFloat; suffixLen=3; } // day
           //break;
       }
 
-      if (mult < 0) throw Err()
+      if (mult < 0.0) throw Err()
 
-      s = s[0..<len-suffixLen]
-      if (dot)
-        return make(((s.toFloat)*mult).toInt)
-      else
-        return make(s.toInt*mult)
+      sf := s[0..<len-suffixLen].toFloat
+      return make((sf*mult).toInt)
     }
     catch (Err e)
     {
@@ -126,13 +128,13 @@ const struct class Duration
   **
   ** Get the system timer at boot time of the Fantom VM.
   **
-  native static Duration boot()
+  //static Duration boot()
 
   **
   ** Get the duration which has elapsed since the
   ** Fantom VM was booted which is 'now - boot'.
   **
-  static Duration uptime() { now - boot }
+  //static Duration uptime() { now - boot }
 
   **
   ** Default value is 0ns.
@@ -156,11 +158,18 @@ const struct class Duration
   static const Int nsPerMin   := 60000000000
   static const Int nsPerSec   := 1000000000
   static const Int nsPerMilli := 1000000
+
   static const Int micrsPerDay   := 86400000000
   static const Int micrsPerHr    := 3600000000
   static const Int micrsPerMin   := 60000000
   static const Int micrsPerSec   := 1000000
   static const Int micrsPerMilli := 1000
+
+  static const Int milliPerDay   := 86400000
+  static const Int milliPerHr    := 3600000
+  static const Int milliPerMin   := 60000
+  static const Int milliPerSec   := 1000
+
   static const Int secPerDay  := 86400
   static const Int secPerHr   := 3600
   static const Int secPerMin  := 60
@@ -286,41 +295,41 @@ const struct class Duration
   **
   ** Return number of nanosecond ticks.
   **
-  Int toNanos() { ticks }
+  Int toNanos() { ticks * 1000_000 }
 
   **
   ** Return number of microsecond ticks.
   **
-  Int toMicros() { ticks / 1000 }
+  Int toMicros() { ticks * 1000 }
 
   **
   ** Get this duration in milliseconds.  Any fractional
   ** milliseconds are truncated with a loss of precision.
   **
-  Int toMillis() { ticks / 1000_1000 }
+  Int toMillis() { ticks }
 
   **
   ** Get this duration in seconds.  Any fractional
   ** seconds are truncated with a loss of precision.
   **
-  Int toSec() { ticks / 1000_000_000  }
+  Int toSec() { ticks / 1000  }
 
   **
   ** Get this duration in minutes.  Any fractional
   ** minutes are truncated with a loss of precision.
-  Int toMin() { ticks / nsPerMin }
+  Int toMin() { ticks / milliPerMin }
 
   **
   ** Get this duration in hours.  Any fractional
   ** hours are truncated with a loss of precision.
   **
-  Int toHour() { ticks / nsPerHr }
+  Int toHour() { ticks / milliPerHr }
 
   **
   ** Get this duration in 24 hour days.  Any fractional
   ** days are truncated with a loss of precision.
   **
-  Int toDay() { ticks / nsPerDay }
+  Int toDay() { ticks / milliPerDay }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale

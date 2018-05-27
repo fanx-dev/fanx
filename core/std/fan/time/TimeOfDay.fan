@@ -13,7 +13,7 @@
 @Serializable { simple = true }
 const struct class TimeOfDay
 {
-  private const DateTime datetime
+  private const Int ticks
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -24,11 +24,9 @@ const struct class TimeOfDay
   ** tolerance 250ms.
   **
   static new now(TimeZone tz := TimeZone.cur) {
-    fromDateTime(DateTime.now.toTimeZone(tz))
-  }
-
-  private new fromDateTime(DateTime dt) {
-    datetime = dt
+    //fromDateTime(DateTime.now.toTimeZone(tz))
+    dt := DateTime.now.toTimeZone(tz)
+    return make(dt.hour, dt.min, dt.sec, dt.nanoSec)
   }
 
   **
@@ -41,8 +39,19 @@ const struct class TimeOfDay
   ** Throw ArgErr is any of the parameters are out of range.
   **
   new make(Int hour, Int min, Int sec := 0, Int ns := 0) {
-    date := Date.defVal
-    datetime = DateTime(date.year, date.month, date.day, hour, min, sec, ns)
+    ticks := (hour%24) * Duration.nsPerHr + (min%60) * Duration.nsPerMin +
+          (sec%60) * Duration.nsPerSec + (ns%Duration.nsPerSec)
+  }
+
+  new fromTicks(Int ticks) {
+    if (ticks < 0) {
+      ticks = - ticks
+      ticks = ticks % Duration.nsPerDay
+      ticks = Duration.nsPerDay - ticks
+      this.ticks = ticks
+    }
+    else
+      this.ticks = ticks % Duration.nsPerDay
   }
 
   private static Int num(Str s, Int index) {
@@ -100,7 +109,7 @@ const struct class TimeOfDay
   **
   ** Default value is "00:00:00".
   **
-  const static TimeOfDay defVal := make(0, 0, 0, 0)
+  const static TimeOfDay defVal := fromTicks(0)
 
   **
   ** Private constructor.
@@ -116,7 +125,7 @@ const struct class TimeOfDay
   **
   override Bool equals(Obj? that) {
     if (that is TimeOfDay) {
-      return datetime == ((TimeOfDay)that).datetime
+      return ticks == ((TimeOfDay)that).ticks
     }
     return false
   }
@@ -124,13 +133,13 @@ const struct class TimeOfDay
   **
   ** Return hash of hour, min, sec, and ns values.
   **
-  override Int hash() { datetime.hash }
+  override Int hash() { ticks }
 
   **
   ** Compare based on hour, min, sec, and ns values.
   **
   override Int compare(Obj obj) {
-    datetime <=> ((TimeOfDay)obj).datetime
+    ticks <=> ((TimeOfDay)obj).ticks
   }
 
   **
@@ -149,23 +158,23 @@ const struct class TimeOfDay
   **
   ** Get the hour of the time as a number between 0 and 23.
   **
-  Int hour() { datetime.hour }
+  Int hour() { ticks / Duration.nsPerHr }
 
   **
   ** Get the minutes of the time as a number between 0 and 59.
   **
-  Int min() { datetime.min }
+  Int min() { (ticks / Duration.nsPerMin) % 60 }
 
   **
   ** Get the whole seconds of the time as a number between 0 and 59.
   **
-  Int sec() { datetime.sec }
+  Int sec() { (ticks / Duration.nsPerSec) % 60 }
 
   **
   ** Get the number of nanoseconds (the fraction of seconds) as
   ** a number between 0 and 999,999,999.
   **
-  Int nanoSec() { datetime.nanoSec }
+  Int nanoSec() { ticks % Duration.nsPerSec }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale
@@ -196,14 +205,25 @@ const struct class TimeOfDay
   ** A symbol immediately preceding a "F" pattern with a no
   ** fraction to print is skipped.
   **
-  native Str toLocale(Str? pattern := null)
+  Str toLocale(Str? pattern := null) {
+    //TODO
+    buf := StrBuf()
+    buf.add(hour.toRadix(10, 2))
+       .add(":").add(min.toRadix(10, 2))
+       .add(":").add(sec.toRadix(10, 2))
+       .add(".").add(nanoSec.toRadix(10, 9))
+    return buf.toStr
+  }
 
   **
   ** Parse a string into a Time using the given pattern.  If
   ** string is not a valid format then return null or raise ParseErr
   ** based on checked flag.  See `toLocale` for pattern syntax.
   **
-  native static TimeOfDay? fromLocale(Str str, Str pattern, Bool checked := true)
+  static TimeOfDay? fromLocale(Str str, Str pattern, Bool checked := true) {
+    //TODO
+    fromStr(str)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // ISO 8601
@@ -238,9 +258,14 @@ const struct class TimeOfDay
   ** Example:
   **   Time(5,0,0) + 30min  =>  05:30:00
   **
-  @Operator TimeOfDay plus(Duration dur) {
-    dt := datetime + dur
-    return fromDateTime(dt)
+  @Operator TimeOfDay plus(Duration d) {
+    ticks := d.toNanos
+    if (ticks == 0) return this
+
+    if (ticks < 0 || ticks > Duration.nsPerDay )
+      throw ArgErr.make("Duration out of range: " + d)
+
+    return fromTicks(this.ticks + ticks)
   }
 
   ** Subtract the specified duration to this time. Throw ArgErr if 'dur' is
@@ -249,9 +274,14 @@ const struct class TimeOfDay
   ** Example:
   **   Time(5,0,0) - 30min  =>  04:30:00
   **
-  @Operator TimeOfDay minus(Duration dur) {
-    dt := datetime - dur
-    return fromDateTime(dt)
+  @Operator TimeOfDay minus(Duration d) {
+    ticks := d.toNanos
+    if (ticks == 0) return this
+
+    if (ticks < 0 || ticks > Duration.nsPerDay )
+      throw ArgErr.make("Duration out of range: " + d)
+
+    return fromTicks(this.ticks - ticks)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -273,12 +303,7 @@ const struct class TimeOfDay
     if (ticks < 0 || ticks > Duration.nsPerDay )
       throw ArgErr.make("Duration out of range: " + d)
 
-    hour := (ticks / Duration.nsPerHr);  ticks %= Duration.nsPerHr;
-    min  := (ticks / Duration.nsPerMin); ticks %= Duration.nsPerMin;
-    sec  := (ticks / Duration.nsPerSec); ticks %= Duration.nsPerSec;
-    ns   := ticks;
-
-    return make(hour, min, sec, ns)
+    return fromTicks(ticks)
   }
 
   **
@@ -288,7 +313,7 @@ const struct class TimeOfDay
   ** Example:
   **   Time(2, 30).toDuration  =>  150min
   **
-  Duration toDuration() { datetime - defVal.datetime }
+  Duration toDuration() { Duration.fromNanos(ticks) }
 
   **
   ** Combine this Time with the given Date to return a DateTime.

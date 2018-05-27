@@ -68,13 +68,13 @@ const class Locale
   **
   ** Get the current thread's locale.
   **
-  native static Locale cur()
+  static Locale cur() { TimeUtil.getLocale }
 
   **
   ** Set the current thread's locale.
   ** Throw NullErr if null is passed.
   **
-  native static Void setCur(Locale locale)
+  static Void setCur(Locale locale) { TimeUtil.setLocale(locale) }
 
   **
   ** Run the specified function using this locale as the
@@ -82,7 +82,17 @@ const class Locale
   ** that upon return the actor's current locale remains
   ** unchanged.
   **
-  native This use(|This| func)
+  This use(|This| func) {
+    old := cur
+    try {
+      setCur(this)
+      func(this)
+    }
+    finally {
+      setCur(old)
+    }
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity

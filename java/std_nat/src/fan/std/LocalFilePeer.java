@@ -46,10 +46,10 @@ public class LocalFilePeer {
 		return jfile.length();
 	}
 
-	static DateTime modified(LocalFile self) {
+	static TimePoint modified(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		long mills = jfile.lastModified();
-		return DateTime.fromJava(mills);
+		return TimePoint.fromMillis(mills);
 	}
 
 	static String osPath(LocalFile self) {

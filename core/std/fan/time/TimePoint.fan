@@ -7,21 +7,75 @@
 //
 
 **
-** represents an absolute instance in time
+** TimePoint represents an absolute instance in time.
+** It's more light-weight than DateTime and independent of a timezone.
+** TimePoint provides millisecond precision in current implemention.
 **
 @Serializable { simple = true }
 const struct class TimePoint
 {
+  ** millisecond since 1970
   private const Int ticks
 
   private new make(Int ticks) {
   }
 
-  static new fromMills(Int m) {
+  ** Return the current time
+  static new now() {
+    make(TimeUtil.currentTimeMillis)
+  }
+
+  ** make from millisecond since 1970
+  static new fromMillis(Int m) {
     make(m)
   }
 
-  Int toMills() {
+  **
+  ** millisecond since 1970
+  **
+  Int toMillis() {
     ticks
   }
+
+  **
+  ** Two times are equal if have identical nanosecond ticks.
+  **
+  override Bool equals(Obj? that) {
+    if (that is TimePoint)
+    {
+      return ticks == ((TimePoint)that).ticks;
+    }
+    return false;
+  }
+
+  **
+  ** Return nanosecond ticks for the hashcode.
+  **
+  override Int hash() { ticks }
+
+  **
+  ** Compare based on nanosecond ticks.
+  **
+  override Int compare(Obj that) {
+    return ticks - ((TimePoint)that).ticks
+  }
+
+  override Str toStr() { ticks.toStr }
+
+  static new fromStr(Str s) { make(s.toInt) }
+
+  **
+  ** Return the delta between this and the given time.
+  **
+  @Operator Duration minusDateTime(TimePoint time) { Duration.fromMillis(ticks-time.ticks) }
+
+  **
+  ** Add a duration to compute a new time.
+  **
+  @Operator TimePoint plus(Duration duration) { make(ticks+duration.toMillis) }
+
+  **
+  ** Subtract a duration to compute a new time.
+  **
+  @Operator TimePoint minus(Duration duration) { make(ticks-duration.toMillis) }
 }

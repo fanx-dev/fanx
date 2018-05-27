@@ -188,8 +188,8 @@ const struct class Date
   ** based on checked flag.  See `toLocale` for pattern syntax.
   **
   static Date? fromLocale(Str str, Str pattern, Bool checked := true) {
-    datetime := DateTime.fromLocale(str, pattern, TimeZone.cur, checked)
-    return Date.fromDateTime(datetime)
+    dt := DateTime.fromLocale(str, pattern, TimeZone.cur, checked)
+    return fromDateTime(dt)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -212,7 +212,7 @@ const struct class Date
   **
   ** Also see `fromIso` and `toStr`.
   **
-  Str toIso() { toIso }
+  Str toIso() { toStr }
 
 //////////////////////////////////////////////////////////////////////////
 // Past/Future

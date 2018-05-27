@@ -124,7 +124,7 @@ public class FanStr
     return self;
   }
 
-  private static Type type = Sys.findType("sys::Str");
+  public static Type type = Sys.findType("sys::Str");
   public static Type typeof(String self)
   {
     return type;
