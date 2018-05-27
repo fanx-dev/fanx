@@ -81,12 +81,9 @@ public abstract class Slot extends FanObj {
 	// Methods
 	//////////////////////////////////////////////////////////////////////////
 
-	private static Type typeof;
+	static Type typeof = Sys.findType("reflect::Slot");
 
 	public Type typeof() {
-		if (typeof == null) {
-			typeof = Sys.findType("reflect::Slot");
-		}
 		return typeof;
 	}
 
@@ -236,7 +233,7 @@ public abstract class Slot extends FanObj {
 	final String qname;
 	Type parent;
 	final List facets;
-//	public String doc;
+	// public String doc;
 	public final int lineNum;
 
 }

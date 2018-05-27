@@ -151,7 +151,7 @@ public final class FPod
     }
   }
   
-  private static Map readProps(FStore.Input in) throws IOException {
+  private static Map<String, String> readProps(FStore.Input in) throws IOException {
 	  BufferedReader r = new BufferedReader(new InputStreamReader(in));
 	  String line;
 	  Map<String,String> map = new HashMap<String, String>();
@@ -267,7 +267,7 @@ public final class FPod
   public String podVersion;   // pod's version
   public String[] depends;    // pod dependencies
   public String fcodeVersion; // fcode format version
-  public Map meta;            // meta Str:Str map
+  public Map<String, String> meta;            // meta Str:Str map
   public FStore store;        // store we using to read
   public FType[] types;       // pod's declared types
   public FTable names;        // identifier names: foo
@@ -278,4 +278,6 @@ public final class FPod
   
   public ClassLoader podClassLoader;
   private Map<String, FType> typeMap;
+  
+  public Object reflectPod = null;
 }

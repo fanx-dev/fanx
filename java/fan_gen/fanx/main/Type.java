@@ -7,10 +7,14 @@
 //
 package fanx.main;
 
+import java.util.Map;
+
 import fanx.fcode.FConst;
 import fanx.fcode.FType;
 
 public abstract class Type {
+	
+	public Map<String, Object> slots = null;
 	
 	public Object emptyList;
 
@@ -50,5 +54,15 @@ public abstract class Type {
 	}
 	
 	public FType ftype() { return null; }
+	
+	
+	public static Type fromFType(FType ftype) {
+		if (ftype.reflectType == null) {
+			ClassType ct = new ClassType(ftype);
+			ftype.reflectType = ct;
+		}
+		Type res = (Type)ftype.reflectType;
+		return res;
+	}
 
 }

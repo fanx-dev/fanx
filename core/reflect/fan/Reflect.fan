@@ -47,7 +47,7 @@ native mixin TypeExt {
   **   Int:Slot#.params => ["K":Int, "V":Slot, "M":Int:Slot]
   **   |Int x, Float y->Bool|#.params => ["A":Int, "B":Float, "R":Bool]
   **
-  static extension Str:Type params(Type type)
+  //static extension Str:Type params(Type type)
 
   **
   ** If this is a generic type, then dynamically create a new parameterized
@@ -62,7 +62,7 @@ native mixin TypeExt {
   **   List#.parameterize(["V":Bool#]) => Bool[]
   **   Map#.parameterize(["K":Str#, "V":Obj#]) => Str:Obj
   **
-  static extension Type parameterize(Type type, Str:Type params)
+  //static extension Type parameterize(Type type, Str:Type params)
 
   **
   ** List of the all defined fields (including inherited fields).

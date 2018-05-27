@@ -56,13 +56,8 @@ public class Sys {
 		if (pos2 < 0) pos2 = signature.length();
 		String typeName = signature.substring(pos+2, pos2);
 		FType ftype = findFType(podName, typeName);
+		Type res = Type.fromFType(ftype);
 		
-		if (ftype.reflectType == null) {
-			ClassType ct = new ClassType(ftype);
-			ftype.reflectType = ct;
-		}
-		
-		Type res = (Type)ftype.reflectType;
 		if (nullable) {
 			return res.toNullable();
 		}
@@ -107,7 +102,7 @@ public class Sys {
 		throw new RuntimeException("Pod not found:" + name);
 	}
 
-	static List<String> listPod() {
+	public static List<String> listPod() {
 		List<String> classPath = new ArrayList<String>();
 		classPath.add(homeDir + "lib/fan/");
 		classPath.add(workDir + "lib/fan/");

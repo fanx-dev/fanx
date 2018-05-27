@@ -21,17 +21,38 @@ public class Method extends Slot {
 		this.mask = mask;
 		this.func = new MethodFunc(returns);
 	}
+	
+	public static Method fromFCode(FMethod f, Type parent) {
+		//TODO
+		List facets = List.make(Sys.findType("std::Facet"), 1);
+		FType ftype = parent.ftype();
+		FTypeRef tref = ftype.pod.typeRef(f.ret);
+		Type type = Sys.findType(tref.signature);
+		
+		FTypeRef tref2 = ftype.pod.typeRef(f.inheritedRet);
+		Type type2 = Sys.findType(tref2.signature);
+		
+		List params = List.make(Param.typeof, f.paramCount);
+		
+		FMethodVar[] vars = f.params();
+		for (int i=0; i<f.paramCount; ++i) {
+			FMethodVar var = vars[i];
+			params.add(Param.fromFCode(var, ftype.pod));
+		}
+		
+		int mask = 0;
+		Method method = new Method(parent, parent.name(), ftype.flags, facets, 0, type, type2, params, mask);
+		method.reflect = new java.lang.reflect.Method[(int)params.size()];
+		return method;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Methods
 	//////////////////////////////////////////////////////////////////////////
 
-	private static Type typeof;
+	static Type typeof = Sys.findType("reflect::Method");
 
 	public Type typeof() {
-		if (typeof == null) {
-			typeof = Sys.findType("reflect::Method");
-		}
 		return typeof;
 	}
 
@@ -153,9 +174,52 @@ public class Method extends Slot {
 			return true;
 		}
 
+		public Object call() {
+			return callWith(0, null, null, null, null, null, null, null, null);
+		}
+
+		public Object call(Object a) {
+			return callWith(1, a, null, null, null, null, null, null, null);
+		}
+
+		public Object call(Object a, Object b) {
+			return callWith(2, a, b, null, null, null, null, null, null);
+		}
+
+		public Object call(Object a, Object b, Object c) {
+			return callWith(3, a, b, c, null, null, null, null, null);
+		}
+
+		public Object call(Object a, Object b, Object c, Object d) {
+			return callWith(4, a, b, c, d, null, null, null, null);
+		}
+
+		public Object call(Object a, Object b, Object c, Object d, Object e) {
+			return callWith(5, a, b, c, d, e, null, null, null);
+		}
+
+		public Object call(Object a, Object b, Object c, Object d, Object e, Object f) {
+			return callWith(6, a, b, c, d, e, f, null, null);
+		}
+
+		public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {
+			return callWith(7, a, b, c, d, e, f, g, null);
+		}
+
 		public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
+			return callWith(8, a, b, c, d, e, f, g, h);
+		}
+
+		private Object callWith(int argc, Object a, Object b, Object c, Object d, Object e, Object f, Object g,
+				Object h) {
+			if (argc < minParams()) {
+				throw ArgErr.make("Too few arguments: " + argc);
+			}
+			if (argc > fparams.size()) {
+				throw ArgErr.make("Too many arguments: " + argc);
+			}
 			boolean isStatic = isStatic() || isCtor();
-			int p = (int) fparams.size();
+			int p = argc;
 			Object[] args = new Object[p];
 			if (isStatic) {
 				switch (p) {

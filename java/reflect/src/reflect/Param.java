@@ -29,16 +29,19 @@ public class Param
     this.type = type;
     this.mask = mask;
   }
+  
+  public static Param fromFCode(FMethodVar var, FPod pod) {
+	  FTypeRef tref = pod.typeRef(var.type);
+	  Type type2 = Sys.findType(tref.signature);
+	  return new Param(var.name, type2, var.hasDefault() ? HAS_DEFAULT : 0);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
 //////////////////////////////////////////////////////////////////////////
-  private static Type typeof;
+  static Type typeof = Sys.findType("reflect::Param");
 
   public Type typeof() { 
-	  if (typeof == null) {
-		  typeof = Sys.findType("reflect::Param");
-	  }
 	  return typeof;
   }
 
