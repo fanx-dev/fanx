@@ -126,16 +126,27 @@ public abstract class Func extends FanObj {
 		return ((Boolean) call(a, b)).booleanValue();
 	}
 
-	// Hooks used by compiler to generate runtime const field checks for
-	// it-blocks
-	public void enterCtor(Object o) {
-	}
+// Hooks used by compiler to generate runtime const field checks for
+// it-blocks
+//	public void enterCtor(Object o) {
+//	}
+//
+//	public void exitCtor() {
+//	}
+//
+//	public void checkInCtor(Object o) {
+//	}
+	
+	public void enterCtor(Object o) { this.inCtor = o; }
+    public void exitCtor() { this.inCtor = null; }
+    public void checkInCtor(Object it)
+    {
+      if (it == inCtor) return;
+      String msg = it == null ? "null" : FanObj.typeof(it).qname();
+      throw ConstErr.make(msg);
+    }
 
-	public void exitCtor() {
-	}
-
-	public void checkInCtor(Object o) {
-	}
+    protected Object inCtor;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Indirect

@@ -65,12 +65,12 @@ native final const class Pod
   **
   ** Version number for this pod.
   **
-  //Version version()
+  Version version()
 
   **
   ** Get the declared list of dependencies for this pod.
   **
-  //Depend[] depends()
+  Depend[] depends()
 
   **
   ** Uri for this pod which is always "fan://{name}".

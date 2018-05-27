@@ -99,6 +99,13 @@ public class FType
 	  }
 	  throw new RuntimeException("Unknow Generic Param:" + name + " in " + qname());
   }
+  
+  public FDoc doc() {
+	  if (doc == null) {
+		  doc = new FDoc(pod.store, typeName());
+	  }
+	  return doc;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -114,6 +121,8 @@ public class FType
   public FMethod[] methods;     // methods
   public FAttrs attrs;          // type attributes
   public GenericParam[] genericParams;
+  
+  private FDoc doc;
   
   public static class GenericParam {
 	  int bound;

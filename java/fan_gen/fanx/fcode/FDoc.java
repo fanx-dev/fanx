@@ -18,23 +18,31 @@ import java.util.*;
 public class FDoc {
 	private String typeDoc;
 	private Map<String, String> slotsDoc;
-	
-	public FDoc(FStore store, String className) throws IOException {
-		InputStream in = store.read("doc/" + className + ".apidoc");
-		if (in != null) {
-			try {
-				FDocReader doc = new FDocReader(in, className);
-				doc.read();
-			} finally {
-				in.close();
+
+	public FDoc(FStore store, String className) {
+		try {
+			InputStream in = store.read("doc/" + className + ".apidoc");
+			if (in != null) {
+				try {
+					FDocReader doc = new FDocReader(in, className);
+					doc.read();
+				} finally {
+					in.close();
+				}
 			}
+		} catch (Exception e) {
 		}
 	}
-	
-	public String tyeDoc() { return typeDoc; }
-	
-	public String slotDoc(String s) { return slotsDoc.get(s); }
-	
+
+	public String tyeDoc() {
+		return typeDoc;
+	}
+
+	public String slotDoc(String s) {
+		if (slotsDoc == null) return null;
+		return slotsDoc.get(s);
+	}
+
 	private class FDocReader {
 
 		public FDocReader(InputStream in, String type) throws IOException {
@@ -60,11 +68,11 @@ public class FDoc {
 				String slotName = cur.endsWith("(") ? cur.substring(3, cur.length() - 1)
 						: cur.substring(3, cur.indexOf(' ', 4));
 				String slotDoc = readAttrsToDoc();
-				
+
 				slotsDoc.put(slotName, slotDoc);
-//				Slot slot = type.slot(slotName, false);
-//				if (slot != null)
-//					slot.doc = slotDoc;
+				// Slot slot = type.slot(slotName, false);
+				// if (slot != null)
+				// slot.doc = slotDoc;
 			}
 		}
 

@@ -8,6 +8,7 @@
 package fanx.main;
 
 import fanx.fcode.FConst;
+import fanx.fcode.FType;
 
 public abstract class Type {
 	
@@ -47,5 +48,7 @@ public abstract class Type {
 	public String toString() {
 		return signature();
 	}
+	
+	public FType ftype() { return null; }
 
 }

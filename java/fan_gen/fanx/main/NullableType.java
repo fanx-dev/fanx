@@ -7,17 +7,18 @@
 //
 package fanx.main;
 
+import fanx.fcode.FType;
+
 /**
  * NullableType wraps a type as nullable with trailing "?".
  */
-public class NullableType extends Type
-{
+public class NullableType extends Type {
 	Type root;
-	
+
 	public NullableType(Type root) {
 		this.root = root;
 	}
-	
+
 	@Override
 	public String podName() {
 		return root.podName();
@@ -35,7 +36,7 @@ public class NullableType extends Type
 
 	@Override
 	public String signature() {
-		return root.signature()+"?";
+		return root.signature() + "?";
 	}
 
 	@Override
@@ -67,8 +68,14 @@ public class NullableType extends Type
 	public long flags() {
 		return root.flags();
 	}
+
 	@Override
 	public Type toNullable() {
 		return this;
+	}
+
+	@Override
+	public FType ftype() {
+		return root.ftype();
 	}
 }

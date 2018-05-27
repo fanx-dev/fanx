@@ -7,12 +7,19 @@
 //
 package fanx.main;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import fanx.fcode.FField;
+import fanx.fcode.FMethod;
+import fanx.fcode.FSlot;
 import fanx.fcode.FType;
 
 public class ClassType extends Type
 {
 	FType ftype;
 	Class<?> jtype;
+	Map<String, FSlot> slots = null;
 	
 	public ClassType(FType t) {
 		ftype = t;
@@ -74,5 +81,25 @@ public class ClassType extends Type
 	public Type toNullable() {
 		return new NullableType(this);
 	}
-
+	
+	@Override
+	public FType ftype() { return this.ftype; }
+	
+	public FSlot slot(String name) {
+		initSlots();
+		FSlot s = slots.get(name);
+		return s;
+	}
+	
+	private void initSlots() {
+		if (slots != null) return;
+		slots = new HashMap<String, FSlot>();
+		
+		for (FField f : ftype.fields) {
+			slots.put(f.name, f);
+		}
+		for (FMethod f : ftype.methods) {
+			slots.put(f.name, f);
+		}
+	}
 }
