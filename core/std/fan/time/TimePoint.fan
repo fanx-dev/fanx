@@ -20,9 +20,27 @@ const struct class TimePoint
   private new make(Int ticks) {
   }
 
+  **
+  ** Return the current time as millisecond ticks since 1 Jan 1970 UTC.
+  **
+  native static Int nowMillis()
+
+  **
+  ** Get the current value of the system timer.  This method returns
+  ** a relative time unrelated to system or wall-clock time.  Typically
+  ** it is the number of nanosecond ticks which have elapsed since system
+  ** startup.
+  **
+  native static Int nanoTicks()
+
+  **
+  ** Return the current time as nanosecond ticks since 1 Jan 1970 UTC
+  **
+  native static Int nowUnique()
+
   ** Return the current time
   static new now() {
-    make(TimeUtil.currentTimeMillis)
+    make(nowMillis)
   }
 
   ** make from millisecond since 1970

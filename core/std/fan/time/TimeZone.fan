@@ -37,7 +37,7 @@ const class TimeZone
   ** list contains only the simple names such as "New_York"
   ** and "London".
   **
-  static Str[] listNames() { TimeUtil.listTimeZoneNames }
+  native static Str[] listNames()
 
   **
   ** List all zoneinfo (Olson database) full names of the
@@ -72,12 +72,12 @@ const class TimeZone
     return tz
   }
 
-  static TimeZone? fromName(Str name) { TimeUtil.findTimeZone(name) }
+  native static TimeZone? fromName(Str name)
 
   **
   ** UTC time zone instance is "Etc/Utc".
   **
-  const static TimeZone utc := TimeZone("UTC", "UTC", 0)
+  const static TimeZone utc := TimeZone("UTC", "Etc/Utc", 0)
 
   **
   ** Relative time zone instance is "Etc/Rel".  The relative timezone
@@ -94,7 +94,7 @@ const class TimeZone
   ** key "timezone" and any value accepted by `fromStr`.  Once
   ** Fantom is booted, the default timezone cannot be changed.
   **
-  static TimeZone cur() { TimeUtil.curTimeZone }
+  native static TimeZone cur()
 
   **
   ** Default value is UTC.
@@ -124,7 +124,11 @@ const class TimeZone
   ** Examples of full names are "America/New_York" and "Europe/London".
   **
   const Str fullName
-  const Int baseOffset
+
+  **
+  ** raw offset in seconds indepeneds daylight saveings
+  **
+  private const Int baseOffset
 
   **
   ** Get the duration of time added to UTC to compute standard time
@@ -154,9 +158,9 @@ const class TimeZone
   **
   ** Get the duration of time which will be added to local standard
   ** time to get wall time during daylight savings time (often 1hr).
-  ** If daylight savings time is not observed then return null.
+  ** If daylight savings time is not observed then return 0.
   **
-  Duration? dstOffset(Int year) { TimeUtil.daylightSavingsOffset(this, year) }
+  native Duration dstOffset(Int year)
 
   **
   ** Get the abbreviated name during standard time.
@@ -174,4 +178,9 @@ const class TimeZone
   **
   override Str toStr() { name }
 
+
+  //native private static TimeZone? findTimeZone(Str name)
+  //native private static TimeZone curTimeZone()
+  //native private static Duration daylightSavingsOffset(TimeZone tz, Int year)
+  //native private static Str[] listTimeZoneNames()
 }

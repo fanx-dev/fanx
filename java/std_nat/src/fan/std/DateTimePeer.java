@@ -59,7 +59,8 @@ public class DateTimePeer {
 	}
 
 	static long hoursInDay(DateTime self) {
-		return 24;
+		Calendar c = toCalendar(self);
+		return c.get(Calendar.HOUR_OF_DAY);
 	}
 
 	static String toLocale(DateTime self, String pattern, Locale locale) {
@@ -98,11 +99,25 @@ public class DateTimePeer {
 	}
 
 	static long weekdayInMonth(long year, Month mon, Weekday weekday, long pos) {
-//		Calendar c = Calendar.getInstance();
-//		c.set((int)year, (int)mon.ordinal(), 0);
-//		return c.get(Calendar.WEEK_OF_MONTH);
-		//TODO
-		return 0;
+		Calendar cal = Calendar.getInstance();
+	    cal.set(Calendar.DATE,1);
+	    cal.set(Calendar.YEAR, (int)year);
+	    cal.set(Calendar.MONTH, (int)mon.ordinal());
+	    
+	    if (pos < 0) {
+	    	pos = 31 + pos;
+	    }
+	    int count = 0;
+	    for (int i = 0; i < 31; i++) {
+	        if (cal.get(Calendar.DAY_OF_WEEK) == weekday.ordinal()) {
+	            count++;
+	            if (count == pos) {
+	            	return i;
+	            }
+	        }
+	        cal.add(Calendar.DATE,1);
+	    }
+	    return -1;
 	}
 
 }

@@ -69,18 +69,8 @@ const struct class DateTime
   **
   //private static Int nowTicks() { TimeUtil.currentTimeMillis }
 
-  **
-  ** Return the current time as nanosecond ticks since 1 Jan 1970 UTC,
-  ** but with the guarantee that every call returns a unique value for
-  ** the lifetime of this VM.  Since most platforms don't actually support
-  ** nanosecond resolution, the unused nanoseconds are used as a counter
-  ** to ensure uniqueness.  However, bursts of calls may result in a
-  ** drift from the actual system time.  For example if the platform's
-  ** clock supports millisecond resolution, then calling this method
-  ** more than one million time within a millisecond will introduce
-  ** a millisecond drift (1,000,000ns in a ms).
-  **
-  static Int nowUnique() { TimeUtil.nowUnique }
+  @NoDoc
+  static Int nowUnique() { TimePoint.nowUnique }
 
   **
   ** Make for nanosecond ticks since 1 Jan 2000 UTC.  Throw

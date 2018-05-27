@@ -29,13 +29,8 @@ const struct class Duration
   **
   //static Duration now()
 
-  **
-  ** Get the current value of the system timer.  This method returns
-  ** a relative time unrelated to system or wall-clock time.  Typically
-  ** it is the number of nanosecond ticks which have elapsed since system
-  ** startup.
-  **
-  private static Int nowTicks() { TimeUtil.nanoTicks }
+  @NoDoc
+  private static Int nowTicks() { TimePoint.nanoTicks }
 
   **
   ** Create a Duration which represents the specified number of nanosecond ticks.

@@ -35,7 +35,7 @@ const class Locale
       if (len == 2)
       {
         if (s.isLower)
-          return Locale(s, s, null);
+          return Locale(s, null);
       }
 
       if (len == 5)
@@ -43,7 +43,7 @@ const class Locale
         Str lang := s[0..<2]
         Str country := s[3..<5]
         if (lang.isLower && country.isUpper && s[2] == '-')
-          return Locale(s, lang, country)
+          return Locale(lang, country)
       }
     }
     catch (Err e) {
@@ -55,10 +55,11 @@ const class Locale
   **
   ** Private constructor
   **
-  private new make(Str str, Str lang, Str? country) {
-    this.str = str
+  private new make(Str lang, Str? country) {
     this.lang = lang
     this.country = country
+    if (country == null) this.str = lang
+    else this.str = "${country}_${lang}"
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,13 +69,13 @@ const class Locale
   **
   ** Get the current thread's locale.
   **
-  static Locale cur() { TimeUtil.getLocale }
+  native static Locale cur()
 
   **
   ** Set the current thread's locale.
   ** Throw NullErr if null is passed.
   **
-  static Void setCur(Locale locale) { TimeUtil.setLocale(locale) }
+  native static Void setCur(Locale locale)
 
   **
   ** Run the specified function using this locale as the
