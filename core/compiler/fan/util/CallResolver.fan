@@ -272,9 +272,6 @@ class CallResolver : CompilerSupport
   }
 
   private Bool findExtesion(CType base) {
-    call := expr as CallExpr
-    if (call == null) return false
-
     founds := CMethod[,]
     meths := curType.unit.extensionMethods
     meths.each |m| {
