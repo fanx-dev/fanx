@@ -9,6 +9,10 @@ public class LogPeer {
 
 	static java.util.Map<String, Log> map = new java.util.HashMap<String, Log>();
 	static java.util.List<Func> handlers = new java.util.ArrayList<Func>();
+	
+	static LogPeer make(Log log) {
+		return new LogPeer();
+	}
 
 	public static synchronized List list() {
 		List list = List.make(Sys.findType("std::Log"), map.size());
@@ -33,17 +37,15 @@ public class LogPeer {
 		map.put(log.name, log);
 	}
 
-	public static synchronized LogLevel level(Log self) {
-		LogPeer peer = (LogPeer) self.peer;
-		return peer.level;
+	public synchronized LogLevel level(Log self) {
+		return this.level;
 	}
 
-	public static synchronized void setLevel(Log self, LogLevel l) {
-		LogPeer peer = (LogPeer) self.peer;
-		peer.level = l;
+	public synchronized void level(Log self, LogLevel l) {
+		this.level = l;
 	}
 
-	public static synchronized void log(Log self, LogRec rec) {
+	public synchronized void log(Log self, LogRec rec) {
 		if (!self.isEnabled(rec.level))
 			return;
 		for (Func handler : handlers) {

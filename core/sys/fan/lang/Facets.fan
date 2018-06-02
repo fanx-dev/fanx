@@ -138,4 +138,12 @@ facet class FacetMeta
   const Bool inherited := false
 }
 
+**************************************************************************
+** NativePeer
+**************************************************************************
+
+**
+** to indicate the native class do not emit peer field
+**
+facet class NoPeer {}
 

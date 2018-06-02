@@ -548,7 +548,7 @@ mixin InStream
 **************************************************************************
 ** SysInStream
 **************************************************************************
-
+@NoPeer
 class ProxInStream : InStream
 {
   protected InStream in
@@ -574,7 +574,7 @@ class ProxInStream : InStream
   override Str? readLine(Int max := -1) { in.readLine(max) }
   override Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
 }
-
+@NoPeer
 internal class SysInStream : InStream
 {
   protected Obj? peer

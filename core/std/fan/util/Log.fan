@@ -27,7 +27,6 @@ enum class LogLevel
 **
 const class Log
 {
-  protected const Obj? peer
 //////////////////////////////////////////////////////////////////////////
 // Factory
 //////////////////////////////////////////////////////////////////////////
@@ -95,8 +94,8 @@ const class Log
   ** the log level is logged.  Anything less severe is ignored.
   ** If the level is set to silent, then logging is disabled.
   **
-  native LogLevel level()
-  native Void setLevel(LogLevel level)
+  native LogLevel level
+  //native Void setLevel(LogLevel level)
 
   **
   ** Return if this log is enabled for the specified level.

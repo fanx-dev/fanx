@@ -12,24 +12,12 @@ public class DateTimePeer {
 		return null;
 	}
 
-	static DateTime now() {
-		return now(Duration.fromMillis(250));
-	}
-
 	static DateTime nowUtc(Duration tolerance) {
 		return null;
 	}
 
-	static DateTime nowUtc() {
-		return nowUtc(Duration.fromMillis(250));
-	}
-
 	static DateTime fromTicks(long ticks, TimeZone tz) {
 		return null;
-	}
-
-	static DateTime fromTicks(long ticks) {
-		return fromTicks(ticks, TimeZone.cur());
 	}
 
 	static List getTicks(long year, long month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
@@ -54,10 +42,6 @@ public class DateTimePeer {
 		return c.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	static long weekOfYear(DateTime self) {
-		return weekOfYear(self, Weekday.localeStartOfWeek());
-	}
-
 	static long hoursInDay(DateTime self) {
 		Calendar c = toCalendar(self);
 		return c.get(Calendar.HOUR_OF_DAY);
@@ -67,14 +51,6 @@ public class DateTimePeer {
 		SimpleDateFormat format = new SimpleDateFormat(pattern, java.util.Locale.forLanguageTag(locale.lang));
 		java.util.Date date = new java.util.Date(self.toJava());
 		return format.format(date);
-	}
-
-	static String toLocale(DateTime self, String pattern) {
-		return toLocale(self, pattern, Locale.cur());
-	}
-
-	static String toLocale(DateTime self) {
-		return toLocale(self, null, Locale.cur());
 	}
 
 	static DateTime fromLocale(String str, String pattern, TimeZone tz, boolean checked) {
@@ -88,14 +64,6 @@ public class DateTimePeer {
 			}
 			return null;
 		}
-	}
-
-	static DateTime fromLocale(String str, String pattern, TimeZone tz) {
-		return fromLocale(str, pattern, tz, true);
-	}
-
-	static DateTime fromLocale(String str, String pattern) {
-		return fromLocale(str, pattern, TimeZone.cur(), true);
 	}
 
 	static long weekdayInMonth(long year, Month mon, Weekday weekday, long pos) {

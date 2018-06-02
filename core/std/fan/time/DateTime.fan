@@ -17,6 +17,7 @@
 ** Also see [docLang]`docLang::DateTime`.
 **
 @Serializable { simple = true }
+@NoPeer
 const struct class DateTime
 {
   // Fields Bitmask

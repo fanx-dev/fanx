@@ -12,6 +12,7 @@
 ** TimePoint provides millisecond precision in current implemention.
 **
 @Serializable { simple = true }
+@NoPeer
 const struct class TimePoint
 {
   ** millisecond since 1970

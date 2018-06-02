@@ -234,11 +234,19 @@ public class FMethodEmit
       this.self = false;
 
       int peerMethod = emit.method(selfName + "Peer." + name + sig);
-//      code.op(ALOAD_0);
-//      code.op2(GETFIELD, emit.peerField.ref());
-      code.maxLocals = pushArgs(code, true, paramLen);
-      code.maxStack  = Math.max(code.maxLocals, 2);
-      code.op2(INVOKESTATIC, peerMethod);
+      
+      if (emit.peerField != null) {
+	      code.op(ALOAD_0);
+	      code.op2(GETFIELD, emit.peerField.ref());
+	      code.maxLocals = pushArgs(code, true, paramLen) + 1;
+	      code.maxStack  = Math.max(code.maxLocals, 2);
+	      code.op2(INVOKEVIRTUAL, peerMethod);
+      }
+      else {
+	      code.maxLocals = pushArgs(code, true, paramLen);
+	      code.maxStack  = Math.max(code.maxLocals, 2);
+	      code.op2(INVOKESTATIC, peerMethod);
+      }
     }
     code.op(FCodeEmit.returnOp(ret));
 

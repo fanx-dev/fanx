@@ -27,6 +27,7 @@
 ** Also see [docLang]`docLang::DateTime`.
 **
 @Serializable { simple = true }
+@NoPeer
 const class TimeZone
 {
 

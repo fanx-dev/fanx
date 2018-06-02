@@ -8,7 +8,7 @@ Class
     Str name
     Int age
 
-    //Constructor use the new keyword
+    //named constructor
     new make(Str name, Int age) {
       this.name = name
       this.age = age
@@ -44,9 +44,9 @@ Fields And Methods
 
   p.age = 10
   p.say("A")
-  p->say("A") //dynamic call
-```
+  p->say("A") //dynamic reflect call
 
+```
 
 Immutability
 ========
@@ -148,11 +148,11 @@ Extension method
 To add methods out side the class
 ```
   class Whatever {
-    extension static Str[] splitBy(Str str, Str sp, Int max := Int.maxVal) {
+    extension static Void foo(Str str) {
       ...
     }
   }
 
-  //shortcut of Whatever.splitBy(str, "::", 3)
-  fs := str.splitBy("::", 3)
+  //shortcut of Whatever.foo(str)
+  str.foo
 ```

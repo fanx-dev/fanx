@@ -18,13 +18,13 @@
 To add methods out side the class
 ```
   class Whatever {
-    extension static Str[] splitBy(Str str, Str sp, Int max := Int.maxVal) {
+    extension static Void foo(Str str) {
       ...
     }
   }
 
-  //shortcut of Whatever.splitBy(str, "::", 3)
-  fs := str.splitBy("::", 3)
+  //shortcut of Whatever.foo(str)
+  str.foo
 ```
 
 ### Numeric Precision ###
@@ -55,18 +55,14 @@ A struct type is a value type
   }
 ```
 
-
-## Little Things ##
-
-### Light-Weight 'sys' Library ###
-The Fantom sys pod divided into three pod: sys, std, reflect
-They written in Fantom with little native code.
+### Portable Library ###
+The sys pod is written in Fantom with little native code.
 
 It's more portable to write a new backend platforms.
 Future targets might include Objective-C for the iPhone, the LLVM, WebAssembly.
 
 ### Static Namespace ###
-FanCore allow same name static slots through inheritance.
+FanCore allow same name static slots in inheritance.
 ```
    class Base {
      static Void foo() {}
@@ -80,7 +76,6 @@ FanCore allow same name static slots through inheritance.
      }
    }
 ```
-The static constructor still work for compatibility.
 
 ### Return From Void ###
 FanCore not allow return a value from Void method, except return a Void type.
@@ -91,40 +86,6 @@ The Default Number is Float
   f := 0.1   //Float
   f := 0.2f  //Float
   f := 0.3d  //Decimal
-```
-
-### Native Methods ###
-Fantom's Way:
-```
-  // Fantom
-  class Foo {
-    native Str a(Bool x)
-    static native Void b(Int x)
-  }
-
-  // Java or C#
-  class FooPeer {
-    public static FooPeer make(Foo self) { return new FooPeer(); }
-    public String a(Foo self, boolean x) { return "a"; }
-    public static void b(long x) {}
-  }
-```
-New way:
-```
-  // Java or C#
-  class FooPeer {
-    public static String a(Foo self, boolean x) { return "a"; }
-    public static void b(long x) {}
-  }
-```
-If you want a peer field to hold data:
-```
-  //Fantom
-  class Foo {
-    internal Obj? peer
-    native Str a(Bool x)
-    static native Void b(Int x)
-  }
 ```
 
 ### Build Script ###
@@ -139,6 +100,13 @@ Run build:
 ```
   fanc yourPath/pod.props
 ```
+
+### Local Return ###
+distinguish it from normal return
+
+
+
+## API Different ##
 
 ### Extension Methods API ###
 Most Convenience methods changed to extension methods for break depends.
@@ -178,5 +146,7 @@ To avoid int boxing, prefer -1 instead of null.
 LinkedList Set and more.
 
 ### DateTime ###
-Add TimePoint class. all time APIs are based on a millis tick.
+Add TimePoint class.
+All time APIs are based on a millis ticks.
+The Time rename to TimeOfDay.
 

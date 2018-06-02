@@ -9,6 +9,7 @@ package fanx.emit;
 
 import java.util.*;
 import fanx.fcode.*;
+import fanx.fcode.FAttrs.FFacet;
 import fanx.main.Sys;
 import fanx.util.*;
 
@@ -95,11 +96,27 @@ public abstract class FTypeEmit
 
   private void preview()
   {
-    this.isNative = (type.flags & FConst.Native) != 0;
-    if (!this.isNative)
-    {
+//    boolean hasNative = (type.flags & FConst.Native) != 0;
+	boolean resolved = false;
+	if (type.attrs.facets != null) {
+		for (FFacet facet : type.attrs.facets) {
+			FTypeRef tr = type.pod.typeRef(facet.type);
+			if (tr.podName.equals("sys") && tr.typeName.equals("NoPeer")) {
+				hasPeer = false;
+				resolved = true;
+				break;
+			}
+		}
+	}
+	
+    if (!resolved) {
       for (int i=0; i<type.methods.length; ++i)
-        if ((type.methods[i].flags & Native) != 0) { this.isNative = true; break; }
+        if ((type.methods[i].flags & Native) != 0) {
+        	if ((type.methods[i].flags & Static) == 0 && (type.methods[i].flags & Ctor) == 0) {
+        		this.hasPeer = true;
+        		break;
+        	}
+        }
     }
   }
 
@@ -118,8 +135,10 @@ public abstract class FTypeEmit
     code.emitLineNumber(lineNum);
 
     // if native generate peer field and peer() override
-//    if (isNative)
-//      peerField = emitField("peer", "L" + className + "Peer;", EmitConst.PUBLIC);
+    if (hasPeer)
+      peerField = emitField("peer", "L" + className + "Peer;", EmitConst.PUBLIC);
+    else
+      peerField = null;
   }
 
   /**
@@ -223,14 +242,14 @@ public abstract class FTypeEmit
       code.op2(INVOKESPECIAL, method(superClassName +".<init>()V"));
     }
 
-    // make peer
-//    if (isNative)
-//    {
-//      code.op(ALOAD_0);  // for putfield
-//      code.op(DUP);      // for arg to make
-//      code.op2(INVOKESTATIC, method(selfName + "Peer.make(L" + className + ";)L" + className + "Peer;"));
-//      code.op2(PUTFIELD, peerField.ref());
-//    }
+//     make peer
+    if (hasPeer)
+    {
+      code.op(ALOAD_0);  // for putfield
+      code.op(DUP);      // for arg to make
+      code.op2(INVOKESTATIC, method(selfName + "Peer.make(L" + className + ";)L" + className + "Peer;"));
+      code.op2(PUTFIELD, peerField.ref());
+    }
 
     if (m == null)
     {
@@ -484,13 +503,14 @@ public abstract class FTypeEmit
   FType type;
   String selfName;               // class name to use as self (for mixin body - this is interface)
   FieldEmit typeField;           // private static final Type $Type
-//  FieldEmit peerField;           // public static final TypePeer peer
+  FieldEmit peerField;           // public static final TypePeer peer
   boolean hasInstanceInit;       // true if we already emitted <init>
   boolean hasStaticInit;         // true if we already emitted <clinit>
 //  FuncType funcType;             // if type is a function
   boolean isFuncType;
   HashMap typeLiteralFields;     // signature Strings we need to turn into cached fields
-  boolean isNative = false;      // do we have any native methods requiring a peer
+  private boolean hasPeer = false;      // do we have any native methods requiring a peer
+//  private boolean hasNative = false;      // do we have any native methods requiring a peer
   int lineNum;                   // line number of current type (or zero)
 
 }

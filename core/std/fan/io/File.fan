@@ -475,7 +475,7 @@ abstract const class File
 **************************************************************************
 ** LocalFile
 **************************************************************************
-
+@NoPeer
 internal const class LocalFile : File
 {
   protected const Obj? peer
