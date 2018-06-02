@@ -109,9 +109,7 @@ distinguish it from normal return
 ## API Different ##
 
 ### Extension Methods API ###
-Most Convenience methods changed to extension methods for break depends.
-For example: Str.toRegex bring to the Str class depend on Regex module.
-We solve it in the following:
+Most Convenience methods are changed to extension methods to break the dependency.
 ```
   mixin StrUil {
     extensiosn static Regex toRegex(Str self) { Regex(self) }
