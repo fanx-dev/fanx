@@ -5,7 +5,7 @@
 // History:
 //   4 Jan 06  Brian Frank  Creation
 //
-package reflect;
+package fan.reflect;
 
 import fan.sys.*;
 import fanx.fcode.*;

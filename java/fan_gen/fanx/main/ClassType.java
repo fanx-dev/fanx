@@ -18,7 +18,7 @@ import fanx.fcode.FType;
 public class ClassType extends Type
 {
 	FType ftype;
-	Class<?> jtype;
+	private Class<?> jclass;
 	
 	public ClassType(FType t) {
 		ftype = t;
@@ -51,12 +51,19 @@ public class ClassType extends Type
 
 	@Override
 	public Class<?> getJavaClass() {
-		return jtype;
+		if (jclass == null) {
+			try {
+				jclass = ftype.pod.podClassLoader.loadClass("fan."+ftype.pod.podName+"."+ftype.typeName());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return jclass;
 	}
 
 	@Override
 	public void precompiled(Class<?> clz) {
-		jtype = clz;
+		jclass = clz;
 	}
 
 	@Override

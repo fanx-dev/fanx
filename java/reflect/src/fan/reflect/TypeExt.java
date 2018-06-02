@@ -1,4 +1,4 @@
-package reflect;
+package fan.reflect;
 
 import fan.sys.List;
 import fan.sys.UnknownSlotErr;
@@ -85,9 +85,11 @@ public class TypeExt {
 		FType ftype = type.ftype();
 		if (ftype != null) {
 			for (FField f : ftype.fields) {
+				if (f.isSynthetic()) continue;
 				slots.put(f.name, Field.fromFCode(f, type));
 			}
 			for (FMethod f : ftype.methods) {
+				if (f.isSynthetic()) continue;
 				slots.put(f.name, Method.fromFCode(f, type));
 			}
 		}
@@ -95,6 +97,7 @@ public class TypeExt {
 		java.lang.reflect.Method[] jmths = type.getJavaClass().getMethods();
 		for (java.lang.reflect.Method jmth : jmths) {
 			Slot s = (Slot)slots.get(jmth.getName());
+			if (s == null) continue;
 			if (s instanceof Method) {
 				Method mth = (Method)s;
 				if (jmth.getParameterCount() < mth.reflect.length) {

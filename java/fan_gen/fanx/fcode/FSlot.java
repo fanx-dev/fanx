@@ -13,27 +13,31 @@ import java.util.*;
 /**
  * FSlot is the fcode representation of sys::Slot.
  */
-public class FSlot
-  implements FConst
-{
+public class FSlot implements FConst {
 
-  public final boolean isStatic() { return (flags & FConst.Static) != 0; }
-  
-  public final boolean isAbstract() { return (flags & FConst.Abstract) != 0; }
+	public final boolean isStatic() {
+		return (flags & FConst.Static) != 0;
+	}
 
-  protected void readCommon(FStore.Input in) throws IOException
-  {
-    name  = in.name();
-    flags = in.u4();
-  }
+	public final boolean isAbstract() {
+		return (flags & FConst.Abstract) != 0;
+	}
 
-  protected void readAttrs(FStore.Input in) throws IOException
-  {
-    attrs = FAttrs.read(in);
-  }
+	public final boolean isSynthetic() {
+		return (flags & FConst.Synthetic) != 0;
+	}
 
-  public String name;     // simple slot name
-  public int flags;       // bitmask
-  public FAttrs attrs;    // meta-data
+	protected void readCommon(FStore.Input in) throws IOException {
+		name = in.name();
+		flags = in.u4();
+	}
+
+	protected void readAttrs(FStore.Input in) throws IOException {
+		attrs = FAttrs.read(in);
+	}
+
+	public String name; // simple slot name
+	public int flags; // bitmask
+	public FAttrs attrs; // meta-data
 
 }

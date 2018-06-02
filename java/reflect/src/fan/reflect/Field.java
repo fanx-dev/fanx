@@ -1,4 +1,4 @@
-package reflect;
+package fan.reflect;
 
 import fan.std.Map;
 import fan.sys.*;
@@ -44,14 +44,15 @@ public class Field extends Slot {
 	
 	public static Field fromFCode(FField f, Type parent) {
 		//TODO
-		List facets = List.make(Sys.findType("std::Facet"), 1);
+		List facets = List.make(Sys.findType("sys::Facet"), 1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.type);
 		Type type = Sys.findType(tref.signature);
-		Field field = new Field(parent, parent.name(), ftype.flags, facets, 0, type);
+		Field field = new Field(parent, f.name, ftype.flags, facets, 0, type);
 		
 		try {
-			field.reflect = parent.getJavaClass().getField(f.name);
+			Class<?> clz = parent.getJavaClass();
+			field.reflect = clz.getDeclaredField(f.name);
 			field.reflect.setAccessible(true);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();

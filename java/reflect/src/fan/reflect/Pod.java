@@ -1,4 +1,4 @@
-package reflect;
+package fan.reflect;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -131,6 +131,7 @@ public class Pod extends FanObj {
 		if (types == null) {
 			List list = List.make(FanType.typeof(), fpod.types.length);
 			for (FType f : fpod.types) {
+				if (f.isSynthetic()) continue;
 				Type t = Type.fromFType(f);
 				list.add(t);
 			}

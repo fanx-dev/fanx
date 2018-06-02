@@ -145,6 +145,10 @@ public class FType
 		return (flags & FConst.Mixin) != 0;
 	}
 	
+	public final boolean isSynthetic() {
+		return (flags & FConst.Synthetic) != 0;
+	}
+	
 	public String signature() {
 		return selfRef.signature;
 	}

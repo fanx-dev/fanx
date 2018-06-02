@@ -1,4 +1,4 @@
-package reflect;
+package fan.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,7 +24,7 @@ public class Method extends Slot {
 	
 	public static Method fromFCode(FMethod f, Type parent) {
 		//TODO
-		List facets = List.make(Sys.findType("std::Facet"), 1);
+		List facets = List.make(Sys.findType("sys::Facet"), 1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.ret);
 		Type type = Sys.findType(tref.signature);
@@ -41,7 +41,7 @@ public class Method extends Slot {
 		}
 		
 		int mask = 0;
-		Method method = new Method(parent, parent.name(), ftype.flags, facets, 0, type, type2, params, mask);
+		Method method = new Method(parent, f.name, ftype.flags, facets, 0, type, type2, params, mask);
 		method.reflect = new java.lang.reflect.Method[(int)params.size()];
 		return method;
 	}
