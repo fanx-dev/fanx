@@ -27,7 +27,7 @@ Class
 
 ```
 
-Fields And Methods
+Fields and Methods
 =======
 ```
   class Person
@@ -100,7 +100,7 @@ Literals
 ```
 
 
-Closures
+Functional and Closures
 =======
 Functions are first class objects
 ```
@@ -111,6 +111,41 @@ Functions are first class objects
 
   //sort
   files = files.sort |a, b| { a.modified <=> b.modified }
+```
+
+Declarative Programming
+=======
+Fantom serialization format just is a subset of Fantom source grammar.
+```
+  Window
+  {
+    title = "Demo"
+    size = Size(600,600)
+    GridPane
+    {
+      numCols = 2
+      Label { text="label1" },
+      EdgePane
+      {
+        top    = Button { text = "top" }
+        left   = Button { text = "left" }
+        right  = Button { text = "right" }
+        bottom = Button { text = "bottom" }
+        center = Button { text = "center" }
+      }
+    },
+  }
+```
+
+Modularity
+=======
+Pods are the unit of versioning and deployment. They are combined together using clear dependencies.
+The pod build script:
+```
+podName = testlib
+summary = test lib
+srcDirs = test/,fan/
+depends = sys 1.0, std 1.0, reflect 1.0
 ```
 
 
@@ -156,3 +191,4 @@ To add methods out side the class
   //shortcut of Whatever.foo(str)
   str.foo
 ```
+

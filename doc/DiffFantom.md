@@ -1,5 +1,5 @@
 
-# Different From Fantom #
+# Different from Fantom #
 
 ## Language Diff ##
 
