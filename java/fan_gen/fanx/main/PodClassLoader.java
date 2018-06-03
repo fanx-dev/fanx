@@ -174,6 +174,7 @@ public class PodClassLoader
     FTypeEmit[] emitted = FTypeEmit.emit(ft);
     FTypeEmit emit = emitted[0];
     cls = doDefineClass(name, emit.classFile);
+    if (cls != null) ft.clearBuf();
     return cls;
   }
 

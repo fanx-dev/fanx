@@ -88,6 +88,13 @@ public class FType
     in.close();
   }
   
+  public void clearBuf() {
+	  for (FMethod m : methods) {
+		  m.code = null;
+	  }
+	  hollow = true;
+  }
+  
   public boolean isNative() { return (flags & FConst.Native) != 0; }
   
   public FTypeRef findGenericParamBound(String name) {

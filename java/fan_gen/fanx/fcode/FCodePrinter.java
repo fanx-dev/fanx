@@ -91,14 +91,14 @@ public class FCodePrinter
       case Int:      print(integer()); break;
       case Float:    print(floatpt()); break;
       case Str:      print(str()); break;
-//      case Dur:      print(duration()); break;
-//      case Uri:      print(uri()); break;
+      case Dur:      print(duration()); break;
+      case Uri:      print(uri()); break;
       case Reg:      print(u2()); break;
       case Type:     print(type()); break;
       case Field:    print(field()); break;
       case Method:   print(method()); break;
       case Jmp:      print(jmp()); break;
-//      case Deciaml:  print(deciaml()); break;
+      case Deciaml:  print(deciaml()); break;
       case Other: print("OTHER"); break;
       default: throw new IllegalStateException(op.sig);
     }
@@ -124,14 +124,14 @@ public class FCodePrinter
   static final int Int      = 0;
   static final int Float    = 1;
   static final int Str      = 2;
-//  static final int Dur      = 3;
-//  static final int Uri      = 4;
+  static final int Dur      = 3;
+  static final int Uri      = 4;
   static final int Reg      = 5;
   static final int Type     = 6;
   static final int Field    = 7;
   static final int Method   = 8;
   static final int Jmp      = 9;
-//  static final int Deciaml = 10;
+  static final int Deciaml = 10;
   static final int Other = 11;
 
   static final Op[] ops;
@@ -164,14 +164,14 @@ public class FCodePrinter
     if (sig.equals("(int)"))    return Int;
     if (sig.equals("(float)"))  return Float;
     if (sig.equals("(str)"))    return Str;
-//    if (sig.equals("(dur)"))    return Dur;
-//    if (sig.equals("(uri)"))    return Uri;
+    if (sig.equals("(dur)"))    return Dur;
+    if (sig.equals("(uri)"))    return Uri;
     if (sig.equals("(reg)"))    return Reg;
     if (sig.equals("(type)"))   return Type;
     if (sig.equals("(field)"))  return Field;
     if (sig.equals("(method)")) return Method;
     if (sig.equals("(jmp)"))    return Jmp;
-//    if (sig.equals("(decimal)"))    return Deciaml;
+    if (sig.equals("(decimal)"))    return Deciaml;
     return Other;
     //throw new IllegalStateException(sig);
   }
@@ -226,47 +226,47 @@ public class FCodePrinter
     }
   }
 
-//  private String duration()
-//    throws IOException
-//  {
-//    int index = u2();
-//    try
-//    {
-//      return pod.literals.duration(index).toString() + showIndex(index);
-//    }
-//    catch (Exception e)
-//    {
-//      return "Error [" + index + "]";
-//    }
-//  }
-//
-//  private String uri()
-//    throws IOException
-//  {
-//    int index = u2();
-//    try
-//    {
-//      return pod.literals.uri(index).toString() + showIndex(index);
-//    }
-//    catch (Exception e)
-//    {
-//      return "Error [" + index + "]";
-//    }
-//  }
-//  
-//  private String deciaml()
-//    throws IOException
-//  {
-//    int index = u2();
-//    try
-//    {
-//      return pod.literals.decimals(index).toString() + showIndex(index);
-//    }
-//    catch (Exception e)
-//    {
-//      return "Error [" + index + "]";
-//    }
-//  }
+  private String duration()
+    throws IOException
+  {
+    int index = u2();
+    try
+    {
+      return pod.literals.duration(index).toString() + showIndex(index);
+    }
+    catch (Exception e)
+    {
+      return "Error [" + index + "]";
+    }
+  }
+
+  private String uri()
+    throws IOException
+  {
+    int index = u2();
+    try
+    {
+      return pod.literals.uri(index).toString() + showIndex(index);
+    }
+    catch (Exception e)
+    {
+      return "Error [" + index + "]";
+    }
+  }
+  
+  private String deciaml()
+    throws IOException
+  {
+    int index = u2();
+    try
+    {
+      return pod.literals.decimals(index).toString() + showIndex(index);
+    }
+    catch (Exception e)
+    {
+      return "Error [" + index + "]";
+    }
+  }
 
   private String type()
     throws IOException

@@ -79,10 +79,10 @@ public class FCodeEmit
         case LoadTrue:            loadTrue(); break;
         case LoadInt:             loadInt(); break;
         case LoadFloat:           loadFloat(); break;
-//        case LoadDecimal:         loadDecimal(); break;
+        case LoadDecimal:         loadDecimal(); break;
         case LoadStr:             loadStr(); break;
-//        case LoadDuration:        loadDuration(); break;
-//        case LoadUri:             loadUri(); break;
+        case LoadDuration:        loadDuration(); break;
+        case LoadUri:             loadUri(); break;
         case LoadType:            loadType(); break;
 
         case LoadVar:             loadVar(); break;
@@ -357,14 +357,14 @@ public class FCodeEmit
   private void loadDuration()
   {
     int index = u2();
-    int field = emit.field(podClass + ".Dur" + index + ":Lfan/sys/Duration;");
+    int field = emit.field(podClass + ".Dur" + index + ":Lfan/std/Duration;");
     code.op2(GETSTATIC, field);
   }
 
   private void loadUri()
   {
     int index = u2();
-    int field = emit.field(podClass + ".U" + index + ":Lfan/sys/Uri;");
+    int field = emit.field(podClass + ".U" + index + ":Lfan/std/Uri;");
     code.op2(GETSTATIC, field);
   }
 

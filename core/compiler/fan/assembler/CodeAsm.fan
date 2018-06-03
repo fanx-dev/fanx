@@ -703,8 +703,7 @@ class CodeAsm : CompilerSupport
 
   private Void decimalLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadStr, fpod.strs.add(expr.val.toStr))
-    op(FOp.CallStatic, fpod.addMethodRef(ns.decimalMakeMethod, 1))
+    op(FOp.LoadDecimal, fpod.decimals.add(expr.val))
   }
 
   private Void strLiteral(LiteralExpr expr)
@@ -714,14 +713,12 @@ class CodeAsm : CompilerSupport
 
   private Void durationLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadInt, fpod.ints.add(expr.val->ticks))
-    op(FOp.CallStatic, fpod.addMethodRef(ns.durationMakeMethod, 1))
+    op(FOp.LoadDuration, fpod.durations.add(expr.val))
   }
 
   private Void uriLiteral(LiteralExpr expr)
   {
-    op(FOp.LoadStr, fpod.strs.add(expr.val.toStr))
-    op(FOp.CallStatic, fpod.addMethodRef(ns.uriMakeMethod, 1))
+    op(FOp.LoadUri, fpod.uris.add(expr.val))
   }
 
   private Void typeLiteral(LiteralExpr expr)

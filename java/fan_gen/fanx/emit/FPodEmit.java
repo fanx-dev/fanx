@@ -9,6 +9,7 @@ package fanx.emit;
 
 import fanx.fcode.*;
 import fanx.main.Sys;
+import fanx.main.Type;
 import fanx.util.*;
 
 /**
@@ -31,6 +32,18 @@ public class FPodEmit
     emit.classFile = emit.emit();
     return emit;
   }
+  
+  private static Object makeLiteral(String typeSig, String methodName, Object args, Class argClass) {
+	  try {
+		  Type type = Sys.findType(typeSig);
+		  Class<?> clz = type.getJavaClass();
+		  java.lang.reflect.Method method = clz.getMethod(methodName, argClass);
+		  return method.invoke(null, args);
+	  } catch (Throwable e) {
+		  e.printStackTrace();
+	  }
+	  return null;
+  }
 
   public static void initFields(FPod fpod, Class cls)
     throws Exception
@@ -40,19 +53,25 @@ public class FPodEmit
     // NOTE: ints, floats, and strings use direct Java constants
 
     // decimals
-//    for (int i=0; i<literals.decimals.size(); ++i)
-//      cls.getField("D"+i).set(null, literals.decimals.get(i));
-//    literals.decimals = null;
+    for (int i=0; i<literals.decimals.size(); ++i) {
+      Object obj = literals.decimals.get(i);
+      cls.getField("D"+i).set(null, makeLiteral("std::Decimal", "fromStr", obj, String.class));
+    }
+    literals.decimals = null;
 
     // durations
-//    for (int i=0; i<literals.durations.size(); ++i)
-//      cls.getField("Dur"+i).set(null, literals.durations.get(i));
-//    literals.durations = null;
+    for (int i=0; i<literals.durations.size(); ++i) {
+      Object obj = literals.durations.get(i);
+      cls.getField("Dur"+i).set(null, makeLiteral("std::Duration", "fromTicks", obj, long.class));
+    }
+    literals.durations = null;
 
     // uris
-//    for (int i=0; i<literals.uris.size(); ++i)
-//      cls.getField("U"+i).set(null, literals.uris.get(i));
-//    literals.uris = null;
+    for (int i=0; i<literals.uris.size(); ++i) {
+      Object obj = literals.uris.get(i);
+      cls.getField("U"+i).set(null, makeLiteral("std::Uri", "fromStr", obj, String.class));
+    }
+    literals.uris = null;
 
     // we only generate type fields for [java] types
     for (int i=0; i<fpod.typeRefs.size(); ++i)
@@ -86,12 +105,12 @@ public class FPodEmit
 
     // generate constant fields other types will reference, we don't
     // initialize them, rather we do that later via reflection
-//    for (int i=0; i<literals.decimals.size(); ++i)
-//      emitField("D" + i, "Ljava/math/BigDecimal;", EmitConst.PUBLIC | EmitConst.STATIC);
-//    for (int i=0; i<literals.durations.size(); ++i)
-//      emitField("Dur" + i, "Lfan/sys/Duration;", EmitConst.PUBLIC | EmitConst.STATIC);
-//    for (int i=0; i<literals.uris.size(); ++i)
-//      emitField("U" + i, "Lfan/sys/Uri;", EmitConst.PUBLIC | EmitConst.STATIC);
+    for (int i=0; i<literals.decimals.size(); ++i)
+      emitField("D" + i, "Ljava/math/BigDecimal;", EmitConst.PUBLIC | EmitConst.STATIC);
+    for (int i=0; i<literals.durations.size(); ++i)
+      emitField("Dur" + i, "Lfan/std/Duration;", EmitConst.PUBLIC | EmitConst.STATIC);
+    for (int i=0; i<literals.uris.size(); ++i)
+      emitField("U" + i, "Lfan/std/Uri;", EmitConst.PUBLIC | EmitConst.STATIC);
 
     // we only generate type fields for [java] types
     for (int i=0; i<pod.typeRefs.size(); ++i)

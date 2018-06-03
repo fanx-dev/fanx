@@ -59,8 +59,8 @@ public class FPrinter
     println("--- ints ---");       pod.literals.ints.dump(pod, this);
     println("--- floats ---");     pod.literals.floats.dump(pod, this);
     println("--- strs ---");       pod.literals.strs.dump(pod, this);
-//    println("--- durations ---");  pod.literals.durations.dump(pod, this);
-//    println("--- uris ---");       pod.literals.uris.dump(pod, this);
+    println("--- durations ---");  pod.literals.durations.dump(pod, this);
+    println("--- uris ---");       pod.literals.uris.dump(pod, this);
     flush();
   }
 

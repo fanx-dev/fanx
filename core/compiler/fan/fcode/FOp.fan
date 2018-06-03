@@ -17,11 +17,11 @@ enum class FOp
   LoadTrue           (),                  //   3  load true literal onto stack
   LoadInt            (FOpArg.Int),        //   4  load Int const by index onto stack
   LoadFloat          (FOpArg.Float),      //   5  load Float const by index onto stack
-  Nop6,//LoadDecimal        (FOpArg.Decimal),    //   6  load Decimal const by index onto stack
+  LoadDecimal        (FOpArg.Decimal),    //   6  load Decimal const by index onto stack
   LoadStr            (FOpArg.Str),        //   7  load Str const by index onto stack
-  Nop8,//LoadDuration       (FOpArg.Duration),   //   8  load Duration const by index onto stack
+  LoadDuration       (FOpArg.Duration),   //   8  load Duration const by index onto stack
   LoadType           (FOpArg.TypeRef),    //   9  load Type instance by index onto stack
-  Nop10,//LoadUri            (FOpArg.Uri),        //  10  load Uri const by index onto stack
+  LoadUri            (FOpArg.Uri),        //  10  load Uri const by index onto stack
   LoadVar            (FOpArg.Register),   //  11  local var register index (0 is this)
   StoreVar           (FOpArg.Register),   //  12  local var register index (0 is this)
   LoadInstance       (FOpArg.FieldRef),   //  13  load field from storage
@@ -83,10 +83,10 @@ enum class FOpArg
   None,
   Int,
   Float,
-  //Decimal,
+  Decimal,
   Str,
-  //Duration,
-  //Uri,
+  Duration,
+  Uri,
   Register,
   TypeRef,
   FieldRef,

@@ -32,10 +32,10 @@ final class FPod : CPod, FConst
     this.methodRefs = FTable.makeMethodRefs(this)
     this.ints       = FTable.makeInts(this)
     this.floats     = FTable.makeFloats(this)
-    //this.decimals   = FTable.makeDecimals(this)
+    this.decimals   = FTable.makeDecimals(this)
     this.strs       = FTable.makeStrs(this)
-    //this.durations  = FTable.makeDurations(this)
-    //this.uris       = FTable.makeStrs(this)
+    this.durations  = FTable.makeDurations(this)
+    this.uris       = FTable.makeStrs(this)
     this.meta       = Str:Str[:]
     this.index      = Str:Str[:]
   }
@@ -88,10 +88,10 @@ final class FPod : CPod, FConst
   FMethodRef methodRef(Int index) { methodRefs[index] }
   Int integer(Int index)          { ints[index] }
   Float float(Int index)          { floats[index] }
-  //Decimal decimal(Int index)      { decimals[index] }
+  Decimal decimal(Int index)      { decimals[index] }
   Str str(Int index)              { strs[index] }
-  //Duration duration(Int index)    { durations[index] }
-  //Str uri(Int index)              { uris[index] }
+  Duration duration(Int index)    { durations[index] }
+  Str uri(Int index)              { uris[index] }
 
   Str typeRefStr(Int index) { typeRef(index).format(this) }
   Str fieldRefStr(Int index) { fieldRef(index).format(this) }
@@ -175,10 +175,10 @@ final class FPod : CPod, FConst
     methodRefs.read(in(`/fcode/methodRefs.def`))
     ints.read(in(`/fcode/ints.def`))
     floats.read(in(`/fcode/floats.def`))
-    //decimals.read(in(`/fcode/decimals.def`))
+    decimals.read(in(`/fcode/decimals.def`))
     strs.read(in(`/fcode/strs.def`))
-    //durations.read(in(`/fcode/durations.def`))
-    //uris.read(in(`/fcode/uris.def`))
+    durations.read(in(`/fcode/durations.def`))
+    uris.read(in(`/fcode/uris.def`))
 
     // read type meta-data
     in := this.in(`/fcode/types.def`)
@@ -227,10 +227,10 @@ final class FPod : CPod, FConst
     if (!methodRefs.isEmpty) methodRefs.write(out(`/fcode/methodRefs.def`))
     if (!ints.isEmpty)       ints.write(out(`/fcode/ints.def`))
     if (!floats.isEmpty)     floats.write(out(`/fcode/floats.def`))
-    //if (!decimals.isEmpty)   decimals.write(out(`/fcode/decimals.def`))
+    if (!decimals.isEmpty)   decimals.write(out(`/fcode/decimals.def`))
     if (!strs.isEmpty)       strs.write(out(`/fcode/strs.def`))
-    //if (!durations.isEmpty)  durations.write(out(`/fcode/durations.def`))
-    //if (!uris.isEmpty)       uris.write(out(`/fcode/uris.def`))
+    if (!durations.isEmpty)  durations.write(out(`/fcode/durations.def`))
+    if (!uris.isEmpty)       uris.write(out(`/fcode/uris.def`))
 
     // write type meta-data
     if (!ftypes.isEmpty)
@@ -311,10 +311,10 @@ final class FPod : CPod, FConst
   FTable methodRefs         // methods refs: [parent,name,ret,params]
   FTable ints               // Int literals
   FTable floats             // Float literals
-  //FTable decimals           // Decimal literals
+  FTable decimals           // Decimal literals
   FTable strs               // Str literals
-  //FTable durations          // Duration literals
-  //FTable uris               // Uri literals
+  FTable durations          // Duration literals
+  FTable uris               // Uri literals
   [Str:FType]? ftypesByName // if loaded
 
 }

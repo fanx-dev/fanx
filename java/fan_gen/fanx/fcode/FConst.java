@@ -75,11 +75,11 @@ public interface FConst
   public static final int LoadTrue        =   3; // ()        load true literal onto stack
   public static final int LoadInt         =   4; // (int)     load Int const by index onto stack
   public static final int LoadFloat       =   5; // (float)   load Float const by index onto stack
-  public static final int Nop6            =   6; // (decimal)  load Decimal const by index onto stack
+  public static final int LoadDecimal     =   6; // (decimal)  load Decimal const by index onto stack
   public static final int LoadStr         =   7; // (str)     load Str const by index onto stack
-  public static final int Nop8            =   8; // (dur)     load Duration const by index onto stack
+  public static final int LoadDuration    =   8; // (dur)     load Duration const by index onto stack
   public static final int LoadType        =   9; // (type)    load Type instance by index onto stack
-  public static final int Nop10           =  10; // (uri)     load Uri const by index onto stack
+  public static final int LoadUri         =  10; // (uri)     load Uri const by index onto stack
   public static final int LoadVar         =  11; // (reg)     local var register index (0 is this)
   public static final int StoreVar        =  12; // (reg)     local var register index (0 is this)
   public static final int LoadInstance    =  13; // (field)   load field from storage
@@ -135,11 +135,11 @@ public interface FConst
     "LoadTrue",           //   3
     "LoadInt",            //   4
     "LoadFloat",          //   5
-    "Nop6",        //   6
+    "LoadDecimal",        //   6
     "LoadStr",            //   7
-    "Nop8",       //   8
+    "LoadDuration",       //   8
     "LoadType",           //   9
-    "Nop10",            //  10
+    "LoadUri",            //  10
     "LoadVar",            //  11
     "StoreVar",           //  12
     "LoadInstance",       //  13
