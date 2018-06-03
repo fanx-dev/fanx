@@ -8,8 +8,8 @@
 package fanx.main;
 
 
-public interface IObj extends Comparable {
-	Object toImmutable();
-	boolean isImmutable();
-	Type typeof();
+public abstract class IObj implements Comparable {
+	public abstract Object toImmutable();
+	public abstract boolean isImmutable();
+	public abstract Type typeof();
 }

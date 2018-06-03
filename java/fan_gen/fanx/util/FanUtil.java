@@ -68,6 +68,7 @@ public class FanUtil {
 		javaToFanNameMap.put("java.lang.Number", "fan.sys.Nun");
 		javaToFanNameMap.put("java.lang.Long", "fan.sys.Int");
 		javaToFanNameMap.put("java.lang.Double", "fan.sys.Float");
+		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.sys.Type");
 
 		/*
 		 * javaToFanTypes.put("byte", JavaType.ByteType);

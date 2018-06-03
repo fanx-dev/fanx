@@ -14,7 +14,7 @@ import fanx.util.*;
  * FanObj is the root class of all classes in Fantom - it is the class
  * representation of Obj.
  */
-public class FanObj implements IObj {
+public class FanObj extends IObj {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Java
@@ -133,7 +133,7 @@ public class FanObj implements IObj {
 			return FanUtil.toFanType(self.getClass(), true);
 	}
 
-	static Type type = Sys.findType("sys::Obj");
+	public final static Type type = Sys.findType("sys::Obj");
 
 	public Type typeof() {
 		return type;
@@ -225,7 +225,7 @@ public class FanObj implements IObj {
 		}
 	}
 
-	private static Object doTrap(Object self, String name, List args, Type type) {
+	static Object doTrap(Object self, String name, List args, Type type) {
 		if (type.jslots == null) {
 			java.util.Map<String, java.util.List<Object>> jslots = new java.util.HashMap<String, java.util.List<Object>>();
 			Class<?> clz = type.getJavaClass();

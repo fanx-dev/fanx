@@ -54,23 +54,12 @@ public class JavaType extends Type {
 	}
 
 	@Override
-	public boolean fits(Type t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean isObj() {
-		return false;
+		return this.getClass().equals(Object.class);
 	}
 
 	@Override
 	public long flags() {
-		// TODO Auto-generated method stub
 		return 0;
-	}
-	@Override
-	public Type toNullable() {
-		return new NullableType(this);
 	}
 }

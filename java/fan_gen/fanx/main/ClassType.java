@@ -67,25 +67,13 @@ public class ClassType extends Type
 	}
 
 	@Override
-	public boolean fits(Type t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean isObj() {
-		// TODO Auto-generated method stub
-		return false;
+		return ftype.base ==  0xFFFF;
 	}
 
 	@Override
 	public long flags() {
 		return ftype.flags;
-	}
-
-	@Override
-	public Type toNullable() {
-		return new NullableType(this);
 	}
 	
 	@Override

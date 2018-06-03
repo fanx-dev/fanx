@@ -129,7 +129,7 @@ public class Pod extends FanObj {
 
 	public List types() {
 		if (types == null) {
-			List list = List.make(FanType.typeof(), fpod.types.length);
+			List list = List.make(FanType.type, fpod.types.length);
 			for (FType f : fpod.types) {
 				if (f.isSynthetic()) continue;
 				Type t = Type.fromFType(f);

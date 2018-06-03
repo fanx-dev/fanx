@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import fanx.fcode.*;
+import fanx.fcode.FAttrs.FFacet;
 import fanx.main.*;
 import fanx.main.Type;
 import fanx.emit.*;
@@ -40,15 +41,15 @@ public abstract class FanType
       return FanUtil.toFanType(obj.getClass(), true);
   }
 
-//  public static Type find(String sig) { return TypeParser.load(sig, true, null); }
-//  public static Type find(String sig, boolean checked) { return TypeParser.load(sig, checked, null); }
+  public static Type find(String sig) { return find(sig, true); }
+  public static Type find(String sig, boolean checked) { return Sys.findType(sig, checked); }
 
 //////////////////////////////////////////////////////////////////////////
 // Naming
 //////////////////////////////////////////////////////////////////////////
 
-  private static Type type = Sys.findType("sys::Type");
-  public static Type typeof() { return type; }
+  public static Type type = Sys.findType("sys::Type");
+  public static Type typeof(Type self) { return type; }
 
   public static String podName(Type self) { return self.podName(); }
 //  public static Pod pod();
@@ -78,6 +79,8 @@ public abstract class FanType
     // private undocumented access
     if (name.equals("flags")) return Long.valueOf(flags(self));
     if (name.equals("toClass")) return toClass(self);
+//    if (name.equals("lineNumber")) { return Long.valueOf(lineNum); }
+//    if (name.equals("sourceFile")) { return sourceFile; }
 //    if (name.equals("finish")) { finish(); return self; }
     return FanObj.trap(self, name, args);
   }
@@ -86,10 +89,10 @@ public abstract class FanType
 // Value Types
 //////////////////////////////////////////////////////////////////////////
 
-//  public boolean isVal()
-//  {
-//    return this == Sys.BoolType || this == Sys.IntType || this == Sys.FloatType;
-//  }
+  public boolean isVal(Type self)
+  {
+    return (self.flags() & FConst.Struct) != 0;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Nullable
@@ -97,7 +100,7 @@ public abstract class FanType
 
   public static boolean isNullable(Type self) { return self.isNullable(); }
 
-  public static Type toNonNullable(Type self) { return self; }
+  public static Type toNonNullable(Type self) { return self.toNonNullable(); }
 
   public static Type toNullable(Type self) { return self.toNullable(); }
 
@@ -112,10 +115,10 @@ public abstract class FanType
 //   * is NOT a generic type (all of its generic parameters have been filled in).
 //   * User defined generic types are not supported in Fan.
 //   */
-//  public boolean isGenericType(Type self)
-//  {
-//    return this == Sys.ListType || this == Sys.MapType || this == Sys.FuncType;
-//  }
+  public static boolean isGeneric(Type self)
+  {
+    return self.isGenericType();
+  }
 //
 //  /**
 //   * A generic instance is a type which has "instantiated" a generic type
@@ -204,18 +207,17 @@ public abstract class FanType
 //    throw UnsupportedErr.make("not generic: " + this);
 //  }
 //
-//  public final synchronized Type toListOf()
-//  {
-//    if (listOf == null) listOf = new ListType(this);
-//    return listOf;
-//  }
-//
+  public static synchronized Type toListOf(Type self)
+  {
+    return emptyList(self).typeof();
+  }
+
   public static final List emptyList(Type self)
   {
     if (self.emptyList == null) self.emptyList = List.make(self, 0).toImmutable();
     return (List)self.emptyList;
   }
-//
+
 ////////////////////////////////////////////////////////////////////////////
 //// Slots
 ////////////////////////////////////////////////////////////////////////////
@@ -233,41 +235,89 @@ public abstract class FanType
 //  public final Slot slot(String name) { return slot(name, true); }
 //  public abstract Slot slot(String name, boolean checked);
 //
-//  public final Object make() { return make(null); }
-//  public Object make(List args)
-//  {
-//    Method make = method("make", false);
-//    if (make != null && make.isPublic())
-//    {
-//      int numArgs = args == null ? 0 : args.sz();
-//      List params = make.params();
-//      if ((numArgs == params.sz()) ||
-//          (numArgs < params.sz() && ((Param)params.get(numArgs)).hasDefault()))
-//        return make.func.callList(args);
-//    }
-//
-//    Slot defVal = slot("defVal", false);
-//    if (defVal != null && defVal.isPublic())
-//    {
-//      if (defVal instanceof Field) return ((Field)defVal).get(null);
-//      if (defVal instanceof Method) return ((Method)defVal).func.callList(null);
-//    }
-//
-//    throw Err.make("Type missing 'make' or 'defVal' slots: " + this);
-//  }
-//
+  public static Object make(Type self) { return make(null); }
+  public static Object make(Type self, List args)
+  {
+	Err err;
+	try {
+		return FanObj.doTrap(null, "make", args, self);
+	} catch(Throwable e) { err = Err.make(e); }
+	
+	try {
+		return FanObj.doTrap(null, "defVal", args, self);
+	} catch(Throwable e) {}
+
+	throw err;
+    //throw Err.make("Type missing 'make' or 'defVal' slots: " + self, err);
+  }
+
 ////////////////////////////////////////////////////////////////////////////
 //// Inheritance
 ////////////////////////////////////////////////////////////////////////////
-//
-//  public abstract Type base();
-//
-//  public abstract List mixins();
-//
-//  public abstract List inheritance();
-//
-//  public final boolean fits(Type type) { return toNonNullable().is(type.toNonNullable()); }
-//  public abstract boolean is(Type type);
+
+  public static Type refToType(FPod pod, int typeRefId) {
+	  FTypeRef tref = pod.typeRef(typeRefId);
+	  FType ft = Sys.findFType(tref.podName, tref.typeName);
+	  Type t = Type.fromFType(ft);
+	  return t;
+  }
+  
+  public static Type base(Type self) {
+	  FType ftype = self.ftype();
+	  if (ftype.base ==  0xFFFF) {
+		  return null;
+	  }
+	  return refToType(ftype.pod, ftype.base);
+  }
+
+  public static List mixins(Type self) {
+	  List acc = List.make(type, 4);
+	  FType ftype = self.ftype();
+	  for (int mixin : ftype.mixins) {
+		  Type t = refToType(ftype.pod, mixin);
+		  acc.add(t);
+	  }
+	  return acc.trim().ro();
+  }
+
+  public static List inheritance(Type self)
+  {
+	java.util.HashMap<String, Type> map = new java.util.HashMap<String, Type>();
+    List acc = List.make(type, 2);
+
+    // add myself
+    map.put(self.qname(), self);
+    acc.add(self);
+
+    // add my direct inheritance inheritance
+    addInheritance(self, acc, map);
+    
+    return acc.trim().ro();
+  }
+
+  private static void addInheritance(Type t, List acc, java.util.HashMap<String, Type> map)
+  {
+    if (t == null) return;
+    Type b = base(t);
+    if (b != null) {
+    	map.put(b.qname(), b);
+        acc.add(b);
+        addInheritance(b, acc, map);
+    }
+    
+    List ti = mixins(t);
+    for (int i=0; i<ti.size(); ++i)
+    {
+      Type x = (Type)ti.get(i);
+      if (map.get(x.qname()) == null)
+      {
+        map.put(x.qname(), x);
+        acc.add(x);
+      }
+    }
+  }
+
+  public static boolean fits(Type self, Type type) { return self.fits(type); }
 //
 //  /**
 //   * Given a list of objects, compute the most specific type which they all
@@ -298,25 +348,52 @@ public abstract class FanType
 //////////////////////////////////////////////////////////////////////////
 // Facets
 //////////////////////////////////////////////////////////////////////////
-//
-//  public abstract List facets();
-//
-//  public final Facet facet(Type t) { return facet(t, true); }
-//  public abstract Facet facet(Type t, boolean c);
-//
-//  public final boolean hasFacet(Type t) { return facet(t, false) != null; }
-//
+
+  public static List facets(Type self) {
+	  List list = List.make(Sys.findType("sys::Facet"), 1);
+	  FType ftype = self.ftype();
+	  if (ftype != null && ftype.attrs.facets != null) {
+		for (FFacet facet : ftype.attrs.facets) {
+			FTypeRef tr = ftype.pod.typeRef(facet.type);
+			//TODO
+		}
+	  }
+	  return list;
+  }
+
+  public static Facet facet(Type self, Type t) { return facet(self, t, true); }
+  public static Facet facet(Type self, Type t, boolean checked) {
+	  FType ftype = self.ftype();
+	  if (ftype != null && ftype.attrs.facets != null) {
+		for (FFacet facet : ftype.attrs.facets) {
+			FTypeRef tr = ftype.pod.typeRef(facet.type);
+			if (tr.podName.equals(t.podName()) && tr.typeName.equals(t.name())) {
+				//TODO
+				return null;
+			}
+		}
+	  }
+	  if (checked) throw UnknownFacetErr.make(t.qname());
+	  return null;
+  }
+
+  public static boolean hasFacet(Type self, Type t) {return facet(self, t, false) != null; }
+
 ////////////////////////////////////////////////////////////////////////////
 //// Documentation
 ////////////////////////////////////////////////////////////////////////////
-//
-//  public abstract String doc();
+
+  public static String doc(Type self) {
+	  FType ftype = self.ftype();
+	  if (ftype == null) return null;
+	  return ftype.doc().tyeDoc();
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion
 //////////////////////////////////////////////////////////////////////////
 
-  public String toStr(Type self) { return self.signature(); }
+  public static String toStr(Type self) { return self.signature(); }
 
 //  public String toLocale() { return signature(); }
 

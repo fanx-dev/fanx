@@ -13,7 +13,7 @@ import fanx.fcode.FType;
  * NullableType wraps a type as nullable with trailing "?".
  */
 public class NullableType extends Type {
-	Type root;
+	public Type root;
 
 	public NullableType(Type root) {
 		this.root = root;
@@ -72,6 +72,11 @@ public class NullableType extends Type {
 	@Override
 	public Type toNullable() {
 		return this;
+	}
+	
+	@Override
+	public Type toNonNullable() {
+		return root;
 	}
 
 	@Override
