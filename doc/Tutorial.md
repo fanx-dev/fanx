@@ -1,32 +1,6 @@
 
 # Tutorial #
 
-Class
-========
-```
-  class Person {
-    Str name
-    Int age
-
-    //named constructor
-    new make(Str name, Int age) {
-      this.name = name
-      this.age = age
-    }
-  }
-  //Type Inference
-  p := Person.make("A", 25)
-  p := Person("B", 30) //shortcut
-
-  //A struct type is a value type
-  const struct class Point {
-    const Int x
-    const Int y
-  }
-  p := Point{ x=1; y=2 }
-
-```
-
 Fields and Methods
 =======
 ```
@@ -40,12 +14,40 @@ Fields and Methods
 
     //method with default parameter
     Void say(Str a := "x") { echo("Hi $a") }
+
+    //named constructor
+    new make(Str name, Int age) {
+      this.name = name
+      this.age = age
+    }
   }
+
+  //Type Inference
+  p := Person("B", 30)
 
   p.age = 10
   p.say("A")
   p->say("A") //dynamic reflect call
 
+```
+
+Literals
+========
+```
+  //List
+  [0, 1, 2]
+  Int[0, 1, 2]
+
+  //Map
+  [1:"one", 2:"two"]
+  Int:Str[1:"one", 2:"two"]
+
+  //Range
+  0..5    // 0 to 5
+  0..<5   // 0 to 4
+
+  //string interpolation
+  "$x + $y = ${x+y}"
 ```
 
 Immutability
@@ -79,26 +81,6 @@ A non-nullable type is guaranteed to never store the null value
   //Nullable is a part of API
   Str foo(Str? arg)
 ```
-
-Literals
-========
-```
-  //List
-  [0, 1, 2]
-  Int[0, 1, 2]
-
-  //Map
-  [1:"one", 2:"two"]
-  Int:Str[1:"one", 2:"two"]
-
-  //Range
-  0..5    // 0 to 5
-  0..<5   // 0 to 4
-
-  //string interpolation
-  "$x + $y = ${x+y}"
-```
-
 
 Functional and Closures
 =======

@@ -1,6 +1,6 @@
 
-podName = testlib
-summary = test lib
+podName = baseTest
+summary = test compiler and sys lib
 version = 2.0
 srcDirs = test/,fan/
 depends = sys 2.0, std 2.0, reflect 2.0

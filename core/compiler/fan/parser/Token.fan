@@ -130,6 +130,7 @@ enum class Token
   whileKeyword,
   extensionKeyword,
   rtconstKeyword,
+  inlineKeyword,
   varKeyword,
   defKeyword,
   refKeyword,

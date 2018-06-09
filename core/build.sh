@@ -6,6 +6,6 @@ fanc='../../../fantom/fan/bin/fan compiler::Main'
 $fanc sys/pod.props
 $fanc std/pod.props
 $fanc reflect/pod.props
-$fanc testlib/pod.props
+$fanc baseTest/pod.props
 
 #../../../fantom/fan/bin/fanp -c sys::List
