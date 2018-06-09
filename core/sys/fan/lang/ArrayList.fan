@@ -168,7 +168,7 @@ rtconst class ArrayList<V> : List
 // Modification
 //////////////////////////////////////////////////////////////////////////
 
-  @Operator override This set(Int index, Obj? item) {
+  @Operator override This set(Int index, V item) {
     modify
     if (index < 0) {
       index = size + index

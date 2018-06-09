@@ -198,6 +198,13 @@ native const struct class Int : Num
   **
   Int shiftr(Int b)
 
+  **
+  ** Bitwise arithmetic right-shift of this by b. The left-most bit is shifted
+  ** into the highest bits performing like a signed shift. This is equivalent
+  ** to the Java '>>' operator.
+  **
+  Int shifta(Int b)
+
 /////////////////////////////////////////////////////////////////////////
 // Math
 //////////////////////////////////////////////////////////////////////////

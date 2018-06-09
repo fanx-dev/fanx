@@ -232,14 +232,14 @@ rtconst abstract class List<V>
   ** then size, then manually set size larger.  Return this.  Throw
   ** IndexErr if index is out of range.  Throw ReadonlyErr if readonly.
   **
-  @Operator abstract This set(Int index, Obj? item)
+  @Operator abstract This set(Int index, V item)
 
   **
   ** Add the specified item to the end of the list.  The item will have
   ** an index of size.  Size is incremented by 1.  Return this.  Throw
   ** ReadonlyErr if readonly.
   **
-  @Operator abstract This add(V? item)
+  @Operator abstract This add(V item)
 
   **
   ** Add all the items in the specified list to the end of this list.
@@ -254,7 +254,7 @@ rtconst abstract class List<V>
   ** by 1.  Return this.  Throw IndexErr if index is out of range.  Throw
   ** ReadonlyErr if readonly.
   **
-  abstract This insert(Int index, V? item)
+  abstract This insert(Int index, V item)
 
   **
   ** Insert all the items in the specified list into this list at the
@@ -272,13 +272,13 @@ rtconst abstract class List<V>
   ** decrement size by 1.  If the value is not found, then return null.
   ** Throw ReadonlyErr if readonly.
   **
-  abstract V? remove(V? item)
+  abstract V? remove(V item)
 
   **
   ** Remove the item just like `remove` except use
   ** the === operator instead of the == equals operator.
   **
-  abstract V? removeSame(V? item)
+  abstract V? removeSame(V item)
 
   **
   ** Remove the object at the specified index.  A negative index may be
@@ -329,7 +329,7 @@ rtconst abstract class List<V>
   ** Example:
   **   Int[,].fill(0, 3)  =>  [0, 0, 0]
   **
-  abstract This fill(V? val, Int times)
+  abstract This fill(V val, Int times)
 
 //////////////////////////////////////////////////////////////////////////
 // Stack
@@ -673,7 +673,7 @@ rtconst abstract class List<V>
   **   s.sort |Str a, Str b->Int| { return a.size <=> b.size }
   **   // s now evaluates to ["he", "ate", "candy"]
   **
-  abstract This sort(|V? a, V? b->Int|? c := null)
+  abstract This sort(|V a, V b->Int|? c := null)
 
   **
   ** Reverse sort - perform an in-place reverse sort on this list.  If
@@ -685,7 +685,7 @@ rtconst abstract class List<V>
   ** Example:
   **   [3, 2, 4, 1].sortr =>  [4, 3, 2, 1]
   **
-  abstract This sortr(|V? a, V? b->Int|? c := null)
+  abstract This sortr(|V a, V b->Int|? c := null)
 
   **
   ** Search the list for the index of the specified key using a binary
@@ -696,7 +696,7 @@ rtconst abstract class List<V>
   ** operator (shortcut for the 'compare' method).  If the key is not found,
   ** then return a negative value which is '-(insertation point) - 1'.
   **
-  abstract Int binarySearch(V? key, |V? a, V? b->Int|? c := null)
+  abstract Int binarySearch(V key, |V a, V b->Int|? c := null)
 
   **
   ** Find an element in the list using a binary search algorithm. The specified
@@ -706,7 +706,7 @@ rtconst abstract class List<V>
   ** comparator function. If the key is not found, then return a negative value
   ** which is '-(insertation point) - 1'.
   **
-  abstract Int binaryFind(|V? item, Int index->Int| c)
+  abstract Int binaryFind(|V item, Int index->Int| c)
 
   **
   ** Reverse the order of the items of this list in-place.  Return this.
@@ -813,7 +813,7 @@ rtconst abstract class List<V>
   **   ["a", "b", "c"].join("-") => "a-b-c"
   **   ["a", "b", "c"].join("-") |Str s->Str| { return "($s)" } => "(a)-(b)-(c)"
   **
-  Str join(Str separator := "", |V? item, Int index->Str|? c := null) {
+  Str join(Str separator := "", |V item, Int index->Str|? c := null) {
     buf := StrBuf()
     each |item, i| {
       if (i != 0) buf.add(separator)

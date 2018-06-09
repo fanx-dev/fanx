@@ -62,6 +62,7 @@ facet class Transient {}
 ** Used to annoate types which should be compiled into JavaScript.
 **
 facet class Js {}
+facet class NoJs {}
 
 **************************************************************************
 ** NoDoc

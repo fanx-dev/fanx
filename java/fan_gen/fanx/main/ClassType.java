@@ -14,6 +14,7 @@ import fanx.fcode.FField;
 import fanx.fcode.FMethod;
 import fanx.fcode.FSlot;
 import fanx.fcode.FType;
+import fanx.util.FanUtil;
 
 public class ClassType extends Type
 {
@@ -53,7 +54,8 @@ public class ClassType extends Type
 	public Class<?> getJavaClass() {
 		if (jclass == null) {
 			try {
-				jclass = ftype.pod.podClassLoader.loadClass("fan."+ftype.pod.podName+"."+ftype.typeName());
+				String javaImp = FanUtil.toJavaImplClassName(podName(), name());
+				jclass = ftype.pod.podClassLoader.loadClass(javaImp);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}

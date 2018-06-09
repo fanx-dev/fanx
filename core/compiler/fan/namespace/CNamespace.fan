@@ -221,6 +221,7 @@ abstract class CNamespace
   once CType? funcType             () { findType("sys", "Func") }
   once CType? errType              () { findType("sys", "Err") }
   once CType? typeType             () { findType("sys", "Type") }
+  once CType? typeExtType           () { findType("reflect", "TypeExt") }
   once CType? rangeType            () { findType("sys", "Range") }
   once CType? voidType             () { findType("sys", "Void") }
   once CType? fieldNotSetErrType   () { findType("sys", "FieldNotSetErr") }
@@ -252,8 +253,8 @@ abstract class CNamespace
   once CMethod? listMake           () { sysMethod(listType,    "make") }
   once CMethod? listMakeObj        () { sysMethod(listType,    "makeObj") }
   once CMethod? listAdd            () { sysMethod(listType,    "add") }
-  once CMethod? mapMake       () { sysMethod(mapType,    "make") }
-  once CMethod? mapSet        () { sysMethod(mapType,    "set") }
+  once CMethod? mapMake            () { sysMethod(mapType,    "make") }
+  once CMethod? mapSet             () { sysMethod(mapType,    "set") }
   once CMethod? enumOrdinal        () { sysMethod(enumType,    "ordinal") }
   once CMethod? funcBind           () { sysMethod(funcType,    "bind") }
   once CMethod? rangeMakeInclusive () { sysMethod(rangeType,    "makeInclusive") }
@@ -262,9 +263,9 @@ abstract class CNamespace
   once CMethod? slotFindFunc       () { sysMethod(slotType,    "findFunc") }
   once CMethod? podFind            () { sysMethod(podType,    "find") }
   once CMethod? podLocale          () { sysMethod(podType,    "locale") }
-  once CMethod? typePod            () { sysMethod(typeType,    "pod") }
-  once CMethod? typeField          () { sysMethod(typeType,    "field") }
-  once CMethod? typeMethod         () { sysMethod(typeType,    "method") }
+  once CMethod? typePod            () { sysMethod(typeExtType,    "pod") }
+  once CMethod? typeField          () { sysMethod(typeExtType,    "field") }
+  once CMethod? typeMethod         () { sysMethod(typeExtType,    "method") }
   once CMethod? funcCall           () { sysMethod(funcType,    "call") }
   once CMethod? fieldNotSetErrMake () { sysMethod(fieldNotSetErrType,    "make") }
   once CMethod? notImmutableErrMake() { sysMethod(notImmutableErrType,    "make") }

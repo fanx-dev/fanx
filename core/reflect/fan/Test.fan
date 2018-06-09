@@ -125,6 +125,9 @@ abstract class Test
     verify(a !== b, msg)
   }
 
+  @NoDoc
+  Void verifyTrue(Bool cond, Str? msg := null) { verify(cond, msg) }
+
   **
   ** Verify that 'Type.of(obj)' equals the given type.
   **
@@ -145,6 +148,17 @@ abstract class Test
       verify(false, "no err")
     } catch (Err err) {
       verifyType(err, errType)
+    }
+  }
+
+  @NoDoc
+  Void verifyErrMsg(Type errType, Str errMsg, |Test| c) {
+    try {
+      c(this)
+      verify(false, "no err")
+    } catch (Err err) {
+      verifyType(err, errType)
+      verifyEq(errMsg, err.msg)
     }
   }
 
@@ -221,15 +235,21 @@ internal class TestRunner {
   private Void runTest(Type type, Method meth) {
     Test? obj
     try {
+      //echo("call $meth")
       obj = type.make()
+      //echo(obj)
       obj.curTestMethod = meth
       obj.setup
       meth.callOn(obj, null)
+
       verifyCount += obj.verifyCount
-      //echo(this)
       if (obj.failVerifyCount > 0) {
         ++failures
       }
+      else {
+        echo("Pass $meth [$obj.failVerifyCount]")
+      }
+
     } catch (Err e) {
       ++failures
       e.trace

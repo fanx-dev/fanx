@@ -37,15 +37,19 @@ public class Err
     if (ex == null) return null;
     if (ex instanceof Err) return (Err)ex;
     Err err = null;
-    if (ex instanceof NullPointerException)      err = NullErr.make(ex.getMessage());
-    else if (ex instanceof ClassCastException)        err = CastErr.make(ex.getMessage());
-    else if (ex instanceof IndexOutOfBoundsException) err = IndexErr.make(ex.getMessage());
-    else if (ex instanceof IllegalArgumentException)  err = ArgErr.make(ex.getMessage());
-    else if (ex instanceof IOException)               err = IOErr.make(ex.getMessage());
-    else if (ex instanceof InterruptedException)      err = InterruptedErr.make(ex.getMessage());
-    else if (ex instanceof UnsupportedOperationException)  err = UnsupportedErr.make(ex.getMessage());
-    else err = Err.make(ex.getMessage());
+    if (ex instanceof NullPointerException)      err = NullErr.make();
+    else if (ex instanceof ClassCastException)        err = CastErr.make();
+    else if (ex instanceof IndexOutOfBoundsException) err = IndexErr.make();
+    else if (ex instanceof IllegalArgumentException)  err = ArgErr.make();
+    else if (ex instanceof IOException)               err = IOErr.make();
+    else if (ex instanceof InterruptedException)      err = InterruptedErr.make();
+    else if (ex instanceof UnsupportedOperationException)  err = UnsupportedErr.make();
+    else {
+    	return new Err(ex);
+    }
+    err.msg = ex.getMessage();
     err.actual = ex;
+    err.initCause(ex);
     return err;
   }
 
@@ -99,14 +103,15 @@ public class Err
   public static void make$(Err self, String msg, Err cause)
   {
     if (msg == null) {
-    	NullErr err = new NullErr();
-    	err.msg = ("msg is null");
-    	err.cause = cause;
     	cause.trace();
+    	NullErr err = NullErr.make("msg is null", cause);
+//    	err.msg = ("msg is null");
+//    	err.cause = cause;
     	throw err;
     }
     self.msg = msg;
     self.cause = cause;
+    self.initCause(cause);
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -119,8 +124,9 @@ public class Err
    */
   public Err(Throwable actual)
   {
+	super(actual);
     this.actual = actual;
-    this.msg = actual.toString();
+    this.msg = actual.getMessage();
   }
 
   /**

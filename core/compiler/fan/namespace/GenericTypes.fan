@@ -320,6 +320,8 @@ class GenericParamType : ProxyType {
     this.index = index
   }
 
+  override CPod pod() { parent.pod }
+
   override CType raw() {
     raw := bound
     if (isNullable) raw = raw.toNullable

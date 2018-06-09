@@ -2,8 +2,10 @@ package fan.reflect;
 
 import java.io.IOException;
 
+import fan.sys.FanType;
 import fan.sys.List;
 import fan.sys.UnknownSlotErr;
+import fanx.fcode.FConst;
 import fanx.fcode.FField;
 import fanx.fcode.FMethod;
 import fanx.fcode.FType;
@@ -78,12 +80,30 @@ public class TypeExt {
 	public static Method method(Type type, String name) {
 		return method(type, name, true);
 	}
+	
+	private static void mergeSlots(java.util.Map<String, Object> out, Type base) {
+		java.util.Map<String, Object> add = getSlots(base);
+		for (java.util.Map.Entry<String, Object> entry : add.entrySet()) {
+			out.put(entry.getKey(), entry.getValue());
+		}
+	}
 
 	private static java.util.Map<String, Object> getSlots(Type type) {
 		if (type.slots != null)
 			return type.slots;
 		java.util.Map<String, Object> slots = new java.util.HashMap<String, Object>();
+		
+		//get inheritance slots
+		List mixins = FanType.mixins(type);
+		for (int i=0; i<mixins.size(); ++i) {
+			Type t = (Type)mixins.get(i);
+			mergeSlots(slots, t);
+		}
+		if (!type.isObj()) {
+			mergeSlots(slots, type.base());
+		}
 
+		//get self type slots
 		FType ftype = type.ftype();
 		if (ftype != null) {
 			ftype.load();
@@ -91,12 +111,25 @@ public class TypeExt {
 				if (f.isSynthetic()) continue;
 				slots.put(f.name, Field.fromFCode(f, type));
 			}
+			
 			for (FMethod f : ftype.methods) {
+				if ((f.flags & FConst.Getter) != 0) {
+					Field field = (Field)slots.get(f.name);
+					field.getter = Method.fromFCode(f, type);
+					continue;
+				}
+				if ((f.flags & FConst.Setter) != 0) {
+					Field field = (Field)slots.get(f.name);
+					field.setter = Method.fromFCode(f, type);
+					continue;
+				}
+				
 				if (f.isSynthetic()) continue;
 				slots.put(f.name, Method.fromFCode(f, type));
 			}
 		}
 		
+		//link java reflect
 		java.lang.reflect.Method[] jmths = type.getJavaClass().getMethods();
 		for (java.lang.reflect.Method jmth : jmths) {
 			Slot s = (Slot)slots.get(jmth.getName());
