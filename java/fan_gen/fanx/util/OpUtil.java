@@ -195,25 +195,25 @@ public class OpUtil
     return type.getJavaClass().isInstance(instance);
   }
 
-  public static Object toImmutable(Object obj)
-  {
-    if (obj == null) return null;
-    
-    if (obj instanceof IObj) {
-	    IObj fobj = (IObj)obj;
-	    if (fobj.isImmutable()) return obj;
-	    
-	    Type type = fobj.typeof();
-	    if ((type.flags() & FConst.Const) != 0) return obj;
-	    if ((type.flags() & FConst.RuntimeConst) != 0) {
-	    	return fobj.toImmutable();
-	    }
-    } else {
-    	if (FanUtil.isJavaImmutable(obj.getClass())) {
-    		return obj;
-    	}
-    }
-    throw new RuntimeException("NotImmutableErr:"+obj.getClass().getName());
-  }
+//  public static Object toImmutable(Object obj)
+//  {
+//    if (obj == null) return null;
+//    
+//    if (obj instanceof IObj) {
+//	    IObj fobj = (IObj)obj;
+//	    if (fobj.isImmutable()) return obj;
+//	    
+//	    Type type = fobj.typeof();
+//	    if ((type.flags() & FConst.Const) != 0) return obj;
+//	    if ((type.flags() & FConst.RuntimeConst) != 0) {
+//	    	return fobj.toImmutable();
+//	    }
+//    } else {
+//    	if (FanUtil.isJavaImmutable(obj.getClass())) {
+//    		return obj;
+//    	}
+//    }
+//    throw new RuntimeException("NotImmutableErr:"+obj.getClass().getName());
+//  }
 
 }

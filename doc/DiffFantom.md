@@ -101,9 +101,8 @@ Run build:
   fanc yourPath/pod.props
 ```
 
-### Local Return ###
+### Local Return (Not Implemented) ###
 distinguish it from normal return
-
 
 
 ## API Different ##
@@ -147,4 +146,7 @@ LinkedList Set and more.
 Add TimePoint class.
 All time APIs are based on a millis ticks.
 The Time rename to TimeOfDay.
+
+### Depend ###
+The Depend class only support simple version constraint.
 

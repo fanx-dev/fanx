@@ -42,7 +42,7 @@ public class Method extends Slot {
 		
 		int mask = 0;
 		Method method = new Method(parent, f.name, ftype.flags, facets, 0, type, type2, params, mask);
-		method.reflect = new java.lang.reflect.Method[(int)params.size()];
+		method.reflect = new java.lang.reflect.Method[(int)params.size()+1];
 		return method;
 	}
 
@@ -212,13 +212,20 @@ public class Method extends Slot {
 
 		private Object callWith(int argc, Object a, Object b, Object c, Object d, Object e, Object f, Object g,
 				Object h) {
-			if (argc < minParams()) {
+			boolean isStatic = isStatic() || isCtor();
+			int min = minParams();
+			int max = (int)fparams.size();
+			if (!isStatic) {
+				--argc;
+			}
+			
+			if (argc < min) {
 				throw ArgErr.make("Too few arguments: " + argc);
 			}
-			if (argc > fparams.size()) {
+			if (argc > max) {
 				throw ArgErr.make("Too many arguments: " + argc);
 			}
-			boolean isStatic = isStatic() || isCtor();
+			
 			int p = argc;
 			Object[] args = new Object[p];
 			if (isStatic) {
@@ -292,11 +299,12 @@ public class Method extends Slot {
 			// return JavaType.invoke(this, instance, args);
 
 			// zero index is full signature up to using max defaults
-			int index = (int) params.size() - args.length;
-			if (isInstance())
-				index++;
-			if (index < 0)
-				index = 0;
+//			int index = (int) params.size() - args.length;
+//			if (isInstance())
+//				index++;
+//			if (index < 0)
+//				index = 0;
+			int index = args.length;
 
 			// route to Java reflection
 			jm = reflect[index];

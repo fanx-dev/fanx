@@ -233,7 +233,7 @@ public final class FPod
     for (int i=0; i<types.length; ++i)
     {
       types[i] = new FType(this).readMeta(in);
-      types[i].hollow = true;
+//      types[i].hollow = true;
     }
     in.close();
   }

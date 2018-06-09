@@ -1,5 +1,7 @@
 package fan.reflect;
 
+import java.io.IOException;
+
 import fan.sys.List;
 import fan.sys.UnknownSlotErr;
 import fanx.fcode.FField;
@@ -84,6 +86,7 @@ public class TypeExt {
 
 		FType ftype = type.ftype();
 		if (ftype != null) {
+			ftype.load();
 			for (FField f : ftype.fields) {
 				if (f.isSynthetic()) continue;
 				slots.put(f.name, Field.fromFCode(f, type));

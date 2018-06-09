@@ -54,7 +54,7 @@ public class Jstub
       {
     	FType type = types[i];
         if (type.isNative()) continue;
-        type.read();
+        type.load();
         FTypeEmit[] emitted = FTypeEmit.emit(type);
         // write to jar
         for (int j=0; j<emitted.length; ++j)

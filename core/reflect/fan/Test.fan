@@ -13,8 +13,8 @@
 **
 abstract class Test
 {
-  private Int failVerifyCount := 0
-  private Int verifyCount := 0
+  internal Int failVerifyCount := 0
+  internal Int verifyCount := 0
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -34,7 +34,7 @@ abstract class Test
   ** not currently running a test.  This method is available during
   ** both `setup` and `teardown` as well during the test itself.
   **
-  Method? curTestMethod { private set }
+  Method? curTestMethod { internal set }
 
   **
   ** Setup is called before running each test method.
@@ -168,41 +168,76 @@ abstract class Test
   **
   //File tempDir()
 
-  static Void main(Str[] arg) {
-    podName := arg[0]
-    typeName := arg[1]
-    pod := Pod.find(podName)
-    type := pod.type(typeName)
+  static Int main(Str[] args) {
+    arg := args[0]
+    return TestRunner(arg).run
+  }
 
-    methodCount := 0
-    failMethodCount := 0
-    obj := type.make()
+}
 
-    TypeExt.methods(type).each |Method m| {
-      if (m.name.startsWith("test")) {
-        try {
-          runTest(obj, m)
-        } catch (Err err) {
-          ++failMethodCount
-          err.trace
+**************************************************************************
+** TestRuner
+**************************************************************************
+
+internal class TestRunner {
+  private Pod pod
+  private Type[] types
+
+  private Int failures := 0
+  private Int verifyCount := 0
+
+  new make(Str arg) {
+    pos := arg.find("::")
+    if (pos != -1) {
+      podName := arg[0..<pos]
+      typeName := arg[pos+2..-1]
+      pod = Pod.find(podName)
+      type := pod.type(typeName)
+      types = [type]
+    } else {
+      podName := arg
+      pod = Pod.find(podName)
+      types = pod.types
+    }
+  }
+
+  Int run() {
+    types.each |type| {
+      TypeExt.methods(type).each |Method m| {
+        if (m.name.startsWith("test")) {
+          runTest(type, m)
         }
-        ++methodCount
       }
     }
-    if (failMethodCount == 0) {
-      echo("SUCCESS, $methodCount methods")
+    if (failures == 0) {
+      echo("All tests passed! totalVerifyCount:$verifyCount")
+      return 0
     } else {
-      echo("$failMethodCount FAILURES, $methodCount methods")
+      echo("$failures FAILURES, totalVerifyCount:$verifyCount")
+      return -1
     }
   }
 
-  private static Void runTest(Obj obj, Method meth) {
-    //obj.curTestMethod = meth
-    obj->setup
-    meth.callOn(obj, null)
-    obj->teardown
+  private Void runTest(Type type, Method meth) {
+    Test? obj
+    try {
+      obj = type.make()
+      obj.curTestMethod = meth
+      obj.setup
+      meth.callOn(obj, null)
+      verifyCount += obj.verifyCount
+      //echo(this)
+      if (obj.failVerifyCount > 0) {
+        ++failures
+      }
+    } catch (Err e) {
+      ++failures
+      e.trace
+    }
+    finally {
+      obj?.teardown
+    }
   }
-
 }
 
 **************************************************************************

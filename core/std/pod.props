@@ -1,6 +1,7 @@
 
 podName = std
 summary = system std lib
-depends = sys 1.0
+version = 2.0
+depends = sys 2.0
 srcDirs = fan/collection/,fan/io/,fan/time/,fan/util/
 

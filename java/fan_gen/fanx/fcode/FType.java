@@ -60,13 +60,22 @@ public class FType
   {
     return "fcode/" + pod.typeRef(self).typeName + ".fcode";
   }
+  
+  public void load() {
+	if (!hollow) return;
+	try {
+		read();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+  }
 
-  public void read() throws IOException
+  void read() throws IOException
   {
     read(pod.store.read(filename()));
   }
 
-  public void read(FStore.Input in) throws IOException
+  void read(FStore.Input in) throws IOException
   {
     if (in == null)
       throw new IOException("Cannot read fcode: " +  pod.typeRef(self).signature);
@@ -92,7 +101,6 @@ public class FType
 	  for (FMethod m : methods) {
 		  m.code = null;
 	  }
-	  hollow = true;
   }
   
   public boolean isNative() { return (flags & FConst.Native) != 0; }
@@ -118,7 +126,7 @@ public class FType
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  public boolean hollow = true; // have we only read meta-data
+  private boolean hollow = true; // have we only read meta-data
   public FPod pod;              // parent pod
   public int self;              // self typeRef index
   public int flags;             // bitmask

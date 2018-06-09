@@ -36,14 +36,17 @@ public class Err
     // and tested in TryTest
     if (ex == null) return null;
     if (ex instanceof Err) return (Err)ex;
-    if (ex instanceof NullPointerException)      return NullErr.make(ex);
-    if (ex instanceof ClassCastException)        return CastErr.make(ex);
-    if (ex instanceof IndexOutOfBoundsException) return IndexErr.make(ex);
-    if (ex instanceof IllegalArgumentException)  return ArgErr.make(ex);
-    if (ex instanceof IOException)               return IOErr.make(ex);
-    if (ex instanceof InterruptedException)      return InterruptedErr.make(ex);
-    if (ex instanceof UnsupportedOperationException)  return UnsupportedErr.make(ex);
-    return new Err(ex);
+    Err err = null;
+    if (ex instanceof NullPointerException)      err = NullErr.make(ex.getMessage());
+    else if (ex instanceof ClassCastException)        err = CastErr.make(ex.getMessage());
+    else if (ex instanceof IndexOutOfBoundsException) err = IndexErr.make(ex.getMessage());
+    else if (ex instanceof IllegalArgumentException)  err = ArgErr.make(ex.getMessage());
+    else if (ex instanceof IOException)               err = IOErr.make(ex.getMessage());
+    else if (ex instanceof InterruptedException)      err = InterruptedErr.make(ex.getMessage());
+    else if (ex instanceof UnsupportedOperationException)  err = UnsupportedErr.make(ex.getMessage());
+    else err = Err.make(ex.getMessage());
+    err.actual = ex;
+    return err;
   }
 
   /**
@@ -95,7 +98,13 @@ public class Err
   public static void make$(Err self, String msg) { make$(self, msg, null); }
   public static void make$(Err self, String msg, Err cause)
   {
-    if (msg == null) throw NullErr.make("msg is null");
+    if (msg == null) {
+    	NullErr err = new NullErr();
+    	err.msg = ("msg is null");
+    	err.cause = cause;
+    	cause.trace();
+    	throw err;
+    }
     self.msg = msg;
     self.cause = cause;
   }

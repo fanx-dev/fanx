@@ -448,6 +448,8 @@ public class FanUtil {
 				return "fan/sys/FanFloat";
 			if (jsig.equals("java/lang/Number"))
 				return "fan/sys/FanNum";
+		}
+		if (jsig.length() > 4 &&  jsig.charAt(3) == 'x') {
 			if (jsig.equals(Sys.TypeClassName))
 				return "fan/sys/FanType";
 //			if (jsig.equals("java/math/BigDecimal"))

@@ -877,7 +877,7 @@ public class FCodeEmit
     // if a generic instance, we have to use a method call
     // because Fantom types don't map to Java classes exactly;
     // otherwise we can use straight bytecode
-    if (typeRef.isGenericInstance())
+    if (typeRef.podName.equals("sys") && typeRef.isGenericInstance())
     {
       if (parent.IsViaType == 0) parent.IsViaType = emit.method("fanx/util/OpUtil.is(Ljava/lang/Object;"+Sys.TypeClassJsig+")Z");
       loadType(typeRef);

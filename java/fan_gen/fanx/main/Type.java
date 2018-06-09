@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import fanx.fcode.FConst;
+import fanx.fcode.FPod;
 import fanx.fcode.FType;
+import fanx.fcode.FTypeRef;
 
 public abstract class Type {
 
@@ -89,6 +91,21 @@ public abstract class Type {
 		}
 		Type res = (Type) ftype.reflectType;
 		return res;
+	}
+	
+	public static Type refToType(FPod pod, int typeRefId) {
+		FTypeRef tref = pod.typeRef(typeRefId);
+		FType ft = Sys.findFType(tref.podName, tref.typeName);
+		Type t = Type.fromFType(ft);
+		return t;
+	}
+
+	public Type base() {
+		FType ftype = this.ftype();
+		if (ftype.base == 0xFFFF) {
+			return null;
+		}
+		return refToType(ftype.pod, ftype.base);
 	}
 
 }

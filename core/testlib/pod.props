@@ -1,6 +1,7 @@
 
 podName = testlib
 summary = test lib
+version = 2.0
 srcDirs = test/,fan/
-depends = sys 1.0, std 1.0, reflect 1.0
+depends = sys 2.0, std 2.0, reflect 2.0
 

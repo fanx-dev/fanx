@@ -29,7 +29,7 @@ rtconst abstract class List<V>
   **
   ** Constructor for Obj?[] with initial capacity.
   **
-  static new makeObj(Int capacity) {
+  static new makeObj(Int capacity := 4) {
     type := Obj?#
     return ArrayList(type, capacity)
   }

@@ -137,9 +137,16 @@ public class Fan
 //    }
 //  }
   
-  private java.lang.reflect.Method findMethod(Class clz, String name) throws NoSuchMethodException, SecurityException {
-		  java.lang.reflect.Method met = clz.getMethod(name);
-		  if (met != null) return met;
+  private java.lang.reflect.Method findMethod(Class<?> clz, String name, Class<?> argClass) throws NoSuchMethodException, SecurityException {
+	try { 
+	  java.lang.reflect.Method met = clz.getMethod(name);
+	  return met;
+	}
+	catch (Exception e) {
+	  if (argClass == null) throw e;
+ 	  java.lang.reflect.Method met = clz.getMethod(name, argClass);
+	  return met;
+	}
 		  
 //		  java.lang.reflect.Method[] ms = clz.getDeclaredMethods();
 ////		  java.lang.reflect.Method[] ms = clz.getMethods();
@@ -148,7 +155,7 @@ public class Fan
 //				  return m;
 //			  }
 //		  }
-		  return null;
+//		  return null;
   }
 
   private int executeType(String target, String[] args)
@@ -166,18 +173,42 @@ public class Fan
       String methodName = target.substring(dot+1);
       
       FPod pod = Sys.findPod(podName);
-      Class jclass = pod.podClassLoader.loadClass("fan."+podName+"."+typeName);
+      Class<?> jclass = pod.podClassLoader.loadClass("fan."+podName+"."+typeName);
 //      System.out.println(jclass.getClassLoader());
-      java.lang.reflect.Method m = findMethod(jclass, methodName);
+      Class<?> argClass = null;
+      Object argObj = null;
+      if (args.length > 0) {
+    	  argClass = pod.podClassLoader.loadClass("fan.sys.List");
+    	  java.lang.reflect.Method m = argClass.getMethod("make", Type.class, long.class);
+    	  argObj = m.invoke(null, Sys.findType("sys::Str"), (long)args.length);
+    	  java.lang.reflect.Method addm = argClass.getMethod("add", Object.class);
+    	  for (String s : args) {
+    		  addm.invoke(argObj, s);
+    	  }
+      }
+      
+//      System.out.println(argObj);
+      
+      java.lang.reflect.Method m = findMethod(jclass, methodName, argClass);
       
       Object res = null;
       if ((m.getModifiers() * Modifier.STATIC) != 0) {
-    	  res = m.invoke(null);
+    	  if (argObj == null) {
+    		  res = m.invoke(null);
+    	  }
+    	  else {
+    		  res = m.invoke(null, argObj);
+    	  }
       } else {
-    	  java.lang.reflect.Method ctor = findMethod(jclass, "make");
+    	  java.lang.reflect.Method ctor = findMethod(jclass, "make", null);
     	  Object instance = ctor.invoke(null);
-//    	  Object instance = jclass.newInstance();
-    	  res = m.invoke(instance);
+    	  //Object instance = jclass.newInstance();
+    	  if (argObj == null) {
+    		  res = m.invoke(instance);
+    	  }
+    	  else {
+    		  res = m.invoke(instance, argObj);
+    	  }
       }
       
       if (res instanceof Integer) {

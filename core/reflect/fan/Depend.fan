@@ -13,39 +13,18 @@
 **
 ** The string format for Depend:
 **
-**   <depend>        := <name> space* <constraints>
-**   <constraints>   := <constraint> [space* "," space* <constraint>]*
-**   <constraint>    := <versionSimple> | <versionPlus> | <versionRange>
-**   <versionSimple> := <version>
-**   <versionPlus>   := <version> space* "+"
-**   <versionRange>  := <version> space* "-" space* <version>
+**   <depend>        := <name> space <version>
 **   <version>       := <digits> ["." <digits>]*
 **   <digits>        := <digit> [<digits>]*
 **   <digit>         := "0" - "9"
 **
-** Note a simple version constraint such as "foo 1.2" really means
-** "1.2.*" - it  will match all build numbers and patch numbers
-** within "1.2".  Likewise "foo 1.2.64" will match all patch numbers
-** within the "1.2.64" build.  The "+" plus sign is used to specify a
-** given version and anything greater.  The "-" dash is used to
-** specify an inclusive range.  When using a range, then end version
-** is matched using the same rules as a simple version - for example
-** "4", "4.2", and "4.0.99" are all matches for "foo 1.2-4".  You may
-** specify a list of potential constraints separated by commas - a match
-** for the entire dependency is made if any one constraint is matched.
-**
 **  Examples:
 **    "foo 1.2"      Any version of foo 1.2 with any build or patch number
 **    "foo 1.2.64"   Any version of foo 1.2.64 with any patch number
-**    "foo 0+"       Any version of foo - version wildcard
-**    "foo 1.2+"     Any version of foo 1.2 or greater
-**    "foo 1.2-1.4"  Any version between 1.2 and 1.4 inclusive
-**    "foo 1.2,1.4"  Any version of 1.2 or 1.4
 **
 @Serializable { simple = true }
 final const class Depend
 {
-  private const DependConstraint[] constraints
   private const Str str
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,16 +36,26 @@ final const class Depend
   ** header for specification of the format.  If invalid format
   ** and checked is false return null, otherwise throw ParseErr.
   **
-  //TODO
-  native static new fromStr(Str s, Bool checked := true)
+  static new fromStr(Str s) {
+    pos := s.find(" ")
+    if (pos == -1 || pos >= s.size-1) {
+      throw ParseErr("Invalid Depend :$s")
+    }
+    name := s[0..<pos]
+
+    end := s.find("+")
+    if (end == -1) end = s.find(",")
+    ver := Version.fromStr(s[pos+1..end])
+    return privateMake(name, ver)
+  }
 
   **
   ** Private constructor
   **
-  private new privateMake(Str name, DependConstraint[] constraints, Str str) {
+  private new privateMake(Str name, Version ver) {
     this.name = name
-    this.constraints = constraints
-    this.str = str
+    this.version = ver
+    this.str = "$name $version"
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,42 +92,9 @@ final const class Depend
 //////////////////////////////////////////////////////////////////////////
 
   **
-  ** Get the number of version constraints.  There is always
-  ** at least one constraint.
+  ** Get the version constraint
   **
-  Int size() { constraints.size }
-
-  **
-  ** Get the version constraint at specified index:
-  **   - versionSimple: returns the version
-  **   - versionPlus:   returns the version
-  **   - versionRange:  returns the start version
-  **
-  Version version(Int index := 0) { constraints[index].version }
-
-  **
-  ** Return if the constraint at the specified index is a versionPlus:
-  **   - versionSimple: returns false
-  **   - versionPlus:   returns true
-  **   - versionRange:  returns false
-  **
-  Bool isPlus(Int index := 0) { constraints[index].isPlus }
-
-  **
-  ** Return if the constraint at the specified index is a versionRange:
-  **   - versionSimple: returns false
-  **   - versionPlus:   returns false
-  **   - versionRange:  returns true
-  **
-  Bool isRange(Int index := 0) { constraints[index].endVersion != null }
-
-  **
-  ** Return the ending version if versionRange:
-  **   - versionSimple: returns null
-  **   - versionPlus:   returns null
-  **   - versionRange:  returns end version
-  **
-  Version endVersion(Int index := 0) { constraints[index].endVersion }
+  const Version version
 
   **
   ** Return if the specified version is a match against
@@ -146,51 +102,10 @@ final const class Depend
   ** matching rules.
   **
   Bool match(Version v) {
-    for (i:=0; i<constraints.size; ++i)
-    {
-      c := constraints[i]
-      if (c.isPlus)
-      {
-        // versionPlus
-        if (c.version.compare(v) <= 0)
-          return true
-      }
-      else if (c.endVersion != null)
-      {
-        // versionRange
-        if (c.version.compare(v) <= 0 &&
-            (c.endVersion.compare(v) >= 0 || doMatch(c.endVersion, v)))
-          return true
-      }
-      else
-      {
-        // versionSimple
-        if (doMatch(c.version, v))
-          return true
-      }
-    }
-    return false
-  }
-
-  private static Bool doMatch(Version a, Version b)
-  {
-    if (a.segments.size > b.segments.size) return false
-    for (i:=0; i<a.segments.size; ++i)
-      if (a.segments[i] != b.segments[i])
+    for (i:=0; i<version.segments.size; ++i)
+      if (version.segments[i] != v.segments[i])
         return false
     return true
   }
 }
 
-internal const class DependConstraint
-{
-  const Version version;
-  const Bool isPlus;
-  const Version? endVersion;
-
-  new make(Version v, Bool p, Version? e) {
-    version = v
-    isPlus = p
-    endVersion = e
-  }
-}

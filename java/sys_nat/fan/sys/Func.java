@@ -74,9 +74,11 @@ public abstract class Func extends FanObj {
   }
 
 	public Object callOn(Object target, List args) {
-		 List list = List.make(FanObj.type, args.size()+1);
+		int argc = 0;
+		if (args != null) argc = (int)args.size();
+		 List list = List.make(FanObj.type, argc+1);
 		 list.add(target);
-		 for (int i=0; i< args.size(); ++i) {
+		 for (int i=0; i< argc; ++i) {
 			 list.add(args.get(i));
 		 }
 		 return callList(list);

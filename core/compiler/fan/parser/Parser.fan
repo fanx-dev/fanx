@@ -721,7 +721,7 @@ public class Parser : CompilerSupport
     {
       if (curt === Token.lbrace)
       {
-        err("Abstract and native methods cannot have method body")
+        err("Abstract or native methods cannot have method body")
         block  // keep parsing
       }
       else

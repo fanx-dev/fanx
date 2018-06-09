@@ -235,7 +235,7 @@ public abstract class FanType
 //  public final Slot slot(String name) { return slot(name, true); }
 //  public abstract Slot slot(String name, boolean checked);
 //
-  public static Object make(Type self) { return make(null); }
+  public static Object make(Type self) { return make(self, null); }
   public static Object make(Type self, List args)
   {
 	Err err;
@@ -255,26 +255,15 @@ public abstract class FanType
 //// Inheritance
 ////////////////////////////////////////////////////////////////////////////
 
-  public static Type refToType(FPod pod, int typeRefId) {
-	  FTypeRef tref = pod.typeRef(typeRefId);
-	  FType ft = Sys.findFType(tref.podName, tref.typeName);
-	  Type t = Type.fromFType(ft);
-	  return t;
-  }
-  
   public static Type base(Type self) {
-	  FType ftype = self.ftype();
-	  if (ftype.base ==  0xFFFF) {
-		  return null;
-	  }
-	  return refToType(ftype.pod, ftype.base);
+	  return self.base();
   }
 
   public static List mixins(Type self) {
 	  List acc = List.make(type, 4);
 	  FType ftype = self.ftype();
 	  for (int mixin : ftype.mixins) {
-		  Type t = refToType(ftype.pod, mixin);
+		  Type t = Type.refToType(ftype.pod, mixin);
 		  acc.add(t);
 	  }
 	  return acc.trim().ro();

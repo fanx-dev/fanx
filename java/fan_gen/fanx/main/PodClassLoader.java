@@ -169,7 +169,7 @@ public class PodClassLoader
     // be a normal fcode type which we need to emit
     FType ft = pod.type(typeName, false);
     if (ft == null) return null;
-    if (ft.hollow) ft.read();
+    ft.load();
     if (ft.isNative()) return null;
     FTypeEmit[] emitted = FTypeEmit.emit(ft);
     FTypeEmit emit = emitted[0];
