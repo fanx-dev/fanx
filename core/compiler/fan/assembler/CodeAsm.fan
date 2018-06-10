@@ -767,7 +767,8 @@ class CodeAsm : CompilerSupport
 
   private Void mapLiteral(MapLiteralExpr map)
   {
-    op(FOp.LoadType, fpod.addTypeRef(map.ctype))
+    //op(FOp.LoadType, fpod.addTypeRef(map.ctype))
+    op(FOp.LoadInt,  fpod.ints.add(map.keys.size))
     op(FOp.CallNew,  fpod.addMethodRef(ns.mapMake, 1))
 
     set := fpod.addMethodRef(ns.mapSet)

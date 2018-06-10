@@ -37,7 +37,7 @@ public final class FanInt
     catch (NumberFormatException e)
     {
       if (!checked) return 0;
-      throw ParseErr.make("Int:"+ s);
+      throw ParseErr.make("Invalid Int: '"+ s+"'");
     }
   }
 

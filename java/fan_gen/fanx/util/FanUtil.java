@@ -221,6 +221,31 @@ public class FanUtil {
 
 		return "fan." + podName + "." + typeName;
 	}
+	
+	public static boolean specialJavaImpl(String podName, String typeName) {
+		if (podName.equals("sys")) {
+			switch (typeName.charAt(0)) {
+			case 'B':
+				if (typeName.equals("Bool")) return true;
+//			case 'D':
+//				if (typeName.equals("Decimal"))
+//					return "fan.sys.FanDecimal";
+			case 'F':
+				if (typeName.equals("Float")) return true;
+			case 'I':
+				if (typeName.equals("Int")) return true;
+			case 'N':
+				if (typeName.equals("Num")) return true;
+			case 'O':
+				if (typeName.equals("Obj")) return true;
+			case 'S':
+				if (typeName.equals("Str")) return true;
+			case 'T':
+				if (typeName.equals("Type")) return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Given a Fantom qname, get the Java type signature: sys::Obj =>

@@ -50,6 +50,11 @@ abstract class Test
 // Verify
 //////////////////////////////////////////////////////////////////////////
 
+  private static Str toS(Obj? obj) {
+    if (obj == null) return "null"
+    return "$obj [${obj.typeof}]"
+  }
+
   **
   ** Verify that cond is true, otherwise throw a test
   ** failure exception.  If msg is non-null, include it
@@ -58,7 +63,6 @@ abstract class Test
   Void verify(Bool cond, Str? msg := null) {
     ++verifyCount;
     if (!cond) {
-      ++failVerifyCount
       fail(msg)
     }
   }
@@ -78,6 +82,7 @@ abstract class Test
   ** exception.
   **
   Void verifyNull(Obj? a, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} is not null"
     verify(a == null, msg)
   }
 
@@ -87,6 +92,7 @@ abstract class Test
   ** exception.
   **
   Void verifyNotNull(Obj? a, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} is null"
     verify(a != null, msg)
   }
 
@@ -98,6 +104,7 @@ abstract class Test
   ** msg is non-null, include it in failure exception.
   **
   Void verifyEq(Obj? a, Obj? b, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} != ${toS(b)}"
     verify(a == b, msg)
   }
 
@@ -106,6 +113,7 @@ abstract class Test
   ** If msg is non-null, include it in failure exception.
   **
   Void verifyNotEq(Obj? a, Obj? b, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} == ${toS(b)}"
     verify(a != b, msg)
   }
 
@@ -114,6 +122,7 @@ abstract class Test
   ** If msg is non-null, include it in failure exception.
   **
   Void verifySame(Obj? a, Obj? b, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} !== ${toS(b)}"
     verify(a === b, msg)
   }
 
@@ -122,6 +131,7 @@ abstract class Test
   ** If msg is non-null, include it in failure exception.
   **
   Void verifyNotSame(Obj? a, Obj? b, Str? msg := null) {
+    if (msg == null) msg = "${toS(a)} === ${toS(b)}"
     verify(a !== b, msg)
   }
 
@@ -145,7 +155,7 @@ abstract class Test
   Void verifyErr(Type errType, |Test| c) {
     try {
       c(this)
-      verify(false, "no err")
+      fail("No err thrown, expected $errType")
     } catch (Err err) {
       verifyType(err, errType)
     }
@@ -155,7 +165,7 @@ abstract class Test
   Void verifyErrMsg(Type errType, Str errMsg, |Test| c) {
     try {
       c(this)
-      verify(false, "no err")
+      fail("No err thrown, expected $errType")
     } catch (Err err) {
       verifyType(err, errType)
       verifyEq(errMsg, err.msg)
@@ -167,7 +177,9 @@ abstract class Test
   ** it in the failure exception.
   **
   Void fail(Str? msg := null) {
-    throw TestErr(msg)
+    ++failVerifyCount
+    if (msg == null) throw TestErr("Test failed")
+    throw TestErr("Test failed: $msg")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -235,7 +247,7 @@ internal class TestRunner {
   private Void runTest(Type type, Method meth) {
     Test? obj
     try {
-      //echo("call $meth")
+      echo("-- Run:  ${meth}...")
       obj = type.make()
       //echo(obj)
       obj.curTestMethod = meth

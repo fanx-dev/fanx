@@ -42,6 +42,7 @@ class CompilationUnit : Node
   }
 
   // get all imported extendsion methods
+  //TODO: optimize to map
   once CMethod[] extensionMethods() {
     meths := CMethod[,]
     importedTypes.each |types|{

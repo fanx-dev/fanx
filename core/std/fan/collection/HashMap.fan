@@ -6,50 +6,26 @@
 //   2018-5-18 Jed Young Creation
 //
 
-internal class MapEntry {
+internal class MapEntry : LinkedElem {
+  //key never be null
   Obj? key
-  Obj? value
-
-  MapEntry? next
-  MapEntry? previous
+  Obj? value { get{super.val} set{super.val=it} }
 }
 
-internal class MapEntryList {
-  private MapEntry head := MapEntry()
-  private MapEntry tail := head
-  Int size { private set }
+internal class MapEntryList : LinkedList {
 
   new make() {
-    head.next = tail
-    tail.previous = head
-  }
-
-  Bool isEmtpy() { head == tail }
-
-  Void clear() {
-    tail = head
-    size = 0
-  }
-
-  This add(MapEntry entry) {
-    entry.previous = tail.previous
-    entry.next = tail
-    tail.previous.next = entry
-    tail.previous = entry
-    ++size
-    return this
+    head = MapEntry()
+    head.previous = head
+    head.next = head
   }
 
   Void remove(MapEntry entry) {
-    entry.previous.next = entry.next
-    entry.next.previous = entry.previous
-    entry.next = null
-    entry.previous = null
-    --size
+    if (entry == end) throw ArgErr("remove end")
+    entry.remove
   }
 
-  MapEntry begin() { head }
-  MapEntry end() { tail }
+  MapEntry begin() { first }
 
   MapEntry? findByKey(Obj? key) {
     MapEntry entry := begin
@@ -121,6 +97,7 @@ internal rtconst class HashMap<K,V> : Map
 
   new make(Int capacity:=16, Float loadFactor:=0.75) : super.privateMake() {
     //this.type = type
+    if (capacity <= 0) capacity = 1
     array = MapEntryList?[,] { it.size = capacity }
     this.loadFactor = loadFactor
   }
@@ -214,7 +191,8 @@ internal rtconst class HashMap<K,V> : Map
       array[hash] = l
     }
 
-    l.setByKey(key, val)
+    old := l.setByKey(key, val)
+    if (old == null) ++size
     return this
   }
 
@@ -228,6 +206,7 @@ internal rtconst class HashMap<K,V> : Map
     }
 
     l.addByKey(key, val)
+    ++size
     return this
   }
 
@@ -239,7 +218,9 @@ internal rtconst class HashMap<K,V> : Map
       return null
     }
 
-    return l.removeByKey(key)
+    old := l.removeByKey(key)
+    if (old != null) --size
+    return old
   }
 
   override This clear() {
@@ -249,6 +230,7 @@ internal rtconst class HashMap<K,V> : Map
       l := array[i]
       l.clear
     }
+    size = 0
     return this
   }
 

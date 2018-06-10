@@ -49,7 +49,7 @@ public class Err
     }
     err.msg = ex.getMessage();
     err.actual = ex;
-    err.initCause(ex);
+    err.setCause(ex);
     return err;
   }
 
@@ -103,15 +103,28 @@ public class Err
   public static void make$(Err self, String msg, Err cause)
   {
     if (msg == null) {
-    	cause.trace();
     	NullErr err = NullErr.make("msg is null", cause);
-//    	err.msg = ("msg is null");
-//    	err.cause = cause;
     	throw err;
     }
+    
     self.msg = msg;
     self.cause = cause;
-    self.initCause(cause);
+    self.setCause(cause);
+  }
+  
+  protected void setCause(Throwable cause) {
+	  if (cause == this) {
+	    	Err err = Err.make("Self-causation", cause);
+	    	throw err;
+	  }
+	  
+	  try {
+		  java.lang.reflect.Field field = Throwable.class.getDeclaredField("cause");
+		  field.setAccessible(true);
+		  field.set(this, cause);
+	  } catch (Throwable e) {
+		  e.printStackTrace();
+	  }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,6 +183,28 @@ public class Err
 	  toJava().printStackTrace();
 	  return this;
   }
+  
+  public String traceToStr() {
+	StringBuilder sb = new StringBuilder();
+	sb.append(toStr()).append("\n");
+	
+    StackTraceElement[] elems = toJava().getStackTrace();
+    for (StackTraceElement elem : elems)
+    {
+      sb.append(elem);
+      sb.append("\n");
+    }
+    
+    if (cause != null)
+    {
+    	String causeStr = cause.traceToStr();
+    	sb.append("Cause:\n");
+    	sb.append(causeStr);
+    }
+    
+    return sb.toString();
+  }
+  
 //  public Err trace(OutStream out) { return trace(out, null, 0, toJava()); }
 //  public Err trace(O.utStream out, Map opt) { return trace(out, opt, optToIndent(opt), toJava()); }
 //

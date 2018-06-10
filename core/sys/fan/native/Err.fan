@@ -29,12 +29,12 @@ native const class Err
   ** Get the string message passed to the contructor or empty
   ** string if a message is not available.
   **
-  const Str msg
+  Str msg()
 
   **
   ** Get the underyling cause exception or null.
   **
-  const Err? cause
+  Err? cause()
 
   **
   ** Dump the stack trace of this exception to the specified
@@ -52,7 +52,7 @@ native const class Err
   **
   ** Dump the stack trace of this exception to a Str.
   **
-  const Str traceToStr
+  Str traceToStr()
 
   **
   ** Return the qualified type name and optional message.

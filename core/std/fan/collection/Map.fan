@@ -19,9 +19,9 @@ rtconst abstract class Map<K,V>
 //////////////////////////////////////////////////////////////////////////
 
   **
-  ** Constructor with of type (must be Map type).
+  ** Constructor
   **
-  static new make(Type? type := null, Int capacity := 16) {
+  static new make(Int capacity := 16) {
     return HashMap(capacity)
   }
 

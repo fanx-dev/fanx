@@ -7,6 +7,8 @@
 //
 package fan.sys;
 
+import java.lang.reflect.Modifier;
+
 import fanx.main.*;
 import fanx.util.*;
 
@@ -174,9 +176,19 @@ public class FanObj extends IObj {
 	public Object trap(String name, List args) {
 		return doTrap(this, name, args, typeof());
 	}
-
-	private static Object invokeMethod(java.lang.reflect.Method m, Object obj, List args) {
+	
+	private static Object invokeMethod(java.lang.reflect.Method m, Object obj, List args, Type type) {
+		//Fan.Int.and(a, b)
+		if ((m.getModifiers() & Modifier.STATIC) !=0 && FanUtil.specialJavaImpl(type.podName(), type.name())) {
+			args.insert(0, obj);
+			return doInvokeMethod(m, null, args);
+		}
+		return doInvokeMethod(m, obj, args);
+	}
+	
+	private static Object doInvokeMethod(java.lang.reflect.Method m, Object obj, List args) {
 		try {
+			
 			Object result = null;
 			if (args == null) {
 				result = m.invoke(obj);
@@ -189,30 +201,30 @@ public class FanObj extends IObj {
 				result = m.invoke(obj);
 				break;
 			case 1:
-				result = m.invoke(obj, args.add(0));
+				result = m.invoke(obj, args.get(0));
 				break;
 			case 2:
-				result = m.invoke(obj, args.add(0), args.add(1));
+				result = m.invoke(obj, args.get(0), args.get(1));
 				break;
 			case 3:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2));
 				break;
 			case 4:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2), args.add(3));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3));
 				break;
 			case 5:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2), args.add(3), args.add(4));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4));
 				break;
 			case 6:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2), args.add(3), args.add(4), args.add(5));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5));
 				break;
 			case 7:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2), args.add(3), args.add(4), args.add(5),
-						args.add(6));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5),
+						args.get(6));
 				break;
 			case 8:
-				result = m.invoke(obj, args.add(0), args.add(1), args.add(2), args.add(3), args.add(4), args.add(5),
-						args.add(6), args.add(7));
+				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5),
+						args.get(6), args.get(7));
 				break;
 			default:
 				throw ArgErr.make("too many args:" + m + "," + args);
@@ -283,7 +295,7 @@ public class FanObj extends IObj {
 			Object slot = ml.get(0);
 			if (slot instanceof java.lang.reflect.Method) {
 				java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
-				return invokeMethod(m, self, args);
+				return invokeMethod(m, self, args, type);
 			}
 			else if (slot instanceof java.lang.reflect.Field) {
 				java.lang.reflect.Field field = (java.lang.reflect.Field)slot;
@@ -313,7 +325,7 @@ public class FanObj extends IObj {
 				java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
 				int paramSize = m.getParameterTypes().length;
 				if (paramSize == argc) {
-					return invokeMethod(m, self, args);
+					return invokeMethod(m, self, args, type);
 				}
 			}
 			throw ArgErr.make("Invalid number of args to call method '" +name + "'");

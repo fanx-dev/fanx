@@ -11,8 +11,8 @@ class LinkedElem {
   Obj? val
 
   Void remove() {
-    previous->next = next
-    next->previous = previous
+    previous.next = next
+    next.previous = previous
 
     next = null
     previous = null
@@ -27,39 +27,39 @@ class LinkedList {
   LinkedElem head := LinkedElem()
 
   new make() {
-    head->previous = head
-    head->next = head
+    head.previous = head
+    head.next = head
   }
 
   Void clear() {
-    head->previous = head
-    head->next = head
+    head.previous = head
+    head.next = head
   }
 
-  LinkedElem first() { head->next }
+  LinkedElem first() { head.next }
 
-  LinkedElem last() { head->previous }
+  LinkedElem last() { head.previous }
 
   LinkedElem end() { head }
 
   Void add(LinkedElem e) {
-    last := head->previous
+    last := head.previous
 
-    last->next = e
-    e->previous = last
+    last.next = e
+    e.previous = last
 
-    e->next = head
-    head->previous = e
+    e.next = head
+    head.previous = e
   }
 
   Void insertBefore(LinkedElem e, LinkedElem other := first) {
-    e->next = other
-    other->previous = e
+    e.next = other
+    other.previous = e
 
-    head->next = e
-    e->previous = head
+    head.next = e
+    e.previous = head
   }
 
-  Bool isEmpty() { head->next == head }
+  Bool isEmpty() { head.next == head }
 }
 
