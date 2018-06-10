@@ -108,7 +108,7 @@ class ObjTest : Test
     verifyEq(this.isImmutable, false)
     verifyEq(Unsafe(this).isImmutable, true)
     verifyType(Unsafe(this), Unsafe#)
-    verifyEq(Type.of(Unsafe(this)).qname, "sys::Unsafe")
+    verifyEq(Type.of(Unsafe(this)).qname, "std::Unsafe")
     verifySame(Unsafe(this).val, this)
   }
 

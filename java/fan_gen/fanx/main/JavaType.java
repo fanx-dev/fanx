@@ -8,10 +8,17 @@
 package fanx.main;
 
 public class JavaType extends Type {
-	Class<?> jtype;
+	private Class<?> jclass;
+	private NullableType nullable;
 	
 	public JavaType(Class<?> jtype) {
-		this.jtype = jtype;
+		this.jclass = jtype;
+		nullable = new NullableType(this);
+	}
+	
+	@Override
+	public Type toNullable() {
+		return nullable;
 	}
 
 	@Override
@@ -45,12 +52,12 @@ public class JavaType extends Type {
 
 	@Override
 	public Class<?> getJavaClass() {
-		return jtype;
+		return jclass;
 	}
 
 	@Override
 	public void precompiled(Class<?> clz) {
-		jtype = clz;
+		jclass = clz;
 	}
 
 	@Override

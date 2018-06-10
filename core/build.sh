@@ -10,3 +10,4 @@ $fanc baseTest/pod.props
 $fanc testSys/pod.props
 
 #../../../fantom/fan/bin/fanp -c sys::List
+

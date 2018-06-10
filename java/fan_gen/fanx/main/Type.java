@@ -21,7 +21,7 @@ public abstract class Type {
 	public Map<String, List<Object>> jslots = null;
 
 	public Object emptyList;
-
+	
 	public abstract String podName();
 
 	public abstract String name();
@@ -63,9 +63,7 @@ public abstract class Type {
 		return this;
 	}
 
-	public Type toNullable() {
-		return new NullableType(this);
-	}
+	public abstract Type toNullable();
 
 	public boolean isConst() {
 		return (flags() & FConst.Const) != 0;

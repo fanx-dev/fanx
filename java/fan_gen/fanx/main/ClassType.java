@@ -20,9 +20,16 @@ public class ClassType extends Type
 {
 	FType ftype;
 	private Class<?> jclass;
+	private NullableType nullable;
 	
 	public ClassType(FType t) {
 		ftype = t;
+		nullable = new NullableType(this);
+	}
+	
+	@Override
+	public Type toNullable() {
+		return nullable;
 	}
 
 	@Override

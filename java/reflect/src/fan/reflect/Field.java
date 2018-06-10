@@ -30,6 +30,16 @@ public class Field extends Slot {
 			public boolean isImmutable() {
 				return true;
 			}
+
+			@Override
+			public Type returns() {
+				return null;
+			}
+
+			@Override
+			public long arity() {
+				return 1;
+			}
 		};
 	}
 

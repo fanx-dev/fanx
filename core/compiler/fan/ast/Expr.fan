@@ -155,6 +155,8 @@ abstract class Expr : Node
           LiteralExpr(loc, ExprId.falseLiteral, ns.boolType, false)
       case Str#:
         return LiteralExpr(loc, ExprId.strLiteral, ns.strType, val)
+      case Int#:
+        return LiteralExpr(loc, ExprId.intLiteral, ns.intType, val)
       case DateTime#:
 
         return CallExpr(loc, null, "fromStr", ExprId.construction)

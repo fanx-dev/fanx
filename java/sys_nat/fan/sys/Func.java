@@ -23,9 +23,9 @@ public abstract class Func extends FanObj {
 		return type;
 	}
 
-//	public abstract Type returns();
+	public abstract Type returns();
 
-//	public abstract long arity();
+	public abstract long arity();
 
 //	public abstract List params();
 

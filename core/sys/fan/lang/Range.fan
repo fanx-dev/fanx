@@ -23,19 +23,15 @@ const struct class Range
   **
   ** Convenience for make(start, end, false).
   **
-  new makeInclusive(Int start, Int end) {
-    this._start = start
-    this._end = end
-    _exclusive = false
+  static new makeInclusive(Int start, Int end) {
+    return make(start, end, false)
   }
 
   **
   ** Convenience for make(start, end, true).
   **
-  new makeExclusive(Int start, Int end) {
-    this._start = start
-    this._end = end
-    _exclusive = true
+  static new makeExclusive(Int start, Int end) {
+    return make(start, end, true)
   }
 
   **
@@ -52,9 +48,24 @@ const struct class Range
   ** exclusive is "start..<end".  If invalid format then
   ** throw ParseErr or return null based on checked flag.
   **
-  static new fromStr(Str s, Bool checked := true) {
-    //TODO
-    throw ParseErr()
+  static new fromStr(Str str, Bool checked := true) {
+    pos := str.find("..")
+    if (pos == -1 || pos+2>= str.size) {
+      if (checked) throw ParseErr("Invalide Range: $str")
+      return make(0, 0, true)
+    }
+    s := str[0..<pos]
+    Str? e
+    exclusive := false
+    if (str[pos+2] == '<') {
+      e = str[pos+3..-1]
+      exclusive = true
+    }
+    else {
+      e = str[pos+2..-1]
+      exclusive = false
+    }
+    return make(s.toInt, e.toInt, exclusive)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,6 +126,18 @@ const struct class Range
   private const Int _end
 
   **
+  ** Return last inclusive index
+  ** Example:
+  ** (1..<3).end => 2
+  **
+  Int lastEnd() {
+    if (start < end)
+      return exclusive ? end-1 : end
+    else
+      return exclusive ? end+1 : end
+  }
+
+  **
   ** Is the end index inclusive.
   **
   ** Example:
@@ -137,31 +160,45 @@ const struct class Range
   ** Return if this range contains no integer values.
   ** Equivalent to 'toList.isEmpty'.
   **
-  Bool isEmpty() { toList.isEmpty }
+  Bool isEmpty() { exclusive && start == end }
 
   **
   ** Get the minimum value of the range. If range contains
   ** no values then return null.  Equivalent to 'toList.min'.
   **
-  Int? min() { toList.min }
+  Int? min() {
+    if (isEmpty) return null
+    if (end < start) return exclusive ? end+1 : end
+    return start
+  }
 
   **
   ** Get the maximum value of the range. If range contains
   ** no values then return null.  Equivalent to 'toList.max'.
   **
-  Int? max() { toList.max }
+  Int? max() {
+    if (isEmpty) return null
+    if (end < start) return start
+    return exclusive ? end-1 : end
+  }
 
   **
   ** Get the first value of the range.   If range contains
   ** no values then return null.  Equivalent to 'toList.first'.
   **
-  Int? first() { toList.first }
+  Int? first() {
+    if (isEmpty) return null
+    return start
+  }
 
   **
   ** Get the last value of the range.   If range contains
   ** no values then return null.  Equivalent to 'toList.last'.
   **
-  Int? last() { toList.last }
+  Int? last() {
+    if (isEmpty()) return null
+    return lastEnd
+  }
 
   **
   ** Return if this range contains the specified integer.
@@ -171,13 +208,18 @@ const struct class Range
   **   (1..3).contains(4)  =>  false
   **
   Bool contains(Int i) {
-    if (i < start) return false
-    if (exclusive) {
-      if (i >= end) return false
-    } else {
-      if (i > end) return false
+    if (start < end) {
+      if (exclusive)
+        return start <= i && i < end
+      else
+        return start <= i && i <= end
     }
-    return true
+    else {
+      if (exclusive)
+        return end < i && i <= start
+      else
+        return end <= i && i <= start
+    }
   }
 
   **
@@ -189,7 +231,7 @@ const struct class Range
   **   (3..<5).offset(-2) =>  1..<3
   **
   Range offset(Int offset) {
-    return Range(start-offset, end-offset, exclusive)
+    return Range(start+offset, end+offset, exclusive)
   }
 
   **
@@ -201,11 +243,39 @@ const struct class Range
   **   (1..<3).each |i| { echo(i) }         => 1, 2
   **   ('a'..'z').each |Int i| { echo(i) }  => 'a', 'b', ... 'z'
   **
-  Void each(|Int i| c) {
-    len := exclusive ? end : end +1
-    for (i:=start; i<len; ++i) {
-      c(i)
+  Void each(|Int i| f) {
+    start := this.start
+    end := this.lastEnd
+    if (start < end) {
+      for (i:=start; i<=end; ++i) f.call(i)
     }
+    else {
+      for (i:=start; i>=end; --i) f.call(i)
+    }
+  }
+
+  **
+  ** Iterate every integer in the range until the function returns
+  ** non-null.  If function returns non-null, then break the iteration
+  ** and return the resulting object.  Return null if the function returns
+  ** null for every integer in the range.
+  **
+  Obj? eachWhile(|Int i->Obj?| f) {
+    start := this.start
+    end := this.lastEnd
+    if (start < end) {
+      for (i:=start; i<=end; ++i) {
+        r := f.call(i)
+        if (r != null) return r
+      }
+    }
+    else {
+      for (i:=start; i>=end; --i) {
+        r := f.call(i)
+        if (r != null) return r
+      }
+    }
+    return null
   }
 
   **
@@ -216,11 +286,25 @@ const struct class Range
   ** Example:
   **   (10..15).map |i->Str| { i.toHex }  =>  Str[a, b, c, d, e, f]
   **
-  Obj?[] map(|Int i->Obj?| c) {
-    nlist := Obj?[,]
-    len := exclusive ? end : end +1
-    for (i:=start; i<len; ++i) {
-      nlist.add(c(i))
+  Obj?[] map(|Int i->Obj?| f) {
+    tof := f.returns
+    if (tof == Void#) tof = Obj?#
+    cp := start < end ? end-start+1 : start-end+1
+
+    nlist := List.make(tof, cp)
+    start := this.start
+    end := this.lastEnd
+    if (start < end) {
+      for (i:=start; i<=end; ++i) {
+        r := f.call(i)
+        nlist.add(r)
+      }
+    }
+    else {
+      for (i:=start; i>=end; --i) {
+        r := f.call(i)
+        nlist.add(r)
+      }
     }
     return nlist
   }
@@ -235,9 +319,20 @@ const struct class Range
   **
   Int[] toList() {
     nlist := Int[,]
-    len := exclusive ? end : end +1
-    for (i:=start; i<len; ++i) {
-      nlist.add(i)
+    if (isEmpty) return nlist
+    start := this.start
+    end := this.lastEnd
+    if (start < end) {
+      nlist.capacity = end-start+1
+      for (i:=start; i<=end; ++i) {
+        nlist.add(i)
+      }
+    }
+    else {
+      nlist.capacity = start-end+1
+      for (i:=start; i>=end; --i) {
+        nlist.add(i)
+      }
     }
     return nlist
   }
@@ -250,7 +345,6 @@ const struct class Range
   Int random() {
     Int.random(this)
   }
-
 
   Int startIndex(Int size)
   {

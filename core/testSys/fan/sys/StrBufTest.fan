@@ -247,7 +247,7 @@ class StrBufTest : Test
 //////////////////////////////////////////////////////////////////////////
 // OutputStream
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testOut()
   {
     verifyOut("x\u0abc\n") |out| { out.print("x\u0abc\n") }
@@ -274,11 +274,11 @@ class StrBufTest : Test
     f(s.out)
     verifyEq(s.toStr, expected)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Wrapped OutputStream
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testOutWrap()
   {
     buf := StrBuf()
@@ -300,20 +300,22 @@ class StrBufTest : Test
     buf.clear
     out.writeXml("<foo>");  verifyEq(buf.toStr, "&lt;foo>")
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Charset
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testDefaultCharset()
   {
     s := StrBuf.make
     verify(s.out.charset.name == "UTF-8")
   }
+  */
 }
-
+/*
 @Js
 internal class StrBufWrapOutStream : OutStream
 {
   new make(OutStream out) : super(out) {}
 }
+*/
