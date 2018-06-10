@@ -469,4 +469,14 @@ rtconst class ArrayList<V> : List
     return nlist
   }
 
+  override Bool isImmutable() { immutable }
+
+  override This toImmutable() {
+    if (isImmutable) return this
+    nlist := ArrayList(of, size)
+    each |v| { nlist.add(v.toImmutable) }
+    nlist.readOnly = true
+    nlist.immutable = true
+    return nlist
+  }
 }

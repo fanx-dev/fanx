@@ -880,4 +880,7 @@ rtconst abstract class List<V>
   **
   abstract This rw()
 
+  override abstract Bool isImmutable()
+
+  override abstract This toImmutable()
 }

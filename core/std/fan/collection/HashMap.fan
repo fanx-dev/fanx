@@ -326,6 +326,7 @@ internal rtconst class HashMap<K,V> : Map
         itr = itr.next
       }
     }
+    nmap.readOnly = true
     nmap.immutable = true
     return nmap
   }

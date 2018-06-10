@@ -248,7 +248,7 @@ public class FanStr
     return r;
   }
   
-  public static Long indexr(String self, String s) { return indexr(self, s, s.length()-1L); }
+  public static Long indexr(String self, String s) { return indexr(self, s, self.length()-1L); }
   public static Long indexr(String self, String s, long off)
   {
     long res = findr(self, s, off);
@@ -258,7 +258,7 @@ public class FanStr
     return res;
   }
 
-  public static long findr(String self, String s) { return indexr(self, s, s.length()-1L); }
+  public static long findr(String self, String s) { return indexr(self, s, self.length()-1L); }
   public static long findr(String self, String s, long off)
   {
     int i = (int)off;
@@ -346,7 +346,7 @@ public class FanStr
     if (len == 0) return FanType.emptyList(FanInt.type);
     List list = List.make(FanInt.type, len);
     for (int i=0; i<len; ++i) {
-    	list.add(self.charAt(i));
+    	list.add((long)self.charAt(i));
     }
     return list;
   }

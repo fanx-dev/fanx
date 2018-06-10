@@ -124,10 +124,11 @@ Modularity
 Pods are the unit of versioning and deployment. They are combined together using clear dependencies.
 The pod build script:
 ```
-podName = testlib
-summary = test lib
-srcDirs = test/,fan/
-depends = sys 1.0, std 1.0, reflect 1.0
+  podName = testlib
+  summary = test lib
+  version = 2.0
+  srcDirs = test/,fan/
+  depends = sys 1.0, std 1.0, reflect 1.0
 ```
 
 

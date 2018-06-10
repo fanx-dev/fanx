@@ -93,6 +93,7 @@ The pod.props file:
 ```
   podName = testlib
   summary = test lib
+  version = 2.0
   srcDirs = fan/*
   depends = sys 1.0
 ```
