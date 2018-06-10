@@ -94,8 +94,10 @@ class ResolveImports : CompilerStep
       checkUsingPod(this, podName, u.loc)
 
       // don't allow a using my own pod
-      if (u.typeName == null && u.podName == compiler.pod.name)
-        err("Using '$u.podName' is on pod being compiled", u.loc)
+      if (u.typeName == null && u.podName == compiler.pod.name) {
+        warn("Using '$u.podName' is on pod being compiled", u.loc)
+        return
+      }
 
       // check for duplicate imports
       key := podName

@@ -71,8 +71,15 @@ class UsingAndTypeScanner : CompilerSupport
   Void parse()
   {
     // sys is imported implicitly (unless this is sys itself)
-    if (!isSys)
+    if (!isSys) {
       unit.usings.add(Using(unit.loc) { podName="sys" })
+
+      //std and reflect is imported implicitly
+      if (pod.name != "std" && pod.name != "reflect") {
+        unit.usings.add(Using(unit.loc) { podName="std" })
+        unit.usings.add(Using(unit.loc) { podName="reflect" })
+      }
+    }
 
     // scan tokens quickly looking for keywords
     inClassHeader := false

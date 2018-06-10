@@ -6,8 +6,6 @@
 //   1 Jan 06  Brian Frank  Creation
 //
 
-using reflect
-using std
 
 **
 ** IntTest

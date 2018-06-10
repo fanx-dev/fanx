@@ -48,7 +48,7 @@ public class Field extends Slot {
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.type);
 		Type type = Sys.findType(tref.signature);
-		Field field = new Field(parent, f.name, ftype.flags, facets, 0, type);
+		Field field = new Field(parent, f.name, f.flags, facets, 0, type);
 		
 		try {
 			Class<?> clz = parent.getJavaClass();

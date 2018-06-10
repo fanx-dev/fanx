@@ -135,6 +135,17 @@ native const struct class Float : Num
   Bool isNaN()
 
   **
+  ** Return if this is negative zero value.
+  **
+  Bool isNegZero()
+
+  **
+  ** If this value is negative zero then return
+  ** normalized zero, otherwise return this value.
+  **
+  Float normNegZero()
+
+  **
   ** Return bits().
   **
   override Int hash()

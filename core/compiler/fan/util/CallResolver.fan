@@ -186,7 +186,7 @@ class CallResolver : CompilerSupport
       }
     }
 
-    if (found == null) {
+    if (found == null && target == null) {
       founds := CSlot[,]
       findInheritedStatic(base, founds)
       if (founds.size > 1) {
@@ -198,7 +198,7 @@ class CallResolver : CompilerSupport
     }
 
     //try find extesion methods
-    if (found == null) {
+    if (found == null && target != null && target.id !== ExprId.staticTarget) {
       findExtesion(base)
     }
 

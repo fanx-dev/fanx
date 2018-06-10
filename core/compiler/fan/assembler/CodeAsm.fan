@@ -732,9 +732,9 @@ class CodeAsm : CompilerSupport
     op(FOp.LoadType, fpod.addTypeRef(expr.parent))
     op(FOp.LoadStr, fpod.strs.add(expr.name))
     if (expr.slot is CField)
-      op(FOp.CallStatic, fpod.addMethodRef(ns.typeField, 1))
+      op(FOp.CallStatic, fpod.addMethodRef(ns.typeField, 2))
     else
-      op(FOp.CallStatic, fpod.addMethodRef(ns.typeMethod, 1))
+      op(FOp.CallStatic, fpod.addMethodRef(ns.typeMethod, 2))
   }
 
   private Void rangeLiteral(RangeLiteralExpr r)

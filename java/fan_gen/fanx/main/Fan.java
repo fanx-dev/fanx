@@ -219,7 +219,11 @@ public class Fan
     catch (Throwable e)
     {
       //System.out.println("ERROR: " + e);
-      e.printStackTrace();
+      if (e.getCause() != null) {
+    	  e.getCause().printStackTrace();
+      } else {
+    	  e.printStackTrace();
+      }
       return -1;
     }
   }

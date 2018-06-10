@@ -182,8 +182,32 @@ internal rtconst class HashMap<K,V> : Map
     return nmap
   }
 
+  protected Void rehash() {
+    if (size < (array.size * loadFactor).toInt) {
+      return
+    }
+    modify
+
+    newSize := size < 256 ? size * 2 + 8 : (size * 1.5).toInt
+    oldArray := this.array
+    array = MapEntryList?[,] { it.size = newSize }
+    size = 0
+
+    for (i:=0; i<oldArray.size; ++i) {
+      l := oldArray[i]
+      if (l == null) continue
+
+      itr := l.begin
+      while (itr != l.end) {
+        set(itr.key, itr.value)
+        itr = itr.next
+      }
+    }
+  }
+
   @Operator override This set(K key, V val) {
     modify
+    rehash
     hash := getHash(key)
     l := array[hash]
     if (l == null) {
@@ -198,6 +222,7 @@ internal rtconst class HashMap<K,V> : Map
 
   override This add(K key, V val) {
     modify
+    rehash
     hash := getHash(key)
     l := array[hash]
     if (l == null) {
@@ -228,7 +253,7 @@ internal rtconst class HashMap<K,V> : Map
     size = 0
     for (i:=0; i<array.size; ++i) {
       l := array[i]
-      l.clear
+      l?.clear
     }
     size = 0
     return this
