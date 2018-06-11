@@ -320,7 +320,7 @@ const final class Uri
   }
 
   static Str decodeToken(Str s, Bool isQuery) {
-    sb := Buf()
+    sb := Buf.make()
     for (i:=0; i<s.size; ++i) {
       ch := s[i]
       if (ch == '%') {

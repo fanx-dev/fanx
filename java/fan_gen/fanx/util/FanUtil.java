@@ -109,9 +109,9 @@ public class FanUtil {
 		javaImmutables.put("java.math.BigDecimal", Boolean.TRUE);
 		javaImmutables.put("java.math.BigInteger", Boolean.TRUE);
 		
-		javaImmutables.put("fan.main.ClassType", Boolean.TRUE);
-		javaImmutables.put("fan.main.JavaType", Boolean.TRUE);
-		javaImmutables.put("fan.main.Type", Boolean.TRUE);
+		javaImmutables.put("fanx.main.ClassType", Boolean.TRUE);
+		javaImmutables.put("fanx.main.JavaType", Boolean.TRUE);
+		javaImmutables.put("fanx.main.Type", Boolean.TRUE);
 	}
 
 	/**

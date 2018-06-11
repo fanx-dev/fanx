@@ -9,5 +9,5 @@
 - serialization by reflect
 - numeric precision in JVM
 - locale and config
-
+- data class
 

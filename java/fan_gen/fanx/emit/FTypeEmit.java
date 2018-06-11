@@ -390,6 +390,7 @@ public abstract class FTypeEmit
     while (it.hasNext())
     {
       FType mixin = (FType)it.next();
+      mixin.load();
       emitMixinRouters(mixin);
     }
   }

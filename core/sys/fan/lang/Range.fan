@@ -131,7 +131,8 @@ const struct class Range
   ** (1..<3).end => 2
   **
   Int lastEnd() {
-    if (start < end)
+    if (start == end) return end
+    else if (start < end)
       return exclusive ? end-1 : end
     else
       return exclusive ? end+1 : end

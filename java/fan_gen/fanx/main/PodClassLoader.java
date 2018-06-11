@@ -109,6 +109,7 @@ public class PodClassLoader
         String msg = "cannot load SWT library; see http://fantom.org/doc/docTools/Setup.html#swt";
         System.out.println("\nERROR: " + msg + "\n");
       }
+      e.printStackTrace();
       throw new RuntimeException(e);
     }
   }
@@ -154,6 +155,7 @@ public class PodClassLoader
       String tname = typeName.substring(0, typeName.length()-strip);
       FType ft = pod.type(tname, false);
       if (ft == null) return null;
+      ft.load();
       if (ft.isNative()) return null;
       FTypeEmit[] emitted = FTypeEmit.emit(ft);
       Class c = null;

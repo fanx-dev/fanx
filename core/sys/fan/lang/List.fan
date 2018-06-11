@@ -576,13 +576,16 @@ rtconst abstract class List<V>
   **
   V? min(|V a, V b->Int|? c := null) {
     Obj? min
-    each |obj| {
-      if (min == null) min = obj
+    each |obj, i| {
+      if (i == 0) {
+        min = obj
+        return
+      }
       Int result
       if (c!=null) result = c(min, obj)
       else result = min <=> obj
 
-      if (result < 0) {
+      if (result > 0) {
         min = obj
       }
     }
@@ -602,13 +605,16 @@ rtconst abstract class List<V>
   **
   V? max(|V a, V b->Int|? c := null) {
     Obj? max
-    each |obj| {
-      if (max == null) max = obj
+    each |obj, i| {
+      if (i == 0)  {
+        max = obj
+        return
+      }
       Int result
       if (c!=null) result = c(max, obj)
       else result = max <=> obj
 
-      if (result > 0) {
+      if (result < 0) {
         max = obj
       }
     }

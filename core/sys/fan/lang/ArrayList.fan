@@ -123,7 +123,7 @@ rtconst class ArrayList<V> : List
 
     nlist := ArrayList(of, len)
     nlist.array.copyFrom(array, 0, start, len)
-    nlist.size = len
+    nlist.&size = len
     return nlist
   }
 
@@ -160,7 +160,7 @@ rtconst class ArrayList<V> : List
   override This dup() {
     nlist := ArrayList(of, size)
     nlist.array.copyFrom(array, 0, 0, size)
-    nlist.size = size
+    nlist.&size = size
     return nlist
   }
 
@@ -201,7 +201,7 @@ rtconst class ArrayList<V> : List
     //TODO
     ArrayList list := alist
     array.copyFrom(list.array, 0, size, list.size)
-    size = size + list.size
+    &size = size + list.size
     return this
   }
 
@@ -213,7 +213,7 @@ rtconst class ArrayList<V> : List
     grow(size + 1)
     array.copyFrom(array, index, index+1, size-index)
     array[index] = item
-    size += 1
+    &size += 1
     return this
   }
 
@@ -227,7 +227,7 @@ rtconst class ArrayList<V> : List
     ArrayList list := alist
     array.copyFrom(array, index, index+list.size, size-index)
     array.copyFrom(list.array, 0, index, list.size)
-    size = size + list.size
+    &size = size + list.size
     return this
   }
 
@@ -250,7 +250,7 @@ rtconst class ArrayList<V> : List
     obj := array[index]
     array.copyFrom(array, index+1, index, size-index-1)
     array[size-1] = null
-    size = size-1
+    &size = size-1
     return obj
   }
 
@@ -271,7 +271,7 @@ rtconst class ArrayList<V> : List
     if (len == 0) return this
 
     array.copyFrom(array, end, start, size-end)
-    size = size - len
+    &size = size - len
     return this
   }
 

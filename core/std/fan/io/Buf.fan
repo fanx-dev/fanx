@@ -27,7 +27,7 @@
 ** appended.  It is common to write bytes into the buffer using the
 ** OutStream, then call `Buf.flip` to prepare the buffer to be used for reading.
 **
-rtconst mixin Buf
+rtconst abstract class Buf
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,6 +40,8 @@ rtconst mixin Buf
   static new make(Int capacity := 1024) {
     MemBuf(capacity)
   }
+
+  protected new privateMake() {}
 
   **
   ** Generate a random series of bytes.
@@ -623,7 +625,7 @@ internal class MemBuf : Buf
 {
   protected ByteArray buf
 
-  new make(Int cap) {
+  new make(Int cap) : super.privateMake() {
     size = 0
     pos = 0
     buf = ByteArray(cap)
@@ -695,7 +697,7 @@ internal class MemBuf : Buf
 
 internal class FileBuf : Buf
 {
-  new make(Str filename) {
+  new make(Str filename) : super.privateMake() {
     init(filename)
   }
 
