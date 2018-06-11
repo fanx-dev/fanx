@@ -38,6 +38,9 @@ public abstract class Func extends FanObj {
 	}
 
 //	public abstract Method method();
+	private Err tooFewArgs(int given) {
+		return ArgErr.make("Too few arguments: "+ given + " < " + arity());
+	}
 
 	public Object callList(List args) {
 	  int size = (int)args.size();
@@ -85,39 +88,197 @@ public abstract class Func extends FanObj {
 	}
 
 	public Object call() {
-		return call(null, null, null, null, null, null, null, null);
+		int size = (int)arity();
+		if (size == 0) call();
+		throw tooFewArgs(0);
 	}
 
 	public Object call(Object a) {
-		return call(a, null, null, null, null, null, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		}
+		throw tooFewArgs(1);
 	}
 
 	public Object call(Object a, Object b) {
-		return call(a, b, null, null, null, null, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		}
+		throw tooFewArgs(2);
 	}
 
 	public Object call(Object a, Object b, Object c) {
-		return call(a, b, c, null, null, null, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		}
+		throw tooFewArgs(3);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d) {
-		return call(a, b, c, d, null, null, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		  case 4: {
+			  return call(a, b, c, d);
+		  }
+		}
+		throw tooFewArgs(4);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e) {
-		return call(a, b, c, d, e, null, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		  case 4: {
+			  return call(a, b, c, d);
+		  }
+		  case 5: {
+			  return call(a, b, c, d, e);
+		  }
+		}
+		throw tooFewArgs(5);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f) {
-		return call(a, b, c, d, e, f, null, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		  case 4: {
+			  return call(a, b, c, d);
+		  }
+		  case 5: {
+			  return call(a, b, c, d, e);
+		  }
+		  case 6: {
+			  return call(a, b, c, d, e, f);
+		  }
+		}
+		throw tooFewArgs(6);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {
-		return call(a, b, c, d, e, f, g, null);
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		  case 4: {
+			  return call(a, b, c, d);
+		  }
+		  case 5: {
+			  return call(a, b, c, d, e);
+		  }
+		  case 6: {
+			  return call(a, b, c, d, e, f);
+		  }
+		  case 7: {
+			  return call(a, b, c, d, e, f, g);
+		  }
+		}
+		throw tooFewArgs(7);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
-		return null;
+		int size = (int)arity();
+		switch (size) {
+		  case 0: {
+			  return call();
+		  }
+		  case 1: {
+			  return call(a);
+		  }
+		  case 2: {
+			  return call(a, b);
+		  }
+		  case 3: {
+			  return call(a, b, c);
+		  }
+		  case 4: {
+			  return call(a, b, c, d);
+		  }
+		  case 5: {
+			  return call(a, b, c, d, e);
+		  }
+		  case 6: {
+			  return call(a, b, c, d, e, f);
+		  }
+		  case 7: {
+			  return call(a, b, c, d, e, f, g);
+		  }
+		  case 8: {
+			  return call(a, b, c, d, e, f, g, h);
+		  }
+		}
+		throw tooFewArgs(8);
 	}
 
 	final boolean callBool(Object a) {

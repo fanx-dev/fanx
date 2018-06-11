@@ -159,7 +159,7 @@ class InitClosures : CompilerStep
     else
     {
       m.name = "call"
-      MaxIndirectParams.times |Int i|
+      paramCount.times |Int i|
       {
         p := ParamDef(loc, ns.objType.toNullable, "p$i")
         m.paramDefs.add(p)
