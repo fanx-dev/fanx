@@ -33,7 +33,7 @@ class ClosureTest : Test
   {
     x := 2
     y := 3
-    InStream in := "foo".in
+    in := StrBuf()//"foo".in
     c := ClosureInConst()
     Obj? xObj := x
     Obj? inObj := in
@@ -304,7 +304,7 @@ class ClosureTest : Test
 
   once Str onceIt()
   {
-    s := StrBuf.make.add(Duration.now)
+    s := StrBuf.make.add(TimePoint.now)
     3.times |Int i| { s.add(" $i") }
     return s.toStr
   }

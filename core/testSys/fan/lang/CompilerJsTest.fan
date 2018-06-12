@@ -55,11 +55,11 @@ class CompilerJsTest : Test
 
 @Js class CompilerJsB : CompilerJsA
 {
-  Str bar() { getFoo }
-  private Str getFoo() { "b" }
+  Str bar() { getFoo2 }
+  private Str getFoo2() { "b" }
 
-  Str f2() { _f1 }
-  private Str _f1 := "fb"
+  Str f2() { _f2 }
+  private Str _f2 := "fb"
 }
 
 @Js class CompilerJsC

@@ -199,7 +199,7 @@ class EnumTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Facets
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testFacets()
   {
     verifyEq(EnumAbc#.hasFacet(Serializable#), true)
@@ -216,7 +216,7 @@ class EnumTest : Test
     verifyEq(Suits#spades.hasFacet(FacetS1#), true)
     verifyEq(Suits#spades.facet(FacetS1#)->val, "!")
   }
-
+*/
 }
 
 @Js
@@ -230,16 +230,17 @@ internal enum class EnumAbc
 }
 
 @Js
-@FacetS1 { val = "y" }
+//@FacetS1 { val = "y" }
 enum class Suits
 {
   clubs("black"),
 
   diamonds("red"),
 
-  @FacetM2 hearts("red"),
+  //@FacetM2
+  hearts("red"),
 
-  @FacetS1 { val = "!" }
+  //@FacetS1 { val = "!" }
   spades("black")
 
   private new make(Str color) { this.color = color; }

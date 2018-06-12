@@ -74,7 +74,7 @@ class FuncTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Retype
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testRetype()
   {
     x := |x,y->Obj?| { "$x, $y" }
@@ -109,11 +109,11 @@ class FuncTest : Test
 
     verifyErr(ArgErr#) { z.retype(Str#) }
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Bind Calls
 //////////////////////////////////////////////////////////////////////////
-
+/*TODO
   Void testBindCalls()
   {
     // verify binding/calling
@@ -178,7 +178,7 @@ class FuncTest : Test
     verifyEq(x.call("x"), expected)
     verifyEq(x.call("x", "y"), expected)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Bind.isImmutable
 //////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ class FuncTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Bind Signatures
 //////////////////////////////////////////////////////////////////////////
-
+/*TODO
   Void testBindSig()
   {
     Func f := |Bool b, Int i, Float f, Str s->Str| { return "$b $i $f $s" }
@@ -331,18 +331,19 @@ class FuncTest : Test
     verifyEq(func.callOn(null, ["Hershey"]), "Hershey")
     verifyEq(func.callList(["Anderson"]), "Anderson")
     verifyEq(func.arity, 1)
-    
+
     func = #judge.func
     verifyEq(func.call(this, "Dredd"), "Dredd")
     verifyEq(func.callOn(this, ["Hershey"]), "Hershey")
     verifyEq(func.callList([this, "Anderson"]), "Anderson")
     verifyEq(func.arity, 2)
-    
+
     echo("params -> ${func.params}")
     echo("typeof -> ${func.typeof}")
     echo("toStr  -> ${func}")
   }
-  
+  */
+
   Str judge(Str who) { who }
   static Str staticJudge(Str who) { who }
 }

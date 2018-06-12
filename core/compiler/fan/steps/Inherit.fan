@@ -92,7 +92,7 @@ class Inherit : CompilerStep
       name := parentSlot.name
       selfSlot := t.slot(name)
       if (selfSlot != null) {
-        throw err("slot name conflicting $parentSlot vs $selfSlot", t.loc)
+        throw err("Can not override private $parentSlot with $selfSlot", t.loc)
       }
     }
   }

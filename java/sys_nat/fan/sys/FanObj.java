@@ -179,7 +179,13 @@ public class FanObj extends IObj {
 	
 	private static Object invokeMethod(java.lang.reflect.Method m, Object obj, List args, Type type) {
 		//Fan.Int.and(a, b)
-		if ((m.getModifiers() & Modifier.STATIC) !=0 && FanUtil.specialJavaImpl(type.podName(), type.name())) {
+		//TODO
+		if ((m.getModifiers() & Modifier.STATIC) !=0 && 
+				(FanUtil.specialJavaImpl(type.podName(), type.name()) || (obj != null && !(obj instanceof FanObj)))
+				) {
+			if (args == null) {
+				args = List.make(type, 1);
+			}
 			args.insert(0, obj);
 			return doInvokeMethod(m, null, args);
 		}
@@ -280,6 +286,22 @@ public class FanObj extends IObj {
 					ml = new java.util.ArrayList<Object>();
 					jslots.put(m.getName(), ml);
 					m.setAccessible(true);
+					ml.add(m);
+				}
+			}
+			
+			//TODO
+			if (FanUtil.specialJavaImpl(type.podName(), type.name()) || (self != null && !(self instanceof FanObj))) {
+				ms = FanObj.class.getMethods();
+				for (java.lang.reflect.Method m : ms) {
+					if ((m.getModifiers() & Modifier.STATIC) == 0) continue;
+					java.util.List<Object> ml = jslots.get(m.getName());
+					if (ml == null) {
+						ml = new java.util.ArrayList<Object>();
+						jslots.put(m.getName(), ml);
+					} else {
+						continue;
+					}
 					ml.add(m);
 				}
 			}

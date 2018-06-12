@@ -70,8 +70,8 @@ class StmtTest : Test
   Str verifyIfLE(Int a, Int b) { if (a <= b) return "<="; return "!<="; }
   Str verifyIfGT(Int a, Int b) { if (a > b)  return ">"; return "!>"; }
   Str verifyIfGE(Int a, Int b) { if (a >= b) return ">="; return "!>="; }
-  Str verifyIfSame(Duration a, Duration b)    { if (a === b) return "==="; return "!=="; }
-  Str verifyIfNotSame(Duration a, Duration b) { if (a !== b) return "!=="; return "==="; }
+  Str verifyIfSame(Duration a, Duration b)    { if (a == b) return "==="; return "!=="; }
+  Str verifyIfNotSame(Duration a, Duration b) { if (a != b) return "!=="; return "==="; }
   Str verifyIfNullA(Obj? a)     { if (a == null) return "true"; return "false" }
   Str verifyIfNullB(Obj? a)     { if (null == a) return "true"; return "false" }
   Str verifyIfNullC(Obj? a)     { if (a === null) return "true"; return "false" }
@@ -138,8 +138,8 @@ class StmtTest : Test
   Bool verifyIfLEBool(Int a, Int b) { return (a <= b) }
   Bool verifyIfGTBool(Int a, Int b) { return (a > b)  }
   Bool verifyIfGEBool(Int a, Int b) { return (a >= b) }
-  Bool verifyIfSameBool(Duration a, Duration b)    { return (a === b) }
-  Bool verifyIfNotSameBool(Duration a, Duration b) { return (a !== b) }
+  Bool verifyIfSameBool(Duration a, Duration b)    { return (a == b) }
+  Bool verifyIfNotSameBool(Duration a, Duration b) { return (a != b) }
   Bool verifyIfNullBoolA(Obj? a)    { return (a == null) }
   Bool verifyIfNullBoolB(Obj? a)    { return (null == a) }
   Bool verifyIfNullBoolC(Obj? a)    { return (a === null) }

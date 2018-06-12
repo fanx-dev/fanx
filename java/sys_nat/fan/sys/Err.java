@@ -157,7 +157,7 @@ public class Err
 
   public Err cause() { return cause; }
 
-  private static Type type = Sys.findType("sys::Err");
+  static Type type = Sys.findType("sys::Err");
   public Type typeof() {return type; }
 
   public final String toString() { return toStr(); }

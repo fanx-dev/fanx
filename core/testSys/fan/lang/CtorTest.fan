@@ -10,7 +10,7 @@
 
 class TestOrder {
   Int order := 0
-  static Usafe<TestOrder> cur := Usafe(TestOrder())
+  static const Unsafe<TestOrder> cur := Unsafe(TestOrder())
 }
 
 **

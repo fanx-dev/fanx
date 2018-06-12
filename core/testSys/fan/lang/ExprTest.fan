@@ -53,10 +53,10 @@ class ExprTest : Test
     verifyEq(false ? (x = 9) : (y = 8), 8); verifyEq(x, 0); verifyEq(y, 8);
 
     a := 4ns; b := 3ns;
-    Str? s := a === b ? "a=$a" : "b=$b"
+    Str? s := a == b ? "a=$a" : "b=$b"
     verifyEq(s, "b=3ns")
-    verifyEq(s = a !== b ? null : "b=$b", null)
-    verifyEq(s = a !== b ? "a=$a" : null,  "a=4ns")
+    verifyEq(s = a != b ? null : "b=$b", null)
+    verifyEq(s = a != b ? "a=$a" : null,  "a=4ns")
   }
 
 //////////////////////////////////////////////////////////////////////////

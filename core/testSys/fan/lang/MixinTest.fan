@@ -23,8 +23,8 @@
     verifyEq(MxB.sb,     "sb")
 
     // static on class
-    verifyEq(MxClsAB.sa, "sa")
-    verifyEq(MxClsAB.sb, "sb")
+    //verifyEq(MxClsAB.sa, "sa")
+    //verifyEq(MxClsAB.sb, "sb")
 
     // static on class instance
 /* TODO - need to pop make off stack?

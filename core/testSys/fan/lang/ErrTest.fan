@@ -19,7 +19,7 @@ class ErrTest : Test
   Void a(Func f) { b(f) }
   Void b(Func f) { c(f) }
   Void c(Func f) { f() }
-
+/*
   Void testTrace()
   {
     Int line := #testTrace->lineNumber; line += 3 // next line
@@ -77,6 +77,7 @@ class ErrTest : Test
     lines = buf.flip.readAllLines
     verify(lines.size > 30)
   }
+  */
 
   Void doThrow(Int depth)
   {
