@@ -58,18 +58,7 @@ class CompilerInput
   ** Namespace used to resolve dependency pods/types.
   ** Default implementation uses reflection of the compiler's VM.
   **
-  CNamespace? ns {
-    get {
-      if (&ns == null) {
-        if (output != CompilerOutputMode.transientPod) {
-          &ns = FPodNamespace(null)
-        } else {
-          &ns = ReflectNamespace()
-        }
-      }
-      return &ns
-    }
-  }
+  CNamespace ns := FPodNamespace(null)
 
   **
   ** Pod meta-data name/value pairs

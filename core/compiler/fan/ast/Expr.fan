@@ -1073,9 +1073,9 @@ class FieldExpr : NameExpr
     {
       switch (field.typeof)
       {
-        case ReflectField#:
-          ifield := field as ReflectField
-          return ((Enum)ifield.f.get).ordinal
+        //case ReflectField#:
+        //  ifield := field as ReflectField
+        //  return ((Enum)ifield.f.get).ordinal
         case FieldDef#:
           fieldDef := field as FieldDef
           enumDef := fieldDef.parentDef.enumDef(field.name)
