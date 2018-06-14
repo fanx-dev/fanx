@@ -6,5 +6,5 @@ $jstub reflect
 $jstub baseTest
 $jstub testSys
 
-#javap -c -s -v -constants -l -public -sysinfo -cp libs/basetTest.jar fan.baseTest.Main
+#javap -c -s -v -constants -l -p -sysinfo -cp libs/basetTest.jar fan.baseTest.Main
 

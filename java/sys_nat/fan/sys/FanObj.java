@@ -181,7 +181,7 @@ public class FanObj extends IObj {
 		//Fan.Int.and(a, b)
 		//TODO
 		if ((m.getModifiers() & Modifier.STATIC) !=0 && 
-				(FanUtil.specialJavaImpl(type.podName(), type.name()) || (obj != null && !(obj instanceof FanObj)))
+				!FanObj.class.isAssignableFrom(type.getJavaClass())
 				) {
 			if (args == null) {
 				args = List.make(type, 1);
@@ -290,8 +290,7 @@ public class FanObj extends IObj {
 				}
 			}
 			
-			//TODO
-			if (FanUtil.specialJavaImpl(type.podName(), type.name()) || (self != null && !(self instanceof FanObj))) {
+			if (!FanObj.class.isAssignableFrom(clz)) {
 				ms = FanObj.class.getMethods();
 				for (java.lang.reflect.Method m : ms) {
 					if ((m.getModifiers() & Modifier.STATIC) == 0) continue;
