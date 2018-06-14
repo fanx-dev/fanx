@@ -47,7 +47,7 @@ class TypeDef : DefNode, CType
 
   override Bool isGeneric() { genericParameters.size > 0 }
   override Bool isParameterized() { false }
-  override Bool isGenericParameter() { false }
+  override Bool hasGenericParameter() { false }
 
   override once CType toListOf() { ListType(this) }
 

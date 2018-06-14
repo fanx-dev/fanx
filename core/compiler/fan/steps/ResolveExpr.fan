@@ -128,7 +128,7 @@ class ResolveExpr : CompilerStep
 
     // if we resolved to a generic parameter like V or K,
     // then use its real underlying type
-    if (expr.ctype.isGenericParameter)
+    if (expr.ctype.hasGenericParameter)
       expr.ctype = expr.ctype.raw
 
     // if this expression performs assignment against a local

@@ -48,7 +48,7 @@ class ReflectType : CType
 
   override Bool isGeneric() { t.isGeneric }
   override Bool isParameterized() { !t.params.isEmpty }
-  override Bool isGenericParameter() { pod === ns.sysPod && name.size == 1 }
+  override Bool hasGenericParameter() { pod === ns.sysPod && name.size == 1 }
 
   override once CType toListOf() { ListType(this) }
 
@@ -66,7 +66,7 @@ class ReflectType : CType
     if (!slotsLoaded)
     {
       slotsLoaded = true
-      if (!isGenericParameter)
+      if (!hasGenericParameter)
       {
         t.slots.each |Slot s|
         {

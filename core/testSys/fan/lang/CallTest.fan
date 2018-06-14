@@ -108,8 +108,8 @@ class CallTest : Test
 
     // closure arg
     //TODO:fix bug
-    //verifyEq([0, 1, 2]->find |Int x->Bool| { return x == 2 }, 2)
-    //verifyEq([0, 1, 2]->find(|Int x->Bool| { return x == 2 }), 2)
+    verifyEq([0, 1, 2]->find |Int x->Bool| { return x == 2 }, 2)
+    verifyEq([0, 1, 2]->find(|Int x->Bool| { return x == 2 }), 2)
 
     // errors
     verifyErr(UnknownSlotErr#) { obj->blah }

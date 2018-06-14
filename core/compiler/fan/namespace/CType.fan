@@ -161,7 +161,7 @@ mixin CType
   ** Fantom has a predefined set of generic parameters which are always
   ** defined in the sys pod with a one character name.
   **
-  abstract Bool isGenericParameter()
+  abstract Bool hasGenericParameter()
 
   **
   ** Create a parameterized List of this type.
@@ -236,10 +236,8 @@ mixin CType
   virtual Bool fits(CType ty)
   {
     //unparameterized generic parameters
-    t := ty.deref.raw
-
     // don't take nullable in consideration
-    t = t.toNonNullable
+    t := ty.deref.raw.toNonNullable
 
     // everything fits Obj
     if (t.isObj) return true
@@ -592,7 +590,7 @@ abstract class ProxyType : CType
 
   override Bool isGeneric() { root.isGeneric }
   override Bool isParameterized() { root.isParameterized }
-  override Bool isGenericParameter() { root.isGenericParameter }
+  override Bool hasGenericParameter() { root.hasGenericParameter }
   override CType parameterizeThis(CType thisType) { root.parameterizeThis(thisType) }
 
   override Bool isForeign()   { root.isForeign }
@@ -639,7 +637,7 @@ class PlaceHolderType : CType {
   override once CType toNullable() { NullableType(this) }
   override Bool isGeneric() { false }
   override Bool isParameterized() { false }
-  override Bool isGenericParameter() { false }
+  override Bool hasGenericParameter() { false }
   override once CType toListOf() { ListType(this) }
   override CType? base() { null }
   override CType[] mixins() { CType[,] }

@@ -107,7 +107,7 @@ mixin CField : CSlot
   **
   ** Is this field typed with a generic parameter.
   **
-  Bool isGeneric() { fieldType.isGenericParameter }
+  Bool isGeneric() { fieldType.hasGenericParameter }
 
   **
   ** Is this field the parameterization of a generic field,
@@ -189,9 +189,9 @@ mixin CMethod : CSlot
   internal static Bool calcGeneric(CMethod m)
   {
     if (!m.parent.isGeneric) return false
-    isGeneric := m.returnType.isGenericParameter
+    isGeneric := m.returnType.hasGenericParameter
     if (isGeneric) return true
-    return m.params.any { it.paramType.isGenericParameter }
+    return m.params.any { it.paramType.hasGenericParameter }
   }
 
   **

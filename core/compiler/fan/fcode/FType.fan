@@ -84,7 +84,7 @@ class FType : CType
 
   override Bool isParameterized() { false }
 
-  override Bool isGenericParameter() { false }
+  override Bool hasGenericParameter() { false }
 
   override GenericParamType? getGenericParamType(Str name) {
     if (genericParams.size == 0) return null

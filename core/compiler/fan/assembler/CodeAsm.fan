@@ -1332,7 +1332,7 @@ class CodeAsm : CompilerSupport
       if (m.isParameterized)
       {
         ret := m.generic.returnType
-        if (ret.isGenericParameter)
+        if (ret.hasGenericParameter)
           coerceOp(ret.raw, m.returnType)
       }
       else if (m.isCovariant)

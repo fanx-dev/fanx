@@ -57,7 +57,7 @@ class TypeRef : Node, CType
 
   override Bool isGeneric() { t.isGeneric }
   override Bool isParameterized() { t.isParameterized }
-  override Bool isGenericParameter() { t.isGenericParameter }
+  override Bool hasGenericParameter() { t.hasGenericParameter }
   override CType parameterizeThis(CType thisType) { t.parameterizeThis(thisType) }
   override CType toListOf() { t.toListOf }
 

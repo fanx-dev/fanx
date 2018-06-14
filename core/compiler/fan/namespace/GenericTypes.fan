@@ -14,7 +14,7 @@
 ** common parameterized type for user define generic type ref
 **
 class ParameterizedType : ProxyType {
-  override Bool isGenericParameter
+  override Bool hasGenericParameter
   CType[] genericParams
 
   static new create(CType baseType, CType[] params) {
@@ -43,7 +43,7 @@ class ParameterizedType : ProxyType {
     : super(baseType)
   {
     this.genericParams = params
-    isGenericParameter = params.any { it.isGenericParameter }
+    hasGenericParameter = params.any { it.hasGenericParameter }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ class ParameterizedType : ProxyType {
     else
     {
       f := (CField)slot
-      if (!f.fieldType.isGenericParameter) return slot
+      if (!f.fieldType.hasGenericParameter) return slot
       p := ParameterizedField(this, f)
       return p
     }
@@ -113,7 +113,7 @@ class ParameterizedType : ProxyType {
 
   internal CType parameterize(CType t)
   {
-    if (!t.isGenericParameter) return t
+    if (!t.hasGenericParameter) return t
     nullable := t.isNullable
     nn := t.toNonNullable
 
@@ -207,14 +207,14 @@ class FuncType : ParameterizedType
 
   override Bool fits(CType ty)
   {
-    t := ty.deref.raw
-    t = t.toNonNullable
+    t := ty.deref.raw.toNonNullable
     if (this == t) return true
     if (t.qname == "sys::Func") return true
     if (t.isObj) return true
-    if (t.name.size == 1 && t.pod.name == "sys") return true
+    //TODO: not sure
+    //if (t.name.size == 1 && t.pod.name == "sys") return true
 
-    that := t.deref as FuncType
+    that := t as FuncType
     if (that == null) return false
 
     // match return type (if void is needed, anything matches)
@@ -251,8 +251,8 @@ class FuncType : ParameterizedType
 
   static CType toMostSpecific(CType a, CType b)
   {
-    if (b.isGenericParameter) return a
-    if (a.isObj || a.isVoid || a.isGenericParameter) return b
+    if (b.hasGenericParameter) return a
+    if (a.isObj || a.isVoid || a.hasGenericParameter) return b
     return a
   }
 
@@ -330,7 +330,7 @@ class GenericParamType : ProxyType {
 
   override Bool isNullable() { return true }
 
-  override Bool isGenericParameter() { true }
+  override Bool hasGenericParameter() { true }
 }
 
 **************************************************************************
@@ -382,7 +382,7 @@ class ParameterizedMethod : CMethod
     this.returnType = parent.parameterize(generic.returnType)
     this.params = generic.params.map |CParam p->CParam|
     {
-      if (!p.paramType.isGenericParameter)
+      if (!p.paramType.hasGenericParameter)
         return p
       else
         return ParameterizedMethodParam(parent, p)

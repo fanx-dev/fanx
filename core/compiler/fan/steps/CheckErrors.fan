@@ -449,9 +449,9 @@ class CheckErrors : CompilerStep
       checkValidType(p.loc, t)
     }
     // check parameter default type
-    if (p.def != null && !p.paramType.isGenericParameter)
+    if (p.def != null)// && !p.paramType.isGenericParameter)
     {
-      p.def = coerce(p.def, p.paramType) |->|
+      p.def = coerce(p.def, p.paramType.raw) |->|
       {
         err("'$p.def.toTypeStr' is not assignable to '$p.paramType'", p.def.loc)
       }
