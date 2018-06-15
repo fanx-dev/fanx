@@ -370,43 +370,113 @@ rtconst class ArrayList<V> : List
     return null
   }
 
-  override This unique() {
-    //TODO
-    throw Err()
-  }
-
-  override This union(List that) {
-    //TODO
-    throw Err()
-  }
-
-  override This intersection(List that) {
-    //TODO
-    throw Err()
-  }
-
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
-  override This sort(|V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
+  private Void insertSort(Int left, Int right, |V a, V b->Int| cmopFunc) {
+    self := array
+    Int j := 0
+    V? swapBuffer
+    for (;left < right; left++) {
+      swapBuffer = self[left+1]
+      j = left
+      while (j>-1 && (cmopFunc(swapBuffer, self[j]) < 0)) {
+        self[j+1] = self[j]
+        --j
+      }
+      self[j+1] = swapBuffer
+    }
   }
 
-  override This sortr(|V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
+  private Void quickSort(Int low, Int high, |V a, V b->Int| cmopFunc) {
+    i := low; j := high
+    if(!(low < high)) throw Err("$low >= $high")
+
+    /*if too small using insert sort*/
+    if (high - low < 20) {
+      insertSort(low, high, cmopFunc)
+      return
+    }
+
+    self := array
+
+    //select pivot
+    pivot := (j+i)/2
+    min := i
+    max := j
+    if (self[i] > self[j]) {
+      min = j
+      max = i
+    }
+    if (self[pivot] < self[min]) {
+      pivot = min
+    }
+    else if (self[pivot] > self[max]) {
+      pivot = max
+    }
+
+    while (i < j) {
+      while (i<j && cmopFunc(pivot, self[j]) <= 0 ) --j
+      //self[i] is empty
+      if (i < j) {
+        self[i] = self[j]
+        ++i
+      }
+
+      while (i<j && cmopFunc(self[i], pivot) < 0) ++i
+      //self[j] is empty
+      if (i < j) {
+        self[j] = self[i]
+        --j
+      }
+    }
+    self[i] = pivot
+    if (low < i-1) {
+      quickSort(low, i-1, cmopFunc)
+    }
+    if (i+1 < high) {
+      quickSort(j+1, high, cmopFunc)
+    }
   }
 
-  override Int binarySearch(V? key, |V? a, V? b->Int|? c := null) {
-    //TODO
-    throw Err()
+  override This sort(|V a, V b->Int|? c := null) {
+    if (size <= 1) return this
+    if (c == null) c = |a, b->Int| { a <=> b }
+    quickSort(0, size-1, c)
+    return this
   }
 
-  override Int binaryFind(|V? item, Int index->Int| c) {
-    //TODO
-    throw Err()
+  //return -(insertation point) - 1
+  private Int bsearch(|V b, Int i->Int| cmopFunc) {
+    self := array
+    n := size
+    if (n == 0) return -1
+    low := 0
+    high := n - 1
+    while (low <= high) {
+      mid := (low+high) / 2
+      cond := cmopFunc(self[mid], mid)
+      if (cond < 0) {
+        high = mid - 1
+      } else if (cond > 0) {
+        low = mid + 1
+      } else {
+        return mid
+      }
+    }
+    return -(low+1)
+  }
+
+  override Int binarySearch(V key, |V a, V b->Int|? c := null) {
+    return bsearch |b, i| {
+      if (c == null) return key <=> b
+      return c(key, b)
+    }
+  }
+
+  override Int binaryFind(|V item, Int index->Int| c) {
+    return bsearch(c)
   }
 
   override This reverse() {

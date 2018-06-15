@@ -621,44 +621,6 @@ rtconst abstract class List<V>
     return max
   }
 
-  **
-  ** Returns a new list with all duplicate items removed such that the
-  ** resulting list is a proper set.  Duplicates are detected using hash()
-  ** and the == operator (shortcut for equals method).  This method is
-  ** readonly safe.
-  **
-  ** Example:
-  **   ["a", "a", "b", "c", "b", "b"].unique => ["a", "b", "c"]
-  **
-  abstract This unique()
-
-  **
-  ** Return a new list which is the union of this list and the given list.
-  ** The union is defined as the unique items which are in *either* list.
-  ** The resulting list is ordered first by this list's order, and secondarily
-  ** by that's order.  The new list is guaranteed to be unique with no duplicate
-  ** values.  Equality is determined using hash() and the == operator
-  ** (shortcut for equals method).  This method is readonly safe.
-  **
-  ** Example:
-  **   [1, 2].union([3, 2]) => [1, 2, 3]
-  **
-  abstract This union(List that)
-
-  **
-  ** Return a new list which is the intersection of this list and the
-  ** given list.  The intersection is defined as the unique items which
-  ** are in *both* lists.  The new list will be ordered according to this
-  ** list's order.  The new list is guaranteed to be unique with no duplicate
-  ** values.  Equality is determined using hash() and the == operator
-  ** (shortcut for equals method).  This method is readonly safe.
-  **
-  ** Example:
-  **   [0, 1, 2, 3].intersection([5, 3, 1]) => [1, 3]
-  **   [0, null, 2].intersection([null, 0, 1, 2, 3]) => [0, null, 2]
-  **
-  abstract This intersection(List that)
-
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
@@ -691,7 +653,12 @@ rtconst abstract class List<V>
   ** Example:
   **   [3, 2, 4, 1].sortr =>  [4, 3, 2, 1]
   **
-  abstract This sortr(|V a, V b->Int|? c := null)
+  This sortr(|V a, V b->Int|? c := null) {
+    sort |a, b| {
+      if (c == null) return -(a <=> b)
+      return -c(b, b)
+    }
+  }
 
   **
   ** Search the list for the index of the specified key using a binary
