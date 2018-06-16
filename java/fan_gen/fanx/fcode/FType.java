@@ -150,6 +150,35 @@ public class FType
   
   	public FTypeRef selfRef;
   	public Object reflectType = null;
+  	private Map<String, FSlot > slotsMap = null;
+  	
+  	public Map<String, FSlot> getSlotsMap() {
+  		if (slotsMap != null) return slotsMap;
+  		Map<String, FSlot > map = new HashMap<String, FSlot>();
+  		
+  		for (FField f : fields) {
+			if (f.isSynthetic()) continue;
+			map.put(f.name, f);
+		}
+		
+		for (FMethod f : methods) {
+			if ((f.flags & FConst.Getter) != 0) {
+				FField field = (FField)map.get(f.name);
+				field.getter = f;
+				continue;
+			}
+			if ((f.flags & FConst.Setter) != 0) {
+				FField field = (FField)map.get(f.name);
+				field.setter = f;
+				continue;
+			}
+			
+			if (f.isSynthetic()) continue;
+			map.put(f.name, f);
+		}
+		slotsMap = map;
+		return slotsMap;
+  	}
 	
 	public boolean baseIsJava() {
 		FTypeRef ref = pod.typeRef(base);

@@ -9,7 +9,6 @@
 **
 ** RangeTest
 **
-@Js
 class RangeTest : Test
 {
 

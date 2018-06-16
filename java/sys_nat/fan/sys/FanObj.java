@@ -349,6 +349,18 @@ public class FanObj extends IObj {
 					return invokeMethod(m, self, args, type);
 				}
 			}
+			
+			if (!FanObj.class.isAssignableFrom(type.getJavaClass())) {
+				for (Object slot : ml) {
+					java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
+					if ((m.getModifiers() & Modifier.STATIC) == 0) continue;
+					int paramSize = m.getParameterTypes().length;
+					if (paramSize == argc+1) {
+						return invokeMethod(m, self, args, type);
+					}
+				}
+			}
+			
 			throw ArgErr.make("Invalid number of args to call method '" +name + "'");
 		}
 		

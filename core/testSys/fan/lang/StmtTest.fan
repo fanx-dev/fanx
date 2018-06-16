@@ -39,11 +39,11 @@ class StmtTest : Test
     verifyEq(verifyIfGE(5, 5), ">=")
     verifyEq(verifyIfGE(2, 7), "!>=")
 
-    verifyEq(verifyIfSame(5ns, 5ns), "===")
-    verifyEq(verifyIfSame(5ns, 3ns), "!==")
+    verifyEq(verifyIfSame(5ms, 5ms), "===")
+    verifyEq(verifyIfSame(5ms, 3ms), "!==")
 
-    verifyEq(verifyIfNotSame(5ns, 5ns), "===")
-    verifyEq(verifyIfNotSame(5ns, 3ns), "!==")
+    verifyEq(verifyIfNotSame(5ms, 5ms), "===")
+    verifyEq(verifyIfNotSame(5ms, 3ms), "!==")
 
     verifyEq(verifyIfNullA(5),    "false")
     verifyEq(verifyIfNullA(null), "true")

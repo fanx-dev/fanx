@@ -69,7 +69,7 @@ class FTable
   static FTable makeDurations(FPod pod)
   {
     return make(pod,
-      |OutStream out, Obj obj| { out.writeI8(((Duration)obj).ticks) },
+      |OutStream out, Obj obj| { out.writeI8(((Duration)obj).toMillis) },
       |InStream in->Obj| { Duration(in.readS8) })
   }
 

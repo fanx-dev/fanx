@@ -9,7 +9,6 @@
 **
 ** StrBufTest
 **
-@Js
 class StrBufTest : Test
 {
 

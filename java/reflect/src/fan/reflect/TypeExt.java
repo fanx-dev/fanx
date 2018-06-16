@@ -94,13 +94,13 @@ public class TypeExt {
 		java.util.Map<String, Object> slots = new java.util.HashMap<String, Object>();
 		
 		//get inheritance slots
+		if (!type.isObj() && !FanType.isMixin(type)) {
+			mergeSlots(slots, type.base());
+		}
 		List mixins = FanType.mixins(type);
 		for (int i=0; i<mixins.size(); ++i) {
 			Type t = (Type)mixins.get(i);
 			mergeSlots(slots, t);
-		}
-		if (!type.isObj()) {
-			mergeSlots(slots, type.base());
 		}
 
 		//get self type slots

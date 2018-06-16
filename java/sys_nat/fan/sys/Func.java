@@ -29,8 +29,8 @@ public abstract class Func extends FanObj {
 
 //	public abstract List params();
 
-	public abstract boolean isImmutable();
-
+//	public abstract boolean isImmutable();
+//
 	public Object toImmutable() {
 		if (isImmutable())
 			return this;

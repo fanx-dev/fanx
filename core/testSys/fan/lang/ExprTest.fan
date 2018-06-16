@@ -52,11 +52,11 @@ class ExprTest : Test
     verifyEq(true  ? (x = 0) : (y = 1), 0); verifyEq(x, 0); verifyEq(y, 2);
     verifyEq(false ? (x = 9) : (y = 8), 8); verifyEq(x, 0); verifyEq(y, 8);
 
-    a := 4ns; b := 3ns;
+    a := 4ms; b := 3ms;
     Str? s := a == b ? "a=$a" : "b=$b"
-    verifyEq(s, "b=3ns")
+    verifyEq(s, "b=3ms")
     verifyEq(s = a != b ? null : "b=$b", null)
-    verifyEq(s = a != b ? "a=$a" : null,  "a=4ns")
+    verifyEq(s = a != b ? "a=$a" : null,  "a=4ms")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ class ExprTest : Test
     i := (Int)a?.toHex?.index("c"); verifyEq(i, 2)
     verifyEq(a?.toHex?.index("d")?.toStr, "3")
     verifyEq(a?.toHex?.index("x")?.toStr, null)
-    verifyEq(a?.toHex?.get(-1)?.toChar, "d")
+    verifyEq(a?.toHex?.getSafe(-1)?.toChar, "d")
 
     // same combinations against null
     a = null

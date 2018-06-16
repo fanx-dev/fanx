@@ -78,7 +78,7 @@ const struct class DateTime
   ** ArgErr if ticks represent a year out of the range 1901
   ** to 2099.
   **
-  native static DateTime fromTicks(Int ticks, TimeZone tz := TimeZone.cur)
+  private native static DateTime fromTicks(Int ticks, TimeZone tz := TimeZone.cur)
 
   private native static Int[] getTicks(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 

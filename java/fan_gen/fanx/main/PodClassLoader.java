@@ -48,6 +48,7 @@ public class PodClassLoader
   }
 
   private final Class<?> doDefineClass(String name, Box classfile) {
+//	  System.out.println("doDefineClass:"+name);
 	  return defineClass(name, classfile.buf, 0, classfile.len);
   }
 
@@ -158,13 +159,20 @@ public class PodClassLoader
       ft.load();
       if (ft.isNative()) return null;
       FTypeEmit[] emitted = FTypeEmit.emit(ft);
-      Class c = null;
-      for (int j=0; j<emitted.length; ++j)
-      {
-        FTypeEmit emit = emitted[j];
-        c = doDefineClass(name, emit.classFile);
-      }
-      if (c != null) return c;
+      
+      FTypeEmit emit = emitted[1];
+      cls = doDefineClass(name, emit.classFile);
+      if (cls != null) ft.clearBuf();
+      return cls;
+      
+//      Class c = null;
+//      for (int j=0; j<emitted.length; ++j)
+//      {
+//        FTypeEmit emit = emitted[j];
+//        String clzName = emit.className.replace('/', '.');
+//        c = doDefineClass(clzName, emit.classFile);
+//      }
+//      if (c != null) return c;
     }
 
     // if there wasn't a precompiled class, then this must
@@ -176,7 +184,7 @@ public class PodClassLoader
     FTypeEmit[] emitted = FTypeEmit.emit(ft);
     FTypeEmit emit = emitted[0];
     cls = doDefineClass(name, emit.classFile);
-    if (cls != null) ft.clearBuf();
+    if (cls != null && !ft.isMixin()) ft.clearBuf();
     return cls;
   }
 

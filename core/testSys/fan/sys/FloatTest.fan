@@ -9,7 +9,6 @@
 **
 ** FloatTest
 **
-@Js
 class FloatTest : Test
 {
   Bool isJs := false //Env.cur.runtime == "js"

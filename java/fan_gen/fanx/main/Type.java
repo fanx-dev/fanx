@@ -47,12 +47,14 @@ public abstract class Type {
 
 		if (type == self || (type.isObj()))
 			return true;
+		
+		return type.getJavaClass().isAssignableFrom(self.getJavaClass());
 		//TODO
 //		List inheritance = inheritance(self);
 //		for (int i = 0; i < inheritance.size(); ++i)
 //			if (inheritance.get(i) == type)
 //				return true;
-		return false;
+//		return false;
 	}
 
 	public abstract boolean isObj();

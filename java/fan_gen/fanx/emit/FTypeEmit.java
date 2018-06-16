@@ -372,6 +372,11 @@ public abstract class FTypeEmit
 //////////////////////////////////////////////////////////////////////////
 // Mixin Routers
 //////////////////////////////////////////////////////////////////////////
+  
+  static class FatMethod {
+	  FMethod method;
+	  FType type;
+  }
 
   private void emitMixinRouters()
   {
@@ -382,54 +387,79 @@ public abstract class FTypeEmit
     // direct mixin inheritances (but not my class extension) - these
     // are the ones I need routers for (but I can skip generating
     // routers for any mixins implemented by my super class)
-    HashMap acc = new HashMap();
-    findMixins(type, acc);
+    HashMap<String,FatMethod> methodToMixin = new HashMap<String,FatMethod>();
+    resolveMethodMixins(type, methodToMixin);
 
     // emit routers for concrete instance methods
-    Iterator it = acc.values().iterator();
+    Iterator<FatMethod> it = methodToMixin.values().iterator();
     while (it.hasNext())
     {
-      FType mixin = (FType)it.next();
-      mixin.load();
-      emitMixinRouters(mixin);
+      FatMethod fm = (FatMethod)it.next();
+      //self class methods
+      if (fm == null) continue;
+      
+//      fm.type.load();
+      new FMethodEmit(this).emitMixinRouter(fm.method, fm.type);
+//      emitMixinRouters(mixin);
     }
   }
 
-  private void findMixins(FType t, HashMap acc)
+  private void resolveMethodMixins(FType t, HashMap<String,FatMethod> methodToMixin)
   {
-    // if mixin I haven't seen add to accumulator
-    String qname = t.qname();
-    if (((t.flags & FConst.Mixin) != 0)
-    		&& acc.get(qname) == null)
-      acc.put(qname, t);
+	  t.load();
+	  if (!t.isMixin()) {
+		  //self
+		  for (Map.Entry<String, FSlot> entry : type.getSlotsMap().entrySet()) {
+			  if (entry.getValue().isStatic()) continue;
+			  methodToMixin.put(entry.getKey(), null);
+		  }
+	  }
+	  else {
+		  for (FMethod m : t.methods) {
+			  if (m.isStatic() || m.isAbstract()) continue;
+			  if (!methodToMixin.containsKey(m.name)) {
+				  FatMethod fm = new FatMethod();
+				  fm.method = m;
+				  fm.type = t;
+				  methodToMixin.put(m.name, fm);
+			  }
+		  }
+	  }
+	  
+//    // if mixin I haven't seen add to accumulator
+//    String qname = t.qname();
+//    if (((t.flags & FConst.Mixin) != 0)
+//    		&& acc.get(qname) == null)
+//      acc.put(qname, t);
 
     // recurse
     for (int i=0; i<t.mixins.length; ++i) {
     	FTypeRef ref = t.pod.typeRef(t.mixins[i]);
 		FType x = Sys.findFType(ref.podName, ref.typeName);
-        findMixins(x, acc);
+		resolveMethodMixins(x, methodToMixin);
     }
   }
 
-  private void emitMixinRouters(FType type)
-  {
+//  private void emitMixinRouters(FMethod m, FType type)
+//  {
     // generate router method for each concrete instance method
-    FMethod[] methods = type.methods;
-    for (int i=0; i<methods.length; ++i)
-    {
-    	FMethod m = methods[i];
+//    FMethod[] methods = type.methods;
+//    for (int i=0; i<methods.length; ++i)
+//    {
+//    	FMethod m = methods[i];
 
       // only emit router for non-abstract instance methods
-      if (m.isStatic() || m.isAbstract()) continue;
+//      if (m.isStatic() || m.isAbstract()) return;
 
       // only emit the router unless this is the exact one I inherit
-      String name = m.name;
+//      String name = m.name;
 //      if (parent.slot(name, true).parent() != type) continue;
+      //already override
 
-      // do it
-      new FMethodEmit(this).emitMixinRouter(m, type);
-    }
-  }
+//       do it
+//      new FMethodEmit(this).emitMixinRouter(m, type);
+//    }
+//  }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils

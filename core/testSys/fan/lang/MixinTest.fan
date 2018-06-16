@@ -9,7 +9,7 @@
 **
 ** MixinTest
 **
-@Js class MixinTest : Test
+class MixinTest : Test
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Reflection
 //////////////////////////////////////////////////////////////////////////
-
+/*TODO
   Void testReflection()
   {
     Slot[] obj := Obj#.slots
@@ -200,7 +200,7 @@
     verifyEq(fromMxA, ["sa", "ia", "wrapToStr1", "wrapToStr2",
       "staticWrapType", "va", "aa", "coa", "cob", "coc", "thisa", "thisb"])
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Param Default
 //////////////////////////////////////////////////////////////////////////
@@ -346,7 +346,7 @@
 
     verify(a1 == a2)
     verify(a1 != b)
-    verify(t.method("equals").parent == MxGoo#)
+    verifyEq(t.method("equals").parent, MxGoo#)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -379,7 +379,7 @@
 // Helper Types
 //////////////////////////////////////////////////////////////////////////
 
-@Js
+
 mixin MxA
 {
   static Str sa() { "sa" }
@@ -396,7 +396,7 @@ mixin MxA
   virtual This thisb() { this }
 }
 
-@Js
+
 mixin MxB
 {
   static Str sb() { "sb" }
@@ -405,7 +405,7 @@ mixin MxB
   abstract Str ab()
 }
 
-@Js
+
 mixin MxAB : MxA, MxB
 {
   override Str coa() { "11" }
@@ -413,7 +413,7 @@ mixin MxAB : MxA, MxB
   override This thisa() { throw UnresolvedErr() }
 }
 
-@Js
+
 class MxClsA : MxA
 {
   override Str aa() { return "aa" }
@@ -422,7 +422,7 @@ class MxClsA : MxA
   Str mxClsA() { return "MxClsA" }
 }
 
-@Js
+
 class MxClsAB : MxA, MxB
 {
   override Str aa() { return "aa" }
@@ -433,7 +433,7 @@ class MxClsAB : MxA, MxB
   Str mxClsAB() { return "MxClsAB" }
 }
 
-@Js
+
 class MxClsABIndirect  : MxAB
 {
   override Str aa() { return "iaa" }
@@ -442,7 +442,7 @@ class MxClsABIndirect  : MxAB
   override This thisb() { throw IndexErr() }
 }
 
-@Js
+
 mixin MxDefs
 {
   Void v0() { result("v0") }
@@ -464,7 +464,7 @@ mixin MxDefs
   abstract Void result(Str r)
 }
 
-@Js
+
 class MxClsDefs : MxDefs
 {
   override Str r() { return _r }
@@ -472,43 +472,43 @@ class MxClsDefs : MxDefs
   Str _r := "";
 }
 
-@Js mixin MxMisc
+  mixin MxMisc
 {
   Type typeConst() { return MixinTest# }
 }
 
-@Js class MxClsMisc : MxMisc
+  class MxClsMisc : MxMisc
 {
 }
 
-@Js mixin MxGetters
+  mixin MxGetters
 {
   abstract Str a()
   virtual Int  b() { return 4 }
   virtual Float c() { return 3f }
 }
 
-@Js class MxClsGetters : MxGetters
+  class MxClsGetters : MxGetters
 {
   override Str a := "a"
   override Int b := 'b'
 }
 
-@Js mixin MxGoo
+  mixin MxGoo
 {
   abstract Str name
   override Bool equals(Obj? that) { return name == ((MxGoo)that).name }
 }
 
-@Js mixin MxRoo {}
+  mixin MxRoo {}
 
-@Js class MxGooRoo: MxGoo, MxRoo
+  class MxGooRoo: MxGoo, MxRoo
 {
   new make(Str n) { this.name = n }
   override Str name
 }
 
-@Js class MxRooGoo: MxRoo, MxGoo
+  class MxRooGoo: MxRoo, MxGoo
 {
   new make(Str n) { this.name = n }
   override Str name
@@ -518,7 +518,7 @@ class MxClsDefs : MxDefs
 // Helper Types for .NET tests
 //////////////////////////////////////////////////////////////////////////
 
-@Js mixin NetMixin
+  mixin NetMixin
 {
   abstract Int foo()
   abstract Int bar()
@@ -527,24 +527,24 @@ class MxClsDefs : MxDefs
   static Int nope2() { return 11 }
 }
 
-@Js class NetNormal : NetMixin
+  class NetNormal : NetMixin
 {
   override Int foo() { return 22 }
   override Int bar() { return 23 }
 }
 
-@Js class NetBase { Int foo() { return 5 } }
-@Js class NetChild : NetBase, NetMixin { override Int bar() { return 7 } }
+  class NetBase { Int foo() { return 5 } }
+  class NetChild : NetBase, NetMixin { override Int bar() { return 7 } }
 
-@Js class NetBase2 : NetBase { Int bar() { return 33 } }
-@Js class NetChild2 : NetBase2, NetMixin {}
+  class NetBase2 : NetBase { Int bar() { return 33 } }
+  class NetChild2 : NetBase2, NetMixin {}
 
-@Js mixin NetMixin2 : NetMixin  { override Int foo() { return 17 } }
-@Js class NetChild3 : NetMixin2 { override Int bar() { return 19 } }
+  mixin NetMixin2 : NetMixin  { override Int foo() { return 17 } }
+  class NetChild3 : NetMixin2 { override Int bar() { return 19 } }
 
-@Js class NetBase3 { Int bar() { return 99 } }
-@Js class NetChild4 : NetBase3, NetMixin2 {}
+  class NetBase3 { Int bar() { return 99 } }
+  class NetChild4 : NetBase3, NetMixin2 {}
 
-@Js mixin NetDefMixin { abstract Int foo(Int a := 3, Int b := 5) }
-@Js class NetDefBase  { Int foo(Int a := 3, Int b := 5) { return a + b } }
-@Js class NetDefChild : NetDefBase, NetDefMixin {}
+  mixin NetDefMixin { abstract Int foo(Int a := 3, Int b := 5) }
+  class NetDefBase  { Int foo(Int a := 3, Int b := 5) { return a + b } }
+  class NetDefChild : NetDefBase, NetDefMixin {}

@@ -16,7 +16,6 @@ class TestOrder {
 **
 ** CtorTest
 **
-@Js
 class CtorTest : Test
 {
 
@@ -181,12 +180,12 @@ class CtorTest : Test
 // CtorNone
 //////////////////////////////////////////////////////////////////////////
 
-@Js class CtorNone
+class CtorNone
 {
   Str x := "none"
 }
 
-@Js class CtorSubNone : CtorNone
+class CtorSubNone : CtorNone
 {
 }
 
@@ -194,17 +193,17 @@ class CtorTest : Test
 // CtorAutoGen
 //////////////////////////////////////////////////////////////////////////
 
-@Js class CtorAutoGen
+class CtorAutoGen
 {
   new foobar() { x = "bsf" }
   Str x
 }
 
-@Js class CtorSubAutoGen1 : CtorAutoGen
+class CtorSubAutoGen1 : CtorAutoGen
 {
 }
 
-@Js class CtorSubAutoGen2 : CtorAutoGen
+class CtorSubAutoGen2 : CtorAutoGen
 {
   new make() {}
 }
@@ -213,7 +212,7 @@ class CtorTest : Test
 // CtorBase
 //////////////////////////////////////////////////////////////////////////
 
-@Js class CtorBase
+class CtorBase
 {
   new make(Str x) { this.x = x; this.y = "y"; }
   new makeDef()   { this.x = "defx"; this.y = "defy"; }
@@ -223,7 +222,7 @@ class CtorTest : Test
   Str y
 }
 
-@Js class CtorSubBase : CtorBase
+class CtorSubBase : CtorBase
 {
   new make() : super("foo") {}
 }
@@ -232,7 +231,7 @@ class CtorTest : Test
 // CtorDefs
 //////////////////////////////////////////////////////////////////////////
 
-@Js class CtorDefs
+class CtorDefs
 {
   new make(Int a, Int b := 2, Int c := 3)
   {
@@ -250,7 +249,7 @@ class CtorTest : Test
   Int c;
 }
 
-@Js class CtorSubDefs : CtorDefs
+class CtorSubDefs : CtorDefs
 {
   new make(Int a, Int b := 12, Int c := 13) : super(a, b, c) {}
   new makeThis1()  : this.make(71) {}
@@ -261,13 +260,13 @@ class CtorTest : Test
 // CtorOrdering
 //////////////////////////////////////////////////////////////////////////
 
-@Js class CtorOrderA
+class CtorOrderA
 {
   new make(Str? a := null) { q += ",1" }
   Str q := "0"
 }
 
-@Js class CtorOrderB : CtorOrderA
+class CtorOrderB : CtorOrderA
 {
   new make() : super.make("foo") { r += ",3" }
   new makeThis() : this.make() {}
@@ -279,7 +278,7 @@ class CtorTest : Test
 // ConstFieldCtor
 //////////////////////////////////////////////////////////////////////////
 
-@Js class ConstFieldCtor
+class ConstFieldCtor
 {
   new make()
   {

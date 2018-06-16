@@ -9,7 +9,6 @@
 **
 ** CompilerJsTest
 **
-@Js
 class CompilerJsTest : Test
 {
 
@@ -44,7 +43,7 @@ class CompilerJsTest : Test
   }
 }
 
-@Js class CompilerJsA
+class CompilerJsA
 {
   Str foo() { getFoo }
   private Str getFoo() { "a" }
@@ -53,7 +52,7 @@ class CompilerJsTest : Test
   private Str _f1 := "fa"
 }
 
-@Js class CompilerJsB : CompilerJsA
+class CompilerJsB : CompilerJsA
 {
   Str bar() { getFoo2 }
   private Str getFoo2() { "b" }
@@ -62,7 +61,7 @@ class CompilerJsTest : Test
   private Str _f2 := "fb"
 }
 
-@Js class CompilerJsC
+class CompilerJsC
 {
   virtual Int x := 0
   Void foo() { x += 4 }

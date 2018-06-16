@@ -9,7 +9,6 @@
 **
 ** StrTest
 **
-@Js
 class StrTest : Test
 {
 

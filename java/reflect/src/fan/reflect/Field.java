@@ -60,14 +60,16 @@ public class Field extends Slot {
 		Type type = Sys.findType(tref.signature);
 		Field field = new Field(parent, f.name, f.flags, facets, 0, type);
 		
-		try {
-			Class<?> clz = parent.getJavaClass();
-			field.reflect = clz.getDeclaredField(f.name);
-			field.reflect.setAccessible(true);
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
+		if ((f.flags & FConst.Storage) != 0) {
+			try {
+				Class<?> clz = parent.getJavaClass();
+				field.reflect = clz.getDeclaredField(f.name);
+				field.reflect.setAccessible(true);
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return field;

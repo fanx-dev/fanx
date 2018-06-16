@@ -39,5 +39,4 @@ public class FSlot implements FConst {
 	public String name; // simple slot name
 	public int flags; // bitmask
 	public FAttrs attrs; // meta-data
-
 }

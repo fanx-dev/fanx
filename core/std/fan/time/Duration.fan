@@ -29,8 +29,8 @@ const struct class Duration
   **
   //static Duration now()
 
-  @NoDoc
-  private static Int nowTicks() { TimePoint.nanoTicks }
+  @Deprecated
+  static Int nowTicks() { TimePoint.nanoTicks }
 
   **
   ** Create a Duration which represents the specified number of nanosecond ticks.
@@ -39,9 +39,9 @@ const struct class Duration
     this.ticks = ticks
   }
 
-  Int toTicks() { ticks }
+  private Int toTicks() { ticks }
 
-  static new fromTicks(Int t) { make(t) }
+  private static new fromTicks(Int t) { make(t) }
 
   internal static new fromDateTime(Int t) { make(t) }
 
