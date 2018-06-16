@@ -102,8 +102,15 @@ Run build:
   fanc yourPath/pod.props
 ```
 
-### Local Return (Not Implemented) ###
-distinguish it from normal return
+### Local Return (Not Sure) ###
+A new keyword 'ret' as same as 'return' but only be used in closures.
+
+### Data Class (TODO) ###
+Auto generate toStr hash make and equals methods.
+```
+  data class Point { Float x; Float y }
+```
 
 ## API Different ##
 See more [Api Diff](./ApiDiff.md)
+

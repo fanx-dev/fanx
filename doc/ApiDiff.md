@@ -45,3 +45,8 @@ The Time rename to TimeOfDay.
 ### Depend ###
 The Depend class only support simple version constraint.
 
+### Type Erasure ###
+The List.of and Func.returns are no longer available.
+
+
+
