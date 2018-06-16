@@ -159,14 +159,9 @@ class Main
     return srcDirs
   }
 
-  private Void parseMap(Str? str, [Str:Str] map) {
-    if (str == null) return
-    str.split(',').each |pair|
-    {
-      if (pair.isEmpty) return
-      tuples := pair.split('=')
-      if (tuples.size != 2) throw Err("Invalid config meta: $pair")
-      map[tuples[0]] = tuples[1]
+  private Void getStartsWith(Str str, [Str:Str] props, [Str:Str] map) {
+    props.each |v,k| {
+      if (k.startsWith(str)) map[k] = v
     }
   }
 
@@ -213,10 +208,10 @@ class Main
     meta["pod.native.js"]     = (jsDirs     != null && !jsDirs.isEmpty).toStr
 
     //get matadata
-    parseMap(props.get("meta"), meta)
+    getStartsWith("meta.", props, meta)
 
     //get index
-    parseMap(props.get("index"), index)
+    getStartsWith("index.", props, index)
 
     // if stripTest config property is set to true then don't
     // compile any Fantom code under test/ or include any res files

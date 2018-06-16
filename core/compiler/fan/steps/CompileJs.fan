@@ -38,6 +38,8 @@ class CompileJs  : CompilerStep
     // in JS mode we force JS compilation
     if (compiler.input.output === CompilerOutputMode.js) return true
 
+    if (compiler.input.compileJs) return true
+
     // if any JS directories were specified force JS compilation
     if (compiler.jsFiles != null && !compiler.jsFiles.isEmpty) return true
 
