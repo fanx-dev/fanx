@@ -183,17 +183,17 @@ public class OpUtil
 // Is/As
 //////////////////////////////////////////////////////////////////////////
 
-  public static boolean is(Object instance, ClassType type)
-  {
-    if (instance == null) return false;
-    if (instance instanceof IObj) {
-    	IObj fobj = (IObj)instance;
-    	fobj.typeof().fits(type);
-    }
-    if (type.isObj()) return true;
-    
-    return type.getJavaClass().isInstance(instance);
-  }
+//  public static boolean is(Object instance, ClassType type)
+//  {
+//    if (instance == null) return false;
+//    if (instance instanceof IObj) {
+//    	IObj fobj = (IObj)instance;
+//    	fobj.typeof().fits(type);
+//    }
+//    if (type.isObj()) return true;
+//    
+//    return type.getJavaClass().isInstance(instance);
+//  }
 
 //  public static Object toImmutable(Object obj)
 //  {

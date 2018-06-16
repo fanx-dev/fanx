@@ -23,7 +23,7 @@ public abstract class Func extends FanObj {
 		return type;
 	}
 
-	public abstract Type returns();
+//	public abstract Type returns();
 
 	public abstract long arity();
 
@@ -79,7 +79,7 @@ public abstract class Func extends FanObj {
 	public Object callOn(Object target, List args) {
 		int argc = 0;
 		if (args != null) argc = (int)args.size();
-		 List list = List.make(FanObj.type, argc+1);
+		 List list = List.make(argc+1);
 		 list.add(target);
 		 for (int i=0; i< argc; ++i) {
 			 list.add(args.get(i));

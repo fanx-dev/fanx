@@ -243,7 +243,7 @@ native const class Env
   **   - force: pass 'true' to not use caching, always forces
   **     a recompile
   **
-  virtual Type compileScript(File f, [Str:Obj]? options := null)
+  //virtual Type compileScript(File f, [Str:Obj]? options := null)
 
   **
   ** Lookup all the matching values for a pod indexed key.  If no

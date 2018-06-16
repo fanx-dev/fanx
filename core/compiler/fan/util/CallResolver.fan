@@ -280,7 +280,7 @@ class CallResolver : CompilerSupport
       if (param == null) return
       CType paramType := param.paramType
       while (true) {
-        if (paramType == base) {
+        if (base.fits(paramType)) {
           founds.add(m)
           break
         }

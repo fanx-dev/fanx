@@ -33,7 +33,7 @@ public class TimeZonePeer {
 
 	static List listNames() {
 		String[] tz = java.util.TimeZone.getAvailableIDs();
-		List list = List.make(FanStr.type, tz.length);
+		List list = List.make(tz.length);
 		for (String n : tz) {
 			list.add(n);
 		}

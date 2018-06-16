@@ -41,7 +41,7 @@ abstract const class Enum
   ** A public static fromStr method is always auto-generated
   ** by the compiler for each enum.
   **
-  native protected static Enum? doFromStr(Type t, Str name, Bool checked)
+  native protected static Enum? doFromStr(Str type, Str name, Bool checked)
   /*
   protected static Enum? doFromStr(Type t, Str name, Bool checked) {
     slot := t.slot(name, false)

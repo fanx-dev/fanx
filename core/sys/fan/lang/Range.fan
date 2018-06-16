@@ -288,11 +288,11 @@ const struct class Range
   **   (10..15).map |i->Str| { i.toHex }  =>  Str[a, b, c, d, e, f]
   **
   Obj?[] map(|Int i->Obj?| f) {
-    tof := f.returns
-    if (tof == Void#) tof = Obj?#
+    //tof := f.returns
+    //if (tof == Void#) tof = Obj?#
     cp := start < end ? end-start+1 : start-end+1
 
-    nlist := List.make(tof, cp)
+    nlist := List.make(cp)
     start := this.start
     end := this.lastEnd
     if (start < end) {

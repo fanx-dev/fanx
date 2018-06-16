@@ -5,7 +5,7 @@
 // History:
 //   3 Mar 06  Brian Frank  Creation
 //
-package fanx.main;
+package fanx.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.zip.*;
 import fanx.fcode.*;
+import fanx.main.Sys;
 import fanx.emit.*;
 import fanx.util.*;
 

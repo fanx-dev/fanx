@@ -68,7 +68,8 @@ public class FanUtil {
 		javaToFanNameMap.put("java.lang.Number", "fan.sys.Nun");
 		javaToFanNameMap.put("java.lang.Long", "fan.sys.Int");
 		javaToFanNameMap.put("java.lang.Double", "fan.sys.Float");
-		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.sys.Type");
+		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.reflect.Type");
+		javaToFanNameMap.put("fanx.main.ClassType", "fan.reflect.Type");
 
 		/*
 		 * javaToFanTypes.put("byte", JavaType.ByteType);
@@ -160,11 +161,14 @@ public class FanUtil {
 			case 'S':
 				if (typeName.equals("Str"))
 					return "java.lang.String";
-			case 'T':
-				if (typeName.equals("Type"))
-					return Sys.TypeClassDotName;
+//			case 'T':
+//				if (typeName.equals("Type"))
+//					return Sys.TypeClassDotName;
 				break;
 			}
+		}
+		if (podName.equals("reflect") && typeName.equals("Type")) {
+			return Sys.TypeClassDotName;
 		}
 
 		// if pod starts with [java] parse as FFI name
@@ -208,11 +212,15 @@ public class FanUtil {
 			case 'S':
 				if (typeName.equals("Str"))
 					return "fan.sys.FanStr";
-			case 'T':
-				if (typeName.equals("Type"))
-					return "fan.sys.FanType";
+//			case 'T':
+//				if (typeName.equals("Type"))
+//					return "fan.sys.FanType";
 				break;
 			}
+		}
+		
+		if (podName.equals("reflect") && typeName.equals("Type")) {
+			return "fan.reflect.FanType";
 		}
 
 		// if pod starts with [java] parse as FFI name
@@ -222,31 +230,6 @@ public class FanUtil {
 		return "fan." + podName + "." + typeName;
 	}
 	
-//	public static boolean specialJavaImpl(String podName, String typeName) {
-//		if (podName.equals("sys")) {
-//			switch (typeName.charAt(0)) {
-//			case 'B':
-//				if (typeName.equals("Bool")) return true;
-////			case 'D':
-////				if (typeName.equals("Decimal"))
-////					return "fan.sys.FanDecimal";
-//			case 'F':
-//				if (typeName.equals("Float")) return true;
-//			case 'I':
-//				if (typeName.equals("Int")) return true;
-//			case 'N':
-//				if (typeName.equals("Num")) return true;
-//			case 'O':
-//				if (typeName.equals("Obj")) return true;
-//			case 'S':
-//				if (typeName.equals("Str")) return true;
-//			case 'T':
-//				if (typeName.equals("Type")) return true;
-//			}
-//		}
-//		return false;
-//	}
-
 	/**
 	 * Given a Fantom qname, get the Java type signature: sys::Obj =>
 	 * java/lang/Object foo::Bar => fan/foo/Bar
@@ -285,15 +268,19 @@ public class FanUtil {
 			case 'V':
 				if (typeName.equals("Void"))
 					return "V";
-			case 'T':
-				if (typeName.equals("Type"))
-					return Sys.TypeClassName;
+//			case 'T':
+//				if (typeName.equals("Type"))
+//					return Sys.TypeClassPathName;
 				break;
 			}
 
 			// generic parameters V, etc
 //			if (typeName.length() == 1)
 //				return "java/lang/Object";
+		}
+		
+		if (podName.equals("reflect") && typeName.equals("Type")) {
+			return Sys.TypeClassPathName;
 		}
 
 		// if pod starts with [java] parse as FFI name
@@ -475,8 +462,8 @@ public class FanUtil {
 				return "fan/sys/FanNum";
 		}
 		if (jsig.length() > 4 &&  jsig.charAt(3) == 'x') {
-			if (jsig.equals(Sys.TypeClassName))
-				return "fan/sys/FanType";
+			if (jsig.equals(Sys.TypeClassPathName))
+				return "fan/reflect/FanType";
 //			if (jsig.equals("java/math/BigDecimal"))
 //				return "fan/sys/FanDecimal";
 		}

@@ -31,10 +31,10 @@ public class Field extends Slot {
 				return true;
 			}
 
-			@Override
-			public Type returns() {
-				return null;
-			}
+//			@Override
+//			public Type returns() {
+//				return null;
+//			}
 
 			@Override
 			public long arity() {
@@ -54,7 +54,7 @@ public class Field extends Slot {
 	
 	public static Field fromFCode(FField f, Type parent) {
 		//TODO
-		List facets = List.make(Sys.findType("sys::Facet"), 1);
+		List facets = List.make(1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.type);
 		Type type = Sys.findType(tref.signature);

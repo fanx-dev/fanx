@@ -877,13 +877,13 @@ public class FCodeEmit
     // if a generic instance, we have to use a method call
     // because Fantom types don't map to Java classes exactly;
     // otherwise we can use straight bytecode
-    if (typeRef.podName.equals("sys") && typeRef.isGenericInstance())
-    {
-      if (parent.IsViaType == 0) parent.IsViaType = emit.method("fanx/util/OpUtil.is(Ljava/lang/Object;"+Sys.TypeClassJsig+")Z");
-      loadType(typeRef);
-      code.op2(INVOKESTATIC, parent.IsViaType);
-    }
-    else
+//    if (typeRef.podName.equals("sys") && typeRef.isGenericInstance())
+//    {
+//      if (parent.IsViaType == 0) parent.IsViaType = emit.method("fanx/util/OpUtil.is(Ljava/lang/Object;"+Sys.TypeClassJsig+")Z");
+//      loadType(typeRef);
+//      code.op2(INVOKESTATIC, parent.IsViaType);
+//    }
+//    else
     {
       int cls = emit.cls(typeRef.jnameBoxed());
       code.op2(INSTANCEOF, cls);
@@ -1148,7 +1148,7 @@ public class FCodeEmit
 
   private void typeToNullable()
   {
-    if (parent.TypeToNullable == 0) parent.TypeToNullable = emit.method(Sys.TypeClassName+".toNullable()"+Sys.TypeClassJsig);
+    if (parent.TypeToNullable == 0) parent.TypeToNullable = emit.method(Sys.TypeClassPathName+".toNullable()"+Sys.TypeClassJsig);
     code.op2(INVOKEVIRTUAL, parent.TypeToNullable);
   }
 

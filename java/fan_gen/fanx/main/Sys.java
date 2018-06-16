@@ -12,9 +12,9 @@ import fanx.fcode.FType;
 
 public class Sys {
 	
-	public static final String TypeClassName = "fanx/main/Type";
+	public static final String TypeClassPathName = "fanx/main/Type";
 	public static final String TypeClassDotName = "fanx.main.Type";
-	public static final String TypeClassJsig = "L"+Sys.TypeClassName+";";
+	public static final String TypeClassJsig = "L"+Sys.TypeClassPathName+";";
 
 	public static String[] args;
 	
@@ -56,7 +56,7 @@ public class Sys {
 		if (pos2 < 0) pos2 = signature.length();
 		String typeName = signature.substring(pos+2, pos2);
 		FType ftype = findFType(podName, typeName);
-		Type res = Type.fromFType(ftype);
+		Type res = Type.fromFType(ftype, signature);
 		
 		if (nullable) {
 			return res.toNullable();

@@ -1,10 +1,12 @@
 package fan.sys;
 
 import fanx.fcode.FConst;
+import fanx.main.Sys;
 import fanx.main.Type;
 
 public class EnumPeer {
-	protected static Enum doFromStr(Type t, String name, boolean checked) {
+	protected static Enum doFromStr(String type, String name, boolean checked) {
+		Type t = Sys.findType(type);
 		if ((t.flags() & FConst.Enum) != 0) {
 			try {
 				Class<?> jclass = t.getJavaClass();

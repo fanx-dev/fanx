@@ -40,12 +40,6 @@ public class JavaType extends Type {
 	}
 
 	@Override
-	public String signature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean isNullable() {
 		return false;
 	}

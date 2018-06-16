@@ -29,7 +29,7 @@ const mixin UriScheme
   **
   ** Default implementation returns type qname.
   **
-  override Str toStr() { typeof.qname }
+  //override Str toStr() { typeof.qname }
 
   **
   ** Resolve the uri to a Fantom object.  If uri cannot

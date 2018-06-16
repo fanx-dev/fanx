@@ -34,6 +34,8 @@ native const class Type
   **
   static Type of(Obj obj)
 
+  static extension Type typeof(Obj? obj := null)
+
   **
   ** Find a Type by it's qualified name "pod::Type".  If the type
   ** doesn't exist and checked is false then return null, otherwise
@@ -54,7 +56,7 @@ native const class Type
   **   acme::Foo#.pod   => acme
   **   acme::Foo[]#.pod => sys
   **
-  //Pod? pod()
+  Pod? pod()
 
   **
   ** Simple name of the type such as "Str".  For parameterized types derived
@@ -317,7 +319,7 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-  /*
+
   **
   ** List of the all defined fields (including inherited fields).
   **
@@ -352,8 +354,6 @@ native const class Type
   ** super class or mixins.
   **
   Slot? slot(Str name, Bool checked := true)
-
-  */
 
   **
   ** Create a new instance of this Type using the following rules:

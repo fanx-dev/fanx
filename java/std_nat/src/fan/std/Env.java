@@ -276,7 +276,7 @@ public class Env extends FanObj {
 	}
 
 	public List findAllPodNames() {
-		List acc = List.make(FanStr.typeof(""), 8);
+		List acc = List.make(64);
 		List files = findFile(Uri.fromStr("lib/fan/")).list();
 		for (int i = 0; i < files.size(); ++i) {
 			File f = (File) files.get(i);

@@ -22,16 +22,13 @@ rtconst abstract class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  static new make(Type? of, Int capacity) {
-    return ArrayList(of, capacity)
+  static new make(Int capacity) {
+    return ArrayList(capacity)
   }
 
-  **
-  ** Constructor for Obj?[] with initial capacity.
-  **
+  @NoDoc
   static new makeObj(Int capacity := 4) {
-    type := Obj?#
-    return ArrayList(type, capacity)
+    return ArrayList(capacity)
   }
 
   protected new privateMake() {}
@@ -73,7 +70,7 @@ rtconst abstract class List<V>
   **   ["hi"].of    =>  Str#
   **   [[2, 3]].of  =>  Int[]#
   **
-  abstract Type? of()
+  //abstract Type? of()
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -98,7 +95,7 @@ rtconst abstract class List<V>
   ** automatically allocates new storage so that capacity exactly matches
   ** the new size.
   **
-  abstract Int size
+  abstract Int size()
 
   **
   ** The number of items this list can hold without allocating more memory.
@@ -445,7 +442,7 @@ rtconst abstract class List<V>
   **   list.findAll |Int v->Bool| { return v%2==0 } => [0, 2, 4]
   **
   List findAll(|V item, Int index->Bool| c) {
-    nlist := List.make(of, 1)
+    nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)
       if (result) {
@@ -466,8 +463,9 @@ rtconst abstract class List<V>
   **   list := ["a", 3, "foo", 5sec, null]
   **   list.findType(Str#) => Str["a", "foo"]
   **
+  /*TODO
   List findType(Type t) {
-    nlist := List.make(of, 1)
+    nlist := List.make(1)
     each |obj| {
       result := obj.typeof.fits(t)
       if (result) {
@@ -476,6 +474,7 @@ rtconst abstract class List<V>
     }
     return nlist
   }
+  */
 
   **
   ** Return a new list containing the items for which c returns
@@ -488,7 +487,7 @@ rtconst abstract class List<V>
   **   list.exclude |Int v->Bool| { return v%2==0 } => [1, 3]
   **
   List exclude(|V item, Int index->Bool| c) {
-    nlist := List.make(of, 1)
+    nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)
       if (!result) {
@@ -536,7 +535,7 @@ rtconst abstract class List<V>
   **   list.map |Int v->Int| { return v*2 } => [6, 8, 10]
   **
   Obj?[] map(|V item, Int index->Obj?| c) {
-    nlist := Obj?[,]
+    nlist := List.make(size)
     each |obj, i| {
       result := c(obj, i)
       nlist.add(result)
@@ -719,8 +718,8 @@ rtconst abstract class List<V>
   **   [[1,2],[3]].flatten    =>  [1,2,3]
   **   [1,[2,[3]],4].flatten  =>  [1,2,3,4]
   **
-  List<Obj?> flatten() {
-    nlist := List<Obj?>(Obj#,size)
+  Obj?[] flatten() {
+    nlist := List.make(size)
     each |item| {
       if (item is List) {
         f := (item as List)?.flatten

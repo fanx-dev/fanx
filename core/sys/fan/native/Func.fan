@@ -52,7 +52,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   **
   ** Type returned by the function or sys::Void if no return value.
   **
-  Type returns()
+  //Type returns()
 
   **
   ** Convenience for 'params.size'

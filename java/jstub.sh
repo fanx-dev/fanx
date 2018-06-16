@@ -1,5 +1,5 @@
 mkdir libs
-jstub='java -cp fan_gen/bin fanx.main.Jstub -d libs'
+jstub='java -cp fan_gen/bin fanx.tools.Jstub -d libs'
 $jstub sys
 $jstub std
 $jstub reflect

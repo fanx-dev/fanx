@@ -7,12 +7,6 @@
 //
 package fanx.main;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import fanx.fcode.FField;
-import fanx.fcode.FMethod;
-import fanx.fcode.FSlot;
 import fanx.fcode.FType;
 import fanx.util.FanUtil;
 
@@ -45,11 +39,6 @@ public class ClassType extends Type
 	@Override
 	public String qname() {
 		return ftype.qname();
-	}
-
-	@Override
-	public String signature() {
-		return ftype.signature();
 	}
 
 	@Override

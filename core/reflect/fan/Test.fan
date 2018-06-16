@@ -236,7 +236,7 @@ internal class TestRunner {
 
   Int run() {
     types.each |type| {
-      TypeExt.methods(type).each |Method m| {
+      type.methods.each |Method m| {
         if (m.name.startsWith("test")) {
           runTest(type, m)
         }

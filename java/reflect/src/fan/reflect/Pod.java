@@ -49,7 +49,7 @@ public class Pod extends FanObj {
 
 	public static Pod of(Object obj) {
 		if (obj instanceof FanObj) {
-			TypeExt.pod(((FanObj) obj).typeof());
+			FanType.pod(((FanObj) obj).typeof());
 		}
 		return null;
 	}
@@ -70,7 +70,7 @@ public class Pod extends FanObj {
 
 	public static List list() {
 		java.util.List<String> names = Sys.listPod();
-		List list = List.make(Sys.findType("reflect::Pod"), names.size());
+		List list = List.make(names.size());
 		for (String n : names) {
 			list.add(find(n));
 		}
@@ -93,7 +93,7 @@ public class Pod extends FanObj {
 
 	public final List depends() {
 		if (depends == null) {
-			List dps = (List) List.make(Sys.findType("reflect::Depends"), fpod.depends.length);
+			List dps = (List) List.make(fpod.depends.length);
 			for (String n : fpod.depends) {
 				dps.add(Depend.fromStr(n));
 			}
@@ -129,10 +129,10 @@ public class Pod extends FanObj {
 
 	public List types() {
 		if (types == null) {
-			List list = List.make(FanType.type, fpod.types.length);
+			List list = List.make(fpod.types.length);
 			for (FType f : fpod.types) {
 				if (f.isSynthetic()) continue;
-				Type t = Type.fromFType(f);
+				Type t = Type.fromFType(f, f.signature());
 				list.add(t);
 			}
 			types = list;
@@ -146,7 +146,7 @@ public class Pod extends FanObj {
 
 	public Type type(String name, boolean checked) {
 		FType ftype = fpod.type(name, checked);
-		Type type = Type.fromFType(ftype);
+		Type type = Type.fromFType(ftype, ftype.signature());
 		if (type != null)
 			return type;
 		if (checked)

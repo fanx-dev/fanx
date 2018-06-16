@@ -69,7 +69,7 @@ rtconst abstract class Buf
   **
   ** Return string summary of the buffer.
   **
-  override Str toStr() { typeof.name + "(pos=$pos size=$size)" }
+  override Str toStr() { super.toStr + "(pos=$pos size=$size)" }
 
 //////////////////////////////////////////////////////////////////////////
 // Access

@@ -24,7 +24,7 @@ public class Method extends Slot {
 	
 	public static Method fromFCode(FMethod f, Type parent) {
 		//TODO
-		List facets = List.make(Sys.findType("sys::Facet"), 1);
+		List facets = List.make(1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.ret);
 		Type type = Sys.findType(tref.signature);
@@ -32,7 +32,7 @@ public class Method extends Slot {
 		FTypeRef tref2 = ftype.pod.typeRef(f.inheritedRet);
 		Type type2 = Sys.findType(tref2.signature);
 		
-		List params = List.make(Param.typeof, f.paramCount);
+		List params = List.make(f.paramCount);
 		
 		FMethodVar[] vars = f.params();
 		for (int i=0; i<f.paramCount; ++i) {

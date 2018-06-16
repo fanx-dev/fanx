@@ -140,7 +140,7 @@ class InitEnum : CompilerStep
 
     // return (CurType)doParse(name, checked)
     doFromStr := CallExpr(loc, null, "doFromStr")
-    doFromStr.args.add(LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, curType))
+    doFromStr.args.add(LiteralExpr(loc, ExprId.strLiteral, ns.strType, curType.qname))
     doFromStr.args.add(UnknownVarExpr(loc, null, "name"))
     doFromStr.args.add(UnknownVarExpr(loc, null, "checked"))
     cast := TypeCheckExpr(loc, ExprId.coerce, doFromStr, curType.toNullable)

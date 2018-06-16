@@ -184,7 +184,7 @@ public class FanObj extends IObj {
 				!FanObj.class.isAssignableFrom(type.getJavaClass())
 				) {
 			if (args == null) {
-				args = List.make(type, 1);
+				args = List.make(1);
 			}
 			args.insert(0, obj);
 			return doInvokeMethod(m, null, args);
@@ -243,7 +243,7 @@ public class FanObj extends IObj {
 		}
 	}
 
-	static Object doTrap(Object self, String name, List args, Type type) {
+	public static Object doTrap(Object self, String name, List args, Type type) {
 		if (type.jslots == null) {
 			java.util.Map<String, java.util.List<Object>> jslots = new java.util.HashMap<String, java.util.List<Object>>();
 			Class<?> clz = type.getJavaClass();

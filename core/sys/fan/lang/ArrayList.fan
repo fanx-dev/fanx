@@ -9,7 +9,7 @@
 rtconst class ArrayList<V> : List
 {
   private ObjArray array
-  private Type type
+  //private Type type
   private Bool readOnly
   private Bool immutable
 
@@ -19,13 +19,7 @@ rtconst class ArrayList<V> : List
     }
   }
 
-  new make(Type? of, Int capacity) : super.privateMake() {
-    type = of
-    array = ObjArray(capacity)
-  }
-
-  new makeObj(Int capacity) : super.privateMake() {
-    type = Obj?#
+  new make(Int capacity) : super.privateMake() {
     array = ObjArray(capacity)
   }
 
@@ -38,7 +32,7 @@ rtconst class ArrayList<V> : List
     if (other isnot List) return false
     that := other as List
 
-    if (this.of != that.of) return false
+    //if (this.of != that.of) return false
     if (this.size != that.size) return false
 
     for (Int i:=0; i<size; ++i) {
@@ -47,7 +41,7 @@ rtconst class ArrayList<V> : List
     return true
   }
 
-  override Type? of() { type }
+  //override Type? of() { type }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -64,9 +58,9 @@ rtconst class ArrayList<V> : List
         }
         &size = it
       } else if (it > &size) {
-        if (type.isNullable == false) {
-          throw ArgErr("growing non-nullable list")
-        }
+        //if (type.isNullable == false) {
+        //  throw ArgErr("growing non-nullable list")
+        //}
         if (it > capacity) {
           capacity = it
         }
@@ -121,7 +115,7 @@ rtconst class ArrayList<V> : List
     len := end - start
     if (len < 0) throw IndexErr("range illegal")
 
-    nlist := ArrayList(of, len)
+    nlist := ArrayList(len)
     nlist.array.copyFrom(array, 0, start, len)
     nlist.&size = len
     return nlist
@@ -158,7 +152,7 @@ rtconst class ArrayList<V> : List
   }
 
   override This dup() {
-    nlist := ArrayList(of, size)
+    nlist := ArrayList(size)
     nlist.array.copyFrom(array, 0, 0, size)
     nlist.&size = size
     return nlist
@@ -543,7 +537,7 @@ rtconst class ArrayList<V> : List
 
   override This toImmutable() {
     if (isImmutable) return this
-    nlist := ArrayList(of, size)
+    nlist := ArrayList(size)
     each |v| { nlist.add(v.toImmutable) }
     nlist.readOnly = true
     nlist.immutable = true

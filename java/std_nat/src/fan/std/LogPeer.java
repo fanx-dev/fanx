@@ -15,7 +15,7 @@ public class LogPeer {
 	}
 
 	public static synchronized List list() {
-		List list = List.make(Sys.findType("std::Log"), map.size());
+		List list = List.make(map.size());
 		for (Log log : map.values()) {
 			list.add(log);
 		}
@@ -58,7 +58,7 @@ public class LogPeer {
 	}
 
 	public static synchronized List handlers() {
-		List list = List.make(Sys.findType("std::Log"), map.size());
+		List list = List.make(map.size());
 		for (Func handler : handlers) {
 			list.add(handler);
 		}

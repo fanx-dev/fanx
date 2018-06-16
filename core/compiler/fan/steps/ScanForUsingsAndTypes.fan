@@ -76,8 +76,12 @@ class UsingAndTypeScanner : CompilerSupport
 
       //std and reflect is imported implicitly
       if (pod.name != "std" && pod.name != "reflect") {
-        unit.usings.add(Using(unit.loc) { podName="std" })
-        unit.usings.add(Using(unit.loc) { podName="reflect" })
+        if (pod.depends.any { it.name == "std" }) {
+          unit.usings.add(Using(unit.loc) { podName="std" })
+        }
+        if (pod.depends.any { it.name == "reflect" }) {
+          unit.usings.add(Using(unit.loc) { podName="reflect" })
+        }
       }
     }
 

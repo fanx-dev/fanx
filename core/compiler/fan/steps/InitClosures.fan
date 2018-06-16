@@ -54,7 +54,7 @@ class InitClosures : CompilerStep
     genCtor       // generate make()
     genDoCall     // generate doCall(...)
     genCall       // generate call(...) { doCall(...) }
-    genReturns
+    //genReturns
     genArity
     substitute    // substitute closure code with anonymous class ctor
   }
@@ -213,7 +213,7 @@ class InitClosures : CompilerStep
     if (parent.isClosure) parent.closure.call = m
     return m
   }
-
+  /*
   private Void genReturns()
   {
     loc := cls.loc
@@ -226,6 +226,7 @@ class InitClosures : CompilerStep
     m.code.stmts.add(ReturnStmt.makeSynthetic(loc, t))
     cls.addSlot(m)
   }
+  */
 
   private Void genArity()
   {

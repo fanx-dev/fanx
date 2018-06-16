@@ -41,7 +41,7 @@ const struct class Duration
 
   private Int toTicks() { ticks }
 
-  private static new fromTicks(Int t) { make(t) }
+  internal static new fromTicks(Int t) { make(t) }
 
   internal static new fromDateTime(Int t) { make(t) }
 

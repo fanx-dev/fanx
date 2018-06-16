@@ -46,7 +46,7 @@ public abstract class Slot extends FanObj {
 			if (type == null)
 				return null;
 
-			return TypeExt.slot(type, slotName, checked);
+			return FanType.slot(type, slotName, checked);
 
 		} catch (Exception e) {
 			throw Err.make("Invalid slot qname \"" + qname + "\", use <pod>::<type>.<slot>");

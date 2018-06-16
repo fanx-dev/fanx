@@ -343,8 +343,8 @@ public class FanStr
   public static List chars(String self)
   {
     int len = self.length();
-    if (len == 0) return FanType.emptyList(FanInt.type);
-    List list = List.make(FanInt.type, len);
+//    if (len == 0) return FanType.emptyList(FanInt.type);
+    List list = List.make(len);
     for (int i=0; i<len; ++i) {
     	list.add((long)self.charAt(i));
     }
@@ -658,7 +658,7 @@ public class FanStr
     if (separator == null) return splitws(self);
     int sep = separator.intValue();
     boolean trim = trimmed;
-    List toks = List.make(type, 16);
+    List toks = List.make(16);
     int len = self.length();
     int x = 0;
     for (int i=0; i<len; ++i)
@@ -683,7 +683,7 @@ public class FanStr
 
   public static List splitws(String val)
   {
-    List toks = List.make(type, 16);
+    List toks = List.make(16);
     int len = val.length();
     while (len > 0 && val.charAt(len-1) <= ' ') --len;
     int x = 0;
@@ -703,7 +703,7 @@ public class FanStr
 
   public static List splitLines(String self)
   {
-    List lines = List.make(type, 16);
+    List lines = List.make(16);
     int len = self.length();
     int s = 0;
     for (int i=0; i<len; ++i)

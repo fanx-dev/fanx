@@ -72,7 +72,7 @@ public class LocalFilePeer {
 	static List list(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		java.io.File[] ls = jfile.listFiles();
-		List res = List.make(self.typeof(), ls.length);
+		List res = List.make(ls.length);
 		for (java.io.File f : ls) {
 			res.add(javaToFan(f));
 		}

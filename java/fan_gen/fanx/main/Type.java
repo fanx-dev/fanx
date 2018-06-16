@@ -28,7 +28,9 @@ public abstract class Type {
 
 	public abstract String qname();
 
-	public abstract String signature();
+	public String signature() {
+		return qname();
+	}
 
 	public abstract boolean isNullable();
 
@@ -84,8 +86,9 @@ public abstract class Type {
 		return null;
 	}
 
-	public static Type fromFType(FType ftype) {
+	public static Type fromFType(FType ftype, String signature) {
 		if (ftype.reflectType == null) {
+			//need new instance for every signature?
 			ClassType ct = new ClassType(ftype);
 			ftype.reflectType = ct;
 		}
@@ -96,7 +99,7 @@ public abstract class Type {
 	public static Type refToType(FPod pod, int typeRefId) {
 		FTypeRef tref = pod.typeRef(typeRefId);
 		FType ft = Sys.findFType(tref.podName, tref.typeName);
-		Type t = Type.fromFType(ft);
+		Type t = Type.fromFType(ft, tref.signature);
 		return t;
 	}
 

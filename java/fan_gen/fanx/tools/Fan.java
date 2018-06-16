@@ -5,13 +5,15 @@
 // History:
 //   4 Dec 05  Brian Frank  Creation
 //
-package fanx.main;
+package fanx.tools;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
 import fanx.fcode.FPod;
+import fanx.main.Sys;
+import fanx.main.Type;
 import fanx.util.*;
 
 /**
@@ -179,8 +181,8 @@ public class Fan
       Object argObj = null;
       if (args.length > 0) {
     	  argClass = pod.podClassLoader.loadClass("fan.sys.List");
-    	  java.lang.reflect.Method m = argClass.getMethod("make", Type.class, long.class);
-    	  argObj = m.invoke(null, Sys.findType("sys::Str"), (long)args.length);
+    	  java.lang.reflect.Method m = argClass.getMethod("make", long.class);
+    	  argObj = m.invoke(null, (long)args.length);
     	  java.lang.reflect.Method addm = argClass.getMethod("add", Object.class);
     	  for (String s : args) {
     		  addm.invoke(argObj, s);

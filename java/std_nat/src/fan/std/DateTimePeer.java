@@ -21,7 +21,7 @@ public class DateTimePeer {
 	}
 
 	static List getTicks(long year, long month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
-		List list = List.make(FanInt.type, 3);
+		List list = List.make(3);
 		return list;
 	}
 	
