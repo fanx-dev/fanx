@@ -239,6 +239,9 @@ public class FanObj extends IObj {
 			return result;
 			
 		} catch (Throwable e) {
+			if (e.getCause() != null) {
+				throw Err.make(e.getCause());
+			}
 			throw Err.make(e);
 		}
 	}

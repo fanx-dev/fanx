@@ -7,7 +7,6 @@
 //
 
 internal class MapEntry : LinkedElem {
-  //key never be null
   Obj? key
   Obj? value { get{super.val} set{super.val=it} }
 }
@@ -117,12 +116,13 @@ internal rtconst class HashMap<K,V> : Map
 
   override Int size { private set }
 
-  private Int getHash(K key) {
+  private Int getHash(K? key) {
+    if (key == null) return 0
     hash := key.hash % array.size
     return hash.abs
   }
 
-  @Operator override V? get(K key, V? defV := this.defV) {
+  @Operator override V? get(K key, V? defV := null) {
     hash := getHash(key)
     l := array[hash]
     if (l == null) {
@@ -263,7 +263,7 @@ internal rtconst class HashMap<K,V> : Map
 
   override Bool ordered := false { set { modify; &ordered = it } }
 
-  override V? defV { set { modify; &defV = it } }
+  //override V? defV { set { modify; &defV = it } }
 
   override Void each(|V val, K key| c) {
     for (i:=0; i<array.size; ++i) {

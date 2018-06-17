@@ -17,14 +17,25 @@ class ParameterizedType : ProxyType {
   override Bool hasGenericParameter
   CType[] genericParams
 
-  static new create(CType baseType, CType[] params) {
+  static new create(CType baseType, CType[]? params := null) {
     if (baseType.qname == "sys::List") {
+      if (params == null) {
+        params = [baseType.ns.objType.toNullable]
+      }
       return ListType(params.first)
     }
     else if (baseType.qname == "std::Map") {
+      if (params == null) {
+        objType := baseType.ns.objType.toNullable
+        params = [objType, objType]
+      }
       return MapType(params.first, params.last)
     }
     else if (baseType.qname == "sys::Func") {
+      if (params == null) {
+        objType := baseType.ns.objType.toNullable
+        params = [objType]
+      }
       ret := params.first
       types := CType[,]
       names := Str[,]
@@ -35,6 +46,7 @@ class ParameterizedType : ProxyType {
       return FuncType(types, names, params.first)
     }
     else {
+      if (params == null) params = CType[,]
       return ParameterizedType.make(baseType, params)
     }
   }
@@ -80,11 +92,8 @@ class ParameterizedType : ProxyType {
 
   override Bool fits(CType t)
   {
-    t = t.toNonNullable
-    if (this == t) return true
-    if (t == root) return true
-    if (t.isObj) return true
-    if (t.qname == root.qname) return true
+    if (super.fits(t)) return true
+    //if (t.qname == root.qname) return true
     return false
   }
 

@@ -243,7 +243,8 @@ mixin CType
     if (t.isObj) return true
 
     // short circuit if myself
-    if (this == t) return true
+    //if (this == t) return true
+    if (this.qname == t.qname) return true
 
     // recurse extends
     if (base != null && base.fits(t)) return true

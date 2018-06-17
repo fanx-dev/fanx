@@ -13,7 +13,8 @@ import fanx.util.FanUtil;
 public class ClassType extends Type
 {
 	FType ftype;
-	private Class<?> jclass;
+	private Class<?> jImplClass;
+	private Class<?> jActualClass;
 	private NullableType nullable;
 	
 	public ClassType(FType t) {
@@ -45,23 +46,36 @@ public class ClassType extends Type
 	public boolean isNullable() {
 		return false;
 	}
-
+	
 	@Override
-	public Class<?> getJavaClass() {
-		if (jclass == null) {
+	public Class<?> getJavaActualClass() {
+		if (jActualClass == null) {
 			try {
-				String javaImp = FanUtil.toJavaImplClassName(podName(), name());
-				jclass = ftype.pod.podClassLoader.loadClass(javaImp);
+				String javaImp = FanUtil.toJavaClassName(podName(), name());
+				jActualClass = ftype.pod.podClassLoader.loadClass(javaImp);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		return jclass;
+		return jActualClass;
+	}
+
+	@Override
+	public Class<?> getJavaClass() {
+		if (jImplClass == null) {
+			try {
+				String javaImp = FanUtil.toJavaImplClassName(podName(), name());
+				jImplClass = ftype.pod.podClassLoader.loadClass(javaImp);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return jImplClass;
 	}
 
 	@Override
 	public void precompiled(Class<?> clz) {
-		jclass = clz;
+		jActualClass = clz;
 	}
 
 	@Override

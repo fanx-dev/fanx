@@ -89,34 +89,28 @@ rtconst class ArrayList<V> : List
   }
 
   @Operator override V get(Int index) {
-    /*
-    I think JVM already do this
     if (index < 0) {
       index += size
+      if (index < 0) throw IndexErr("index is out of range. size:$size, index:$index")
     }
 
     if (index >= size) {
       throw IndexErr("index is out of range. size:$size, index:$index")
     }
-    */
+
     return array[index]
   }
 
   @Operator override List getRange(Range r) {
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
+    start := r.startIndex(size)
+    end := r.endIndex(size)
+    ++end
+    //if (end > size) throw IndexErr("range illegal")
     len := end - start
     if (len < 0) throw IndexErr("range illegal")
 
     nlist := ArrayList(len)
-    nlist.array.copyFrom(array, 0, start, len)
+    nlist.array.copyFrom(array, start, 0, len)
     nlist.&size = len
     return nlist
   }
@@ -177,7 +171,10 @@ rtconst class ArrayList<V> : List
   private Void grow(Int desiredSize) {
     modify
     if (desiredSize <= capacity) return
-    newSize := desiredSize.max(capacity*2)
+
+    newSize := (capacity < 256) ? (capacity*2+10) : (capacity*1.5).toInt
+    newSize = desiredSize.max(newSize)
+
     capacity = newSize
   }
 
@@ -201,8 +198,8 @@ rtconst class ArrayList<V> : List
 
   override This insert(Int index, V? item) {
     modify
-    if (index < 0) index += size
-    if (index > size) throw IndexErr("index is out of range")
+    if (index < 0) index = index + size
+    if (index > size) throw IndexErr("index is out of range $index")
 
     grow(size + 1)
     array.copyFrom(array, index, index+1, size-index)
@@ -228,19 +225,22 @@ rtconst class ArrayList<V> : List
   override V? remove(V? item) {
     modify
     index := index(item)
-    if (index == null) return null
+    if (index == -1) return null
     return removeAt(index)
   }
 
   override V? removeSame(V? item) {
     modify
     index := indexSame(item)
-    if (index == null) return null
+    if (index == -1) return null
     return removeAt(index)
   }
 
   override V? removeAt(Int index) {
     modify
+    if (index < 0) index += size
+    if (index >= size) throw IndexErr("index is out of range $index")
+
     obj := array[index]
     array.copyFrom(array, index+1, index, size-index-1)
     array[size-1] = null
@@ -250,18 +250,12 @@ rtconst class ArrayList<V> : List
 
   override This removeRange(Range r) {
     modify
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
+    start := r.startIndex(size)
+    end := r.endIndex(size)
+    ++end
+
     len := end - start
     if (len < 0) throw IndexErr("range illegal")
-
     if (len == 0) return this
 
     array.copyFrom(array, end, start, size-end)
@@ -343,6 +337,7 @@ rtconst class ArrayList<V> : List
   }
 
   override Obj? eachWhile(|V item, Int index->Obj?| c, Int offset := 0) {
+    if (offset < 0) offset += size
     for (i:=offset; i<size; ++i) {
       obj := this[i]
       result := c(obj, i)
@@ -354,7 +349,8 @@ rtconst class ArrayList<V> : List
   }
 
   override Obj? eachrWhile(|V? item, Int index->Obj?| c, Int offset := -1) {
-    for (i:=size+offset; i>=0; --i) {
+    if (offset < 0) offset += size
+    for (i:=offset; i>=0; --i) {
       obj := this[i]
       result := c(obj, i)
       if (result != null) {
@@ -364,36 +360,60 @@ rtconst class ArrayList<V> : List
     return null
   }
 
+  override Int findIndex(|V item, Int index->Bool| c, Int offset := 0) {
+    if (offset < 0) offset += size
+    for (i:=offset; i<size; ++i) {
+      obj := this[i]
+      result := c(obj, i)
+      if (result) {
+        return i
+      }
+    }
+    return -1
+  }
+
+  override Int findrIndex(|V item, Int index->Bool| c, Int offset := -1) {
+    if (offset < 0) offset += size
+    for (i:=offset; i>=0; --i) {
+      obj := this[i]
+      result := c(obj, i)
+      if (result) {
+        return i
+      }
+    }
+    return -1
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
   private Void insertSort(Int left, Int right, |V a, V b->Int| cmopFunc) {
     self := array
-    Int j := 0
-    V? swapBuffer
-    for (;left < right; left++) {
-      swapBuffer = self[left+1]
-      j = left
-      while (j>-1 && (cmopFunc(swapBuffer, self[j]) < 0)) {
+    for (i:=left;i < right; i++) {
+      curVal := self[i+1]
+      j := i
+      //shift right
+      while (j>=left && (cmopFunc(curVal, self[j]) < 0)) {
         self[j+1] = self[j]
         --j
       }
-      self[j+1] = swapBuffer
+      self[j+1] = curVal
     }
   }
 
   private Void quickSort(Int low, Int high, |V a, V b->Int| cmopFunc) {
-    i := low; j := high
+    if (low == high) return
     if(!(low < high)) throw Err("$low >= $high")
 
-    /*if too small using insert sort*/
-    if (high - low < 20) {
+    //if too small using insert sort
+    if (high - low < 5) {
       insertSort(low, high, cmopFunc)
       return
     }
 
     self := array
+    i := low; j := high
 
     //select pivot
     pivot := (j+i)/2
@@ -409,23 +429,25 @@ rtconst class ArrayList<V> : List
     else if (self[pivot] > self[max]) {
       pivot = max
     }
+    pivotVal := self[pivot]
+    self[pivot] = self[i]
 
     while (i < j) {
-      while (i<j && cmopFunc(pivot, self[j]) <= 0 ) --j
+      while (i<j && cmopFunc(pivotVal, self[j]) <= 0 ) --j
       //self[i] is empty
       if (i < j) {
         self[i] = self[j]
         ++i
       }
 
-      while (i<j && cmopFunc(self[i], pivot) < 0) ++i
+      while (i<j && cmopFunc(self[i], pivotVal) < 0) ++i
       //self[j] is empty
       if (i < j) {
         self[j] = self[i]
         --j
       }
     }
-    self[i] = pivot
+    self[i] = pivotVal
     if (low < i-1) {
       quickSort(low, i-1, cmopFunc)
     }
@@ -435,6 +457,7 @@ rtconst class ArrayList<V> : List
   }
 
   override This sort(|V a, V b->Int|? c := null) {
+    modify
     if (size <= 1) return this
     if (c == null) c = |a, b->Int| { a <=> b }
     quickSort(0, size-1, c)
@@ -448,6 +471,7 @@ rtconst class ArrayList<V> : List
     if (n == 0) return -1
     low := 0
     high := n - 1
+
     while (low <= high) {
       mid := (low+high) / 2
       cond := cmopFunc(self[mid], mid)
@@ -475,11 +499,14 @@ rtconst class ArrayList<V> : List
 
   override This reverse() {
     modify
-    mid := size / 2
-    for (i:=0; i<mid; ++i) {
+    if (size <= 1) return this
+    n := size
+    for (i:=0; i<n; ++i) {
+      j := n-i-1
+      if (i >= j) break
       a := array[i]
-      b := array[size-i]
-      array[size-i] = a
+      b := array[j]
+      array[j] = a
       array[i] = b
     }
     return this
@@ -501,7 +528,10 @@ rtconst class ArrayList<V> : List
     modify
     if (item == null) return this
     i := index(item)
-    if (i == null) return this
+    if (i == -1) return this
+
+    //must deal with before removeAt
+    if (toIndex < 0) toIndex += size
 
     removeAt(i)
     insert(toIndex, item)

@@ -74,7 +74,7 @@ rtconst abstract class Map<K,V>
   ** it defaults to the `def` field.  This method is readonly safe.
   ** Shortcut is 'a[key]'.
   **
-  @Operator abstract V? get(K key, V? defV := this.defV)
+  @Operator abstract V? get(K key, V? defV := null)
 
   **
   ** Get the value for the specified key or if key is not mapped
@@ -92,7 +92,7 @@ rtconst abstract class Map<K,V>
   ** Return if the specified key is mapped.
   ** This method is readonly safe.
   **
-  Bool containsKey(K? key) {
+  Bool containsKey(K key) {
     return get(key, null) != null
   }
 
@@ -271,7 +271,7 @@ rtconst abstract class Map<K,V>
   ** or NotImmutableErr is thrown.  Getting this field is readonly safe.
   ** Throw ReadonlyErr if set when readonly.
   **
-  abstract V? defV
+  //abstract V? defV
 
 //////////////////////////////////////////////////////////////////////////
 // Str

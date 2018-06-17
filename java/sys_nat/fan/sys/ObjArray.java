@@ -1,5 +1,7 @@
 package fan.sys;
 
+import java.util.Arrays;
+
 import fanx.main.*;
 
 public class ObjArray extends FanObj {

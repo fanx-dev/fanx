@@ -166,6 +166,11 @@ class UsingAndTypeScanner : CompilerSupport
     typeDef := TypeDef(ns, tok, unit, name)
     unit.types.add(typeDef)
 
+    peek := tokens[pos]
+    if (peek.kind === Token.lt) {
+      typeDef.isGeneric = true
+    }
+
     // set mixin flag to use by Parser
     if (tok.kind === Token.mixinKeyword)
       typeDef.flags = typeDef.flags.or(FConst.Mixin)

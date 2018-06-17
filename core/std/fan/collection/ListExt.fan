@@ -16,6 +16,7 @@ class ListExt {
   **   ["a", "a", "b", "c", "b", "b"].unique => ["a", "b", "c"]
   **
   static extension List unique(List self) {
+    if (self.size == 0) return self.dup
     map := [:]
     res := [,]
     self.each|v|{
@@ -71,12 +72,13 @@ class ListExt {
   static extension List intersection(List self, List that) {
     map := [:]
     res := [,]
-    self.each|v|{
+    that.each|v|{
       map[v] = 1
     }
-    that.each|v|{
+    self.each|v|{
       if (map.containsKey(v)) {
         res.add(v)
+        map.remove(v)
       }
     }
     return res

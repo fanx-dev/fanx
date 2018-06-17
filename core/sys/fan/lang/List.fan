@@ -124,6 +124,7 @@ rtconst abstract class List<V>
   V? getSafe(Int index, V? defV := null) {
     if (index < 0) {
       index += size
+      if (index < 0) return defV
     }
 
     if (index >= size) {
@@ -154,7 +155,7 @@ rtconst abstract class List<V>
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
   Bool contains(Obj? item) {
-    eachWhile |v,i->Obj?| { v == item ? v : null } != null
+    findIndex |v,i->Bool| { v == item } != -1
   }
 
   **
@@ -176,27 +177,27 @@ rtconst abstract class List<V>
   ** The search starts at the specified offset and returns
   ** the first match.  The offset may be negative to access
   ** from end of list.  Throw IndexErr if offset is out of
-  ** range.  If the item is not found return null.  This method
+  ** range.  If the item is not found return -1.  This method
   ** is readonly safe.
   **
-  Int? index(Obj? item, Int offset := 0) {
-    eachWhile( |v,i->Obj?| { v == item ? i : null }, offset)
+  Int index(Obj? item, Int offset := 0) {
+    findIndex( |v,i->Bool| { v == item }, offset)
   }
 
   **
   ** Reverse index lookup.  This method works just like `index`
   ** except that it searches backward from the starting offset.
   **
-  Int? indexr(Obj? item, Int offset := -1) {
-    eachrWhile( |v,i->Obj?| { v == item ? i : null }, offset)
+  Int indexr(Obj? item, Int offset := -1) {
+    findrIndex( |v,i->Bool| { v == item }, offset)
   }
 
   **
   ** Return integer index just like `List.index` except
   ** use '===' same operator instead of the '==' equals operator.
   **
-  Int? indexSame(Obj? item, Int offset := 0) {
-    eachWhile( |v,i->Obj?| { v === item ? i : null }, offset)
+  Int indexSame(Obj? item, Int offset := 0) {
+    findIndex( |v,i->Bool| { v === item }, offset)
   }
 
   **
@@ -414,22 +415,22 @@ rtconst abstract class List<V>
   **   list.find |Int v->Bool| { return v.toStr == "7" } => null
   **
   V? find(|V item, Int index->Bool| c) {
-    eachWhile |v,i->Obj?| { c(v,i) ? v : null }
+    i := findIndex |v,i->Bool| { c(v,i) }
+    return i == -1 ? null : get(i)
   }
 
   **
   ** Return the index of the first item in the list for which c returns
-  ** true.  If c returns false for every item, then return null.  This
+  ** true.  If c returns false for every item, then return -1.  This
   ** method is readonly safe.
   **
   ** Example:
   **   list := [5, 6, 7]
   **   list.findIndex |Int v->Bool| { return v.toStr == "7" } => 2
-  **   list.findIndex |Int v->Bool| { return v.toStr == "9" } => null
+  **   list.findIndex |Int v->Bool| { return v.toStr == "9" } => -1
   **
-  Int? findIndex(|V item, Int index->Bool| c) {
-    eachWhile |v,i->Obj?| { c(v,i) ? i : null }
-  }
+  abstract Int findIndex(|V item, Int index->Bool| c, Int offset := 0)
+  abstract Int findrIndex(|V item, Int index->Bool| c, Int offset := -1)
 
   **
   ** Return a new list containing the items for which c returns
@@ -451,30 +452,6 @@ rtconst abstract class List<V>
     }
     return nlist
   }
-
-  **
-  ** Return a new list containing all the items which are an instance
-  ** of the specified type such that item.type.fits(t) is true.  Any null
-  ** items are automatically excluded.  If none of the items are instance
-  ** of the specified type, then an empty list is returned.  The returned
-  ** list will be a list of t.  This method is readonly safe.
-  **
-  ** Example:
-  **   list := ["a", 3, "foo", 5sec, null]
-  **   list.findType(Str#) => Str["a", "foo"]
-  **
-  /*TODO
-  List findType(Type t) {
-    nlist := List.make(1)
-    each |obj| {
-      result := obj.typeof.fits(t)
-      if (result) {
-        nlist.add(obj)
-      }
-    }
-    return nlist
-  }
-  */
 
   **
   ** Return a new list containing the items for which c returns
@@ -508,7 +485,7 @@ rtconst abstract class List<V>
   **   list.any |Str v->Bool| { return v.size >= 5 } => false
   **
   Bool any(|V item, Int index->Bool| c) {
-    eachWhile |v,i->Obj?| { c(v,i) ? v : null } != null
+    findIndex |v,i->Bool| { c(v,i) } != -1
   }
 
   **
@@ -522,7 +499,7 @@ rtconst abstract class List<V>
   **   list.all |Str v->Bool| { return v.size >= 4 } => false
   **
   Bool all(|V item, Int index->Bool| c) {
-    eachWhile |v,i->Obj?| { c(v,i) ? null : v } == null
+    findIndex |v,i->Bool| { !c(v,i) } == -1
   }
 
   **
@@ -655,7 +632,7 @@ rtconst abstract class List<V>
   This sortr(|V a, V b->Int|? c := null) {
     sort |a, b| {
       if (c == null) return -(a <=> b)
-      return -c(b, b)
+      return -c(a, b)
     }
   }
 
@@ -740,7 +717,7 @@ rtconst abstract class List<V>
   **
   V? random() {
     if (size == 0) return null
-    r := Range(0, size, true)
+    r := 0..<size
     return this[r.random]
   }
 
@@ -750,8 +727,9 @@ rtconst abstract class List<V>
   **
   This shuffle() {
     //modify
+    r := 0..<size
     each |v, i| {
-      swap(i, random)
+      swap(i, r.random)
     }
     return this
   }
@@ -764,10 +742,11 @@ rtconst abstract class List<V>
   ** Return a string representation the list.  This method is readonly safe.
   **
   override Str toStr() {
+    if (size == 0) return "[,]"
     buf := StrBuf()
     buf.add("[")
     each |item, i| {
-      if (i != 0) buf.add(",")
+      if (i != 0) buf.add(", ")
       buf.add(item)
     }
     buf.add("]")
@@ -803,10 +782,11 @@ rtconst abstract class List<V>
   ** The individual items must all respond to the 'toCode' method.
   **
   Str toCode() {
+    if (size == 0) return "[,]"
     buf := StrBuf()
     buf.add("[")
     each |item, i| {
-      if (i != 0) buf.add(",")
+      if (i != 0) buf.add(", ")
       buf.add(item->toCode)
     }
     buf.add("]")

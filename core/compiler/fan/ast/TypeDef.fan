@@ -45,7 +45,7 @@ class TypeDef : DefNode, CType
   override Bool isNullable() { false }
   override once CType toNullable() { NullableType(this) }
 
-  override Bool isGeneric() { genericParameters.size > 0 }
+  override Bool isGeneric := false
   override Bool isParameterized() { false }
   override Bool hasGenericParameter() { false }
 

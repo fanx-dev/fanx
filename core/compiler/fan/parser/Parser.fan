@@ -195,7 +195,7 @@ public class Parser : CompilerSupport
     if (def.isFacet) def.mixins.add(ns.facetType)
 
     //GenericType Param
-    if (curt == Token.lt) {
+    if (curt === Token.lt) {
       consume
       gparams := GenericParamType[,]
       while (true) {
@@ -284,7 +284,8 @@ public class Parser : CompilerSupport
 
   private CType inheritType()
   {
-    t := typeRef
+    Loc loc := cur
+    t := TypeRef(loc, simpleType(false))
     if (t == ns.facetType) err("Cannot inherit 'Facet' explicitly", t.loc)
     if (t == ns.enumType)  err("Cannot inherit 'Enum' explicitly", t.loc)
     return t
@@ -466,10 +467,18 @@ public class Parser : CompilerSupport
     if (flags.and(FConst.Ctor) != 0)
     {
       name := consumeId
+      /*
       returns := flags.and(FConst.Static) == 0 ?
                  TypeRef(loc, ns.voidType) :
                  TypeRef(loc, parent) //remove 'toNullable' sine we don't want boxing for struct type
-      return methodDef(loc, parent, doc, facets, flags, returns, name)
+      */
+      returns := ns.voidType
+      if (flags.and(FConst.Static) != 0) {
+        if (parent.isGeneric) returns = ParameterizedType.create(parent)
+        else returns = parent
+      }
+      returnsRef := TypeRef(loc, returns)
+      return methodDef(loc, parent, doc, facets, flags, returnsRef, name)
     }
 
     // otherwise must be field or method
@@ -2215,7 +2224,7 @@ public class Parser : CompilerSupport
   ** Simple type signature:
   **   <simpleType>  :=  <id> ["::" <id>]
   **
-  private CType simpleType()
+  private CType simpleType(Bool allowParameterized := true)
   {
     loc := cur
     id := consumeId
@@ -2259,6 +2268,12 @@ public class Parser : CompilerSupport
     type := types.first
     //generic param
     if (curt === Token.lt) {
+      if (!allowParameterized) {
+        err("Can not be parameterized type", loc)
+      }
+      if (!type.isGeneric) {
+        err("$type is not Generic", loc)
+      }
       consume
       params := CType[,]
       while (true) {
@@ -2274,6 +2289,9 @@ public class Parser : CompilerSupport
         }
       }
       type = ParameterizedType.create(type, params)
+    }
+    else if (type.isGeneric && allowParameterized) {
+      type = ParameterizedType.create(type)
     }
 
     // got it

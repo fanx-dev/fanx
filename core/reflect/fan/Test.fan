@@ -160,6 +160,9 @@ abstract class Test
       fail("No err thrown, expected $errType")
     } catch (Err err) {
       if (errType != null) {
+        if (err.typeof != errType) {
+          err.trace
+        }
         verifyType(err, errType)
       }
       else {

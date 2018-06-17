@@ -35,6 +35,8 @@ public abstract class Type {
 	public abstract boolean isNullable();
 
 	public abstract Class<?> getJavaClass();
+	
+	public abstract Class<?> getJavaActualClass();
 
 	public abstract void precompiled(Class<?> clz);
 
@@ -42,7 +44,7 @@ public abstract class Type {
 		return is(this.toNonNullable(), t.toNonNullable());
 	}
 
-	public static boolean is(Type self, Type type) {
+	private static boolean is(Type self, Type type) {
 		// we don't take nullable into account for fits
 		if (type instanceof NullableType)
 			type = ((NullableType) type).root;
@@ -50,7 +52,7 @@ public abstract class Type {
 		if (type == self || (type.isObj()))
 			return true;
 		
-		return type.getJavaClass().isAssignableFrom(self.getJavaClass());
+		return type.getJavaActualClass().isAssignableFrom(self.getJavaActualClass());
 		//TODO
 //		List inheritance = inheritance(self);
 //		for (int i = 0; i < inheritance.size(); ++i)
