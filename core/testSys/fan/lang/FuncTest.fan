@@ -112,7 +112,7 @@ class FuncTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Bind Calls
 //////////////////////////////////////////////////////////////////////////
-/*TODO
+
   Void testBindCalls()
   {
     // verify binding/calling
@@ -133,13 +133,15 @@ class FuncTest : Test
   {
     args := Str[,]
     expected := ""
-    verifyEq(f.params.size, f.arity)
-    f.params.size.times |Int i|
+
+    //verifyEq(f.params.size, f.arity)
+    f.arity.times |Int i|
     {
       ch := ('a' + i).toChar
       args.add(ch)
       expected += ch
     }
+
 
     verifyEq(f.callList(args), expected)
 
@@ -177,11 +179,11 @@ class FuncTest : Test
     verifyEq(x.call("x"), expected)
     verifyEq(x.call("x", "y"), expected)
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Bind.isImmutable
 //////////////////////////////////////////////////////////////////////////
-/*TODO
+
   Void testBindIsImmutable()
   {
     // start off with immutable function
@@ -210,7 +212,7 @@ class FuncTest : Test
     verifyEq(f3.isImmutable, true)
     verifyEq(f3.bind([this]).isImmutable, false)
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Bind Signatures
 //////////////////////////////////////////////////////////////////////////
@@ -263,7 +265,7 @@ class FuncTest : Test
     verifyEq(p.name, n)
     verifyEq(p.type, t)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Bind Def Params
 //////////////////////////////////////////////////////////////////////////
@@ -273,6 +275,7 @@ class FuncTest : Test
     o := BindDef()
     // instance methods
     verifyEq(BindDef#i.func.bind([o]).call, [1, 2, 3])
+
     verifyEq(BindDef#i.func.bind([o]).call(7), [7, 2, 3])
     verifyEq(BindDef#i.func.bind([o]).callList([7,8]), [7, 8, 3])
     verifyEq(BindDef#i.func.bind([o]).callList([7,8,9]), [7, 8, 9])
@@ -337,11 +340,10 @@ class FuncTest : Test
     verifyEq(func.callList([this, "Anderson"]), "Anderson")
     verifyEq(func.arity, 2)
 
-    echo("params -> ${func.params}")
+    //echo("params -> ${func.params}")
     echo("typeof -> ${func.typeof}")
     echo("toStr  -> ${func}")
   }
-  */
 
   Str judge(Str who) { who }
   static Str staticJudge(Str who) { who }

@@ -1527,7 +1527,14 @@ class CheckErrors : CompilerStep
     {
       if (sig.params.size != args.size)
       {
-        isErr = true
+        //ignore on sig.defaultParameterized
+        if (sig.defaultParameterized) {
+          objType := ns.objType.toNullable
+          args.size.times |i| {
+            newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
+          }
+        }
+        else isErr = true
       }
       else
       {
@@ -1581,7 +1588,7 @@ class CheckErrors : CompilerStep
 
     msg := "Invalid args "
     if (sig != null)
-      msg += "|" + sig.params.join(", ") + "|"
+      msg += "|" + sig.params.join(", ") + "|.$name"
     else
       msg += "$name(" + params.join(", ", |p| { paramTypeStr(base, p) }) + ")"
     msg += ", not (" + args.join(", ", |Expr e->Str| { "$e.toTypeStr" }) + ")"

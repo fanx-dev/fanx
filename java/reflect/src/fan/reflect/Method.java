@@ -149,7 +149,6 @@ public class Method extends Slot {
 	class MethodFunc extends Func {
 		MethodFunc(Type returns) {
 			this.returns = returns;
-			this.fparams = Method.this.params;
 		}
 
 		public Type returns() {
@@ -157,14 +156,10 @@ public class Method extends Slot {
 		}
 
 		private final Type returns;
-		private List fparams;
 
 		public long arity() {
-			return params().size();
-		}
-
-		public List params() {
-			return fparams;
+			if (isInstance()) return params.size()+1;
+			return params.size();
 		}
 
 		public Method method() {
@@ -173,6 +168,11 @@ public class Method extends Slot {
 
 		public boolean isImmutable() {
 			return true;
+		}
+		
+		public final Object callOn(Object target, List args) {
+			if (isInstance()) return super.callOn(target, args);
+			return callList(args);
 		}
 
 		public Object call() {
@@ -215,10 +215,7 @@ public class Method extends Slot {
 				Object h) {
 			boolean isStatic = !isInstance();
 			int min = minParams();
-			int max = (int)fparams.size();
-			if (!isStatic) {
-				--argc;
-			}
+			int max = isStatic ? (int)params.size() : (int)params.size()+1;
 			
 			if (argc < min) {
 				throw ArgErr.make("Too few arguments: " + argc);
@@ -227,6 +224,7 @@ public class Method extends Slot {
 				throw ArgErr.make("Too many arguments: " + argc);
 			}
 			
+			if (!isStatic) --argc;
 			java.lang.reflect.Method jm = reflect[argc];
 			//specialImpl: FanInt.abs(i)
 			if (jm.getParameterCount() > argc) {
@@ -289,6 +287,7 @@ public class Method extends Slot {
 			for (; min < params.size(); ++min)
 				if (((Param) params.get(min)).hasDefault())
 					break;
+			if (isInstance()) ++min;
 			minParams = min;
 		}
 		return minParams;

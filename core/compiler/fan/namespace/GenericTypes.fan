@@ -16,23 +16,25 @@
 class ParameterizedType : ProxyType {
   override Bool hasGenericParameter
   CType[] genericParams
+  Bool defaultParameterized { private set } //generic param is absent
 
-  static new create(CType baseType, CType[]? params := null) {
+  static new create(CType baseType, CType[] params := [,]) {
+    defaultParameterized := params.size == 0
     if (baseType.qname == "sys::List") {
-      if (params == null) {
+      if (defaultParameterized) {
         params = [baseType.ns.objType.toNullable]
       }
       return ListType(params.first)
     }
     else if (baseType.qname == "std::Map") {
-      if (params == null) {
+      if (defaultParameterized) {
         objType := baseType.ns.objType.toNullable
         params = [objType, objType]
       }
       return MapType(params.first, params.last)
     }
     else if (baseType.qname == "sys::Func") {
-      if (params == null) {
+      if (defaultParameterized) {
         objType := baseType.ns.objType.toNullable
         params = [objType]
       }
@@ -43,18 +45,18 @@ class ParameterizedType : ProxyType {
         types.add(params[i])
         names.add(('a'+i-1).toCode)
       }
-      return FuncType(types, names, params.first)
+      return FuncType(types, names, params.first, defaultParameterized)
     }
     else {
-      if (params == null) params = CType[,]
-      return ParameterizedType.make(baseType, params)
+      return ParameterizedType.make(baseType, params, defaultParameterized)
     }
   }
 
-  protected new make(CType baseType, CType[] params)
+  protected new make(CType baseType, CType[] params, Bool defaultParameterized)
     : super(baseType)
   {
     this.genericParams = params
+    this.defaultParameterized = defaultParameterized
     hasGenericParameter = params.any { it.hasGenericParameter }
   }
 
@@ -148,8 +150,10 @@ class ParameterizedType : ProxyType {
     return genericParams.getSafe(gp.index, gp.bound)
   }
 
-  //override once Str signature() { "$qname$extName" }
-  override once Str extName() { "<"+genericParams.join(",",|s|{ s.signature })+">" }
+  override once Str extName() {
+    if (defaultParameterized) return "<>"
+    return "<"+genericParams.join(",",|s|{ s.signature })+">"
+  }
 }
 
 **************************************************************************
@@ -161,8 +165,8 @@ class ParameterizedType : ProxyType {
 **
 class ListType : ParameterizedType
 {
-  new make(CType v)
-    : super(v.ns.listType, [v])
+  new make(CType v, Bool defaultParameterized := false)
+    : super(v.ns.listType, [v], defaultParameterized)
   {
     this.v = v
   }
@@ -179,8 +183,8 @@ class ListType : ParameterizedType
 **
 class MapType : ParameterizedType
 {
-  new make(CType k, CType v)
-    : super(k.ns.mapType, [k,v])
+  new make(CType k, CType v, Bool defaultParameterized := false)
+    : super(k.ns.mapType, [k,v], defaultParameterized)
   {
     this.k = k
     this.v = v
@@ -199,8 +203,8 @@ class MapType : ParameterizedType
 **
 class FuncType : ParameterizedType
 {
-  new make(CType[] params, Str[] names, CType ret)
-    : super(ret.ns.funcType, [ret].addAll(params))
+  new make(CType[] params, Str[] names, CType ret, Bool defaultParameterized := false)
+    : super(ret.ns.funcType, [ret].addAll(params), defaultParameterized)
   {
     this.params = params
     this.names  = names
@@ -296,7 +300,7 @@ class FuncType : ParameterizedType
   {
     if (!usesThis) return this
     f := |CType t->CType| { t.isThis ? thisType : t }
-    return FuncType(params.map(f), names, f(ret))
+    return FuncType(params.map(f), names, f(ret), defaultParameterized)
   }
 
   CType[] params { private set } // a, b, c ...
