@@ -50,7 +50,7 @@ public class JavaType extends Type {
 	}
 
 	@Override
-	public Class<?> getJavaClass() {
+	public Class<?> getJavaImplClass() {
 		return jclass;
 	}
 

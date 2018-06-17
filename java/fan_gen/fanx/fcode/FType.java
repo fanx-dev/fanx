@@ -163,13 +163,13 @@ public class FType
 		
 		for (FMethod f : methods) {
 			if ((f.flags & FConst.Getter) != 0) {
-				FField field = (FField)map.get(f.name);
-				field.getter = f;
+//				FField field = (FField)map.get(f.name);
+//				field.getter = f;
 				continue;
 			}
 			if ((f.flags & FConst.Setter) != 0) {
-				FField field = (FField)map.get(f.name);
-				field.setter = f;
+//				FField field = (FField)map.get(f.name);
+//				field.setter = f;
 				continue;
 			}
 			

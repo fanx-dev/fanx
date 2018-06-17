@@ -50,8 +50,8 @@ public class NullableType extends Type {
 	}
 
 	@Override
-	public Class<?> getJavaClass() {
-		return root.getJavaClass();
+	public Class<?> getJavaImplClass() {
+		return root.getJavaImplClass();
 	}
 
 	@Override

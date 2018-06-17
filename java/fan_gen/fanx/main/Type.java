@@ -7,7 +7,6 @@
 //
 package fanx.main;
 
-import java.util.List;
 import java.util.Map;
 
 import fanx.fcode.FConst;
@@ -18,7 +17,6 @@ import fanx.fcode.FTypeRef;
 public abstract class Type {
 
 	public Map<String, Object> slots = null;
-	public Map<String, List<Object>> jslots = null;
 
 	public Object emptyList;
 	
@@ -34,7 +32,7 @@ public abstract class Type {
 
 	public abstract boolean isNullable();
 
-	public abstract Class<?> getJavaClass();
+	public abstract Class<?> getJavaImplClass();
 	
 	public abstract Class<?> getJavaActualClass();
 

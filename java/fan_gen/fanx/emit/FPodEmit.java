@@ -36,7 +36,7 @@ public class FPodEmit
   private static Object makeLiteral(String typeSig, String methodName, Object args, Class argClass) {
 	  try {
 		  Type type = Sys.findType(typeSig);
-		  Class<?> clz = type.getJavaClass();
+		  Class<?> clz = type.getJavaImplClass();
 		  java.lang.reflect.Method method = clz.getMethod(methodName, argClass);
 		  return method.invoke(null, args);
 	  } catch (Throwable e) {

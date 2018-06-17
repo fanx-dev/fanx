@@ -33,7 +33,7 @@ public class Fan
     Sys.args = args;
 
     // check for pods pending installation
-    checkInstall();
+//    checkInstall();
 
     // first try as file name
     File file = new File(target);
@@ -48,43 +48,43 @@ public class Fan
 	return 0;
   }
 
-  private void checkInstall()
-  {
-    // During bootstrap, check for pods located in "lib/install" and
-    // if found copy them to "lib/fan".  This gives us a simple way to
-    // stage installs which don't effect current program until the next
-    // reboot.  This is not really intended to be a long term solution
-    // because it suffers from limitations: assumes only one Fantom program
-    // being restarted at a time
-    try
-    {
-      // check for {home}/lib/install/
-      File installDir = new File(Sys.homeDir, "lib" + File.separator + "install");
-      if (!installDir.exists()) return;
-
-      // install to {work}/lib/fan/
-      File dir = new File(Sys.homeDir, "lib" + File.separator + "fan");
-      dir = new File(dir, "lib" + File.separator + "fan");
-
-      // install each file
-      File[] files = installDir.listFiles();
-      for (int i=0; files != null && i<files.length; ++i)
-      {
-        File file = files[i];
-        String name = file.getName();
-        if (!name.endsWith(".pod")) continue;
-        System.out.println("INSTALL POD: " + name);
-        FileUtil.copy(file, new File(dir, name));
-        file.delete();
-      }
-      FileUtil.delete(installDir);
-    }
-    catch (Throwable e)
-    {
-      System.out.println("ERROR: checkInstall");
-      e.printStackTrace();
-    }
-  }
+//  private void checkInstall()
+//  {
+//    // During bootstrap, check for pods located in "lib/install" and
+//    // if found copy them to "lib/fan".  This gives us a simple way to
+//    // stage installs which don't effect current program until the next
+//    // reboot.  This is not really intended to be a long term solution
+//    // because it suffers from limitations: assumes only one Fantom program
+//    // being restarted at a time
+//    try
+//    {
+//      // check for {home}/lib/install/
+//      File installDir = new File(Sys.homeDir, "lib" + File.separator + "install");
+//      if (!installDir.exists()) return;
+//
+//      // install to {work}/lib/fan/
+//      File dir = new File(Sys.homeDir, "lib" + File.separator + "fan");
+//      dir = new File(dir, "lib" + File.separator + "fan");
+//
+//      // install each file
+//      File[] files = installDir.listFiles();
+//      for (int i=0; files != null && i<files.length; ++i)
+//      {
+//        File file = files[i];
+//        String name = file.getName();
+//        if (!name.endsWith(".pod")) continue;
+//        System.out.println("INSTALL POD: " + name);
+//        FileUtil.copy(file, new File(dir, name));
+//        file.delete();
+//      }
+//      FileUtil.delete(installDir);
+//    }
+//    catch (Throwable e)
+//    {
+//      System.out.println("ERROR: checkInstall");
+//      e.printStackTrace();
+//    }
+//  }
 
 //  private int executeFile(File file, String[] args)
 //    throws Exception

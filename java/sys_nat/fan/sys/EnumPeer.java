@@ -9,9 +9,7 @@ public class EnumPeer {
 		Type t = Sys.findType(type);
 		if ((t.flags() & FConst.Enum) != 0) {
 			try {
-				Class<?> jclass = t.getJavaClass();
-				java.lang.reflect.Field field = jclass.getField(name);
-				Object val = field.get(null);
+				Object val = FanObj.doTrap(null, name, null, t);
 				if (val instanceof Enum) {
 					return (Enum) val;
 				}

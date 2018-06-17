@@ -61,7 +61,7 @@ public class ClassType extends Type
 	}
 
 	@Override
-	public Class<?> getJavaClass() {
+	public Class<?> getJavaImplClass() {
 		if (jImplClass == null) {
 			try {
 				String javaImp = FanUtil.toJavaImplClassName(podName(), name());

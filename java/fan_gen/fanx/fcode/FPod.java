@@ -11,6 +11,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import fanx.main.Sys;
+
 /**
  * FPod is the read/write fcode representation of sys::Pod.  It's main job in
  * life is to manage all the pod-wide constant tables for names, literals,

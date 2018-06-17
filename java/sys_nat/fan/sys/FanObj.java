@@ -7,7 +7,6 @@
 //
 package fan.sys;
 
-import java.lang.reflect.Modifier;
 
 import fanx.main.*;
 import fanx.util.*;
@@ -170,236 +169,29 @@ public class FanObj extends IObj {
 	}
 
 	public Object trap(String name) {
-		return doTrap(this, name, null, typeof());
+		return trap(this, name, null);
 	}
 
 	public Object trap(String name, List args) {
 		return doTrap(this, name, args, typeof());
 	}
 	
-	private static Object invokeMethod(java.lang.reflect.Method m, Object obj, List args, Type type) {
-		//Fan.Int.and(a, b)
-		//TODO
-		if ((m.getModifiers() & Modifier.STATIC) !=0 && 
-				!FanObj.class.isAssignableFrom(type.getJavaClass())
-				) {
-			if (args == null) {
-				args = List.make(1);
-			}
-			args.insert(0, obj);
-			return doInvokeMethod(m, null, args);
-		}
-		return doInvokeMethod(m, obj, args);
+	public static interface InvokeTrapper {
+		public abstract Object doTrap(Object self, String name, List args, Type type);
 	}
 	
-	private static Object doInvokeMethod(java.lang.reflect.Method m, Object obj, List args) {
+	public static InvokeTrapper invokeTrapper = null;
+	static {
 		try {
-			
-			Object result = null;
-			if (args == null) {
-				result = m.invoke(obj);
-				return result;
-			}
-			
-			int argc = (int)args.size();
-			switch (argc) {
-			case 0:
-				result = m.invoke(obj);
-				break;
-			case 1:
-				result = m.invoke(obj, args.get(0));
-				break;
-			case 2:
-				result = m.invoke(obj, args.get(0), args.get(1));
-				break;
-			case 3:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2));
-				break;
-			case 4:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3));
-				break;
-			case 5:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4));
-				break;
-			case 6:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5));
-				break;
-			case 7:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5),
-						args.get(6));
-				break;
-			case 8:
-				result = m.invoke(obj, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5),
-						args.get(6), args.get(7));
-				break;
-			default:
-				throw ArgErr.make("too many args:" + m + "," + args);
-			}
-
-			return result;
-			
+			ClassLoader loader = Sys.findPod("reflect").podClassLoader;
+			invokeTrapper = (InvokeTrapper)loader.loadClass("fan.reflect.ReflectInvoker").newInstance();
 		} catch (Throwable e) {
-			if (e.getCause() != null) {
-				throw Err.make(e.getCause());
-			}
-			throw Err.make(e);
+			System.err.println("install InvokeTrapper fail");
 		}
 	}
 
 	public static Object doTrap(Object self, String name, List args, Type type) {
-		if (type.jslots == null) {
-			java.util.Map<String, java.util.List<Object>> jslots = new java.util.HashMap<String, java.util.List<Object>>();
-			Class<?> clz = type.getJavaClass();
-			java.lang.reflect.Method[] ms = clz.getMethods();
-			for (java.lang.reflect.Method m : ms) {
-				java.util.List<Object> ml = jslots.get(m.getName());
-				if (ml == null) {
-					ml = new java.util.ArrayList<Object>();
-					jslots.put(m.getName(), ml);
-				}
-				ml.add(m);
-			}
-			ms = clz.getDeclaredMethods();
-			for (java.lang.reflect.Method m : ms) {
-				java.util.List<Object> ml = jslots.get(m.getName());
-				if (ml == null) {
-					ml = new java.util.ArrayList<Object>();
-					jslots.put(m.getName(), ml);
-				} else {
-					if (ml.contains(m)) {
-						continue;
-					}
-				}
-				m.setAccessible(true);
-				ml.add(m);
-			}
-			java.lang.reflect.Field[] fs = clz.getFields();
-			for (java.lang.reflect.Field m : fs) {
-				java.util.List<Object> ml = jslots.get(m.getName());
-				if (ml == null) {
-					ml = new java.util.ArrayList<Object>();
-					jslots.put(m.getName(), ml);
-					ml.add(m);
-				}
-			}
-			fs = clz.getDeclaredFields();
-			for (java.lang.reflect.Field m : fs) {
-				java.util.List<Object> ml = jslots.get(m.getName());
-				if (ml == null) {
-					ml = new java.util.ArrayList<Object>();
-					jslots.put(m.getName(), ml);
-					m.setAccessible(true);
-					ml.add(m);
-				}
-			}
-			
-			if (!FanObj.class.isAssignableFrom(clz)) {
-				ms = FanObj.class.getMethods();
-				for (java.lang.reflect.Method m : ms) {
-					if ((m.getModifiers() & Modifier.STATIC) == 0) continue;
-					java.util.List<Object> ml = jslots.get(m.getName());
-					if (ml == null) {
-						ml = new java.util.ArrayList<Object>();
-						jslots.put(m.getName(), ml);
-					} else {
-						continue;
-					}
-					ml.add(m);
-				}
-			}
-			type.jslots = jslots;
-		}
-
-		java.util.List<Object> ml = type.jslots.get(name);
-		if (ml == null || ml.size() == 0) {
-			throw UnknownSlotErr.make(type.qname() + "." + name);
-		}
-
-		if (ml.size() == 1) {
-			Object slot = ml.get(0);
-			if (slot instanceof java.lang.reflect.Method) {
-				java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
-				return invokeMethod(m, self, args, type);
-			}
-			else if (slot instanceof java.lang.reflect.Field) {
-				java.lang.reflect.Field field = (java.lang.reflect.Field)slot;
-				if (args == null || args.size() == 0) {
-					try {
-						return field.get(self);
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						throw Err.make(e);
-					}
-				}
-				else if (args.size() == 1) {
-					try {
-						field.set(self, args.get(0));
-						return null;
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						throw Err.make(e);
-					}
-				}
-				else {
-					throw ArgErr.make("Invalid number of args to get or set field '" +name + "'");
-				}
-			}
-		}
-		else {
-			int argc = args == null ? 0 : (int)args.size();
-			for (Object slot : ml) {
-				java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
-				int paramSize = m.getParameterTypes().length;
-				if (paramSize == argc) {
-					return invokeMethod(m, self, args, type);
-				}
-			}
-			
-			if (!FanObj.class.isAssignableFrom(type.getJavaClass())) {
-				for (Object slot : ml) {
-					java.lang.reflect.Method m = (java.lang.reflect.Method) slot;
-					if ((m.getModifiers() & Modifier.STATIC) == 0) continue;
-					int paramSize = m.getParameterTypes().length;
-					if (paramSize == argc+1) {
-						return invokeMethod(m, self, args, type);
-					}
-				}
-			}
-			
-			throw ArgErr.make("Invalid number of args to call method '" +name + "'");
-		}
-		
-		// Slot slot = type.slot(name, true);
-		//
-		// if (slot instanceof Method)
-		// {
-		// Method m = (Method)slot;
-		// return m.func.callOn(self, args);
-		// }
-		// else
-		// {
-		// // handle FFI field overloaded with a method
-		// Field f = (Field)slot;
-		// if (f.overload != null)
-		// return f.overload.func.callOn(self, args);
-		//
-		// // zero args -> getter
-		// int argSize = (args == null) ? 0 : args.sz();
-		// if (argSize == 0)
-		// {
-		// return f.get(self);
-		// }
-		//
-		// // one arg -> setter
-		// if (argSize == 1)
-		// {
-		// Object val = args.get(0);
-		// f.set(self, val);
-		// return val;
-		// }
-		//
-		// throw ArgErr.make("Invalid number of args to get or set field '" +
-		// name + "'");
-		// }
-		return null;
+		return invokeTrapper.doTrap(self, name, args, type);
 	}
 
 	// Remap all java.lang.Objects as statics since we emit to FanObj

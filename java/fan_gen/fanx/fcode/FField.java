@@ -27,6 +27,6 @@ public class FField
 
   public int type;       // type qname index
 
-  public FMethod getter;
-  public FMethod setter;
+//  public FMethod getter;
+//  public FMethod setter;
 }

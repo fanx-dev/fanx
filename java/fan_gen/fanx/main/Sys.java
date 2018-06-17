@@ -54,6 +54,7 @@ public class Sys {
 		String podName = signature.substring(0, pos);
 		int pos2 = signature.lastIndexOf('<');
 		if (pos2 < 0) pos2 = signature.length();
+		
 		String typeName = signature.substring(pos+2, pos2);
 		FType ftype = findFType(podName, typeName);
 		Type res = Type.fromFType(ftype, signature);
@@ -66,7 +67,14 @@ public class Sys {
 	
 	public static FType findFType(String podName, String typeName) {
 		FPod pod = findPod(podName);
-		return pod.type(typeName);
+		FType type = pod.type(typeName, false);
+		if (type == null) {
+			if (typeName.indexOf('^') != -1) {
+				return findFType("sys", "Obj");
+			}
+			throw new RuntimeException("UnknownTypeErr:"+typeName);
+		}
+		return type;
 	}
 
 	public static FPod findPod(String podName) {

@@ -1,6 +1,6 @@
 package fan.reflect;
 
-import java.io.IOException;
+import java.lang.reflect.Modifier;
 
 import fan.sys.Err;
 import fan.sys.Facet;
@@ -495,7 +495,7 @@ public class FanType {
 	 * Get the Java class which represents this type.
 	 */
 	public static Class toClass(Type self) {
-		return self.getJavaClass();
+		return self.getJavaActualClass();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -534,6 +534,10 @@ public class FanType {
 		List list = List.make(slots.size());
 		for (java.util.Map.Entry<String, Object> entry : slots.entrySet()) {
 			if (entry.getValue() instanceof Field) {
+				Slot slot = (Slot)entry.getValue();
+				if (slot.isPrivate() || slot.isInternal() || slot.isSynthetic()) {
+					continue;
+				}
 				list.add(entry.getValue());
 			}
 		}
@@ -545,6 +549,10 @@ public class FanType {
 		List list = List.make(slots.size());
 		for (java.util.Map.Entry<String, Object> entry : slots.entrySet()) {
 			if (entry.getValue() instanceof Method) {
+				Slot slot = (Slot)entry.getValue();
+				if (slot.isPrivate() || slot.isInternal() || slot.isSynthetic()) {
+					continue;
+				}
 				list.add(entry.getValue());
 			}
 		}
@@ -555,7 +563,11 @@ public class FanType {
 		java.util.Map<String, Object> slots = getSlots(type);
 		List list = List.make(slots.size());
 		for (java.util.Map.Entry<String, Object> entry : slots.entrySet()) {
-			list.add(entry.getValue());
+			Slot slot = (Slot)entry.getValue();
+			if (slot.isPrivate() || slot.isInternal() || slot.isSynthetic()) {
+				continue;
+			}
+			list.add(slot);
 		}
 		return list;
 	}
@@ -579,7 +591,33 @@ public class FanType {
 	private static void mergeSlots(java.util.Map<String, Object> out, Type base) {
 		java.util.Map<String, Object> add = getSlots(base);
 		for (java.util.Map.Entry<String, Object> entry : add.entrySet()) {
-			out.put(entry.getKey(), entry.getValue());
+			Slot slot = (Slot)entry.getValue();
+			
+			if (slot.isStatic() || slot.isCtor()) continue;
+			
+			String name = entry.getKey();
+			Slot oldSlot = (Slot)out.get(name);
+			if (oldSlot == null) {
+				out.put(name, entry.getValue());
+				continue;
+			}
+			
+			if (base.isObj()) continue;
+			if (slot.isAbstract() && !oldSlot.isAbstract()) {
+				continue;
+			}
+			
+			if ((slot.flags & (FConst.Getter|FConst.Setter)) != 0) {
+				if (oldSlot instanceof Field) {
+					Field field = (Field)oldSlot;
+					if ((slot.flags & FConst.Getter) != 0)
+			          field.getter = (Method)slot;
+			        else
+			          field.setter = (Method)slot; 
+					continue;
+				}
+			}
+			out.put(name, slot);
 		}
 	}
 
@@ -603,8 +641,6 @@ public class FanType {
 		if (ftype != null) {
 			ftype.load();
 			for (FField f : ftype.fields) {
-				if (f.isSynthetic())
-					continue;
 				slots.put(f.name, Field.fromFCode(f, type));
 			}
 
@@ -620,31 +656,51 @@ public class FanType {
 					continue;
 				}
 
-				if (f.isSynthetic())
-					continue;
 				slots.put(f.name, Method.fromFCode(f, type));
 			}
 		}
-
+		
 		// link java reflect
-		java.lang.reflect.Method[] jmths = type.getJavaClass().getMethods();
+		Class<?> jclz = type.getJavaImplClass();
+		Class<?> aclz = type.getJavaActualClass();
+		boolean specialImpl = jclz != aclz;
+		
+		java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
 		for (java.lang.reflect.Method jmth : jmths) {
+			
 			Slot s = (Slot) slots.get(jmth.getName());
 			if (s == null)
 				continue;
+			
+			//already inited in parent class
+			if (s.parent != type) {
+				continue;
+			}
+			
 			if (s instanceof Method) {
 				Method mth = (Method) s;
-				if (jmth.getParameterCount() < mth.reflect.length) {
-					mth.reflect[jmth.getParameterCount()] = jmth;
+				int paramCount = jmth.getParameterCount();
+				boolean isStatic = s.isStatic() || s.isCtor();
+				if (specialImpl && !isStatic) {
+					//specialImpl always is static
+					if ((jmth.getModifiers() & (Modifier.STATIC)) == 0) continue;
+					--paramCount;
+				}
+				
+				if (paramCount < mth.reflect.length) {
+					mth.reflect[paramCount] = jmth;
 				}
 			} else if (s instanceof Field) {
 				Field field = (Field) s;
-				if (jmth.getReturnType() == void.class)
-					field.setter.reflect = new java.lang.reflect.Method[] { jmth };
-				else
-					field.getter.reflect = new java.lang.reflect.Method[] { jmth };
+				if (jmth.getReturnType() == void.class && jmth.getParameterCount() == 1) {
+					if (field.setter != null)
+						field.setter.reflect[1] = jmth;
+				}
+				else if (jmth.getParameterCount() == 0) {
+					if (field.getter != null)
+						field.getter.reflect[0] = jmth;
+				}
 			}
-			jmth.setAccessible(true);
 		}
 
 		type.slots = slots;
@@ -664,4 +720,6 @@ public class FanType {
 	public static Slot slot(Type type, String name) {
 		return slot(type, name, true);
 	}
+	
+	
 }

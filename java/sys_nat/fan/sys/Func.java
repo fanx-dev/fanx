@@ -43,7 +43,7 @@ public abstract class Func extends FanObj {
 	}
 
 	public Object callList(List args) {
-	  int size = (int)args.size();
+	  int size = (args == null) ? 0 : (int)args.size();
 	  switch (size) {
 	  case 0: {
 		  return call();
@@ -77,14 +77,37 @@ public abstract class Func extends FanObj {
   }
 
 	public Object callOn(Object target, List args) {
-		int argc = 0;
-		if (args != null) argc = (int)args.size();
-		 List list = List.make(argc+1);
-		 list.add(target);
-		 for (int i=0; i< argc; ++i) {
-			 list.add(args.get(i));
-		 }
-		 return callList(list);
+	  int size = (args == null) ? 1 : (int)args.size()+1;
+	  switch (size) {
+	  case 0: {
+		  return call();
+	  }
+	  case 1: {
+		  return call(target);
+	  }
+	  case 2: {
+		  return call(target, args.get(0));
+	  }
+	  case 3: {
+		  return call(target, args.get(0), args.get(1));
+	  }
+	  case 4: {
+		  return call(target, args.get(0), args.get(1), args.get(2));
+	  }
+	  case 5: {
+		  return call(target, args.get(0), args.get(1), args.get(2), args.get(3));
+	  }
+	  case 6: {
+		  return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4));
+	  }
+	  case 7: {
+		  return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5));
+	  }
+	  case 8: {
+		  return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6));
+	  }
+	  }
+	  throw ArgErr.make("too many args:" + size);
 	}
 
 	public Object call() {

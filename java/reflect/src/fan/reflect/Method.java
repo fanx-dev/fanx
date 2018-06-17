@@ -1,6 +1,7 @@
 package fan.reflect;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -209,10 +210,10 @@ public class Method extends Slot {
 		public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
 			return callWith(8, a, b, c, d, e, f, g, h);
 		}
-
+		
 		private Object callWith(int argc, Object a, Object b, Object c, Object d, Object e, Object f, Object g,
 				Object h) {
-			boolean isStatic = isStatic() || isCtor();
+			boolean isStatic = !isInstance();
 			int min = minParams();
 			int max = (int)fparams.size();
 			if (!isStatic) {
@@ -226,8 +227,16 @@ public class Method extends Slot {
 				throw ArgErr.make("Too many arguments: " + argc);
 			}
 			
+			java.lang.reflect.Method jm = reflect[argc];
+			//specialImpl: FanInt.abs(i)
+			if (jm.getParameterCount() > argc) {
+				isStatic = true;
+				++argc;
+			}
+			
 			int p = argc;
 			Object[] args = new Object[p];
+			
 			if (isStatic) {
 				switch (p) {
 				case 8:
@@ -247,7 +256,7 @@ public class Method extends Slot {
 				case 1:
 					args[0] = a;
 				}
-				return invoke(null, args);
+				return invoke(null, args, jm);
 			} else {
 				switch (p) {
 				case 7:
@@ -265,7 +274,7 @@ public class Method extends Slot {
 				case 1:
 					args[0] = b;
 				}
-				return invoke(a, args);
+				return invoke(a, args, jm);
 			}
 		}
 	}
@@ -288,31 +297,18 @@ public class Method extends Slot {
 	private boolean isInstance() {
 		return (flags & (FConst.Static | FConst.Ctor)) == 0;
 	}
+	
+	Object invoke(Object instance, Object[] args) {
+		return invoke(instance, args, null);
+	}
 
-	public Object invoke(Object instance, Object[] args) {
-
-		java.lang.reflect.Method jm = null;
+	Object invoke(Object instance, Object[] args, java.lang.reflect.Method jm) {
 		try {
-			// // if parent is FFI Java class, then route to JavaType for
-			// handling
-			// if (parent.isJava())
-			// return JavaType.invoke(this, instance, args);
-
-			// zero index is full signature up to using max defaults
-//			int index = (int) params.size() - args.length;
-//			if (isInstance())
-//				index++;
-//			if (index < 0)
-//				index = 0;
-			int index = args.length;
-
-			// route to Java reflection
-			jm = reflect[index];
+			if (jm == null) jm = reflect[args.length];
 			if (jm == null) {
-				// fixReflect();
-				// jm = reflect[index];
 				throw Err.make("reflect methods not inited");
 			}
+			
 			return jm.invoke(instance, args);
 		} catch (IllegalArgumentException e) {
 			throw ArgErr.make(e);
@@ -322,7 +318,6 @@ public class Method extends Slot {
 			else
 				throw Err.make(e.getCause());
 		} catch (Exception e) {
-
 			if (instance == null && jm != null && !java.lang.reflect.Modifier.isStatic(jm.getModifiers()))
 				throw Err.make("Cannot call method '" + this + "' with null instance");
 
@@ -372,7 +367,7 @@ public class Method extends Slot {
 			throw Err.make("Instance required for non-static method: " + qname());
 
 		try {
-			Class cls = parent.getJavaClass();
+			Class cls = parent.getJavaImplClass();
 			String methodName = paramDefMethodName(this.name, param.name);
 			java.lang.reflect.Method m = cls.getMethod(methodName);
 			return m.invoke(instance);
@@ -408,5 +403,6 @@ public class Method extends Slot {
 	// Method generic;
 	java.lang.reflect.Method[] reflect;
 	private int minParams = -1;
-
+	
+//	boolean specialImpl = false;
 }
