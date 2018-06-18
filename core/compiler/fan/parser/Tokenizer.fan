@@ -214,7 +214,7 @@ class Tokenizer : CompilerSupport
     Int? dur      := null
     if (cur.isLower && peek.isLower)
     {
-      if (cur == 'n' && peek == 's') { consume; consume; dur = 1 }
+      //if (cur == 'n' && peek == 's') { consume; consume; dur = 1 }
       if (cur == 'm' && peek == 's') { consume; consume; dur = 1000000 }
       if (cur == 's' && peek == 'e') { consume; consume; if (cur != 'c') throw err("Expected 'sec' in Duration literal"); consume; dur = 1_000_000_000 }
       if (cur == 'm' && peek == 'i') { consume; consume; if (cur != 'n') throw err("Expected 'min' in Duration literal"); consume; dur = 60_000_000_000 }

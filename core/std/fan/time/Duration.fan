@@ -35,8 +35,13 @@ const struct class Duration
   **
   ** Create a Duration which represents the specified number of nanosecond ticks.
   **
-  private new make(Int ticks) {
-    this.ticks = ticks
+  private static new make(Int ticks) {
+    if (ticks == 0) return zero
+    return privateMake(ticks)
+  }
+
+  private new privateMake(Int t) {
+    this.ticks = t
   }
 
   private Int toTicks() { ticks }
@@ -131,6 +136,7 @@ const struct class Duration
   **
   //static Duration uptime() { now - boot }
 
+  private static const Duration zero := privateMake(0)
   **
   ** Default value is 0ns.
   **
@@ -145,8 +151,6 @@ const struct class Duration
   ** Max value is equivalent to 'make(Int.maxVal)'.
   **
   static const Duration maxVal := make(Int.maxVal)
-
-  private static const Duration zero := make(0)
 
   static const Int nsPerDay   := 86400000000000
   static const Int nsPerHr    := 3600000000000
@@ -273,7 +277,7 @@ const struct class Duration
   **
   ** Return the maximum duration between this and that.
   **
-  Duration max(Duration that) { ticks > that.ticks ? that : this }
+  Duration max(Duration that) { ticks > that.ticks ? this : that }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion
@@ -285,7 +289,10 @@ const struct class Duration
   ** For example 'floor(1min)' will truncate this duration
   ** such that its seconds are 0.0.
   **
-  Duration floor(Duration accuracy) { make(ticks - (ticks % accuracy.ticks)) }
+  Duration floor(Duration accuracy) {
+    if (ticks % accuracy.ticks == 0) return this
+    return make(ticks - (ticks % accuracy.ticks))
+  }
 
   **
   ** Return number of nanosecond ticks.
