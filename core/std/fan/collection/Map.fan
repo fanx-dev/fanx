@@ -31,6 +31,9 @@ rtconst abstract class Map<K,V>
 
   protected new privateMake() {}
 
+
+  protected abstract This createEmpty()
+
 //////////////////////////////////////////////////////////////////////////
 // Identity
 //////////////////////////////////////////////////////////////////////////
@@ -81,9 +84,18 @@ rtconst abstract class Map<K,V>
   ** then raise UnknownKeyErr.  This method is readonly safe.
   **
   V getOrThrow(Obj key) {
+    getChecked(key, true)
+  }
+
+  **
+  ** Get the value for the specified key.  If the key is not
+  ** mapped then return null or raise UnknownKeyEr based on checked
+  ** flag.  This method is readonly safe.
+  **
+  V? getChecked(K key, Bool checked := true) {
     l := get(key, null)
     if (l == null) {
-      throw UnknownKeyErr(key)
+      if (checked && !containsKey(key)) throw UnknownKeyErr(key)
     }
     return l
   }
@@ -92,9 +104,7 @@ rtconst abstract class Map<K,V>
   ** Return if the specified key is mapped.
   ** This method is readonly safe.
   **
-  Bool containsKey(K key) {
-    return get(key, null) != null
-  }
+  abstract Bool containsKey(K key)
 
   **
   ** Get a list of all the mapped keys.  This method is readonly safe.
@@ -110,7 +120,13 @@ rtconst abstract class Map<K,V>
   ** Create a shallow duplicate copy of this Map.  The keys and
   ** values themselves are not duplicated.  This method is readonly safe.
   **
-  abstract This dup()
+  virtual This dup() {
+    nmap := createEmpty()
+    each |v,k| {
+      nmap.set(k, v)
+    }
+    return nmap
+  }
 
   **
   ** Set the value for the specified key.  If the key is already
@@ -140,6 +156,7 @@ rtconst abstract class Map<K,V>
     if (l != null) {
       return l
     }
+    if (containsKey(key)) return null
     modify
     val := valFunc(key)
     set(key, val)
@@ -250,7 +267,7 @@ rtconst abstract class Map<K,V>
   ** UnsupportedOperation.  Throw ReadonlyErr if set when readonly.  This
   ** mode cannot be used concurrently with `ordered`.
   **
-  abstract Bool caseInsensitive
+  //abstract Bool caseInsensitive
 
   **
   ** When set to true, the map maintains the order in which key/value
@@ -263,7 +280,7 @@ rtconst abstract class Map<K,V>
   ** ReadonlyErr if set when readonly.  This mode cannot be used concurrently
   ** with `caseInsensitive`.
   **
-  abstract Bool ordered
+  //abstract Bool ordered
 
   **
   ** The default value to use for `get` when a key isn't mapped.
@@ -280,7 +297,22 @@ rtconst abstract class Map<K,V>
   **
   ** Return a string representation the Map.  This method is readonly safe.
   **
-  override Str toStr() { toCode }
+  override Str toStr() {
+    if (size == 0) return "[:]"
+    buf := StrBuf()
+    buf.add("[")
+    first := true
+    this.each |v, k| {
+      if (!first) {
+        buf.add(", ")
+      } else {
+        first = false
+      }
+      buf.add("$k:$v")
+    }
+    buf.add("]")
+    return buf.toStr
+  }
 
   **
   ** Return a string by concatenating each key/value pair using
@@ -290,13 +322,12 @@ rtconst abstract class Map<K,V>
   **
   ** Example:
   **
-  virtual Str join(Str separator, |Obj? val, Obj? key->Str|? c := null){
+  virtual Str join(Str separator, |Obj? val, Obj? key->Str|? c := null) {
     buf := StrBuf()
-    buf.add("[")
     first := true
     this.each |v, k| {
       if (!first) {
-        buf.add(",")
+        buf.add(separator)
       } else {
         first = false
       }
@@ -304,10 +335,9 @@ rtconst abstract class Map<K,V>
       if (c != null) {
         buf.add(c(v, k))
       } else {
-        buf.add("$k:$v")
+        buf.add("$k: $v")
       }
     }
-    buf.add("]")
     return buf.toStr
   }
 
@@ -316,16 +346,21 @@ rtconst abstract class Map<K,V>
   ** The individual keys and values must all respond to the 'toCode' method.
   **
   Str toCode() {
+    if (size == 0) return "[:]"
     buf := StrBuf()
     buf.add("[")
     first := true
     this.each |v, k| {
       if (!first) {
-        buf.add(",")
+        buf.add(", ")
       } else {
         first = false
       }
-      buf.add("$k:$v")
+      if (k == null) buf.add("null")
+      else buf.add(k->toCode)
+      buf.add(":")
+      if (v == null) buf.add("null")
+      else buf.add(v->toCode)
     }
     buf.add("]")
     return buf.toStr
@@ -356,7 +391,15 @@ rtconst abstract class Map<K,V>
   ** method is readonly safe.
   **
   V? find(|V val, K key->Bool| c) {
-    return eachWhile |v,k| { c(v, k) ? v : null }
+    V? found := null
+    eachWhile |v,k| {
+      if (c(v, k)) {
+        found = v
+        return 1
+      }
+      return null
+    }
+    return found
   }
 
   **
@@ -367,7 +410,7 @@ rtconst abstract class Map<K,V>
   ** map is too.  This method is readonly safe.
   **
   This findAll(|V val, K key->Bool| c) {
-    nmap := Map.make()
+    nmap := createEmpty()
     this.each |v,k| {
       if (c(v,k)) {
         nmap[k] = v
@@ -388,7 +431,7 @@ rtconst abstract class Map<K,V>
   **   map.exclude |Int v->Bool| { return v == 0 } => ["slow":50, "fast":100]
   **
   This exclude(|V val, K key->Bool| c) {
-    nmap := Map.make()
+    nmap := createEmpty()
     this.each |v,k| {
       if (!c(v,k)) {
         nmap[k] = v
@@ -403,7 +446,15 @@ rtconst abstract class Map<K,V>
   ** is readonly safe.
   **
   Bool any(|V val, K key->Bool| c) {
-    return find(c) != null
+    found := false
+    eachWhile |v,k| {
+      if (c(v, k)) {
+        found = true
+        return 1
+      }
+      return null
+    }
+    return found
   }
 
   **
@@ -412,7 +463,15 @@ rtconst abstract class Map<K,V>
   ** is readonly safe.
   **
   Bool all(|V val, K key->Bool| c) {
-    return eachWhile |v, k|{ c(v, k) ? null : "" } == null
+    valid := true
+    eachWhile |v,k| {
+      if (!c(v, k)) {
+        valid = false
+        return 1
+      }
+      return null
+    }
+    return valid
   }
 
   **
@@ -447,7 +506,7 @@ rtconst abstract class Map<K,V>
   **   x => [2:4, 3:6, 4:8]
   **
   Map map(|V val, K key->Obj?| c) {
-    nmap := [K:Obj][:]
+    nmap := createEmpty()
     this.each |v,k| {
         nval := c(v, k)
         nmap[k] = nval

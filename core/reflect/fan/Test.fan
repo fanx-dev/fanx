@@ -146,6 +146,13 @@ abstract class Test
   }
 
   **
+  ** Verify that 'obj' is instance of the given type.
+  **
+  Void verifyTypeFits(Obj obj, Type t) {
+    verify(obj.typeof.fits(t), "$obj.typeof not fits $t")
+  }
+
+  **
   ** Verify that the function throws an Err of the
   ** exact same type as errType (compare using === operator).
   ** If the errType parameter is null, then this method
@@ -218,6 +225,7 @@ abstract class Test
 internal class TestRunner {
   private Pod pod
   private Type[] types
+  private Method? method := null
 
   private Int failures := 0
   private Int verifyCount := 0
@@ -227,9 +235,18 @@ internal class TestRunner {
     if (pos != -1) {
       podName := arg[0..<pos]
       typeName := arg[pos+2..-1]
+      Str? methName := null
+      dot := typeName.find(".")
+      if (dot != -1) {
+        methName = typeName[dot+1..-1]
+        typeName = typeName[0..<dot]
+      }
+
       pod = Pod.find(podName)
       type := pod.type(typeName)
       types = [type]
+      if (methName != null) method = type.method(methName)
+
     } else {
       podName := arg
       pod = Pod.find(podName)
@@ -238,13 +255,19 @@ internal class TestRunner {
   }
 
   Int run() {
-    types.each |type| {
-      type.methods.each |Method m| {
-        if (m.name.startsWith("test")) {
-          runTest(type, m)
+    if (method != null) {
+      runTest(types.first, method)
+    }
+    else {
+      types.each |type| {
+        type.methods.each |Method m| {
+          if (m.name.startsWith("test")) {
+            runTest(type, m)
+          }
         }
       }
     }
+
     if (failures == 0) {
       echo("All tests passed! totalVerifyCount:$verifyCount")
       return 0

@@ -200,7 +200,7 @@ const struct class Duration
   ** duration literal format suitable for decoding via `fromStr`.
   **
   override Str toStr() {
-    if (ticks == 0) return "0ns"
+    if (ticks == 0) return "0ms"
     // if clean millisecond boundary
     ns := toNanos
     if (ns % nsPerMilli == 0)

@@ -10,7 +10,9 @@ class LinkedElem {
   LinkedElem? previous
   Obj? val
 
-  Void remove() {
+  new make(Obj? v:=null) { val = v }
+
+  internal Void remove() {
     previous.next = next
     next.previous = previous
 
@@ -19,12 +21,12 @@ class LinkedElem {
   }
 
   override Str toStr() {
-    "$val"
+    "-$val"
   }
 }
 
 class LinkedList {
-  LinkedElem head := LinkedElem()
+  protected LinkedElem head := LinkedElem("LinkedList.head")
 
   new make() {
     head.previous = head
@@ -34,6 +36,11 @@ class LinkedList {
   Void clear() {
     head.previous = head
     head.next = head
+  }
+
+  Void remove(LinkedElem e) {
+    if (e === head) throw ArgErr("Try remove a invalide LinkedElem: $e.val")
+    e.remove
   }
 
   LinkedElem first() { head.next }

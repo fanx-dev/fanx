@@ -27,6 +27,11 @@ public class Sys {
 	public static String host = initHost();
 	public static String user = initUser();
 	
+	public static boolean isAndroid = true;
+	static {
+		try { Class.forName("android.app.Activity"); isAndroid = true; } catch (Throwable e) { isAndroid = false; }
+	}
+	
 	private static String initHomeDir() {
 		homeDir = System.getenv("FAN_HOME");
 		if (homeDir == null) {

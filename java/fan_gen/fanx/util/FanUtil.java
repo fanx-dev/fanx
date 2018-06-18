@@ -70,6 +70,8 @@ public class FanUtil {
 		javaToFanNameMap.put("java.lang.Double", "fan.sys.Float");
 		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.reflect.Type");
 		javaToFanNameMap.put("fanx.main.ClassType", "fan.reflect.Type");
+		javaToFanNameMap.put("fanx.main.JavaType", "fan.reflect.Type");
+		javaToFanNameMap.put("fanx.main.NullableType", "fan.reflect.Type");
 
 		/*
 		 * javaToFanTypes.put("byte", JavaType.ByteType);

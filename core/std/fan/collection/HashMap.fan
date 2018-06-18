@@ -9,19 +9,16 @@
 internal class MapEntry : LinkedElem {
   Obj? key
   Obj? value { get{super.val} set{super.val=it} }
+
+  new make(Obj? v:=null) : super.make(v) {}
 }
 
 internal class MapEntryList : LinkedList {
 
   new make() {
-    head = MapEntry()
+    head = MapEntry("MapEntryList.head")
     head.previous = head
     head.next = head
-  }
-
-  Void remove(MapEntry entry) {
-    if (entry == end) throw ArgErr("remove end")
-    entry.remove
   }
 
   MapEntry begin() { first }
@@ -37,17 +34,16 @@ internal class MapEntryList : LinkedList {
     return null
   }
 
-  Obj? removeByKey(Obj? key) {
+  MapEntry? removeByKey(Obj? key) {
     entry := findByKey(key)
     if (entry == null) {
       return null
     }
-    old := entry.value
     remove(entry)
-    return old
+    return entry
   }
 
-  Obj? setByKey(Obj? key, Obj? value) {
+  MapEntry? setByKey(Obj? key, Obj? value) {
     entry := findByKey(key)
     if (entry == null) {
       entry = MapEntry()
@@ -56,9 +52,8 @@ internal class MapEntryList : LinkedList {
       this.add(entry)
       return null
     }
-    old := entry.value
     entry.value = value
-    return old
+    return entry
   }
 
   Void addByKey(Obj? key, Obj? value) {
@@ -80,13 +75,14 @@ internal class MapEntryList : LinkedList {
 // HashMap
 //////////////////////////////////////////////////////////////////////////
 
-internal rtconst class HashMap<K,V> : Map
+rtconst class HashMap<K,V> : Map
 {
   private MapEntryList?[] array
   //private Type type
   private Bool readOnly
   private Bool immutable
   private Float loadFactor
+  protected Bool keySafe := true
 
   protected override Void modify() {
     if (readOnly) {
@@ -105,13 +101,23 @@ internal rtconst class HashMap<K,V> : Map
     if (this === that) return true
     if (that isnot Map) return false
     o := that as Map
+    if (this.size != o.size) return false
     return all |v,k| {
-      o[k] == v
+      if (v == null) {
+        return (o.get(k) == null && o.containsKey(k))
+      }
+      return o.get(k) == v
     }
   }
 
   override Int hash() {
-    return array.hash
+    Int h := 0
+    //The HashMap is unordered
+    each |v,k| {
+      if (v != null) h += v.hash
+      if (k != null) h += k.hash
+    }
+    return h
   }
 
   override Int size { private set }
@@ -122,7 +128,7 @@ internal rtconst class HashMap<K,V> : Map
     return hash.abs
   }
 
-  @Operator override V? get(K key, V? defV := null) {
+  protected V? rawGet(K key, V? defV := null) {
     hash := getHash(key)
     l := array[hash]
     if (l == null) {
@@ -137,8 +143,23 @@ internal rtconst class HashMap<K,V> : Map
     }
   }
 
+  @Operator override V? get(K key, V? defV := null) {
+    rawGet(key, defV)
+  }
+
+  override Bool containsKey(K key) {
+    hash := getHash(key)
+    l := array[hash]
+    if (l == null) {
+      return false
+    }
+
+    entry := l.findByKey(key)
+    return entry != null
+  }
+
   override K[] keys() {
-    list := Obj?[,]
+    list := List.make(size)
     for (i:=0; i<array.size; ++i) {
       l := array[i]
       if (l == null) continue
@@ -153,7 +174,7 @@ internal rtconst class HashMap<K,V> : Map
   }
 
   override V[] vals() {
-    list := Obj?[,]
+    list := List.make(size)
     for (i:=0; i<array.size; ++i) {
       l := array[i]
       if (l == null) continue
@@ -167,19 +188,8 @@ internal rtconst class HashMap<K,V> : Map
     return list
   }
 
-  override This dup() {
-    nmap := HashMap()
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        nmap[itr.key] = itr.value
-        itr = itr.next
-      }
-    }
-    return nmap
+  protected override This createEmpty() {
+    return HashMap()
   }
 
   protected Void rehash() {
@@ -199,14 +209,13 @@ internal rtconst class HashMap<K,V> : Map
 
       itr := l.begin
       while (itr != l.end) {
-        set(itr.key, itr.value)
+        rawSet(itr.key, itr.value)
         itr = itr.next
       }
     }
   }
 
-  @Operator override This set(K key, V val) {
-    modify
+  protected Void rawSet(K key, V val) {
     rehash
     hash := getHash(key)
     l := array[hash]
@@ -217,11 +226,20 @@ internal rtconst class HashMap<K,V> : Map
 
     old := l.setByKey(key, val)
     if (old == null) ++size
+  }
+
+  @Operator override This set(K key, V val) {
+    modify
+    if (keySafe && !key.isImmutable)
+      throw NotImmutableErr("key is not immutable: ${key->typeof}")
+    rawSet(key, val)
     return this
   }
 
   override This add(K key, V val) {
     modify
+    if (keySafe && !key.isImmutable)
+      throw NotImmutableErr("key is not immutable: ${key->typeof}")
     rehash
     hash := getHash(key)
     l := array[hash]
@@ -245,7 +263,7 @@ internal rtconst class HashMap<K,V> : Map
 
     old := l.removeByKey(key)
     if (old != null) --size
-    return old
+    return old.value
   }
 
   override This clear() {
@@ -259,9 +277,9 @@ internal rtconst class HashMap<K,V> : Map
     return this
   }
 
-  override Bool caseInsensitive := false { set { modify; &caseInsensitive = it } }
+  //override Bool caseInsensitive := false { set { modify; &caseInsensitive = it } }
 
-  override Bool ordered := false { set { modify; &ordered = it } }
+  //override Bool ordered := false { set { modify; &ordered = it } }
 
   //override V? defV { set { modify; &defV = it } }
 
@@ -315,16 +333,9 @@ internal rtconst class HashMap<K,V> : Map
 
   override This toImmutable() {
     if (immutable) return this
-    nmap := HashMap()
-    for (i:=0; i<array.size; ++i) {
-      l := array[i]
-      if (l == null) continue
-
-      itr := l.begin
-      while (itr != l.end) {
-        nmap[itr.key?.toImmutable] = itr.value?.toImmutable
-        itr = itr.next
-      }
+    nmap := createEmpty()
+    each |v,k| {
+      nmap.set(k?.toImmutable, v?.toImmutable)
     }
     nmap.readOnly = true
     nmap.immutable = true

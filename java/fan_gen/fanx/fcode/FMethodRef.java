@@ -11,6 +11,7 @@ package fanx.fcode;
 import java.io.*;
 import java.util.*;
 import fanx.emit.*;
+import fanx.main.Sys;
 
 /**
  * FMethodRef is used to reference methods for a call operation.
@@ -156,11 +157,6 @@ public class FMethodRef
       code.op2(INVOKEVIRTUAL, method);
   }
 
-  static boolean isAndroid = true;
-  static {
-    try { Class.forName("android.app.Activity"); isAndroid = true; } catch (Throwable e) { isAndroid = false; }
-  }
-  
   public void emitCallSuper(CodeEmit code, FType selfType) {
 	if (jsigAlt == null)
     {
@@ -227,7 +223,7 @@ public class FMethodRef
     if ((mask & INVOKE_VIRT_AS_STATIC) != 0)
       code.op2(INVOKESTATIC, method);
     else {
-    	if (isAndroid || this.parent.id != selfType.self) {
+    	if (Sys.isAndroid || this.parent.id != selfType.self) {
           code.op2(INVOKEVIRTUAL, method);
         }
         else {
