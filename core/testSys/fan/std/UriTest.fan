@@ -9,7 +9,6 @@
 **
 ** UriTest
 **
-@Js
 class UriTest : Test
 {
 //////////////////////////////////////////////////////////////////////////
@@ -80,7 +79,7 @@ class UriTest : Test
     [u1, u2].each |Uri u|
     {
       verifyEq(s.toStr, s)
-      verifyEq(s.toLocale, s)
+      //verifyEq(s.toLocale, s)
       verifyEq(u.scheme, "a+b")
       verifyEq(u.userInfo, "c + \u30A2")
       verifyEq(u.host, "d + \u00c0")
@@ -187,7 +186,7 @@ class UriTest : Test
     roundtrip := Uri.decodeQuery(Uri.encodeQuery(q))
     verifyEq(roundtrip, q)
 
-    qci := Str:Str[:] { caseInsensitive = true }
+    qci := CIMap<Str,Str>()
     q.each |v, k| { qci[k] = v }
     verifyEq(Uri.encodeQuery(qci), Uri.encodeQuery(q))
 
@@ -565,7 +564,7 @@ class UriTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Slice
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testSlice()
   {
     verifySlice(`http://h:9/a/b/c?query#frag`, 0..-1, `http://h:9/a/b/c?query#frag`)
@@ -626,7 +625,7 @@ class UriTest : Test
     else
       verifyEq(pa, "/$expected".toUri)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Norm
 //////////////////////////////////////////////////////////////////////////
@@ -1006,7 +1005,7 @@ class UriTest : Test
 //////////////////////////////////////////////////////////////////////////
 // NameCheck (isName, checkName)
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testNameCheck()
   {
     verifyNameCheck("", false)
@@ -1027,7 +1026,7 @@ class UriTest : Test
     if (ok) Uri.checkName(n)
     else verifyErr(NameErr#) { Uri.checkName(n) }
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Escapes
 //////////////////////////////////////////////////////////////////////////
@@ -1181,7 +1180,7 @@ class UriTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Tokens
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testTokens()
   {
     verifyToken("", Uri.sectionPath, "", "")
@@ -1213,7 +1212,7 @@ class UriTest : Test
     verifyEq(Uri.unescapeToken(escaped), s)
     verifyEq(Uri.decodeToken(encoded, section), escaped)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Util
 //////////////////////////////////////////////////////////////////////////
@@ -1234,7 +1233,8 @@ class UriTest : Test
     verifyEq(a.isPathAbs, b.isPathAbs)
     verifyEq(a.toStr,     b.toStr)
     verify(a.path.isRO);   verify(b.path.isRO)
-    verify(a.query.isRO);  verify(b.query.isRO)
+    verify(a.query.isRO)
+    verify(b.query.isRO)
 
     if (roundtrip)
     {

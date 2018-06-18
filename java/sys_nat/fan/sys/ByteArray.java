@@ -26,7 +26,7 @@ public class ByteArray {
 		return array;
 	}
 
-	public Object get(long pos) {
+	public long get(long pos) {
 		return array[(int)pos];
 	}
 

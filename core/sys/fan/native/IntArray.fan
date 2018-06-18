@@ -11,7 +11,7 @@ native class IntArray {
 
    @Operator Int get(Int pos)
 
-   @Operator Int set(Int pos, Int val)
+   @Operator Void set(Int pos, Int val)
 
    Int size()
 
@@ -27,7 +27,7 @@ native class ByteArray {
 
    @Operator Int get(Int pos)
 
-   @Operator Int set(Int pos, Int val)
+   @Operator Void set(Int pos, Int val)
 
    Int size()
 

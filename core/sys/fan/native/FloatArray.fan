@@ -9,9 +9,9 @@
 native class FloatArray {
    new make(Int size, Int byteSize)
 
-   @Operator Int get(Int pos)
+   @Operator Float get(Int pos)
 
-   @Operator Int set(Int pos, Int val)
+   @Operator Void set(Int pos, Float val)
 
    Int size()
 

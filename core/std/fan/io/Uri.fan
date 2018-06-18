@@ -15,114 +15,86 @@ internal class UriParser {
   [Str:Str]? query
   Str? frag
 
-  Void parse(Str s) {
-    buf := StrBuf()
-    state := 0
-    i := 0
-    tempKey := ""
-    ch := 0
-    while (true) {
-      if (i<s.size) {
-        ch = s[i]
-      } else {
-        if (ch != 0) ch = 0
-        else break
-      }
-      switch (state) {
-      //scheme
-      case 0:
-        if (ch == ':') {
-          if (buf.size > 0) scheme = buf.toStr
-          buf.clear
-          state = 1
-        }
-        else if (ch == '/') {
-          buf.addChar(ch)
-          state = 3
-        }
-        else if (ch == 0) {
-          if (buf.size > 0) path = buf.toStr
-          buf.clear
-          break
-        }
-        else {
-          buf.addChar(ch)
-        }
-      //host
-      case 1:
-        if (ch == ':' || ch == '/' || ch == '?' || ch == '#') {
-          if (buf.size > 0) host = buf.toStr
-          buf.clear
-          if (ch == ':') state = 2
-          else if (ch == '/') state = 3
-          else if (ch == '?') state = 4
-          else if (ch == '#') state = 5
-        }
-        else if (ch == '@') {
-          if (buf.size > 0) userInfo = buf.toStr
-          buf.clear
-        }
-        else if (ch == 0) {
-          throw ParseErr("uri: $s at $i")
-        }
-        else {
-          buf.addChar(ch)
-        }
-      //port
-      case 2:
-        if (ch == '?' || ch == '#') {
-          if (buf.size > 0) port = buf.toStr.toInt
-          buf.clear
-          state = 3
-        }
-        else if (ch == 0) {
-          throw ParseErr("uri: $s at $i")
-        }
-        else {
-          buf.addChar(ch)
-        }
-      //path
-      case 3:
-        if (ch == '?' || ch == '#' || ch == 0) {
-          if (buf.size > 0) path = buf.toStr
-          buf.clear
-          state = 3
-        }
-        else {
-          buf.addChar(ch)
-        }
-      //query
-      case 4:
-        if (ch == '&') {
-          val := buf.toStr
-          buf.clear
-          if (query == null) query = Str:Str[:]
-          query[tempKey] = val
-        }
-        else if (ch == '=') {
-          tempKey = buf.toStr
-          buf.clear
-        }
-        else if (ch == '#' || ch == 0) {
-          val := buf.toStr
-          buf.clear
-          if (query == null) query = Str:Str[:]
-          query[tempKey] = val
-          state = 5
-        }
-        else {
-          buf.addChar(ch)
-        }
-      //fragment
-      case 5:
-        if (ch == 0) {
-          if (buf.size > 0) frag = buf.toStr
-        } else {
-          buf.addChar(ch)
-        }
-      }
-      ++i
+  override Str toStr() {
+    sb := StrBuf()
+    sb.add("scheme:").add(scheme).add(",userInfo:").add(userInfo).add(",host:").add(host)
+    .add(",port:").add(port).add(",path:").add(path).add(",query:").add(query).add(",frag:").add(frag)
+    return sb.toStr
+  }
+
+  Void parse(Str str) {
+    s := str
+    pos := s.find(":")
+    if (pos != -1) {
+      scheme = s[0..<pos]
+      s = s[pos+1..-1]
     }
+    if (s.startsWith("//")) {
+      pos = s.find("/", 2)
+      auth := ""
+      if (pos != -1) {
+        auth = s[2..<pos]
+        s = s[pos..-1]
+      } else {
+        auth = s[2..-1]
+        s = ""
+      }
+      pos = auth.find("@")
+      if (pos != -1) {
+        userInfo = auth[0..<pos]
+        auth = auth[pos+1..-1]
+      }
+      pos = auth.find("]")
+      if (pos != -1) {
+        host = auth[0..pos]
+        if (pos+1 < auth.size && auth[pos+1] == ':') {
+          port = auth[pos+2..-1].toInt
+        }
+      }
+      else {
+        pos = auth.findr(":")
+        if (pos != -1) {
+          port = auth[pos+1..-1].toInt
+          host = auth[0..<pos]
+        }
+        else {
+          host = auth
+        }
+      }
+    }
+    //parse query
+    pos = s.find("?")
+    if (pos != -1) {
+      path = s[0..<pos]
+      pos2 := s.find("#")
+      Str? qs
+      if (pos2 != -1) {
+        qs = s[pos+1..<pos2]
+        frag = s[pos2+1..-1]
+      }
+      else {
+        qs = s[pos+1..-1]
+      }
+      query = [:]
+      qs.split('&').each |v|{
+        fs := v.split('=')
+        if (fs.size == 2)
+          query[fs.first] = fs.last
+        if (fs.size == 1)
+          query[fs.first] = ""
+      }
+    }
+    else {
+      //parse frag
+      pos = s.find("#")
+      if (pos != -1) {
+        path = s[0..<pos]
+        frag = s[pos+1..-1]
+      }
+      else
+        path = s
+    }
+    //echo("$str => $this")
   }
 }
 
@@ -228,16 +200,16 @@ const final class Uri
       parser := UriParser()
       parser.parse(s)
 
-      parser.scheme = decodeToken(parser.scheme, false)
-      parser.userInfo = decodeToken(parser.userInfo, false)
-      parser.host = decodeToken(parser.host, false)
-      parser.path = decodeToken(parser.path, false)
+      if (parser.scheme != null) parser.scheme = decodeToken(parser.scheme, false)
+      if (parser.userInfo != null) parser.userInfo = decodeToken(parser.userInfo, false)
+      if (parser.host != null) parser.host = decodeToken(parser.host, false)
+      if (parser.path.size > 0) parser.path = decodeToken(parser.path, false)
 
       query2 := Str:Str[:]
       parser.query?.each |v,k| {
         query2[decodeToken(k, true)] = decodeToken(v, true)
       }
-      parser.frag = decodeToken(parser.frag, false)
+      if (parser.frag != null) parser.frag = decodeToken(parser.frag, false)
 
       return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, query2, parser.frag)
     } catch (Err e) {
@@ -260,7 +232,7 @@ const final class Uri
     this.host = host
     this.port = port
     this.pathStr = path
-    this.query = query
+    this.query = query ?: [:]
     this.frag = frag
     this.str = partsToStr(scheme, userInfo, host, port, path, query, frag, false)
   }
@@ -280,7 +252,7 @@ const final class Uri
       buf.add(host)
     }
     if (port != null) {
-      buf.addChar(':').add(port)
+      buf.addChar(':').add(port.toStr)
     }
     if (path != null) {
       if (encode) path = encodeToken(path, false)
@@ -319,8 +291,18 @@ const final class Uri
     buf.addChar((lo < 10 ? '0'+lo : 'A'+(lo-10)))
   }
 
+  **
+  ** Unescape "%xx" percent encoded string to its normalized form
+  ** for the given section.  Any delimiters for the section are
+  ** backslash escaped.  Section must be `sectionPath`, `sectionQuery`,
+  ** or `sectionFrag`.  Also see `encodeToken`.
+  **
+  ** Examples:
+  **   Uri.decodeToken("a%2Fb%23c", Uri.sectionPath)  =>  "a\/b\#c"
+  **   Uri.decodeToken("a%3Db/c", Uri.sectionQuery)   =>  "a\=b/c"
+  **
   static Str decodeToken(Str s, Bool isQuery) {
-    sb := Buf.make()
+    sb := StrBuf()
     for (i:=0; i<s.size; ++i) {
       ch := s[i]
       if (ch == '%') {
@@ -329,26 +311,39 @@ const final class Uri
         h := hi.fromDigit(16)
         l := lo.fromDigit(16)
         c := h.shiftl(4).or(l)
-        sb.write(c)
+        sb.addChar(c)
       }
       else if (isQuery && ch == '+') {
-        sb.write(' ')
+        sb.addChar(' ')
       }
       else {
-        sb.write(ch)
+        sb.addChar(ch)
       }
     }
-    sb.flip
-    return sb.readAllStr
+    return sb.toStr
   }
 
+  **
+  ** Encode a token so that any invalid character or delimter for
+  ** the given section is "%xx" percent encoding.  Section must
+  ** be `sectionPath`, `sectionQuery`, or `sectionFrag`.  Also see
+  ** `decodeToken`.
+  **
+  ** Examples:
+  **   Uri.encodeToken("a/b#c", Uri.sectionPath)   =>  "a%2Fb%23c"
+  **   Uri.encodeToken("a=b/c", Uri.sectionQuery)  =>  "a%3Db/c"
+  **
   static Str encodeToken(Str s, Bool isQuery) {
     sb := StrBuf()
     ba := s.toUtf8
     for (i:=0; i<ba.size; ++i) {
       ch := ba[i]
       if (ch < 127) {
-        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~') {
+        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~' ) {
+          sb.addChar(ch)
+          continue
+        }
+        if (!isQuery && ch == '/') {
           sb.addChar(ch)
           continue
         }
@@ -597,7 +592,7 @@ const final class Uri
   **   `/a/b`.path            =>  ["a", "b"]
   **   `../a/b`.path          =>  ["..", "a", "b"]
   **
-  Str[] path() { pathStr.split('/') }
+  Str[] path() { pathStr.split('/').toImmutable }
 
   **
   ** Return the path component of the Uri.  Any general
@@ -632,12 +627,18 @@ const final class Uri
   }
 
   **
+  ** Return not of `isPathAbs` when path is empty
+  ** or does not start with a leading slash.
+  **
+  Bool isPathRel() { !isPathAbs }
+
+  **
   ** Return if this Uri contains only a path component.  The
   ** authority (scheme, host, port), query, and fragment must
   ** be null.
   **
   Bool isPathOnly() { scheme == null && host == null && port == null &&
-           userInfo == null && (query == null || query.size == 0) && frag == null }
+           userInfo == null && (query.size == 0) && frag == null }
 
   **
   ** Return simple file name which is path.last or ""
@@ -742,7 +743,7 @@ const final class Uri
   **   `?a=b;;c`.query                 =>  ["a":"b", "c":"true"]
   **   `?x=1&x=2&x=3`.query            =>  ["x":"1,2,3"]
   **
-  const [Str:Str]? query
+  const [Str:Str] query
 
   **
   ** Return the query component of the Uri which is everything
@@ -757,8 +758,9 @@ const final class Uri
   **   `../foo?a=b&c=d`.queryStr              =>  "a=b&c=d"
   **   `?a=b;c;`.queryStr                     =>  "a=b;c;"
   **
-  Str queryStr() {
-    encodeQuery(query)
+  Str? queryStr() {
+    if (query.size == 0) return null
+    return encodeQuery(query)
   }
 
   **
@@ -942,7 +944,7 @@ const final class Uri
   **
   Uri plusQuery([Str:Str]? query) {
     if (query == null || query.size == 0) return this
-    nq := this.query != null ? this.query.dup : [Str:Str][:]
+    nq := this.query// != null ? this.query.dup : [Str:Str][:]
     query.each |v,k| { nq[k] = v }
     return privateMake(scheme, userInfo, host, port, pathStr, nq, frag)
   }
@@ -1023,4 +1025,5 @@ const final class Uri
   **
   Str toCode() { "`$this`" }
 
+  static extension Uri toUri(Str str) { Uri(str) }
 }

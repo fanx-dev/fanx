@@ -177,7 +177,12 @@ mixin OutStream
   ** specification.  This method is paired with `InStream.readUtf`.  Throw
   ** IOErr on error.  Return this.
   **
-  abstract This writeUtf(Str s)
+  virtual This writeUtf(Str s) {
+    ba := s.toUtf8
+    writeI2(ba.size)
+    writeByteArray(ba)
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Text Data

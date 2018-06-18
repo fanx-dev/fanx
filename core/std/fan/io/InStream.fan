@@ -289,7 +289,12 @@ mixin InStream
   ** Throw IOErr on error, invalid UTF encoding, or if the end of stream
   ** is reached before the string is fully read.
   **
-  abstract Str readUtf()
+  virtual Str readUtf() {
+    sz := readS2
+    ba := ByteArray(sz)
+    readByteArray(ba)
+    return Str.fromUtf8(ba)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Text Data

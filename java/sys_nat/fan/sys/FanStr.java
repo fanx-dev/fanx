@@ -258,7 +258,7 @@ public class FanStr
     return res;
   }
 
-  public static long findr(String self, String s) { return indexr(self, s, self.length()-1L); }
+  public static long findr(String self, String s) { return findr(self, s, self.length()-1L); }
   public static long findr(String self, String s, long off)
   {
     int i = (int)off;
@@ -1005,7 +1005,7 @@ public class FanStr
 //    return buf.flip();
 //  }
   
-  public ByteArray toUtf8(String self) {
+  public static ByteArray toUtf8(String self) {
 	  byte[] bs;
 	try {
 		bs = self.getBytes("UTF-8");

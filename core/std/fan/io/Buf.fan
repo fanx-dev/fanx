@@ -27,6 +27,7 @@
 ** appended.  It is common to write bytes into the buffer using the
 ** OutStream, then call `Buf.flip` to prepare the buffer to be used for reading.
 **
+@NoPeer
 rtconst abstract class Buf
 {
 
@@ -615,80 +616,6 @@ rtconst abstract class Buf
 
   protected abstract Void writeTo(OutStream out, Int len)
   protected abstract Int readFrom(InStream in, Int len)
-}
-
-**************************************************************************
-** MemBuf
-**************************************************************************
-
-internal class MemBuf : Buf
-{
-  protected ByteArray buf
-
-  new make(Int cap) : super.privateMake() {
-    size = 0
-    pos = 0
-    buf = ByteArray(cap)
-  }
-
-  new makeArray(ByteArray buf) {
-    this.buf = buf
-    size = buf.size
-    pos = 0
-  }
-
-  override Int size
-  override Int capacity { get{ return buf.size } set{ buf.realloc(it) } }
-  override Int pos
-
-  @Operator override Int get(Int index) { buf.get(index) }
-  @Operator override Buf getRange(Range range) {
-    size := this.size
-    s := range.startIndex(size);
-    e := range.endIndex(size);
-    n := (e - s + 1);
-    if (n < 0) throw IndexErr.make("$range");
-
-    a := ByteArray(n)
-    a.copyFrom(buf, s, 0, n)
-    return makeArray(a)
-  }
-
-  override Buf dup() {
-    size := this.size
-    a := ByteArray(size)
-    a.copyFrom(buf, 0, 0, size)
-    return makeArray(a)
-  }
-
-  @Operator override This set(Int index, Int byte) {
-    size := this.size
-    if (pos < 0) pos = size + pos;
-    if (pos < 0 || pos >= size) throw IndexErr.make("$pos");
-    buf.set(pos, byte)
-    return this
-  }
-  override This trim() { this }
-  override Bool close() { true }
-  override This flush() { this }
-  override Endian endian {
-    set { out.endian = it; in.endian = it }
-    get { out.endian }
-  }
-  override Charset charset {
-    set { out.charset = it; in.charset = it }
-    get { out.charset }
-  }
-  override This fill(Int byte, Int times) { buf.fill(byte, times); return this }
-
-  private native OutStream createOut()
-  private native InStream createIn()
-
-  once override OutStream out() { createOut }
-  once override InStream in() { createIn }
-
-  protected override Void writeTo(OutStream out, Int len) { out.writeByteArray(buf, pos, len) }
-  protected override Int readFrom(InStream in, Int len) { in.readByteArray(buf, pos, len) }
 }
 
 **************************************************************************
