@@ -658,7 +658,7 @@ native const final class Str
 
   ByteArray toUtf8()
 
-  static new fromUtf8(ByteArray ba)
+  static new fromUtf8(ByteArray ba, Int offset := 0, Int len := ba.size)
 
   protected override Void finalize()
 }

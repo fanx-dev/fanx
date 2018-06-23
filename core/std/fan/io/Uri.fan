@@ -11,90 +11,211 @@ internal class UriParser {
   Str? userInfo
   Str? host
   Int? port
-  Str path := ""
+  Str pathStr := ""
   [Str:Str]? query
   Str? frag
 
   override Str toStr() {
     sb := StrBuf()
     sb.add("scheme:").add(scheme).add(",userInfo:").add(userInfo).add(",host:").add(host)
-    .add(",port:").add(port).add(",path:").add(path).add(",query:").add(query).add(",frag:").add(frag)
+    .add(",port:").add(port).add(",pathStr:").add(pathStr).add(",query:").add(query).add(",frag:").add(frag)
     return sb.toStr
   }
 
-  Void parse(Str str) {
-    s := str
-    pos := s.find(":")
-    if (pos != -1) {
-      scheme = s[0..<pos]
-      s = s[pos+1..-1]
+  private Void normalize() {
+    if (pathStr == "") {
+      pathStr = "/"
     }
-    if (s.startsWith("//")) {
-      pos = s.find("/", 2)
-      auth := ""
-      if (pos != -1) {
-        auth = s[2..<pos]
-        s = s[pos..-1]
-      } else {
-        auth = s[2..-1]
-        s = ""
+    else if (pathStr.startsWith("./")) {
+      pathStr = pathStr[2..-1]
+    }
+
+    if (host != null) {
+      if (!pathStr.startsWith("/")) {
+        pathStr = "/" + pathStr
       }
-      pos = auth.find("@")
-      if (pos != -1) {
-        userInfo = auth[0..<pos]
-        auth = auth[pos+1..-1]
+    }
+  }
+
+  static Str:Str parseQuery(Str s, Bool decode) {
+    query := OrderedMap<Str,Str>()
+    start := 0
+    eq := 0
+    k := ""
+    v := ""
+    i := 0
+    for (; i<s.size; ++i) {
+      ch := s[i]
+      if (ch == '=') eq = i
+      if (ch != '&' && ch != ';') {
+        continue
       }
-      pos = auth.find("]")
-      if (pos != -1) {
-        host = auth[0..pos]
-        if (pos+1 < auth.size && auth[pos+1] == ':') {
-          port = auth[pos+2..-1].toInt
-        }
-      }
-      else {
-        pos = auth.findr(":")
-        if (pos != -1) {
-          port = auth[pos+1..-1].toInt
-          host = auth[0..<pos]
+      if (start < i) {
+        if (start == eq && s[start] != '=') {
+          k = s[start..<i]
+          v = ""
         }
         else {
-          host = auth
+          k = s[start..<eq]
+          v = s[eq+1..<i]
+        }
+        if (decode) {
+          ek := Uri.decodeToken(k, true)
+          ev := Uri.decodeToken(v, true)
+          query[ek] = ev
+        } else {
+          query[k] = v
         }
       }
+      start = i + 1
+      eq = start
     }
-    //parse query
-    pos = s.find("?")
-    if (pos != -1) {
-      path = s[0..<pos]
-      pos2 := s.find("#")
-      Str? qs
-      if (pos2 != -1) {
-        qs = s[pos+1..<pos2]
-        frag = s[pos2+1..-1]
+    if (start < i) {
+      if (start == eq && s[start] != '=') {
+        k = s[start..<i]
+        v = ""
       }
       else {
-        qs = s[pos+1..-1]
+        k = s[start..<eq]
+        v = s[eq+1..<i]
       }
-      query = [:]
-      qs.split('&').each |v|{
-        fs := v.split('=')
-        if (fs.size == 2)
-          query[fs.first] = fs.last
-        if (fs.size == 1)
-          query[fs.first] = ""
+      if (decode) {
+        ek := Uri.decodeToken(k, true)
+        ev := Uri.decodeToken(v, true)
+        query[ek] = ev
+      } else {
+        query[k] = v
       }
     }
-    else {
-      //parse frag
-      pos = s.find("#")
-      if (pos != -1) {
-        path = s[0..<pos]
-        frag = s[pos+1..-1]
+    return query
+  }
+
+  Void parse(Str str) {
+    len := str.size
+    pos := 0
+
+    // ==== SCHEME ====
+
+    //scheme
+    // scan the string from the beginning looking for either a
+    // colon or any character which doesn't fit a valid scheme
+    hasUpper := false
+    for (i:=0;i < len; ++i) {
+      ch := str[i]
+      if (ch.isAlphaNum || ch == '_') {
+        if (ch.isUpper) hasUpper = true
+        continue
+      }
+      if (ch != ':') break
+
+      // at this point we have a scheme; if we detected
+      // any upper case characters normalize to lowercase
+      pos = i + 1
+      scheme = str[0..<i]
+      if (hasUpper) scheme = scheme.lower
+      break
+    }
+
+    // ==== authority ====
+
+    // authority must start with //
+    if (pos+1 < len && str[pos] == '/' && str[pos+1] == '/' ) {
+      // find end of authority which is /, ?, #, or end of string;
+      // while we're scanning look for @ and last colon which isn't
+      // inside an [] IPv6 literal
+      authStart := pos+2; authEnd := len; at := -1; colon := -1;
+      for (i:=authStart; i<len; ++i)
+      {
+        c := str[i]
+        if (c == '/' || c == '?' || c == '#') { authEnd = i; break; }
+        else if (c == '@' && at < 0) { at = i; colon = -1; }
+        else if (c == ':') colon = i;
+        else if (c == ']') colon = -1;
+      }
+
+      // start with assumption that there is no userinfo or port
+      hostStart := authStart; hostEnd := authEnd;
+
+      // if we found an @ symbol, parse out userinfo
+      if (at > 0)
+      {
+        this.userInfo = str[authStart..<at]
+        hostStart = at+1
+      }
+
+      // if we found an colon, parse out port
+      if (colon > 0)
+      {
+        this.port = str[colon+1..<authEnd].toInt
+        hostEnd = colon;
+      }
+
+      // host is everything left in the authority
+      this.host = str[hostStart..<hostEnd]
+      pos = authEnd
+    }
+
+    // ==== path ====
+
+    // scan the string looking '?' or '#' which ends the path
+    // section; while we're scanning count the number of slashes
+    pathStart := pos; pathEnd := len; numSegs := 1; prev := 0
+    for (i:=pathStart; i<len; ++i)
+    {
+      c := str[i]
+      if (prev != '\\')
+      {
+        if (c == '?' || c == '#') { pathEnd = i; break; }
+        if (i != pathStart && c == '/') ++numSegs;
+        prev = c;
       }
       else
-        path = s
+      {
+        prev = (c != '\\') ? c : 0;
+      }
     }
-    //echo("$str => $this")
+
+    // we now have the complete path section
+    this.pathStr = str[pathStart..<pathEnd]
+    //this.path = pathSegments(pathStr, numSegs);
+    pos = pathEnd
+
+    // ==== query ====
+
+    if (pos < len && str[pos] == '?')
+    {
+      // look for end of query which is # or end of string
+      queryStart := pos+1; queryEnd := len; prev = 0;
+      for (i:=queryStart; i<len; ++i)
+      {
+        c := str[i]
+        if (prev != '\\')
+        {
+          if (c == '#') { queryEnd = i; break; }
+          prev = c;
+        }
+        else
+        {
+          prev = (c != '\\') ? c : 0;
+        }
+      }
+
+      // we now have the complete query section
+      queryStr := str[queryStart..<queryEnd]
+      this.query = parseQuery(queryStr, false);
+      //echo("'$queryStr, $query'")
+      pos = queryEnd;
+    }
+
+    // ==== frag ====
+
+    if (pos < len  && str[pos] == '#')
+    {
+      this.frag = str[pos+1..<len]
+    }
+
+    normalize
+    //echo("'$str => $this'")
   }
 }
 
@@ -172,18 +293,9 @@ const final class Uri
   **   - If http then a null path normalizes to /
   **
   static new fromStr(Str s, Bool checked := true) {
-    try {
-      if (s == "") {
-        return privateMake(null, null, null, null, "", null, null)
-      }
-      parser := UriParser()
-      parser.parse(s)
-      return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, parser.query, parser.frag)
-    } catch (Err e) {
-      //e.trace
-      if (checked) throw ParseErr("uri:$s", e)
-      return defVal
-    }
+    res := decode(s, checked)
+    if (res == null) return defVal
+    return res
   }
 
   **
@@ -197,21 +309,27 @@ const final class Uri
   **
   static Uri? decode(Str s, Bool checked := true) {
     try {
+      if (s == "") {
+        return privateMake(null, null, null, null, "", null, null)
+      }
       parser := UriParser()
       parser.parse(s)
 
       if (parser.scheme != null) parser.scheme = decodeToken(parser.scheme, false)
       if (parser.userInfo != null) parser.userInfo = decodeToken(parser.userInfo, false)
       if (parser.host != null) parser.host = decodeToken(parser.host, false)
-      if (parser.path.size > 0) parser.path = decodeToken(parser.path, false)
+      if (parser.pathStr.size > 0) parser.pathStr = decodeToken(parser.pathStr, false)
 
-      query2 := Str:Str[:]
-      parser.query?.each |v,k| {
-        query2[decodeToken(k, true)] = decodeToken(v, true)
+      if (parser.query != null) {
+        query2 := OrderedMap<Str,Str>()
+        parser.query.each |v,k| {
+          query2[decodeToken(k, true)] = decodeToken(v, true)
+        }
+        parser.query = query2
       }
       if (parser.frag != null) parser.frag = decodeToken(parser.frag, false)
 
-      return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.path, query2, parser.frag)
+      return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.pathStr, parser.query, parser.frag)
     } catch (Err e) {
       if (checked) throw ParseErr("uri:$s", e)
       return null
@@ -226,48 +344,57 @@ const final class Uri
   **
   ** Private constructor
   **
-  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str path, [Str:Str]? query, Str? frag) {
+  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str pathStr, [Str:Str]? query, Str? frag, Str? str := null) {
     this.scheme = scheme
     this.userInfo = userInfo
     this.host = host
     this.port = port
-    this.pathStr = path
-    this.query = query ?: [:]
+    this.pathStr = pathStr
+    this.query = query ?: Map.defVal
     this.frag = frag
-    this.str = partsToStr(scheme, userInfo, host, port, path, query, frag, false)
+    this.str = str ?: partsToStr(scheme, userInfo, host, port, pathStr, query, frag, true)
   }
 
   private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, [Str:Str]? query, Str? frag, Bool encode) {
     buf := StrBuf()
     if (scheme != null) {
       if (encode) scheme = encodeToken(scheme, false)
-      buf.add(scheme).add("://")
+      buf.add(scheme).add(":")
     }
-    if (userInfo != null) {
-      if (encode) userInfo = encodeToken(userInfo, false)
-      buf.add(userInfo).addChar('@')
+
+    if (userInfo != null || host != null || port != null) {
+      buf.add("//")
+      if (userInfo != null) {
+        if (encode) userInfo = encodeToken(userInfo, false)
+        buf.add(userInfo).addChar('@')
+      }
+      if (host != null) {
+        if (encode) host = encodeToken(host, false)
+        buf.add(host)
+      }
+      if (port != null) {
+        buf.addChar(':').add(port.toStr)
+      }
     }
-    if (host != null) {
-      if (encode) host = encodeToken(host, false)
-      buf.add(host)
-    }
-    if (port != null) {
-      buf.addChar(':').add(port.toStr)
-    }
+
     if (path != null) {
       if (encode) path = encodeToken(path, false)
       buf.add(path)
     }
+
     if (query != null && query.size > 0) {
       if (path != null) buf.addChar('?')
       i := 0
-      query.each |v, k| {
+      query.each |Str v, k| {
         if (i>0) buf.addChar('&')
         if (encode) {
           k = encodeToken(k, true)
-          v = encodeToken(v, true)
+          v = v == "" ? "" : encodeToken(v, true)
         }
-        buf.add(k).addChar('=').add(v)
+        if (v.size == 0)
+          buf.add(k)
+        else
+          buf.add(k).addChar('=').add(v)
         ++i
       }
     }
@@ -284,7 +411,7 @@ const final class Uri
 
   private static Void percentEncodeByte(StrBuf buf, Int c)
   {
-    buf.add('%')
+    buf.addChar('%')
     Int hi := (c.shiftr(4)).and(0xf)
     Int lo := c.and(0xf)
     buf.addChar((hi < 10 ? '0'+hi : 'A'+(hi-10)))
@@ -303,6 +430,8 @@ const final class Uri
   **
   static Str decodeToken(Str s, Bool isQuery) {
     sb := StrBuf()
+    ba := ByteArray(s.size)
+    bp := 0
     for (i:=0; i<s.size; ++i) {
       ch := s[i]
       if (ch == '%') {
@@ -311,14 +440,28 @@ const final class Uri
         h := hi.fromDigit(16)
         l := lo.fromDigit(16)
         c := h.shiftl(4).or(l)
-        sb.addChar(c)
+        //sb.addChar(c)
+        ba.set(bp, c)
+        ++bp
+        continue
       }
-      else if (isQuery && ch == '+') {
+      if (bp > 0) {
+        t := Str.fromUtf8(ba, 0, bp)
+        bp = 0
+        sb.add(t)
+      }
+
+      if (isQuery && ch == '+') {
         sb.addChar(' ')
       }
       else {
         sb.addChar(ch)
       }
+    }
+    if (bp > 0) {
+      t := Str.fromUtf8(ba, 0, bp)
+      bp = 0
+      sb.add(t)
     }
     return sb.toStr
   }
@@ -369,17 +512,7 @@ const final class Uri
   ** ArgErr is the string is malformed.  See `encodeQuery`.
   **
   static Str:Str decodeQuery(Str s) {
-    query := Str:Str[:]
-    fs := s.split('&')
-    fs.each {
-      qs := it.split('=')
-      k := qs.first
-      v := qs.last
-      k = decodeToken(k, true)
-      v = decodeToken(v, true)
-      query[k] = v
-    }
-    return query
+    return UriParser.parseQuery(s, true)
   }
 
   **
@@ -395,7 +528,8 @@ const final class Uri
       vs := encodeToken(v, true)
       if (first) first = false
       else buf.addChar('&')
-      buf.add(ks).addChar('=').add(vs)
+      if (v == "") buf.add(ks)
+      else buf.add(ks).addChar('=').add(vs)
     }
     return buf.toStr
   }
@@ -467,7 +601,7 @@ const final class Uri
   ** Spaces in the query section are encoded as '+'.
   **
   Str encode() {
-    partsToStr(scheme, userInfo, host, port, pathStr, query, frag, true)
+    return str
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -592,7 +726,14 @@ const final class Uri
   **   `/a/b`.path            =>  ["a", "b"]
   **   `../a/b`.path          =>  ["..", "a", "b"]
   **
-  Str[] path() { pathStr.split('/').toImmutable }
+  Str[] path() {
+    if (pathStr.size == 0) return List.defVal
+    if (pathStr == "/") return List.defVal
+    ps := pathStr.split('/')
+    if (ps[0] == "") ps.removeAt(0)
+    if (ps.last == "") ps.removeAt(ps.size-1)
+    return ps.toImmutable
+  }
 
   **
   ** Return the path component of the Uri.  Any general
@@ -651,15 +792,24 @@ const final class Uri
   **   `somedir/`.name     =>  "somedir"
   **
   Str name() {
-    if (pathStr.size == 0) return ""
     len := pathStr.size
     if (len == 0) return ""
-    start := pathStr.indexr("/", -2)
+
+    start := 0
+    endsSlash := pathStr[len-1] == '/'
+    if (endsSlash) start = pathStr.findr("/", -2)
+    else start = pathStr.findr("/")
+
+    if (start != -1)
+      start = start + 1
+    else
+      start = 0
+
     end := len
-    if (pathStr[len-1] == '/') {
+    if (endsSlash) {
       end = len-1
     }
-    return pathStr[start..end]
+    return pathStr[start..<end]
   }
 
   **
@@ -706,7 +856,7 @@ const final class Uri
       if (n.equals(".")) return null
       if (n.equals("..")) return null
     }
-    return n[dot..-1]
+    return n[dot+1..-1]
   }
 
   **
@@ -720,6 +870,8 @@ const final class Uri
   **
   MimeType? mimeType() {
     if (isDir) return MimeType.dir
+    e := ext
+    if (e == null) return null
     return MimeType.forExt(ext)
   }
 
@@ -792,21 +944,17 @@ const final class Uri
   **   `a.txt`.parent    =>   null
   **
   Uri? parent() {
-    if (pathStr == "/") return null
     p := parentPathStr(pathStr)
-    return privateMake(scheme, userInfo, host, port, p, query, frag)
+    if (p == null) return null
+    return privateMake(scheme, userInfo, host, port, p, null, null)
   }
 
-  private Str parentPathStr(Str pathStr) {
+  private Str? parentPathStr(Str pathStr) {
     len := pathStr.size
-    if (len == 0) return ""
-    if (len == 1) {
-      if (pathStr[0] == '/') return ""
-      return "/"
-    }
-    end := pathStr.indexr("/", -2)
-    if (end == -1) return "/"
-    return pathStr[0..<end]
+    if (len == 0 || pathStr == "/") return null
+    end := pathStr.findr("/", -2)
+    if (end == -1) return null
+    return pathStr[0..end]
   }
 
   **
@@ -820,6 +968,8 @@ const final class Uri
   **   `file.txt`.pathOnly                =>  `file.txt`
   **
   Uri pathOnly() {
+    if (scheme == null && userInfo == null && host == null &&
+        port == null && queryStr == null && frag == null) return this
     return privateMake(null, null, null, null, pathStr, null, null)
   }
 
@@ -878,20 +1028,32 @@ const final class Uri
   **   `a/b/c/` + `../../../d`            =>  `d`
   **
   @Operator Uri plus(Uri toAppend) {
-    if (toAppend.pathStr.size == 0) return this
-    if (toAppend.pathStr == "/") return this
+    if (toAppend.scheme != null || toAppend.host != null) return toAppend
 
     toAppPath := toAppend.pathStr
-    if (isDir) {
-      if (toAppPath[0] == '/') toAppPath = toAppPath[1..-1]
-      return privateMake(scheme, userInfo, host, port, pathStr+toAppPath, query, frag)
+    Str? resPath := null
+    query := toAppend.query
+    if (toAppend.query.isEmpty && toAppPath == "/") {
+       query = this.query
     }
-    if (toAppPath[0] == '/') {
-      return privateMake(scheme, userInfo, host, port, pathStr+toAppPath, query, frag)
+
+    if (toAppPath == "" || toAppPath == "/") {
+      resPath = pathStr
+    }
+    else if (toAppPath.startsWith("/")) {
+      resPath = toAppPath
+    }
+    else if (isDir) {
+      resPath = pathStr+toAppPath
     }
     else {
-      return privateMake(scheme, userInfo, host, port, "$pathStr/$toAppPath", query, frag)
+      p := parentPathStr(pathStr)
+      if (p == null) p = "/"
+      resPath = p + toAppPath
     }
+    //TODO support '..'
+
+    return privateMake(scheme, userInfo, host, port, resPath, query, toAppend.frag)
   }
 
   **
@@ -908,9 +1070,11 @@ const final class Uri
   **   `/dir/#frag`.plusName("foo")  =>  `/dir/foo`
   **
   Uri plusName(Str name, Bool asDir := false) {
-    if (asDir) name += "/"
-    if (isDir) return privateMake(scheme, userInfo, host, port, pathStr+name, query, frag)
-    return privateMake(scheme, userInfo, host, port, pathStr+"/", query, frag)
+    if (asDir && !name.endsWith("/")) name += "/"
+    if (isDir) return privateMake(scheme, userInfo, host, port, pathStr+name, null, null)
+    p := parentPathStr(pathStr)
+    if (p == null) p = isPathAbs ? "/" : ""
+    return privateMake(scheme, userInfo, host, port, p+name, null, null)
   }
 
   **
@@ -944,7 +1108,8 @@ const final class Uri
   **
   Uri plusQuery([Str:Str]? query) {
     if (query == null || query.size == 0) return this
-    nq := this.query// != null ? this.query.dup : [Str:Str][:]
+    nq := OrderedMap<Str,Str>()
+    this.query.each |v,k| { nq[k] = v }
     query.each |v,k| { nq[k] = v }
     return privateMake(scheme, userInfo, host, port, pathStr, nq, frag)
   }
@@ -961,10 +1126,27 @@ const final class Uri
   **   `/a/x`.relTo(`/a/b/c`)                       => `../x`
   **
   Uri relTo(Uri base) {
-    pos := pathStr.index(base.pathStr)
-    path := pathStr[pos..-1]
-    if (path.size > 0 && path[0] == '/') {
-      path = path[1..-1]
+    same := this.scheme == base.scheme && this.userInfo == base.userInfo
+      && this.host == base.host && this.port == base.port
+
+    pos := pathStr.find(base.pathStr)
+    path := pathStr
+    if (pos == 0) {
+      pos2 := base.pathStr.size
+      path = pathStr[pos2..-1]
+      if (path.size > 0 && path[0] == '/') {
+        path = path[1..-1]
+      }
+    }
+    else {
+      if (!same) return this
+    }
+
+    if (!same) {
+      if (!path.startsWith("/")) {
+        path = "/" + path
+      }
+      return privateMake(scheme, userInfo, host, port, path, query, frag)
     }
     return privateMake(null, null, null, null, path, query, frag)
   }
@@ -983,6 +1165,9 @@ const final class Uri
   **   `logo.png`.relToAuth                  => `logo.png`
   **
   Uri relToAuth() {
+    if (scheme == null && host == null && port == null && userInfo == null) {
+      return this
+    }
     return privateMake(null, null, null, null, pathStr, query, frag)
   }
 

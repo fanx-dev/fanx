@@ -14,16 +14,19 @@
 const final class MimeType
 {
 
-  static const MimeType imagePng   := fromStr("image/png")
-  static const MimeType imageGif   := fromStr("image/gif")
-  static const MimeType imageJpeg  := fromStr("image/jpeg")
-  static const MimeType textPlain  := fromStr("text/plain")
-  static const MimeType textHtml   := fromStr("text/html")
-  static const MimeType textXml    := fromStr("text/xml")
-  static const MimeType dir        := fromStr("x-directory/normal")
-  static const MimeType textPlainUtf8 := fromStr("text/plain; charset=utf-8")
-  static const MimeType textHtmlUtf8  := fromStr("text/html; charset=utf-8")
-  static const MimeType textXmlUtf8   := fromStr("text/xml; charset=utf-8")
+  static const MimeType imagePng   := parse("image/png")
+  static const MimeType imageGif   := parse("image/gif")
+  static const MimeType imageJpeg  := parse("image/jpeg")
+  static const MimeType textPlain  := parse("text/plain")
+  static const MimeType textHtml   := parse("text/html")
+  static const MimeType textXml    := parse("text/xml")
+  static const MimeType textJsUtf8 := parse("text/javascript; charset=utf-8")
+  static const MimeType textJs     := parse("text/javascript")
+  static const MimeType textJson   := parse("application/json")
+  static const MimeType dir        := parse("x-directory/normal")
+  static const MimeType textPlainUtf8 := parse("text/plain; charset=utf-8")
+  static const MimeType textHtmlUtf8  := parse("text/html; charset=utf-8")
+  static const MimeType textXmlUtf8   := parse("text/xml; charset=utf-8")
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
@@ -34,7 +37,50 @@ const final class MimeType
   ** checked is false return null, otherwise throw ParseErr.
   ** Parenthesis comments are treated as part of the value.
   **
-  native static new fromStr(Str s, Bool checked := true)
+  static new fromStr(Str s) {
+    switch (s[0])
+    {
+      case 'i':
+        if (s.equals("image/png"))  return imagePng;
+        if (s.equals("image/jpeg")) return imageJpeg;
+        if (s.equals("image/gif"))  return imageGif;
+      case 't':
+        if (s.equals("text/plain")) return textPlain;
+        if (s.equals("text/html"))  return textHtml;
+        if (s.equals("text/xml"))   return textXml;
+        if (s.equals("text/javascript; charset=utf-8")) return textJsUtf8
+        if (s.equals("text/javascript")) return textJs
+        if (s.equals("text/plain; charset=utf-8")) return textPlainUtf8;
+        if (s.equals("text/html; charset=utf-8"))  return textHtmlUtf8;
+        if (s.equals("text/xml; charset=utf-8"))   return textXmlUtf8;
+      case 'x':
+        if (s.equals("x-directory/normal")) return dir;
+      case 'a':
+       if (s.equals("application/json")) return textJson
+    }
+    try {
+      return parse(s)
+    } catch (Err e) {
+      throw ParseErr("MimeType:$s", e)
+    }
+  }
+
+  private static MimeType parse(Str s) {
+    pos := s.find("/")
+    if (pos == -1) throw ParseErr("parse $s")
+    media := s[0..<pos]
+    sub := s[pos+1..-1]
+
+    pos2 := sub.find(";")
+    [Str:Str]? params := null
+    if (pos2 != -1) {
+      paramStr := sub[pos2+1..-1]
+      sub = sub[0..<pos2]
+      params = parseParams(paramStr.trim)
+    }
+    if (params == null) params = [:]
+    return make(media.trim, sub.trim, params, s)
+  }
 
   **
   ** Parse a set of attribute-value parameters where the
@@ -63,7 +109,21 @@ const final class MimeType
   ** This mapping is configured via "etc/sys/ext2mime.props".  If
   ** no mapping is available return null.
   **
-  native static MimeType? forExt(Str ext)
+  static MimeType? forExt(Str s) {
+    switch (s)
+    {
+      case "png":   return imagePng;
+      case "jpeg":  return imageJpeg;
+      case "gif":   return imageGif;
+      case "txt":   return textPlainUtf8;
+      case "html":  return textHtml;
+      case "xml":   return textHtmlUtf8;
+      case "htm":   return textHtml;
+      case "json":  return textJson;
+      case "js":    return textJsUtf8;
+    }
+    return null
+  }
 
   **
   ** Private constructor - must use fromStr

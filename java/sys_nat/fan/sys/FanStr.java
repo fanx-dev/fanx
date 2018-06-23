@@ -1015,9 +1015,18 @@ public class FanStr
 	}
   }
   
+  public static String fromUtf8(ByteArray ba, long offset) {
+	  return fromUtf8(ba, offset, ba.size());
+  }
+  
   public static String fromUtf8(ByteArray ba) {
+	  return fromUtf8(ba, 0, ba.size());
+  }
+  
+  public static String fromUtf8(ByteArray ba, long offset, long len) {
 	try {
-		return new String(ba.array(), "UTF-8");
+		String s = new String(ba.array(), (int)offset, (int)len, "UTF-8");
+		return s;
 	} catch (UnsupportedEncodingException e) {
 		throw UnsupportedErr.make(e);
 	}
