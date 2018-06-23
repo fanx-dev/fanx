@@ -2351,6 +2351,9 @@ public class Parser : CompilerSupport
       else if (!params.isEmpty) // use errReport to avoid suppression
         errReport(CompilerErr("Expecting function return type", cur))
     }
+    else if (!isTypeRef) {
+      inferred = true
+    }
 
     // closing pipe
     consume(Token.pipe)
