@@ -246,6 +246,8 @@ class CheckErrors : CompilerStep
     // check that public field isn't using internal type
     if (curType.isPublic && (f.isPublic || f.isProtected) && !f.fieldType.isPublic)
       err("Public field '${curType.name}.${f.name}' cannot use internal type '$f.fieldType'", f.loc)
+
+    checkParameterizedType(f.loc, f.fieldType)
   }
 
   private Void checkFieldFlags(FieldDef f)
@@ -1607,6 +1609,17 @@ class CheckErrors : CompilerStep
   private Void checkValidType(Loc loc, CType t)
   {
     if (!t.isValid) err("Invalid type '$t'", loc)
+    checkParameterizedType(loc, t)
+  }
+
+  private Void checkParameterizedType(Loc loc, CType t)
+  {
+    if (t.isParameterized) {
+      ParameterizedType o := t.deref.raw.toNonNullable
+      if (o.defaultParameterized && o.qname != "sys::Func") {
+        warn("Expected generic parameter", loc)
+      }
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////

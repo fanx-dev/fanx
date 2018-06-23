@@ -190,7 +190,7 @@ abstract const class File
   ** doesn't represent a directory, then return an empty list.
   **
   virtual File[] listDirs() {
-    list.findAll |File f|{ f.isDir }
+    list.findAll |f|{ f.isDir }
   }
 
   **

@@ -15,7 +15,7 @@ class ListExt {
   ** Example:
   **   ["a", "a", "b", "c", "b", "b"].unique => ["a", "b", "c"]
   **
-  static extension List unique(List self) {
+  static extension Obj?[] unique(Obj?[] self) {
     if (self.size == 0) return self.dup
     map := HashMap { keySafe = false }
     res := [,]
@@ -39,7 +39,7 @@ class ListExt {
   ** Example:
   **   [1, 2].union([3, 2]) => [1, 2, 3]
   **
-  static extension List union(List self, List that) {
+  static extension Obj?[] union(Obj?[] self, Obj?[] that) {
     map := HashMap { keySafe = false }
     res := [,]
     self.each|v|{
@@ -69,7 +69,7 @@ class ListExt {
   **   [0, 1, 2, 3].intersection([5, 3, 1]) => [1, 3]
   **   [0, null, 2].intersection([null, 0, 1, 2, 3]) => [0, null, 2]
   **
-  static extension List intersection(List self, List that) {
+  static extension Obj?[] intersection(Obj?[] self, Obj?[] that) {
     map := HashMap { keySafe = false }
     res := [,]
     that.each|v|{

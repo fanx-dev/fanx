@@ -23,17 +23,17 @@ rtconst abstract class List<V>
   ** Constructor with of type and initial capacity.
   **
   static new make(Int capacity) {
-    return ArrayList(capacity)
+    return ArrayList<V>(capacity)
   }
 
   @NoDoc
-  static new makeObj(Int capacity := 4) {
-    return ArrayList(capacity)
+  static Obj?[] makeObj(Int capacity := 4) {
+    return ArrayList<Obj?>(capacity)
   }
 
   protected new privateMake() {}
 
-  const static List defVal := [,]
+  const static Obj[] defVal := [,]
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -150,7 +150,7 @@ rtconst abstract class List<V>
   **   list[0..<2]  => [0, 1]
   **   list[1..-2]  => [1, 2]
   **
-  @Operator abstract List getRange(Range r)
+  @Operator abstract V[] getRange(Range r)
 
   **
   ** Return if this list contains the specified item.
@@ -164,13 +164,13 @@ rtconst abstract class List<V>
   ** Return if this list contains every item in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  abstract Bool containsAll(List list)
+  abstract Bool containsAll(V[] list)
 
   **
   ** Return if this list contains any one of the items in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  abstract Bool containsAny(List list)
+  abstract Bool containsAny(V[] list)
 
   **
   ** Return the integer index of the specified item using
@@ -246,7 +246,7 @@ rtconst abstract class List<V>
   ** Size is incremented by list.size.  Return this.  Throw ReadonlyErr
   ** if readonly.
   **
-  abstract This addAll(List list)
+  abstract This addAll(V[] list)
 
   **
   ** Insert the item at the specified index.  A negative index may be
@@ -263,7 +263,7 @@ rtconst abstract class List<V>
   ** this.  Throw IndexErr if index is out of range.  Throw ReadonlyErr
   ** if readonly.
   **
-  abstract This insertAll(Int index, List list)
+  abstract This insertAll(Int index, V[] list)
 
   **
   ** Remove the specified value from the list.  The value is compared
@@ -302,7 +302,7 @@ rtconst abstract class List<V>
   ** If any value is not found, it is ignored.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  virtual This removeAll(List list) {
+  virtual This removeAll(V[] list) {
     //modify
     each |obj| {
       remove(obj)
@@ -444,7 +444,7 @@ rtconst abstract class List<V>
   **   list := [0, 1, 2, 3, 4]
   **   list.findAll |Int v->Bool| { return v%2==0 } => [0, 2, 4]
   **
-  List findAll(|V item, Int index->Bool| c) {
+  V[] findAll(|V item, Int index->Bool| c) {
     nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)
@@ -465,7 +465,7 @@ rtconst abstract class List<V>
   **   list := [0, 1, 2, 3, 4]
   **   list.exclude |Int v->Bool| { return v%2==0 } => [1, 3]
   **
-  List exclude(|V item, Int index->Bool| c) {
+  V[] exclude(|V item, Int index->Bool| c) {
     nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)

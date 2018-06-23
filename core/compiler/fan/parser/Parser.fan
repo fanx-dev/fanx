@@ -474,7 +474,11 @@ public class Parser : CompilerSupport
       */
       returns := ns.voidType
       if (flags.and(FConst.Static) != 0) {
-        if (parent.isGeneric) returns = ParameterizedType.create(parent)
+        if (parent.isGeneric) {
+          TypeDef gp := parent.deref
+          params := gp.genericParameters
+          returns = ParameterizedType.create(parent, params)
+        }
         else returns = parent
       }
       returnsRef := TypeRef(loc, returns)

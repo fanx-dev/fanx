@@ -6,7 +6,7 @@ class GenericType<T> {
   T? bar
   T? foo() { bar }
 
-  GenericType self() { return this }
+  GenericType<T> self() { return this }
 
   Void say(|T|? f) {
     if (f != null) f(bar)

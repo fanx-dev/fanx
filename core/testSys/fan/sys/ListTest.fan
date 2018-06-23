@@ -1385,7 +1385,7 @@ class ListTest : Test
     verifyShuffle([1, 2, 3, 4], 24)
   }
 
-  Void verifyShuffle(List x, Int expectedCombos)
+  Void verifyShuffle(Obj?[] x, Int expectedCombos)
   {
     combos := Str:Str[:]
     for (i := 0; true; ++i)

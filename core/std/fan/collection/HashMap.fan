@@ -100,7 +100,7 @@ rtconst class HashMap<K,V> : Map
   override Bool equals(Obj? that) {
     if (this === that) return true
     if (that isnot Map) return false
-    o := that as Map
+    o := that as [K:V]
     if (this.size != o.size) return false
     return all |v,k| {
       if (v == null) {
@@ -315,14 +315,14 @@ rtconst class HashMap<K,V> : Map
 
   override This ro() {
     if (isRO) return this
-    HashMap nmap := dup
+    HashMap<K,V> nmap := dup
     nmap.readOnly = true
     return nmap
   }
 
   override This rw() {
     if (isRW) return this
-    HashMap nmap := dup
+    HashMap<K,V> nmap := dup
     nmap.readOnly = false
     return nmap
   }

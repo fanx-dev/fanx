@@ -582,7 +582,7 @@ class MapTest : Test
 
   Void testCaseInsensitive()
   {
-    m := CIMap()
+    m := CIMap<Str,Int>()
     //m.caseInsensitive = true
 
     // add, get, containsKey

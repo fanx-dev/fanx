@@ -385,7 +385,7 @@ const final class Uri
     if (query != null && query.size > 0) {
       if (path != null) buf.addChar('?')
       i := 0
-      query.each |Str v, k| {
+      query.each |v, k| {
         if (i>0) buf.addChar('&')
         if (encode) {
           k = encodeToken(k, true)

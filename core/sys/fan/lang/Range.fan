@@ -292,7 +292,7 @@ const struct class Range
     //if (tof == Void#) tof = Obj?#
     cp := start < end ? end-start+1 : start-end+1
 
-    nlist := List.make(cp)
+    nlist := List<Obj?>.make(cp)
     start := this.start
     end := this.lastEnd
     if (start < end) {

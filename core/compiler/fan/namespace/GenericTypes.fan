@@ -24,14 +24,14 @@ class ParameterizedType : ProxyType {
       if (defaultParameterized) {
         params = [baseType.ns.objType.toNullable]
       }
-      return ListType(params.first)
+      return ListType(params.first, defaultParameterized)
     }
     else if (baseType.qname == "std::Map") {
       if (defaultParameterized) {
         objType := baseType.ns.objType.toNullable
         params = [objType, objType]
       }
-      return MapType(params.first, params.last)
+      return MapType(params.first, params.last, defaultParameterized)
     }
     else if (baseType.qname == "sys::Func") {
       if (defaultParameterized) {
@@ -92,10 +92,42 @@ class ParameterizedType : ProxyType {
     return baseFlags
   }
 
-  override Bool fits(CType t)
+  override Bool fits(CType ty)
   {
-    if (super.fits(t)) return true
-    //if (t.qname == root.qname) return true
+    //echo("fits: $this <=> $ty")
+    t := ty.deref.raw.toNonNullable
+
+    // everything fits Obj
+    if (t.isObj) return true
+
+    // short circuit if myself
+    if (this == t) return true
+
+    if (t.qname == root.qname) {
+      if (t.isGeneric) return true
+      if(defaultParameterized) return true
+      ParameterizedType o := t.deref.raw.toNonNullable
+      if (o.defaultParameterized) return true
+      if (this.genericParams.size != o.genericParams.size) {
+        //echo("fits: $this != $t: size: ${this.genericParams.size}!=${o.genericParams.size}")
+        return false
+      }
+      for (i:=0; i<genericParams.size; ++i) {
+        if (!this.genericParams[i].fits(o.genericParams[i])) {
+          //echo("fits: $this != $ty, param:$i")
+          return false
+        }
+      }
+      return true
+    }
+
+    // recurse extends
+    if (base != null && base.fits(t)) return true
+
+    // recuse mixins
+    for (i:=0; i<mixins.size; ++i)
+      if (mixins[i].fits(t)) return true
+
     return false
   }
 
@@ -220,25 +252,31 @@ class FuncType : ParameterizedType
 
   override Bool fits(CType ty)
   {
+    //echo("Func.fits: $this => $ty")
     t := ty.deref.raw.toNonNullable
     if (this == t) return true
-    if (t.qname == "sys::Func") return true
     if (t.isObj) return true
+
+    if (this.qname == t.qname) {
+      if (defaultParameterized) return true
+      if (t.isGeneric) return true
+    }
     //TODO: not sure
     //if (t.name.size == 1 && t.pod.name == "sys") return true
 
     that := t as FuncType
     if (that == null) return false
+    if (that.defaultParameterized) return true
 
     // match return type (if void is needed, anything matches)
-    if (!that.ret.isVoid && !ret.fits(that.ret)) return false
+    if (!that.ret.isVoid && !this.ret.fits(that.ret)) return false
 
     // match params - it is ok for me to have less than
     // the type params (if I want to ignore them), but I
     // must have no more
-    if (params.size > that.params.size) return false
-    for (i:=0; i<params.size; ++i)
-      if (!that.params[i].fits(params[i])) return false
+    if (this.params.size > that.params.size) return false
+    for (i:=0; i<this.params.size; ++i)
+      if (!that.params[i].fits(this.params[i])) return false
 
     // this method works for the specified method type
     return true;

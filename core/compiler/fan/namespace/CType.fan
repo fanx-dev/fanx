@@ -238,13 +238,13 @@ mixin CType
     //unparameterized generic parameters
     // don't take nullable in consideration
     t := ty.deref.raw.toNonNullable
+    m := this.deref.raw.toNonNullable
 
     // everything fits Obj
     if (t.isObj) return true
 
     // short circuit if myself
-    //if (this == t) return true
-    if (this.qname == t.qname) return true
+    if (m.qname == t.qname) return true
 
     // recurse extends
     if (base != null && base.fits(t)) return true
@@ -592,7 +592,7 @@ abstract class ProxyType : CType
   override Bool isGeneric() { root.isGeneric }
   override Bool isParameterized() { root.isParameterized }
   override Bool hasGenericParameter() { root.hasGenericParameter }
-  override CType parameterizeThis(CType thisType) { root.parameterizeThis(thisType) }
+  //override CType parameterizeThis(CType thisType) { root.parameterizeThis(thisType) }
 
   override Bool isForeign()   { root.isForeign }
   override Bool isSupported() { root.isSupported }

@@ -22,7 +22,7 @@ rtconst abstract class Map<K,V>
   ** Constructor
   **
   static new make(Int capacity := 16) {
-    return HashMap(capacity)
+    return HashMap<K,V>(capacity)
   }
 
   //on modify
@@ -34,7 +34,7 @@ rtconst abstract class Map<K,V>
 
   protected abstract This createEmpty()
 
-  const static Map defVal := [:]
+  const static [Obj:Obj] defVal := [:]
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -172,7 +172,7 @@ rtconst abstract class Map<K,V>
   ** Also see `addAll`.  This method is semanatically equivalent to:
   **   m.each |v, k| { this.set(k, v) }
   **
-  This setAll(Map m) {
+  This setAll([K:V] m) {
     modify
     m.each |v, k| { this.set(k, v) }
     return this
@@ -186,7 +186,7 @@ rtconst abstract class Map<K,V>
   ** readonly.  Also see `setAll`. This method is semanatically equivalent to:
   **   m.each |v, k| { this.add(k, v) }
   **
-  This addAll(Map m) {
+  This addAll([K:V] m) {
     modify
     m.each |v, k| { this.add(k, v) }
     return this
@@ -507,7 +507,7 @@ rtconst abstract class Map<K,V>
   **   x := m.map |Int v->Int| { return v*2 }
   **   x => [2:4, 3:6, 4:8]
   **
-  Map map(|V val, K key->Obj?| c) {
+  [K:Obj?] map(|V val, K key->Obj?| c) {
     nmap := createEmpty()
     this.each |v,k| {
         nval := c(v, k)

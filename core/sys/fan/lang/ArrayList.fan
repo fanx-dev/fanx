@@ -30,7 +30,7 @@ rtconst class ArrayList<V> : List
   override Bool equals(Obj? other) {
     if (other == null) return false
     if (other isnot List) return false
-    that := other as List
+    that := other as V[]
 
     //if (this.of != that.of) return false
     if (this.size != that.size) return false
@@ -101,7 +101,7 @@ rtconst class ArrayList<V> : List
     return array[index]
   }
 
-  @Operator override List getRange(Range r) {
+  @Operator override V[] getRange(Range r) {
     start := r.startIndex(size)
     end := r.endIndex(size)
     ++end
@@ -109,13 +109,13 @@ rtconst class ArrayList<V> : List
     len := end - start
     if (len < 0) throw IndexErr("range illegal")
 
-    nlist := ArrayList(len)
+    nlist := ArrayList<V>(len)
     nlist.array.copyFrom(array, start, 0, len)
     nlist.&size = len
     return nlist
   }
 
-  override Bool containsAll(List list) {
+  override Bool containsAll(V[] list) {
     for (i:=0; i<list.size; ++i) {
       obj := list[i]
       if (!contains(obj)) {
@@ -125,7 +125,7 @@ rtconst class ArrayList<V> : List
     return true
   }
 
-  override Bool containsAny(List list) {
+  override Bool containsAny(V[] list) {
     for (i:=0; i<list.size; ++i) {
       obj := list[i]
       if (contains(obj)) {
@@ -146,7 +146,7 @@ rtconst class ArrayList<V> : List
   }
 
   override This dup() {
-    nlist := ArrayList(size)
+    nlist := ArrayList<V>(size)
     nlist.array.copyFrom(array, 0, 0, size)
     nlist.&size = size
     return nlist
@@ -186,11 +186,11 @@ rtconst class ArrayList<V> : List
     return this
   }
 
-  override This addAll(List alist) {
+  override This addAll(V[] alist) {
     modify
     grow(size + alist.size)
     //TODO
-    ArrayList list := alist
+    ArrayList<V> list := alist
     array.copyFrom(list.array, 0, size, list.size)
     &size = size + list.size
     return this
@@ -208,14 +208,14 @@ rtconst class ArrayList<V> : List
     return this
   }
 
-  override This insertAll(Int index, List alist) {
+  override This insertAll(Int index, V[] alist) {
     modify
     if (index < 0) index += size
     if (index > size) throw IndexErr("index is out of range")
 
     grow(size + alist.size)
     //TODO
-    ArrayList list := alist
+    ArrayList<V> list := alist
     array.copyFrom(array, index, index+list.size, size-index)
     array.copyFrom(list.array, 0, index, list.size)
     &size = size + list.size
@@ -263,7 +263,7 @@ rtconst class ArrayList<V> : List
     return this
   }
 
-  override This removeAll(List list) {
+  override This removeAll(V[] list) {
     modify
     for (i:=0; i<list.size; ++i) {
       obj := list[i]
@@ -567,7 +567,7 @@ rtconst class ArrayList<V> : List
 
   override This toImmutable() {
     if (isImmutable) return this
-    nlist := ArrayList(size)
+    nlist := ArrayList<V>(size)
     each |v| { nlist.add(v.toImmutable) }
     nlist.readOnly = true
     nlist.immutable = true

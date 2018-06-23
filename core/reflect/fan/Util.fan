@@ -11,7 +11,7 @@ class Util {
   **   list := ["a", 3, "foo", 5sec, null]
   **   list.findType(Str#) => Str["a", "foo"]
   **
-  static extension List findType(List self, Type t) {
+  static extension Obj[] findType(Obj?[] self, Type t) {
     nlist := List.make(8)
     self.each |obj| {
       if (obj == null) return
