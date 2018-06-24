@@ -1613,10 +1613,10 @@ class ListTest : Test
     c := ["c"]
 
     x := [a, b, c]
-    xc := x.toImmutable
+    Str[][] xc := x.toImmutable
 
     y := [x]
-    yc := y.toImmutable
+    Str[][][] yc := y.toImmutable
 
     verifyNotSame(x.ro, xc)
     verifyEq(xc.isRO, true)
@@ -1638,7 +1638,7 @@ class ListTest : Test
 
     m := [0:"zero", 99:null]
     z := [m, null]
-    zc := z.toImmutable
+    [Int:Str?]?[] zc := z.toImmutable
     //verifyEq(Type.of(zc).signature, "[sys::Int:sys::Str?]?[]")
     verify(zc.isRO)
     verify(zc[0].isRO)

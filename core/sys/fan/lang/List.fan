@@ -836,5 +836,5 @@ rtconst abstract class List<V>
 
   override abstract Bool isImmutable()
 
-  override abstract This toImmutable()
+  override abstract V[] toImmutable()
 }

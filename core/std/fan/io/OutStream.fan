@@ -10,7 +10,7 @@
 ** OutStream is used to write binary and text data
 ** to an output stream.
 **
-mixin OutStream
+abstract class OutStream
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,10 @@ mixin OutStream
   ** Write one or more bytes to the stream for the specified Unicode
   ** character based on the current charset encoding.  Return this.
   **
-  abstract This writeChar(Int char)
+  virtual This writeChar(Int ch) {
+    charset.encode(ch, this)
+    return this
+  }
 
   **
   ** Write the Unicode characters in the specified string to the
@@ -206,19 +209,25 @@ mixin OutStream
   ** the index offset to start writing characters and len the
   ** number of characters in str to write.  Return this.
   **
-  abstract This writeChars(Str str, Int off := 0, Int len := str.size-off)
+  virtual This writeChars(Str str, Int off := 0, Int len := str.size-off) {
+    for (i:=0; i<len; ++i) {
+      ch := str[i+off]
+      charset.encode(ch, this)
+    }
+    return this
+  }
 
   **
   ** Convenience for 'writeChars(obj.toStr)'.  If obj is null,
   ** then print the string "null".  Return this.
   **
-  virtual This print(Obj? s) { writeChars("$s") }
+  virtual This print(Obj? s) { writeChars(s == null ? "null" : s.toStr) }
 
   **
   ** Convenience for 'writeChars(obj.toStr + "\n")'.  If obj
   ** is null then print the string "null\n".  Return this.
   **
-  virtual This printLine(Obj? obj := "") { writeChars("$obj\n") }
+  virtual This printLine(Obj? obj := "") { print(obj).write('\n') }
 
   **
   ** Write a serialized object from the stream according to
@@ -284,7 +293,7 @@ mixin OutStream
 **************************************************************************
 ** SysOutStream
 **************************************************************************
-
+@NoDoc
 class ProxyOutStream : OutStream
 {
   protected OutStream out
@@ -305,13 +314,9 @@ class ProxyOutStream : OutStream
     get { out.charset }
     set { out.charset = it }
   }
-  override This writeUtf(Str s) { out.writeUtf(s) }
-  override This writeChar(Int char) { out.writeChar(char) }
-  override This writeChars(Str str, Int off := 0, Int len := str.size-off) { out.writeChars(str, off, len) }
 }
 
 internal class SysOutStream : OutStream {
-  protected Obj? peer
   override Endian endian
   override Charset charset
 
@@ -325,8 +330,5 @@ internal class SysOutStream : OutStream {
   native override This sync()
   native override This flush()
   native override Bool close()
-
-  native override This writeUtf(Str s)
-  native override This writeChar(Int char)
-  native override This writeChars(Str str, Int off := 0, Int len := str.size-off)
 }
+

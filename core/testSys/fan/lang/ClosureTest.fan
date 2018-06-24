@@ -60,7 +60,7 @@ class ClosureTest : Test
   {
     list := [0, 1, 2]
     f := |->Obj| { list }
-    g := f.toImmutable
+    |->Obj| g := f.toImmutable
     verifyEq(f.isImmutable, false); verifyEq(f(), [0, 1, 2])
     verifyEq(g.isImmutable, true);  verifyEq(g(), [0, 1, 2])
     list.add(3)

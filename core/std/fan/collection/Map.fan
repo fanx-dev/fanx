@@ -557,5 +557,5 @@ rtconst abstract class Map<K,V>
 
   override abstract Bool isImmutable()
 
-  override abstract This toImmutable()
+  override abstract [K:V] toImmutable()
 }

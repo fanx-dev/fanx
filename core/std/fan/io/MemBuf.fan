@@ -13,10 +13,10 @@ internal class MemBuf : Buf
     buf = ByteArray(cap)
   }
 
-  new makeArray(ByteArray buf) {
+  new makeBuf(ByteArray buf, Int size := buf.size, Int pos := 0) : super.privateMake() {
     this.buf = buf
-    size = buf.size
-    pos = 0
+    this.size = size
+    this.pos = pos
   }
 
   override Int size
@@ -33,14 +33,14 @@ internal class MemBuf : Buf
 
     a := ByteArray(n)
     a.copyFrom(buf, s, 0, n)
-    return makeArray(a)
+    return makeBuf(a)
   }
 
   override Buf dup() {
     size := this.size
     a := ByteArray(size)
     a.copyFrom(buf, 0, 0, size)
-    return makeArray(a)
+    return makeBuf(a)
   }
 
   @Operator override This set(Int index, Int byte) {
@@ -77,6 +77,86 @@ internal class MemBuf : Buf
     c := cap.max(capacity*2)
     capacity = c
   }
+
+  override Bool isImmutable() { false }
+
+  override Buf toImmutable() {
+    old := buf
+    osize := size
+    opos := pos
+    this.buf = ByteArray(0)
+    this.size = 0
+    this.pos = 0
+    return ConstMemBuf.makeBuf(old, osize, opos)
+  }
+}
+
+internal class ConstMemBuf : Buf
+{
+  protected ByteArray buf
+
+  protected ReadonlyErr err() {
+    throw ReadonlyErr()
+  }
+
+  new makeBuf(ByteArray buf, Int size := buf.size, Int pos := 0) : super.privateMake() {
+    this.buf = buf
+    this.size = size
+    this.pos = pos
+  }
+
+  override Int size { private set { err } }
+  override Int capacity { get{ return buf.size } set{ err } }
+  override Int pos { set { err } }
+
+  @Operator override Int get(Int index) { buf.get(index) }
+  @Operator override Buf getRange(Range range) {
+    size := this.size
+    s := range.startIndex(size);
+    e := range.endIndex(size);
+    n := (e - s + 1);
+    if (n < 0) throw IndexErr.make("$range");
+
+    a := ByteArray(n)
+    a.copyFrom(buf, s, 0, n)
+    return makeBuf(a)
+  }
+
+  override Buf dup() {
+    size := this.size
+    a := ByteArray(size)
+    a.copyFrom(buf, 0, 0, size)
+    return makeBuf(a)
+  }
+
+  @Operator override This set(Int index, Int byte) {
+    err
+    return this
+  }
+  override This trim() { this }
+  override Bool close() { true }
+  override This flush() { this }
+  override Endian endian {
+    set { err }
+    get { out.endian }
+  }
+  override Charset charset {
+    set { err }
+    get { out.charset }
+  }
+  override This fill(Int byte, Int times) { err; return this }
+
+  private InStream createIn() { ConstMemInStream(this) }
+
+  override OutStream out() { throw err }
+  once override InStream in() { createIn }
+
+  protected override Void writeTo(OutStream out, Int len) { out.writeByteArray(buf, pos, len) }
+  protected override Int readFrom(InStream in, Int len) { throw err }
+
+  override Bool isImmutable() { true }
+
+  override Buf toImmutable() { return this }
 }
 
 internal class MemOutStream : OutStream {
@@ -107,15 +187,6 @@ internal class MemOutStream : OutStream {
   override This sync() { this }
   override This flush() { this }
   override Bool close() { true }
-
-  override This writeChar(Int char) {
-    writeUtf(char.toChar)
-  }
-  override This writeChars(Str str, Int off := 0, Int len := str.size-off) {
-    s := str[off..<len]
-    writeUtf(s)
-    return this
-  }
 }
 
 internal class MemInStream : InStream {
@@ -165,14 +236,60 @@ internal class MemInStream : InStream {
     if (buf.pos+1 >= buf.size) return -1
     return buf.buf[buf.pos+1]
   }
-  override Int rChar() { throw UnsupportedErr("TODO") }
-  override This unreadChar(Int b) { throw UnsupportedErr("TODO") }
-  override Int peekChar() { throw UnsupportedErr("TODO") }
-  override Str readChars(Int n) { throw UnsupportedErr("TODO") }
-  override Str? readLine(Int max := -1) {
-    throw UnsupportedErr("TODO")
+
+  //override Int peekChar() {  }
+}
+
+
+internal class ConstMemInStream : InStream {
+  override Endian endian
+  override Charset charset
+  protected ConstMemBuf buf
+  protected Int pos
+
+  new make(ConstMemBuf buf) {
+    endian = Endian.big
+    charset = Charset.defVal
+    this.buf = buf
+    pos = 0
   }
-  override Str readAllStr(Bool normalizeNewlines := true) {
-    throw UnsupportedErr("TODO")
+
+  override Int avail() {
+    buf.size - pos
   }
+  override Int r() {
+    if (pos >= buf.size) return -1
+    return buf.buf[pos++]
+  }
+  override Int skip(Int n) {
+    pos := this.pos + n
+    if (pos > buf.size) {
+      pos = buf.size
+      n = pos - this.pos
+    }
+    this.pos = pos
+    return n
+  }
+  override Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size) {
+    m := avail
+    if (m <= 0) return 0
+    len = len.min(m)
+    ba.copyFrom(buf.buf, this.pos, off, len)
+    this.pos += len
+    return len
+  }
+  override This unread(Int n) {
+    if (this.pos == 0) throw UnsupportedErr("$buf")
+    --this.pos
+    buf.buf[this.pos] = n
+    return this
+  }
+  override Bool close() { true }
+
+  override Int peek() {
+    if (this.pos+1 >= buf.size) return -1
+    return buf.buf[this.pos+1]
+  }
+
+  //override Int peekChar() {  }
 }

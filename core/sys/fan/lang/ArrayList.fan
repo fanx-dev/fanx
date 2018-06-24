@@ -565,7 +565,7 @@ rtconst class ArrayList<V> : List
 
   override Bool isImmutable() { immutable }
 
-  override This toImmutable() {
+  override V[] toImmutable() {
     if (isImmutable) return this
     nlist := ArrayList<V>(size)
     each |v| { nlist.add(v.toImmutable) }

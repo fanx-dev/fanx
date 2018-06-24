@@ -9,7 +9,7 @@
 **
 ** InStream is used to read binary and text stream based input.
 **
-mixin InStream
+abstract class InStream
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,12 @@ mixin InStream
   ** Attempt to skip 'n' number of bytes.  Return the number of bytes
   ** actually skipped which may be equal to or lesser than n.
   **
-  abstract Int skip(Int n)
+  virtual Int skip(Int n) {
+    for (i:=0; i<n; ++i) {
+      if (r() < 0) return i
+    }
+    return n
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Buf Support
@@ -150,7 +155,11 @@ mixin InStream
   ** it.  Peek has the same semantics as a read/unread.  Return
   ** -1 if at end of stream.
   **
-  abstract Int peek()
+  virtual Int peek() {
+    x := r()
+    if (x != -1) unread(x)
+    return x
+  }
 
   **
   ** Read the next byte as an unsigned 8-bit number.  This method may
@@ -170,9 +179,7 @@ mixin InStream
   ** paired with `OutStream.write`.  Throw IOErr on error or if the end
   ** of stream is reached before one byte can be read.
   **
-  virtual Int readS1() { x := readU1; return toSigned(x, 1) }
-
-  static native Int toSigned(Int val, Int byteNum)
+  virtual Int readS1() { x := readU1; return SysInStream.toSigned(x, 1) }
 
   **
   ** Read the next two bytes as an unsigned 16-bit number using configured
@@ -196,7 +203,10 @@ mixin InStream
   ** Throw IOErr on error or if the end of stream is reached before
   ** two bytes can be read.
   **
-  virtual Int readS2() { x := readU2; return toSigned(x, 2) }
+  virtual Int readS2() {
+    x := readU2
+    return SysInStream.toSigned(x, 2)
+  }
 
   **
   ** Read the next four bytes as an unsigned 32-bit number using configured
@@ -224,7 +234,10 @@ mixin InStream
   ** Throw IOErr on error or if the end of stream is reached before
   ** four bytes can be read.
   **
-  virtual Int readS4() { x := readU4; return toSigned(x, 4) }
+  virtual Int readS4() {
+    x := readU4
+    return SysInStream.toSigned(x, 4)
+  }
 
   **
   ** Read the next eight bytes as a signed 64-bit number using configured
@@ -313,28 +326,52 @@ mixin InStream
   ** an invalid character encoding is encountered.
   **
   Int readChar() { rChar }
-  protected abstract Int rChar()
+  protected virtual Int rChar() {
+    charset.decode(this)
+  }
 
   **
   ** Pushback a char so that it is the next char to be read.  This
   ** method pushes back one or more bytes depending on the current
   ** character encoding.  Return this.
   **
-  abstract This unreadChar(Int b)
+  virtual This unreadChar(Int b) {
+    ba := ByteArray(8)
+    n := charset.encodeArray(b, ba, 0)
+    for (i:=0; i<n; ++i) {
+      unread(ba[i])
+    }
+    return this
+  }
 
   **
   ** Peek at the next char to be read without actually consuming
   ** it.  Peek has the same semantics as a readChar/unreadChar.
   ** Return null if at end of stream.
   **
-  abstract Int peekChar()
+  virtual Int peekChar() {
+    x := rChar()
+    if (x != -1) unreadChar(x)
+    return x
+  }
 
   **
   ** Read the next n chars from the stream as a Str using the
   ** current `charset`.  Block until exactly n chars have been
   ** read or throw IOErr if end of stream is reached first.
   **
-  abstract Str readChars(Int n)
+  virtual Str readChars(Int n) {
+    if (n < 0) throw ArgErr("readChars n < 0: $n")
+    if (n == 0) return ""
+    buf := StrBuf()
+    for (i:=n; i>0; --i)
+    {
+      ch := charset.decode(this)
+      if (ch < 0) throw IOErr("Unexpected end of stream")
+      buf.addChar(ch)
+    }
+    return buf.toStr
+  }
 
   **
   ** Read the next line from the input stream as a Str based on the
@@ -350,7 +387,26 @@ mixin InStream
   ** if there is a problem reading the stream or an invalid character
   ** encoding is encountered.
   **
-  abstract Str? readLine(Int max := -1)
+  virtual Str? readLine(Int max := -1) {
+    if (max < 0) max = Int.maxVal
+    if (max == 0) return ""
+    buf := StrBuf()
+    for (i:=max; i>0; --i) {
+      c := charset.decode(this)
+      if (c < 0) {
+        if (buf.size == 0) return null
+        break
+      }
+      else if (c == '\n') break
+      else if (c == '\r') {
+        c = charset.decode(this)
+        if (c >= 0 && c != '\n') unreadChar(c);
+        break
+      }
+      buf.addChar(c)
+    }
+    return buf.toStr
+  }
 
   **
   ** Read a Str token from the input stream which is terminated
@@ -447,7 +503,23 @@ mixin InStream
   ** encoding is encountered.  This InStream is guaranteed to
   ** be closed.
   **
-  abstract Str readAllStr(Bool normalizeNewlines := true)
+  virtual Str readAllStr(Bool normalizeNewlines := true) {
+    buf := StrBuf()
+    last := -1
+    while (true) {
+      ch := charset.decode(this)
+      if (ch < 0) break
+      if (normalizeNewlines)
+      {
+        if (last == '\r' && ch == '\n') continue
+        last = ch
+        if (ch == '\r') ch = '\n'
+      }
+
+      buf.addChar(ch)
+    }
+    return buf.toStr
+  }
 
   **
   ** Read a serialized object from the stream according to
@@ -553,7 +625,7 @@ mixin InStream
 **************************************************************************
 ** SysInStream
 **************************************************************************
-@NoPeer
+@NoDoc
 class ProxInStream : InStream
 {
   protected InStream in
@@ -569,27 +641,20 @@ class ProxInStream : InStream
   override Bool close() { in.close }
 
   override Endian endian { set{ in.endian = it } get{ in.endian } }
-  override Int peek() { in.peek }
-  override Str readUtf() { in.readUtf }
   override Charset charset { set{ in.charset = it } get { in.charset } }
-  override Int rChar() { in.rChar }
-  override This unreadChar(Int b) { in.unreadChar(b) }
-  override Int peekChar() { in.peekChar }
-  override Str readChars(Int n) { in.readChars(n) }
-  override Str? readLine(Int max := -1) { in.readLine(max) }
-  override Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
 }
-@NoPeer
+
 internal class SysInStream : InStream
 {
-  protected Obj? peer
   override Endian endian
   override Charset charset
 
-  new make(Endian e, Charset c) {
+  protected new make(Endian e, Charset c) {
     endian = e
     charset = c
   }
+
+  static native Int toSigned(Int val, Int byteNum)
 
   native override Int avail()
   native override Int r()
@@ -598,12 +663,12 @@ internal class SysInStream : InStream
   native override This unread(Int n)
   native override Bool close()
 
-  native override Int peek()
-  native override Str readUtf()
-  native override Int rChar()
-  native override This unreadChar(Int b)
-  native override Int peekChar()
-  native override Str readChars(Int n)
-  native override Str? readLine(Int max := -1)
-  native override Str readAllStr(Bool normalizeNewlines := true)
+  //native override Int peek()
+  //native override Str readUtf()
+  //native override Int rChar()
+  //native override This unreadChar(Int b)
+  //native override Int peekChar()
+  //native override Str readChars(Int n)
+  //native override Str? readLine(Int max := -1)
+  //native override Str readAllStr(Bool normalizeNewlines := true)
 }

@@ -11,7 +11,7 @@
 ** bytes to Unicode characters, and encode Unicode characters to bytes.
 **
 @Serializable { simple = true }
-const final class Charset
+const class Charset
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,20 +24,16 @@ const final class Charset
   ** found and checked is false return null, otherwise throw ParseErr.
   **
   static new fromStr(Str name, Bool checked := true) {
-    privateMake(name)
+    if (name == "UTF-8") return utf8
+    return privateMake(name)
   }
 
   **
   ** Private constructor
   **
-  private new privateMake(Str name) {
+  protected new privateMake(Str name) {
     this.name = name
   }
-
-  **
-  ** Default value is `utf8`.
-  **
-  const static Charset defVal := utf8
 
 //////////////////////////////////////////////////////////////////////////
 // Standard Encodings
@@ -46,7 +42,12 @@ const final class Charset
   **
   ** An charset for "UTF-8" format (Eight-bit UCS Transformation Format).
   **
-  const static Charset utf8 := fromStr("UTF-8")
+  const static Charset utf8 := Utf8()
+
+  **
+  ** Default value is `utf8`.
+  **
+  const static Charset defVal := utf8
 
   **
   ** An charset for "UTF-16BE" format (Sixteen-bit UCS Transformation
@@ -90,4 +91,114 @@ const final class Charset
   **
   override Str toStr() { name }
 
+  virtual Int encode(Int ch, OutStream out) { throw UnsupportedErr("TODO") }
+  virtual Int encodeArray(Int ch, ByteArray out, Int offset) { throw UnsupportedErr("TODO") }
+  virtual Int decode(InStream in) { throw UnsupportedErr("TODO") }
+  //abstract Int decodeArray(ByteArray in, Int offset)
 }
+
+//////////////////////////////////////////////////////////////////////////
+// UTF-8
+//////////////////////////////////////////////////////////////////////////
+
+internal const class Utf8 : Charset {
+
+  new make() : super.privateMake("UTF-8") {}
+
+  override Int encode(Int c, OutStream out)  {
+    if (c <= 0x007F) {
+      out.write(c)
+      return 1
+    }
+    else if (c <= 0x07FF) {
+      out.write(c.shiftr(6).and(0x1F).or(0xC0))
+      out.write(c.shiftr(0).and(0x3F).or(0x80))
+      return 2
+    }
+    else if (c <= 0xFFFF) {
+      out.write( c.shiftr(12).and(0x0F).or(0xE0))
+      out.write( c.shiftr(6).and(0x3F).or(0x80))
+      out.write( c.shiftr(0).and(0x3F).or(0x80))
+      return 3
+    }
+    else if (c <= 0x10FFFF) {
+      out.write( c.shiftr(18).and(0x07).or(0xF0))
+      out.write( c.shiftr(12).and(0x3F).or(0x80))
+      out.write( c.shiftr(6).and(0x3F).or(0x80))
+      out.write( c.shiftr(0).and(0x3F).or(0x80))
+      return 4
+    }
+    else {
+      throw IOErr("Invalid UTF-8 encoding")
+    }
+  }
+
+  override Int encodeArray(Int c, ByteArray out, Int offset) {
+    i := offset
+    if (c <= 0x007F) {
+      out[i++] = c
+    }
+    else if (c <= 0x07FF) {
+      out[i++] = c.shiftr(6).and(0x1F).or(0xC0)
+      out[i++] = c.shiftr(0).and(0x3F).or(0x80)
+    }
+    else if (c <= 0xFFFF) {
+      out[i++] = c.shiftr(12).and(0x0F).or(0xE0)
+      out[i++] = c.shiftr(6).and(0x3F).or(0x80)
+      out[i++] = c.shiftr(0).and(0x3F).or(0x80)
+    }
+    else if (c <= 0x10FFFF) {
+      out[i++] = c.shiftr(18).and(0x07).or(0xF0)
+      out[i++] = c.shiftr(12).and(0x3F).or(0x80)
+      out[i++] = c.shiftr(6).and(0x3F).or(0x80)
+      out[i++] = c.shiftr(0).and(0x3F).or(0x80)
+    }
+    else {
+      throw IOErr("Invalid UTF-8 encoding")
+    }
+    return i - offset
+  }
+
+  override Int decode(InStream in) {
+    //i := offset
+    c1 := in.r
+    if (c1 < 0) return -1
+    size := 0
+    ch := 0
+
+    if (c1 < 0x80) {
+      ch = c1
+      size = 1
+    }
+    else if (c1 < 0xE0) {
+      c2 := in.r
+      ch = c1.and(0x1F).shiftl(6).
+             or(c2.and(0x3F))
+      size = 2
+    }
+    else if (c1 < 0xF0) {
+      c2 := in.r
+      c3 := in.r
+      ch = c1.and(0x0F).shiftl(12)
+             .or(c2.and(0x3F).shiftl(6))
+             .or(c2.and(0x3F))
+      size = 3
+    }
+    else if (c1 < 0xF8) {
+      c2 := in.r
+      c3 := in.r
+      c4 := in.r
+      ch = c1.and(0x07).shiftl(18)
+             .or(c2.and(0x3F).shiftl(12))
+             .or(c2.and(0x3F).shiftl(6))
+             .or(c2.and(0x3F))
+      size = 4
+    }
+    else {
+      throw IOErr("Invalid UTF-8 encoding")
+    }
+    return ch
+  }
+}
+
+

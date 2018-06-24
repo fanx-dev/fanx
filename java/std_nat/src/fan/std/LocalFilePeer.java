@@ -19,14 +19,35 @@ public class LocalFilePeer {
 		String path = self.uri.pathStr;
 		self.peer = new java.io.File(path);
 	}
+	
+	static LocalFile make(String path) {
+		String uri = path.replace("\\", "/");
+		return LocalFile.make(Uri.fromStr(uri));
+	}
+	
+	static LocalFile make(java.io.File file) {
+		LocalFile f = new LocalFile();
+		f.peer = file;
+		String uri = file.getPath();
+		if (file.isDirectory()) uri = uri + "/";
+		f.uri = Uri.fromStr(uri);
+		return f;
+	}
+	
+	static LocalFile make(java.io.File file, Uri uri) {
+		LocalFile f = new LocalFile();
+		f.peer = file;
+		f.uri = uri;
+		return f;
+	}
+	
+	static java.io.File getJFile(LocalFile self) {
+		return (java.io.File) self.peer;
+	}
 
 	static FileStore store() {
 		// TODO
 		return null;
-	}
-
-	static File copyTo(LocalFile self, LocalFile to) {
-		return copyTo(self, to, null);
 	}
 
 	static File copyTo(LocalFile self, LocalFile to, Map options) {
@@ -63,10 +84,7 @@ public class LocalFilePeer {
 	}
 
 	static File javaToFan(java.io.File jfile) {
-		LocalFile f = new LocalFile();
-		f.uri = Uri.fromStr(jfile.getPath());
-		f.peer = jfile;
-		return f;
+		return LocalFilePeer.make(jfile);
 	}
 
 	static List list(LocalFile self) {
@@ -184,28 +202,14 @@ public class LocalFilePeer {
 
 	static Buf open(LocalFile self, String mode) {
 		java.io.File jfile = (java.io.File) self.peer;
+		//TODO
 		return null;
-	}
-
-	static Buf open(LocalFile self) {
-		return open(self, "rw");
 	}
 
 	static Buf mmap(LocalFile self, String mode, long pos, long size) {
 		java.io.File jfile = (java.io.File) self.peer;
+		//TODO
 		return null;
-	}
-
-	static Buf mmap(LocalFile self, String mode, long pos) {
-		return mmap(self, mode, pos, self.size());
-	}
-
-	static Buf mmap(LocalFile self, String mode) {
-		return mmap(self, mode, 0, self.size());
-	}
-
-	static Buf mmap(LocalFile self) {
-		return mmap(self, "rw", 0, self.size());
 	}
 
 	static InStream in(LocalFile self, long bufferSize) {
@@ -218,10 +222,6 @@ public class LocalFilePeer {
 		}
 	}
 
-	static InStream in(LocalFile self) {
-		return in(self, 4096);
-	}
-
 	static OutStream out(LocalFile self, boolean append, long bufferSize) {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {
@@ -230,13 +230,5 @@ public class LocalFilePeer {
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}
-	}
-
-	static OutStream out(LocalFile self, boolean append) {
-		return out(self, append, 4096);
-	}
-
-	static OutStream out(LocalFile self) {
-		return out(self, false, 4096);
 	}
 }

@@ -331,7 +331,7 @@ rtconst class HashMap<K,V> : Map
     return immutable
   }
 
-  override This toImmutable() {
+  override [K:V] toImmutable() {
     if (immutable) return this
     nmap := createEmpty()
     each |v,k| {

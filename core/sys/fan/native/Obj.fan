@@ -119,7 +119,7 @@ native rtconst abstract class Obj
   **   - some Funcs can be made immutable - see `sys::Func`
   **   - any other object throws NotImmutableErr
   **
-  virtual This toImmutable()
+  virtual Obj toImmutable()
 
   **
   ** Get the 'Type' instance which represents this object's class.
