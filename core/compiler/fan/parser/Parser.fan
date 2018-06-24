@@ -200,7 +200,7 @@ public class Parser : CompilerSupport
       gparams := GenericParamType[,]
       while (true) {
         paramName := consumeId
-        param := GenericParamType(ns, paramName, ns.objType.toNullable, def, gparams.size)
+        param := GenericParamType(ns, paramName, def, gparams.size)
         gparams.add(param)
         if (curt === Token.comma) {
           consume

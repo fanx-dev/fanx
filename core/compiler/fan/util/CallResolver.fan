@@ -389,8 +389,16 @@ class CallResolver : CompilerSupport
     call.noParens = isVar
 
     call.method = method
-    if (method.isInstanceCtor)
-      call.ctype = method.parent
+    if (method.isInstanceCtor) {
+      if (method.parent.isGeneric) {
+        //echo("$expr.typeof $expr $expr.target")
+        //echo("$expr.loc.file $expr.loc.line")
+        call.ctype = expr.target.ctype
+      }
+      else {
+       call.ctype = method.parent
+      }
+    }
     else
       call.ctype = method.returnType
 

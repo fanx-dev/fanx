@@ -96,7 +96,7 @@ class FType : CType
     genericParams.size.times |i| {
       n := fpod.n(genericParams[i])
       t := fpod.toType(genericParamBounds[i])
-      gt := GenericParamType(ns, n, t, this, i)
+      gt := GenericParamType(ns, n, this, i, t)
       res[n] = gt
     }
     return res

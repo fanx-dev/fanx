@@ -194,7 +194,7 @@ public class Fan
       java.lang.reflect.Method m = findMethod(jclass, methodName, argClass);
       
       Object res = null;
-      if ((m.getModifiers() * Modifier.STATIC) != 0) {
+      if ((m.getModifiers() & Modifier.STATIC) != 0) {
     	  if (argObj == null) {
     		  res = m.invoke(null);
     	  }

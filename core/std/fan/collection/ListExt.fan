@@ -17,7 +17,7 @@ class ListExt {
   **
   static extension Obj?[] unique(Obj?[] self) {
     if (self.size == 0) return self.dup
-    map := HashMap { keySafe = false }
+    map := HashMap<Obj?,Obj?> { keySafe = false }
     res := [,]
     self.each|v|{
       if (!map.containsKey(v)) {
@@ -40,7 +40,7 @@ class ListExt {
   **   [1, 2].union([3, 2]) => [1, 2, 3]
   **
   static extension Obj?[] union(Obj?[] self, Obj?[] that) {
-    map := HashMap { keySafe = false }
+    map := HashMap<Obj?,Obj?> { keySafe = false }
     res := [,]
     self.each|v|{
       if (!map.containsKey(v)) {
@@ -70,7 +70,7 @@ class ListExt {
   **   [0, null, 2].intersection([null, 0, 1, 2, 3]) => [0, null, 2]
   **
   static extension Obj?[] intersection(Obj?[] self, Obj?[] that) {
-    map := HashMap { keySafe = false }
+    map := HashMap<Obj?,Obj?> { keySafe = false }
     res := [,]
     that.each|v|{
       map[v] = 1

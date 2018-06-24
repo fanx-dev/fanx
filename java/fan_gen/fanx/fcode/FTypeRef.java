@@ -88,9 +88,9 @@ public final class FTypeRef
             if (!nullable) { mask |= PRIMITIVE_LONG; stackType = LONG; }
           }
           break;
-        case 'L':
-          if (typeName.equals("List")) mask |= SYS_LIST;
-          break;
+//        case 'L':
+//          if (typeName.equals("List")) mask |= SYS_LIST;
+//          break;
         case 'O':
           if (typeName.equals("Obj")) mask |= SYS_OBJ;
           break;
@@ -99,9 +99,15 @@ public final class FTypeRef
           break;
       }
     }
+    
+    int pos = typeName.indexOf('^');
+    if (pos != -1) {
+    	mask |= GENERIC_PARAM;
+    }
+    
     this.mask = mask;
     this.stackType = stackType;
-
+    
     // compute full siguature
 //    if (podName.equals("sys") && (typeName.equals("Map") || typeName.equals("List") || typeName.equals("Func")))
 //      this.signature = sig;
@@ -126,7 +132,7 @@ public final class FTypeRef
   /**
    * Is this a nullable type
    */
-  public boolean isNullable() { return (mask & NULLABLE) != 0; }
+  public boolean isNullable() { return (mask & (NULLABLE | GENERIC_PARAM)) != 0; }
 
   /**
    * Is this a parameterized generic instance like Str[]
@@ -166,7 +172,7 @@ public final class FTypeRef
   /**
    * Is this some type of sys::List (nullable or parameterized)
    */
-  public boolean isList() { return (mask & SYS_LIST) != 0; }
+//  public boolean isList() { return (mask & SYS_LIST) != 0; }
 
   /**
    * Is this a FFI direct java type?
@@ -315,7 +321,7 @@ public final class FTypeRef
   public static final int SYS_INT          = 0x0010;
   public static final int SYS_FLOAT        = 0x0020;
   public static final int SYS_ERR          = 0x0040;
-  public static final int SYS_LIST         = 0x0080;
+  public static final int GENERIC_PARAM    = 0x0080;
 
   // mask primitive constants
   public static final int PRIMITIVE        = 0xff00;

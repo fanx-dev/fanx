@@ -157,7 +157,8 @@ class ParameterizedType : ProxyType {
   internal CType parameterize(CType t)
   {
     if (!t.hasGenericParameter) return t
-    nullable := t.isNullable
+    //can't use t.isNullable because the GenericParameter as nullable
+    nullable := t.deref is NullableType
     nn := t.toNonNullable
 
     if (nn is ParameterizedType) {
@@ -361,11 +362,12 @@ class GenericParamType : ProxyType {
   CType bound() { super.root }
   override Str name() { "${parent.name}^${paramName}" }
   override Str qname() { "${parent.qname}^${paramName}" }
+  override Str extName()   { "" }
   CType parent
   Str paramName
   Int index
 
-  new make(CNamespace ns, Str name, CType bound, CType parent, Int index) : super(bound) {
+  new make(CNamespace ns, Str name, CType parent, Int index, CType bound := ns.objType.toNullable) : super(bound) {
     this.parent = parent
     this.paramName = name
     this.index = index
@@ -379,7 +381,7 @@ class GenericParamType : ProxyType {
     return raw
   }
 
-  override Bool isNullable() { return true }
+  override Bool isNullable() { true }
 
   override Bool hasGenericParameter() { true }
 }
