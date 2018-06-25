@@ -1,10 +1,14 @@
 package fan.std;
 
+import fan.sys.ArgErr;
 import fan.sys.IOErr;
 import fan.sys.List;
 
 public class FilePeer {
 	static File make(Uri uri, boolean checkSlash) {
+		if (uri.scheme != null && !uri.scheme.equals("file")) {
+			throw ArgErr.make("Invalid Uri scheme for local file: " + uri);
+		}
 		String path = uri.pathStr;
 		java.io.File jfile = new java.io.File(path);
 	    if (jfile.isDirectory() && !checkSlash && !uri.isDir())

@@ -111,6 +111,4 @@ Auto generate toStr hash make and equals methods.
   data class Point { Float x; Float y }
 ```
 
-## API Different ##
-See more [Api Diff](./ApiDiff.md)
 

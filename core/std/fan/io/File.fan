@@ -277,7 +277,7 @@ abstract const class File
   ** Throw IOErr is this file is not a directory or if there is a
   ** error creating the new directory.  Return the directory created.
   **
-  File createDir(Str name) { (this+`name/`).create }
+  File createDir(Str name) { (this+`$name/`).create }
 
   **
   ** Copy this file or directory to the new specified location.
@@ -320,7 +320,7 @@ abstract const class File
   **   return this.copyTo(dir + this.name, options)
   **
   virtual File copyInto(File dir, [Str:Obj]? options := null) {
-    return copyTo(dir + Uri(this.name), options)
+    return copyTo(dir + `$name/`, options)
   }
 
   **
@@ -336,14 +336,14 @@ abstract const class File
   ** the destination file.  This method is a convenience for:
   **   return this.moveTo(dir + this.name)
   **
-  virtual File moveInto(File dir) { this.moveTo(dir + Uri(this.name)) }
+  virtual File moveInto(File dir) { this.moveTo(dir + `$name/`) }
 
   **
   ** Renaming this file within its current directory.
   ** It is a convenience for:
   **   return this.moveTo(parent + newName)
   **
-  virtual File rename(Str newName) { this.moveTo(parent + Uri(newName)) }
+  virtual File rename(Str newName) { this.moveTo(parent + `$newName/`) }
 
   **
   ** Delete this file.  If this file represents a directory, then

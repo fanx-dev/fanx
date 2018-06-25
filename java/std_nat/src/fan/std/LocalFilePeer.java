@@ -35,6 +35,20 @@ public class LocalFilePeer {
 	}
 	
 	static LocalFile make(java.io.File file, Uri uri) {
+		if (file.exists())
+	    {
+	      if (file.isDirectory())
+	      {
+	        if (!uri.isDir())
+	          throw IOErr.make("Must use trailing slash for dir: " + uri);
+	      }
+	      else
+	      {
+	        if (uri.isDir())
+	          throw IOErr.make("Cannot use trailing slash for file: " + uri);
+	      }
+	    }
+		
 		LocalFile f = new LocalFile();
 		f.peer = file;
 		f.uri = uri;
@@ -90,6 +104,9 @@ public class LocalFilePeer {
 	static List list(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		java.io.File[] ls = jfile.listFiles();
+		if (ls == null) {
+			return List.defVal;
+		}
 		List res = List.make(ls.length);
 		for (java.io.File f : ls) {
 			res.add(javaToFan(f));
@@ -101,7 +118,12 @@ public class LocalFilePeer {
 		try {
 			java.io.File jfile = (java.io.File) self.peer;
 			java.io.File canonical = jfile.getCanonicalFile();
-			return javaToFan(canonical);
+			String path = "file:"+canonical.getCanonicalPath();
+			if (canonical.exists() && canonical.isDirectory()) {
+				path = path + "/";
+			}
+			Uri uri = Uri.fromStr(path);
+			return make(canonical, uri);
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}
@@ -139,7 +161,7 @@ public class LocalFilePeer {
 
 	static File create(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
-		if (jfile.isDirectory())
+		if (self.isDir())
 			createDir(jfile);
 		else
 			createFile(jfile);
@@ -178,10 +200,14 @@ public class LocalFilePeer {
 
 	static void delete(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
+		deleteJFile(jfile);
+	}
+	
+	static void deleteJFile(java.io.File jfile) {
 		if (jfile.exists() && jfile.isDirectory()) {
 			java.io.File[] kids = jfile.listFiles();
 			for (int i = 0; i < kids.length; ++i)
-				kids[i].delete();
+				deleteJFile(kids[i]);
 		}
 
 		try {
@@ -190,7 +216,7 @@ public class LocalFilePeer {
 			// Files.deleteIfExists to cleanup properly
 			java.nio.file.Files.deleteIfExists(jfile.toPath());
 		} catch (java.io.IOException err) {
-			throw fan.sys.IOErr.make("Cannot delete: " + self.toStr(), err);
+			throw fan.sys.IOErr.make("Cannot delete: " + jfile, err);
 		}
 	}
 

@@ -38,9 +38,9 @@ To avoid int boxing, prefer -1 instead of null.
 LinkedList Set and more.
 
 ### DateTime ###
-Add TimePoint class.
-All time APIs are based on a millis ticks.
-The Time rename to TimeOfDay.
+Added TimePoint class.
+All time APIs are based on millis ticks.
+The Time is renamed to TimeOfDay.
 
 ### Depend ###
 The Depend class only support simple version constraint.
@@ -48,5 +48,10 @@ The Depend class only support simple version constraint.
 ### Type Erasure ###
 The List.of and Func.returns are no longer available.
 
+### Map ###
+The Map.caseInsensitive and Map.ordered replaced by Orderedmap and CIMap.
+
+### Static Cotr ###
+The static constructor return nonNullable type.
 
 
