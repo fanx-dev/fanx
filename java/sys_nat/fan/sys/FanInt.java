@@ -442,8 +442,12 @@ public final class FanInt
 
   public static String toChar(long self)
   {
-    if (self < 0 || self > 0xFFFF) throw Err.make("Invalid unicode char: " + self);
+    if (self < 0) throw Err.make("Invalid unicode char: " + self);
     if (self < FanStr.ascii.length) return FanStr.ascii[(int)self];
+    if (self > 0xFFFF) {
+    	int[] codepoint = new int[]{(int)self};
+    	return new String(codepoint, 0, 1);
+    }
     return String.valueOf((char)self);
   }
 

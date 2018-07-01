@@ -11,7 +11,7 @@
 ** bytes to Unicode characters, and encode Unicode characters to bytes.
 **
 @Serializable { simple = true }
-const class Charset
+const abstract class Charset
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,13 @@ const class Charset
   ** found and checked is false return null, otherwise throw ParseErr.
   **
   static new fromStr(Str name, Bool checked := true) {
-    if (name == "UTF-8") return utf8
-    return privateMake(name)
+    switch (name) {
+     case "UTF-8": return utf8
+     case "UTF-16BE": return utf16BE
+     case "UTF-16LE": return utf16LE
+     default:
+       return NativeCharset.fromStr(name)
+    }
   }
 
   **
@@ -53,13 +58,13 @@ const class Charset
   ** An charset for "UTF-16BE" format (Sixteen-bit UCS Transformation
   ** Format, big-endian byte order).
   **
-  const static Charset utf16BE := fromStr("UTF-16BE")
+  const static Charset utf16BE := Utf16(true)
 
   **
   ** An charset for "UTF-16LE" format (Sixteen-bit UCS Transformation
   ** Format, little-endian byte order).
   **
-  const static Charset utf16LE := fromStr("UTF-16LE")
+  const static Charset utf16LE := Utf16(false)
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -91,10 +96,24 @@ const class Charset
   **
   override Str toStr() { name }
 
-  virtual Int encode(Int ch, OutStream out) { throw UnsupportedErr("TODO") }
-  virtual Int encodeArray(Int ch, ByteArray out, Int offset) { throw UnsupportedErr("TODO") }
-  virtual Int decode(InStream in) { throw UnsupportedErr("TODO") }
+  abstract Int encode(Int ch, OutStream out)
+  abstract Int encodeArray(Int ch, ByteArray out, Int offset)
+  abstract Int decode(InStream in)
   //abstract Int decodeArray(ByteArray in, Int offset)
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Native
+//////////////////////////////////////////////////////////////////////////
+
+internal const class NativeCharset : Charset {
+  protected new make(Str name) : super.privateMake(name) {}
+
+  native static Charset? fromStr(Str name)
+
+  native override Int encode(Int ch, OutStream out)
+  native override Int encodeArray(Int ch, ByteArray out, Int offset)
+  native override Int decode(InStream in)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -160,7 +179,6 @@ internal const class Utf8 : Charset {
   }
 
   override Int decode(InStream in) {
-    //i := offset
     c1 := in.r
     if (c1 < 0) return -1
     size := 0
@@ -201,4 +219,95 @@ internal const class Utf8 : Charset {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// UTF-16
+//////////////////////////////////////////////////////////////////////////
+internal const class Utf16 : Charset {
+  const Bool bigEndian
+
+  new make(Bool bigEndian) : super.privateMake(bigEndian?"UTF-16BE" : "UTF-16LE") {
+    this.bigEndian = bigEndian
+  }
+
+  protected virtual Void writeBE16(Int c, OutStream out) {
+    if (bigEndian) {
+      out.write(c.shiftr(8).and(0xFF))
+      out.write(c.and(0xFF))
+    } else {
+      out.write(c.and(0xFF))
+      out.write(c.shiftr(8).and(0xFF))
+    }
+  }
+
+  override Int encode(Int c, OutStream out)  {
+    if (c <= 0xD7FF || (0xE000 <= c && c <= 0xFFFF)) {
+      writeBE16(c, out)
+      return 2
+    }
+    //surrogate pairs
+    else {
+      h := c.shiftr(10).and(0x3FF).or(0xD800)
+      l := c.and(0x3FF).or(0xDc00)
+      writeBE16(h, out)
+      writeBE16(l, out)
+      return 4
+    }
+  }
+
+  protected virtual Void setBE16(Int c, ByteArray out, Int i) {
+    if (bigEndian) {
+      out.set(i, c.shiftr(8).and(0xFF))
+      out.set(i+1, c.and(0xFF))
+    } else {
+      out.set(i, c.and(0xFF))
+      out.set(i+1, c.shiftr(8).and(0xFF))
+    }
+  }
+
+  override Int encodeArray(Int c, ByteArray out, Int offset) {
+    i := offset
+    if (c <= 0xD7FF || (0xE000 <= c && c <= 0xFFFF)) {
+      setBE16(c, out, i)
+      return 2
+    }
+    //surrogate pairs
+    else {
+      h := c.shiftr(10).and(0x3FF).or(0xD800)
+      l := c.and(0x3FF).or(0xDc00)
+      setBE16(h, out, i)
+      setBE16(l, out, i+2)
+      return 4
+    }
+  }
+
+  protected virtual Int readBE16(InStream in) {
+    c1 := in.r
+    c2 := in.r
+    if (c1 < 0 || c2 < 0) return -1
+    if (bigEndian) {
+      return c1.shiftl(8).or(c2)
+    } else {
+      return c1.or(c2.shiftl(8))
+    }
+  }
+
+  override Int decode(InStream in) {
+    c1 := readBE16(in)
+    if (c1 < 0) return -1
+    size := 0
+    ch := 0
+
+    if (c1 <= 0xD7FF || (0xE000 <= c1 && c1 <= 0xFFFF)) {
+      ch = c1
+      size = 2
+    }
+    //surrogate pairs
+    else {
+      c2 := readBE16(in)
+      ch = c1.shiftl(6).or(c2.and(0x3FF))
+      size = 4
+    }
+    return ch
+  }
+}
 

@@ -25,8 +25,10 @@ public class FanStr
   {
     if (chars.size() == 0) return "";
     StringBuilder s = new StringBuilder((int)chars.size());
-    for (int i=0; i<chars.size(); ++i)
-      s.append((char)((Long)chars.get(i)).longValue());
+    for (int i=0; i<chars.size(); ++i) {
+      int codepoint = ((Long)chars.get(i)).intValue();
+      s.appendCodePoint(codepoint);
+    }
     return s.toString();
   }
 
@@ -343,10 +345,13 @@ public class FanStr
   public static List chars(String self)
   {
     int len = self.length();
-//    if (len == 0) return FanType.emptyList(FanInt.type);
-    List list = List.make(len);
-    for (int i=0; i<len; ++i) {
-    	list.add((long)self.charAt(i));
+    if (len == 0) return List.defVal;
+    int size = self.codePointCount(0, len);
+    List list = List.make(size);
+    for (int i=0; i<len;) {
+    	int codepoint = self.codePointAt(i);
+    	list.add((long)codepoint);
+    	i += Character.charCount(codepoint);
     }
     return list;
   }

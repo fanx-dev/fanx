@@ -54,4 +54,6 @@ The Map.caseInsensitive and Map.ordered replaced by Orderedmap and CIMap.
 ### Static Cotr ###
 The static constructor return nonNullable type.
 
+### Charset ###
+It's more Unicode compliant.
 
