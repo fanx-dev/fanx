@@ -55,7 +55,7 @@ abstract class InStream
   ** Throw IOErr on error.
   **
   Int readBuf(Buf buf, Int n) {
-    buf.readFrom(this, n)
+    return buf.readFrom(this, n)
   }
 
   **

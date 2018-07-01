@@ -10,29 +10,18 @@
 ** FileStore represents the storage pool, device, partition, or volume
 ** used to store files.
 **
-const abstract class FileStore
+const class FileStore
 {
   ** Protected constructor for subclasses.
-  //@NoDoc protected new makeNew()
+  new make(|This| f) { f(this) }
 
   ** Total number of bytes in the store or null if unknown.
-  abstract Int? totalSpace()
+  const Int totalSpace
 
   ** Number of bytes available for use by the application or null if unknown.
-  abstract Int? availSpace()
+  const Int availSpace
 
   ** Number of bytes unallocated in the store or null if unknown.
-  abstract Int? freeSpace()
+  const Int freeSpace
 }
 
-**************************************************************************
-** LocalFileStore
-**************************************************************************
-
-internal const class LocalFileStore : FileStore
-{
-  //private new init()
-  native override Int? totalSpace()
-  native override Int? availSpace()
-  native override Int? freeSpace()
-}

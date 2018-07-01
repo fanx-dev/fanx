@@ -10,6 +10,7 @@
 ** File is used to represent a Uri path to a file or directory.
 ** See [examples]`examples::sys-files`.
 **
+@NoPeer
 abstract const class File
 {
 
@@ -174,7 +175,11 @@ abstract const class File
   ** Get the parent directory of this file or null.
   ** Also see `Uri.parent`.
   **
-  abstract File? parent()
+  virtual File? parent() {
+    p := uri.parent
+    if (p == null) return null
+    return make(p)
+  }
 
   **
   ** List the files contained by this directory.  This list includes
@@ -238,7 +243,7 @@ abstract const class File
   **
   @Operator virtual File plus(Uri path, Bool checkSlash := true) {
     u := uri + path
-    return File.make(u)
+    return File.make(u, checkSlash)
   }
 
   **
@@ -246,7 +251,7 @@ abstract const class File
   ** partition, or volume used to store this file.  Raise UnsupportedErr
   ** if this file is not associated with a store.
   **
-  abstract FileStore? store()
+  virtual FileStore? store() { null }
 
 //////////////////////////////////////////////////////////////////////////
 // Management
@@ -311,7 +316,7 @@ abstract const class File
   **
   ** Return the 'to' destination file.
   **
-  abstract File copyTo(File to, [Str:Obj]? options := null)
+  native File copyTo(File to, [Str:Obj]? options := null)
 
 
   **
@@ -320,7 +325,10 @@ abstract const class File
   **   return this.copyTo(dir + this.name, options)
   **
   virtual File copyInto(File dir, [Str:Obj]? options := null) {
-    return copyTo(dir + `$name/`, options)
+    if (!dir.isDir) throw ArgErr("Not a dir: `" + dir + "`")
+    name := this.name
+    if (isDir) name += "/"
+    return copyTo(dir + `$name`, options)
   }
 
   **
@@ -336,14 +344,22 @@ abstract const class File
   ** the destination file.  This method is a convenience for:
   **   return this.moveTo(dir + this.name)
   **
-  virtual File moveInto(File dir) { this.moveTo(dir + `$name/`) }
+  virtual File moveInto(File dir) {
+    if (!dir.isDir) throw ArgErr("Not a dir: `" + dir + "`")
+    name := this.name
+    if (isDir) name += "/"
+    return this.moveTo(dir + `$name`)
+  }
 
   **
   ** Renaming this file within its current directory.
   ** It is a convenience for:
   **   return this.moveTo(parent + newName)
   **
-  virtual File rename(Str newName) { this.moveTo(parent + `$newName/`) }
+  virtual File rename(Str newName) {
+    if (isDir) newName += "/"
+    return this.moveTo(parent + `$newName`)
+  }
 
   **
   ** Delete this file.  If this file represents a directory, then
@@ -481,14 +497,13 @@ internal const class LocalFile : File
   protected const Obj? peer
   native private Void init()
   new make(Uri uri) : super.privateMake(uri) { init }
+
   native override FileStore? store()
-  native override File copyTo(File to, [Str:Obj]? options := null)
 
   native override Bool exists()
   native override Int size()
   native override TimePoint? modified
   native override Str? osPath()
-  native override File? parent()
   native override File[] list()
   native override File normalize()
   native override File create()
@@ -510,14 +525,10 @@ internal const class ZipEntryFile : File
   native private Void init()
   new make(Uri uri) : super.privateMake(uri) { init }
 
-  native override FileStore? store()
-  native override File copyTo(File to, [Str:Obj]? options := null)
-
   native override Bool exists()
   native override Int size()
   native override TimePoint? modified
   native override Str? osPath()
-  native override File? parent()
   native override File[] list()
   native override File normalize()
   native override File create()

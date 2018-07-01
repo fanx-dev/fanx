@@ -313,11 +313,11 @@ public abstract class Func extends FanObj {
 		throw tooFewArgs(8);
 	}
 
-	final boolean callBool(Object a) {
+	public final boolean callBool(Object a) {
 		return ((Boolean) call(a)).booleanValue();
 	}
 
-	final boolean callBool(Object a, Object b) {
+	public final boolean callBool(Object a, Object b) {
 		return ((Boolean) call(a, b)).booleanValue();
 	}
 

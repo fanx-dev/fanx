@@ -21,6 +21,8 @@ const struct class TimePoint
   private new make(Int ticks) {
   }
 
+  static const TimePoint epoch := make(0)
+
   **
   ** Return the current time as millisecond ticks since 1 Jan 1970 UTC.
   **

@@ -4,3 +4,4 @@ java/fan_gen/bin
 *.class
 java/libs
 core/baseTest/test
+java/fan_gen/

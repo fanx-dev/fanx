@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import fan.sys.ArgErr;
+import fan.sys.Func;
 import fan.sys.IOErr;
 import fan.sys.List;
 
@@ -19,55 +20,48 @@ public class LocalFilePeer {
 		String path = self.uri.pathStr;
 		self.peer = new java.io.File(path);
 	}
-	
-	static LocalFile make(String path) {
-		String uri = path.replace("\\", "/");
-		return LocalFile.make(Uri.fromStr(uri));
-	}
-	
+
 	static LocalFile make(java.io.File file) {
 		LocalFile f = new LocalFile();
 		f.peer = file;
 		String uri = file.getPath();
-		if (file.isDirectory()) uri = uri + "/";
+		if (file.isDirectory())
+			uri = uri + "/";
 		f.uri = Uri.fromStr(uri);
 		return f;
 	}
-	
+
 	static LocalFile make(java.io.File file, Uri uri) {
-		if (file.exists())
-	    {
-	      if (file.isDirectory())
-	      {
-	        if (!uri.isDir())
-	          throw IOErr.make("Must use trailing slash for dir: " + uri);
-	      }
-	      else
-	      {
-	        if (uri.isDir())
-	          throw IOErr.make("Cannot use trailing slash for file: " + uri);
-	      }
-	    }
-		
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				if (!uri.isDir())
+					throw IOErr.make("Must use trailing slash for dir: " + uri);
+			} else {
+				if (uri.isDir())
+					throw IOErr.make("Cannot use trailing slash for file: " + uri);
+			}
+		}
+
 		LocalFile f = new LocalFile();
 		f.peer = file;
 		f.uri = uri;
 		return f;
 	}
-	
+
 	static java.io.File getJFile(LocalFile self) {
 		return (java.io.File) self.peer;
 	}
 
-	static FileStore store() {
-		// TODO
-		return null;
+	static FileStore store(LocalFile self) {
+		java.io.File jfile = (java.io.File) self.peer;
+		FileStore fs = new FileStore();
+		boolean spaceKnown = jfile.getTotalSpace() > 0;
+		fs.totalSpace = spaceKnown ? jfile.getTotalSpace() : -1;
+		fs.availSpace = spaceKnown ? jfile.getUsableSpace() : -1;
+		fs.freeSpace = spaceKnown ? jfile.getFreeSpace() : -1;
+		return fs;
 	}
 
-	static File copyTo(LocalFile self, LocalFile to, Map options) {
-		// TODO
-		return null;
-	}
 
 	static boolean exists(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
@@ -81,6 +75,11 @@ public class LocalFilePeer {
 		return jfile.length();
 	}
 
+	static void modified(LocalFile self, TimePoint time) {
+		java.io.File jfile = (java.io.File) self.peer;
+		jfile.setLastModified(time.toMillis());
+	}
+
 	static TimePoint modified(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		long mills = jfile.lastModified();
@@ -90,11 +89,6 @@ public class LocalFilePeer {
 	static String osPath(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		return jfile.getPath();
-	}
-
-	static File parent(LocalFile self) {
-		// java.io.File jfile = (java.io.File)self.peer;
-		return fan.std.File.make(self.uri.parent());
 	}
 
 	static File javaToFan(java.io.File jfile) {
@@ -118,7 +112,7 @@ public class LocalFilePeer {
 		try {
 			java.io.File jfile = (java.io.File) self.peer;
 			java.io.File canonical = jfile.getCanonicalFile();
-			String path = "file:"+canonical.getCanonicalPath();
+			String path = "file:" + canonical.getCanonicalPath();
 			if (canonical.exists() && canonical.isDirectory()) {
 				path = path + "/";
 			}
@@ -202,7 +196,7 @@ public class LocalFilePeer {
 		java.io.File jfile = (java.io.File) self.peer;
 		deleteJFile(jfile);
 	}
-	
+
 	static void deleteJFile(java.io.File jfile) {
 		if (jfile.exists() && jfile.isDirectory()) {
 			java.io.File[] kids = jfile.listFiles();
@@ -228,13 +222,13 @@ public class LocalFilePeer {
 
 	static Buf open(LocalFile self, String mode) {
 		java.io.File jfile = (java.io.File) self.peer;
-		//TODO
+		// TODO
 		return null;
 	}
 
 	static Buf mmap(LocalFile self, String mode, long pos, long size) {
 		java.io.File jfile = (java.io.File) self.peer;
-		//TODO
+		// TODO
 		return null;
 	}
 

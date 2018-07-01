@@ -59,7 +59,7 @@ A struct type is a value type
 The sys pod is written in Fantom with little native code.
 
 It's more portable to write a new backend platforms.
-Future targets might include Objective-C for the iPhone, the LLVM, WebAssembly.
+Future targets might include Objective-C, the LLVM, WebAssembly.
 
 ### Static Namespace ###
 FanCore allow same name static slots in inheritance.
@@ -104,6 +104,12 @@ Run build:
 
 ### Local Return (Not Sure) ###
 A new keyword 'ret' as same as 'return' but only be used in closures.
+```
+  list.eachWhile |v| {
+    if (v == 0) ret null
+    ret v
+  }
+```
 
 ### Data Class (TODO) ###
 Auto generate toStr hash make and equals methods.

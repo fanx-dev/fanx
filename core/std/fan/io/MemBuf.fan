@@ -69,8 +69,17 @@ internal class MemBuf : Buf
   once override OutStream out() { createOut }
   once override InStream in() { createIn }
 
-  protected override Void writeTo(OutStream out, Int len) { out.writeByteArray(buf, pos, len) }
-  protected override Int readFrom(InStream in, Int len) { in.readByteArray(buf, pos, len) }
+  protected override Void writeTo(OutStream out, Int len) {
+    if (pos + len > size) throw IOErr("Not enough bytes to write")
+    out.writeByteArray(buf, pos, len)
+    pos += len
+  }
+  protected override Int readFrom(InStream in, Int len) {
+    grow(pos+len)
+    a := in.readByteArray(buf, pos, len)
+    pos += a
+    return a
+  }
 
   protected Void grow(Int cap) {
     if (cap >= capacity) return
