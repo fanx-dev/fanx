@@ -28,9 +28,13 @@ const abstract class Charset
      case "UTF-8": return utf8
      case "UTF-16BE": return utf16BE
      case "UTF-16LE": return utf16LE
-     default:
-       return NativeCharset.fromStr(name)
     }
+    res := NativeCharset.fromStr(name)
+    if (res == null) {
+      if (checked) throw ParseErr("invalid charset $name")
+      return utf8
+    }
+    return res
   }
 
   **
