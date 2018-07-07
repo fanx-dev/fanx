@@ -56,7 +56,7 @@ public class SysOutStreamPeer {
 		}
 	}
 
-	public OutStream writeByteArray(SysOutStream self, ByteArray buf, long off, long len) {
+	public OutStream writeBytes(SysOutStream self, ByteArray buf, long off, long len) {
 		try {
 			this.outStream.write(buf.array(), (int) off, (int) len);
 			return self;

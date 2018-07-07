@@ -82,6 +82,8 @@ native final class StrBuf
   **
   This addChar(Int ch)
 
+  This addStr(Str str, Int off, Int len)
+
   **
   ** Add x.toStr to the end of the buffer.  If the buffer is not
   ** empty, then first add the specified separator which defaults

@@ -42,8 +42,8 @@ abstract class InStream
   ** Read the next unsigned byte from the input stream.
   ** Return -1 if at end of stream.  Throw IOErr on error.
   **
-  virtual Int read() { r }
-  abstract Int r()
+  abstract Int read()
+  internal Int r() { read }
 
   **
   ** Attempt to read the next n bytes into the Buf at it's current
@@ -55,13 +55,13 @@ abstract class InStream
   ** Throw IOErr on error.
   **
   Int readBuf(Buf buf, Int n) {
-    return buf.readFrom(this, n)
+    return buf.pipeFrom(this, n)
   }
 
   **
   ** Reads up to len bytes of data from the input stream into an array of bytes.
   **
-  abstract Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  abstract Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size)
 
   **
   ** Pushback a byte so that it is the next byte to be read.  There
@@ -305,7 +305,7 @@ abstract class InStream
   virtual Str readUtf() {
     sz := readS2
     ba := ByteArray(sz)
-    readByteArray(ba)
+    readBytes(ba)
     return Str.fromUtf8(ba)
   }
 
@@ -325,10 +325,7 @@ abstract class InStream
   ** Throw IOErr if there is a problem reading the stream, or
   ** an invalid character encoding is encountered.
   **
-  Int readChar() { rChar }
-  protected virtual Int rChar() {
-    charset.decode(this)
-  }
+  virtual Int readChar() { charset.decode(this) }
 
   **
   ** Pushback a char so that it is the next char to be read.  This
@@ -350,7 +347,7 @@ abstract class InStream
   ** Return null if at end of stream.
   **
   virtual Int peekChar() {
-    x := rChar()
+    x := readChar()
     if (x != -1) unreadChar(x)
     return x
   }
@@ -431,7 +428,7 @@ abstract class InStream
     if (max == -1) max = Int.maxVal
     sb := StrBuf()
     while (true) {
-      c := rChar
+      c := readChar
       if (c < 0) break
       terminate := false
       if (callback == null)
@@ -655,9 +652,9 @@ class ProxInStream : InStream
   }
 
   override Int avail() { in.avail }
-  override Int r() { in.r }
+  override Int read() { in.read }
   override Int skip(Int n) { in.skip(n) }
-  override Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size) { in.readByteArray(ba, off, len) }
+  override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) { in.readBytes(ba, off, len) }
   override This unread(Int n) { in.unread(n) }
   override Bool close() { in.close }
 
@@ -678,9 +675,9 @@ internal class SysInStream : InStream
   static native Int toSigned(Int val, Int byteNum)
 
   native override Int avail()
-  native override Int r()
+  native override Int read()
   native override Int skip(Int n)
-  native override Int readByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size)
   native override This unread(Int n)
   native override Bool close()
 
@@ -693,3 +690,5 @@ internal class SysInStream : InStream
   //native override Str? readLine(Int max := -1)
   //native override Str readAllStr(Bool normalizeNewlines := true)
 }
+
+

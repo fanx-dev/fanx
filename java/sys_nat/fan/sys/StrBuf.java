@@ -104,6 +104,12 @@ public class StrBuf
 	sb.appendCodePoint((int)ch);
     return this;
   }
+  
+  public StrBuf addStr(String str, long off, long len)
+  {
+	sb.append(str, (int)off, (int)(off+len));
+    return this;
+  }
 
   public StrBuf join(Object x) { return join(x, " "); }
   public StrBuf join(Object x, String sep)
@@ -179,6 +185,6 @@ public class StrBuf
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  StringBuilder sb;
+  public StringBuilder sb;
 
 }

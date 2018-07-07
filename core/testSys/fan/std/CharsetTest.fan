@@ -9,7 +9,6 @@
 **
 ** CharsetTest
 **
-@Js
 class CharsetTest : Test
 {
 

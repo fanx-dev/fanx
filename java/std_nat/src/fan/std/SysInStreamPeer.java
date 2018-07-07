@@ -55,7 +55,7 @@ public class SysInStreamPeer {
 		}
 	}
 
-	public long r(SysInStream self) {
+	public long read(SysInStream self) {
 		try {
 			long res = this.inputStream.read();
 //			if (res == -1) return FanInt.invalidVal;
@@ -73,7 +73,7 @@ public class SysInStreamPeer {
 		}
 	}
 
-	public long readByteArray(SysInStream self, ByteArray ba, long off, long len) {
+	public long readBytes(SysInStream self, ByteArray ba, long off, long len) {
 		try {
 			return this.inputStream.read(ba.array(), (int)off, (int)len);
 		} catch (IOException e) {

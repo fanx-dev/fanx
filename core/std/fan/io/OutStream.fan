@@ -46,14 +46,14 @@ abstract class OutStream
   ** IOErr on error.  Return this.
   **
   This writeBuf(Buf buf, Int n := buf.remaining) {
-    buf.writeTo(this, n)
+    buf.pipeTo(this, n)
     return this
   }
 
   **
   ** Writes len bytes from the specified byte array starting at offset off to this output stream.
   **
-  abstract This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  abstract This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size)
 
   **
   ** Flush the stream so any buffered bytes are written out.  Default
@@ -180,7 +180,7 @@ abstract class OutStream
   virtual This writeUtf(Str s) {
     ba := s.toUtf8
     writeI2(ba.size)
-    writeByteArray(ba)
+    writeBytes(ba)
     return this
   }
 
@@ -302,7 +302,7 @@ class ProxyOutStream : OutStream
   }
 
   override This write(Int byte) { out.write(byte); return this }
-  override This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size) { out.writeByteArray(ba, off, len); return this }
+  override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) { out.writeBytes(ba, off, len); return this }
   override This sync() { out.sync; return this }
   override This flush() { out.flush; return this }
   override Bool close() { out.close }
@@ -326,7 +326,7 @@ internal class SysOutStream : OutStream {
   }
 
   native override This write(Int byte)
-  native override This writeByteArray(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size)
   native override This sync()
   native override This flush()
   native override Bool close()

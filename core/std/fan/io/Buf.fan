@@ -106,7 +106,7 @@ rtconst abstract class Buf
   ** size then future writes will rewrite the existing bytes without
   ** growing size.  Change the position with `seek`.
   **
-  abstract Int pos
+  abstract Int pos { internal set }
 
   **
   ** Return the remaining number of bytes to read: size-pos.
@@ -150,7 +150,18 @@ rtconst abstract class Buf
   ** method is accessed via the [] shortcut operator.  Throw IndexErr
   ** if index out of range.
   **
-  @Operator abstract Int get(Int index)
+  @Operator Int get(Int index) {
+    size := this.size
+    if (pos < 0) pos = size + pos
+    if (pos < 0 || pos >= size) throw IndexErr.make("$pos")
+    return getByte(pos)
+  }
+
+  protected abstract Int getByte(Int pos)
+  protected abstract Void setByte(Int pos, Int v)
+
+  protected abstract Int getBytes(Int pos, ByteArray dst, Int off, Int len)
+  protected abstract Void setBytes(Int pos, ByteArray src, Int off, Int len)
 
   **
   ** Return a new buffer containing the bytes in the specified absolute
@@ -168,12 +179,29 @@ rtconst abstract class Buf
   **   buf[0..<2]  => 0x[aabb]
   **   buf[1..-2]  => 0x[bbcc]
   **
-  @Operator abstract Buf getRange(Range range)
+  @Operator virtual Buf getRange(Range range) {
+    size := this.size
+    s := range.startIndex(size);
+    e := range.endIndex(size);
+    n := (e - s + 1);
+    if (n < 0) throw IndexErr.make("$range");
+
+    a := ByteArray(n)
+    getBytes(s, a, 0, n)
+    //a.copyFrom(buf, s, 0, n)
+    return MemBuf.makeBuf(a)
+  }
 
   **
   ** Create a new buffer in memory which deeply clones this buffer.
   **
-  abstract Buf dup()
+  virtual Buf dup() {
+    size := this.size
+    a := ByteArray(size)
+    getBytes(0, a, 0, size)
+    //a.copyFrom(buf, 0, 0, size)
+    return MemBuf.makeBuf(a)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Modification
@@ -185,7 +213,13 @@ rtconst abstract class Buf
   ** buffer.  The set method is accessed via the []= shortcut operator.
   ** Return this.  Throw IndexErr if index is out of range.
   **
-  @Operator abstract This set(Int index, Int byte)
+  @Operator This set(Int index, Int byte) {
+    size := this.size
+    if (pos < 0) pos = size + pos
+    if (pos < 0 || pos >= size) throw IndexErr.make("$pos")
+    setByte(pos, byte)
+    return this
+  }
 
   **
   ** Read the buffer for a fresh read by reseting the buffer's pos
@@ -198,7 +232,10 @@ rtconst abstract class Buf
   ** Trim the capacity such that the underlying storage is optimized
   ** for the current size.  Return this.
   **
-  abstract This trim()
+  virtual This trim() {
+    if (size != capacity) capacity = size
+    return this
+  }
 
   **
   ** If this buffer is backed by a file, then close it.  If a memory
@@ -209,10 +246,10 @@ rtconst abstract class Buf
   abstract Bool close()
 
   **
-  ** If this Buf is backed by a file, then force all changes
-  ** to the storage device.  Throw IOErr on error.  Return this.
+  ** If this Buf is backed by a file, then fsync all changes to
+  ** the storage device.  Throw IOErr on error.  Return this.
   **
-  abstract This flush()
+  abstract This sync()
 
   **
   ** Byte order mode for both OutStream and InStream.
@@ -231,7 +268,13 @@ rtconst abstract class Buf
   ** Examples:
   **   Buf().fill(0xff, 4)  =>  0xffffffff
   **
-  abstract This fill(Int byte, Int times)
+  virtual This fill(Int b, Int times) {
+    if (capacity < size+times) capacity = size+times
+    out := this.out
+    for (i := 0; i < times; ++i)
+      out.write(b)
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // OutStream
@@ -243,7 +286,7 @@ rtconst abstract class Buf
   ** If this buffer is backed by a file, then 'out.close'
   ** will not close the file - you must use `Buf.close`.
   **
-  abstract OutStream out()
+  virtual once OutStream out() { BufOutStream(this) }
 
   **
   ** Convenience for [out.write]`OutStream.write`
@@ -357,7 +400,7 @@ rtconst abstract class Buf
   ** If this buffer is backed by a file, then 'in.close'
   ** will not close the file - you must use `Buf.close`.
   **
-  abstract InStream in()
+  virtual once InStream in() { BufInStream(this) }
 
   **
   ** Convenience for [in.read]`InStream.read`
@@ -614,8 +657,28 @@ rtconst abstract class Buf
   native Buf hmac(Str algorithm, Buf key)
 
 
-  protected abstract Void writeTo(OutStream out, Int len)
-  protected abstract Int readFrom(InStream in, Int len)
+  protected virtual Void pipeTo(OutStream out, Int len) {
+    temp := ByteArray(1024)
+    total := 0
+    while (total < len) {
+      n := getBytes(pos, temp, 0, temp.size.min(len - total))
+      out.writeBytes(temp, 0, n)
+      total += n
+    }
+  }
+
+  protected virtual Int pipeFrom(InStream in, Int len) {
+    total := 0
+    ba := ByteArray(1024)
+    while (total < len) {
+      n := in.readBytes(ba, 0, ba.size.min(len - total))
+      if (n < 0)
+        return total == 0 ? -1 : total
+      setBytes(pos, ba, 0, n)
+      total += n
+    }
+    return total
+  }
 }
 
 **************************************************************************
@@ -624,43 +687,32 @@ rtconst abstract class Buf
 
 internal class FileBuf : Buf
 {
-  new make(Str filename) : super.privateMake() {
-    init(filename)
+  new make(File file, Str mode) : super.privateMake() {
+    init(file, mode)
   }
 
-  native Void init(Str filename)
+  protected native Void init(File file, Str mode)
 
   native override Int size
   native override Int capacity
   native override Int pos
 
-  @Operator native override Int get(Int index)
-  @Operator native override Buf getRange(Range range)
+  native override Int getByte(Int index)
+  native override Void setByte(Int index, Int byte)
 
-  native override Buf dup()
+  native override Int getBytes(Int pos, ByteArray dst, Int off, Int len)
+  native override Void setBytes(Int pos, ByteArray src, Int off, Int len)
 
-  @Operator native override This set(Int index, Int byte)
-  native override This trim()
   native override Bool close()
-  native override This flush()
+  native override This sync()
 
   override Endian endian {
-    set { out.endian = it; in.endian = it }
+    set { in.endian = it; out.endian = it }
     get { out.endian }
   }
   override Charset charset {
-    set { out.charset = it; in.charset = it }
+    set { in.charset = it; out.charset = it }
     get { out.charset }
   }
-  native override This fill(Int byte, Int times)
-
-  private native OutStream createOut()
-  private native InStream createIn()
-
-  once override OutStream out() { createOut }
-  once override InStream in() { createIn }
-
-  protected override native Void writeTo(OutStream out, Int len)
-  protected override native Int readFrom(InStream in, Int len)
 }
 
