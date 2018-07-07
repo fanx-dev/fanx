@@ -159,7 +159,7 @@ abstract class OutStream
   ** order according to `Float.bits`.  This is paired with `InStream.readF8`.
   ** Throw IOErr on error.  Return this.
   **
-  virtual This writeF8(Float r) { writeI4(r.bits) }
+  virtual This writeF8(Float r) { writeI8(r.bits) }
 
   **
   ** Write a decimal as a string according to `writeUtf`.
@@ -227,7 +227,7 @@ abstract class OutStream
   ** Convenience for 'writeChars(obj.toStr + "\n")'.  If obj
   ** is null then print the string "null\n".  Return this.
   **
-  virtual This printLine(Obj? obj := "") { print(obj).write('\n') }
+  virtual This printLine(Obj? obj := "") { print(obj).writeChar('\n') }
 
   **
   ** Write a serialized object from the stream according to

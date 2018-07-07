@@ -158,6 +158,7 @@ internal const class Utf8 : Charset {
 
   override Int encodeArray(Int c, ByteArray out, Int offset) {
     i := offset
+    //echo("encode1 $c")
     if (c <= 0x007F) {
       out[i++] = c
     }
@@ -169,6 +170,7 @@ internal const class Utf8 : Charset {
       out[i++] = c.shiftr(12).and(0x0F).or(0xE0)
       out[i++] = c.shiftr(6).and(0x3F).or(0x80)
       out[i++] = c.shiftr(0).and(0x3F).or(0x80)
+      //echo("encode ${out[i-3]}, ${out[i-2]}, ${out[i-1]}")
     }
     else if (c <= 0x10FFFF) {
       out[i++] = c.shiftr(18).and(0x07).or(0xF0)
@@ -187,6 +189,7 @@ internal const class Utf8 : Charset {
     if (c1 < 0) return -1
     size := 0
     ch := 0
+    //echo("decod1 $c1")
 
     if (c1 < 0x80) {
       ch = c1
@@ -201,9 +204,12 @@ internal const class Utf8 : Charset {
     else if (c1 < 0xF0) {
       c2 := in.r
       c3 := in.r
+      //echo("decode $c1, $c2, $c3")
+      if ((c2.and(0xC0) != 0x80) || (c3.and(0xC0) != 0x80))
+            throw IOErr("Invalid UTF-8 encoding")
       ch = c1.and(0x0F).shiftl(12)
              .or(c2.and(0x3F).shiftl(6))
-             .or(c2.and(0x3F))
+             .or(c3.and(0x3F))
       size = 3
     }
     else if (c1 < 0xF8) {
@@ -212,8 +218,8 @@ internal const class Utf8 : Charset {
       c4 := in.r
       ch = c1.and(0x07).shiftl(18)
              .or(c2.and(0x3F).shiftl(12))
-             .or(c2.and(0x3F).shiftl(6))
-             .or(c2.and(0x3F))
+             .or(c3.and(0x3F).shiftl(6))
+             .or(c4.and(0x3F))
       size = 4
     }
     else {

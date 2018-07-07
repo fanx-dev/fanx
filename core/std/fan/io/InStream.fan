@@ -335,7 +335,7 @@ abstract class InStream
   virtual This unreadChar(Int b) {
     ba := ByteArray(8)
     n := charset.encodeArray(b, ba, 0)
-    for (i:=0; i<n; ++i) {
+    for (i:=n-1; i>=0; --i) {
       unread(ba[i])
     }
     return this
@@ -363,7 +363,7 @@ abstract class InStream
     buf := StrBuf()
     for (i:=n; i>0; --i)
     {
-      ch := charset.decode(this)
+      ch := readChar
       if (ch < 0) throw IOErr("Unexpected end of stream")
       buf.addChar(ch)
     }
@@ -389,14 +389,14 @@ abstract class InStream
     if (max == 0) return ""
     buf := StrBuf()
     for (i:=max; i>0; --i) {
-      c := charset.decode(this)
+      c := readChar
       if (c < 0) {
         if (buf.size == 0) return null
         break
       }
       else if (c == '\n') break
       else if (c == '\r') {
-        c = charset.decode(this)
+        c = readChar
         if (c >= 0 && c != '\n') unreadChar(c);
         break
       }
@@ -427,9 +427,12 @@ abstract class InStream
   Str? readStrToken(Int max := -1, |Int ch->Bool|? callback := null) {
     if (max == -1) max = Int.maxVal
     sb := StrBuf()
-    while (true) {
+    while (sb.size < max) {
       c := readChar
-      if (c < 0) break
+      if (c < 0) {
+        if (sb.size == 0) return null
+        break
+      }
       terminate := false
       if (callback == null)
         terminate = c.isSpace
@@ -440,8 +443,7 @@ abstract class InStream
         unreadChar(c)
         break
       }
-      sb.add(c)
-      if (sb.size >= max) break
+      sb.addChar(c)
     }
     return sb.toStr
   }
@@ -456,12 +458,16 @@ abstract class InStream
   ** returning.  If max is null, then no boundary is enforced except
   ** of course the end of the stream.
   **
-  Str readNullTerminatedStr(Int max := -1) {
+  Str? readNullTerminatedStr(Int max := -1) {
     if (max < 0) max = Int.maxVal
     buf := StrBuf()
-    while (true) {
-      ch := charset.decode(this)
-      if (ch < 0 || ch == 0) break
+    while (buf.size < max) {
+      ch := readChar
+      if (ch < 0) {
+        if (buf.size == 0) return null
+        break
+      }
+      if (ch == 0) break
       buf.addChar(ch)
     }
     return buf.toStr
@@ -525,11 +531,14 @@ abstract class InStream
     buf := StrBuf()
     last := -1
     while (true) {
-      ch := charset.decode(this)
+      ch := readChar
       if (ch < 0) break
       if (normalizeNewlines)
       {
-        if (last == '\r' && ch == '\n') continue
+        if (last == '\r' && ch == '\n') {
+          last = -1
+          continue
+        }
         last = ch
         if (ch == '\r') ch = '\n'
       }

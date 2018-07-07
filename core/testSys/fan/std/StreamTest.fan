@@ -48,8 +48,8 @@ class StreamTest : Test
 
     // read one byte back
     verifyEq(in.read, 'x')
-    verifyEq(in.read, null)
-    verifyEq(in.read, null)
+    verifyEq(in.read, -1)
+    verifyEq(in.read, -1)
     in.close()
   }
 
@@ -100,7 +100,7 @@ class StreamTest : Test
     verifyEq(buf[4], 'f')
 
     // read at end of stream
-    verifyEq(in.readBuf(buf, f.size), null)
+    verifyEq(in.readBuf(buf, f.size), -1)
     verifyEq(buf.size, 5)
     verifyEq(buf.pos,  5)
     verifyEq(buf.remaining, 0)
@@ -116,7 +116,7 @@ class StreamTest : Test
       verifyEq(buf.pos,  i+1)
       verifyEq(buf.remaining, 0)
     }
-    verifyEq(in.readBuf(buf, f.size), null)
+    verifyEq(in.readBuf(buf, f.size), -1)
     verifyEq(buf.size, 5)
     verifyEq(buf.pos,  5)
     verifyEq(buf[0], 'f')
@@ -225,7 +225,7 @@ class StreamTest : Test
     if (out.endian !== Endian.little) throw Err()
     out.writeI2(0xaabb)
     out.writeI4(0xaabbccdd)
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       out.writeI8(0xaabbccdd11223344)
     }
@@ -233,7 +233,7 @@ class StreamTest : Test
     out.writeI2(-2398)
     out.writeI4(0xaabbccdd)
     out.writeI4(-123_456)
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       out.writeI8(0xaabbccdd11223344)
     }
@@ -321,7 +321,7 @@ class StreamTest : Test
     // little endian
     test.verifyEq(in.readU2, 0xbbaa)
     test.verifyEq(in.readU4, 0xddccbbaa)
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       test.verifyEq(in.readS8, 0x44332211ddccbbaa)
     }
@@ -345,10 +345,10 @@ class StreamTest : Test
       // Java PushbackInputStream seems broken
       // test.verifyEq(in.skip(6), 4)
       in.skip(6)
-      test.verifyEq(in.peek, null)
-      test.verifyEq(in.read, null)
-      test.verifyEq(in.peek, null)
-      test.verifyEq(in.read, null)
+      test.verifyEq(in.peek, -1)
+      test.verifyEq(in.read, -1)
+      test.verifyEq(in.peek, -1)
+      test.verifyEq(in.read, -1)
 
       test.verifyErr(IOErr#) { in.readBufFully(null, 1) }
       test.verifyErr(IOErr#) { in.readU1 }
@@ -471,9 +471,9 @@ class StreamTest : Test
     verifyEq(in.peekChar, 0xabcd)
     verifyEq(in.readChar, 0xabcd)
     verifyEq(in.read,     0x33)
-    verifyEq(in.readChar, null)
-    verifyEq(in.peekChar, null)
-    verifyEq(in.read,     null)
+    verifyEq(in.readChar, -1)
+    verifyEq(in.peekChar, -1)
+    verifyEq(in.read,     -1)
     in.close
   }
 
@@ -518,10 +518,10 @@ class StreamTest : Test
     verifyEq(in.peekChar, 0xf6)
     verifyEq(in.readChar, 0xf6)
     verifyEq(in.readChar, 0xabcd)
-    verifyEq(in.readChar, null)
-    verifyEq(in.peekChar, null)
-    verifyEq(in.read,     null)
-    verifyEq(in.readChar, null)
+    verifyEq(in.readChar, -1)
+    verifyEq(in.peekChar, -1)
+    verifyEq(in.read,     -1)
+    verifyEq(in.readChar, -1)
     in.close
   }
 
@@ -552,8 +552,8 @@ class StreamTest : Test
     verifyEq(in.readChar, ' ')
     verifyEq(in.readChar, 0xff)
     verifyEq(in.readChar, 0xbcde)
-    verifyEq(in.read, null)
-    verifyEq(in.readChar, null)
+    verifyEq(in.read, -1)
+    verifyEq(in.readChar, -1)
     in.close
   }
 
@@ -1107,7 +1107,7 @@ class StreamTest : Test
     verifyEq(in.readChars(2), "yz")
     in.unreadChar('@')
     verifyEq(in.readChar, '@')
-    verifyEq(in.readChar, null)
+    verifyEq(in.readChar, -1)
     verifyEq(in.close(), true)
   }
 

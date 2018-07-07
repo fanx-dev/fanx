@@ -2,26 +2,40 @@
 **************************************************************************
 ** MemBuf
 **************************************************************************
-
-internal class MemBuf : Buf
+@NoDoc
+class MemBuf : Buf
 {
   protected ByteArray buf
 
   new make(Int cap) : super.privateMake() {
-    size = 0
-    pos = 0
     buf = ByteArray(cap)
+    &size = 0
+    &pos = 0
   }
 
   new makeBuf(ByteArray buf, Int size := buf.size, Int pos := 0) : super.privateMake() {
     this.buf = buf
-    this.size = size
+    this.&size = size
     this.pos = pos
   }
 
-  override Int size
+  override Int size {
+    set {
+      if (it > capacity) {
+        capacity = it
+      }
+      &size = it
+    }
+  }
   override Int capacity { get{ return buf.size } set{ buf.realloc(it) } }
-  override Int pos
+  override Int pos {
+    set {
+      if (it > size) {
+        size = it
+      }
+      &pos = it
+    }
+  }
 
   override Int getBytes(Int pos, ByteArray dst, Int off, Int len) {
     dst.copyFrom(buf, pos, off, len)
@@ -60,7 +74,9 @@ internal class MemBuf : Buf
       capacity = pos + len
     }
     a := in.readBytes(buf, pos, len)
-    pos += a
+    if (a > 0) {
+      pos += a
+    }
     return a
   }
 

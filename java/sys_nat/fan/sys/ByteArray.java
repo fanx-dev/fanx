@@ -27,7 +27,8 @@ public class ByteArray {
 	}
 
 	public long get(long pos) {
-		return array[(int)pos];
+		byte b = array[(int)pos];
+		return b & 0xFF;
 	}
 
 	public void set(long pos, long val) {
@@ -39,6 +40,7 @@ public class ByteArray {
 	}
 
 	public boolean realloc(long newSize) {
+		if (array.length == newSize) return true;
 		byte[] na = new byte[(int)newSize];
 		int len = array.length > na.length ? na.length : array.length;
 		System.arraycopy(array, 0, na, 0, len);

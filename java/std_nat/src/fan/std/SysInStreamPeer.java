@@ -85,7 +85,7 @@ public class SysInStreamPeer {
 		if (this.inputStream instanceof PushbackInputStream) {
 			((PushbackInputStream) this.inputStream).unread(n);
 		} else {
-			PushbackInputStream p = new PushbackInputStream(this.inputStream);
+			PushbackInputStream p = new PushbackInputStream(this.inputStream, 128);
 			this.init(p);
 			((PushbackInputStream) this.inputStream).unread(n);
 		}

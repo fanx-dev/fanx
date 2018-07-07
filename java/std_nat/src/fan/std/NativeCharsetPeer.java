@@ -12,7 +12,7 @@ import fan.sys.IOErr;
 public class NativeCharsetPeer {
 	java.nio.charset.Charset jcharset;
 
-	public NativeCharsetPeer make(NativeCharset charset) {
+	static public NativeCharsetPeer make(NativeCharset charset) {
 		return new NativeCharsetPeer();
 	}
 

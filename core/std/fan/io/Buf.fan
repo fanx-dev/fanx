@@ -150,7 +150,7 @@ rtconst abstract class Buf
   ** method is accessed via the [] shortcut operator.  Throw IndexErr
   ** if index out of range.
   **
-  @Operator Int get(Int index) {
+  @Operator Int get(Int pos) {
     size := this.size
     if (pos < 0) pos = size + pos
     if (pos < 0 || pos >= size) throw IndexErr.make("$pos")
@@ -213,7 +213,7 @@ rtconst abstract class Buf
   ** buffer.  The set method is accessed via the []= shortcut operator.
   ** Return this.  Throw IndexErr if index is out of range.
   **
-  @Operator This set(Int index, Int byte) {
+  @Operator This set(Int pos, Int byte) {
     size := this.size
     if (pos < 0) pos = size + pos
     if (pos < 0 || pos >= size) throw IndexErr.make("$pos")
@@ -675,6 +675,7 @@ rtconst abstract class Buf
       if (n < 0)
         return total == 0 ? -1 : total
       setBytes(pos, ba, 0, n)
+      this.pos += n
       total += n
     }
     return total
