@@ -8,8 +8,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import fan.reflect.*;
+import fan.std.LocalFile;
+import fan.std.LocalFilePeer;
 import fan.std.Log;
 import fan.std.Map;
+import fan.std.Uri;
 
 public class Pod extends FanObj {
 	FPod fpod;
@@ -22,6 +25,7 @@ public class Pod extends FanObj {
 
 	Log log;
 	List types;
+	Uri uri;
 
 	private static Type typeof;
 
@@ -56,7 +60,7 @@ public class Pod extends FanObj {
 	}
 
 	public static Pod find(String name, boolean checked) {
-		FPod p = Sys.findPod(name);
+		FPod p = Sys.findPod(name, false);
 		if (p == null) {
 			if (checked)
 				throw UnknownPodErr.make(name);
@@ -66,11 +70,13 @@ public class Pod extends FanObj {
 	}
 
 	public static List list() {
-		java.util.List<String> names = Sys.listPod();
+		java.util.List<String> names = Sys.listPodFiles();
 		List list = List.make(names.size());
 		for (String n : names) {
-			list.add(find(n));
+			Uri f = Uri.fromStr(n);
+			list.add(find(f.basename()));
 		}
+		list = (List) list.toImmutable();
 		return list;
 	}
 
@@ -99,11 +105,11 @@ public class Pod extends FanObj {
 		return depends;
 	}
 
-	// public final Uri uri() {
-	// if (uri == null)
-	// uri = Uri.fromStr("fan://" + name);
-	// return uri;
-	// }
+	public final Uri uri() {
+		if (uri == null)
+			uri = Uri.fromStr("fan://" + name());
+		return uri;
+	}
 
 	public final String toStr() {
 		return name();
@@ -185,61 +191,70 @@ public class Pod extends FanObj {
 	//////////////////////////////////////////////////////////////////////////
 	// Files
 	//////////////////////////////////////////////////////////////////////////
+	
+	private List filesList;
+	private Map filesMap = Map.make(32);
 
-	// public final List files() {
-	// loadFiles();
-	// return filesList;
-	// }
-	//
-	// public final fan.sys.File file(Uri uri) {
-	// return file(uri, true);
-	// }
-	//
-	// public final fan.sys.File file(Uri uri, boolean checked) {
-	// loadFiles();
-	// if (!uri.isPathAbs())
-	// throw ArgErr.make("Pod.files Uri must be path abs: " + uri);
-	// if (uri.auth() != null && !uri.toStr().startsWith(uri().toStr()))
-	// throw ArgErr.make("Invalid base uri `" + uri + "` for `" + uri() + "`");
-	// else
-	// uri = this.uri().plus(uri);
-	// fan.sys.File f = (fan.sys.File) filesMap.get(uri);
-	// if (f != null || !checked)
-	// return f;
-	// throw UnresolvedErr.make(uri.toStr());
-	// }
-	//
-	// private void loadFiles() {
-	// synchronized (filesMap) {
-	// if (filesList != null)
-	// return;
-	// if (fpod.store == null)
-	// throw Err.make("Not backed by pod file: " + name);
-	// List list;
-	// try {
-	// this.filesList = (List) fpod.store.podFiles(uri()).toImmutable();
-	// } catch (java.io.IOException e) {
-	// e.printStackTrace();
-	// throw Err.make(e);
-	// }
-	// for (int i = 0; i < filesList.sz(); ++i) {
-	// fan.sys.File f = (fan.sys.File) filesList.get(i);
-	// filesMap.put(f.uri(), f);
-	// }
-	// }
-	// }
-	//
-	// public fan.sys.File loadFile() {
-	// if (loadFile == null) {
-	// if (fpod == null)
-	// return null;
-	// java.io.File jfile = fpod.loadFile();
-	// if (jfile == null)
-	// return null;
-	// loadFile = new LocalFile(jfile).normalize();
-	// }
-	// return (fan.sys.File) loadFile;
-	// }
+	public final List files() {
+		loadFiles();
+		return filesList;
+	}
+
+	public final fan.std.File file(Uri uri) {
+		return file(uri, true);
+	}
+
+	public final fan.std.File file(Uri uri, boolean checked) {
+		loadFiles();
+		if (!uri.isPathAbs())
+			throw ArgErr.make("Pod.files Uri must be path abs: " + uri);
+		if (uri.auth() != null && !uri.toStr().startsWith(uri().toStr()))
+			throw ArgErr.make("Invalid base uri `" + uri + "` for `" + uri() + "`");
+		else
+			uri = this.uri().plus(uri);
+		fan.std.File f = (fan.std.File) filesMap.get(uri);
+		if (f != null || !checked)
+			return f;
+		throw UnresolvedErr.make(uri.toStr());
+	}
+
+	private void loadFiles() {
+		synchronized (filesMap) {
+			if (filesList != null)
+				return;
+			if (fpod.store == null)
+				throw Err.make("Not backed by pod file: " + name());
+			List list;
+			try {
+				java.util.List<fanx.fcode.ZipEntryFile> jlist = fpod.store.podFiles(uri().toStr());
+				list = List.make(jlist.size());
+				for (fanx.fcode.ZipEntryFile j : jlist) {
+					ZipEntryFile f = new ZipEntryFile(j.parent, j.entry, Uri.fromStr(j.uri));
+					list.add(f);
+				}
+				this.filesList = (List) list.toImmutable();
+			} catch (java.io.IOException e) {
+				e.printStackTrace();
+				throw Err.make(e);
+			}
+			for (int i = 0; i < filesList.size(); ++i) {
+				fan.std.File f = (fan.std.File) filesList.get(i);
+				filesMap.set(f.uri, f);
+			}
+		}
+	}
+
+//	public fan.std.File loadFile() {
+//		if (loadFile == null) {
+//			if (fpod == null)
+//				return null;
+//			java.io.File jfile = fpod.loadFile();
+//			if (jfile == null)
+//				return null;
+//			loadFile = LocalFilePeer.make(jfile).normalize();
+//		}
+//		return (fan.std.File) loadFile;
+//	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Utils

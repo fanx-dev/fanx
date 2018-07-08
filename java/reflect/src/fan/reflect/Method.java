@@ -221,7 +221,9 @@ public class Method extends Slot {
 				throw ArgErr.make("Too few arguments: " + argc);
 			}
 			if (argc > max) {
-				throw ArgErr.make("Too many arguments: " + argc);
+				//throw ArgErr.make("Too many arguments: " + argc);
+				//ignore more args
+				argc = max;
 			}
 			
 			if (!isStatic) --argc;
@@ -277,6 +279,42 @@ public class Method extends Slot {
 				}
 				return invoke(a, args, jm);
 			}
+		}
+		
+		public Object callList(List args) {
+			boolean isStatic = !isInstance();
+			int min = minParams();
+			int max = isStatic ? (int)params.size() : (int)params.size()+1;
+			
+			int argc = args == null ? 0 : (int)args.size();
+			if (argc < min) {
+				throw ArgErr.make("Too few arguments: " + argc);
+			}
+			if (argc > max) {
+				//throw ArgErr.make("Too many arguments: " + argc);
+				//ignore more args
+				argc = max;
+			}
+			
+			if (!isStatic) --argc;
+			java.lang.reflect.Method jm = reflect[argc];
+			if (jm == null) {
+				throw ArgErr.make("arguments num err:" + argc);
+			}
+			//specialImpl: FanInt.abs(i)
+			if (jm.getParameterCount() > argc) {
+				isStatic = true;
+				++argc;
+			}
+			
+			Object[] jargs = new Object[argc];
+			int i = 0;
+			if (!isStatic) i = 1;
+			for (int j=0; j<argc; ++i, ++j) {
+				jargs[j] = args.get(i);
+			}
+			Object obj = isStatic ? null : args.get(0);
+			return invoke(obj, jargs, jm);
 		}
 	}
 

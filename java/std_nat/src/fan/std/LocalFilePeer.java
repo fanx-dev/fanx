@@ -21,7 +21,7 @@ public class LocalFilePeer {
 		self.peer = new java.io.File(path);
 	}
 
-	static LocalFile make(java.io.File file) {
+	public static LocalFile make(java.io.File file) {
 		LocalFile f = new LocalFile();
 		f.peer = file;
 		String uri = file.getPath();

@@ -9,7 +9,6 @@
 **
 ** FieldTest
 **
-@Js
 class FieldTest : Test
 {
 
@@ -285,8 +284,8 @@ class FieldTest : Test
   Void testMakeSetFunc()
   {
     // simple
-    s := SerSimple(0, 0)
-    f := Field.makeSetFunc([SerSimple#a: 6, SerSimple#b: 7])
+    s := FieldTestSerSimple(0, 0)
+    f := Field.makeSetFunc([FieldTestSerSimple#a: 6, FieldTestSerSimple#b: 7])
     f(s)
     verifyEq(s.a, 6)
     verifyEq(s.b, 7)
@@ -309,13 +308,13 @@ class FieldTest : Test
   Void testFieldInference()
   {
     x := FieldInferTest()
-    verifyEq(x.a.typeof, Str[]#)
-    verifyEq(x.b.typeof, Str?[]#)
-    verifyEq(x.c.typeof, Str[]#)
-    verifyEq(x.d.typeof, Int?[]#)
-    verifyEq(x.e.typeof, Str:Int#)
-    verifyEq(x.f.typeof, Str:Num?#)
-    verifyEq(x.g.typeof, Str:Duration#)
+    verifyIsType(x.a, Str[]#)
+    verifyIsType(x.b, Str?[]#)
+    verifyIsType(x.c, Str[]#)
+    verifyIsType(x.d, Int?[]#)
+    verifyIsType(x.e, Str:Int#)
+    verifyIsType(x.f, Str:Num?#)
+    verifyIsType(x.g, Str:Duration#)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -346,7 +345,7 @@ class FieldTest : Test
 // OutsideAccessor
 //////////////////////////////////////////////////////////////////////////
 
-@Js class OutsideAccessor
+  class OutsideAccessor
 {
   static Int getCount(FieldTest test) { return test.count }
   static Void setCount(FieldTest test, Int c) { test.count = c }
@@ -357,7 +356,7 @@ class FieldTest : Test
 // OutsideAccessor
 //////////////////////////////////////////////////////////////////////////
 
-@Js const class ConstMakeSetTest
+  const class ConstMakeSetTest
 {
   new make(|This|? f) { f?.call(this) }
   const Int x
@@ -369,7 +368,7 @@ class FieldTest : Test
 // FieldInferTest
 //////////////////////////////////////////////////////////////////////////
 
-@Js class FieldInferTest
+  class FieldInferTest
 {
   Str[]  a  := [,]
   Str?[]? b := [null, "x"]
@@ -385,7 +384,7 @@ class FieldTest : Test
 // FieldNotSetTest
 //////////////////////////////////////////////////////////////////////////
 
-@Js class FieldNotSetTest
+  class FieldNotSetTest
 {
   new make1(|This|? f := null) { f?.call(this) }
 
@@ -405,5 +404,23 @@ class FieldTest : Test
   Str b
   Str c
   Str? x
+}
+
+class FieldTestSerSimple
+{
+  static FieldTestSerSimple fromStr(Str s)
+  {
+    return make(s[0..<s.index(",")].toInt, s[s.index(",")+1..-1].toInt)
+  }
+  new make(Int a, Int b) { this.a = a; this.b = b }
+  override Str toStr() { return "$a,$b" }
+  override Int hash() { return a.xor(b) }
+  override Bool equals(Obj? obj)
+  {
+    if (obj isnot FieldTestSerSimple) return false
+    return a == obj->a && b == obj->b
+  }
+  Int a
+  Int b
 }
 

@@ -1068,9 +1068,11 @@ class CodeAsm : CompilerSupport
         if (getter.isStatic)
           op(FOp.CallStatic, index)
         else if (fexpr.target.id == ExprId.superExpr)
-          op(FOp.CallNonVirtual, index)
-        else
+          op(FOp.CallSuper, index)
+        else if (field.isVirtual || field.isAbstract)
           op(FOp.CallVirtual, index)
+        else
+          op(FOp.CallNonVirtual, index)
       }
 
       // if parameterized or covariant, then coerce
@@ -1151,9 +1153,11 @@ class CodeAsm : CompilerSupport
         if (setter.isStatic)
           op(FOp.CallStatic, index)
         else if (fexpr.target.id == ExprId.superExpr)
-          op(FOp.CallNonVirtual, index)
-        else
+          op(FOp.CallSuper, index)
+        else if (field.isVirtual || field.isAbstract)
           op(FOp.CallVirtual, index)
+        else
+          op(FOp.CallNonVirtual, index)
       }
     }
     else

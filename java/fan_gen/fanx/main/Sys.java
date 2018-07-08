@@ -145,7 +145,7 @@ public class Sys {
 		throw new RuntimeException("Pod not found:" + name);
 	}
 
-	public static List<String> listPod() {
+	public static List<String> listPodFiles() {
 		List<String> classPath = new ArrayList<String>();
 		classPath.add(homeDir + "lib/fan/");
 		classPath.add(workDir + "lib/fan/");

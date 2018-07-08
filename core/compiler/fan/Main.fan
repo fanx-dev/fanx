@@ -161,7 +161,10 @@ class Main
 
   private Void getStartsWith(Str str, [Str:Str] props, [Str:Str] map) {
     props.each |v,k| {
-      if (k.startsWith(str)) map[k] = v
+      if (k.startsWith(str)) {
+        k = k[str.size..-1]
+        map[k] = v
+      }
     }
   }
 
@@ -212,6 +215,7 @@ class Main
 
     //get index
     getStartsWith("index.", props, index)
+    //echo("meta: $meta, index: $index")
 
     // if stripTest config property is set to true then don't
     // compile any Fantom code under test/ or include any res files

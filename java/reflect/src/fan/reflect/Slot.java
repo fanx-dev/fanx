@@ -37,20 +37,15 @@ public abstract class Slot extends FanObj {
 
 	public static Slot find(String qname, boolean checked) {
 		String typeName, slotName;
-		try {
-			int dot = qname.lastIndexOf('.');
-			typeName = qname.substring(0, dot);
-			slotName = qname.substring(dot + 1);
+		int dot = qname.lastIndexOf('.');
+		typeName = qname.substring(0, dot);
+		slotName = qname.substring(dot + 1);
 
-			Type type = Sys.findType(typeName, checked);
-			if (type == null)
-				return null;
+		Type type = Sys.findType(typeName, checked);
+		if (type == null)
+			return null;
 
-			return FanType.slot(type, slotName, checked);
-
-		} catch (Exception e) {
-			throw Err.make("Invalid slot qname \"" + qname + "\", use <pod>::<type>.<slot>");
-		}
+		return FanType.slot(type, slotName, checked);
 	}
 
 	public static Func findFunc(String qname) {

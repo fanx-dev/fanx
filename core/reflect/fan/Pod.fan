@@ -6,6 +6,8 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
+using std
+
 **
 ** Pod represents a module of Types.  Pods serve as a type namespace
 ** as well as unit of deployment and versioning.
@@ -75,7 +77,7 @@ native final const class Pod
   **
   ** Uri for this pod which is always "fan://{name}".
   **
-  //Uri uri()
+  Uri uri()
 
   **
   ** Always return name().
@@ -113,7 +115,7 @@ native final const class Pod
   ** files.  The URI of these files is rooted by `uri`.  Use `file`
   ** or `Uri.get` to lookup a resource file.
   **
-  //File[] files()
+  File[] files()
 
   **
   ** Look up a resource file in this pod.  The URI must start
@@ -126,7 +128,7 @@ native final const class Pod
   **   Pod.find("icons").file(`fan://icons/x16/cut.png`)
   **   `fan://icons/x16/cut.png`.get
   **
-  //File? file(Uri uri, Bool checked := true)
+  File? file(Uri uri, Bool checked := true)
 
 //////////////////////////////////////////////////////////////////////////
 // Doc
@@ -147,7 +149,7 @@ native final const class Pod
   ** Return the log for this pod's name.  This is a
   ** convenience for 'Log.get(name)'.
   **
-  //Log log()
+  Log log()
 
   **
   ** Convenience for `Env.props`.

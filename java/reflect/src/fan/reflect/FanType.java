@@ -266,15 +266,15 @@ public class FanType {
 	// throw UnsupportedErr.make("not generic: " + this);
 	// }
 	//
-	public static synchronized Type toListOf(Type self) {
-		return emptyList(self).typeof();
-	}
-
-	public static final List emptyList(Type self) {
-		if (self.emptyList == null)
-			self.emptyList = List.make(0).toImmutable();
-		return (List) self.emptyList;
-	}
+//	public static synchronized Type toListOf(Type self) {
+//		return emptyList(self).typeof();
+//	}
+//
+//	public static final List emptyList(Type self) {
+//		if (self.emptyList == null)
+//			self.emptyList = List.make(0).toImmutable();
+//		return (List) self.emptyList;
+//	}
 
 	////////////////////////////////////////////////////////////////////////////
 	//// Slots
@@ -546,6 +546,7 @@ public class FanType {
 				list.add(entry.getValue());
 			}
 		}
+		list = (List)list.ro();
 		return list;
 	}
 
@@ -561,6 +562,7 @@ public class FanType {
 				list.add(entry.getValue());
 			}
 		}
+		list = (List)list.ro();
 		return list;
 	}
 
@@ -574,6 +576,7 @@ public class FanType {
 			}
 			list.add(slot);
 		}
+		list = (List)list.ro();
 		return list;
 	}
 
@@ -672,44 +675,70 @@ public class FanType {
 		
 		java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
 		for (java.lang.reflect.Method jmth : jmths) {
-			
-			Slot s = (Slot) slots.get(jmth.getName());
-			if (s == null)
-				continue;
-			
-			//already inited in parent class
-			if (s.parent != type) {
-				continue;
-			}
-			
-			if (s instanceof Method) {
-				Method mth = (Method) s;
-				int paramCount = jmth.getParameterCount();
-				boolean isStatic = s.isStatic() || s.isCtor();
-				if (specialImpl && !isStatic) {
-					//specialImpl always is static
-					if ((jmth.getModifiers() & (Modifier.STATIC)) == 0) continue;
-					--paramCount;
+			linkMethod(type, slots, specialImpl, jmth, false);
+		}
+		
+		//bind mixin imple
+		if (jclz.isInterface()) {
+			try {
+				Class<?> clz = Class.forName(jclz.getName()+"$");
+				java.lang.reflect.Method[] jmths2 = clz.getDeclaredMethods();
+				for (java.lang.reflect.Method jmth : jmths2) {
+					linkMethod(type, slots, true, jmth, true);
 				}
-				
-				if (paramCount < mth.reflect.length) {
-					mth.reflect[paramCount] = jmth;
-				}
-			} else if (s instanceof Field) {
-				Field field = (Field) s;
-				if (jmth.getReturnType() == void.class && jmth.getParameterCount() == 1) {
-					if (field.setter != null)
-						field.setter.reflect[1] = jmth;
-				}
-				else if (jmth.getParameterCount() == 0) {
-					if (field.getter != null)
-						field.getter.reflect[0] = jmth;
-				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
 		}
 
 		type.slots = slots;
 		return type.slots;
+	}
+
+	private static void linkMethod(Type type, java.util.Map<String, Object> slots, boolean specialImpl,
+			java.lang.reflect.Method jmth, boolean onlyStatic) {
+		Slot s = (Slot) slots.get(jmth.getName());
+		if (s == null)
+			return;
+		
+		//already inited in parent class
+		if (s.parent != type) {
+			return;
+		}
+		
+		if (onlyStatic) {
+			if (!s.isStatic()) {
+				return;
+			}
+		}
+		
+		jmth.setAccessible(true);
+		
+		if (s instanceof Method) {
+			Method mth = (Method) s;
+			int paramCount = jmth.getParameterCount();
+			boolean isStatic = s.isStatic() || s.isCtor();
+			if (specialImpl && !isStatic) {
+				//specialImpl always is static
+				if ((jmth.getModifiers() & (Modifier.STATIC)) == 0)
+					return;
+				--paramCount;
+			}
+			
+			if (paramCount < mth.reflect.length) {
+				mth.reflect[paramCount] = jmth;
+			}
+		} else if (s instanceof Field) {
+			Field field = (Field) s;
+			if (jmth.getReturnType() == void.class && jmth.getParameterCount() == 1) {
+				if (field.setter != null)
+					field.setter.reflect[1] = jmth;
+			}
+			else if (jmth.getParameterCount() == 0) {
+				if (field.getter != null)
+					field.getter.reflect[0] = jmth;
+			}
+		}
 	}
 
 	public static Slot slot(Type type, String name, boolean checked) {

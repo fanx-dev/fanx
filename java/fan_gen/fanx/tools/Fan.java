@@ -327,7 +327,7 @@ public class Fan
     version(progName);
 
     long t1 = System.nanoTime();
-    List<String> pods = Sys.listPod();
+    List<String> pods = Sys.listPodFiles();
     long t2 = System.nanoTime();
 
     println("");

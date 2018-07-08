@@ -63,11 +63,16 @@ public class Field extends Slot {
 		if ((f.flags & FConst.Storage) != 0) {
 			try {
 				Class<?> clz = parent.getJavaImplClass();
+				if (clz.isInterface()) {
+					clz = Class.forName(clz.getName()+"$");
+				}
 				field.reflect = clz.getDeclaredField(f.name);
 				field.reflect.setAccessible(true);
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}

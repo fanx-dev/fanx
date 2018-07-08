@@ -140,12 +140,12 @@ public abstract class FStore
         String name = entry.getName();
         if (name.startsWith("fcode/")) continue;
         if (name.endsWith(".class")) continue;
-        String uri = (podUri + "/" + (entry.getName()));
+        String uri = (podUri + (entry.getName()));
         list.add(new ZipEntryFile(zipFile, entry, uri));
       }
       return list;
     }
-
+    
     public FStore.Input read(String path, boolean required)
       throws IOException
     {
