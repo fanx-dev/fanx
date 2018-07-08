@@ -115,6 +115,10 @@ public class FType
 	  throw new RuntimeException("Unknow Generic Param:" + name + " in " + qname());
   }
   
+  public boolean isGeneric() {
+	  return genericParams.length > 0;
+  }
+  
   public FDoc doc() {
 	  if (doc == null) {
 		  doc = new FDoc(pod.store, typeName());

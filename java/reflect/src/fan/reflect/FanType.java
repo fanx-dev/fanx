@@ -2,6 +2,7 @@ package fan.reflect;
 
 import java.lang.reflect.Modifier;
 
+import fan.sys.ArgErr;
 import fan.sys.Err;
 import fan.sys.Facet;
 import fan.sys.FanObj;
@@ -139,7 +140,7 @@ public class FanType {
 	// Value Types
 	//////////////////////////////////////////////////////////////////////////
 
-	public boolean isVal(Type self) {
+	public static boolean isVal(Type self) {
 		return (self.flags() & FConst.Struct) != 0;
 	}
 
@@ -303,21 +304,25 @@ public class FanType {
 	}
 
 	public static Object make(Type self, List args) {
-		Err err;
-		try {
-			return FanObj.doTrap(null, "make", args, self);
-		} catch (Throwable e) {
-			err = Err.make(e);
+		
+		Method m = method(self, "make", false);
+		if (m != null && m.isPublic()) {
+			try {
+				return m.callList(args);
+			}
+			catch (ArgErr e) {
+			}
+		}
+		
+		//fallback to defVal
+		if (args == null || args.size() == 0) {
+			Field f = field(self, "defVal", false);
+			if (f != null && f.isStatic()) {
+				return f.get();
+			}
 		}
 
-		try {
-			return FanObj.doTrap(null, "defVal", args, self);
-		} catch (Throwable e) {
-		}
-
-		throw err;
-		// throw Err.make("Type missing 'make' or 'defVal' slots: " + self,
-		// err);
+		throw Err.make("Type missing 'make' or 'defVal' slots: " + self);
 	}
 
 	////////////////////////////////////////////////////////////////////////////

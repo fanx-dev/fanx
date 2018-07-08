@@ -135,4 +135,19 @@ public class Reflection {
         
         return null;
 	}
+	
+	public static Object callStaticMethod(Class<?> clz, String name, Object... arg) {
+        try {
+        	Method method = findMethod(clz, name, arg);
+			return method.invoke(null, arg);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+        
+        return null;
+	}
 }

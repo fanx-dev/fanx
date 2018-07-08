@@ -48,6 +48,11 @@ public class ClassType extends Type
 	}
 	
 	@Override
+	public boolean isGenericType() {
+		return ftype.isGeneric();
+	}
+	
+	@Override
 	public Class<?> getJavaActualClass() {
 		if (jActualClass == null) {
 			try {

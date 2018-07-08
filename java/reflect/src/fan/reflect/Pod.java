@@ -48,10 +48,7 @@ public class Pod extends FanObj {
 	}
 
 	public static Pod of(Object obj) {
-		if (obj instanceof FanObj) {
-			FanType.pod(((FanObj) obj).typeof());
-		}
-		return null;
+		return FanType.pod(FanType.of(obj));
 	}
 
 	public static Pod find(String name) {
@@ -131,7 +128,7 @@ public class Pod extends FanObj {
 		if (types == null) {
 			List list = List.make(fpod.types.length);
 			for (FType f : fpod.types) {
-				if (f.isSynthetic()) continue;
+//				if (f.isSynthetic()) continue;
 				Type t = Type.fromFType(f, f.signature());
 				list.add(t);
 			}

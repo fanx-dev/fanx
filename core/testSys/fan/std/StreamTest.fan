@@ -31,7 +31,7 @@ class StreamTest : Test
     OutStream out := f.out
 
     // verify typing of out stream
-    verifyTypeFits(out, OutStream#)
+    verifyIsType(out, OutStream#)
     //verifyEq(Type.of(out).qname, "sys::SysOutStream")
 
     // write one byte
@@ -43,7 +43,7 @@ class StreamTest : Test
     InStream in := f.in
 
     // verify typing of in stream
-    verifyTypeFits(in, InStream#)
+    verifyIsType(in, InStream#)
     //verifyEq(Type.of(in).qname, "sys::SysInStream")
 
     // read one byte back

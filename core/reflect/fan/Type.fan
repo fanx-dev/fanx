@@ -212,7 +212,7 @@ native const class Type
   **   List#.isGeneric  => true
   **   Str[]#.isGeneric => false
   **
-  Bool isGeneric()
+  //Bool isGeneric()
 
   **
   ** If this is a parameterized type, then return the map of names to
@@ -248,7 +248,7 @@ native const class Type
   **   Int#.toListOf => Int[]
   **   Str[]#.toListOf => Str[][]
   **
-  Type toListOf()
+  //Type toListOf()
 
   **
   ** Return an immutable empty list of this type.  Since immutable
@@ -258,7 +258,7 @@ native const class Type
   ** Examples:
   **   Str#.emptyList  =>  Str[,]
   **
-  Obj[] emptyList()
+  //Obj[] emptyList()
 
 //////////////////////////////////////////////////////////////////////////
 // Flags

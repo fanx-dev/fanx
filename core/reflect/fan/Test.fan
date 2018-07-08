@@ -148,7 +148,7 @@ abstract class Test
   **
   ** Verify that 'obj' is instance of the given type.
   **
-  Void verifyTypeFits(Obj obj, Type t) {
+  Void verifyIsType(Obj obj, Type t) {
     verify(obj.typeof.fits(t), "$obj.typeof not fits $t")
   }
 

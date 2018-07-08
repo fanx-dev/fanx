@@ -61,7 +61,7 @@ public abstract class Slot extends FanObj {
 		Method m = (Method) find(qname, checked);
 		if (m == null)
 			return null;
-		return m.func;
+		return m.func();
 	}
 
 	//////////////////////////////////////////////////////////////////////////

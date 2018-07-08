@@ -9,6 +9,7 @@ import java.util.Map;
 
 import fanx.fcode.FPod;
 import fanx.fcode.FType;
+import fanx.util.Reflection;
 
 public class Sys {
 	
@@ -43,11 +44,11 @@ public class Sys {
 	private static Map<String, FPod> pods = new HashMap<String, FPod>();
 	
 	
-	public static Type findType(String signature, boolean checked) {
-		return findType(signature);
+	public static Type findType(String signature) {
+		return findType(signature, true);
 	}
 	
-	public static Type findType(String signature) {
+	public static Type findType(String signature, boolean checked) {
 		int len = signature.length();
 		boolean nullable = false;
 		if (signature.charAt(len-1) == '?') {
@@ -56,12 +57,22 @@ public class Sys {
 		}
 		
 		int pos = signature.indexOf("::");
+		if (pos <= 0 || pos >= len-2) {
+			if (checked) {
+				Type etype = findType("sys::ArgErr");
+				RuntimeException re = (RuntimeException)Reflection.callStaticMethod(
+						etype.getJavaActualClass(), "make", signature);
+				throw re;
+			}
+			return null;
+		}
 		String podName = signature.substring(0, pos);
-		int pos2 = signature.lastIndexOf('<');
+		int pos2 = signature.indexOf('<');
 		if (pos2 < 0) pos2 = signature.length();
 		
 		String typeName = signature.substring(pos+2, pos2);
-		FType ftype = findFType(podName, typeName);
+		FType ftype = findFType(podName, typeName, checked);
+		if (ftype == null) return null;
 		Type res = Type.fromFType(ftype, signature);
 		
 		if (nullable) {
@@ -71,18 +82,32 @@ public class Sys {
 	}
 	
 	public static FType findFType(String podName, String typeName) {
-		FPod pod = findPod(podName);
+		return findFType(podName, typeName, true);
+	}
+	
+	public static FType findFType(String podName, String typeName, boolean checked) {
+		FPod pod = findPod(podName, checked);
 		FType type = pod.type(typeName, false);
 		if (type == null) {
 			if (typeName.indexOf('^') != -1) {
-				return findFType("sys", "Obj");
+				return findFType("sys", "Obj", checked);
 			}
-			throw new RuntimeException("UnknownTypeErr:"+typeName);
+			
+			if (checked) {
+				Type etype = findType("sys::UnknownTypeErr");
+				RuntimeException re = (RuntimeException)Reflection.callStaticMethod(
+						etype.getJavaActualClass(), "make", podName+"::"+typeName);
+				throw re;
+			}
 		}
 		return type;
 	}
-
+	
 	public static FPod findPod(String podName) {
+		return findPod(podName, true);
+	}
+
+	public static FPod findPod(String podName, boolean checked) {
 		try {
 			synchronized(Sys.class) {
 				FPod p = pods.get(podName);
@@ -98,7 +123,12 @@ public class Sys {
 				return pod;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (checked) {
+				Type type = findType("sys::UnknownPodErr");
+				RuntimeException re = (RuntimeException)Reflection.callStaticMethod(
+						type.getJavaActualClass(), "make", podName);
+				throw re;
+			}
 		}
 		return null;
 	}

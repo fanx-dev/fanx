@@ -23,7 +23,7 @@ class CharsetTest : Test
     // verify name, toStr, equals, hash
 
     c1 := Charset.fromStr("UTF-8")
-    verifyTypeFits(c1, Charset#)
+    verifyIsType(c1, Charset#)
     //verifyEq(Type.of(c1).base, Obj#)
     verifyEq(c1.name,  "UTF-8")
     verifyEq(c1.toStr, "UTF-8")

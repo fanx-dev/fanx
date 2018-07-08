@@ -226,6 +226,9 @@ public class Method extends Slot {
 			
 			if (!isStatic) --argc;
 			java.lang.reflect.Method jm = reflect[argc];
+			if (jm == null) {
+				throw ArgErr.make("arguments num err:" + argc);
+			}
 			//specialImpl: FanInt.abs(i)
 			if (jm.getParameterCount() > argc) {
 				isStatic = true;
@@ -392,13 +395,13 @@ public class Method extends Slot {
 	// Fields
 	//////////////////////////////////////////////////////////////////////////
 
-	static final int GENERIC = 0x01; // is this a generic method
+	private static final int GENERIC = 0x01; // is this a generic method
 	static final Object[] noArgs = new Object[0];
 
-	MethodFunc func;
-	List params; // might be different from func.params is instance method
-	Type inheritedReturns; // for covariance
-	int mask;
+	private MethodFunc func;
+	private List params; // might be different from func.params is instance method
+	private Type inheritedReturns; // for covariance
+	private int mask;
 	// Method generic;
 	java.lang.reflect.Method[] reflect;
 	private int minParams = -1;

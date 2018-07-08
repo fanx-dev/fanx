@@ -106,12 +106,12 @@ class MapTest : Test
     // empty Obj[Obj]
     Obj a := [:]
     verify(a is Obj:Obj)
-    verifyTypeFits(a, Obj:Obj?#)
+    verifyIsType(a, Obj:Obj?#)
 
     // inferred Obj:Obj
     Obj b := [2:"two", "three":3]
     verify(b is Obj:Obj)
-    verifyTypeFits(b, Obj:Obj#)
+    verifyIsType(b, Obj:Obj#)
 
     // inferred Int:Str
     Obj c := [3:"c"]
@@ -120,8 +120,8 @@ class MapTest : Test
     verify(c is Num:Str)
     verify(c is Num:Obj)
     verify(c is Obj:Obj)
-    verifyTypeFits(c, Int:Str#)
-    verifyTypeFits([3 : null , 4 : "d"], Int:Str?#)   // null
+    verifyIsType(c, Int:Str#)
+    verifyIsType([3 : null , 4 : "d"], Int:Str?#)   // null
 
     Obj d := [3:"c"]
     verifyNotEq(Type.of(d), Obj:Str#)
@@ -130,7 +130,7 @@ class MapTest : Test
 
     // nullable
     Obj e := [2:"two", "three":null, "four":4]
-    verifyTypeFits(e, Obj:Obj?#)
+    verifyIsType(e, Obj:Obj?#)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -394,12 +394,12 @@ class MapTest : Test
   {
     a := ['a':"A", 'b':"B", 'c':"C"]
     verifyEq(a.size, 3)
-    verifyTypeFits(a, Int:Str#)
+    verifyIsType(a, Int:Str#)
     verifyEq(a, ['a':"A", 'b':"B", 'c':"C"])
 
     b := a.dup
     verifyEq(b.size, 3)
-    verifyTypeFits(b, Int:Str#)
+    verifyIsType(b, Int:Str#)
     verifyEq(b, ['a':"A", 'b':"B", 'c':"C"])
 
     a['a'] = "X"
@@ -1162,7 +1162,7 @@ class MapTest : Test
     verifyEq(r, x)
 
     // verify all readonly safe methods work
-    verifyTypeFits(r, Int:Str#)
+    verifyIsType(r, Int:Str#)
     verifyEq(r.isEmpty, false)
     verifyEq(r.size, 3)
     verifyEq(r[0], "a")
