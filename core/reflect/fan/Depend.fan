@@ -38,7 +38,7 @@ final const class Depend
   **
   static new fromStr(Str s) {
     pos := s.find(" ")
-    if (pos == -1 || pos >= s.size-1) {
+    if (pos <= 0 || pos >= s.size-1) {
       throw ParseErr("Invalid Depend :$s")
     }
     name := s[0..<pos]
@@ -102,9 +102,14 @@ final const class Depend
   ** matching rules.
   **
   Bool match(Version v) {
-    for (i:=0; i<version.segments.size; ++i)
-      if (version.segments[i] != v.segments[i])
+    if (version.segments.size > v.segments.size) {
+      return false
+    }
+    for (i:=0; i<version.segments.size; ++i) {
+      if (version.segments[i] != v.segments[i]) {
         return false
+      }
+    }
     return true
   }
 }

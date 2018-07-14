@@ -25,19 +25,26 @@ const final class Version
   ** otherwise throw ParseErr.
   **
   static new fromStr(Str version, Bool checked := true) {
-    fs := version.split('.')
-    seg := Int[,]
-    fs.each |Str p| { seg.add(p.toInt) }
-    return Version.make(seg, version)
+    try {
+      fs := version.split('.', false)
+      seg := Int[,]
+      fs.each |Str p| { seg.add(p.toInt) }
+      return Version.make(seg)
+    } catch (Err e) {
+      if (checked) throw ParseErr(version, e)
+      return defVal
+    }
   }
 
   **
   ** Construct with list of integer segments.
   ** Throw ArgErr if segments is empty or contains negative numbers.
   **
-  new make(Int[] segments, Str str) {
-    this.str = str
+  new make(Int[] segments) {
+    if (segments.size == 0) throw ArgErr("$segments")
+    if (segments.any { it < 0 }) throw ArgErr("$segments")
     this.segments = segments
+    this.str = segments.join(".")
   }
 
   **

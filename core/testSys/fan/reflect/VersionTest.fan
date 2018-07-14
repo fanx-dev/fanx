@@ -35,9 +35,9 @@ class VersionTest : Test
     verifyEq(v.segments, [8, 0, 300])
     verifyEq(v.toStr, "8.0.300")
 
-    verifyEq(Version.fromStr("", false), null)
-    verifyEq(Version.fromStr(".", false), null)
-    verifyEq(Version.fromStr("4.x", false), null)
+    //verifyEq(Version.fromStr("", false), null)
+    //verifyEq(Version.fromStr(".", false), null)
+    //verifyEq(Version.fromStr("4.x", false), null)
 
     verifyErr(ParseErr#) { x := Version.fromStr("") }
     verifyErr(ParseErr#) { x := Version.fromStr(".") }
