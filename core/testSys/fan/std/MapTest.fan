@@ -808,7 +808,7 @@ class MapTest : Test
     verifyEq(m.vals, [0, 1, 2, 3, 4, 6, 7, 8, 9])
 
     // addAll
-    m.addAll(OrderedMap { add("5", 5); add("10",10) })
+    m.addAll(OrderedMap<Str, Int> { add("5", 5); add("10",10) })
     verifyEq(m.keys, ["0", "1", "2", "3", "4", "6", "7", "8", "9", "5", "10"])
     verifyEq(m.vals, [0, 1, 2, 3, 4, 6, 7, 8, 9, 5, 10])
 

@@ -614,7 +614,7 @@ abstract class InStream
         while (true)
         {
           n := readBuf(buf.clear(), bufSize);
-          if (n == -1) break;
+          if (n <= 0) break;
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }
@@ -626,7 +626,7 @@ abstract class InStream
         {
           if (toPipeVal - total < bufSize) bufSize = toPipeVal - total;
           n := readBuf(buf.clear(), bufSize);
-          if (n == -1) throw IOErr.make("Unexpected end of stream");
+          if (n <= 0) throw IOErr.make("Unexpected end of stream");
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }

@@ -95,15 +95,34 @@ internal class BufInStream : InStream {
     return len
   }
   override This unread(Int n) {
-    if (buf.pos == 0) throw UnsupportedErr("$buf")
-    --buf.pos
-    buf.setByte(buf.pos, n)
+    // unreading a buffer is a bit weird - the typical case
+    // is that we are pushing back the byte we just read in
+    // which case we can just rewind the position; however
+    // if we pushing back a different byte then we need
+    // to shift the entire buffer and insert the byte
+    pos := buf.pos
+    if (pos > 0) {
+      --buf.pos
+      buf.setByte(buf.pos, n)
+    }
+    else if (buf is MemBuf) {
+      if (buf.capacity < buf.size+1) {
+        buf.capacity = buf.capacity + 1
+      }
+      ba := (buf as MemBuf).buf
+      ba.copyFrom(ba, pos, pos+1, buf.size-pos)
+      buf.setByte(pos, n)
+      buf.size++
+    }
+    else {
+      throw UnsupportedErr("$buf")
+    }
     return this
   }
   override Bool close() { true }
 
   override Int peek() {
-    if (buf.pos+1 >= buf.size) return -1
+    if (buf.pos >= buf.size) return -1
     return buf.getByte(buf.pos)
   }
 

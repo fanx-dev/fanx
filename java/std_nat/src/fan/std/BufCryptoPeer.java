@@ -89,6 +89,9 @@ public class BufCryptoPeer {
 			long total = 0;
 			while (total < size) {
 				long n = in.readBytes(temp, 0, (int) java.lang.Math.min(temp.size(), (int) size - total));
+				if (n <= 0) {
+					break;
+				}
 				md.update(temp.array(), 0, (int) n);
 				total += n;
 			}

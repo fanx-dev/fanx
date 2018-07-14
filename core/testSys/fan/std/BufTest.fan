@@ -7,83 +7,11 @@
 //
 
 **
-** AbstractBufTest
-**
-@Js
-abstract class AbstractBufTest : Test
-{
-//////////////////////////////////////////////////////////////////////////
-// Setup
-//////////////////////////////////////////////////////////////////////////
-
-  Buf makeMem()
-  {
-    b := Buf.make;
-    bufs.add(b);
-    return b
-  }
-
-  Buf makeFile()
-  {
-    // js doesn't support files
-    if ("js" == Env.cur.runtime) return makeMem
-
-    name := "buf" + bufs.size
-    file := tempDir + name.toUri
-    b := file.open("rw")
-    bufs.add(b)
-    return b
-  }
-
-  Buf[] bufs := Buf[,]
-
-  override Void teardown()
-  {
-    bufs.each |Buf b| { verify(b.close) }
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Utils
-//////////////////////////////////////////////////////////////////////////
-
-  Buf ascii(Str ascii)
-  {
-    return Buf.make.print(ascii)
-  }
-
-  Void verifyBufEq(Buf a, Buf b)
-  {
-    verify(eq(a, b))
-  }
-
-  Void verifyBufNotEq(Buf a, Buf b)
-  {
-    verify(!eq(a, b))
-  }
-
-  Bool eq(Buf a, Buf b)
-  {
-    if (a.size != b.size) return false
-    for (i := 0; i<a.size; ++i)
-      if (a[i] != b[i]) return false
-    return true
-  }
-
-  Void verifyBufEqStr(Buf buf, Str ascii)
-  {
-    verifyEq(buf.size, ascii.size)
-    for (i := 0; i<buf.size; ++i)
-      verifyEq(buf[i], ascii[i])
-  }
-}
-
-**
 ** BufTest
 **
-@Js
 class BufTest : AbstractBufTest
 {
-
+  Bool isJs := false
 //////////////////////////////////////////////////////////////////////////
 // Equality
 //////////////////////////////////////////////////////////////////////////
@@ -192,9 +120,9 @@ class BufTest : AbstractBufTest
     verifyEq(buf.in.avail, 0)
 
     // read pos=end
-    verifyEq(buf.read, null)
-    verifyEq(buf.read, null)
-    verifyEq(buf.peek, null)
+    verifyEq(buf.read, -1)
+    verifyEq(buf.read, -1)
+    verifyEq(buf.peek, -1)
     verifyEq(buf.pos,  3)
     verifyEq(buf.size, 3)
     verifyEq(buf.remaining, 0)
@@ -245,7 +173,7 @@ class BufTest : AbstractBufTest
     buf.clear
     verifyEq(buf.pos,  0)
     verifyEq(buf.size, 0)
-    verifyEq(buf.read, null)
+    verifyEq(buf.read, -1)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -265,11 +193,11 @@ class BufTest : AbstractBufTest
     verifyEq(b.size, 2)
 
     b.write('c')
-    verifyEq(b.capacity, 4)
+    verify(b.capacity >= 3)
     verifyEq(b.size, 3)
 
     b.write('d').write('e')
-    verifyEq(b.capacity, 8)
+    verify(b.capacity >= 5)
     verifyEq(b.size, 5)
 
     b.capacity = 6
@@ -281,7 +209,7 @@ class BufTest : AbstractBufTest
     verifyEq(b.size, 6)
 
     b.write('g')
-    verifyEq(b.capacity, 12)
+    verify(b.capacity > 8)
     verifyEq(b.size, 7)
 
     b.capacity = 7
@@ -313,7 +241,7 @@ class BufTest : AbstractBufTest
     verifyEq(b[6], 'g')
     verifyErr(IndexErr#) |->Int| { return b[7] }
 
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       f := makeFile
       verifyEq(f.capacity, Int.maxVal)
@@ -502,7 +430,7 @@ class BufTest : AbstractBufTest
     verifyEq(a.remaining, 0)
     verifyEq(b.pos,  3)
     verifyBufEqStr(b, "abc")
-    verifyEq(b.readBuf(b, 1), null)
+    verify(b.readBuf(b, 1) <= 0)
 
     // reset and read the more than entirity
     a.seek(0)
@@ -512,7 +440,7 @@ class BufTest : AbstractBufTest
     verifyEq(a.remaining, 0)
     verifyEq(b.pos,  3)
     verifyBufEqStr(b, "abc")
-    verifyEq(b.readBuf(b, 1), null)
+    verify(b.readBuf(b, 1) <= 0)
 
     // reset and read 1 byte at a time
     a.seek(0)
@@ -532,7 +460,7 @@ class BufTest : AbstractBufTest
     verifyEq(a.remaining, 0)
     verifyEq(b.pos,  3)
     verifyBufEqStr(b, "abc")
-    verifyEq(a.readBuf(b, 1), null)
+    verify(a.readBuf(b, 1) <= 0)
     verifyBufEqStr(b, "abc")
 
     // reset and read 2 bytes at a time
@@ -594,7 +522,7 @@ class BufTest : AbstractBufTest
 
   Void verifyConveniences(Buf buf, Buf temp)
   {
-    js := Env.cur.runtime == "js"
+    js := isJs
 
     // convenience writes
     temp.print("fool")
@@ -607,7 +535,7 @@ class BufTest : AbstractBufTest
     if (!js) buf.writeI8(0xabcd0123ffffeeee)
     buf.writeF4(2f)
     if (!js) buf.writeF8(77.0f)
-    if (!js) buf.writeDecimal(50.03D)
+    //if (!js) buf.writeDecimal(50.03D)
     buf.writeBool(true)
     buf.print("harry").printLine(" potter")
     buf.writeUtf("deathly hallows")
@@ -624,7 +552,7 @@ class BufTest : AbstractBufTest
     if (!js) verifyEq(buf.readS8, 0xabcd0123ffffeeee)
     verifyEq(buf.readF4, 2f)
     if (!js) verifyEq(buf.readF8, 77f)
-    if (!js) verifyEq(buf.readDecimal, 50.03d)
+    //if (!js) verifyEq(buf.readDecimal, 50.03d)
     verifyEq(buf.readBool, true)
     verifyEq(buf.readLine, "harry potter")
     verifyEq(buf.readUtf, "deathly hallows")
@@ -645,7 +573,7 @@ class BufTest : AbstractBufTest
     buf.seek(0)
     acc := Str[,]; buf.eachLine |Str s| { acc.add(s) }
     verifyEq(acc, ["one", "two"])
-
+/*
     // props
     buf.clear.writeProps(["a":"Apple", "b":"Bear"])
     verifyEq(buf.flip.readProps, ["a":"Apple", "b":"Bear"])
@@ -655,7 +583,7 @@ class BufTest : AbstractBufTest
     verifyEq(buf.flip.readObj, 3)
     buf.clear.writeObj(3, ["dummy":true])
     verifyEq(buf.flip.readObj(["dummy":true]), 3)
-
+*/
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -715,8 +643,8 @@ class BufTest : AbstractBufTest
     verifyEq(buf.read, 0xaa)
     verifyEq(buf.peek, 0xbb)
     verifyEq(buf.read, 0xbb)
-    verifyEq(buf.read, null)
-    verifyEq(buf.peek, null)
+    verifyEq(buf.read, -1)
+    verifyEq(buf.peek, -1)
 
     buf.clear
     StreamTest.writeUnread(buf.out)
@@ -824,11 +752,11 @@ class BufTest : AbstractBufTest
     dst := makeMem
     1800.times |Int i| { src.write(i) }
     src.flip
-    src.in.pipe(dst.out, null, false)
+    src.in.pipe(dst.out, -1, false)
     verifyEq(dst.size, 1800)
     1800.times |Int i| { verifyEq(dst[i], i.and(0xff)) }
 
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       verifyPipe(makeMem,  makeMem)
       verifyPipe(makeMem,  makeFile)
@@ -842,7 +770,7 @@ class BufTest : AbstractBufTest
     2300.times |Int i| { src.write(i) }
 
     src.flip
-    src.in.pipe(dst.out, null, false)
+    src.in.pipe(dst.out, -1, false)
     verifyEq(dst.size, 2300)
     2300.times |Int i| { verifyEq(dst[i], i.and(0xff)) }
 
@@ -932,7 +860,7 @@ class BufTest : AbstractBufTest
 
   Void testToFile()
   {
-    if (Env.cur.runtime == "js") return
+    if (isJs) return
 
     mut := Buf().print("test!")
     f := mut.toFile(`test/path/file.txt`)
@@ -941,21 +869,22 @@ class BufTest : AbstractBufTest
     mut.print("more data!")
     verifyToFile(f)
 
-    f = Buf().print("test!").toImmutable.toFile(`test/path/file.txt`)
+    f = Buf().print("test!").toImmutable->toFile(`test/path/file.txt`)
     verifyToFile(f)
   }
 
   Void verifyToFile(File f)
   {
     verifyEq(f.readAllStr, "test!")
-    verifyEq(f.typeof.qname, "sys::MemFile")
+    //verifyEq(f.typeof.qname, "sys::MemFile")
     verifyEq(f.in.readAllStr, "test!")
     verifyEq(f.size, 5)
-    verifyEq(f.modified.date, Date.today)
+    //TODO
+    //verifyEq(f.modified.date, Date.today)
     verifyEq(f.uri, `test/path/file.txt`)
     verifyEq(f.name, "file.txt")
     verifyEq(f.ext, "txt")
-    verifyErr(UnsupportedErr#) { f.modified = DateTime.now }
+    verifyErr(UnsupportedErr#) { f.modified = TimePoint.now }
     verifyErr(UnsupportedErr#) { f.out }
     verifyErr(UnsupportedErr#) { f.open("r") }
   }
@@ -966,15 +895,15 @@ class BufTest : AbstractBufTest
 
   Void testImmutable()
   {
-    js := Env.cur.runtime == "js"
+    js := isJs
 
     orig := "ABCD".toBuf
-    buf := orig.toImmutable
+    Buf buf := orig.toImmutable
     e := ReadonlyErr#
 
     verifyEq(buf.isImmutable, true)
     verifySame(buf.toImmutable, buf)
-    verifyEq(buf.typeof.qname, "sys::ConstBuf")
+    //verifyEq(buf.typeof.qname, "sys::ConstBuf")
     verifyEq(buf.size, 4)
     verifyEq(buf.size, 4)
     verifyEq(buf.isEmpty, false)
@@ -1008,7 +937,7 @@ class BufTest : AbstractBufTest
     verifyEq(in.read, 'C')
     verifyErr(e) { in.unread('%') }
     verifyEq(in.read, 'D')
-    verifyEq(in.read, null)
+    verifyEq(in.read, -1)
 
     newBuf := Buf()
     newBuf.out.writeBuf(buf)
@@ -1035,13 +964,13 @@ class BufTest : AbstractBufTest
     verifyErr(e) { buf.readBufFully(Buf(),3)  }
     verifyErr(e) { buf.readChar }
     verifyErr(e) { buf.readChars(3) }
-    verifyErr(e) { buf.readDecimal }
+    //verifyErr(e) { buf.readDecimal }
     verifyErr(e) { buf.readF4 }
 // TODO
 if (!js) verifyErr(e) { buf.readF8 }
     verifyErr(e) { buf.readLine }
-    verifyErr(e) { buf.readObj }
-    verifyErr(e) { buf.readProps }
+    //verifyErr(e) { buf.readObj }
+    //verifyErr(e) { buf.readProps }
     verifyErr(e) { buf.readS1 }
     verifyErr(e) { buf.readS2 }
     verifyErr(e) { buf.readS4 }
@@ -1063,7 +992,7 @@ if (!js) verifyErr(e) { buf.readS8 }
     verifyErr(e) { buf.writeBuf("a".toBuf) }
     verifyErr(e) { buf.writeChar('x') }
     verifyErr(e) { buf.writeChars("abc") }
-    verifyErr(e) { buf.writeDecimal(10d) }
+    //verifyErr(e) { buf.writeDecimal(10d) }
     verifyErr(e) { buf.writeF4(10f) }
 // TODO
 if (!js) verifyErr(e) { buf.writeF8(10f) }
@@ -1071,10 +1000,10 @@ if (!js) verifyErr(e) { buf.writeF8(10f) }
     verifyErr(e) { buf.writeI4(10) }
 // TODO
 if (!js) verifyErr(e) { buf.writeI8(10) }
-    verifyErr(e) { buf.writeObj("x") }
-    verifyErr(e) { buf.writeProps(["x":"x"]) }
+    //verifyErr(e) { buf.writeObj("x") }
+    //verifyErr(e) { buf.writeProps(["x":"x"]) }
     verifyErr(e) { buf.writeUtf("x") }
-    verifyErr(e) { buf.writeXml("x") }
+    //verifyErr(e) { buf.writeXml("x") }
 
     d := buf.dup
     d[1] = '!'

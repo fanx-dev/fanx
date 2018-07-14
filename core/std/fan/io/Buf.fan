@@ -194,7 +194,9 @@ rtconst abstract class Buf
     a := ByteArray(n)
     getBytes(s, a, 0, n)
     //a.copyFrom(buf, s, 0, n)
-    return MemBuf.makeBuf(a)
+    buf := MemBuf.makeBuf(a)
+    buf.charset = this.charset
+    return buf
   }
 
   **
@@ -407,15 +409,18 @@ rtconst abstract class Buf
   **
   virtual once InStream in() { BufInStream(this) }
 
+  ** throw err in ConstBuf
+  internal virtual InStream privateIn() { in }
+
   **
   ** Convenience for [in.read]`InStream.read`
   **
-  Int? read() { in.read }
+  Int? read() { privateIn.read }
 
   **
   ** Convenience for [in.readBuf]`InStream.readBuf`
   **
-  Int? readBuf(Buf buf, Int n) { in.readBuf(buf, n) }
+  Int? readBuf(Buf buf, Int n) { privateIn.readBuf(buf, n) }
 
   **
   ** Convenience for [in.unread]`InStream.unread`
@@ -423,67 +428,67 @@ rtconst abstract class Buf
   ** like IO streams.  File backed buffers will simply rewrite
   ** the last position in the file.  Return this.
   **
-  This unread(Int b) { in.unread(b); return this }
+  This unread(Int b) { privateIn.unread(b); return this }
 
   **
   ** Convenience for [in.readAllBuf]`InStream.readAllBuf`
   **
-  Buf readAllBuf() { in.readAllBuf }
+  Buf readAllBuf() { privateIn.readAllBuf }
 
   **
   ** Convenience for [in.readBufFully]`InStream.readBufFully`
   **
-  Buf readBufFully(Buf? buf, Int n) { in.readBufFully(buf, n) }
+  Buf readBufFully(Buf? buf, Int n) { privateIn.readBufFully(buf, n) }
 
   **
   ** Convenience for [in.peek]`InStream.peek`
   **
-  Int? peek() { in.peek }
+  Int? peek() { privateIn.peek }
 
   **
   ** Convenience for [in.readU1]`InStream.readU1`
   **
-  Int readU1() { in.readU1 }
+  Int readU1() { privateIn.readU1 }
 
   **
   ** Convenience for [in.readS1]`InStream.readS1`
   **
-  Int readS1() { in.readS1 }
+  Int readS1() { privateIn.readS1 }
 
   **
   ** Convenience for [in.readU2]`InStream.readU2`
   **
-  Int readU2() { in.readU2 }
+  Int readU2() { privateIn.readU2 }
 
   **
   ** Convenience for [in.readS2]`InStream.readS2`
   **
-  Int readS2() { in.readS2 }
+  Int readS2() { privateIn.readS2 }
 
   **
   ** Convenience for [in.readU4]`InStream.readU4`
   **
-  Int readU4() { in.readU4 }
+  Int readU4() { privateIn.readU4 }
 
   **
   ** Convenience for [in.readS4]`InStream.readS4`
   **
-  Int readS4() { in.readS4 }
+  Int readS4() { privateIn.readS4 }
 
   **
   ** Convenience for [in.readS8]`InStream.readS8`
   **
-  Int readS8() { in.readS8 }
+  Int readS8() { privateIn.readS8 }
 
   **
   ** Convenience for [in.readF4]`InStream.readF4`
   **
-  Float readF4() { in.readF4 }
+  Float readF4() { privateIn.readF4 }
 
   **
   ** Convenience for [in.readF8]`InStream.readF8`
   **
-  Float readF8() { in.readF8 }
+  Float readF8() { privateIn.readF8 }
 
   **
   ** Convenience for [in.readDecimal]`InStream.readDecimal`
@@ -493,17 +498,17 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.readBool]`InStream.readBool`
   **
-  Bool readBool() { in.readBool }
+  Bool readBool() { privateIn.readBool }
 
   **
   ** Convenience for [in.readUtf]`InStream.readUtf`
   **
-  Str readUtf() { in.readUtf }
+  Str readUtf() { privateIn.readUtf }
 
   **
   ** Convenience for [in.readChar]`InStream.readChar`
   **
-  Int? readChar() { in.readChar }
+  Int? readChar() { privateIn.readChar }
 
   **
   ** Convenience for [in.unreadChar]`InStream.unreadChar`
@@ -511,42 +516,42 @@ rtconst abstract class Buf
   ** like IO streams.  File backed buffers will simply rewrite
   ** the last position in the file.  Return this.
   **
-  This unreadChar(Int b) { in.unreadChar(b); return this }
+  This unreadChar(Int b) { privateIn.unreadChar(b); return this }
 
   **
   ** Convenience for [in.peekChar]`InStream.peekChar`
   **
-  Int? peekChar() { in.peekChar }
+  Int? peekChar() { privateIn.peekChar }
 
   **
   ** Convenience for [in.readChars]`InStream.readChars`
   **
-  Str readChars(Int n) { in.readChars(n) }
+  Str readChars(Int n) { privateIn.readChars(n) }
 
   **
   ** Convenience for [in.readLine]`InStream.readLine`
   **
-  Str? readLine(Int max := -1) { in.readLine(max) }
+  Str? readLine(Int max := -1) { privateIn.readLine(max) }
 
   **
   ** Convenience for [in.readStrToken]`InStream.readStrToken`
   **
-  Str? readStrToken(Int? max := null, |Int ch->Bool|? c := null) { in.readStrToken(max, c) }
+  Str? readStrToken(Int? max := -1, |Int ch->Bool|? c := null) { privateIn.readStrToken(max, c) }
 
   **
   ** Convenience for [in.readAllLines]`InStream.readAllLines`
   **
-  Str[] readAllLines() { in.readAllLines }
+  Str[] readAllLines() { privateIn.readAllLines }
 
   **
   ** Convenience for [in.eachLine]`InStream.eachLine`
   **
-  Void eachLine(|Str line| f) { in.eachLine(f) }
+  Void eachLine(|Str line| f) { privateIn.eachLine(f) }
 
   **
   ** Convenience for [in.readAllStr]`InStream.readAllStr`
   **
-  Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
+  Str readAllStr(Bool normalizeNewlines := true) { privateIn.readAllStr(normalizeNewlines) }
 
   **
   ** Convenience for [in.readProps]`InStream.readProps`
@@ -592,8 +597,12 @@ rtconst abstract class Buf
     in := this.in
     size := size
     sb := StrBuf(size*2)
+    pos = 0
     while (total < size) {
       n := in.readBytes(temp, 0, temp.size.min(size - total))
+      if (n <= 0) {
+        break
+      }
       memToHex(temp, n, sb)
       total += n
     }
@@ -660,6 +669,9 @@ rtconst abstract class Buf
     in := this.in
     while (total < len) {
       n := in.readBytes(temp, 0, temp.size.min(len - total))
+      if (n <= 0) {
+        break
+      }
       out.writeBytes(temp, 0, n)
       total += n
     }
@@ -670,7 +682,7 @@ rtconst abstract class Buf
     ba := ByteArray(1024)
     while (total < len) {
       n := in.readBytes(ba, 0, ba.size.min(len - total))
-      if (n < 0)
+      if (n <= 0)
         return total == 0 ? -1 : total
       setBytes(pos, ba, 0, n)
       this.pos += n
@@ -678,5 +690,13 @@ rtconst abstract class Buf
     }
     return total
   }
+
+  **
+  ** Create an in-memory File instance for this buffer with the given
+  ** file URI.  The buffer must be a RAM based buffer which is converted
+  ** to an immutable buffer via 'Obj.toImmutable' semantics.  The current
+  ** time is used for the file's modified time.
+  **
+  virtual File toFile(Uri uri) { throw UnsupportedErr("Only supported on memory buffers") }
 }
 
