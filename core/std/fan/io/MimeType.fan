@@ -23,6 +23,7 @@ const final class MimeType
   static const MimeType textJsUtf8 := parse("text/javascript; charset=utf-8")
   static const MimeType textJs     := parse("text/javascript")
   static const MimeType textJson   := parse("application/json")
+  static const MimeType textJsonUtf8   := parse("application/json; charset=utf-8")
   static const MimeType dir        := parse("x-directory/normal")
   static const MimeType textPlainUtf8 := parse("text/plain; charset=utf-8")
   static const MimeType textHtmlUtf8  := parse("text/html; charset=utf-8")
@@ -79,7 +80,7 @@ const final class MimeType
       params = parseParams(paramStr.trim)
     }
     if (params == null) params = [:]
-    return make(media.trim, sub.trim, params, s)
+    return make(media.trim, sub.trim, params)
   }
 
   **
@@ -93,15 +94,71 @@ const final class MimeType
   **   a=b; c="d"  =>  ["a":"b", "c"="d"]
   **
   static [Str:Str]? parseParams(Str s, Bool checked := true) {
-    params := [Str:Str][:]
-    fs := s.split(';')
-    fs.each |Str p|{
-      ss := p.split('=')
-      if (ss.size == 2) {
-        params[ss[0].trim] = ss[1].trim
+    try {
+      params := CIMap<Str,Str>()
+      i := 0
+      while (i < s.size) {
+        i = parsePair(s, i, params)
       }
+      return params
     }
-    return params
+    catch (Err e) {
+      if (checked) throw e
+      return null
+    }
+  }
+
+  private static Int parsePair(Str s, Int start, [Str:Str] params) {
+    i := start
+    while (i<s.size) {
+      ch := s[i]
+      if (ch == '=' || ch == ';') break
+      ++i
+    }
+    key := s[start..<i].trim
+    if (i>=s.size || s[i] == ';') {
+      params[key] = ""
+      return i+1
+    }
+
+    inQuotes := false
+    ++i // skip '='
+    //skip space
+    while (i<s.size && s[i] == ' ') { ++i }
+
+    if (i<s.size && s[i] == '"') {
+      inQuotes = true
+      ++i
+    }
+
+    vstart := i
+    while (i<s.size) {
+      ch := s[i]
+      if (inQuotes) {
+        if (ch == '"') break
+      }
+      else {
+        if (ch == ';') break
+      }
+      ++i
+    }
+
+    //default val
+    if (vstart == i) {
+      if (inQuotes)
+        params[key] = ""
+      else
+        throw ParseErr(s)
+    }
+    else {
+      val := s[vstart..<i].trim
+      //echo("'$key, $val'")
+      params[key] = val
+    }
+
+    ++i//skip '"'
+    while (i<s.size && (s[i] == ' ' || s[i] == ';')) { ++i }
+    return i
   }
 
   **
@@ -110,17 +167,18 @@ const final class MimeType
   ** no mapping is available return null.
   **
   static MimeType? forExt(Str s) {
+    s = s.lower
     switch (s)
     {
       case "png":   return imagePng;
       case "jpeg":  return imageJpeg;
       case "gif":   return imageGif;
       case "txt":   return textPlainUtf8;
-      case "html":  return textHtml;
-      case "xml":   return textHtmlUtf8;
-      case "htm":   return textHtml;
-      case "json":  return textJson;
-      case "js":    return textJsUtf8;
+      case "html":  return textHtmlUtf8;
+      case "xml":   return textXmlUtf8;
+      case "htm":   return textHtmlUtf8;
+      case "json":  return textJsonUtf8;
+      case "js":    return textJs;
     }
     return null
   }
@@ -128,11 +186,26 @@ const final class MimeType
   **
   ** Private constructor - must use fromStr
   **
-  private new make(Str mediaType, Str subType, Str:Str params, Str str) {
-    this.mediaType = mediaType
-    this.subType = subType
+  private new make(Str mediaType, Str subType, Str:Str params) {
+    this.mediaType = mediaType.lower
+    this.subType = subType.lower
     this.params = params
-    this.str = str
+
+    sb := StrBuf()
+    sb.add(this.mediaType).addChar('/').add(this.subType)
+    params.each |v, k| {
+      sb.add("; ")
+      sb.add(k).addChar('=')
+      if (v.contains(";")) {
+        sb.addChar('"')
+        sb.add(v)
+        sb.addChar('"')
+      }
+      else {
+        sb.add(v)
+      }
+    }
+    this.str = sb.toStr
   }
 
 //////////////////////////////////////////////////////////////////////////
