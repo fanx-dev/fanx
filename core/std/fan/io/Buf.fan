@@ -521,7 +521,7 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.readLine]`InStream.readLine`
   **
-  Str? readLine(Int? max := null) { in.readLine(max) }
+  Str? readLine(Int max := -1) { in.readLine(max) }
 
   **
   ** Convenience for [in.readStrToken]`InStream.readStrToken`
@@ -660,8 +660,9 @@ rtconst abstract class Buf
   protected virtual Void pipeTo(OutStream out, Int len) {
     temp := ByteArray(1024)
     total := 0
+    in := this.in
     while (total < len) {
-      n := getBytes(pos, temp, 0, temp.size.min(len - total))
+      n := in.readBytes(temp, 0, temp.size.min(len - total))
       out.writeBytes(temp, 0, n)
       total += n
     }
@@ -682,38 +683,4 @@ rtconst abstract class Buf
   }
 }
 
-**************************************************************************
-** FileBuf
-**************************************************************************
-
-internal class FileBuf : Buf
-{
-  new make(File file, Str mode) : super.privateMake() {
-    init(file, mode)
-  }
-
-  protected native Void init(File file, Str mode)
-
-  native override Int size
-  native override Int capacity
-  native override Int pos
-
-  native override Int getByte(Int index)
-  native override Void setByte(Int index, Int byte)
-
-  native override Int getBytes(Int pos, ByteArray dst, Int off, Int len)
-  native override Void setBytes(Int pos, ByteArray src, Int off, Int len)
-
-  native override Bool close()
-  native override This sync()
-
-  override Endian endian {
-    set { in.endian = it; out.endian = it }
-    get { out.endian }
-  }
-  override Charset charset {
-    set { in.charset = it; out.charset = it }
-    get { out.charset }
-  }
-}
 

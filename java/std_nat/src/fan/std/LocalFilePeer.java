@@ -220,18 +220,6 @@ public class LocalFilePeer {
 		return self;
 	}
 
-	static Buf open(LocalFile self, String mode) {
-		java.io.File jfile = (java.io.File) self.peer;
-		// TODO
-		return null;
-	}
-
-	static Buf mmap(LocalFile self, String mode, long pos, long size) {
-		java.io.File jfile = (java.io.File) self.peer;
-		// TODO
-		return null;
-	}
-
 	static InStream in(LocalFile self, long bufferSize) {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {

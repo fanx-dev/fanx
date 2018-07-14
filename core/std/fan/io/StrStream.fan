@@ -7,6 +7,13 @@ class StrStream {
     static extension OutStream out(StrBuf buf) {
       StrOutStream(buf)
     }
+
+    static extension Buf toBuf(Str str, Charset charset := Charset.utf8) {
+      buf := MemBuf(str.size * 2)
+      buf.charset = charset
+      buf.print(str)
+      return buf
+    }
 }
 
 internal class StrInStream : InStream {

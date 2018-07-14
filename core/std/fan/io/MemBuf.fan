@@ -48,7 +48,7 @@ class MemBuf : Buf
   override Int getByte(Int index) { buf.get(index) }
 
   override Void setByte(Int index, Int byte) {
-    buf.set(pos, byte)
+    buf.set(index, byte)
   }
 
   override Bool close() { true }

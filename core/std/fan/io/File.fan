@@ -510,8 +510,14 @@ internal const class LocalFile : File
   native override File moveTo(File to)
   native override Void delete()
   native override File deleteOnExit()
-  native override Buf open(Str mode := "rw")
-  native override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size)
+
+  override Buf open(Str mode := "rw") {
+    FileBuf(this, mode)
+  }
+  override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size) {
+    NioBuf(this, mode, pos, size)
+  }
+
   native override InStream in(Int bufferSize := 4096)
   native override OutStream out(Bool append := false, Int bufferSize := 4096)
 }

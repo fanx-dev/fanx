@@ -10,7 +10,7 @@ import fan.sys.IOErr;
 public class FileBufPeer {
 	private RandomAccessFile fp;
 
-	public FileBufPeer make(FileBuf buf) {
+	public static FileBufPeer make(FileBuf buf) {
 		return new FileBufPeer();
 	}
 
@@ -113,7 +113,7 @@ public class FileBufPeer {
 		}
 	}
 
-	FileBuf sync(FileBuf self) {
+	Buf sync(FileBuf self) {
 		try {
 			fp.getFD().sync();
 			return self;

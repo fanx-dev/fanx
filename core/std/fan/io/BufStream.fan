@@ -79,7 +79,7 @@ internal class BufInStream : InStream {
 
   override Int peek() {
     if (buf.pos+1 >= buf.size) return -1
-    return buf.getByte(buf.pos+1)
+    return buf.getByte(buf.pos)
   }
 
 }
