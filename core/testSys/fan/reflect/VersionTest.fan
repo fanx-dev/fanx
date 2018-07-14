@@ -9,7 +9,6 @@
 **
 ** VersionTest
 **
-@Js
 class VersionTest : Test
 {
 

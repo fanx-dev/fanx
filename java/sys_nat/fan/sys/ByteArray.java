@@ -48,7 +48,7 @@ public class ByteArray {
 		return true;
 	}
 
-	public ByteArray copyFrom(ObjArray that, long thatOffset, long thisOffset, long length) {
+	public ByteArray copyFrom(ByteArray that, long thatOffset, long thisOffset, long length) {
 		System.arraycopy(that.array, (int)thatOffset, array, (int)thisOffset, (int)length);
 		return this;
 	}

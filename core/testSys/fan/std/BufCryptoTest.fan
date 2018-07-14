@@ -9,10 +9,9 @@
 **
 ** BufCryptoTest
 **
-@Js
 class BufCryptoTest : AbstractBufTest
 {
-
+  Bool isJs := false
 //////////////////////////////////////////////////////////////////////////
 // Base64
 //////////////////////////////////////////////////////////////////////////
@@ -35,7 +34,7 @@ class BufCryptoTest : AbstractBufTest
     buf := Buf.make
     300.times |Int i| { buf.write(i) }
     buf.flip
-    verifyBufEq(Buf.fromBase64(buf.toBase64), buf)
+    verifyBufEq(BufCrypto.fromBase64(buf.toBase64), buf)
   }
 
   Void verifyBase64(Str src, Str base64)
@@ -45,12 +44,12 @@ class BufCryptoTest : AbstractBufTest
     verifyEq(makeMem.print(src).toBase64, base64)
     verifyEq(makeMem.print(src).toBase64Uri, safe)
 
-    verifyBufEq(Buf.fromBase64(base64), Buf.make.print(src))
-    verifyBufEq(Buf.fromBase64(safe), Buf.make.print(src))
+    verifyBufEq(BufCrypto.fromBase64(base64), Buf.make.print(src))
+    verifyBufEq(BufCrypto.fromBase64(safe), Buf.make.print(src))
 
     breaks := StrBuf.make
     base64.each |Int ch, Int i| { breaks.addChar(ch); if (i % 3 == 0) breaks.add("\uabcd\r\n") }
-    verifyBufEq(Buf.fromBase64(breaks.toStr), ascii(src))
+    verifyBufEq(BufCrypto.fromBase64(breaks.toStr), ascii(src))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,7 +77,7 @@ class BufCryptoTest : AbstractBufTest
     verifyDigest("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", "SHA-1",
      "a49b2446a02c645bf419f995b67091253a04a259")
     // 'a' 1,000,000 times - takes too long to run in js
-    if ("js" != Env.cur.runtime)
+    if (!isJs)
     {
       verifyDigest(Buf().fill('a', 1_000_000).flip.readAllStr, "SHA-1",
         "34aa973cd4c4daa4f61eeb2bdbad27316534016f")
@@ -100,7 +99,7 @@ class BufCryptoTest : AbstractBufTest
     verifyDigest("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", "SHA-256",
      "cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1")
     // 'a' 1,000,000 times - takes too long to run in js
-    if ("js" != Env.cur.runtime)
+    if (!isJs)
     {
       verifyDigest(Buf().fill('a', 1_000_000).flip.readAllStr, "SHA-256",
         "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0")
@@ -248,14 +247,14 @@ class BufCryptoTest : AbstractBufTest
       "c5 e4 78 d5 92 88 c8 41 aa 53 0d b6 84 5c 4c 8d 96 28 93 a0 01 ce 4e 11 a4 96 38 73 aa 98 13 4a")
     verifyPbk("PBKDF2WithHmacSHA256", "passwordPASSWORDpassword", "saltSALTsaltSALTsaltSALTsaltSALTsalt".toBuf, 4096, 40,
       "34 8c 89 db cb d3 2b 2f 32 d8 14 b8 11 6e 84 cf 2b 17 34 7e bc 18 00 18 1c 4e 2a 1f b8 dd 53 e1 c6 35 51 8c 7d ac 47 e9")
-    verifyPbk("PBKDF2WithHmacSHA256", "pencil", Buf.fromBase64("W22ZaJ0SNY7soEsUEjb6gQ=="), 4096, 32,
+    verifyPbk("PBKDF2WithHmacSHA256", "pencil", BufCrypto.fromBase64("W22ZaJ0SNY7soEsUEjb6gQ=="), 4096, 32,
       "c4a49510323ab4f952cac1fa99441939e78ea74d6be81ddf7096e87513dc615d")
   }
 
   Void verifyPbk(Str algorithm, Str pass, Buf salt, Int iterations, Int keyLen, Str expected)
   {
     expected = expected.replace(" ", "")
-    actual := Buf.pbk(algorithm, pass, salt, iterations, keyLen).toHex
+    actual := BufCrypto.pbk(algorithm, pass, salt, iterations, keyLen).toHex
     /*
     echo(">>>> $algorithm $pass $iterations $keyLen")
     echo("     $actual")

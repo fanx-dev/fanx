@@ -9,7 +9,6 @@
 **
 ** DependTest
 **
-@Js
 class DependTest : Test
 {
 

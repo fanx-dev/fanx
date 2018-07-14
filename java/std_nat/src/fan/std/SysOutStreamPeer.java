@@ -9,6 +9,7 @@ package fan.std;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -22,6 +23,7 @@ public class SysOutStreamPeer {
 	OutputStream outStream;
 //	Writer outWrite;
 //	DataOutputStream dataStream;
+	FileDescriptor fd;
 
 	private void init(OutputStream out) {
 		outStream = out;
@@ -34,11 +36,11 @@ public class SysOutStreamPeer {
 		return new SysOutStreamPeer();
 	}
 
-	public static OutStream make(OutputStream out, long bufSize) {
+	public static SysOutStream make(OutputStream out, long bufSize) {
 		return make(out, Endian.big, Charset.utf8, bufSize);
 	}
 
-	public static OutStream make(OutputStream out, Endian e, Charset c, long bufSize) {
+	public static SysOutStream make(OutputStream out, Endian e, Charset c, long bufSize) {
 		SysOutStream sin = SysOutStream.make(e, c);
 		if (bufSize > 0) {
 			out = new BufferedOutputStream(out, (int) bufSize);
@@ -76,6 +78,7 @@ public class SysOutStreamPeer {
 	public OutStream sync(SysOutStream self) {
 		try {
 			this.outStream.flush();
+			if (fd != null) fd.sync();
 			return self;
 		} catch (IOException e) {
 			throw IOErr.make(e);

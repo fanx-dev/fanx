@@ -1,3 +1,10 @@
+//
+// Copyright (c) 2018, chunquedong
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   2018-07-14  Jed Young
+//
 
 **************************************************************************
 ** MemBuf
@@ -18,6 +25,8 @@ class MemBuf : Buf
     this.&size = size
     this.pos = pos
   }
+
+  protected override ByteArray? unsafeArray() { buf }
 
   override Int size {
     set {
@@ -61,8 +70,12 @@ class MemBuf : Buf
     set { in.charset = it; out.charset = it }
     get { out.charset }
   }
-
-  override This fill(Int byte, Int times) { buf.fill(byte, times); return this }
+  /*
+  override This fill(Int byte, Int times) {
+    if (capacity < size+times) capacity = size+times
+    buf.fill(byte, times); return this
+  }
+  */
 
   protected override Void pipeTo(OutStream out, Int len) {
     if (pos + len > size) throw IOErr("Not enough bytes to write")
@@ -108,6 +121,8 @@ internal class ConstMemBuf : Buf
     this.&endian = Endian.big
     this.&charset = Charset.defVal
   }
+
+  protected override ByteArray? unsafeArray() { buf }
 
   override Int size { private set { err } }
   override Int capacity { get{ return buf.size } set{ err } }

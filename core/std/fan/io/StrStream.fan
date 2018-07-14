@@ -1,3 +1,10 @@
+//
+// Copyright (c) 2018, chunquedong
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   2018-07-14  Jed Young
+//
 
 class StrStream {
     static extension InStream in(Str str) {
@@ -12,7 +19,7 @@ class StrStream {
       buf := MemBuf(str.size * 2)
       buf.charset = charset
       buf.print(str)
-      return buf
+      return buf.flip
     }
 }
 
@@ -40,7 +47,7 @@ internal class StrInStream : InStream {
   override Bool close() { true }
 
   override Int readChar() {
-    if (pushback != null && pushback.size() > 0)
+    if (pushback != null && pushback.size > 0)
         return pushback.pop
     if (pos >= size)
         return -1

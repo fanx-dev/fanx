@@ -97,7 +97,7 @@ rtconst abstract class List<V>
   ** automatically allocates new storage so that capacity exactly matches
   ** the new size.
   **
-  abstract Int size()
+  abstract Int size
 
   **
   ** The number of items this list can hold without allocating more memory.

@@ -234,7 +234,9 @@ public class LocalFilePeer {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {
 			FileOutputStream fin = new FileOutputStream(jfile, append);
-			return SysOutStreamPeer.make(fin, bufferSize);
+			SysOutStream out = SysOutStreamPeer.make(fin, bufferSize);
+			out.peer.fd = fin.getFD();
+			return out;
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}

@@ -50,7 +50,12 @@ rtconst abstract class Buf
   ** Example:
   **   Buf.random(8).toHex  => "d548b54989028b90"
   **
-  native static Buf random(Int size)
+  static Buf random(Int size) {
+    x := Buf.make(size)
+    x.size = size
+    for (i:=0; i<size; ++i) { x[i] = Int.random(0..255) }
+    return x
+  }
 
   **
   ** Buf cannot be subclassed outside of sys since we do
@@ -557,6 +562,13 @@ rtconst abstract class Buf
 // Conversions
 //////////////////////////////////////////////////////////////////////////
 
+  protected virtual ByteArray? unsafeArray() { null }
+  protected virtual ByteArray safeArray() {
+    ba := ByteArray(size)
+    getBytes(0, ba, 0, size)
+    return ba
+  }
+
   **
   ** Encode the buffer contents from 0 to size into a
   ** hexadecimal string.  This method is unsupported for
@@ -566,8 +578,47 @@ rtconst abstract class Buf
   **   Buf.make.print("\r\n").toHex   => "0d0a"
   **   Buf.fromHex("0d0a").readAllStr => "\r\n"
   **
-  native Str toHex()
-  //private static const Str := "0123456789abcdef"
+  virtual Str toHex() {
+    buf := unsafeArray()
+    if (buf != null) {
+      sb := StrBuf(this.size*2)
+      memToHex(buf, this.size, sb)
+      return sb.toStr
+    }
+
+    oldPos := pos
+    temp := ByteArray(1024)
+    total := 0
+    in := this.in
+    size := size
+    sb := StrBuf(size*2)
+    while (total < size) {
+      n := in.readBytes(temp, 0, temp.size.min(size - total))
+      memToHex(temp, n, sb)
+      total += n
+    }
+    this.pos = oldPos
+    return sb.toStr
+  }
+  internal static const Str hexChars := "0123456789abcdef"
+
+  private Void memToHex(ByteArray temp, Int n, StrBuf sb) {
+    for (i:=0; i<n; ++i) {
+      b := temp[i].and(0xFF)
+      h := b.shiftr(4)
+      l := b.and(0xF)
+      sb.addChar(hexChars[h])
+       .addChar(hexChars[l])
+    }
+  }
+
+  private static Int parseHex(Int ch) {
+    nib := -1
+    if ('0' <= ch && ch <= '9') nib = ch - '0'
+    else if ('a' <= ch && ch <= 'f') nib = 10 + ch - 'a'
+    else if ('A' <= ch && ch <= 'F') nib = 10 + ch - 'A'
+    return nib
+  }
 
   **
   ** Decode the specified hexadecimal string into its binary
@@ -579,82 +630,28 @@ rtconst abstract class Buf
   **   Buf.make.print("\r\n").toHex   => "0d0a"
   **   Buf.fromHex("0d0a").readAllStr => "\r\n"
   **
-  native static Buf fromHex(Str s)
+  static Buf fromHex(Str s) {
+    slen := s.size
+    buf := ByteArray(slen/2)
+    size := 0
 
-  **
-  ** Encode the buffer contents from 0 to size to a Base64
-  ** string as defined by MIME RFC 2045.  No line breaks are
-  ** added.  This method is only supported by memory backed
-  ** buffers, file backed buffers will throw UnsupportedErr.
-  **
-  ** Example:
-  **   Buf.make.print("Fan").toBase64    => "RmFu"
-  **   Buf.fromBase64("RmFu").readAllStr => "Fan"
-  **
-  native Str toBase64()
+    for (i:=0; i<slen; ++i) {
+      c0 := s[i]
+      n0 := parseHex(c0)
+      if (n0 < 0) continue
 
-  **
-  ** Decode the specified Base64 string into its binary contents
-  ** as defined by MIME RFC 2045.  Any characters which are not
-  ** included in the Base64 character set are safely ignored.
-  **
-  ** Example:
-  **   Buf.make.print("Fan").toBase64    => "RmFu"
-  **   Buf.fromBase64("RmFu").readAllStr => "Fan"
-  **
-  native static Buf fromBase64(Str s)
+      n1 := -1
+      if (++i < slen) {
+        c1 := s[i]
+        n1 = parseHex(c1)
+      }
+      if (n1 < 0) throw IOErr.make("Invalid hex str")
 
-  **
-  ** Apply the specified message digest algorthm to this buffer's
-  ** contents from 0 to size and return the resulting hash.  Digests
-  ** are secure one-way hash functions which input an arbitrary sized
-  ** buffer and return a fixed sized buffer.  Common algorithms include:
-  ** "MD5", "SHA-1", and "SHA-256"; the full list supported is platform
-  ** dependent.  On the Java VM, the algorithm maps to those avaialble
-  ** via the 'java.security.MessageDigest' API.  Throw ArgErr if the
-  ** algorithm is not available.  This method is unsupported for mmap
-  ** buffers.
-  **
-  ** Example:
-  **   Buf.make.print("password").print("salt").toDigest("MD5").toHex
-  **    =>  "b305cadbb3bce54f3aa59c64fec00dea"
-  **
-  native Buf toDigest(Str algorithm)
+      buf[size++] = n0.shiftl(4).or(n1)
+    }
 
-  **
-  ** Compute a cycle reduancy check code using this buffer's contents
-  ** from 0 to size.  The supported algorithm names:
-  **    - "CRC-16": also known as CRC-16-ANSI, CRC-16-IBM; used by
-  **      USB, ANSI X3.28, and Modbus
-  **    - "CRC-32": used by Ethernet, MPEG-2, PKZIP, Gzip, PNG
-  **    - "CRC-32-Adler": used by Zlib
-  **
-  ** Raise ArgErr is algorithm is not available.  This method is
-  ** only supported for memory based buffers.
-  **
-  native Int crc(Str algorithm)
-
-  **
-  ** Generate an HMAC message authentication as specified by RFC 2104.
-  ** This buffer is the data input, 'algorithm' specifies the hash digest,
-  ** and 'key' represents the secret key:
-  **   - 'H': specified by algorthim parameter - "MD5" or "SHA1"
-  **   - 'K': secret key specified by key parameter
-  **   - 'B': fixed at 64
-  **   - 'text': this instance
-  **
-  ** The HMAC is computed using:
-  **   ipad = the byte 0x36 repeated B times
-  **   opad = the byte 0x5C repeated B times
-  **   H(K XOR opad, H(K XOR ipad, text))
-  **
-  ** Throw ArgErr if the algorithm is not available.  This method is
-  ** only supported for memory buffers.
-  **
-  ** Examples:
-  **   "hi there".toBuf.hmac("MD5", "secret".toBuf)
-  **
-  native Buf hmac(Str algorithm, Buf key)
+    return MemBuf.makeBuf(buf, size)
+  }
 
 
   protected virtual Void pipeTo(OutStream out, Int len) {
@@ -682,5 +679,4 @@ rtconst abstract class Buf
     return total
   }
 }
-
 
