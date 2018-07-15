@@ -22,7 +22,8 @@ const struct class Date
   ** Get today's Date using specified timezone.
   **
   static Date today(TimeZone tz := TimeZone.cur) {
-    fromDateTime(DateTime.now.toTimeZone(tz))
+    dt := DateTime.now.toTimeZone(tz)
+    return dt.date
   }
 
   **
@@ -73,12 +74,6 @@ const struct class Date
   **
   static const Date defVal := Date(2000, Month.vals[0], 1)
 
-  **
-  ** Private constructor.
-  **
-  new fromDateTime(DateTime datetime) {
-    this.datetime = datetime
-  }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -114,7 +109,7 @@ const struct class Date
   ** Also `fromStr`, `toIso`, and `toLocale`.
   **
   override Str toStr() {
-    toLocale("YYYY-MM-DD")
+    toLocale("yyyy-MM-dd")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,7 +184,7 @@ const struct class Date
   **
   static Date? fromLocale(Str str, Str pattern, Bool checked := true) {
     dt := DateTime.fromLocale(str, pattern, TimeZone.cur, checked)
-    return fromDateTime(dt)
+    return dt.date
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,6 +222,7 @@ const struct class Date
   **   Date(2008, Month.feb, 28) + 2day  =>  2008-03-01
   **
   @Operator Date plus(Duration days) {
+    if (days.toNanos % Duration.nsPerDay != 0) throw ArgErr("$days")
     d := datetime + days
     return d.date
   }
@@ -240,8 +236,7 @@ const struct class Date
   **   Date(2008, Month.feb, 28) - 2day  =>  2008-02-26
   **
   @Operator Date minus(Duration days) {
-    d := datetime - days
-    return d.date
+    plus(-days)
   }
 
   **

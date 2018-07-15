@@ -12,29 +12,48 @@
 enum class Month
 {
   ** January
-  jan,
+  jan("January"),
+
   ** February
-  feb,
+  feb("February"),
+
   ** March
-  mar,
+  mar("March"),
+
   ** April
-  apr,
+  apr("April"),
+
   ** May
-  may,
+  may("May"),
+
   ** June
-  jun,
+  jun("June"),
+
   ** July
-  jul,
+  jul("July"),
+
   ** August
-  aug,
+  aug("August"),
+
   ** September
-  sep,
+  sep("September"),
+
   ** October
-  oct,
+  oct("October"),
+
   ** November
-  nov,
+  nov("November"),
+
   ** December
-  dec
+  dec("December")
+
+  private const Str fullName
+  private const Str abbrName
+
+  private new make(Str fullName) {
+    this.fullName = fullName
+    this.abbrName = name.capitalize
+  }
 
   **
   ** Return the month after this month.
@@ -79,25 +98,32 @@ enum class Month
   ** and `localeFull`.
   **
   Str toLocale(Str? pattern := null, Locale locale := Locale.cur) {
-    if (pattern == null) pattern = "MM"
+    if (pattern == null) pattern = "MMM"
+    else {
+      if (pattern.size == 0 || pattern.size > 4) throw ArgErr(pattern)
+      if (pattern.any { it != 'M' }) throw ArgErr(pattern)
+    }
+
     switch (pattern.size)
     {
       case 1: return (ordinal+1).toStr
-      case 2: return ordinal < 9 ? "0" + (ordinal+1).toStr : (ordinal+1).toStr;
+      case 2: return ordinal < 9 ? "0" + (ordinal+1).toStr : (ordinal+1).toStr
+      case 3: return abbrName
+      case 4: return fullName
     }
-    return name
+    return abbrName
   }
 
   **
   ** Get the abbreviated name for the current locale.
   ** Configured by the 'sys::<name>Abbr' localized property.
   **
-  Str localeAbbr() { name }
+  Str localeAbbr() { abbrName }
 
   **
   ** Get the full name for the current locale.
   ** Configured by the 'sys::<name>Full' localized property.
   **
-  Str localeFull() { name }
+  Str localeFull() { fullName }
 
 }

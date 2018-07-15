@@ -12,25 +12,34 @@
 enum class Weekday
 {
   ** Sunday
-  sun,
+  sun("Sunday"),
   ** Monday
-  mon,
+  mon("Monday"),
   ** Tuesday
-  tue,
+  tue("Tuesday"),
   ** Wednesday
-  wed,
+  wed("Wednesday"),
   ** Thursday
-  thu,
+  thu("Thursday"),
   ** Friday
-  fri,
+  fri("Friday"),
   ** Saturday
-  sat
+  sat("Saturday")
+
+  private const Str fullName
+  private const Str abbrName
+
+  private new make(Str fullName) {
+    this.fullName = fullName
+    this.abbrName = name.capitalize
+  }
 
   **
   ** Return the day after this weekday.
   **
   @Operator Weekday increment() {
     o := this.ordinal + 1
+    o = o % 7
     return Weekday.vals[o]
   }
 
@@ -39,6 +48,7 @@ enum class Weekday
   **
   @Operator Weekday decrement() {
     o := this.ordinal - 1
+    o = o % 7
     return Weekday.vals[o]
   }
 
@@ -54,28 +64,13 @@ enum class Weekday
   ** and `localeFull`.
   **
   Str toLocale(Str? pattern := null, Locale locale := Locale.cur) {
-    result := ""
-    switch(this) {
-      case sun:
-      result = "Sunday"
-      case mon:
-      result = "Monday"
-      case tue:
-      result = "Tuesday"
-      case wed:
-      result = "Wednesday"
-      case thu:
-      result = "Thursday"
-      case fri:
-      result = "Friday"
-      case sat:
-      result = "Saturday"
-    }
-
     if (pattern == null || pattern == "WWW") {
-      return result[0..<3]
+      return abbrName
     }
-    return result
+    else if (pattern == "WWWW") {
+      return fullName
+    }
+    throw ArgErr(pattern)
   }
 
   **
@@ -83,8 +78,7 @@ enum class Weekday
   ** Configured by the 'sys::<name>Abbr' localized property.
   **
   Str localeAbbr() {
-    //TODO
-    toStr
+    abbrName
   }
 
   **
@@ -92,8 +86,7 @@ enum class Weekday
   ** Configured by the 'sys::<name>Full' localized property.
   **
   Str localeFull() {
-    //TODO
-    toStr
+    fullName
   }
 
   **

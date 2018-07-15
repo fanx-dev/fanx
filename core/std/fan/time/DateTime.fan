@@ -196,6 +196,7 @@ const struct class DateTime
         if (s.get(i++) != ' ') throw Err();
         tz = TimeZone.fromStr(s[i..-1], true);
       }
+      //echo("$s, $sec $ns, $tz")
 
       return DateTime(year, Month.vals[month], day, hour, min, sec, ns, tz);
     }
@@ -269,7 +270,7 @@ const struct class DateTime
   **   "2009-03-10T11:33:20Z London"
   **   "2009-03-01T12:00:00+01:00 Amsterdam"
   **
-  override Str toStr() { toLocale("YYYY-MM-DD'T'hh:mm:ss.FFFFFFFFFz zzzz") }
+  override Str toStr() { toLocale("yyyy-MM-dd'T'hh:mm:ss.SSSZ z") }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -284,7 +285,7 @@ const struct class DateTime
   **
   ** Get the date component of this timestamp.
   **
-  Date date() { Date(year(), month, day) }
+  Date date() { Date(year, month, day) }
 
   **
   ** Get the time component of this timestamp.
@@ -329,7 +330,7 @@ const struct class DateTime
   ** a number between 0 and 999,999,999.
   **
   Int nanoSec() {
-    return (ticks % Duration.milliPerSec) * 1000_1000
+    return (ticks % Duration.milliPerSec) * 1000_000
   }
 
   **
@@ -480,16 +481,15 @@ const struct class DateTime
   **
   DateTime toTimeZone(TimeZone tz) {
     if (this.tz == tz) return this;
+
     if (tz == TimeZone.rel || this.tz == TimeZone.rel)
     {
       return DateTime(year, month, day,
                           hour, min, sec, nanoSec,
                           tz);
     }
-    else
-    {
-      return fromTicks(ticks, tz);
-    }
+
+    return fromTicks(ticks, tz);
   }
 
   **
@@ -621,7 +621,7 @@ const struct class DateTime
   **
   ** Also see `toIso`, `fromStr`, and `fromHttpStr`.
   **
-  static DateTime? fromIso(Str s, Bool checked := true) { fromStr(s, checked, true) }
+  static DateTime? fromIso(Str s, Bool checked := true) { fromLocale(s, "yyyy-MM-dd'T'hh:mm:ss.SXXX", null, checked) }
 
   **
   ** Format this instance according to ISO 8601 using the pattern:
@@ -629,7 +629,7 @@ const struct class DateTime
   **
   ** Also see `fromIso`, `toStr`, and `toHttpStr`.
   **
-  Str toIso() { toLocale("YYYY-MM-DD'T'hh:mm:ss.FFFFFFFFFz") }
+  Str toIso() { toLocale("yyyy-MM-dd'T'hh:mm:ss.SXXX") }
 
 //////////////////////////////////////////////////////////////////////////
 // HTTP
@@ -652,7 +652,7 @@ const struct class DateTime
     if (checked) throw ParseErr("Invalid HTTP DateTime: '$s'")
     return null
   }
-  static const Str[] httpFormats := ["EEE, dd MMM yyyy HH:mm:ss zzz", "EEEEEE, dd-MMM-yy HH:mm:ss zzz", "EEE MMMM d HH:mm:ss yyyy"]
+  static const Str[] httpFormats := ["EEE, dd MMM yyyy HH:mm:ss Z", "E, dd-MMM-yy HH:mm:ss Z", "EEE MMM d HH:mm:ss Z"]
 
   **
   ** Format this time for use in an MIME or HTTP message
@@ -661,7 +661,7 @@ const struct class DateTime
   **   Sun, 06 Nov 1994 08:49:37 GMT
   **
   Str toHttpStr() {
-    toTimeZone(TimeZone.utc).toLocale("WWW, DD MMM YYYY hh:mm:ss", Locale.en) + " GMT"
+    toTimeZone(TimeZone.utc).toLocale("EEE, dd MMM yyyy hh:mm:ss", Locale.en) + " GMT"
   }
 
 //////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,7 @@ const struct class TimeOfDay
   **
   static TimeOfDay now(TimeZone tz := TimeZone.cur) {
     //fromDateTime(DateTime.now.toTimeZone(tz))
-    dt := DateTime.now.toTimeZone(tz)
+    dt := DateTime.now(null).toTimeZone(tz)
     return make(dt.hour, dt.min, dt.sec, dt.nanoSec)
   }
 
@@ -47,7 +47,9 @@ const struct class TimeOfDay
     if (ticks < 0) {
       ticks = - ticks
       ticks = ticks % Duration.nsPerDay
-      ticks = Duration.nsPerDay - ticks
+      if (ticks > 0) {
+        ticks = Duration.nsPerDay - ticks
+      }
       this.ticks = ticks
     }
     else
@@ -149,7 +151,7 @@ const struct class TimeOfDay
   **
   ** Also see `fromStr`, `toIso`, and `toLocale`.
   **
-  override Str toStr() { toLocale("hh:mm:ss.FFFFFFFFF") }
+  override Str toStr() { toLocale("hh:mm:ss.SSS") }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -211,7 +213,9 @@ const struct class TimeOfDay
     buf.add(hour.toRadix(10, 2))
        .add(":").add(min.toRadix(10, 2))
        .add(":").add(sec.toRadix(10, 2))
-       .add(".").add(nanoSec.toRadix(10, 9))
+    if (nanoSec != 0) {
+       buf.add(".").add(nanoSec.toRadix(10, 9))
+    }
     return buf.toStr
   }
 
@@ -262,7 +266,7 @@ const struct class TimeOfDay
     ticks := d.toNanos
     if (ticks == 0) return this
 
-    if (ticks < 0 || ticks > Duration.nsPerDay )
+    if (ticks < -Duration.nsPerDay || ticks > Duration.nsPerDay )
       throw ArgErr.make("Duration out of range: " + d)
 
     return fromTicks(this.ticks + ticks)
@@ -275,13 +279,7 @@ const struct class TimeOfDay
   **   Time(5,0,0) - 30min  =>  04:30:00
   **
   @Operator TimeOfDay minus(Duration d) {
-    ticks := d.toNanos
-    if (ticks == 0) return this
-
-    if (ticks < 0 || ticks > Duration.nsPerDay )
-      throw ArgErr.make("Duration out of range: " + d)
-
-    return fromTicks(this.ticks - ticks)
+    plus(-d)
   }
 
 //////////////////////////////////////////////////////////////////////////

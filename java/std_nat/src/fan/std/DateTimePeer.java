@@ -3,6 +3,7 @@ package fan.std;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import fan.sys.ArgErr;
 import fan.sys.ParseErr;
 
 public class DateTimePeer {
@@ -13,7 +14,7 @@ public class DateTimePeer {
 		long now = System.currentTimeMillis();
 
 	    DateTime c = cached;
-	    if (tolerance != null && now - c.ticks <= tolerance.ticks)
+	    if (tolerance != null && now - c.ticks <= tolerance.toMillis())
 	        return c;
 
 	    return cached = DateTime.fromTicks(now, TimeZone.cur());
@@ -23,14 +24,14 @@ public class DateTimePeer {
 		long now = System.currentTimeMillis();
 
 	    DateTime c = cachedUtc;
-	    if (tolerance != null && now - c.ticks <= tolerance.ticks)
+	    if (tolerance != null && now - c.ticks <= tolerance.toMillis())
 	        return c;
 
 	    return cachedUtc = DateTime.fromTicks(now, TimeZone.utc);
 	}
 
 	static DateTime fromTicks(long ticks, TimeZone tz) {
-		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(tz.name);
+		java.util.TimeZone jtz = TimeZonePeer.getJtz(tz);
 		Calendar cal = Calendar.getInstance(jtz);
 		cal.setTimeInMillis(ticks);
 		
@@ -44,12 +45,17 @@ public class DateTimePeer {
 		long dst = cal.get(Calendar.DST_OFFSET);
 		long weekday = cal.get(Calendar.DAY_OF_WEEK)-1;//base 1
 		
+		
+		if (year < 1901 || year > 2099) {
+			System.out.println("ERROR");
+		}
+		
 		DateTime dt = DateTime.privateMake(year, month, day, hour, min, sec, ns, ticks, dst, weekday, tz);
 		return dt;
 	}
 
 	static DateTime make(long year, Month month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
-		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(tz.name);
+		java.util.TimeZone jtz = TimeZonePeer.getJtz(tz);
 		Calendar cal = Calendar.getInstance(jtz);
 		
 		cal.set(Calendar.YEAR, (int)year);
@@ -69,7 +75,7 @@ public class DateTimePeer {
 	}
 	
 	static Calendar toCalendar(DateTime self) {
-		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(self.tz().name);
+		java.util.TimeZone jtz = TimeZonePeer.getJtz(self.tz());
 		Calendar c = Calendar.getInstance(jtz);
 		c.setTimeInMillis((self.toJava()));
 		return c;
@@ -98,14 +104,19 @@ public class DateTimePeer {
 			pattern = "YYYY-MM-DD'T'hh:mm:ss.FFFFFFFFFz";
 		}
 		SimpleDateFormat format = new SimpleDateFormat(pattern, jlocale);
+		format.setTimeZone(TimeZonePeer.getJtz(self.tz()));
 		java.util.Date date = new java.util.Date(self.toJava());
-		return format.format(date);
+		String res = format.format(date);
+		return res;
 	}
 
 	static DateTime fromLocale(String str, String pattern, TimeZone tz, boolean checked) {
 		try {
+			if (tz == null) tz = TimeZone.cur();
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
+			format.setTimeZone(TimeZonePeer.getJtz(tz));
 			java.util.Date date = format.parse(str);
+			tz = TimeZone.fromName(format.getTimeZone().getID());
 			return DateTime.fromJava(date.getTime(), tz);
 		} catch (Exception e) {
 			if (checked) {
@@ -117,24 +128,38 @@ public class DateTimePeer {
 
 	static long weekdayInMonth(long year, Month mon, Weekday weekday, long pos) {
 		Calendar cal = Calendar.getInstance();
-	    cal.set(Calendar.DATE,1);
+	    cal.set(Calendar.DAY_OF_MONTH,1);
 	    cal.set(Calendar.YEAR, (int)year);
 	    cal.set(Calendar.MONTH, (int)mon.ordinal());
 	    
-	    if (pos < 0) {
-	    	pos = 31 + pos;
+	    if (pos > 0) {
+		    int count = 0;
+		    for (int i = 1; i < 32; i++) {
+		        if (cal.get(Calendar.DAY_OF_WEEK)-1 == weekday.ordinal()) {
+		            count++;
+		            if (count == pos) {
+		            	return i;
+		            }
+		        }
+		        cal.add(Calendar.DATE,1);
+		    }
 	    }
-	    int count = 0;
-	    for (int i = 0; i < 31; i++) {
-	        if (cal.get(Calendar.DAY_OF_WEEK) == weekday.ordinal()) {
-	            count++;
-	            if (count == pos) {
-	            	return i;
-	            }
-	        }
-	        cal.add(Calendar.DATE,1);
+	    else if (pos < 0) {
+	    	pos = -pos;
+	    	int i = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+	    	cal.add(Calendar.DATE, i-1);
+	    	int count = 0;
+		    for (; i >0; i--) {
+		        if (cal.get(Calendar.DAY_OF_WEEK)-1 == weekday.ordinal()) {
+		            count++;
+		            if (count == pos) {
+		            	return i;
+		            }
+		        }
+		        cal.add(Calendar.DATE, -1);
+		    }
 	    }
-	    return -1;
+	    throw ArgErr.make("year:"+year+",month:"+mon +",weekday:"+weekday+",pos:"+pos);
 	}
 
 }

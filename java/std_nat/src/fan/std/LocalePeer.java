@@ -1,14 +1,30 @@
 package fan.std;
 
 public class LocalePeer {
-	static Locale cur() {
+	static Locale defaultLocale;
+	static {
 		java.util.Locale jl = java.util.Locale.getDefault();
-		Locale locale = Locale.make(jl.getLanguage(), jl.getCountry());
-		return locale;
+		defaultLocale = Locale.make(jl.getLanguage(), jl.getCountry());
+	}
+
+	static ThreadLocal<Locale> threadLocale = new ThreadLocal<Locale>() {
+		@Override
+		protected Locale initialValue() {
+			return defaultLocale;
+		}
+	};
+
+	static Locale cur() {
+		return threadLocale.get();
 	}
 
 	static void setCur(Locale local) {
-		java.util.Locale jl = java.util.Locale.forLanguageTag(local.lang);
-		java.util.Locale.setDefault(jl);
+		threadLocale.set(local);
+		try {
+			java.util.Locale jl = java.util.Locale.forLanguageTag(local.lang);
+			java.util.Locale.setDefault(jl);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

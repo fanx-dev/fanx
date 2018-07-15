@@ -27,10 +27,8 @@
 ** Also see [docLang]`docLang::DateTime`.
 **
 @Serializable { simple = true }
-@NoPeer
 const class TimeZone
 {
-
   **
   ** List the names of all the time zones available in the
   ** local time zone database.  This database is stored in
@@ -38,7 +36,10 @@ const class TimeZone
   ** list contains only the simple names such as "New_York"
   ** and "London".
   **
-  native static Str[] listNames()
+  static Str[] listNames() {
+    s := listFullNames
+    return s.map { it.split('/').last }.toImmutable
+  }
 
   **
   ** List all zoneinfo (Olson database) full names of the
@@ -46,7 +47,7 @@ const class TimeZone
   ** This list is the full names only such as "America/New_York"
   ** and "Europe/London".
   **
-  //static Str[] listFullNames()
+  native static Str[] listFullNames()
 
   **
   ** Find a time zone by name from the built-in database:
@@ -63,12 +64,11 @@ const class TimeZone
   **
   static new fromStr(Str name, Bool checked := true) {
     if (name == "UTC") return utc
+    if (name == "Rel") return rel
     tz := fromName(name)
     if (tz == null) {
-      if (checked)
-        throw ArgErr("unknow time zone $name")
-      else
-        return defVal
+      if (checked) throw ParseErr(name)
+      tz = make(name, name, 0)
     }
     return tz
   }
@@ -86,7 +86,7 @@ const class TimeZone
   ** day versus absolute time.  See `DateTime.toRel` and
   ** [docLang]`docLang::DateTime#relTimeZone`.
   **
-  static TimeZone rel() { utc }
+  const static TimeZone rel := TimeZone("Rel", "Etc/Rel", 0)
 
   **
   ** Get the current default TimeZone of the VM.  The default
@@ -100,7 +100,7 @@ const class TimeZone
   **
   ** Default value is UTC.
   **
-  static TimeZone defVal() { utc }
+  const static TimeZone defVal := utc
 
   **
   ** Private constructor.
@@ -159,9 +159,9 @@ const class TimeZone
   **
   ** Get the duration of time which will be added to local standard
   ** time to get wall time during daylight savings time (often 1hr).
-  ** If daylight savings time is not observed then return 0.
+  ** If daylight savings time is not observed then return null.
   **
-  native Duration dstOffset(Int year)
+  native Duration? dstOffset(Int year)
 
   **
   ** Get the abbreviated name during standard time.
