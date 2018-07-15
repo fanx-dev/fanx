@@ -78,7 +78,8 @@ enum class Month
   ** If pattern is null it defaults to "MMM".  Also see `localeAbbr`
   ** and `localeFull`.
   **
-  Str toLocale(Str pattern := "MM") {
+  Str toLocale(Str? pattern := null, Locale locale := Locale.cur) {
+    if (pattern == null) pattern = "MM"
     switch (pattern.size)
     {
       case 1: return (ordinal+1).toStr

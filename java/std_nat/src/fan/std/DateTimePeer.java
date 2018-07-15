@@ -3,32 +3,75 @@ package fan.std;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import fan.sys.FanInt;
-import fan.sys.List;
 import fan.sys.ParseErr;
 
 public class DateTimePeer {
+	private static volatile DateTime cached = DateTime.fromTicks(0, TimeZone.cur());
+	private static volatile DateTime cachedUtc = DateTime.fromTicks(0, TimeZone.utc);
+	  
 	static DateTime now(Duration tolerance) {
-		return null;
+		long now = System.currentTimeMillis();
+
+	    DateTime c = cached;
+	    if (tolerance != null && now - c.ticks <= tolerance.ticks)
+	        return c;
+
+	    return cached = DateTime.fromTicks(now, TimeZone.cur());
 	}
 
 	static DateTime nowUtc(Duration tolerance) {
-		return null;
+		long now = System.currentTimeMillis();
+
+	    DateTime c = cachedUtc;
+	    if (tolerance != null && now - c.ticks <= tolerance.ticks)
+	        return c;
+
+	    return cachedUtc = DateTime.fromTicks(now, TimeZone.utc);
 	}
 
 	static DateTime fromTicks(long ticks, TimeZone tz) {
-		return null;
+		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(tz.name);
+		Calendar cal = Calendar.getInstance(jtz);
+		cal.setTimeInMillis(ticks);
+		
+		long year = cal.get(Calendar.YEAR);
+		long month = cal.get(Calendar.MONTH);//base 0
+		long day = cal.get(Calendar.DAY_OF_MONTH);//base 1
+		long hour = cal.get(Calendar.HOUR_OF_DAY);
+		long min = cal.get(Calendar.MINUTE);
+		long sec = cal.get(Calendar.SECOND);
+		long ns = cal.get(Calendar.MILLISECOND)*1000000;
+		long dst = cal.get(Calendar.DST_OFFSET);
+		long weekday = cal.get(Calendar.DAY_OF_WEEK)-1;//base 1
+		
+		DateTime dt = DateTime.privateMake(year, month, day, hour, min, sec, ns, ticks, dst, weekday, tz);
+		return dt;
 	}
 
-	static List getTicks(long year, long month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
-		List list = List.make(3);
-		return list;
+	static DateTime make(long year, Month month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
+		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(tz.name);
+		Calendar cal = Calendar.getInstance(jtz);
+		
+		cal.set(Calendar.YEAR, (int)year);
+		cal.set(Calendar.MONTH, (int)month.ordinal());
+		cal.set(Calendar.DAY_OF_MONTH, (int)day);
+		cal.set(Calendar.HOUR_OF_DAY, (int)hour);
+		cal.set(Calendar.MINUTE, (int)min);
+		cal.set(Calendar.SECOND, (int)sec);
+		
+		cal.set(Calendar.MILLISECOND, (int)ns/1000000);
+		long dst = cal.get(Calendar.DST_OFFSET);
+		long weekday = cal.get(Calendar.DAY_OF_WEEK)-1;
+		long ticks = cal.getTimeInMillis();
+		
+		DateTime dt = DateTime.privateMake(year, month.ordinal(), day, hour, min, sec, ns, ticks, dst, weekday, tz);
+		return dt;
 	}
 	
 	static Calendar toCalendar(DateTime self) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(new java.util.Date(self.toJava()));
-		c.setTimeZone(java.util.TimeZone.getTimeZone(self.tz().name));
+		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(self.tz().name);
+		Calendar c = Calendar.getInstance(jtz);
+		c.setTimeInMillis((self.toJava()));
 		return c;
 	}
 
@@ -44,11 +87,17 @@ public class DateTimePeer {
 
 	static long hoursInDay(DateTime self) {
 		Calendar c = toCalendar(self);
-		return c.get(Calendar.HOUR_OF_DAY);
+		long dst = c.get(Calendar.DST_OFFSET);
+//		return c.get(Calendar.HOUR_OF_DAY);
+		return 24 + (dst/Duration.milliPerHr);
 	}
 
 	static String toLocale(DateTime self, String pattern, Locale locale) {
-		SimpleDateFormat format = new SimpleDateFormat(pattern, java.util.Locale.forLanguageTag(locale.lang));
+		java.util.Locale jlocale = java.util.Locale.forLanguageTag(locale.lang);
+		if (pattern == null) {
+			pattern = "YYYY-MM-DD'T'hh:mm:ss.FFFFFFFFFz";
+		}
+		SimpleDateFormat format = new SimpleDateFormat(pattern, jlocale);
 		java.util.Date date = new java.util.Date(self.toJava());
 		return format.format(date);
 	}

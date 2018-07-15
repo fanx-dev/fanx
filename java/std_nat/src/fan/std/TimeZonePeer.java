@@ -2,7 +2,6 @@ package fan.std;
 
 import java.util.Calendar;
 
-import fan.sys.FanStr;
 import fan.sys.List;
 
 public class TimeZonePeer {
@@ -21,14 +20,17 @@ public class TimeZonePeer {
 		java.util.TimeZone jtz = java.util.TimeZone.getTimeZone(self.name);
 		
 		Calendar c = Calendar.getInstance();
-		c.set((int)year + 1900, 0, 0);
+		c.set((int)year, 0, 0);
 		
 		if (!jtz.inDaylightTime(c.getTime())) {
-			return Duration.make(0);
+			return Duration.zero;
 		}
 		
-		long sec = jtz.getDSTSavings() / 1000;
-		return Duration.fromSec(sec);
+		long millis = c.get(Calendar.DST_OFFSET);
+		return Duration.fromMillis(millis);
+		
+//		long sec = jtz.getDSTSavings() / 1000;
+//		return Duration.fromSec(sec);
 	}
 
 	static List listNames() {

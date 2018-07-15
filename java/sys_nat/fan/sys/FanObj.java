@@ -15,7 +15,7 @@ import fanx.util.*;
  * FanObj is the root class of all classes in Fantom - it is the class
  * representation of Obj.
  */
-public class FanObj extends IObj {
+public class FanObj extends IObj implements Comparable {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Java
@@ -52,7 +52,10 @@ public class FanObj extends IObj {
 	}
 
 	public int compareTo(Object obj) {
-		return (int) compare(obj);
+		long r = compare(obj);
+		if (r > 0) return 1;
+		if (r < 0) return -1;
+		return 0;
 	}
 
 	public static long hash(Object self) {

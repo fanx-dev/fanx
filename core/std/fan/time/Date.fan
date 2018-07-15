@@ -103,7 +103,7 @@ const struct class Date
   ** Compare based on year, month, and day.
   **
   override Int compare(Obj obj) {
-    datetime <=> ((Date)obj).datetime
+    this.datetime.compare(((Date)obj).datetime)
   }
 
   **
@@ -178,8 +178,8 @@ const struct class Date
   **   WWWW   Full weekday               Tuesday
   **   'xyz'  Literal characters
   **
-  Str toLocale(Str? pattern := null) {
-    datetime.toLocale(pattern)
+  Str toLocale(Str? pattern := null, Locale locale := Locale.cur) {
+    datetime.toLocale(pattern, locale)
   }
 
   **

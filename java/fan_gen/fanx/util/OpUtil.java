@@ -7,10 +7,7 @@
 //
 package fanx.util;
 
-import fanx.fcode.FConst;
-import fanx.main.ClassType;
 import fanx.main.IObj;
-import fanx.main.Type;
 
 /**
  * OpUtil provides static methods used to implement special fcode opcodes.
@@ -21,8 +18,11 @@ public class OpUtil
 //////////////////////////////////////////////////////////////////////////
 // Object Comparisions
 //////////////////////////////////////////////////////////////////////////
-  public static int doCompare(Object a, Object b) {
-	  if (a instanceof Comparable) {
+  private static long doCompare(Object a, Object b) {
+	  if (a instanceof IObj) {
+		  return ((IObj)a).compare(b);
+	  }
+	  else if (a instanceof Comparable) {
 	      return ((Comparable)a).compareTo(b);
 	  }
 	  return a.toString().compareTo(b.toString());

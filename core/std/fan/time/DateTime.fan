@@ -35,8 +35,8 @@ const struct class DateTime
   @I32 private const Int fields     // bitmask month, day, etc
   @I32 private const Int yearField // year
 
-  private static const Int minTicks   := Int.minVal
-  private static const Int maxTicks   := Int.maxVal
+  //private static const Int minTicks   := Int.minVal
+  //private static const Int maxTicks   := Int.maxVal
 
   private const Int ticks           // millis since 1970
   private const TimeZone timeZone   // timezone used to resolve fields
@@ -80,7 +80,6 @@ const struct class DateTime
   **
   private native static DateTime fromTicks(Int ticks, TimeZone tz := TimeZone.cur)
 
-  private native static Int[] getTicks(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 
   **
   ** Make for the specified date and time values:
@@ -95,24 +94,24 @@ const struct class DateTime
   **
   ** Throw ArgErr is any of the parameters are out of range.
   **
-  new make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur) {
-    res := getTicks(year, month, day, hour, min, sec, ns, tz)
-    Int ticks := res[0]
-    Int dst := res[1]
-    Int weekday := res[2]
+  native static new make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 
+
+  protected new privateMake(Int year, Int month, Int day, Int hour, Int min, Int sec, Int ns
+     , Int ticks, Int dst, Int weekday, TimeZone tz := TimeZone.cur) {
     //if (year < 1901 || year > 2099) throw ArgErr.make("year " + year.toStr);
-    if (month.ordinal < 0 || month.ordinal > 11)    throw ArgErr.make("month " + month.toStr);
-    if (day < 1 || day > numDaysInMonth(year, month.ordinal)) throw ArgErr.make("day " + day);
+    if (month < 0 || month > 11)    throw ArgErr.make("month " + month.toStr);
+    if (day < 1 || day > numDaysInMonth(year, month)) throw ArgErr.make("day " + day);
     if (hour < 0 || hour > 23)      throw ArgErr.make("hour " + hour);
     if (min < 0 || min > 59)        throw ArgErr.make("min " + min);
     if (sec < 0 || sec > 59)        throw ArgErr.make("sec " + sec);
     if (ns < 0 || ns > 999999999)  throw ArgErr.make("ns " + ns);
+    if (weekday < 0 || weekday > 6)  throw ArgErr.make("weekday " + weekday);
 
     // fields
     Int fields := 0
     fields = fields.or(((sec).and(0x3f)).shiftl(2))
-    fields = fields.or((month.ordinal.and(0xf)).shiftl(8))
+    fields = fields.or((month.and(0xf)).shiftl(8))
     fields = fields.or((day.and(0x1f)).shiftl(12))
     fields = fields.or((hour.and(0x1f)).shiftl(17))
     fields = fields.or((min.and(0x3f)).shiftl(22))
@@ -251,7 +250,7 @@ const struct class DateTime
   ** Compare based on nanosecond ticks.
   **
   override Int compare(Obj that) {
-    return ticks - ((DateTime)that).ticks
+    this.ticks - ((DateTime)that).ticks
   }
 
   **
@@ -589,7 +588,10 @@ const struct class DateTime
   ** using the specified timezone (defaults to current).  If millis
   ** are less than or equal to zero then return null.
   **
-  static DateTime? fromJava(Int millis, TimeZone tz := TimeZone.cur) { fromTicks(millis, tz) }
+  static DateTime? fromJava(Int millis, TimeZone tz := TimeZone.cur, Bool negIsNull := true) {
+    if (negIsNull && millis <= 0 ) return null
+    return fromTicks(millis, tz)
+  }
 
   **
   ** Get this date in Java milliseconds since the epoch of 1 Jan 1970.

@@ -11,7 +11,6 @@
 **
 ** DateTimeTest
 **
-@Js
 class DateTimeTest : Test
 {
 
@@ -53,6 +52,8 @@ class DateTimeTest : Test
   const Bool dst := true
   Locale? origLocale
 
+  Bool isJs := false
+
 //////////////////////////////////////////////////////////////////////////
 // Test Setup
 //////////////////////////////////////////////////////////////////////////
@@ -75,11 +76,11 @@ class DateTimeTest : Test
   Void testEquals()
   {
     // equals
-    verifyEq(DateTime.makeTicks(123_456_789), DateTime.makeTicks(123_456_789))
-    verifyNotEq(DateTime.makeTicks(123_456_789), DateTime.makeTicks(123_456_780))
+    verifyEq(makeTicks(123_456_789), makeTicks(123_456_789))
+    verifyNotEq(makeTicks(123_456_789), makeTicks(123_456_780))
 
     // hash
-    verifyEq(DateTime.makeTicks(123_456_789).hash, 123_456_789)
+    verifyEq(makeTicks(123_456_789).hash, 123_456_789)
   }
 
   Void testDateEquals()
@@ -92,23 +93,26 @@ class DateTimeTest : Test
 
   Void testTimeEquals()
   {
-    verifyEq(Time(1, 2, 3, 4), Time(1, 2, 3, 4))
-    verifyNotEq(Time(1, 2, 3, 4), Time(9, 2, 3, 4))
-    verifyNotEq(Time(1, 2, 3, 4), Time(1, 9, 3, 4))
-    verifyNotEq(Time(1, 2, 3, 4), Time(1, 2, 9, 4))
-    verifyNotEq(Time(1, 2, 3, 4), Time(1, 2, 3, 9))
+    verifyEq(TimeOfDay(1, 2, 3, 4), TimeOfDay(1, 2, 3, 4))
+    verifyNotEq(TimeOfDay(1, 2, 3, 4), TimeOfDay(9, 2, 3, 4))
+    verifyNotEq(TimeOfDay(1, 2, 3, 4), TimeOfDay(1, 9, 3, 4))
+    verifyNotEq(TimeOfDay(1, 2, 3, 4), TimeOfDay(1, 2, 9, 4))
+    verifyNotEq(TimeOfDay(1, 2, 3, 4), TimeOfDay(1, 2, 3, 9))
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Compare
 //////////////////////////////////////////////////////////////////////////
+  static DateTime makeTicks(Int t, TimeZone tz := TimeZone.cur) {
+    return DateTime#.method("fromTicks").call(t)
+  }
 
   Void testCompare()
   {
-    verify(DateTime.makeTicks(723_456_789) >  DateTime.makeTicks(123_456_789))
-    verify(DateTime.makeTicks(123_456_789) >= DateTime.makeTicks(123_456_789))
-    verify(DateTime.makeTicks(123_456_789) <= DateTime.makeTicks(123_456_789))
-    verify(DateTime.makeTicks(123_456_789) <  DateTime.makeTicks(723_456_789))
+    verify(makeTicks(723_456_789) >  makeTicks(123_456_789))
+    verify(makeTicks(123_456_789) >= makeTicks(123_456_789))
+    verify(makeTicks(123_456_789) <= makeTicks(123_456_789))
+    verify(makeTicks(123_456_789) <  makeTicks(723_456_789))
   }
 
   Void testDateCompare()
@@ -126,13 +130,13 @@ class DateTimeTest : Test
 
   Void testTimeCompare()
   {
-    verify(Time(1, 2, 3, 4) <= Time(1, 2, 3, 4))
-    verifyFalse(Time(1, 2, 3, 4) < Time(1, 2, 3, 4))
+    verify(TimeOfDay(1, 2, 3, 4) <= TimeOfDay(1, 2, 3, 4))
+    verifyFalse(TimeOfDay(1, 2, 3, 4) < TimeOfDay(1, 2, 3, 4))
 
-    verify(Time(1, 2, 3, 4) < Time(1, 2, 3, 9))
-    verify(Time(1, 2, 3, 4) < Time(1, 2, 9, 4))
-    verify(Time(1, 2, 3, 4) < Time(1, 9, 3, 4))
-    verify(Time(1, 2, 3, 4) < Time(9, 2, 3, 4))
+    verify(TimeOfDay(1, 2, 3, 4) < TimeOfDay(1, 2, 3, 9))
+    verify(TimeOfDay(1, 2, 3, 4) < TimeOfDay(1, 2, 9, 4))
+    verify(TimeOfDay(1, 2, 3, 4) < TimeOfDay(1, 9, 3, 4))
+    verify(TimeOfDay(1, 2, 3, 4) < TimeOfDay(9, 2, 3, 4))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,15 +145,15 @@ class DateTimeTest : Test
 
   Void testNow()
   {
-    verify(DateTime.now(null) !== DateTime.now(null))
+    //verify(DateTime.now(null) != DateTime.now(null))
 
     a := DateTime.now
-    verify(a === DateTime.now)
+    verify(a == DateTime.now)
     verifySame(a.tz, TimeZone.cur)
 
     b := DateTime.now(null)
-    verify(a !== b)
-    verify(b === DateTime.now)
+    verify(a != b)
+    verify(b == DateTime.now)
 
     /*
     if (Env.cur.runtime != "js")
@@ -166,17 +170,17 @@ class DateTimeTest : Test
     verifyEq(Date.today(TimeZone.utc), DateTime.nowUtc.date)
 
     dt1   := DateTime.now(null)
-    ticks := DateTime.nowTicks
+    //ticks := DateTime.nowTicks
     dt2   := DateTime.now(null)
-    verify(dt1.ticks <= ticks && ticks <= dt2.ticks)
+    verify(dt1->ticks <= dt2->ticks)
 
     dt1   = DateTime.now
-    time  := Time.now
+    time  := TimeOfDay.now
     dt2   = DateTime.now
     verify(dt1.time <= time && time <= dt2.time)
 
     dt1   = DateTime.nowUtc(null)
-    time  = Time.now(TimeZone.utc)
+    time  = TimeOfDay.now(TimeZone.utc)
     dt2   = DateTime.nowUtc(null)
     verify(dt1.time <= time && time <= dt2.time)
   }
@@ -187,15 +191,15 @@ class DateTimeTest : Test
 
   Void testNowUtc()
   {
-    verify(DateTime.nowUtc(null) !== DateTime.nowUtc(null))
+    verify(DateTime.nowUtc(null) != DateTime.nowUtc(null))
 
     a := DateTime.nowUtc
-    verify(a === DateTime.nowUtc)
+    verify(a == DateTime.nowUtc)
     verifySame(a.tz, TimeZone.utc)
 
     b := DateTime.nowUtc(null)
-    verify(a !== b)
-    verify(b === DateTime.nowUtc)
+    verify(a != b)
+    verify(b == DateTime.nowUtc)
 
     /*
     if (Env.cur.runtime != "js")
@@ -260,14 +264,14 @@ class DateTimeTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Boot
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testBoot()
   {
     verifySame(DateTime.boot, DateTime.boot)
     verifySame(DateTime.boot.tz, TimeZone.cur)
     verify(DateTime.boot < DateTime.now(null))
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Month
 //////////////////////////////////////////////////////////////////////////
@@ -416,7 +420,7 @@ class DateTimeTest : Test
     verifyEq(Weekday.localeVals.isImmutable, true)
     verifySame(Weekday.localeVals, Weekday.localeVals)
 
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
       Locale.fromStr("fi", false).use
       {
@@ -454,9 +458,9 @@ class DateTimeTest : Test
     yesterday2 := now - 1day
     tomorrow := now + 1day
 
-    verifyEq(now.ticks - yesterday1.ticks, 1day.ticks)
-    verifyEq(now.ticks - yesterday2.ticks, 1day.ticks)
-    verifyEq(now.ticks - tomorrow.ticks, -1day.ticks)
+    verifyEq((Int)now->ticks - (Int)yesterday1->ticks, 1day->ticks)
+    verifyEq((Int)now->ticks - (Int)yesterday2->ticks, 1day->ticks)
+    verifyEq((Int)now->ticks - (Int)tomorrow->ticks, -(Int)1day->ticks)
 
     verifyEq(now - yesterday1, 1day)
     verifyEq(now - yesterday2, 1day)
@@ -466,11 +470,11 @@ class DateTimeTest : Test
   Void testFloor()
   {
     now := DateTime.now
-    verifyEq(now.floor(1min).ticks % 1min.ticks, 0)
-    verifyEq(now.floor(1sec).ticks % 1sec.ticks, 0)
-    now += 1234567890ns
-    verifyEq(now.floor(1min).ticks % 1min.ticks, 0)
-    verifyEq(now.floor(1sec).ticks % 1sec.ticks, 0)
+    verifyEq((Int)now.floor(1min)->ticks % (Int)1min->ticks, 0)
+    verifyEq((Int)now.floor(1sec)->ticks % (Int)1sec->ticks, 0)
+    now += 12ms
+    verifyEq((Int)now.floor(1min)->ticks % (Int)1min->ticks, 0)
+    verifyEq((Int)now.floor(1sec)->ticks % (Int)1sec->ticks, 0)
 
     x := DateTime.make(2008, Month.mar, 14, 12, 30, 44)
     verifyEq(x.floor(1hr), DateTime.make(2008, Month.mar, 14, 12, 00))
@@ -492,7 +496,7 @@ class DateTimeTest : Test
     verify(names.contains("UTC"))
     verify(names.contains("Rel"))
     verify(!names.contains("America/New_York"))
-
+/*
     names = TimeZone.listFullNames
     verify(names.isRO)
     verify(names.contains("America/New_York"))
@@ -501,8 +505,8 @@ class DateTimeTest : Test
     verify(names.contains("Etc/UTC"))
     verify(names.contains("Etc/Rel"))
     verify(!names.contains("New_York"))
-
-    verify(TimeZone.fromStr("foo bar", false) == null)
+*/
+    //verify(TimeZone.fromStr("foo bar", false) == null)
     verifyErr(ParseErr#) { x := TimeZone.fromStr("foo bar") }
 
     verifySame(TimeZone.utc, TimeZone.fromStr("UTC"))
@@ -525,7 +529,7 @@ class DateTimeTest : Test
     verifyEq(x.fullName, "America/Kentucky/Louisville")
     verifySame(TimeZone.fromStr("America/Kentucky/Louisville"), TimeZone.fromStr("Louisville"))
 
-    verifyEq(TimeZone.fromStr("Asia/New_York", false), null)
+    //verifyEq(TimeZone.fromStr("Asia/New_York", false), null)
   }
 
   Void verifyTimeZone(Str fullName, Str stdAbbr, Duration offset, Str? dstAbbr, Duration? dstOffset)
@@ -560,7 +564,7 @@ class DateTimeTest : Test
 
     x := DateTime.fromStr("2008-04-06T05:21:20-08:00 Los_Angeles")
     y := DateTime.fromStr("2008-04-06T09:21:20-04:00 New_York")
-    verifyEq(x.ticks, y.ticks)
+    verifyEq(x->ticks, y->ticks)
   }
 
   Void testTimeZoneAliases()
@@ -656,7 +660,7 @@ class DateTimeTest : Test
     verifyDateTime(13478400000_000000, utc, 2000, jun, 5,  0, 0, 0, mon, std)
     verifyDateTime(16156800000_000000, utc, 2000, jul, 6,  0, 0, 0, thu, std)
     verifyDateTime(18921600000_000000, utc, 2000, aug, 7,  0, 0, 0, mon, std)
-    if (Env.cur.runtime != "js")
+    if (!isJs)
       verifyDateTime(21686400123_456789, utc, 2000, sep, 8,  0, 0, 0, fri, std, null, 123_456_789)
     verifyDateTime(24364800000_000000, utc, 2000, oct, 9,  0, 0, 0, mon, std)
     verifyDateTime(27129600000_000000, utc, 2000, nov, 10, 0, 0, 0, fri, std)
@@ -669,7 +673,7 @@ class DateTimeTest : Test
     verifyDateTime(0, utc, 2000, jan, 1, 0, 0, 0, sat, std)
 
     // Java epoch is 1-jan-1970
-    verifyDateTime((-10957day).ticks, utc, 1970, jan, 1, 0, 0, 0, thu, std)
+    verifyDateTime((-10957day)->ticks, utc, 1970, jan, 1, 0, 0, 0, thu, std)
 
     // Boundary condition for leap table monForDayOfYearLeap
     verifyDateTime(-220906800000_000000, ny, 1992, dec, 31, 0, 0, 0, thu, std)
@@ -678,7 +682,7 @@ class DateTimeTest : Test
     verifyDateTime(86400000_000000, utc, 2000, jan, 2, 0, 0, 0, sun, std)
 
     // right now as I code this
-    if (Env.cur.runtime != "js")
+    if (!isJs)
       verifyDateTime(245209531000_000099, ny, 2007, oct, 8, 21, 45, 31, mon, dst, null, 99)
 
     // Halloween 2008 (dst)
@@ -799,11 +803,11 @@ class DateTimeTest : Test
     verifyErr(ArgErr#) { x := DateTime.make(2007, Month.jun, 6, 0, 0, 60) }
     verifyErr(ArgErr#) { x := DateTime.make(2007, Month.jun, 6, 0, 0, 0, -1) }
     verifyErr(ArgErr#) { x := DateTime.make(2007, Month.jun, 6, 0, 0, 0, 1_000_000_000) }
-    verifyErr(ArgErr#) { x := DateTime.makeTicks(3155760000000_000000, utc) }
+    //verifyErr(ArgErr#) { x := makeTicks(3155760000000_000000, utc) }
 
     // JS cannot represent this number, it rounds to _000000, which causes the test  to fail
-    if (Env.cur.runtime != "js")
-      verifyErr(ArgErr#) { x := DateTime.makeTicks(-3124137600000_000001, utc) }
+    if (!isJs)
+      verifyErr(ArgErr#) { x := makeTicks(-3124137600000_000001, utc) }
   }
 
   Void verifyDateTime(Int ticks, TimeZone tz, Int year, Month month, Int day,
@@ -815,7 +819,7 @@ class DateTimeTest : Test
     {
       // echo("-- verify $dt " + (dt.dst ? "DST" : "STD"))
       verifySame(dt.tz, tz)
-      verifyEq(dt.ticks,   ticks)
+      verifyEq(dt->ticks,   ticks)
       verifyEq(dt.year,    year)
       verifyEq(dt.month,   month)
       verifyEq(dt.day,     day)
@@ -840,7 +844,7 @@ class DateTimeTest : Test
       verifyEq(dt.time.nanoSec, nanoSec)
     }
 
-    dtA := DateTime.makeTicks(ticks, tz)
+    dtA := makeTicks(ticks, tz)
     dtB := DateTime.make(year, month, day, hr, min, sec, nanoSec, tz)
     func(dtA)
     if (testMake) func(dtB)
@@ -857,7 +861,7 @@ class DateTimeTest : Test
     verifyEq(dtA.date.toStr, dR.toStr)
 
     // verify time.toStr -> Time.fromStr round trip
-    tR := Time.fromStr(dtA.time.toStr)
+    tR := TimeOfDay.fromStr(dtA.time.toStr)
     verifyEq(dtA.time, tR)
     verifyEq(dtA.time.toStr, tR.toStr)
   }
@@ -868,22 +872,22 @@ class DateTimeTest : Test
 
   Void testToStr()
   {
-    d := DateTime.makeTicks(8035200123_000000, utc)
+    d := makeTicks(8035200123_000000, utc)
     verifyEq(d.toStr, "2000-04-03T00:00:00.123Z UTC")
 
-    if (Env.cur.runtime != "js")
+    if (!isJs)
     {
-      d = DateTime.makeTicks(278744523000_000089, ny)
+      d = makeTicks(278744523000_000089, ny)
       verifyEq(d.toStr, "2008-10-31T01:02:03.000000089-04:00 New_York")
     }
 
-    d = DateTime.makeTicks(215589723000_000000, ny)
+    d = makeTicks(215589723000_000000, ny)
     verifyEq(d.toStr, "2006-10-31T01:02:03-05:00 New_York")
 
-    d = DateTime.makeTicks(289220400000_000000, nl)
+    d = makeTicks(289220400000_000000, nl)
     verifyEq(d.toStr, "2009-03-01T12:00:00+01:00 Amsterdam")
 
-    d = DateTime.makeTicks(290000000000_000000, uk)
+    d = makeTicks(290000000000_000000, uk)
     verifyEq(d.toStr, "2009-03-10T11:33:20Z London")
 
     verifyFromStrErr("2009^03-01T12:00:00+01:00 Amsterdam")
@@ -926,28 +930,28 @@ class DateTimeTest : Test
 
   Void testTimeToStr()
   {
-    verifyTimeToStr(Time(2, 30), "02:30:00")
-    verifyTimeToStr(Time(13, 4, 5), "13:04:05")
-    verifyTimeToStr(Time(23, 0, 0, 123), "23:00:00.000000123")
-    verifyTimeToStr(Time(23, 0, 0, 123_456), "23:00:00.000123456")
-    verifyTimeToStr(Time(23, 0, 43, 123_456_987), "23:00:43.123456987")
+    verifyTimeToStr(TimeOfDay(2, 30), "02:30:00")
+    verifyTimeToStr(TimeOfDay(13, 4, 5), "13:04:05")
+    verifyTimeToStr(TimeOfDay(23, 0, 0, 123), "23:00:00.000000123")
+    verifyTimeToStr(TimeOfDay(23, 0, 0, 123_456), "23:00:00.000123456")
+    verifyTimeToStr(TimeOfDay(23, 0, 43, 123_456_987), "23:00:43.123456987")
 
-    verifyEq(Time.fromStr("01:02:03"), Time(1, 2, 3))
-    verifyEq(Time.fromStr("01:02:03.9"), Time(1, 2, 3, 900_000_000))
-    verifyEq(Time.fromStr("01:02:03.308"), Time(1, 2, 3, 308_000_000))
+    verifyEq(TimeOfDay.fromStr("01:02:03"), TimeOfDay(1, 2, 3))
+    verifyEq(TimeOfDay.fromStr("01:02:03.9"), TimeOfDay(1, 2, 3, 900_000_000))
+    verifyEq(TimeOfDay.fromStr("01:02:03.308"), TimeOfDay(1, 2, 3, 308_000_000))
 
-    verifyEq(Time.fromStr("30:99", false), null)
-    verifyEq(Time.fromIso("12:30:00Z", false), null)
-    verifyErr(ParseErr#) { x := Time.fromStr("") }
-    verifyErr(ParseErr#) { x := Time.fromIso("12:30:00+05:00") }
+    verifyEq(TimeOfDay.fromStr("30:99", false), null)
+    verifyEq(TimeOfDay.fromIso("12:30:00Z", false), null)
+    verifyErr(ParseErr#) { x := TimeOfDay.fromStr("") }
+    verifyErr(ParseErr#) { x := TimeOfDay.fromIso("12:30:00+05:00") }
   }
 
-  Void verifyTimeToStr(Time t, Str s)
+  Void verifyTimeToStr(TimeOfDay t, Str s)
   {
     verifyEq(t.toStr, s)
     verifyEq(t.toIso, s)
-    verifyEq(Time.fromStr(s), t)
-    verifyEq(Time.fromIso(s), t)
+    verifyEq(TimeOfDay.fromStr(s), t)
+    verifyEq(TimeOfDay.fromIso(s), t)
   }
 
   Void verifyFromStrErr(Str s)
@@ -1021,9 +1025,9 @@ class DateTimeTest : Test
     verifyEq(x.toLocale("YYMMDDkkmmssz"), "070617010203Z")
     x = DateTime.make(2007, Month.jun, 17, 1, 2, 3, 0, ny)
     verifyEq(x.toLocale("z|zzz|zzzz"), "-04:00|EDT|New_York")
-    x = DateTime.makeTicks(255148200000_000000, stJohn)
+    x = makeTicks(255148200000_000000, stJohn)
     verifyEq(x.toLocale("z|zzz|zzzz"), "-03:30|NST|St_Johns")
-    x = DateTime.makeTicks(291718800000_000000, kiev)
+    x = makeTicks(291718800000_000000, kiev)
     verifyEq(x.toLocale("z|zzz|zzzz"), "+03:00|EEST|Kiev")
 
     // optional secs
@@ -1175,7 +1179,7 @@ class DateTimeTest : Test
 
     ts := DateTime.fromLocale("-0330 10JUN201123:19", "z DMMMYYYYhh:mm")
     verifyEq(ts.tz, TimeZone("GMT+3"))
-    verifyEq(ts.ticks, DateTime(2011, Month.jun, 10, 23, 19, 0, 0, TimeZone("GMT+3")).plus(30min).ticks)
+    verifyEq(ts->ticks, DateTime(2011, Month.jun, 10, 23, 19, 0, 0, TimeZone("GMT+3")).plus(30min)->ticks)
 
     // cur timezone
     verifyEq(DateTime.fromLocale("10-08-23 4:55", "YY-MM-DD k:mm"), DateTime(2010, Month.aug, 23, 4, 55, 0))
@@ -1246,38 +1250,38 @@ class DateTimeTest : Test
 
   Void testTimeLocale()
   {
-    t := Time(13, 2, 4, 123_000_678)
-    verifyTimeLocale(t, "h:mmAA",  "13:02PM", Time(13, 2))
-    verifyTimeLocale(t, "k:mmaa",  "1:02pm",  Time(13, 2))
-    verifyTimeLocale(t, "kk:mma",  "01:02p", Time(13, 2))
-    verifyTimeLocale(t, "kk:mmA",  "01:02P", Time(13, 2))
-    verifyTimeLocale(t, "k:mm:ss.F AA", "1:02:04.1 PM", Time(13, 2, 4, 100_000_000))
-    verifyTimeLocale(t, "h:mm:ss.ffffff", "13:02:04.123000", Time(13, 2, 4, 123_000_000))
+    t := TimeOfDay(13, 2, 4, 123_000_678)
+    verifyTimeLocale(t, "h:mmAA",  "13:02PM", TimeOfDay(13, 2))
+    verifyTimeLocale(t, "k:mmaa",  "1:02pm",  TimeOfDay(13, 2))
+    verifyTimeLocale(t, "kk:mma",  "01:02p", TimeOfDay(13, 2))
+    verifyTimeLocale(t, "kk:mmA",  "01:02P", TimeOfDay(13, 2))
+    verifyTimeLocale(t, "k:mm:ss.F AA", "1:02:04.1 PM", TimeOfDay(13, 2, 4, 100_000_000))
+    verifyTimeLocale(t, "h:mm:ss.ffffff", "13:02:04.123000", TimeOfDay(13, 2, 4, 123_000_000))
     verifyTimeLocale(t, "h:mm:ss.FFFFFFFFF", "13:02:04.123000678")
 
-    verifyTimeLocale(Time(1, 2), "hh:mm:SS", "01:02")
-    verifyTimeLocale(Time(1, 2, 3), "hh:mm:SS", "01:02:03")
-    verifyTimeLocale(Time(1, 2, 0, 400_000_000), "hh:mm:SS", "01:02:00", Time(1, 2))
-    verifyTimeLocale(Time(1, 2, 0, 400_000_000), "hh:mm:SS.FF", "01:02:00.4")
+    verifyTimeLocale(TimeOfDay(1, 2), "hh:mm:SS", "01:02")
+    verifyTimeLocale(TimeOfDay(1, 2, 3), "hh:mm:SS", "01:02:03")
+    verifyTimeLocale(TimeOfDay(1, 2, 0, 400_000_000), "hh:mm:SS", "01:02:00", TimeOfDay(1, 2))
+    verifyTimeLocale(TimeOfDay(1, 2, 0, 400_000_000), "hh:mm:SS.FF", "01:02:00.4")
 
-    verifyTimeLocale(Time(0, 0), "k:mm:ss AA", "12:00:00 AM")
-    verifyTimeLocale(Time(0, 0, 3), "k:mm:ss a", "12:00:03 a")
-    verifyTimeLocale(Time(11, 59, 59), "k:mm:ss A", "11:59:59 A")
-    verifyTimeLocale(Time(12, 0), "k:mm:ss aa", "12:00:00 pm")
-    verifyTimeLocale(Time(3, 0), "''h:mm 'time'", "'3:00 time")
+    verifyTimeLocale(TimeOfDay(0, 0), "k:mm:ss AA", "12:00:00 AM")
+    verifyTimeLocale(TimeOfDay(0, 0, 3), "k:mm:ss a", "12:00:03 a")
+    verifyTimeLocale(TimeOfDay(11, 59, 59), "k:mm:ss A", "11:59:59 A")
+    verifyTimeLocale(TimeOfDay(12, 0), "k:mm:ss aa", "12:00:00 pm")
+    verifyTimeLocale(TimeOfDay(3, 0), "''h:mm 'time'", "'3:00 time")
 
-    verifyNull(Time.fromLocale("xx:yy", "kk:mm", false))
-    verifyErr(ParseErr#) { Time.fromLocale("3x:33", "kk:mm") }
-    verifyErr(ParseErr#) { Time.fromLocale("10:7x", "kk:mm", true) }
-    verifyErr(ParseErr#) { Time.fromLocale("10:30", "''kk:mm") }
-    verifyErr(ParseErr#) { Time.fromLocale("10:30 ti", "kk:mm 'time'") }
+    verifyNull(TimeOfDay.fromLocale("xx:yy", "kk:mm", false))
+    verifyErr(ParseErr#) { TimeOfDay.fromLocale("3x:33", "kk:mm") }
+    verifyErr(ParseErr#) { TimeOfDay.fromLocale("10:7x", "kk:mm", true) }
+    verifyErr(ParseErr#) { TimeOfDay.fromLocale("10:30", "''kk:mm") }
+    verifyErr(ParseErr#) { TimeOfDay.fromLocale("10:30 ti", "kk:mm 'time'") }
 
   }
 
-  Void verifyTimeLocale(Time t, Str pattern, Str expected, Time fromLocale := t)
+  Void verifyTimeLocale(TimeOfDay t, Str pattern, Str expected, TimeOfDay fromLocale := t)
   {
     verifyEq(t.toLocale(pattern), expected)
-    verifyEq(Time.fromLocale(expected, pattern), fromLocale)
+    verifyEq(TimeOfDay.fromLocale(expected, pattern), fromLocale)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1307,7 +1311,7 @@ class DateTimeTest : Test
   Void testIso()
   {
     verifyIso("2000-01-15T02:03:04Z", 2000, jan, 15, 2, 3, 4, 0, utc, 0hr)
-    verifyIso("2009-02-15T23:00:00.5-05:00", 2009, feb, 15, 23, 0, 0, 500ms.ticks, TimeZone("Etc/GMT+5"), -5hr)
+    verifyIso("2009-02-15T23:00:00.5-05:00", 2009, feb, 15, 23, 0, 0, 500ms->ticks, TimeZone("Etc/GMT+5"), -5hr)
     verifyIso("2009-02-15T23:00:00.0+10:00", 2009, feb, 15, 23, 0, 0, 0, TimeZone("Etc/GMT-10"), +10hr)
 
     verifyNull(DateTime.fromIso(DateTime.now.toStr, false))
@@ -1328,7 +1332,7 @@ class DateTimeTest : Test
     verifyEq(d.nanoSec, ns)
     verifyEq(d.tz, tz)
     verifyEq(d.tz.offset(y), offset)
-    verifyEq(d.ticks, DateTime(y, mon, day, h, min, sec, ns, tz).ticks)
+    verifyEq(d->ticks, DateTime(y, mon, day, h, min, sec, ns, tz)->ticks)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1371,8 +1375,8 @@ class DateTimeTest : Test
     verifyEq(Date.defVal, Date(2000, jan, 1))
     verifyEq(Date#.make, Date(2000, jan, 1))
 
-    verifyEq(Time.defVal, Time(0, 0, 0))
-    verifyEq(Time#.make, Time(0, 0, 0))
+    verifyEq(TimeOfDay.defVal, TimeOfDay(0, 0, 0))
+    verifyEq(TimeOfDay#.make, TimeOfDay(0, 0, 0))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1390,8 +1394,8 @@ class DateTimeTest : Test
     verifyEq(Date(2009, Month.jun, 7).toCode, "Date(\"2009-06-07\")")
 
     // Time
-    verifyEq(Time.defVal.toCode, "Time.defVal")
-    verifyEq(Time(8, 30, 8).toCode, "Time(\"08:30:08\")")
+    verifyEq(TimeOfDay.defVal.toCode, "TimeOfDay.defVal")
+    verifyEq(TimeOfDay(8, 30, 8).toCode, "TimeOfDay(\"08:30:08\")")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1401,7 +1405,7 @@ class DateTimeTest : Test
   Void testMidnight()
   {
     // DateTime.midnight
-    verifyEq(DateTime.now.midnight.time, Time(0, 0, 0))
+    verifyEq(DateTime.now.midnight.time, TimeOfDay(0, 0, 0))
     verifyEq(DateTime(2008, apr, 14, 2, 3, 4, 0, utc).midnight,
              DateTime(2008, apr, 14, 0, 0, 0, 0, utc))
     verifyEq(DateTime(1990, feb, 28, 12, 33, 45, 666_777, la).midnight,
@@ -1409,18 +1413,18 @@ class DateTimeTest : Test
 
     // Date.midnight
     verifyEq(Date.today.midnight.date, Date.today)
-    verifyEq(Date.today.midnight.time, Time(0, 0, 0))
+    verifyEq(Date.today.midnight.time, TimeOfDay(0, 0, 0))
     verifyEq(Date(2008, apr, 14).midnight(la), DateTime(2008, apr, 14, 0, 0, 0, 0, la))
 
     // DST
-    verifyEq(DateTime(2009, Month.mar, 7, 4, 5, 0, 0, ny).midnight.time, Time(0, 0))
-    verifyEq(DateTime(2009, Month.nov, 1, 4, 5, 0, 0, ny).midnight.time, Time(0, 0))
+    verifyEq(DateTime(2009, Month.mar, 7, 4, 5, 0, 0, ny).midnight.time, TimeOfDay(0, 0))
+    verifyEq(DateTime(2009, Month.nov, 1, 4, 5, 0, 0, ny).midnight.time, TimeOfDay(0, 0))
 
     // isMidnight
     x := Date.today.midnight
     verifyEq(x.isMidnight, true)
     verifyEq(x.time.isMidnight, true)
-    x = (Env.cur.runtime == "js") ? x+100ns : x+1ns
+    x = x+1ms
     verifyEq(x.isMidnight, false)
     verifyEq(x.time.isMidnight, false)
   }
@@ -1443,16 +1447,16 @@ class DateTimeTest : Test
       verifyEq(dt.sec, 47)
       verifyEq(dt.nanoSec, 123_456)
     }
-    f(Date(2009, Month.dec, 31).toDateTime(Time(12, 30, 47, 123_456)))
-    f(Time(12, 30, 47, 123_456).toDateTime(Date(2009, Month.dec, 31)))
+    f(Date(2009, Month.dec, 31).toDateTime(TimeOfDay(12, 30, 47, 123_456)))
+    f(TimeOfDay(12, 30, 47, 123_456).toDateTime(Date(2009, Month.dec, 31)))
 
     f = |DateTime dt|
     {
       verifyEq(dt, DateTime(2008, Month.feb, 28, 23, 0, 0, 0, la))
       verifyEq(dt.tz, la)
     }
-    f(Date(2008, Month.feb, 28).toDateTime(Time(23, 0), la))
-    f(Time(23, 0).toDateTime(Date(2008, Month.feb, 28), la))
+    f(Date(2008, Month.feb, 28).toDateTime(TimeOfDay(23, 0), la))
+    f(TimeOfDay(23, 0).toDateTime(Date(2008, Month.feb, 28), la))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1461,21 +1465,21 @@ class DateTimeTest : Test
 
   Void testToDuration()
   {
-    verifyToDuration(Time(0, 0, 0, 0), 0ns)
-    verifyToDuration(Time(0, 0, 0, 1), 1ns)
-    verifyToDuration(Time(0, 0, 2, 0), 2sec)
-    verifyToDuration(Time(0, 3, 0, 0), 3min)
-    verifyToDuration(Time(4, 0, 0, 0), 4hr)
-    verifyToDuration(Time(4, 3, 2, 1), 4hr+3min+2sec+1ns)
-    verifyToDuration(Time(23, 59, 12, 123_000_789), 23hr+59min+12sec+123_000_789ns)
-    verifyErr(ArgErr#) { Time.fromDuration(-10hr) }
-    verifyErr(ArgErr#) { Time.fromDuration(25hr) }
+    verifyToDuration(TimeOfDay(0, 0, 0, 0), 0ms)
+    verifyToDuration(TimeOfDay(0, 0, 0, 1000_000), 1ms)
+    verifyToDuration(TimeOfDay(0, 0, 2, 0), 2sec)
+    verifyToDuration(TimeOfDay(0, 3, 0, 0), 3min)
+    verifyToDuration(TimeOfDay(4, 0, 0, 0), 4hr)
+    verifyToDuration(TimeOfDay(4, 3, 2, 1000_000), 4hr+3min+2sec+1ms)
+    verifyToDuration(TimeOfDay(23, 59, 12, 123), 23hr+59min+12sec+123ms)
+    verifyErr(ArgErr#) { TimeOfDay.fromDuration(-10hr) }
+    verifyErr(ArgErr#) { TimeOfDay.fromDuration(25hr) }
   }
 
-  Void verifyToDuration(Time t, Duration d)
+  Void verifyToDuration(TimeOfDay t, Duration d)
   {
     verifyEq(t.toDuration, d)
-    verifyEq(Time.fromDuration(d), t)
+    verifyEq(TimeOfDay.fromDuration(d), t)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1484,23 +1488,23 @@ class DateTimeTest : Test
 
   Void testTimeMath()
   {
-    verifyTimeMath(Time(5,0,0),    Time(5,0,0),     0min)
-    verifyTimeMath(Time(5,0,0),    Time(5,30,0),    30min)
-    verifyTimeMath(Time(5,0,0),    Time(4,30,0),    -30min)
-    verifyTimeMath(Time(2,30,0),   Time(3,30,0),    1hr)
-    verifyTimeMath(Time(2,30,0),   Time(1,30,0),    -1hr)
-    verifyTimeMath(Time(20,12,25), Time(20,13, 3),  38sec)
-    verifyTimeMath(Time(20,12,25), Time(20,11,47),  -38sec)
-    verifyTimeMath(Time(23,59,59), Time(0,0,0),     1sec)
-    verifyTimeMath(Time(0,0,0),    Time(0,0,0),     24hr)
-    verifyTimeMath(Time(22,30,00), Time(3,30,0),    5hr)
-    verifyTimeMath(Time(1,15,00),  Time(23,15,0),   -2hr)
+    verifyTimeMath(TimeOfDay(5,0,0),    TimeOfDay(5,0,0),     0min)
+    verifyTimeMath(TimeOfDay(5,0,0),    TimeOfDay(5,30,0),    30min)
+    verifyTimeMath(TimeOfDay(5,0,0),    TimeOfDay(4,30,0),    -30min)
+    verifyTimeMath(TimeOfDay(2,30,0),   TimeOfDay(3,30,0),    1hr)
+    verifyTimeMath(TimeOfDay(2,30,0),   TimeOfDay(1,30,0),    -1hr)
+    verifyTimeMath(TimeOfDay(20,12,25), TimeOfDay(20,13, 3),  38sec)
+    verifyTimeMath(TimeOfDay(20,12,25), TimeOfDay(20,11,47),  -38sec)
+    verifyTimeMath(TimeOfDay(23,59,59), TimeOfDay(0,0,0),     1sec)
+    verifyTimeMath(TimeOfDay(0,0,0),    TimeOfDay(0,0,0),     24hr)
+    verifyTimeMath(TimeOfDay(22,30,00), TimeOfDay(3,30,0),    5hr)
+    verifyTimeMath(TimeOfDay(1,15,00),  TimeOfDay(23,15,0),   -2hr)
 
-    verifyErr(ArgErr#) { x := Time(3,30,0) + 25hr }
-    verifyErr(ArgErr#) { x := Time(3,30,0) + 2day }
+    verifyErr(ArgErr#) { x := TimeOfDay(3,30,0) + 25hr }
+    verifyErr(ArgErr#) { x := TimeOfDay(3,30,0) + 2day }
   }
 
-  Void verifyTimeMath(Time a, Time b, Duration diff)
+  Void verifyTimeMath(TimeOfDay a, TimeOfDay b, Duration diff)
   {
     verifyEq(a + diff, b)
     verifyEq(b + -diff, a)
@@ -1626,18 +1630,18 @@ class DateTimeTest : Test
   {
     d := Date(date)
     Locale("en-US").use { doVerifyWeekOfYear(d, us) }
-    if (Env.cur.runtime != "js")
+    if (!isJs)
       Locale("fi").use    { doVerifyWeekOfYear(d, fi) }
     verifyEq(d.weekOfYear(Weekday.tue), tue)
-    verifyEq(d.toDateTime(Time(23,59)).weekOfYear(Weekday.tue), tue)
+    verifyEq(d.toDateTime(TimeOfDay(23,59)).weekOfYear(Weekday.tue), tue)
   }
 
   private Void doVerifyWeekOfYear(Date d, Int woy)
   {
     verifyEq(d.weekOfYear, woy)
-    verifyEq(d.toDateTime(Time(12,0)).weekOfYear, woy)
+    verifyEq(d.toDateTime(TimeOfDay(12,0)).weekOfYear, woy)
     verifyEq(d.toLocale("V VV VVV"), weekOfYearPattern(woy))
-    verifyEq(d.toDateTime(Time(0,0)).toLocale("V VV VVV" ), weekOfYearPattern(woy))
+    verifyEq(d.toDateTime(TimeOfDay(0,0)).toLocale("V VV VVV" ), weekOfYearPattern(woy))
   }
 
   private Str weekOfYearPattern(Int woy)
@@ -1679,7 +1683,7 @@ class DateTimeTest : Test
 
   private Void verifyHoursInDay(Str d, Str tz, Int expected)
   {
-    dt := Date(d).toDateTime(Time((0..23).random, 30), TimeZone(tz))
+    dt := Date(d).toDateTime(TimeOfDay((0..23).random, 30), TimeZone(tz))
     verifyEq(dt.hoursInDay, expected)
   }
 
@@ -1713,7 +1717,7 @@ class DateTimeTest : Test
     verifyEq(x.weekday, r.weekday)
     verifySame(r.dst, false)
     verifySame(r.tz,  TimeZone.rel)
-    verifyEq(r.ticks, r.toUtc.ticks)
+    verifyEq(r->ticks, r.toUtc->ticks)
 
     y := r.toTimeZone(x.tz)
     verifyEq(x, y)
@@ -1746,7 +1750,7 @@ class DateTimeTest : Test
 //////////////////////////////////////////////////////////////////////////
 // All Locales
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testAllLocales()
   {
     if (Env.cur.runtime == "js") return
@@ -1772,5 +1776,5 @@ class DateTimeTest : Test
       }
     }
   }
-
+*/
 }

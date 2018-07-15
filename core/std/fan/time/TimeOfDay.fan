@@ -23,7 +23,7 @@ const struct class TimeOfDay
   ** This method may use `DateTime.now` with the default
   ** tolerance 250ms.
   **
-  static new now(TimeZone tz := TimeZone.cur) {
+  static TimeOfDay now(TimeZone tz := TimeZone.cur) {
     //fromDateTime(DateTime.now.toTimeZone(tz))
     dt := DateTime.now.toTimeZone(tz)
     return make(dt.hour, dt.min, dt.sec, dt.nanoSec)
@@ -39,7 +39,7 @@ const struct class TimeOfDay
   ** Throw ArgErr is any of the parameters are out of range.
   **
   new make(Int hour, Int min, Int sec := 0, Int ns := 0) {
-    ticks := (hour%24) * Duration.nsPerHr + (min%60) * Duration.nsPerMin +
+    this.ticks = (hour%24) * Duration.nsPerHr + (min%60) * Duration.nsPerMin +
           (sec%60) * Duration.nsPerSec + (ns%Duration.nsPerSec)
   }
 
@@ -205,7 +205,7 @@ const struct class TimeOfDay
   ** A symbol immediately preceding a "F" pattern with a no
   ** fraction to print is skipped.
   **
-  Str toLocale(Str? pattern := null) {
+  Str toLocale(Str? pattern := null, Locale locale := Locale.cur) {
     //TODO
     buf := StrBuf()
     buf.add(hour.toRadix(10, 2))
@@ -296,7 +296,7 @@ const struct class TimeOfDay
   ** Example:
   **   Time.fromDuration(150min)  =>  02:30:00
   **
-  static new fromDuration(Duration d) {
+  static TimeOfDay fromDuration(Duration d) {
     ticks := d.toNanos
     if (ticks == 0) return defVal
 
