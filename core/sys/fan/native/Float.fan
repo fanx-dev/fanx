@@ -79,14 +79,14 @@ native const struct class Float : Num
   **
   ** Float value for e which is the base of natural logarithms.
   **
-  @Deprecated
+  @NoDoc
   const static Float e
 
   **
   ** Float value for pi which is the ratio of the
   ** circumference of a circle to its diameter.
   **
-  @Deprecated
+  @NoDoc
   const static Float pi
 
 //////////////////////////////////////////////////////////////////////////

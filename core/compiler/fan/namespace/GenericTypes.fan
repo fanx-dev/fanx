@@ -397,8 +397,8 @@ class ParameterizedField : CField
     this.parent = parent
     this.generic = generic
     this.fieldType = parent.parameterize(generic.fieldType)
-    this.getter = ParameterizedMethod(parent, generic.getter)
-    this.setter = ParameterizedMethod(parent, generic.setter)
+    this.getter = generic.getter == null ? null : ParameterizedMethod(parent, generic.getter)
+    this.setter = generic.setter == null ? null : ParameterizedMethod(parent, generic.setter)
   }
 
   override Str name()  { generic.name }
