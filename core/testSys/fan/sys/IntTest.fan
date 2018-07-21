@@ -19,7 +19,7 @@ class IntTest : Test
 
   Void testConstants()
   {
-    if (js)
+    if (isJs)
     {
       verifyEq(Int.maxVal, 9007199254740992)
       verifyEq(Int.minVal, -9007199254740992)
@@ -276,7 +276,7 @@ class IntTest : Test
     verifyEq(0x80.shifta(1), 0x40)
     verifyEq(0x80.shifta(3), 0x10)
 
-    if (!js)
+    if (!isJs)
     {
       verifyEq(0xabcd_0000_1111_0000.shiftr(4), 0x0abc_d000_0111_1000)
       verifyEq(0xabcd_0000_1111_0000->shiftr(4), 0x0abc_d000_0111_1000)
@@ -561,13 +561,13 @@ class IntTest : Test
     verifyEq(255.toHex(4), "00ff")
     verifyEq(0.toHex(10), "0000000000")
     verifyEq(1.toHex(20), "00000000000000000001")
-    if (!js)
+    if (!isJs)
     {
       verifyEq(0x123456789abcdef.toHex, "123456789abcdef")
       verifyEq(0x123456789abcdef.toHex(18), "000123456789abcdef")
       verifyEq(0xaabbccdd00112233.toHex, "aabbccdd00112233")
     }
-    if (js)
+    if (isJs)
     {
       // TODO FIXIT: sign bit is not extended so doesn't work quite right...
       // test special rules for negative values which differ
@@ -608,7 +608,7 @@ class IntTest : Test
     verifyEq(Int.fromStr("AbCdEf", 16), 0xabcdef)
     verifyEq(Int.fromStr("77", 10, true), 77)
     verifyEq(Int.fromStr("x", 10, false), 0)
-    if (!js)
+    if (!isJs)
     {
       verifyEq(Int.fromStr("aabbccdd00112233", 16), 0xaabbccdd00112233)
       verifyEq(Int.fromStr("80BF3ecA63100DdE", 16), 0x80bf3eca63100dde)
@@ -720,7 +720,7 @@ class IntTest : Test
     verifyToLocale(123_456_789, "#,####", "1,2345,6789")
     verifyToLocale(123_456_789, "#,###",  "123,456,789")
     verifyToLocale(-123_456_789, "#,##",  "-1,23,45,67,89")
-    if (js)
+    if (isJs)
     {
       verifyToLocale(Int.maxVal, "#,###",   "9,007,199,254,740,992")
       verifyToLocale(Int.minVal, "#,###",   "-9,007,199,254,740,992")
@@ -776,6 +776,5 @@ class IntTest : Test
     }
   }
 */
-  const Bool js := false//Env.cur.runtime == "js"
 
 }

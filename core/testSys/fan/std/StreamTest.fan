@@ -11,14 +11,6 @@
 **
 class StreamTest : Test
 {
-  File? tempDir
-  static const Bool isJs := false
-
-  override Void setup() {
-    tempDir = `test_temp/`.toFile
-    tempDir.delete
-    tempDir.create
-  }
 
 //////////////////////////////////////////////////////////////////////////
 // Basic IO

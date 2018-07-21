@@ -6,6 +6,8 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
+using std
+
 **
 ** Test is the base for Fantom unit tests.
 **
@@ -209,7 +211,19 @@ abstract class Test
   ** the first time this method is called for a given test run.  The
   ** test directory is "{Env.cur.tempDir}/test/".
   **
-  //File tempDir()
+  File? tempDir {
+    private set
+    get {
+      if (&tempDir == null) {
+        &tempDir = Env.cur.tempDir.plus(`test`, false)
+        &tempDir.delete()
+        &tempDir.create()
+      }
+      return &tempDir
+    }
+  }
+
+  static const Bool isJs := Env.cur.runtime == "js"
 
   static Int main(Str[] args) {
     arg := args[0]

@@ -52,7 +52,6 @@ class DateTimeTest : Test
   const Bool dst := true
   Locale? origLocale
 
-  Bool isJs := false
 
 //////////////////////////////////////////////////////////////////////////
 // Test Setup
@@ -156,7 +155,7 @@ class DateTimeTest : Test
     verify(b == DateTime.now)
 
     /*
-    if (Env.cur.runtime != "js")
+    if (!isJS)
     {
       //Actor.sleep(200ms)
       verify(b === DateTime.now)
@@ -202,7 +201,7 @@ class DateTimeTest : Test
     verify(b == DateTime.nowUtc)
 
     /*
-    if (Env.cur.runtime != "js")
+    if (!isJS)
     {
       Actor.sleep(200ms)
       verify(b === DateTime.nowUtc)
@@ -219,7 +218,7 @@ class DateTimeTest : Test
 /*
   Void testNowUnique()
   {
-    if (Env.cur.runtime == "js") return;
+    if (isJS) return;
 
     // spawn off a bunch of actors to loop on DateTime.nowUnique
     futures := Future[,]
@@ -1760,7 +1759,7 @@ class DateTimeTest : Test
 /*
   Void testAllLocales()
   {
-    if (Env.cur.runtime == "js") return
+    if (isJS) return
 
     locales := Pod.find("sys").files.findAll |f| { f.pathStr.startsWith("/locale/") }.map |f| { f.basename }
     locales.each |locale|

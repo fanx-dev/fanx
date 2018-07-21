@@ -8,17 +8,9 @@
 
 abstract class AbstractBufTest : Test
 {
-  File? tempDir
-
-  override Void setup() {
-    tempDir = `test_temp/`.toFile
-    tempDir.delete
-    tempDir.create
-  }
 
   override Void teardown() {
     bufs.each |Buf b| { verify(b.close) }
-    tempDir?.delete
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,7 +27,7 @@ abstract class AbstractBufTest : Test
   Buf makeFile()
   {
     // js doesn't support files
-    if ("js" == Env.cur.runtime) return makeMem
+    if (isJs) return makeMem
 
     name := "buf" + bufs.size
     file := tempDir + name.toUri

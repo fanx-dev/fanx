@@ -11,7 +11,6 @@
 **
 class BufTest : AbstractBufTest
 {
-  Bool isJs := false
 //////////////////////////////////////////////////////////////////////////
 // Equality
 //////////////////////////////////////////////////////////////////////////
@@ -522,8 +521,6 @@ class BufTest : AbstractBufTest
 
   Void verifyConveniences(Buf buf, Buf temp)
   {
-    js := isJs
-
     // convenience writes
     temp.print("fool")
     buf.clear
@@ -532,10 +529,10 @@ class BufTest : AbstractBufTest
     buf.writeI2(0xa00a)
     buf.writeI4(-1234)
     buf.writeI4(0xabcd0123)
-    if (!js) buf.writeI8(0xabcd0123ffffeeee)
+    if (!isJs) buf.writeI8(0xabcd0123ffffeeee)
     buf.writeF4(2f)
-    if (!js) buf.writeF8(77.0f)
-    //if (!js) buf.writeDecimal(50.03D)
+    if (!isJs) buf.writeF8(77.0f)
+    //if (!isJs) buf.writeDecimal(50.03D)
     buf.writeBool(true)
     buf.print("harry").printLine(" potter")
     buf.writeUtf("deathly hallows")
@@ -549,10 +546,10 @@ class BufTest : AbstractBufTest
     verifyEq(buf.readU2, 0xa00a)
     verifyEq(buf.readS4, -1234)
     verifyEq(buf.readU4, 0xabcd0123)
-    if (!js) verifyEq(buf.readS8, 0xabcd0123ffffeeee)
+    if (!isJs) verifyEq(buf.readS8, 0xabcd0123ffffeeee)
     verifyEq(buf.readF4, 2f)
-    if (!js) verifyEq(buf.readF8, 77f)
-    //if (!js) verifyEq(buf.readDecimal, 50.03d)
+    if (!isJs) verifyEq(buf.readF8, 77f)
+    //if (!isJs) verifyEq(buf.readDecimal, 50.03d)
     verifyEq(buf.readBool, true)
     verifyEq(buf.readLine, "harry potter")
     verifyEq(buf.readUtf, "deathly hallows")
@@ -747,7 +744,7 @@ class BufTest : AbstractBufTest
 
   Void testPipe()
   {
-    // test for js env
+    // test for isJs env
     src := makeMem
     dst := makeMem
     1800.times |Int i| { src.write(i) }
@@ -895,8 +892,6 @@ class BufTest : AbstractBufTest
 
   Void testImmutable()
   {
-    js := isJs
-
     orig := "ABCD".toBuf
     Buf buf := orig.toImmutable
     e := ReadonlyErr#
@@ -967,7 +962,7 @@ class BufTest : AbstractBufTest
     //verifyErr(e) { buf.readDecimal }
     verifyErr(e) { buf.readF4 }
 // TODO
-if (!js) verifyErr(e) { buf.readF8 }
+if (!isJs) verifyErr(e) { buf.readF8 }
     verifyErr(e) { buf.readLine }
     //verifyErr(e) { buf.readObj }
     //verifyErr(e) { buf.readProps }
@@ -975,7 +970,7 @@ if (!js) verifyErr(e) { buf.readF8 }
     verifyErr(e) { buf.readS2 }
     verifyErr(e) { buf.readS4 }
 // TODO
-if (!js) verifyErr(e) { buf.readS8 }
+if (!isJs) verifyErr(e) { buf.readS8 }
     verifyErr(e) { buf.readStrToken }
     verifyErr(e) { buf.readU1 }
     verifyErr(e) { buf.readU2 }
@@ -995,11 +990,11 @@ if (!js) verifyErr(e) { buf.readS8 }
     //verifyErr(e) { buf.writeDecimal(10d) }
     verifyErr(e) { buf.writeF4(10f) }
 // TODO
-if (!js) verifyErr(e) { buf.writeF8(10f) }
+if (!isJs) verifyErr(e) { buf.writeF8(10f) }
     verifyErr(e) { buf.writeI2(10) }
     verifyErr(e) { buf.writeI4(10) }
 // TODO
-if (!js) verifyErr(e) { buf.writeI8(10) }
+if (!isJs) verifyErr(e) { buf.writeI8(10) }
     //verifyErr(e) { buf.writeObj("x") }
     //verifyErr(e) { buf.writeProps(["x":"x"]) }
     verifyErr(e) { buf.writeUtf("x") }

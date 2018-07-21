@@ -568,16 +568,16 @@ class ListTest : Test
 
   Void testRemove()
   {
-    //js  := Env.cur.runtime == "js"
+    //isJs  := Env.cur.runtime == "isJs"
     foo := "foobar"[0..2]
     list := Str?["a", "b", foo, null, "a"]
-    if (!js) verifyEq(list.indexSame("foo"), -1)
+    if (!isJs) verifyEq(list.indexSame("foo"), -1)
     verifyEq(list.remove("b"), "b");     verifyEq(list, Str?["a", "foo", null, "a"])
     verifyEq(list.remove("a"), "a");     verifyEq(list, Str?["foo", null, "a"])
     verifyEq(list.remove("x"), null);    verifyEq(list, Str?["foo", null, "a"])
     verifyEq(list.remove("a"), "a");     verifyEq(list, Str?["foo", null])
     verifyEq(list.remove(null), null);   verifyEq(list, Str?["foo"])
-    if (!js) verifyEq(list.removeSame("foo"), null);  verifyEq(list, Str?["foo"])
+    if (!isJs) verifyEq(list.removeSame("foo"), null);  verifyEq(list, Str?["foo"])
     verifyEq(list.remove("foo"), "foo"); verifyEq(list, Str?[,])
     verifyEq(list.remove("a"), null);    verifyEq(list, Str?[,])
   }
@@ -663,15 +663,12 @@ class ListTest : Test
 // Contains/Index
 //////////////////////////////////////////////////////////////////////////
 
-  //TODO
-  Bool js := false
-
   Void testContainsIndex()
   {
-    //js  := Env.cur.runtime == "js"
+    //isJs  := Env.cur.runtime == "isJs"
     foo := "foobar"[0..2]
-    // TODO: this is not true under js:
-    if (!js) verify(foo !== "foo")
+    // TODO: this is not true under isJs:
+    if (!isJs) verify(foo !== "foo")
     list := Str?["a", "b", null, "c", null, "b", foo]
 
     //verifyEq([,].contains(null), false)
@@ -690,8 +687,8 @@ class ListTest : Test
     verifyEq(list.indexr("xx"), -1)
 
     verifyEq(list.indexSame("a"), 0)
-    if (!js) verifyEq(list.indexSame("abc"[0..0]), -1)
-    if (!js) verifyEq(list.indexSame("foo"), -1)
+    if (!isJs) verifyEq(list.indexSame("abc"[0..0]), -1)
+    if (!isJs) verifyEq(list.indexSame("foo"), -1)
 
     verify(list.contains("b"))
     verifyEq(list.index("b"), 1)
@@ -729,7 +726,7 @@ class ListTest : Test
     verifyEq(list.index("b", -2), 5)
     verifyEq(list.index("b", -6), 1)
     verifyEq(list.index("foo", -1), 6)
-    if (!js) verifyEq(list.indexSame("foo", -1), -1)
+    if (!isJs) verifyEq(list.indexSame("foo", -1), -1)
 
     verifyEq(list.index(null, 0), 2)
     verifyEq(list.index(null, 2), 2)

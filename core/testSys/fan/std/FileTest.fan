@@ -11,17 +11,6 @@
 **
 class FileTest : Test
 {
-  File? tempDir
-
-  override Void setup() {
-    tempDir = `test_temp/`.toFile
-    tempDir.delete
-    tempDir.create
-  }
-
-  override Void teardown() {
-    tempDir?.delete
-  }
 
   Void testOsRoots()
   {

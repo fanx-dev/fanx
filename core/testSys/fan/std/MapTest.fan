@@ -844,7 +844,7 @@ class MapTest : Test
 
     // set false
     /*
-    if (!js)
+    if (!isJs)
     {
       m.ordered = false
       100.times |Int j| { m.add(j.toStr, j) }
