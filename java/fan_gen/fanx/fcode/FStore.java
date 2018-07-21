@@ -56,7 +56,7 @@ public abstract class FStore
   /**
    * Return a backing file
    */
-  public abstract java.io.File loadFile();
+//  public abstract java.io.File loadFile();
 
   /**
    * Return a list to use for Pod.files()

@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import fan.reflect.*;
+import fan.std.Env;
 import fan.std.LocalFile;
 import fan.std.LocalFilePeer;
 import fan.std.Log;
@@ -70,9 +71,10 @@ public class Pod extends FanObj {
 	}
 
 	public static List list() {
-		java.util.List<String> names = Sys.listPodFiles();
+		List names = Env.cur().findAllPodNames();
 		List list = List.make(names.size());
-		for (String n : names) {
+		for (int i =0; i<names.size(); ++i) {
+			String n = (String)names.get(i);
 			Uri f = Uri.fromStr(n);
 			list.add(find(f.basename()));
 		}

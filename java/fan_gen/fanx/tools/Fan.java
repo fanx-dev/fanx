@@ -12,6 +12,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import fanx.fcode.FPod;
+import fanx.main.BootEnv;
 import fanx.main.Sys;
 import fanx.main.Type;
 import fanx.util.*;
@@ -30,7 +31,7 @@ public class Fan
     throws Exception
   {
     // args
-    Sys.args = args;
+	BootEnv.args = args;
 
     // check for pods pending installation
 //    checkInstall();
@@ -327,7 +328,7 @@ public class Fan
     version(progName);
 
     long t1 = System.nanoTime();
-    List<String> pods = Sys.listPodFiles();
+    List<String> pods = Sys.env.listPodFiles();
     long t2 = System.nanoTime();
 
     println("");

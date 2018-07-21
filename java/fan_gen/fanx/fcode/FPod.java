@@ -255,11 +255,11 @@ public final class FPod
     throw new IOException("Unexpected fcode file: " + name);
   }
 
-  public java.io.File loadFile()
-  {
-    if (store == null) return null;
-    return store.loadFile();
-  }
+//  public java.io.File loadFile()
+//  {
+//    if (store == null) return null;
+//    return store.loadFile();
+//  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

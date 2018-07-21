@@ -91,8 +91,13 @@ public class LocalFilePeer {
 		return jfile.getPath();
 	}
 
-	static File javaToFan(java.io.File jfile) {
+	public static File javaToFan(java.io.File jfile) {
 		return LocalFilePeer.make(jfile);
+	}
+	
+	public static java.io.File toJavaFile(File self) {
+		java.io.File jfile = (java.io.File)((LocalFile)self).peer;
+		return jfile;
 	}
 
 	static List list(LocalFile self) {

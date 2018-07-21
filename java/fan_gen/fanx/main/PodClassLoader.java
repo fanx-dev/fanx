@@ -33,6 +33,7 @@ public class PodClassLoader
     super(new URL[0], extClassLoader);
     this.pod = pod;
     try {
+    	
     	if (pod.podName.equals("sys")) {
     		addURL(new File("../sys_nat/bin").toURI().toURL());
     	} else if (pod.podName.equals("std")) {
@@ -41,6 +42,10 @@ public class PodClassLoader
     		addURL(new File("../reflect/bin").toURI().toURL());
     	} else {
     		addURL(new File("../"+pod.podName+"/bin").toURI().toURL());
+    	}
+    	
+    	for (String path : Sys.env.envPaths()) {
+    		addURL(new File(path, "lib/java/"+pod.podName+"_nat.jar").toURI().toURL());
     	}
 	} catch (MalformedURLException e) {
 		e.printStackTrace();
@@ -284,7 +289,10 @@ public class PodClassLoader
     public ExtClassLoader()
     {
       super(new URL[0], ExtClassLoader.class.getClassLoader());
-      this.addFanDir(new File(Sys.homeDir));
+      
+      for (String path : Sys.env.envPaths()) {
+  		this.addFanDir(new File(path));
+  	  }
     }
 
     /**
@@ -298,7 +306,7 @@ public class PodClassLoader
       {
         String sep = java.io.File.separator;
         java.io.File extDir = new java.io.File(fanDir, "lib" + sep + "java" + sep + "ext");
-        java.io.File platDir = new java.io.File(extDir, Sys.platform);
+        java.io.File platDir = new java.io.File(extDir, Sys.env.platform());
         addExtJars(extDir);
         addExtJars(platDir);
       }
