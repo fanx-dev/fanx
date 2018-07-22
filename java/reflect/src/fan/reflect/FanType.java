@@ -5,13 +5,16 @@ import java.lang.reflect.Modifier;
 import fan.sys.ArgErr;
 import fan.sys.Err;
 import fan.sys.Facet;
+import fan.sys.FacetMeta;
 import fan.sys.FanObj;
+import fan.sys.IOErr;
 import fan.sys.List;
 import fan.sys.UnknownFacetErr;
 import fan.sys.UnknownSlotErr;
 import fanx.fcode.FConst;
 import fanx.fcode.FField;
 import fanx.fcode.FMethod;
+import fanx.fcode.FPod;
 import fanx.fcode.FType;
 import fanx.fcode.FTypeRef;
 import fanx.fcode.FAttrs.FFacet;
@@ -413,35 +416,100 @@ public class FanType {
 	//////////////////////////////////////////////////////////////////////////
 
 	public static List facets(Type self) {
-		List list = List.make(1);
-		FType ftype = self.ftype();
-		if (ftype != null && ftype.attrs.facets != null) {
-			for (FFacet facet : ftype.attrs.facets) {
-				FTypeRef tr = ftype.pod.typeRef(facet.type);
-				// TODO
+		if (self.factesList == null) {
+			
+			java.util.Map<Type, Object> facets = getFacets(self);
+			List list = List.make(facets.size());
+			for (java.util.Map.Entry<Type, Object> e : facets.entrySet()) {
+				Facet f = (Facet)e.getValue();
+				list.add(f);
 			}
+			self.factesList = list;
 		}
-		return list;
+		return (List)self.factesList;
 	}
 
 	public static Facet facet(Type self, Type t) {
 		return facet(self, t, true);
 	}
-
-	public static Facet facet(Type self, Type t, boolean checked) {
-		FType ftype = self.ftype();
-		if (ftype != null && ftype.attrs.facets != null) {
-			for (FFacet facet : ftype.attrs.facets) {
-				FTypeRef tr = ftype.pod.typeRef(facet.type);
-				if (tr.podName.equals(t.podName()) && tr.typeName.equals(t.name())) {
-					// TODO
-					return null;
+	
+	private static java.util.Map<Type, Object> getFacets(Type self) {
+		if (self.factesMap == null) {
+			java.util.Map<Type, Object> map = new java.util.HashMap<Type, Object>();
+			
+			FType ftype = self.ftype();
+			if (ftype != null) {
+				if (ftype.attrs == null) {
+					ftype.load();
+				}
+				if (ftype.attrs.facets != null) {
+					for (FFacet facet : ftype.attrs.facets) {
+						Facet f = decode(facet, ftype.pod);
+						map.put(FanType.of(f), f);
+					}
 				}
 			}
+			
+			// get inheritance slots
+			if (!self.isObj() && !FanType.isMixin(self)) {
+				mergeFacets(self.base(), map);
+			}
+			List mixins = FanType.mixins(self);
+			for (int i = 0; i < mixins.size(); ++i) {
+				Type t = (Type) mixins.get(i);
+				mergeFacets(t, map);
+			}
+			
+			self.factesMap = map;
 		}
-		if (checked)
+		return self.factesMap;
+	}
+
+	private static void mergeFacets(Type self, java.util.Map<Type, Object> map) {
+		java.util.Map<Type, Object> ps = getFacets(self);
+		for (java.util.Map.Entry<Type, Object> e : ps.entrySet()) {
+			Type k = e.getKey();
+			if (map.containsKey(k)) continue;
+			Facet f = (Facet)e.getValue();
+			FacetMeta meta = (FacetMeta) FanType.facet(k, Sys.findType("sys::FacetMeta", false));
+			if (meta == null || !meta.inherited) {
+				continue;
+			}
+			map.put(k, f);
+		}
+	}
+	
+	static Facet decode(FFacet facet, FPod pod) {
+		try
+	    {
+			// if no string use make/defVal
+			if (facet.val.length() == 0) {
+				FTypeRef tr = pod.typeRef(facet.type);
+				String typeName = tr.podName + "::" + tr.typeName;
+				Type type = Sys.findType(typeName);
+				return (Facet)FanType.make(type);
+			}
+			
+			// decode using normal Fantom serialization
+		    return (Facet)ObjDecoder.decode(facet.val);
+	    }
+		catch (Throwable e)
+	    {
+		  FTypeRef tr = pod.typeRef(facet.type);
+		  String typeName = tr.podName + "::" + tr.typeName;
+	      String msg = "ERROR: Cannot decode facet " + typeName + ": " + facet.val;
+	      System.err.println(msg);
+	      e.printStackTrace();
+	      throw IOErr.make(msg);
+	    }
+	}
+
+	public static Facet facet(Type self, Type t, boolean checked) {
+		java.util.Map<Type, Object> facets = getFacets(self);
+		Facet f = (Facet) facets.get(t);
+		if (f == null && checked)
 			throw UnknownFacetErr.make(t.qname());
-		return null;
+		return f;
 	}
 
 	public static boolean hasFacet(Type self, Type t) {
@@ -632,7 +700,7 @@ public class FanType {
 	private static java.util.Map<String, Object> getSlots(Type type) {
 		if (type.slots != null)
 			return type.slots;
-		java.util.Map<String, Object> slots = new java.util.HashMap<String, Object>();
+		java.util.Map<String, Object> slots = new java.util.LinkedHashMap<String, Object>();
 
 		// get inheritance slots
 		if (!type.isObj() && !FanType.isMixin(type)) {

@@ -11,7 +11,6 @@
 ** Types model the inheritance relationships and provide a mapping
 ** for all the slots both inherited and declared.
 **
-@Serializable { simple = true }
 native const class Type
 {
 

@@ -48,9 +48,28 @@ class ObjEncoder
 
 
     if (obj is Bool) { wStr(obj.toStr); return }
-    if (obj is Str)  { wStrLiteral(obj.toStr, '"'); return }
-    if (obj is Int)  { wStr(obj.toStr); return }
-    if (obj is Float)  { wStr(obj.toStr); return }
+    else if (obj is Str)  { wStrLiteral(obj.toStr, '"'); return }
+    else if (obj is Int)  { wStr(obj.toStr); return }
+    else if (obj is Float)  {
+      f := obj as Float
+      if (f.isNaN) wStr("""sys::Float("NaN")""")
+      else if (f == Float.posInf) wStr("""sys::Float("INF")""")
+      else if (f == Float.negInf) wStr("""sys::Float("-INF")""")
+      else { wStr(obj.toStr); w('f') }
+      return
+    }
+    else if (obj is Type) {
+      wType(obj).w('#')
+      return
+    }
+    else if (obj is Slot) {
+      slot := obj as Slot
+      wType(slot.parent).w('#').wStr(slot.name)
+      return
+    }
+    else if (obj is List) { writeList(obj); return }
+    else if (obj is Map) { writeMap(obj); return }
+    else if (obj is Duration) { wStr(obj.toStr); return }
     //if (obj is Decimal) { FanDecimal.encode((BigDecimal)obj, this) return }
     /*
     if (obj instanceof Literal)
@@ -59,8 +78,6 @@ class ObjEncoder
       return
     }
     */
-    if (obj is List) { writeList(obj); return }
-    if (obj is Map) { writeMap(obj); return }
 
     type := obj.typeof
     Serializable? ser := type.facet(Serializable#, false)
@@ -225,8 +242,9 @@ class ObjEncoder
     level--
   }
 
-  private Bool isMultiLine(Obj t)
+  private Bool isMultiLine(Obj? t)
   {
+    if (t == null) return false
     return t.typeof.pod.name != "sys"
   }
 

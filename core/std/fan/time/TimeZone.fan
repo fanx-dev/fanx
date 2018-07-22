@@ -177,7 +177,12 @@ const class TimeZone
   **
   ** Return `name`.
   **
-  override Str toStr() { name }
+  override Str toStr() { fullName }
+
+  override Bool equals(Obj? that) {
+    if (that isnot TimeZone) return false
+    return fullName == ((TimeZone)that).fullName
+  }
 
 
   //native private static TimeZone? findTimeZone(Str name)

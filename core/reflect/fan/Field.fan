@@ -9,7 +9,6 @@
 **
 ** Field is a slot which models the ability to get and set a value.
 **
-@Serializable { simple = true }
 native const class Field : Slot
 {
 

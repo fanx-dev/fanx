@@ -196,9 +196,10 @@ const struct class DateTime
         if (s.get(i++) != ' ') throw Err();
         tz = TimeZone.fromStr(s[i..-1], true);
       }
-      //echo("$s, $sec $ns, $tz")
+      //echo("$s, $sec $ns, $tz, $tz.fullName ${tz.offset(year)}")
 
-      return DateTime(year, Month.vals[month], day, hour, min, sec, ns, tz);
+      dt := DateTime(year, Month.vals[month], day, hour, min, sec, ns, tz);
+      return dt
     }
     catch (ParseErr e)
     {
@@ -208,7 +209,7 @@ const struct class DateTime
     catch (Err e)
     {
       if (!checked) return defVal;
-      throw ParseErr.make("DateTime:$s");
+      throw ParseErr.make("DateTime:$s", e)
     }
   }
 
@@ -270,7 +271,7 @@ const struct class DateTime
   **   "2009-03-10T11:33:20Z London"
   **   "2009-03-01T12:00:00+01:00 Amsterdam"
   **
-  override Str toStr() { toLocale("yyyy-MM-dd'T'hh:mm:ss.SSSZ z") }
+  override Str toStr() { toLocale("yyyy-MM-dd'T'HH:mm:ss.SSSXXX") + " " + tz.fullName }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -621,7 +622,7 @@ const struct class DateTime
   **
   ** Also see `toIso`, `fromStr`, and `fromHttpStr`.
   **
-  static DateTime? fromIso(Str s, Bool checked := true) { fromLocale(s, "yyyy-MM-dd'T'hh:mm:ss.SXXX", null, checked) }
+  static DateTime? fromIso(Str s, Bool checked := true) { fromLocale(s, "yyyy-MM-dd'T'HH:mm:ss.SXXX", null, checked) }
 
   **
   ** Format this instance according to ISO 8601 using the pattern:
@@ -629,7 +630,7 @@ const struct class DateTime
   **
   ** Also see `fromIso`, `toStr`, and `toHttpStr`.
   **
-  Str toIso() { toLocale("yyyy-MM-dd'T'hh:mm:ss.SXXX") }
+  Str toIso() { toLocale("yyyy-MM-dd'T'HH:mm:ss.SXXX") }
 
 //////////////////////////////////////////////////////////////////////////
 // HTTP
@@ -661,7 +662,7 @@ const struct class DateTime
   **   Sun, 06 Nov 1994 08:49:37 GMT
   **
   Str toHttpStr() {
-    toTimeZone(TimeZone.utc).toLocale("EEE, dd MMM yyyy hh:mm:ss", Locale.en) + " GMT"
+    toTimeZone(TimeZone.utc).toLocale("EEE, dd MMM yyyy HH:mm:ss", Locale.en) + " GMT"
   }
 
 //////////////////////////////////////////////////////////////////////////

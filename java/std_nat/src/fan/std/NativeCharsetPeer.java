@@ -29,8 +29,10 @@ public class NativeCharsetPeer {
 			if (csName.equals("UTF-16LE"))
 				return Charset.utf16LE;
 
-			NativeCharset charset = NativeCharset.make(jcharset.name());
-			charset.peer.jcharset = jcharset;
+			NativeCharset encoder = NativeCharset.make();
+			encoder.peer.jcharset = jcharset;
+			
+			Charset charset = Charset.privateMake(csName, encoder);
 			return charset;
 		} catch (Exception e) {
 			return null;
@@ -51,10 +53,10 @@ public class NativeCharsetPeer {
 		CoderResult r;
 		r = encoder.encode(cbuf, bbuf, true);
 		if (r.isError())
-			throw IOErr.make("Invalid " + self.name + " encoding");
+			throw IOErr.make("Invalid " + jcharset.name() + " encoding");
 		r = encoder.flush(bbuf);
 		if (r.isError())
-			throw IOErr.make("Invalid " + self.name + " encoding");
+			throw IOErr.make("Invalid " + jcharset.name() + " encoding");
 
 		// drain from internal byte buffer to fan buf
 		bbuf.flip();
@@ -79,10 +81,10 @@ public class NativeCharsetPeer {
 		CoderResult r;
 		r = encoder.encode(cbuf, bbuf, true);
 		if (r.isError())
-			throw IOErr.make("Invalid " + self.name + " encoding");
+			throw IOErr.make("Invalid " + jcharset.name() + " encoding");
 		r = encoder.flush(bbuf);
 		if (r.isError())
-			throw IOErr.make("Invalid " + self.name + " encoding");
+			throw IOErr.make("Invalid " + jcharset.name() + " encoding");
 
 		// drain from internal byte buffer to fan buf
 		int s = bbuf.position() + 1;
@@ -120,7 +122,7 @@ public class NativeCharsetPeer {
 			CoderResult r = decoder.decode(bbuf, cbuf, false);
 
 			if (r.isError())
-				throw IOErr.make("Invalid " + self.name + " encoding");
+				throw IOErr.make("Invalid " + jcharset.name() + " encoding");
 
 			bbuf.compact();
 			cbuf.flip();

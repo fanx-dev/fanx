@@ -44,7 +44,9 @@ internal class Tokenizer
   {
     if (undo != null) { undo.reset(this); undo = null; return type }
     val = null
-    return type = doNext
+    type = doNext
+    //echo("next: ${Token.toString(type)} '$val'")
+    return type
   }
 
   /**
@@ -249,21 +251,21 @@ internal class Tokenizer
 
     try
     {
-      // Float literal
-      if (floatSuffix)
+      // decimal literal
+      if (decimalSuffix)
       {
-        if (s == null)
-          this.val = whole
-        else
-          this.val = Float.fromStr(s.toStr)
-        return Token.FLOAT_LITERAL
+        throw UnsupportedErr("TODO")
+        //BigDecimal num = (s == null) ? BigDecimal(whole) : BigDecimal(s.toStr)
+        //TODO
+        Float num := (s == null) ? whole.toFloat : Float.fromStr(s.toStr)
+        this.val = num
+        return Token.DECIMAL_LITERAL
       }
 
-      // decimal literal (or duration)
-      if (decimalSuffix || floating)
+      // Float literal (or duration)
+      if (floatSuffix || floating)
       {
-        //BigDecimal num = (s == null) ? BigDecimal(whole) : BigDecimal(s.toStr)
-        Float num := (s == null) ? whole : Float.fromStr(s.toStr)
+        Float num := (s == null) ? whole.toFloat : Float.fromStr(s.toStr)
         if (dur > 0)
         {
           this.val = Duration.fromNanos((num * dur).toInt)
@@ -271,9 +273,8 @@ internal class Tokenizer
         }
         else
         {
-          //TODO
           this.val = num
-          return Token.DECIMAL_LITERAL
+          return Token.FLOAT_LITERAL
         }
       }
 
@@ -345,6 +346,7 @@ internal class Tokenizer
    */
   private Int str()
   {
+    //if (cur != '"') throw err("cur not \"")
     consume  // opening quote
     StrBuf s := StrBuf()
     while (true)
@@ -354,9 +356,9 @@ internal class Tokenizer
       case '"':   consume; break
       case -1:  throw err("Unexpected end of string")
       case '$':   throw err("Interpolated strings unsupported")
-      case '\\':  s.add(escape); break
-      case '\r':  s.addChar('\n'); consume; break
-      default:  s.addChar(cur); consume; break
+      case '\\':  s.addChar(escape);
+      case '\r':  s.addChar('\n'); consume;
+      default:  s.addChar(cur); consume;
       }
     }
     this.val = s.toStr
@@ -545,6 +547,7 @@ internal class Tokenizer
     cur   = peek
     curt  = peekt
     peek  = c
+    //echo("$charMap $c")
     peekt = 0 < c && c < 128 ? charMap[c] : ALPHA
   }
 
@@ -558,8 +561,9 @@ internal class Tokenizer
 
   private static const Int[] charMap
   static {
-    Int[] cmap := List<Int>.make(128)
-    cmap.size = 128
+    //Int[] cmap := List<Int>.make(128)
+    //cmap.size = 128
+    cmap := Int[,].fill(0, 128)
     // space characters note \r is error in symbol
     cmap[' ']  = SPACE
     cmap['\n'] = SPACE

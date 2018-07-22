@@ -151,9 +151,11 @@ public class Pod extends FanObj {
 
 	public Type type(String name, boolean checked) {
 		FType ftype = fpod.type(name, checked);
-		Type type = Type.fromFType(ftype, ftype.signature());
-		if (type != null)
-			return type;
+		if (ftype != null) {
+			Type type = Type.fromFType(ftype, ftype.signature());
+			if (type != null)
+				return type;
+		}
 		if (checked)
 			throw UnknownTypeErr.make(this.name() + "::" + name);
 		return null;

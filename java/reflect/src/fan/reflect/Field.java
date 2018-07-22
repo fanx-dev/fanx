@@ -3,6 +3,7 @@ package fan.reflect;
 import fan.std.Map;
 import fan.sys.*;
 import fanx.fcode.*;
+import fanx.fcode.FAttrs.FFacet;
 import fanx.main.*;
 
 /**
@@ -53,11 +54,18 @@ public class Field extends Slot {
 	}
 	
 	public static Field fromFCode(FField f, Type parent) {
-		//TODO
-		List facets = List.make(1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.type);
 		Type type = Sys.findType(tref.signature);
+		
+		List facets = List.make(1);
+		if (f.attrs.facets != null) {
+			facets.capacity(f.attrs.facets.length);
+			for (FFacet facet : f.attrs.facets) {
+				Facet fa = FanType.decode(facet, ftype.pod);
+				facets.add(fa);
+			}
+		}
 		Field field = new Field(parent, f.name, f.flags, facets, 0, type);
 		
 		if ((f.flags & FConst.Storage) != 0) {

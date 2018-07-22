@@ -11,7 +11,7 @@
 ** bytes to Unicode characters, and encode Unicode characters to bytes.
 **
 @Serializable { simple = true }
-const abstract class Charset
+const class Charset
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,8 +40,9 @@ const abstract class Charset
   **
   ** Private constructor
   **
-  protected new privateMake(Str name) {
+  protected new privateMake(Str name, Encoder coder) {
     this.name = name
+    this.encoder = coder
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ const abstract class Charset
   **
   ** An charset for "UTF-8" format (Eight-bit UCS Transformation Format).
   **
-  const static Charset utf8 := Utf8()
+  const static Charset utf8 := privateMake("UTF-8", Utf8())
 
   **
   ** Default value is `utf8`.
@@ -62,13 +63,13 @@ const abstract class Charset
   ** An charset for "UTF-16BE" format (Sixteen-bit UCS Transformation
   ** Format, big-endian byte order).
   **
-  const static Charset utf16BE := Utf16(true)
+  const static Charset utf16BE := privateMake("UTF-16BE", Utf16(true))
 
   **
   ** An charset for "UTF-16LE" format (Sixteen-bit UCS Transformation
   ** Format, little-endian byte order).
   **
-  const static Charset utf16LE := Utf16(false)
+  const static Charset utf16LE := privateMake("UTF-16LE", Utf16(false))
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -100,6 +101,15 @@ const abstract class Charset
   **
   override Str toStr() { name }
 
+  protected const Encoder encoder
+
+  Int encode(Int ch, OutStream out) { encoder.encode(ch, out) }
+  Int encodeArray(Int ch, ByteArray out, Int offset) { encoder.encodeArray(ch, out, offset) }
+  Int decode(InStream in) { encoder.decode(in) }
+}
+
+@NoDoc
+const abstract class Encoder {
   abstract Int encode(Int ch, OutStream out)
   abstract Int encodeArray(Int ch, ByteArray out, Int offset)
   abstract Int decode(InStream in)
@@ -110,8 +120,7 @@ const abstract class Charset
 // Native
 //////////////////////////////////////////////////////////////////////////
 
-internal const class NativeCharset : Charset {
-  protected new make(Str name) : super.privateMake(name) {}
+internal const class NativeCharset : Encoder {
 
   native static Charset? fromStr(Str name)
 
@@ -124,9 +133,7 @@ internal const class NativeCharset : Charset {
 // UTF-8
 //////////////////////////////////////////////////////////////////////////
 
-internal const class Utf8 : Charset {
-
-  new make() : super.privateMake("UTF-8") {}
+internal const class Utf8 : Encoder {
 
   override Int encode(Int c, OutStream out)  {
     if (c <= 0x007F) {
@@ -232,10 +239,10 @@ internal const class Utf8 : Charset {
 //////////////////////////////////////////////////////////////////////////
 // UTF-16
 //////////////////////////////////////////////////////////////////////////
-internal const class Utf16 : Charset {
+internal const class Utf16 : Encoder {
   const Bool bigEndian
 
-  new make(Bool bigEndian) : super.privateMake(bigEndian?"UTF-16BE" : "UTF-16LE") {
+  new make(Bool bigEndian) {
     this.bigEndian = bigEndian
   }
 

@@ -10,7 +10,6 @@
 ** Method models a function with a formal parameter list and
 ** return value (or Void if no return).
 **
-@Serializable { simple = true }
 native const class Method : Slot
 {
 

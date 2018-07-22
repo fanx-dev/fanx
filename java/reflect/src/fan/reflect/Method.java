@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 
 import fan.sys.*;
 import fanx.fcode.*;
+import fanx.fcode.FAttrs.FFacet;
 import fanx.main.*;
 
 public class Method extends Slot {
@@ -24,8 +25,6 @@ public class Method extends Slot {
 	}
 	
 	public static Method fromFCode(FMethod f, Type parent) {
-		//TODO
-		List facets = List.make(1);
 		FType ftype = parent.ftype();
 		FTypeRef tref = ftype.pod.typeRef(f.ret);
 		Type type = Sys.findType(tref.signature);
@@ -39,6 +38,15 @@ public class Method extends Slot {
 		for (int i=0; i<f.paramCount; ++i) {
 			FMethodVar var = vars[i];
 			params.add(Param.fromFCode(var, ftype.pod));
+		}
+		
+		List facets = List.make(1);
+		if (f.attrs.facets != null) {
+			facets.capacity(f.attrs.facets.length);
+			for (FFacet facet : f.attrs.facets) {
+				Facet fa = FanType.decode(facet, ftype.pod);
+				facets.add(fa);
+			}
 		}
 		
 		int mask = 0;

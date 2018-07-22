@@ -44,6 +44,7 @@ const class Locale
         Str country := s[3..<5]
         if (lang.isLower && country.isUpper && s[2] == '-')
           return Locale(lang, country)
+        //echo("$lang, $country, ${s[2].toChar}")
       }
     }
     catch (Err e) {
@@ -59,7 +60,7 @@ const class Locale
     this.lang = lang
     this.country = country
     if (country == null) this.str = lang
-    else this.str = "${country}_${lang}"
+    else this.str = "${lang}-${country}"
   }
 
 //////////////////////////////////////////////////////////////////////////

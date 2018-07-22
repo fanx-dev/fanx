@@ -44,7 +44,7 @@ class ObjDecoder
   /**
    * Read an object from the stream.
    */
-  Obj readRootObj()
+  Obj? readRootObj()
   {
     readHeader
     return readObj(null, null, true)
@@ -109,12 +109,12 @@ class ObjDecoder
   /**
    * obj := literal | simple | complex
    */
-  private Obj readObj(Field? curField, Type? peekType, Bool root)
+  private Obj? readObj(Field? curField, Type? peekType, Bool root)
   {
     // literals are stand alone
     if (Token.isLiteral(curt))
     {
-      Obj val := tokenizer.val
+      Obj? val := tokenizer.val
       consume
       return val
     }
@@ -185,11 +185,11 @@ class ObjDecoder
     // invoke parse method to translate into instance
     try
     {
-      return m.call(null, str)
+      return m.call(str)
     }
     catch (ParseErr e)
     {
-      throw ParseErr.make(e.msg + " [Line " + line + "]")
+      throw ParseErr.make(e.msg + " [Line " + line + "]", e)
     }
     catch (Err e)
     {
@@ -312,12 +312,12 @@ class ObjDecoder
     if (field == null) throw err("Field not found: " + t.qname + "." + name, line)
 
     // parse value
-    Obj val := readObj(field, null, false)
+    Obj? val := readObj(field, null, false)
 
     try
     {
       // if const field, then make val immutable
-      if (field.isConst) val = val.toImmutable
+      if (field.isConst) val = val?.toImmutable
     }
     catch (Err ex)
     {
@@ -328,12 +328,12 @@ class ObjDecoder
     toSet.set(field, val)
   }
 
-  private Void complexSet(Obj obj, Field field, Obj val, Int line)
+  private Void complexSet(Obj obj, Field field, Obj? val, Int line)
   {
     try
     {
       if (field.isConst)
-        field._set(obj, val.toImmutable, false)
+        field._set(obj, val?.toImmutable, false)
       else
         field.set(obj, val)
     }
@@ -370,7 +370,7 @@ class ObjDecoder
   /**
    * collection := list | map
    */
-  private Obj readCollection(Field curField, Type? t)
+  private Obj readCollection(Field? curField, Type? t)
   {
     // opening [
     consumeAs(Token.LBRACKET, "Expecting '['")
@@ -423,7 +423,7 @@ class ObjDecoder
     }
 
     // read first list item or first map key
-    Obj first := readObj(null, peekType, false)
+    Obj? first := readObj(null, peekType, false)
 
     // now we can distinguish b/w list and map
     if (curt == Token.COLON)
@@ -435,7 +435,7 @@ class ObjDecoder
   /**
    * list := "[" obj ("," obj)* "]"
    */
-  private Obj readList(Obj first)
+  private Obj readList(Obj? first)
   {
     // setup accumulator
     Obj?[] acc := [ first ]
@@ -459,7 +459,7 @@ class ObjDecoder
   private Obj readMap(Obj firstKey)
   {
     // setup accumulator
-    map := [:]
+    map := OrderedMap<Obj,Obj?>()
 
     // finish first pair
     consumeAs(Token.COLON, "Expected ':'")
@@ -597,7 +597,7 @@ class ObjDecoder
     // check for using imported name
     if (curt != Token.DOUBLE_COLON)
     {
-      for (Int i:=0; i<numUsings; ++i)
+      for (Int i:=0; i<usings.size; ++i)
       {
         Type? t := usings[i].resolve(n)
         if (t != null) return t
@@ -685,7 +685,7 @@ class ObjDecoder
   private Void verify(Int type, Str expected)
   {
     if (curt != type)
-      throw err(expected + ", not '" + Token.toString(curt) + "'")
+      throw err(expected + ", not '" + Token.toString(curt) + "' ${tokenizer.val}")
   }
 
   /**
@@ -726,7 +726,7 @@ class ObjDecoder
   private Int curt := -1         // current token type
   private [Str:Obj]? options      // decode option name/value pairs
   private Using[] usings := [,]  // using imports
-  private Int numUsings := 0     // number of using imports
+  //private Int numUsings := 0     // number of using imports
 
 }
 
@@ -736,20 +736,20 @@ class ObjDecoder
 
 internal abstract class Using
 {
-  abstract Type resolve(Str name)
+  abstract Type? resolve(Str name)
 }
 
 internal class UsingPod : Using
 {
   new make(Pod p) { pod = p }
-  override Type resolve(Str n) { return pod.type(n, false) }
+  override Type? resolve(Str n) { return pod.type(n, false) }
   const Pod pod
 }
 
 internal class UsingType : Using
 {
   new make(Type t, Str n) { type = t; name = n }
-  override Type resolve(Str n) { return name.equals(n) ? type : null }
+  override Type? resolve(Str n) { return name.equals(n) ? type : null }
   const Str name
   const Type type
 }

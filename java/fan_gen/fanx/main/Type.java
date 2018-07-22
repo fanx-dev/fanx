@@ -17,6 +17,8 @@ import fanx.fcode.FTypeRef;
 public abstract class Type {
 
 	public Map<String, Object> slots = null;
+	public java.util.Map<Type, Object> factesMap = null;
+	public Object factesList = null;
 
 	public Object emptyList;
 	
