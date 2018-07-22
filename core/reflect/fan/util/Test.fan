@@ -306,7 +306,7 @@ internal class TestRunner {
         ++failures
       }
       else {
-        echo("Pass $meth [$obj.failVerifyCount]")
+        echo("Pass $meth [$obj.verifyCount]")
       }
 
     } catch (Err e) {

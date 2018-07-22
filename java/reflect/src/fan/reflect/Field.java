@@ -21,7 +21,7 @@ public class Field extends Slot {
 				for (int i = 0; i < keys.size(); ++i) {
 					Field field = (Field) keys.get(i);
 					Object val = map.get(field);
-					field.set(obj, val, obj != inCtor);
+					field._set(obj, val, obj != inCtor);
 				}
 				return null;
 			}
@@ -135,10 +135,10 @@ public class Field extends Slot {
 	}
 
 	public void set(Object instance, Object value) {
-		set(instance, value, true);
+		_set(instance, value, true);
 	}
 
-	public void set(Object instance, Object value, boolean checkConst) {
+	public void _set(Object instance, Object value, boolean checkConst) {
 		// parent.finish();
 		// check const
 		if ((flags & FConst.Const) != 0) {

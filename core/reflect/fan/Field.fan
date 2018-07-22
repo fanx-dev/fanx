@@ -65,4 +65,7 @@ native const class Field : Slot
   **
   virtual Void set(Obj? instance, Obj? value)
 
+  @NoDoc
+  virtual Void _set(Obj? instance, Obj? value, Bool checkConst)
+
 }

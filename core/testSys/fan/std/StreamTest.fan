@@ -975,7 +975,7 @@ class StreamTest : Test
        "comment":"/* //!",
        "foo":"http://foo/",
       ]
-/*TODO
+
     props := str.in.readProps
     verifyEq(props.isRW(), true)
     verifyEq(props, expected)
@@ -1000,9 +1000,9 @@ class StreamTest : Test
     verifyErr(IOErr#) { "a=1\\x".in.readProps }
     verifyErr(IOErr#) { "novalue".in.readProps }
     verifyErr(IOErr#) { "novalue\na=b".in.readProps }
-    */
+
   }
-/*
+
   Void testTicket2436()
   {
     verify("#".in.readProps.isEmpty)
@@ -1011,7 +1011,6 @@ class StreamTest : Test
     verify("#\r\n".in.readProps.isEmpty)
     verify("#oops".in.readProps.isEmpty)
   }
-*/
 
 //////////////////////////////////////////////////////////////////////////
 // Pipe
@@ -1127,12 +1126,12 @@ class StreamTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Xml
 //////////////////////////////////////////////////////////////////////////
-/*
+
   Void testXml()
   {
-    nl := OutStream.xmlEscNewlines
-    q  := OutStream.xmlEscQuotes
-    u  := OutStream.xmlEscUnicode
+    nl := XmlUtil.xmlEscNewlines
+    q  := XmlUtil.xmlEscQuotes
+    u  := XmlUtil.xmlEscUnicode
 
     verifyXml("", "", 0)
     verifyXml("a", "a", 0)
@@ -1164,8 +1163,11 @@ class StreamTest : Test
 
   Void verifyXml(Str s, Str expected, Int flags)
   {
-    actual := Buf().writeXml(s, flags).flip.readAllStr(false)
+    buf := Buf()
+    buf.out.writeXml(s, flags)
+    buf.flip
+    actual := buf.readAllStr(false)
     verifyEq(actual, expected)
   }
-*/
+
 }

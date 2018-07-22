@@ -415,4 +415,11 @@ native const class Type
   **
   //Str toLocale()
 
+  /**
+   * Return if this is a JavaType which represents a Java
+   * class imported into the Fantom type system via the Java FFI.
+   */
+  @NoDoc
+  Bool isJava()
+
 }

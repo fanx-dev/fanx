@@ -229,57 +229,10 @@ abstract class OutStream
   **
   virtual This printLine(Obj? obj := "") { print(obj).writeChar('\n') }
 
-  **
-  ** Write a serialized object from the stream according to
-  ** the Fantom [serialization format]`docLang::Serialization`.
-  ** Throw IOErr on error.  Return this.
-  **
-  ** The options may be used to specify the format of the output:
-  **   - "indent": Int specifies how many spaces to indent
-  **     each level.  Default is 0.
-  **   - "skipDefaults": Bool specifies if we should skip fields
-  **     at their default values.  Field values are compared according
-  **     to the 'equals' method.  Default is false.
-  **   - "skipErrors": Bool specifies if we should skip objects which
-  **     aren't serializable. If true then we output null and a comment.
-  **     Default is false.
-  **
-  //This writeObj(Obj? obj, [Str:Obj]? options := null)
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
-
-  **
-  ** Write the given map of Str name/value pairs to the output stream
-  ** according to the Fantom props file format (see `InStream.readProps` for
-  ** full specification).  The props are written using UTF-8 regardless
-  ** of this stream's current charset.  If close argument is true, then
-  ** automatically close the stream.  Return this.
-  **
-  //This writeProps(Str:Str props, Bool close := true)
-
-  **
-  ** Write a string to this output stream using XML escape sequences.
-  ** By default only the '< > &' characters are escaped. You can
-  ** use the following flags to escape additional characters:
-  **   - `xmlEscNewlines`: escape the '\n' and '\r' characters
-  **   - `xmlEscQuotes`: escape the single and double quote characters
-  **   - `xmlEscUnicode`: escape any character greater than 0x7f
-  **
-  ** Any control character less than 0x20 which is not '\t', '\n' or
-  ** '\r' is always escaped with a numeric reference.  Return this.
-  **
-  //This writeXml(Str str, Int mode := 0)
-
-  ** XML escape newline characters.  See `writeXml`.
-  //static const Int xmlEscNewlines := 0x01
-
-  ** XML escape single and double quotes.  See `writeXml`.
-  //static const Int xmlEscQuotes := 0x02
-
-  ** XML escape any character greater then 0x7f.  See `writeXml`.
-  //static const Int xmlEscUnicode := 0x04
 
   **
   ** This OutStream is guaranteed to be closed upon return

@@ -548,51 +548,10 @@ abstract class InStream
     return buf.toStr
   }
 
-  **
-  ** Read a serialized object from the stream according to
-  ** the Fantom [serialization format]`docLang::Serialization`.
-  ** Throw IOErr or ParseErr on error.  This method may consume
-  ** bytes/chars past the end of the serialized object (we may
-  ** want to add a "full stop" token at some point to support
-  ** compound object streams).
-  **
-  ** The options may be used to specify additional decoding
-  ** logic:
-  **   - "makeArgs": Obj[] arguments to pass to the root
-  **     object's make constructor via 'Type.make'
-  **
-  //Obj? readObj([Str:Obj]? options := null)
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
-
-  **
-  ** Read the entire stream into a 'Str:Str' of name/value pairs using the
-  ** Fantom props file format.  This format is similiar but different than
-  ** the Java properties file format:
-  **   - Input must be UTF-8 encoded (current charset is ignored)
-  **   - Name/value pairs formatted as logical line: '<name>=<value>'
-  **   - Any Unicode character allowed in name or value
-  **   - Leading and trailing whitespace trimmed from both name and value
-  **   - Duplicate name keys within one file is an error condition
-  **   - Comment to end of line is '//' if start of line or preceeded
-  **     by whitespace
-  **   - Block comment is '/* */' (may be nested)
-  **   - Use trailing '\' to continue logical line to another actual line,
-  **     any leading whitespace (space or tab char) is trimmed from beginning
-  **     of continued line
-  **   - Fantom Str literal escape sequences supported: '\n \r \t or \uxxxx'
-  **   - The '$' character is treated as a normal character and should not be
-  **     escaped, but convention is to indicate a variable in a format string
-  **   - Convention is that name is lower camel case with dot separators
-  **
-  ** Throw IOErr if there is a problem reading the stream or an invalid
-  ** props format is encountered.  This InStream is guaranteed to be closed.
-  **
-  ** Also see `Env.props`.
-  **
-  //Str:Str readProps()
 
   **
   ** Pipe bytes from this input stream to the specified output stream.
