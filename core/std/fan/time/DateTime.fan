@@ -271,7 +271,7 @@ const struct class DateTime
   **   "2009-03-10T11:33:20Z London"
   **   "2009-03-01T12:00:00+01:00 Amsterdam"
   **
-  override Str toStr() { toLocale("yyyy-MM-dd'T'HH:mm:ss.SSSXXX") + " " + tz.fullName }
+  override Str toStr() { toLocale("YYYY-MM-DD'T'hh:mm:ss.FFFz") + " " + tz.fullName }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -622,7 +622,7 @@ const struct class DateTime
   **
   ** Also see `toIso`, `fromStr`, and `fromHttpStr`.
   **
-  static DateTime? fromIso(Str s, Bool checked := true) { fromLocale(s, "yyyy-MM-dd'T'HH:mm:ss.SXXX", null, checked) }
+  static DateTime? fromIso(Str s, Bool checked := true) { fromLocale(s, "YYYY-MM-DD'T'hh:mm:ss.FFF", null, checked) }
 
   **
   ** Format this instance according to ISO 8601 using the pattern:
@@ -630,7 +630,7 @@ const struct class DateTime
   **
   ** Also see `fromIso`, `toStr`, and `toHttpStr`.
   **
-  Str toIso() { toLocale("yyyy-MM-dd'T'HH:mm:ss.SXXX") }
+  Str toIso() { toLocale("YYYY-MM-DD'T'hh:mm:ss.FFF") }
 
 //////////////////////////////////////////////////////////////////////////
 // HTTP
@@ -653,7 +653,7 @@ const struct class DateTime
     if (checked) throw ParseErr("Invalid HTTP DateTime: '$s'")
     return null
   }
-  static const Str[] httpFormats := ["EEE, dd MMM yyyy HH:mm:ss Z", "E, dd-MMM-yy HH:mm:ss Z", "EEE MMM d HH:mm:ss Z"]
+  static const Str[] httpFormats := ["WWW, DD MMM YYYY hh:mm:ss Z", "W, DD-MMM-YY hh:mm:ss Z", "WWW MMM D hh:mm:ss Z"]
 
   **
   ** Format this time for use in an MIME or HTTP message
@@ -662,7 +662,7 @@ const struct class DateTime
   **   Sun, 06 Nov 1994 08:49:37 GMT
   **
   Str toHttpStr() {
-    toTimeZone(TimeZone.utc).toLocale("EEE, dd MMM yyyy HH:mm:ss", Locale.en) + " GMT"
+    toTimeZone(TimeZone.utc).toLocale("WWW, DD MMM YYYY hh:mm:ss", Locale.en) + " GMT"
   }
 
 //////////////////////////////////////////////////////////////////////////

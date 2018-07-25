@@ -151,7 +151,7 @@ const struct class TimeOfDay
   **
   ** Also see `fromStr`, `toIso`, and `toLocale`.
   **
-  override Str toStr() { toLocale("hh:mm:ss.SSS") }
+  override Str toStr() { toLocale("hh:mm:ss.FFF") }
 
 //////////////////////////////////////////////////////////////////////////
 // Access

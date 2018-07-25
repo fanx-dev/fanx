@@ -97,12 +97,74 @@ public class DateTimePeer {
 //		return c.get(Calendar.HOUR_OF_DAY);
 		return 24 + (dst/Duration.milliPerHr);
 	}
-
-	static String toLocale(DateTime self, String pattern, Locale locale) {
-		java.util.Locale jlocale = java.util.Locale.forLanguageTag(locale.lang);
+	
+	private static String replace(String pattern, char from, String to) {
+		return replace(pattern, from, to, false);
+	}
+	
+	private static String replace(String pattern, char from, String to, boolean isSingle) {
+		boolean in = false;
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<pattern.length(); ++i) {
+			char c = pattern.charAt(i);
+			if (c == '\'') {
+				if (in) in = false;
+				else in = true;
+				
+				sb.append(c);
+				continue;
+			}
+			
+			if (in) {
+				sb.append(c);
+				continue;
+			}
+			
+			if (c == from) {
+				boolean single = true;
+				if (isSingle) {
+					if (i-1 >= 0 && pattern.charAt(i-1) == from) {
+						single = false;
+					}
+					if (i+1 < pattern.length() && pattern.charAt(i+1) == from) {
+						single = false;
+					}
+				}
+				
+				if (single) {
+					sb.append(to);
+					continue;
+				}
+			}
+			sb.append(c);
+		}
+		return sb.toString();
+	}
+	
+	private static String toJavaPattern(String pattern) {
+		String old = pattern;
 		if (pattern == null) {
 			pattern = "YYYY-MM-DD'T'hh:mm:ss.FFFFFFFFFz";
 		}
+		pattern = replace(pattern, 'Y', "y");
+		pattern = replace(pattern, 'D', "d");
+		pattern = replace(pattern, 'W', "E");
+		pattern = replace(pattern, 'V', "w");
+		
+		pattern = replace(pattern, 'h', "H");
+		pattern = replace(pattern, 'k', "h");
+		
+		pattern = replace(pattern, 'a', "A");
+		pattern = replace(pattern, 'F', "S");
+		pattern = replace(pattern, 'z', "XXX", true);
+		
+//		System.out.println("********************\n"+old+"=>" + pattern);
+		return pattern;
+	}
+
+	static String toLocale(DateTime self, String pattern, Locale locale) {
+		java.util.Locale jlocale = java.util.Locale.forLanguageTag(locale.lang);
+		pattern = toJavaPattern(pattern);
 		SimpleDateFormat format = new SimpleDateFormat(pattern, jlocale);
 		format.setTimeZone(TimeZonePeer.getJtz(self.tz()));
 		java.util.Date date = new java.util.Date(self.toJava());
@@ -113,6 +175,7 @@ public class DateTimePeer {
 	static DateTime fromLocale(String str, String pattern, TimeZone tz, boolean checked) {
 		try {
 			if (tz == null) tz = TimeZone.cur();
+			pattern = toJavaPattern(pattern);
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
 			format.setTimeZone(TimeZonePeer.getJtz(tz));
 			java.util.Date date = format.parse(str);

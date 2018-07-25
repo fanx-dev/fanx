@@ -41,7 +41,6 @@ LinkedList Set Tuple and more.
 Added TimePoint class.
 All time APIs are based on millis ticks.
 The Time is renamed to TimeOfDay.
-The formatting date patterns is not compliant.
 
 ### Depend ###
 The Depend class only support simple version constraint.

@@ -109,7 +109,7 @@ const struct class Date
   ** Also `fromStr`, `toIso`, and `toLocale`.
   **
   override Str toStr() {
-    toLocale("yyyy-MM-dd")
+    toLocale("YYYY-MM-DD")
   }
 
 //////////////////////////////////////////////////////////////////////////
