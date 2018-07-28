@@ -3,7 +3,7 @@ package fan.sys;
 import fanx.main.Sys;
 import fanx.main.Type;
 
-public class BoolArray {
+public class BoolArray extends FanObj {
 	private final long size;
 	private final int[] words;
 
@@ -45,7 +45,8 @@ public class BoolArray {
 	}
 
 	public BoolArray copyFrom(BoolArray that, long thatOffset, long thisOffset, long length) {
-		System.arraycopy(that.words, (int) thatOffset, words, (int) thisOffset, (int) length);
+		int len = ((int) length >> 0x5) + 1;
+		System.arraycopy(that.words, (int) thatOffset, words, (int) thisOffset, len);
 		return this;
 	}
 

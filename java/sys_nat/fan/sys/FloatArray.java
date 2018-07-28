@@ -3,16 +3,10 @@ package fan.sys;
 import fanx.main.Sys;
 import fanx.main.Type;
 
-public abstract class FloatArray {
+public abstract class FloatArray extends FanObj {
 
-	public static FloatArray make(long size, long byteSize) {
-		if (byteSize == 4) {
-			return new F4(size);
-		} else if (byteSize == 8) {
-			return new F4(size);
-		}
-		throw UnsupportedErr.make("IntArray:" + byteSize);
-	}
+	public static FloatArray makeF4(long size) { return new F4((int)size); }
+	public static FloatArray makeF8(long size) { return new F8((int)size); }
 
 	public abstract double get(long pos);
 

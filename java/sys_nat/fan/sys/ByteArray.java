@@ -3,7 +3,7 @@ package fan.sys;
 import fanx.main.Sys;
 import fanx.main.Type;
 
-public class ByteArray {
+public class ByteArray extends FanObj {
 	private final byte[] array;
 	
 	public ByteArray(byte[] bs) {
