@@ -534,7 +534,7 @@ const final class Uri
     return buf.toStr
   }
 
-/* Need this?
+
   **
   ** Return if the specified string is an valid name segment to
   ** use in an unencoded URI.  The name must be at least one char
@@ -563,7 +563,7 @@ const final class Uri
     if (!isName(name))
       throw NameErr.make(name)
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Identity
 //////////////////////////////////////////////////////////////////////////

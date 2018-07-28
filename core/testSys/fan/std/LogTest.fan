@@ -10,13 +10,12 @@
 
 class UsafeLogRec {
   LogRec? logRec := null
-  static Usafe<UsafeLogRec> cur := Usafe(UsafeLogRec())
+  static const Unsafe<UsafeLogRec> cur := Unsafe(UsafeLogRec())
 }
 
 **
 ** LogTest
 **
-@Js
 class LogTest : Test
 {
 
@@ -26,7 +25,7 @@ class LogTest : Test
 
   Void testLogLevel()
   {
-    verifyEq(LogLevel#.qname, "sys::LogLevel")
+    verifyEq(LogLevel#.qname, "std::LogLevel")
     verifyEq(LogLevel.vals, [LogLevel.debug, LogLevel.info, LogLevel.warn, LogLevel.err, LogLevel.silent])
     verifyEq(LogLevel.vals.isImmutable, true)
 
@@ -267,7 +266,7 @@ class LogTest : Test
     }
     else
     {
-      verify(start.ticks <= rec.time.ticks && rec.time.ticks < start.ticks + 1sec.ticks)
+      verify(start->ticks <= rec.time->ticks && rec.time->ticks < (Int)start->ticks + (Int)1sec->ticks)
       verifyEq(rec.level, level)
       verifyEq(rec.msg,  msg)
       verifyEq(rec.err,  err)
@@ -294,7 +293,6 @@ class LogTest : Test
 // TestLog
 //////////////////////////////////////////////////////////////////////////
 
-@Js
 const class TestLog : Log
 {
   new make(Str name, Bool reg) : super(name, reg) {}

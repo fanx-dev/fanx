@@ -50,6 +50,7 @@ const class Log
   ** NameErr is thrown.
   **
   static Log get(Str name) {
+    Uri.checkName(name)
     l := find(name, false)
     if (l == null) {
       l = make(name, true)
@@ -64,6 +65,7 @@ const class Log
   ** be valid according to `Uri.isName` otherwise NameErr is thrown.
   **
   new make(Str name, Bool register) {
+    Uri.checkName(name)
     this.name = name
     if (register) doRegister(this)
   }

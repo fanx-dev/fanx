@@ -5,10 +5,39 @@ import fanx.main.Sys;
 
 public class LogPeer {
 
-	LogLevel level;
+	LogLevel level = LogLevel.info;
 
 	static java.util.Map<String, Log> map = new java.util.HashMap<String, Log>();
 	static java.util.List<Func> handlers = new java.util.ArrayList<Func>();
+	
+	static
+	{
+	    try
+	    {
+	    	Func handler = new Func() {
+				@Override
+				public long arity() {
+					return 1;
+				}
+				
+				@Override
+				public Object call(Object a) {
+					LogRec r = (LogRec)a;
+					r.print();
+					return null;
+				}
+				@Override
+				public boolean isImmutable() {
+					return true;
+				}
+	    	};
+	    	handlers.add(handler);
+	    }
+	    catch (Throwable e)
+	    {
+	      e.printStackTrace();
+	    }
+	}
 	
 	static LogPeer make(Log log) {
 		return new LogPeer();
@@ -25,7 +54,7 @@ public class LogPeer {
 	public static synchronized Log find(String name, boolean checked) {
 		Log log = map.get(name);
 		if (log == null && checked)
-			throw ArgErr.make();
+			throw Err.make();
 		return log;
 	}
 
@@ -34,6 +63,8 @@ public class LogPeer {
 	}
 
 	public static synchronized void doRegister(Log log) {
+		if (map.containsKey(log.name))
+			throw ArgErr.make("Duplicate log name: " + log.name);
 		map.put(log.name, log);
 	}
 
@@ -45,14 +76,16 @@ public class LogPeer {
 		this.level = l;
 	}
 
-	public synchronized void log(Log self, LogRec rec) {
+	public void log(Log self, LogRec rec) {
 		if (!self.isEnabled(rec.level))
 			return;
-		for (Func handler : handlers) {
-			try {
-				handler.call(rec);
-			} catch (Throwable e) {
-				e.printStackTrace();
+		synchronized(this) {
+			for (Func handler : handlers) {
+				try {
+					handler.call(rec);
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -66,6 +99,8 @@ public class LogPeer {
 	}
 
 	public static synchronized void addHandler(Func handler) {
+		if (!handler.isImmutable())
+		      throw NotImmutableErr.make("handler must be immutable");
 		handlers.add(handler);
 	}
 
