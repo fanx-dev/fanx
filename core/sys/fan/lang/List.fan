@@ -22,13 +22,13 @@ rtconst abstract class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  static new make(Int capacity, Type? type := null) {
-    return ArrayList<V>(capacity)
+  static new make(Int capacity, Type type := Obj#) {
+    return ArrayList<V>(capacity, type)
   }
 
   @NoDoc
   static Obj?[] makeObj(Int capacity := 4) {
-    return ArrayList<Obj?>(capacity)
+    return ArrayList<Obj?>(capacity, Obj#)
   }
 
   protected new privateMake() {}
@@ -72,7 +72,7 @@ rtconst abstract class List<V>
   **   ["hi"].of    =>  Str#
   **   [[2, 3]].of  =>  Int[]#
   **
-  //abstract Type? of()
+  abstract Type? of()
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -445,7 +445,7 @@ rtconst abstract class List<V>
   **   list.findAll |Int v->Bool| { return v%2==0 } => [0, 2, 4]
   **
   V[] findAll(|V item, Int index->Bool| c) {
-    nlist := List.make(1)
+    nlist := List.make(1, of)
     each |obj, i| {
       result := c(obj, i)
       if (result) {
@@ -466,7 +466,7 @@ rtconst abstract class List<V>
   **   list.exclude |Int v->Bool| { return v%2==0 } => [1, 3]
   **
   V[] exclude(|V item, Int index->Bool| c) {
-    nlist := List.make(1)
+    nlist := List.make(1, of)
     each |obj, i| {
       result := c(obj, i)
       if (!result) {
@@ -611,7 +611,7 @@ rtconst abstract class List<V>
   **   list.findType(Str#) => Str["a", "foo"]
   **
   V[] findType(Type t) {
-    nlist := List<V>.make(8)
+    nlist := List<V>.make(8, of)
     this.each |obj| {
       if (obj == null) return
       result := obj.typeof.fits(t)

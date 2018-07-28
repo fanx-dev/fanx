@@ -25,8 +25,16 @@ public abstract class IntArray {
 	public abstract long size();
 	
 	public abstract Object raw();
+	
+	public IntArray fill(long val, long times) {
+		int t = (int) times;
+		for (int i = 0; i < t; ++i) {
+			set(i, val);
+		}
+		return this;
+	}
 
-	public abstract boolean realloc(long newSize);
+	public abstract IntArray realloc(long newSize);
 
 	public abstract IntArray copyFrom(IntArray that, long thatOffset, long thisOffset, long length);
 	
@@ -37,7 +45,7 @@ public abstract class IntArray {
 	private static Type type;
 	
 	static class I4 extends IntArray {
-		int[] array;
+		final int[] array;
 		
 		public I4(long size) {
 			array = new int[(int)size];
@@ -59,12 +67,12 @@ public abstract class IntArray {
 			return array.length;
 		}
 
-		public boolean realloc(long newSize) {
-			int[] na = new int[(int)newSize];
-			int len = array.length > na.length ? na.length : array.length;
-			System.arraycopy(array, 0, na, 0, len);
-			array = na;
-			return true;
+		public IntArray realloc(long newSize) {
+			if (array.length == newSize) return this;
+			I4 na = new I4(newSize);
+			int len = array.length > na.array.length ? na.array.length : array.length;
+			System.arraycopy(array, 0, na.array, 0, len);
+			return na;
 		}
 
 		public I4 copyFrom(IntArray that, long thatOffset, long thisOffset, long length) {
@@ -74,7 +82,7 @@ public abstract class IntArray {
 	}
 	
 	static class I8 extends IntArray {
-		long[] array;
+		final long[] array;
 		
 		public I8(long size) {
 			array = new long[(int)size];
@@ -96,12 +104,12 @@ public abstract class IntArray {
 			return array.length;
 		}
 
-		public boolean realloc(long newSize) {
-			long[] na = new long[(int)newSize];
-			int len = array.length > na.length ? na.length : array.length;
-			System.arraycopy(array, 0, na, 0, len);
-			array = na;
-			return true;
+		public IntArray realloc(long newSize) {
+			if (array.length == newSize) return this;
+			I8 na = new I8(newSize);
+			int len = array.length > na.array.length ? na.array.length : array.length;
+			System.arraycopy(array, 0, na.array, 0, len);
+			return na;
 		}
 
 		public I8 copyFrom(IntArray that, long thatOffset, long thisOffset, long length) {
@@ -111,7 +119,7 @@ public abstract class IntArray {
 	}
 	
 	static class I2 extends IntArray {
-		short[] array;
+		final short[] array;
 		
 		public I2(long size) {
 			array = new short[(int)size];
@@ -133,12 +141,12 @@ public abstract class IntArray {
 			return array.length;
 		}
 
-		public boolean realloc(long newSize) {
-			short[] na = new short[(int)newSize];
-			int len = array.length > na.length ? na.length : array.length;
-			System.arraycopy(array, 0, na, 0, len);
-			array = na;
-			return true;
+		public IntArray realloc(long newSize) {
+			if (array.length == newSize) return this;
+			I2 na = new I2(newSize);
+			int len = array.length > na.array.length ? na.array.length : array.length;
+			System.arraycopy(array, 0, na.array, 0, len);
+			return na;
 		}
 
 		public I2 copyFrom(IntArray that, long thatOffset, long thisOffset, long length) {
@@ -148,7 +156,7 @@ public abstract class IntArray {
 	}
 	
 	static class I1 extends IntArray {
-		byte[] array;
+		final byte[] array;
 		
 		public I1(long size) {
 			array = new byte[(int)size];
@@ -170,12 +178,12 @@ public abstract class IntArray {
 			return array.length;
 		}
 
-		public boolean realloc(long newSize) {
-			byte[] na = new byte[(int)newSize];
-			int len = array.length > na.length ? na.length : array.length;
-			System.arraycopy(array, 0, na, 0, len);
-			array = na;
-			return true;
+		public IntArray realloc(long newSize) {
+			if (array.length == newSize) return this;
+			I1 na = new I1(newSize);
+			int len = array.length > na.array.length ? na.array.length : array.length;
+			System.arraycopy(array, 0, na.array, 0, len);
+			return na;
 		}
 
 		public I1 copyFrom(IntArray that, long thatOffset, long thisOffset, long length) {

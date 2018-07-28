@@ -9,7 +9,7 @@
 rtconst class ArrayList<V> : List
 {
   private ObjArray array
-  //private Type type
+  private Type type
   private Bool readOnly
   private Bool immutable
 
@@ -19,8 +19,9 @@ rtconst class ArrayList<V> : List
     }
   }
 
-  new make(Int capacity) : super.privateMake() {
-    array = ObjArray(capacity)
+  new make(Int capacity, Type type) : super.privateMake() {
+    array = ObjArray(capacity, type)
+    this.type = type
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ rtconst class ArrayList<V> : List
     return true
   }
 
-  //override Type? of() { type }
+  override Type? of() { type }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -80,7 +81,7 @@ rtconst class ArrayList<V> : List
         return
       }
 
-      array.realloc(it)
+      array = array.realloc(it)
       //&capacity = it
     }
     get {
@@ -109,7 +110,7 @@ rtconst class ArrayList<V> : List
     len := end - start
     if (len < 0) throw IndexErr("range illegal")
 
-    nlist := ArrayList<V>(len)
+    nlist := ArrayList<V>(len, of)
     nlist.array.copyFrom(array, start, 0, len)
     nlist.&size = len
     return nlist
@@ -146,7 +147,7 @@ rtconst class ArrayList<V> : List
   }
 
   override This dup() {
-    nlist := ArrayList<V>(size)
+    nlist := ArrayList<V>(size, of)
     nlist.array.copyFrom(array, 0, 0, size)
     nlist.&size = size
     return nlist
@@ -567,7 +568,7 @@ rtconst class ArrayList<V> : List
 
   override V[] toImmutable() {
     if (isImmutable) return this
-    nlist := ArrayList<V>(size)
+    nlist := ArrayList<V>(size, of)
     each |v| { nlist.add(v.toImmutable) }
     nlist.readOnly = true
     nlist.immutable = true

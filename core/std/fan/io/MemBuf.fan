@@ -39,7 +39,7 @@ class MemBuf : Buf
   override Int capacity { get{ return buf.size }
     set {
       if (it < size) throw ArgErr("capacity < size")
-      buf.realloc(it)
+      buf = buf.realloc(it)
     }
   }
   override Int pos {

@@ -4,18 +4,14 @@ import fanx.main.Sys;
 import fanx.main.Type;
 
 public class ByteArray {
-	byte[] array;
-	
-	public ByteArray(long size) {
-		array = new byte[(int)size];
-	}
+	private final byte[] array;
 	
 	public ByteArray(byte[] bs) {
 		array = bs;
 	}
 	
 	public static ByteArray make(long size) {
-		return new ByteArray(size);
+		return new ByteArray(new byte[(int)size]);
 	}
 	
 	public byte[] array() {
@@ -39,13 +35,13 @@ public class ByteArray {
 		return array.length;
 	}
 
-	public boolean realloc(long newSize) {
-		if (array.length == newSize) return true;
-		byte[] na = new byte[(int)newSize];
-		int len = array.length > na.length ? na.length : array.length;
-		System.arraycopy(array, 0, na, 0, len);
-		array = na;
-		return true;
+	public ByteArray realloc(long newSize) {
+		if (array.length == newSize) return this;
+		
+		ByteArray na = ByteArray.make(newSize);
+		int len = array.length > na.array.length ? na.array.length : array.length;
+		System.arraycopy(array, 0, na.array, 0, len);
+		return na;
 	}
 
 	public ByteArray copyFrom(ByteArray that, long thatOffset, long thisOffset, long length) {
