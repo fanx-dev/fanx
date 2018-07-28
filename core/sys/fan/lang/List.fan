@@ -22,7 +22,7 @@ rtconst abstract class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  static new make(Int capacity) {
+  static new make(Int capacity, Type? type := null) {
     return ArrayList<V>(capacity)
   }
 
@@ -597,6 +597,29 @@ rtconst abstract class List<V>
       }
     }
     return max
+  }
+
+  **
+  ** Return a new list containing all the items which are an instance
+  ** of the specified type such that item.type.fits(t) is true.  Any null
+  ** items are automatically excluded.  If none of the items are instance
+  ** of the specified type, then an empty list is returned.  The returned
+  ** list will be a list of t.  This method is readonly safe.
+  **
+  ** Example:
+  **   list := ["a", 3, "foo", 5sec, null]
+  **   list.findType(Str#) => Str["a", "foo"]
+  **
+  V[] findType(Type t) {
+    nlist := List<V>.make(8)
+    this.each |obj| {
+      if (obj == null) return
+      result := obj.typeof.fits(t)
+      if (result) {
+        nlist.add(obj)
+      }
+    }
+    return nlist
   }
 
 //////////////////////////////////////////////////////////////////////////

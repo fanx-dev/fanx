@@ -1,4 +1,4 @@
-package fan.reflect;
+package fan.std;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -45,7 +45,7 @@ public abstract class Slot extends FanObj {
 		if (type == null)
 			return null;
 
-		return FanType.slot(type, slotName, checked);
+		return TypeExt.slot(type, slotName, checked);
 	}
 
 	public static Func findFunc(String qname) {
@@ -76,7 +76,7 @@ public abstract class Slot extends FanObj {
 	// Methods
 	//////////////////////////////////////////////////////////////////////////
 
-	static Type typeof = Sys.findType("reflect::Slot");
+	static Type typeof = Sys.findType("std::Slot");
 
 	public Type typeof() {
 		return typeof;

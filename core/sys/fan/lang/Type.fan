@@ -33,8 +33,6 @@ native const class Type
   **
   static Type of(Obj obj)
 
-  static extension Type typeof(Obj? obj := null)
-
   **
   ** Find a Type by it's qualified name "pod::Type".  If the type
   ** doesn't exist and checked is false then return null, otherwise
@@ -45,7 +43,7 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 // Naming
 //////////////////////////////////////////////////////////////////////////
-
+/*
   **
   ** Parent pod which defines this type.  For parameterized types derived
   ** from List, Map, or Func, this method always returns the sys pod.
@@ -56,7 +54,7 @@ native const class Type
   **   acme::Foo[]#.pod => sys
   **
   Pod? pod()
-
+*/
   **
   ** Simple name of the type such as "Str".  For parameterized types derived
   ** from List, Map, or Func, this method always returns "List", "Map",
@@ -318,7 +316,7 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-
+/*
   **
   ** List of the all defined fields (including inherited fields).
   **
@@ -363,11 +361,11 @@ native const class Type
   **   3. If no public 'defVal' field, then throw Err
   **
   Obj make(Obj[]? args := null)
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Facets
 //////////////////////////////////////////////////////////////////////////
-
+/*
   **
   ** Get the list of facets defined on this type or return an empty
   ** list if no facets are defined. If looking up a facet by type, then
@@ -396,7 +394,7 @@ native const class Type
   ** Return the raw fandoc for this type or null if not available.
   **
   Str? doc()
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Conversion
 //////////////////////////////////////////////////////////////////////////

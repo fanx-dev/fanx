@@ -68,10 +68,10 @@ public class FanUtil {
 		javaToFanNameMap.put("java.lang.Number", "fan.sys.Nun");
 		javaToFanNameMap.put("java.lang.Long", "fan.sys.Int");
 		javaToFanNameMap.put("java.lang.Double", "fan.sys.Float");
-		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.reflect.Type");
-		javaToFanNameMap.put("fanx.main.ClassType", "fan.reflect.Type");
-		javaToFanNameMap.put("fanx.main.JavaType", "fan.reflect.Type");
-		javaToFanNameMap.put("fanx.main.NullableType", "fan.reflect.Type");
+		javaToFanNameMap.put(Sys.TypeClassDotName, "fan.sys.Type");
+		javaToFanNameMap.put("fanx.main.ClassType", "fan.sys.Type");
+		javaToFanNameMap.put("fanx.main.JavaType", "fan.sys.Type");
+		javaToFanNameMap.put("fanx.main.NullableType", "fan.sys.Type");
 
 		/*
 		 * javaToFanTypes.put("byte", JavaType.ByteType);
@@ -163,15 +163,15 @@ public class FanUtil {
 			case 'S':
 				if (typeName.equals("Str"))
 					return "java.lang.String";
-//			case 'T':
-//				if (typeName.equals("Type"))
-//					return Sys.TypeClassDotName;
+			case 'T':
+				if (typeName.equals("Type"))
+					return Sys.TypeClassDotName;
 				break;
 			}
 		}
-		if (podName.equals("reflect") && typeName.equals("Type")) {
-			return Sys.TypeClassDotName;
-		}
+//		if (podName.equals("reflect") && typeName.equals("Type")) {
+//			return Sys.TypeClassDotName;
+//		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -214,16 +214,16 @@ public class FanUtil {
 			case 'S':
 				if (typeName.equals("Str"))
 					return "fan.sys.FanStr";
-//			case 'T':
-//				if (typeName.equals("Type"))
-//					return "fan.sys.FanType";
+			case 'T':
+				if (typeName.equals("Type"))
+					return "fan.sys.FanType";
 				break;
 			}
 		}
 		
-		if (podName.equals("reflect") && typeName.equals("Type")) {
-			return "fan.reflect.FanType";
-		}
+//		if (podName.equals("reflect") && typeName.equals("Type")) {
+//			return "fan.reflect.FanType";
+//		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -270,9 +270,9 @@ public class FanUtil {
 			case 'V':
 				if (typeName.equals("Void"))
 					return "V";
-//			case 'T':
-//				if (typeName.equals("Type"))
-//					return Sys.TypeClassPathName;
+			case 'T':
+				if (typeName.equals("Type"))
+					return Sys.TypeClassPathName;
 				break;
 			}
 
@@ -281,9 +281,9 @@ public class FanUtil {
 //				return "java/lang/Object";
 		}
 		
-		if (podName.equals("reflect") && typeName.equals("Type")) {
-			return Sys.TypeClassPathName;
-		}
+//		if (podName.equals("reflect") && typeName.equals("Type")) {
+//			return Sys.TypeClassPathName;
+//		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -465,7 +465,7 @@ public class FanUtil {
 		}
 		if (jsig.length() > 4 &&  jsig.charAt(3) == 'x') {
 			if (jsig.equals(Sys.TypeClassPathName))
-				return "fan/reflect/FanType";
+				return "fan/sys/FanType";
 //			if (jsig.equals("java/math/BigDecimal"))
 //				return "fan/sys/FanDecimal";
 		}

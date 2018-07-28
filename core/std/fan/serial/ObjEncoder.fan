@@ -5,7 +5,6 @@
 // History:
 //   18 Aug 07  Brian Frank  Creation
 //
-using std
 
 /**
  * ObjEncoder serializes an object to an output stream.

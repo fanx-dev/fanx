@@ -5,7 +5,7 @@
 // History:
 //   4 Jan 06  Brian Frank  Creation
 //
-package fan.reflect;
+package fan.std;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -39,7 +39,7 @@ public class Param
 //////////////////////////////////////////////////////////////////////////
 // Methods
 //////////////////////////////////////////////////////////////////////////
-  static Type typeof = Sys.findType("reflect::Param");
+  static Type typeof = Sys.findType("std::Param");
 
   public Type typeof() { 
 	  return typeof;

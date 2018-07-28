@@ -6,7 +6,6 @@
 //   18 Aug 07  Brian Frank  Creation
 //
 
-using std
 
 /**
  * ObjDecoder parses an object tree from an input stream.

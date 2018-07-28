@@ -732,9 +732,9 @@ class CodeAsm : CompilerSupport
     op(FOp.LoadType, fpod.addTypeRef(expr.parent))
     op(FOp.LoadStr, fpod.strs.add(expr.name))
     if (expr.slot is CField)
-      op(FOp.CallNonVirtual, fpod.addMethodRef(ns.typeField, 1))
+      op(FOp.CallStatic, fpod.addMethodRef(ns.typeField, 2))
     else
-      op(FOp.CallNonVirtual, fpod.addMethodRef(ns.typeMethod, 1))
+      op(FOp.CallStatic, fpod.addMethodRef(ns.typeMethod, 2))
   }
 
   private Void rangeLiteral(RangeLiteralExpr r)
@@ -751,10 +751,10 @@ class CodeAsm : CompilerSupport
   {
     t := list.ctype
     if (t is NullableType) t = t->root
-    //v := ((ListType)t).v
+    v := ((ListType)t).v
 
-    //op(FOp.LoadType, fpod.addTypeRef(v));
     op(FOp.LoadInt,  fpod.ints.add(list.vals.size))
+    op(FOp.LoadType, fpod.addTypeRef(v))
     op(FOp.CallNew,  fpod.addMethodRef(ns.listMake))
 
     add := fpod.addMethodRef(ns.listAdd)

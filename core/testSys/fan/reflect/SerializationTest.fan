@@ -141,8 +141,8 @@ class SerializationTest : Test
   {
     now := DateTime.now
 
-    verifySer("reflect::Version(\"1.2.3\")", Version.make([1,2,3]))
-    verifySer("reflect::Depend(\"foo 1.2\")", Depend.fromStr("foo 1.2"))
+    verifySer("std::Version(\"1.2.3\")", Version.make([1,2,3]))
+    verifySer("std::Depend(\"foo 1.2\")", Depend.fromStr("foo 1.2"))
     verifySer("std::Locale(\"fr-CA\")", Locale.fromStr("fr-CA"))
     verifySer("std::TimeZone(\"London\")", TimeZone.fromStr("London"))
     verifySer("std::DateTime(\"$now\")", now)
@@ -154,9 +154,9 @@ class SerializationTest : Test
     verifySer("testSys::EnumAbc(\"C\")", EnumAbc.C)
     verifySer("testSys::Suits(\"spades\")", Suits.spades)
 
-    verifyErr(IOErr#) { verifySer("reflect::Version(x)", null) }
-    verifyErr(IOErr#)  { verifySer("reflect::Version(\"x\"", null) }
-    verifyErr(ParseErr#) { verifySer("reflect::Version(\"x\")", null) }
+    verifyErr(IOErr#) { verifySer("std::Version(x)", null) }
+    verifyErr(IOErr#)  { verifySer("std::Version(\"x\"", null) }
+    verifyErr(ParseErr#) { verifySer("std::Version(\"x\")", null) }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -831,7 +831,6 @@ class SerializationTest : Test
      """using sys
         using testSys
         using std
-        using reflect
         SerTypeSlotLiterals { c = Duration#fromNanos; a = InStream#; d = Test#verify }""".in.readObj
     verifyEq(z.a, InStream#)
     verifyEq(z.c, Duration#fromNanos)

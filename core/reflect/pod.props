@@ -1,7 +1,0 @@
-
-podName = reflect
-summary = system reflect lib
-version = 2.0
-depends = sys 2.0, std 2.0
-srcDirs = fan/*
-

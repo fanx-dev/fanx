@@ -1,18 +1,30 @@
-package fan.reflect;
+package fan.std;
 
 import fan.sys.ArgErr;
-import fan.sys.FanObj;
 import fan.sys.List;
+import fan.sys.UnknownSlotErr;
 import fan.sys.FanObj.InvokeTrapper;
 import fanx.main.Type;
 
 public class ReflectInvoker implements InvokeTrapper {
 	@Override
 	public Object doTrap(Object self, String name, List args, Type type) {
-		if (self != null && name.equals("typeof")) {
-			return FanObj.typeof(self);
+//		if (self != null && name.equals("typeof")) {
+//			return FanObj.typeof(self);
+//		}
+		Slot slot = TypeExt.slot(type, name, false);
+		if (slot == null) {
+			if (type.qname().equals("sys::Type")) {
+				List nargs = List.make(4);
+				nargs.add(self);
+				if (args != null && args.size() > 0) {
+					nargs.addAll(args);
+				}
+				return doTrap(null, name, nargs, TypeExt.typeof());
+			}
+			throw UnknownSlotErr.make(name);
 		}
-		Slot slot = FanType.slot(type, name);
+		
 		if (slot instanceof Method) {
 			Method m = (Method)slot;
 			if (m.isStatic() || m.isCtor()) {
@@ -31,6 +43,7 @@ public class ReflectInvoker implements InvokeTrapper {
 				return null;
 			}
 		}
+		
 		throw ArgErr.make("Invalid number of args to get or set field '" + name + "'("+args+")");
 	}
 }

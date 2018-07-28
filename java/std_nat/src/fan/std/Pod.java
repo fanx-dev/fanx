@@ -1,4 +1,4 @@
-package fan.reflect;
+package fan.std;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -7,10 +7,7 @@ import fanx.main.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import fan.reflect.*;
 import fan.std.Env;
-import fan.std.LocalFile;
-import fan.std.LocalFilePeer;
 import fan.std.Log;
 import fan.std.Map;
 import fan.std.Uri;
@@ -32,7 +29,7 @@ public class Pod extends FanObj {
 
 	public Type typeof() {
 		if (typeof == null) {
-			typeof = Sys.findType("reflect::Pod");
+			typeof = Sys.findType("std::Pod");
 		}
 		return typeof;
 	}
@@ -53,7 +50,7 @@ public class Pod extends FanObj {
 	}
 
 	public static Pod of(Object obj) {
-		return FanType.pod(FanType.of(obj));
+		return TypeExt.pod(FanType.of(obj));
 	}
 
 	public static Pod find(String name) {
@@ -233,7 +230,7 @@ public class Pod extends FanObj {
 				java.util.List<fanx.fcode.ZipEntryFile> jlist = fpod.store.podFiles(uri().toStr());
 				list = List.make(jlist.size());
 				for (fanx.fcode.ZipEntryFile j : jlist) {
-					ZipEntryFile f = new ZipEntryFile(j.parent, j.entry, Uri.fromStr(j.uri));
+					fan.std.ZipEntryFile f = fan.std.ZipEntryFile.make(j.parent, j.entry, Uri.fromStr(j.uri));
 					list.add(f);
 				}
 				this.filesList = (List) list.toImmutable();

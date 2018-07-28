@@ -6,8 +6,6 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
-using std
-
 **
 ** Test is the base for Fantom unit tests.
 **

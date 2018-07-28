@@ -38,8 +38,6 @@ public class PodClassLoader
     		addURL(new File("../sys_nat/bin").toURI().toURL());
     	} else if (pod.podName.equals("std")) {
     		addURL(new File("../std_nat/bin").toURI().toURL());
-    	} else if (pod.podName.equals("reflect")) {
-    		addURL(new File("../reflect/bin").toURI().toURL());
     	} else {
     		addURL(new File("../"+pod.podName+"/bin").toURI().toURL());
     	}

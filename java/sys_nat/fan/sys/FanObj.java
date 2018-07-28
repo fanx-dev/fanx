@@ -186,8 +186,8 @@ public class FanObj extends IObj implements Comparable {
 	public static InvokeTrapper invokeTrapper = null;
 	static {
 		try {
-			ClassLoader loader = Sys.findPod("reflect").podClassLoader;
-			invokeTrapper = (InvokeTrapper)loader.loadClass("fan.reflect.ReflectInvoker").newInstance();
+			ClassLoader loader = Sys.findPod("std").podClassLoader;
+			invokeTrapper = (InvokeTrapper)loader.loadClass("fan.std.ReflectInvoker").newInstance();
 		} catch (Throwable e) {
 			System.err.println("install InvokeTrapper fail");
 		}

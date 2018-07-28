@@ -5,7 +5,7 @@
 //History:
 //26 Mar 06  Brian Frank  Creation
 //
-package fan.reflect;
+package fan.std;
 
 import fan.std.Buf;
 import fan.std.File;
@@ -27,14 +27,15 @@ public class ZipEntryFile extends File {
 	// Construction
 	//////////////////////////////////////////////////////////////////////////
 
-	public ZipEntryFile(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry, Uri uri) {
-		this.parent = parent;
-		this.entry = entry;
-		File.privateMake$(this, uri);
+	public static ZipEntryFile make(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry, Uri uri) {
+		ZipEntryFile t = new ZipEntryFile(parent, entry);
+		t.uri = uri;
+		return t;
 	}
 
 	public ZipEntryFile(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry) {
-		this(parent, entry, entryUri(entry));
+		this.parent = parent;
+		this.entry = entry;
 	}
 
 	static Uri entryUri(java.util.zip.ZipEntry entry) {

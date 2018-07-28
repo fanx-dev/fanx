@@ -1,4 +1,4 @@
-package fan.reflect;
+package fan.std;
 
 import fan.std.Map;
 import fan.sys.*;
@@ -62,7 +62,7 @@ public class Field extends Slot {
 		if (f.attrs.facets != null) {
 			facets.capacity(f.attrs.facets.length);
 			for (FFacet facet : f.attrs.facets) {
-				Facet fa = FanType.decode(facet, ftype.pod);
+				Facet fa = TypeExt.decode(facet, ftype.pod);
 				facets.add(fa);
 			}
 		}
@@ -92,7 +92,7 @@ public class Field extends Slot {
 	// Signature
 	//////////////////////////////////////////////////////////////////////////
 
-	private static Type typeof = Sys.findType("reflect::Field");
+	private static Type typeof = Sys.findType("std::Field");
 
 	public Type typeof() {
 		return typeof;

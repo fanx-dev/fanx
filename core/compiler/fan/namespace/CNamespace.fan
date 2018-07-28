@@ -220,8 +220,8 @@ abstract class CNamespace
   once CType? listType             () { findType("sys", "List") }
   once CType? funcType             () { findType("sys", "Func") }
   once CType? errType              () { findType("sys", "Err") }
-  once CType? typeType             () { findType("reflect", "Type") }
-  //once CType? typeExtType           () { findType("reflect", "TypeExt") }
+  once CType? typeType             () { findType("sys", "Type") }
+  once CType? typeExtType           () { findType("std", "TypeExt") }
   once CType? rangeType            () { findType("sys", "Range") }
   once CType? voidType             () { findType("sys", "Void") }
   once CType? fieldNotSetErrType   () { findType("sys", "FieldNotSetErr") }
@@ -230,10 +230,10 @@ abstract class CNamespace
   once CType? decimalType() { findType("std", "Decimal") }
   once CType? durationType() { findType("std", "Duration") }
   once CType? mapType() { findType("std", "Map") }
-  once CType? podType() { findType("reflect", "Pod") }
-  once CType? slotType() { findType("reflect", "Slot") }
-  once CType? fieldType() { findType("reflect", "Field") }
-  once CType? methodType() { findType("reflect", "Method") }
+  once CType? podType() { findType("std", "Pod") }
+  once CType? slotType() { findType("std", "Slot") }
+  once CType? fieldType() { findType("std", "Field") }
+  once CType? methodType() { findType("std", "Method") }
   once CType? testType() { findType("std", "Test") }
   once CType? uriType() { findType("std", "Uri") }
 
@@ -263,9 +263,9 @@ abstract class CNamespace
   once CMethod? slotFindFunc       () { sysMethod(slotType,    "findFunc") }
   once CMethod? podFind            () { sysMethod(podType,    "find") }
   once CMethod? podLocale          () { sysMethod(podType,    "locale") }
-  once CMethod? typePod            () { sysMethod(typeType,    "pod") }
-  once CMethod? typeField          () { sysMethod(typeType,    "field") }
-  once CMethod? typeMethod         () { sysMethod(typeType,    "method") }
+  once CMethod? typePod            () { sysMethod(typeExtType,    "pod") }
+  once CMethod? typeField          () { sysMethod(typeExtType,    "field") }
+  once CMethod? typeMethod         () { sysMethod(typeExtType,    "method") }
   once CMethod? funcCall           () { sysMethod(funcType,    "call") }
   once CMethod? fieldNotSetErrMake () { sysMethod(fieldNotSetErrType,    "make") }
   once CMethod? notImmutableErrMake() { sysMethod(notImmutableErrType,    "make") }
