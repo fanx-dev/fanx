@@ -22,14 +22,14 @@ public class FilePeer {
 	}
 
 	static File os(String osPath) {
-		return LocalFilePeer.make(new java.io.File(osPath));
+		return LocalFilePeer.fromJava(new java.io.File(osPath));
 	}
 
 	static List osRoots() {
 		java.io.File[] roots = java.io.File.listRoots();
 		List list = List.make(roots.length);
 		for (int i = 0; i < roots.length; ++i) {
-			list.add(LocalFilePeer.make(roots[i]));
+			list.add(LocalFilePeer.fromJava(roots[i]));
 		}
 		return list;
 	}
@@ -49,11 +49,11 @@ public class FilePeer {
 		if (dir != null) {
 			if (!(dir instanceof LocalFile))
 				throw IOErr.make("Dir is not on local file system: " + dir);
-			d = LocalFilePeer.getJFile((LocalFile) dir);
+			d = LocalFilePeer.toJava((LocalFile) dir);
 		}
 
 		try {
-			return LocalFilePeer.make(java.io.File.createTempFile(prefix, suffix, d));
+			return LocalFilePeer.fromJava(java.io.File.createTempFile(prefix, suffix, d));
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}

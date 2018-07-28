@@ -18,7 +18,7 @@
 **   3. `Zip.write` is used to write a zip file to an output stream.
 **      Each entry must is written to the stream using `writeNext`
 **
-final class Zip
+native final class Zip
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ final class Zip
   **   out.writeLine("test")
   **   out.close
   **
-  OutStream writeNext(Uri path, DateTime modifyTime := DateTime.now)
+  OutStream writeNext(Uri path, TimePoint modifyTime := TimePoint.now)
 
   **
   ** Finish writing the contents of this zip file, but leave the underlying
@@ -144,5 +144,24 @@ final class Zip
   ** Construct a new GZIP input stream which wraps the given input stream.
   **
   static InStream gzipInStream(InStream in)
+
+//////////////////////////////////////////////////////////////////////////
+// Deflate
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Construct a new deflate output stream which wraps the given output stream,
+  ** and compresses data using the "deflate" compression format.  Options:
+  **   - level: Int between 9 (best compression) to 0 (no compression)
+  **   - nowrap: Bool false to suppress defalate header and adler checksum
+  **
+  static OutStream deflateOutStream(OutStream out, [Str:Obj?]? opts := null)
+
+  **
+  ** Construct a new deflate input stream which wraps the given input stream and
+  ** inflates data written using the "deflate" compression format.  Options:
+  **   - nowrap: Bool false to suppress defalate header and adler checksum
+  **
+  static InStream deflateInStream(InStream in, [Str:Obj?]? opts := null)
 
 }

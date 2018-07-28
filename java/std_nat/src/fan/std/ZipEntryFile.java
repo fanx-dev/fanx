@@ -17,6 +17,8 @@ import fan.std.Uri;
 import fan.sys.IOErr;
 import fan.sys.List;
 import fan.sys.UnsupportedErr;
+import fanx.main.Sys;
+import fanx.main.Type;
 
 /**
  * ZipEntryFile represents a file entry inside a zip file.
@@ -27,13 +29,19 @@ public class ZipEntryFile extends File {
 	// Construction
 	//////////////////////////////////////////////////////////////////////////
 
-	public static ZipEntryFile make(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry, Uri uri) {
-		ZipEntryFile t = new ZipEntryFile(parent, entry);
-		t.uri = uri;
-		return t;
+	public ZipEntryFile(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry, Uri uri) {
+		File.privateMake$(this, uri);
+		this.parent = parent;
+		this.entry = entry;
 	}
 
 	public ZipEntryFile(java.util.zip.ZipFile parent, java.util.zip.ZipEntry entry) {
+		this(parent, entry, entryUri(entry));
+	}
+
+	public ZipEntryFile(Zip parent, java.util.zip.ZipEntry entry) {
+		Uri uri = entryUri(entry);
+		File.privateMake$(this, uri);
 		this.parent = parent;
 		this.entry = entry;
 	}
@@ -41,6 +49,18 @@ public class ZipEntryFile extends File {
 	static Uri entryUri(java.util.zip.ZipEntry entry) {
 		return Uri.fromStr("/" + (entry.getName()));
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Obj
+	//////////////////////////////////////////////////////////////////////////
+
+//	private static Type type;
+//
+//	public Type typeof() {
+//		if (type == null)
+//			type = Sys.findType("std::ZipEntryFile");
+//		return type;
+//	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// File
@@ -117,9 +137,18 @@ public class ZipEntryFile extends File {
 	public InStream in(long bufSize) {
 		try {
 			java.io.InputStream in;
-			in = ((java.util.zip.ZipFile) parent).getInputStream(entry);
+			if (parent instanceof Zip) {
+				// never buffer if using ZipInputStream
+				in = new java.io.FilterInputStream(((Zip) parent).zipIn) {
+					public void close() {
+					}
+				};
+			} else {
+				in = ((java.util.zip.ZipFile) parent).getInputStream(entry);
+			}
+
 			// return as fan stream
-			return SysInStreamPeer.make(in, bufSize);
+			return SysInStreamPeer.fromJava(in, bufSize);
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}

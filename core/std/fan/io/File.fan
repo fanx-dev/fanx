@@ -515,7 +515,7 @@ internal const class LocalFile : File
     FileBuf(this, mode)
   }
   override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size) {
-    NioBuf(this, mode, pos, size)
+    NioBuf.fromFile(this, mode, pos, size)
   }
 
   native override InStream in(Int bufferSize := 4096)
@@ -525,7 +525,7 @@ internal const class LocalFile : File
 **************************************************************************
 ** ZipEntryFile
 **************************************************************************
-
+/*
 internal const class ZipEntryFile : File
 {
   native private Void init()
@@ -546,5 +546,5 @@ internal const class ZipEntryFile : File
   native override InStream in(Int bufferSize := 4096)
   native override OutStream out(Bool append := false, Int bufferSize := 4096)
 }
-
+*/
 

@@ -230,7 +230,7 @@ public class Pod extends FanObj {
 				java.util.List<fanx.fcode.ZipEntryFile> jlist = fpod.store.podFiles(uri().toStr());
 				list = List.make(jlist.size());
 				for (fanx.fcode.ZipEntryFile j : jlist) {
-					fan.std.ZipEntryFile f = fan.std.ZipEntryFile.make(j.parent, j.entry, Uri.fromStr(j.uri));
+					fan.std.ZipEntryFile f = new fan.std.ZipEntryFile(j.parent, j.entry, Uri.fromStr(j.uri));
 					list.add(f);
 				}
 				this.filesList = (List) list.toImmutable();

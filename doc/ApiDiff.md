@@ -46,7 +46,7 @@ The Time is renamed to TimeOfDay.
 The Depend class only support simple version constraint.
 
 ### Type Erasure ###
-The List.of and Func.returns are no longer available.
+The List.fits and Func.returns are no longer available.
 
 ### Map ###
 The Map.caseInsensitive and Map.ordered replaced by Orderedmap and CIMap.

@@ -40,9 +40,11 @@ internal class FileBuf : Buf
 
 internal class NioBuf : Buf
 {
-  new make(File file, Str mode, Int pos, Int? size) : super.privateMake() {
+  new fromFile(File file, Str mode, Int pos, Int? size) : super.privateMake() {
     init(file, mode, pos, size)
   }
+
+  protected new make() {}
 
   protected native Void init(File file, Str mode, Int pos, Int? size)
 

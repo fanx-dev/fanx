@@ -21,6 +21,48 @@ import fan.sys.IOErr;
 public class SysInStreamPeer {
 	
 	InputStream inputStream;
+	
+	static class JInputStream extends InputStream {
+		InStream in;
+		
+		public JInputStream(InStream in) {
+			this.in = in;
+		}
+
+		@Override
+		public int read() throws IOException {
+			return (int)in.read();
+		}
+		
+		@Override
+		public int read(byte b[], int off, int len) {
+			ByteArray ba = new ByteArray(b);
+			return (int)in.readBytes(ba, off, len);
+		}
+		
+		@Override
+		public long skip(long n) {
+			return (int)in.skip(n);
+		}
+		
+		@Override
+		public int available() {
+			return (int)in.avail();
+		}
+		
+		@Override
+		public void close() {
+			in.close();
+		}
+	}
+	
+	public static InputStream toJava(InStream in) {
+		if (in instanceof SysInStream) {
+			SysInStreamPeer peer = (SysInStreamPeer)((SysInStream)in).peer;
+			return peer.inputStream;
+		}
+		return new JInputStream(in);
+	}
 
 
 	private void init(InputStream in) {
@@ -34,11 +76,15 @@ public class SysInStreamPeer {
 		return new SysInStreamPeer();
 	}
 	
-	public static InStream make(InputStream in, long bufSize) {
-		return make(in, Endian.big, Charset.utf8, bufSize);
+	public static InStream fromJava(InputStream in) {
+		return fromJava(in, Endian.big, Charset.utf8, 0);
+	}
+	
+	public static InStream fromJava(InputStream in, long bufSize) {
+		return fromJava(in, Endian.big, Charset.utf8, bufSize);
 	}
 
-	public static InStream make(InputStream in, Endian e, Charset c, long bufSize) {
+	public static InStream fromJava(InputStream in, Endian e, Charset c, long bufSize) {
 		SysInStream sin = SysInStream.make(e, c);
 		if (bufSize > 0) {
 			in = new BufferedInputStream(in, (int) bufSize);

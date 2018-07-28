@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import fan.sys.ArgErr;
-import fan.sys.Func;
 import fan.sys.IOErr;
 import fan.sys.List;
 
@@ -21,7 +20,7 @@ public class LocalFilePeer {
 		self.peer = new java.io.File(path);
 	}
 
-	public static LocalFile make(java.io.File file) {
+	public static LocalFile fromJava(java.io.File file) {
 		LocalFile f = new LocalFile();
 		f.peer = file;
 		String uri = file.getPath();
@@ -29,6 +28,11 @@ public class LocalFilePeer {
 			uri = uri + "/";
 		f.uri = Uri.fromStr(uri);
 		return f;
+	}
+	
+	public static java.io.File toJava(File self) {
+		java.io.File jfile = (java.io.File)((LocalFile)self).peer;
+		return jfile;
 	}
 
 	static LocalFile make(java.io.File file, Uri uri) {
@@ -46,10 +50,6 @@ public class LocalFilePeer {
 		f.peer = file;
 		f.uri = uri;
 		return f;
-	}
-
-	static java.io.File getJFile(LocalFile self) {
-		return (java.io.File) self.peer;
 	}
 
 	static FileStore store(LocalFile self) {
@@ -91,15 +91,6 @@ public class LocalFilePeer {
 		return jfile.getPath();
 	}
 
-	public static File javaToFan(java.io.File jfile) {
-		return LocalFilePeer.make(jfile);
-	}
-	
-	public static java.io.File toJavaFile(File self) {
-		java.io.File jfile = (java.io.File)((LocalFile)self).peer;
-		return jfile;
-	}
-
 	static List list(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
 		java.io.File[] ls = jfile.listFiles();
@@ -108,7 +99,7 @@ public class LocalFilePeer {
 		}
 		List res = List.make(ls.length);
 		for (java.io.File f : ls) {
-			res.add(javaToFan(f));
+			res.add(fromJava(f));
 		}
 		return res;
 	}
@@ -229,7 +220,7 @@ public class LocalFilePeer {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {
 			FileInputStream fin = new FileInputStream(jfile);
-			return SysInStreamPeer.make(fin, bufferSize);
+			return SysInStreamPeer.fromJava(fin, bufferSize);
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}
@@ -239,7 +230,7 @@ public class LocalFilePeer {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {
 			FileOutputStream fin = new FileOutputStream(jfile, append);
-			SysOutStream out = SysOutStreamPeer.make(fin, bufferSize);
+			SysOutStream out = SysOutStreamPeer.fromJava(fin, bufferSize);
 			out.peer.fd = fin.getFD();
 			return out;
 		} catch (java.io.IOException e) {

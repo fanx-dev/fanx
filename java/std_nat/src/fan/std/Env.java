@@ -46,9 +46,9 @@ public class Env extends FanObj {
 	}
 
 	public Env() {
-		in = SysInStreamPeer.make(System.in, 0);
-		out = SysOutStreamPeer.make(System.out, 0);
-		err = SysOutStreamPeer.make(System.err, 0);
+		in = SysInStreamPeer.fromJava(System.in, 0);
+		out = SysOutStreamPeer.fromJava(System.out, 0);
+		err = SysOutStreamPeer.fromJava(System.err, 0);
 	}
 
 	public String host() {
@@ -399,7 +399,7 @@ public class Env extends FanObj {
 
 	public File findPodFile(String name) {
 		java.io.File jfile = sysEnv().getPodFile(name);
-		File file = LocalFilePeer.make(jfile);
+		File file = LocalFilePeer.fromJava(jfile);
 
 		// verify case since Windoze is case insensitive
 		String actualName = file.normalize().name();

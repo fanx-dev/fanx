@@ -11,10 +11,12 @@ import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import fan.std.SysInStreamPeer.JInputStream;
 import fan.sys.ByteArray;
 import fan.sys.IOErr;
 
@@ -24,6 +26,43 @@ public class SysOutStreamPeer {
 //	Writer outWrite;
 //	DataOutputStream dataStream;
 	FileDescriptor fd;
+	
+	static class JOutputStream extends OutputStream {
+		OutStream out;
+		
+		public JOutputStream(OutStream out) {
+			this.out = out;
+		}
+		
+		@Override
+		public void write(int b) throws IOException {
+			out.write(b);
+		}
+		
+		@Override
+		public void write(byte b[], int off, int len) {
+			ByteArray ba = new ByteArray(b);
+			out.writeBytes(ba, off, len);
+		}
+		
+		@Override
+		public void flush() throws IOException {
+			out.flush();
+	    }
+		
+		@Override
+		public void close() throws IOException {
+			out.close();
+	    }
+	}
+	
+	public static OutputStream toJava(OutStream out) {
+		if (out instanceof SysOutStream) {
+			SysOutStreamPeer peer = (SysOutStreamPeer)((SysOutStream)out).peer;
+			return peer.outStream;
+		}
+		return new JOutputStream(out);
+	}
 
 	private void init(OutputStream out) {
 		outStream = out;
@@ -35,12 +74,16 @@ public class SysOutStreamPeer {
 	public static SysOutStreamPeer make(SysOutStream self) {
 		return new SysOutStreamPeer();
 	}
-
-	public static SysOutStream make(OutputStream out, long bufSize) {
-		return make(out, Endian.big, Charset.utf8, bufSize);
+	
+	public static SysOutStream fromJava(OutputStream out) {
+		return fromJava(out, Endian.big, Charset.utf8, 0);
 	}
 
-	public static SysOutStream make(OutputStream out, Endian e, Charset c, long bufSize) {
+	public static SysOutStream fromJava(OutputStream out, long bufSize) {
+		return fromJava(out, Endian.big, Charset.utf8, bufSize);
+	}
+
+	public static SysOutStream fromJava(OutputStream out, Endian e, Charset c, long bufSize) {
 		SysOutStream sin = SysOutStream.make(e, c);
 		if (bufSize > 0) {
 			out = new BufferedOutputStream(out, (int) bufSize);

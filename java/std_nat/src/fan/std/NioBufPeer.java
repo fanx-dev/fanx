@@ -18,6 +18,12 @@ public class NioBufPeer {
 	public static NioBufPeer make(NioBuf buf) {
 		return new NioBufPeer();
 	}
+	
+	public static NioBuf fromJava(java.nio.ByteBuffer buf) {
+		NioBuf fbuf = NioBuf.make();
+		((NioBufPeer)fbuf.peer).buf = buf;
+		return fbuf;
+	}
 
 	void init(NioBuf self, File file, String mode, long pos, Long size) throws FileNotFoundException {
 		LocalFile lfile = (LocalFile) file;

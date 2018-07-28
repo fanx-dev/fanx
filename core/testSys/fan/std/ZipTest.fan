@@ -9,6 +9,7 @@
 **
 ** ZipTest
 **
+@NoJs
 class ZipTest : Test
 {
 
@@ -143,8 +144,8 @@ class ZipTest : Test
     verifyEq(f.uri, `/foo.txt`)
     verifyEq(f.parent, null)
     verifyEq(f.osPath, null)
-    if (f.size != null) verifyEq(f.size, 11); // doesn't work conistently in Java
-    verify(start + -2sec <= f.modified && f.modified <= DateTime.now + 2sec)
+    if (f.size > 0) verifyEq(f.size, 11); // doesn't work conistently in Java
+    verify(start + -2sec <= f.modified && f.modified <= TimePoint.now + 2sec)
     verifyEq(f.readAllStr, "hello zip!\n")
 
     // file 2
@@ -152,7 +153,7 @@ class ZipTest : Test
     verifyEq(f.uri, `/path/bar.hex`)
     verifyEq(f.parent, null)
     verifyEq(f.osPath, null)
-    if (f.size != null) verifyEq(f.size, 8); // doesn't work consistently in Java
+    if (f.size > 0) verifyEq(f.size, 8); // doesn't work consistently in Java
     verify(yesterday + -2sec <= f.modified && f.modified <= yesterday + 2sec)
     verifyEq(f.in.readS8, 0xabcd_0123_0000_ffff)
 
@@ -161,8 +162,8 @@ class ZipTest : Test
     verifyErr(UnsupportedErr#) { z.finish }
   }
 
-  DateTime start := DateTime.now
-  DateTime yesterday := DateTime.now + (-1day)
+  TimePoint start := TimePoint.now
+  TimePoint yesterday := TimePoint.now + (-1day)
 
 //////////////////////////////////////////////////////////////////////////
 // GZIP
