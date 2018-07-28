@@ -6,15 +6,15 @@
 //   3 Feb 10   Brian Frank  Creation
 //
 
-@Js facet class FacetM1 {}
-@Js facet class FacetM2 {}
+facet class FacetM1 {}
+facet class FacetM2 {}
 
-@Js facet class FacetS1
+facet class FacetS1
 {
   const Str val := "alpha"
 }
 
-@Js facet class FacetS2
+facet class FacetS2
 {
   const Bool b
   const Int i

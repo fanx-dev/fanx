@@ -68,7 +68,7 @@ public abstract class Slot extends FanObj {
 		this.name = name;
 		this.qname = parent == null ? name : parent.qname() + "." + name;
 		this.flags = flags;
-		this.facets = facets;
+		this.facets = (List)facets.toImmutable();
 		this.lineNum = lineNum;
 	}
 

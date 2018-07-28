@@ -133,10 +133,10 @@ public class FanType {
 			return Long.valueOf(flags(self));
 		if (name.equals("toClass"))
 			return toClass(self);
-		// if (name.equals("lineNumber")) { return Long.valueOf(lineNum); }
-		// if (name.equals("sourceFile")) { return sourceFile; }
+		 if (name.equals("lineNumber")) { return Long.valueOf(self.ftype().attrs.lineNum); }
+		 if (name.equals("sourceFile")) { return self.ftype().attrs.sourceFile; }
 		// if (name.equals("finish")) { finish(); return self; }
-		return FanObj.trap(self, name, args);
+		return FanObj.doTrap(self, name, args, typeof(self));//(self, name, args);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -424,9 +424,10 @@ public class FanType {
 				Facet f = (Facet)e.getValue();
 				list.add(f);
 			}
-			self.factesList = list;
+			self.factesList = list.toImmutable();
 		}
-		return (List)self.factesList;
+		List list = (List)self.factesList;
+		return list;
 	}
 
 	public static Facet facet(Type self, Type t) {
@@ -471,7 +472,7 @@ public class FanType {
 			Type k = e.getKey();
 			if (map.containsKey(k)) continue;
 			Facet f = (Facet)e.getValue();
-			FacetMeta meta = (FacetMeta) FanType.facet(k, Sys.findType("sys::FacetMeta", false));
+			FacetMeta meta = (FacetMeta) FanType.facet(k, Sys.findType("sys::FacetMeta"), false);
 			if (meta == null || !meta.inherited) {
 				continue;
 			}

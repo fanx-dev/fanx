@@ -6,10 +6,10 @@
 //   4 Jul 06 - Fireworks!  Brian Frank  Creation
 //
 
+
 **
 ** FacetsTests
 **
-@Js
 class FacetsTest : Test
 {
   Str? aField
@@ -18,13 +18,13 @@ class FacetsTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Attributes
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testAttributes()
   {
-    if (!js)
+    if (!isJs)
     {
-      verifyEq(typeof->lineNumber, 13)
-      verifyEq(typeof->sourceFile, "FacetsTest.fan")
+      verifyEq(this->typeof->lineNumber, 13)
+      verifyEq(this->typeof->sourceFile, "FacetsTest.fan")
 
       Field field := #aField
       verifyEq(field->lineNumber, 15)
@@ -33,19 +33,21 @@ class FacetsTest : Test
       verifyEq(method->lineNumber, 16)
     }
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Empty Facets
 //////////////////////////////////////////////////////////////////////////
 
   Void testEmpty()
   {
-    if (!js)
+    /*
+    if (!isJs)
     {
       verifyEq(Type.find("testSys::ZipTest").facets, Facet[,])
       verifyEq(Type.find("testSys::ZipTest").facets.isImmutable, true)
       verifyEq(Type.find("testSys::ZipTest").facet(NoDoc#, false), null)
     }
+    */
 
     verifyEq(FacetsTest#testEmpty.facets, Facet[,])
     verifyEq(FacetsTest#testEmpty.facets.isImmutable, true)
@@ -71,8 +73,8 @@ class FacetsTest : Test
   Void verifyFacets(Obj t, Facet[] facets)
   {
     verifyEq(facets.isImmutable, true)
-    verifyEq(facets.typeof, Facet[]#)
-    verifyEq(facets.size, t is Type ? 4: 3)
+    verifyIsType(facets, Facet[]#)
+    verifyEq(facets.size, 3)
 
     verifyEq(t->facet(Transient#, false), null)
     verifyErr(UnknownFacetErr#) { t->facet(Transient#) }
@@ -110,7 +112,7 @@ class FacetsTest : Test
     */
 
     // M2: from M1 not F1, yes F3; self F2
-    verifyEq(FacetsM2#.facets.size, 3)
+    verifyEq(FacetsM2#.facets.size, 2)
 
     verifyNotNull(FacetsM2#.facets.find { it.typeof == FacetsF2# })
     verifyNotNull(FacetsM2#.facets.find { it.typeof == FacetsF3# })
@@ -119,7 +121,7 @@ class FacetsTest : Test
     verifyEq(FacetsM2#.facet(FacetsF2#)->n, "FacetsM2")
 
     // C1: from M3 yes F4, from self F3
-    verifyEq(FacetsC1#.facets.size, 3)
+    verifyEq(FacetsC1#.facets.size, 2)
     verifyNotNull(FacetsC1#.facets.find { it.typeof == FacetsF3# })
     verifyNotNull(FacetsC1#.facets.find { it.typeof == FacetsF4# })
     verifyEq(FacetsC1#.facet(FacetsF1#, false), null)
@@ -128,7 +130,7 @@ class FacetsTest : Test
     verifyEq(FacetsC1#.facet(FacetsF4#)->n, "FacetsM3")
 
     // C1: from C2 F4, F4; self: F1
-    verifyEq(FacetsC2#.facets.size, 4)
+    verifyEq(FacetsC2#.facets.size, 3)
     verifyNotNull(FacetsC2#.facets.find { it.typeof == FacetsF3# })
     verifyNotNull(FacetsC2#.facets.find { it.typeof == FacetsF4# })
     verifyNotNull(FacetsC2#.facets.find { it.typeof == FacetsF1# })
@@ -145,14 +147,12 @@ class FacetsTest : Test
     verifySame(FacetsC2#.facets, FacetsC2#.facets)
   }
 
-  const Bool js := Env.cur.runtime == "js"
 }
 
 **************************************************************************
 ** FacetsA
 **************************************************************************
 
-@Js
 @FacetM1
 @FacetS1 { val = "foo" }
 @FacetS2 { i = 77; v = Version("9.0"); l = [1, 2, 3]; type = Str#; slot = Float#nan }
@@ -168,33 +168,27 @@ class FacetsA
 ** FacetsInherit
 **************************************************************************
 
-@Js facet class FacetsF1 { const Str? n }
-@Js facet class FacetsF2 { const Str? n }
-@Js @FacetMeta { inherited = true } facet class FacetsF3 { const Str? n }
-@Js @FacetMeta { inherited = true } facet class FacetsF4 { const Str? n }
-@Js @FacetMeta { inherited = true } facet class FacetsF5 { const Str? n }
+facet class FacetsF1 { const Str? n }
+facet class FacetsF2 { const Str? n }
+@FacetMeta { inherited = true } facet class FacetsF3 { const Str? n }
+@FacetMeta { inherited = true } facet class FacetsF4 { const Str? n }
+@FacetMeta { inherited = true } facet class FacetsF5 { const Str? n }
 
-@Js
 @FacetsF1 { n = "FacetsM1" }
 @FacetsF3 { n = "FacetsM1" }
 mixin FacetsM1 {}
 
-@Js
 @FacetsF2 { n = "FacetsM2" }
 mixin FacetsM2 : FacetsM1 {}
 
-@Js
 @FacetsF4 { n = "FacetsM3" }
 mixin FacetsM3 {}
 
-@Js
 @FacetsF3 { n = "FacetsC1" }
 class FacetsC1 : FacetsM2, FacetsM3 {}
 
-@Js
 @FacetsF1 { n = "FacetsC2" }
 class  FacetsC2 : FacetsC1 {}
 
-@Js
 @FacetsF1 { n = null }
 class  FacetsNull {}
