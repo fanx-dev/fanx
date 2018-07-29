@@ -72,6 +72,7 @@ public class FanUtil {
 		javaToFanNameMap.put("fanx.main.ClassType", "fan.sys.Type");
 		javaToFanNameMap.put("fanx.main.JavaType", "fan.sys.Type");
 		javaToFanNameMap.put("fanx.main.NullableType", "fan.sys.Type");
+		javaToFanNameMap.put("java.math.BigDecimal", "fan.std.Decimal");
 
 		/*
 		 * javaToFanTypes.put("byte", JavaType.ByteType);
@@ -172,6 +173,10 @@ public class FanUtil {
 //		if (podName.equals("reflect") && typeName.equals("Type")) {
 //			return Sys.TypeClassDotName;
 //		}
+		
+		if (podName.equals("std") && typeName.equals("Decimal")) {
+			return "java.math.BigDecimal";
+		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -224,6 +229,10 @@ public class FanUtil {
 //		if (podName.equals("reflect") && typeName.equals("Type")) {
 //			return "fan.reflect.FanType";
 //		}
+		
+		if (podName.equals("std") && typeName.equals("Decimal")) {
+			return "fan.std.FanDecimal";
+		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -284,6 +293,10 @@ public class FanUtil {
 //		if (podName.equals("reflect") && typeName.equals("Type")) {
 //			return Sys.TypeClassPathName;
 //		}
+		
+		if (podName.equals("std") && typeName.equals("Decimal")) {
+			return "java/math/BigDecimal";
+		}
 
 		// if pod starts with [java] parse as FFI name
 		if (podName.charAt(0) == '[')
@@ -462,12 +475,12 @@ public class FanUtil {
 				return "fan/sys/FanFloat";
 			if (jsig.equals("java/lang/Number"))
 				return "fan/sys/FanNum";
+			if (jsig.equals("java/math/BigDecimal"))
+				return "fan/std/FanDecimal";
 		}
 		if (jsig.length() > 4 &&  jsig.charAt(3) == 'x') {
 			if (jsig.equals(Sys.TypeClassPathName))
 				return "fan/sys/FanType";
-//			if (jsig.equals("java/math/BigDecimal"))
-//				return "fan/sys/FanDecimal";
 		}
 		return jsig;
 	}

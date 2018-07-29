@@ -30,7 +30,7 @@ abstract class DslPlugin : CompilerSupport
     switch (qname)
     {
       case "sys::Str": return StrDslPlugin(c.compiler)
-      case "sys::Regex": return RegexDslPlugin(c.compiler)
+      case "std::Regex": return RegexDslPlugin(c.compiler)
     }
 
     // lookup via indexed props

@@ -45,6 +45,7 @@ internal class NumDigits {
       decimal = size
     else if (size > decimal && digits[size - 1] == '0')
       size--
+    //echo("decimal1:"+decimal+",expPos:"+expPos)
 
     // if we had an exponent, then we need to normalize it
     if (expPos >= 0) {
@@ -70,6 +71,8 @@ internal class NumDigits {
         decimal = 0
       }
     }
+
+    this.decimal = decimal
   }
 
   new makeInt(Int d) {
@@ -163,7 +166,7 @@ internal const class NumPattern {
   private const static [Str:NumPattern] cache
 
   private static Void doCache([Str:NumPattern] map, Str p) {
-    map[p] = parse(p)
+    map[p] = make(p)
   }
 
   static {
@@ -214,7 +217,7 @@ internal const class NumPattern {
       case ',':
         comma = true
         group = 0
-        break
+        //break
       case '0':
         if (decimal) {
           minFrac++
@@ -224,17 +227,17 @@ internal const class NumPattern {
           if (comma)
             group++
         }
-        break
+        //break
       case '#':
         if (decimal)
           maxFrac++
         else if (comma)
           group++
-        break
+        //break
       case '.':
         decimal = true
         optInt = last == '#'
-        break
+        //break
       default:
         throw ArgErr.make("Invalid pattern char '" + c + "': " + s)
       }
@@ -330,6 +333,7 @@ internal class NumFormat {
     p := NumPattern.parse(pattern);
     d := NumDigits(str);
 
+    //echo("$p, $d")
     // route to common FanNum method
     return format(p, d);
   }

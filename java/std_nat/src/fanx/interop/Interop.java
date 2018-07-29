@@ -260,6 +260,14 @@ public class Interop
 	  }
 	  return fmap;
   }
+  
+  public static java.util.List toJava(fan.sys.List list) {
+	  java.util.List objs = new java.util.ArrayList((int)list.size());
+	  for (int i=0; i<list.size(); ++i) {
+		  objs.add(list.get(i));
+	  }
+	  return objs;
+  }
 
 //  /**
 //   * Convert a java.util.HashMap to a sys::Map with the specified map type.
@@ -302,4 +310,35 @@ public class Interop
 	  return new fan.sys.ByteArray(a);
   }
   
+  public static fan.sys.List toFanList(Object[] objs) {
+	  List list = List.make(objs.length);
+	  for (Object o : objs) {
+		  list.add(o);
+	  }
+	  return list;
+  }
+  
+  public static Object[] toJavaArray(fan.sys.List list) {
+	  Object[] objs = new Object[(int)list.size()];
+	  for (int i=0; i<list.size(); ++i) {
+		  objs[i] = list.get(i);
+	  }
+	  return objs;
+  }
+  
+  public static fan.sys.ObjArray toFan(Object[] objs) {
+	  ObjArray list = ObjArray.make(objs.length, FanObj.type);
+	  for (int i=0; i<objs.length; ++i) {
+		  list.set(i, objs[i]);
+	  }
+	  return list;
+  }
+  
+  public static Object[] toJava(fan.sys.ObjArray list) {
+	  Object[] objs = new Object[(int)list.size()];
+	  for (int i=0; i<list.size(); ++i) {
+		  objs[i] = list.get(i);
+	  }
+	  return objs;
+  }
 }

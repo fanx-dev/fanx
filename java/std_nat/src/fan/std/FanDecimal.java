@@ -38,6 +38,13 @@ public final class FanDecimal
       throw ParseErr.make("Decimal:"+ s);
     }
   }
+  
+  public static BigDecimal toDecimal(Number self)
+  {
+    if (self instanceof BigDecimal) return (BigDecimal)self;
+    if (self instanceof Long) return new BigDecimal(self.longValue());
+    return new BigDecimal(self.doubleValue());
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity

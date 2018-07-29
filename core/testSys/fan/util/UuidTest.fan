@@ -10,13 +10,12 @@
 **
 ** UuidTest
 **
-@Js
 class UuidTest : Test
 {
 
   Void testIdentity()
   {
-    if (Env.cur.runtime == "js") return
+    if (isJs) return
 
     a := Uuid.makeBits(0xaabb_ccdd_0022_0345, 0x0123_ff00eecc5577)
 
@@ -53,17 +52,17 @@ class UuidTest : Test
 
     x := Uuid()
     buf := Buf()
-    buf.writeObj(x)
-    verifyEq(buf.flip.readObj, x)
+    buf.out.writeObj(x)
+    verifyEq(buf.flip.in.readObj, x)
 
-    verifyEq(Uuid.fromStr("xxxx", false), null)
+    //verifyEq(Uuid.fromStr("xxxx"), null)
     verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc557x") }
-    verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc5577a", true) }
+    verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc5577a") }
   }
 
   Void testIdentityJs()
   {
-    if (Env.cur.runtime != "js") return
+    if (!isJs) return
 
     verifyErr(UnsupportedErr#) { x := Uuid() }
     verifyErr(UnsupportedErr#) { x := Uuid.makeBits(0xaabb_ccdd_0022_0345, 0x0123_ff00eecc5577) }
@@ -96,17 +95,17 @@ class UuidTest : Test
 
   Void testParseJs()
   {
-    if (Env.cur.runtime != "js") return
+    if (!isJs) return
 
     strUuid := "aabbccdd-0022-0345-0123-ff00eecc5577"
     x := Uuid(strUuid)
     buf := Buf()
-    buf.writeObj(x)
-    verifyEq(buf.flip.readObj, x)
+    buf.out.writeObj(x)
+    verifyEq(buf.flip.in.readObj, x)
 
-    verifyEq(Uuid.fromStr("xxxx", false), null)
+    //verifyEq(Uuid.fromStr("xxxx"), null)
     verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc557x") }
-    verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc5577a", true) }
+    verifyErr(ParseErr#) { z := Uuid.fromStr("aabbccdd-0022-0345-0123-ff00eecc5577a") }
   }
 
   Void verifyParse(Uuid x)

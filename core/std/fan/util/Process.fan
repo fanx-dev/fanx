@@ -22,7 +22,10 @@ final class Process
   ** The first item in the 'cmd' list is the executable
   ** itself, then rest are the parameters.
   **
-  new make(Str[] cmd := Str[,], File? dir := null)
+  new make(Str[] cmd := Str[,], File? dir := null) {
+    command = cmd
+    this.dir = dir
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Configuration
@@ -40,7 +43,7 @@ final class Process
   ** map of string key/value pairs.  This map is initialized
   ** with the current process environment.
   **
-  Str:Str env()
+  native Str:Str env()
 
   **
   ** Working directory of process.
@@ -86,17 +89,17 @@ final class Process
   ** Spawn this process.  See `join` to wait until the process
   ** finished and to get the exit code.  Return this.
   **
-  This run()
+  native This run()
 
   **
   ** Wait for this process to exit and return the exit code.
   ** This method may only be called once after 'run'.
   **
-  Int join()
+  native Int join()
 
   **
   ** Kill this process.  Returns this.
   **
-  This kill()
+  native This kill()
 
 }

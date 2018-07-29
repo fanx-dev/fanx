@@ -30,9 +30,10 @@
 **   03f0e2bb-8f1a-c800-e1f8-00623f7473c4
 **
 @Serializable { simple = true }
-const final class Uuid
+const struct class Uuid
 {
-
+  private const Int hi
+  private const Int lo
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
@@ -40,24 +41,48 @@ const final class Uuid
   **
   ** Generate a new UUID globally unique in space and time.
   **
-  static new make()
+  native static new make()
 
   **
   ** Create a 128-bit UUID from two 64-bit integers.
   **
-  static Uuid makeBits(Int hi, Int lo)
+  new makeBits(Int hi, Int lo) {
+    this.hi = hi
+    this.lo = lo
+  }
 
   **
   ** Parse a UUID from according to the string format defined in the
   ** class header documentation.  If invalid format and checked is false
   ** return null, otherwise throw ParseErr.
   **
-  static new fromStr(Str s, Bool checked := true)
+  static new fromStr(Str str) {
+    try
+    {
+      // sanity check
+      if (str.size != 36 || str.get(8) != '-' ||
+          str.get(13) != '-' || str.get(18) != '-' || str.get(23) != '-')
+        throw ParseErr(str)
+
+      // parse hex components
+      a := Int.fromStr(str[0..<8], 16)
+      b := Int.fromStr(str[9..<13], 16)
+      c := Int.fromStr(str[14..<18], 16)
+      d := Int.fromStr(str[19..<23], 16)
+      e := Int.fromStr(str[24..-1], 16)
+
+      return Uuid(a.shiftl(32).or(b.shiftl(16)).or(c), d.shiftl(48).or(e));
+    }
+    catch (Err e)
+    {
+      throw ParseErr("Uuid:"+ str)
+    }
+  }
 
   **
   ** Private constructor
   **
-  private new privateMake()
+  //private new privateMake()
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -66,33 +91,61 @@ const final class Uuid
   **
   ** Get the most significant 64 bits of this 128 bit UUID.
   **
-  Int bitsHi()
+  Int bitsHi() { hi }
 
   **
   ** Get the least significant 64 bits of this 128 bit UUID.
   **
-  Int bitsLo()
+  Int bitsLo() { lo }
 
   **
   ** Return if the specified object is a Uuid with the same 128 bits.
   **
-  override Bool equals(Obj? that)
+  override Bool equals(Obj? that) {
+    if (that isnot Uuid) return false
+    x := that as Uuid
+    return x.hi == hi && x.lo == lo
+  }
 
   **
   ** Hashcode is defined as 'bitsHi ^ bitsLow'
   **
-  override Int hash()
+  override Int hash() { hi.xor(lo) }
 
   **
   ** Compare based on the 128 bit value which will
   ** naturally result in sorts by created timestamp.
   **
-  override Int compare(Obj that)
+  override Int compare(Obj that) {
+    x := (Uuid)that;
+    if (hi != x.hi) return hi < x.hi ? -1 : 1;
+    if (lo == x.lo) return 0;
+    return lo < x.lo ? -1 : 1;
+  }
 
   **
   ** Return the string representation of this UUID.
   ** See class header for string format.
   **
-  override Str toStr()
+  override Str toStr() {
+    s := StrBuf(36);
+    append(s, (hi.shiftr(32).and(0xFFFFFFFF)), 8);
+    s.addChar('-');
+    append(s, (hi.shiftr(16).and(0xFFFF)), 4);
+    s.addChar('-');
+    append(s, hi.and(0xFFFF), 4);
+    s.addChar('-');
+    append(s, lo.shiftr(48).and(0xFFFF), 4);
+    s.addChar('-');
+    append(s, lo.and(0xFFFFFFFFFFFF), 12);
+    return s.toStr
+  }
+
+  private static Void append(StrBuf s, Int val, Int width)
+  {
+    str := val.toHex(width)
+    //for (int i=str.length(); i<width; ++i) s.append('0');
+    s.add(str)
+  }
 
 }

@@ -11,7 +11,8 @@
 **
 const final class Regex
 {
-
+  private const Str source
+  private native Void init()
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,9 @@ const final class Regex
   **
   ** Compile a regular expression pattern string.
   **
-  static Regex fromStr(Str pattern)
+  static Regex fromStr(Str pattern) {
+    return make(pattern)
+  }
 
   **
   ** Make a Regex which will match a glob pattern:
@@ -27,12 +30,46 @@ const final class Regex
   **   - "*": match zero or more unknown char (maps to ".*" in regex)
   **   - any other character is matched exactly
   **
-  static Regex glob(Str pattern)
+  static Regex glob(Str pattern) {
+    s := StrBuf()
+    for (i:=0; i<pattern.size; ++i)
+    {
+      c := pattern.get(i);
+      if (c.isAlphaNum) s.addChar(c);
+      else if (c == '?') s.addChar('.');
+      else if (c == '*') s.addChar('.').addChar('*');
+      else s.addChar('\\').addChar(c);
+    }
+    return Regex.make(s.toStr)
+  }
+
+  **
+  ** Make a Regex that matches the given string exactly.
+  ** All non-alpha numeric characters are escaped.
+  **
+  static Regex quote(Str str) {
+    s := StrBuf()
+    for (i:=0; i<str.size; ++i)
+    {
+      c := str.get(i);
+      if (c.isAlphaNum) s.addChar(c);
+      else s.addChar('\\').addChar(c);
+    }
+    return Regex.make(s.toStr)
+  }
 
   **
   ** Private constructor.
   **
-  private new make()
+  private new make(Str source) {
+    this.source = source
+    init()
+  }
+
+  **
+  ** Default value is Regex("").
+  **
+  const static Regex defVal := Regex.make("")
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides
@@ -41,17 +78,22 @@ const final class Regex
   **
   ** Equality is based on pattern string.
   **
-  override Bool equals(Obj? obj)
+  override Bool equals(Obj? obj) {
+    if (obj is Regex)
+      return ((Regex)obj).source.equals(this.source)
+    else
+      return false
+  }
 
   **
   ** Return 'toStr.hash'.
   **
-  override Int hash()
+  override Int hash() { source.hash }
 
   **
   ** Return the regular expression pattern string.
   **
-  override Str toStr()
+  override Str toStr() { source }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -60,13 +102,13 @@ const final class Regex
   **
   ** Convenience for [matcher(s).matches]`RegexMatcher.matches`.
   **
-  Bool matches(Str s)
+  native Bool matches(Str s)
 
   **
   ** Return a 'RegexMatcher' instance to use for matching
   ** operations against the specified string.
   **
-  RegexMatcher matcher(Str s)
+  native RegexMatcher matcher(Str s)
 
   **
   ** Split the specified string around matches of this pattern.
@@ -81,7 +123,7 @@ const final class Regex
   **     times as possible, but trailing empty strings are
   **     discarded.
   **
-  Str[] split(Str s, Int limit := 0)
+  native Str[] split(Str s, Int limit := 0)
 
 
   // TODO: flags support

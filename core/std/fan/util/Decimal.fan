@@ -25,6 +25,9 @@ native const struct class Decimal : Num
   **
   static new fromStr(Str s, Bool checked := true)
 
+
+  extension static Decimal toDecimal(Num f)
+
   **
   ** Default value is 0.
   **

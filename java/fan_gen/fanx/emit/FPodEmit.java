@@ -55,7 +55,8 @@ public class FPodEmit
     // decimals
     for (int i=0; i<literals.decimals.size(); ++i) {
       Object obj = literals.decimals.get(i);
-      cls.getField("D"+i).set(null, makeLiteral("std::Decimal", "fromStr", obj, String.class));
+//      cls.getField("D"+i).set(null, makeLiteral("std::Decimal", "fromStr", obj, String.class));
+      cls.getField("D"+i).set(null, obj);
     }
     literals.decimals = null;
 

@@ -41,7 +41,7 @@ class Build : BuildPod
     index =
     [
       // DSL plugins
-      "compiler.dsl.sys::Regex": "compiler::RegexDslPlugin",
+      "compiler.dsl.std::Regex": "compiler::RegexDslPlugin",
       "compiler.dsl.sys::Str": "compiler::StrDslPlugin"
     ]
   }

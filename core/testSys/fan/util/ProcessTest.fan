@@ -5,10 +5,11 @@
 // History:
 //   24 Mar 06  Brian Frank  Creation
 //
-
+/*
 **
 ** ProcessTest
 **
+@NoJs
 class ProcessTest : Test
 {
 
@@ -140,3 +141,4 @@ class ProcessTest : Test
   }
 
 }
+*/

@@ -31,7 +31,7 @@ class RegexDslPlugin : DslPlugin
   **
   override Expr compile(DslExpr dsl)
   {
-    regexType := ns.resolveType("sys::Regex")
+    regexType := ns.resolveType("std::Regex")
     fromStr := regexType.method("fromStr")
     args := [Expr.makeForLiteral(dsl.loc, ns, dsl.src)]
     return CallExpr.makeWithMethod(dsl.loc, null, fromStr, args)

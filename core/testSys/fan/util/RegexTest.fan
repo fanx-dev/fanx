@@ -9,7 +9,6 @@
 **
 ** RegexTest
 **
-@Js
 class RegexTest : Test
 {
 
@@ -221,7 +220,7 @@ class RegexTest : Test
   {
     verify(m.find)
     verifyEq(m.groupCount, expected.size-1)
-    expected.each |Obj[] x, Int i|
+    expected.each |Obj?[] x, Int i|
     {
       if (i == 0)
       {
