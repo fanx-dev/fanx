@@ -203,7 +203,7 @@ class ResolveExpr : CompilerStep
     if (inType.isClosure) inType = inType.closure.enclosingType
     podTarget := expr.podName != null ?
       CallExpr.makeWithMethod(loc, null, ns.podFind, [LiteralExpr.makeStr(loc, ns, expr.podName)]) :
-      CallExpr.makeWithMethod(loc, LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, inType), ns.typePod)
+      CallExpr.makeWithMethod(loc, null, ns.typePod, [LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, inType)])
 
     // podTarget.locale(key [, def])
     args := [LiteralExpr.makeStr(loc, ns, expr.key)]

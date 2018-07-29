@@ -57,7 +57,7 @@ class ParserTotureTest : Test
     [6].each |Int value, Int index| {}
     */
   }
-
+/*
   Void testTypes()
   {
     t := Obj?[]?#
@@ -75,5 +75,5 @@ class ParserTotureTest : Test
     verifyEq(Int[][]:Str[][]#vals.returns,  Str[][][]#)
     verifyEq(Int[][]:Str[][]#.method("get").params[0].type, Int[][]#)
   }
-
+*/
 }

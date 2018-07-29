@@ -33,13 +33,14 @@ public class PodClassLoader
     super(new URL[0], extClassLoader);
     this.pod = pod;
     try {
-    	
-    	if (pod.podName.equals("sys")) {
-    		addURL(new File("../sys_nat/bin").toURI().toURL());
-    	} else if (pod.podName.equals("std")) {
-    		addURL(new File("../std_nat/bin").toURI().toURL());
-    	} else {
-    		addURL(new File("../"+pod.podName+"/bin").toURI().toURL());
+    	if ("true".equals(System.getenv("FAN_DEBUG"))) {
+	    	if (pod.podName.equals("sys")) {
+	    		addURL(new File("../sys_nat/bin").toURI().toURL());
+	    	} else if (pod.podName.equals("std")) {
+	    		addURL(new File("../std_nat/bin").toURI().toURL());
+	    	} else {
+	    		addURL(new File("../"+pod.podName+"/bin").toURI().toURL());
+	    	}
     	}
     	
     	for (String path : Sys.env.envPaths()) {

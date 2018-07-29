@@ -23,7 +23,7 @@ public class Sys {
 
 		public abstract List<String> envPaths();
 
-		public abstract List<String> listPodFiles();
+		public abstract List<String> listPodNames();
 
 		public String os();
 
@@ -150,7 +150,10 @@ public class Sys {
 			}
 		} catch (Exception e) {
 			if (checked) {
-				Type type = findType("sys::UnknownPodErr");
+				Type type = findType("sys::UnknownPodErr", false);
+				if (type == null) {
+					throw new RuntimeException(e);
+				}
 				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(type.getJavaActualClass(), "make",
 						podName);
 				throw re;

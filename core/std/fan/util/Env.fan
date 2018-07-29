@@ -283,7 +283,7 @@ native const class Env
   **
   ** Also see `Pod.props` and `docLang::Env`.
   **
-  //virtual Str:Str props(Pod pod, Uri uri, Duration maxAge)
+  virtual Str:Str props(Pod pod, Uri uri, Duration maxAge)
 
   **
   ** Lookup a configuration property for given pod/key pair.
@@ -294,7 +294,7 @@ native const class Env
   **
   ** Also see `Pod.config` and `docLang::Env`.
   **
-  //virtual Str? config(Pod pod, Str key, Str? def := null)
+  virtual Str? config(Pod pod, Str key, Str? defV := null)
 
   **
   ** Lookup a localized property for the specified pod/key pair.
@@ -308,7 +308,7 @@ native const class Env
   **
   ** Also see `Pod.locale` and `docLang::Localization`.
   **
-  //virtual Str? locale(Pod pod, Str key, Str? def := "pod::key", Locale locale := Locale.cur)
+  virtual Str? locale(Pod pod, Str key, Str? defV := "_nodef_", Locale locale := Locale.cur)
 
 //////////////////////////////////////////////////////////////////////////
 // Exiting and Shutdown Hooks

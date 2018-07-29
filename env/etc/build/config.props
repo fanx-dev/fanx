@@ -1,0 +1,29 @@
+//
+// Config: build
+//
+// History:
+//   22 Jul 09  Brian Frank  Creation
+//
+
+//
+// Note all these config options can also be overriden via env variable:
+//   set FAN_BUILD_JDKHOME=/C:/Program Files/Java/jdk1.7/
+//
+
+// default version used by build scripts
+buildVersion=1.0.70
+
+// Must be configured boot build in substitute/release installation
+//devHome=file:/E:/fan/
+
+// JVM version compiler target, by default Fantom requires a JDK 1.8 compiler
+// that targets 1.7.  If not concerned with targeting 1.7 then this property
+// can be cleared or set the env var FAN_BUILD_JAVACPARAMS to a space
+javacParams=-source 1.7 -target 1.7
+
+// Windows setup
+jdkHome=file:/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/
+dotnetHome=/C:/WINDOWS/Microsoft.NET/Framework/v2.0.50727/
+
+// Mac setup
+//jdkHome=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home/

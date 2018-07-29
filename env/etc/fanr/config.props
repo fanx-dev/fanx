@@ -1,0 +1,23 @@
+//
+// Config: fanr
+//
+// History:
+//   03 May 11  Brian Frank  Creation
+//
+
+// Default repository URI to use for all commands.
+// Override on command line with the -r option
+repo=http://fantom.org/fanr/
+
+// Number of versions per pod limit for query command.
+// Override on command line with the -n option
+numVersions=5
+
+// Hard coded username for default repository
+// Override on command line with -u option
+// username=someone
+
+// Hard coded password for default repository
+// Override on command line with -p option
+// password=xyz123
+

@@ -153,7 +153,7 @@ native final const class Pod
   **
   ** Convenience for `Env.props`.
   **
-  //Str:Str props(Uri uri, Duration maxAge)
+  Str:Str props(Uri uri, Duration maxAge)
 
   **
   ** Convenience for `Env.config`.

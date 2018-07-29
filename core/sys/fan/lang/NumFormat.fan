@@ -162,6 +162,7 @@ internal class NumDigits {
  * NumPattern parses and models a numeric locale pattern.
  */
 internal const class NumPattern {
+  /*
   // pre-compute common patterns to aVoid parsing
   private const static [Str:NumPattern] cache
 
@@ -194,11 +195,9 @@ internal const class NumPattern {
     doCache(map, "#,###.0##")
     cache = map
   }
+  */
 
   static new parse(Str s) {
-    x := cache.get(s)
-    if (x != null)
-      return x
     return make(s)
   }
 

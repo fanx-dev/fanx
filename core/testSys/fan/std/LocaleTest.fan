@@ -11,7 +11,6 @@
 **
 ** LocaleTest
 **
-@Js
 class LocaleTest : Test
 {
   Locale? orig
@@ -38,7 +37,7 @@ class LocaleTest : Test
     verifyLocale("fr",    "fr", null)
     verifyLocale("fr-CA", "fr", "CA")
 
-    verifyEq(Locale.fromStr("", false), null)
+    //verifyEq(Locale.fromStr("", false), null)
     verifyErr(ParseErr#) { x := Locale.fromStr("x") }
     verifyErr(ParseErr#) { x := Locale.fromStr("x", true) }
     verifyErr(ParseErr#) { x := Locale.fromStr("e2") }

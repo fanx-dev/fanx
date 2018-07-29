@@ -2211,6 +2211,7 @@ public class Parser : CompilerSupport
       consume(Token.colon)
       key := t
       val := ctype
+      //throw err("temp test")
       t = MapType(key, val)
     }
 

@@ -142,7 +142,7 @@ class EnvTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Props
 //////////////////////////////////////////////////////////////////////////
-/*
+
   Void testProps()
   {
     pod := typeof.pod
@@ -151,7 +151,7 @@ class EnvTest : Test
     try
     {
       props := ["a":"alpha", "b":"beta"]
-      f.writeProps(props)
+      f.out.writeProps(props)
 
       // verify basics
       verifyEq(Env.cur.props(pod, `some-bad-file-foo-bar`, 1min), Str:Str[:])
@@ -163,18 +163,18 @@ class EnvTest : Test
       verifySame(cached, Env.cur.props(pod, uri, 1min))
       verifyEq(cached.isImmutable(), true)
       //Actor.sleep(10ms)
-      verifySame(cached, Env.cur.props(pod, uri, 1ns))
+      verifySame(cached, Env.cur.props(pod, uri, 1ms))
 
       // rewrite file until we get modified time in file system
       props["foo"] = "bar"
       oldTime := f.modified
-      while (f.modified == oldTime) f.writeProps(props)
+      while (f.modified == oldTime) f.out.writeProps(props)
 
       // verify with normal maxAge still cached
       verifySame(cached, Env.cur.props(pod, uri, 1min))
 
       // check that we refresh the cache
-      newCached := Env.cur.props(pod, uri, 1ns)
+      newCached := Env.cur.props(pod, uri, 1ms)
       verifyNotSame(cached, newCached)
       verifyEq(cached["foo"], null)
       verifyEq(newCached["foo"], "bar")
@@ -184,11 +184,11 @@ class EnvTest : Test
       f.delete
     }
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Config
 //////////////////////////////////////////////////////////////////////////
-/*
+
   Void testConfig()
   {
     pod := Pod.find("build", false)
@@ -202,19 +202,19 @@ class EnvTest : Test
     verifyEq(Env.cur.config(pod, "foo.not.found"), null)
     verifyEq(Env.cur.config(pod, "foo.not.found", "?"), "?")
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Locale
 //////////////////////////////////////////////////////////////////////////
-/*
+
   Void testLocale()
   {
     f1 := etcDir + `locale/en.props`
     f2 := etcDir + `locale/en-US.props`
     try
     {
-      f1.writeProps(["e":"e en etc", "f":"f en etc"])
-      f2.writeProps(["f":"f en-US etc"])
+      f1.out.writeProps(["e":"e en etc", "f":"f en etc"])
+      f2.out.writeProps(["f":"f en-US etc"])
 
       x := Locale.fromStr("en")
       verifyLocale(x, "a", "a en")
@@ -308,11 +308,11 @@ class EnvTest : Test
     Locale("es-MX").use
     {
       // existing key
-      var := "hi!"
+      var0 := "hi!"
       verifyEq("$<a>", "a es-MX")
-      verifyEq("${var}_$<b>", "hi!_b es")
+      verifyEq("${var0}_$<b>", "hi!_b es")
       verifyEq("_$<c>_", "_c es_")
-      verifyEq("$<d>_$var", "d en_hi!")
+      verifyEq("$<d>_$var0", "d en_hi!")
 
       // qualified
       verifyEq("$<testSys::a>", "a es-MX")
@@ -330,7 +330,7 @@ class EnvTest : Test
     verifyEq("$<envTest.def2=Def 2\nLine 2 75 \u00B0 F>", "Def 2\nLine 2 75 \u00B0 F")
     verifyEq(typeof.pod.locale("envTest.def2"),           "Def 2\nLine 2 75 \u00B0 F")
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // EnvProp Pods
 //////////////////////////////////////////////////////////////////////////

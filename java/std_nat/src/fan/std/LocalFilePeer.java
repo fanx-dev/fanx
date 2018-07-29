@@ -194,20 +194,16 @@ public class LocalFilePeer {
 	}
 
 	static void deleteJFile(java.io.File jfile) {
-		if (jfile.exists() && jfile.isDirectory()) {
+		if (!jfile.exists()) return;
+		
+		if (jfile.isDirectory()) {
 			java.io.File[] kids = jfile.listFiles();
 			for (int i = 0; i < kids.length; ++i)
 				deleteJFile(kids[i]);
 		}
-
-		try {
-			// java.io.File has some issues on macOS (and Linux?) with
-			// broken symlinks; and will report they do not exist; use
-			// Files.deleteIfExists to cleanup properly
-			java.nio.file.Files.deleteIfExists(jfile.toPath());
-		} catch (java.io.IOException err) {
-			throw fan.sys.IOErr.make("Cannot delete: " + jfile, err);
-		}
+		
+		if (!jfile.delete())
+		   throw IOErr.make("Cannot delete: " + jfile);
 	}
 
 	static File deleteOnExit(LocalFile self) {
@@ -229,6 +225,9 @@ public class LocalFilePeer {
 	static OutStream out(LocalFile self, boolean append, long bufferSize) {
 		java.io.File jfile = (java.io.File) self.peer;
 		try {
+			java.io.File parent = jfile.getParentFile();
+		    if (parent != null && !parent.exists()) parent.mkdirs();
+		      
 			FileOutputStream fin = new FileOutputStream(jfile, append);
 			SysOutStream out = SysOutStreamPeer.fromJava(fin, bufferSize);
 			out.peer.fd = fin.getFD();

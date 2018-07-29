@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#
+# jstub: launcher for JStub program
+#
+
+jstub='java -cp fan_gen/bin fanx.tools.Jstub -d libs'
+jstub "$@"

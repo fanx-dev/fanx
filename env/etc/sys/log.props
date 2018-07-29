@@ -1,0 +1,10 @@
+//
+// log.props
+//
+// LogLevels: debug, info, warn, error, silent
+//
+
+// typedb=debug
+// web=error
+
+

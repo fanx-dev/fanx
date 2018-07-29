@@ -518,7 +518,7 @@ class Tokenizer : CompilerSupport
           tok.kind !== Token.thisKeyword &&
           tok.kind !== Token.superKeyword &&
           tok.kind !== Token.itKeyword)
-        throw err("Expected identifier after \$")
+        throw err("Expected identifier after \$ but $tok")
       tokens.add(tok)
       while (true)
       {

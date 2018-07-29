@@ -133,8 +133,10 @@ public class Env extends FanObj {
 	// public Method mainMethod() { return parent.mainMethod(); }
 
 	Map vars = initVars();
-	
-	public Map vars()  { return vars; }
+
+	public Map vars() {
+		return vars;
+	}
 
 	private static Map initVars() {
 		Map vars = CIMap.make(64);
@@ -410,26 +412,25 @@ public class Env extends FanObj {
 
 	public List findAllPodNames() {
 		List acc = List.make(64);
-		java.util.List<String> files = sysEnv().listPodFiles();
+		java.util.List<String> files = sysEnv().listPodNames();
 		for (int i = 0; i < files.size(); ++i) {
 			String f = (String) files.get(i);
 
-			File file = File.make(Uri.fromStr(f), false);
-			acc.add(file.basename());
+//			File file = File.make(Uri.fromStr(f), false);
+//			acc.add(file.basename());
+			acc.add(f);
 		}
 		return acc;
 	}
-	
-	
 
 	private Map index;
 	private List keys;
-	
+
 	synchronized void onPodReload() {
-	    index = null;
-	    keys = null;
+		index = null;
+		keys = null;
 	}
-	
+
 	private void loadIndex() {
 		java.util.Map<String, java.util.List<String>> jmap = EnvIndex.load();
 		Map map = Map.make();
@@ -439,26 +440,83 @@ public class Env extends FanObj {
 			for (String t : jlst) {
 				v.add(t);
 			}
-			v = (List)v.toImmutable();
+			v = (List) v.toImmutable();
 			map.set(e.getKey(), v);
 		}
 		index = map;
-		keys = (List)map.keys().toImmutable();
+		keys = (List) map.keys().toImmutable();
 	}
 
 	public synchronized List index(String key) {
 		if (index == null) {
 			loadIndex();
 		}
-		
-		List list = (List)index.get(key);
-		if (list == null) list = List.defVal;
+
+		List list = (List) index.get(key);
+		if (list == null)
+			list = List.defVal;
 		return list;
 	}
 
 	public synchronized List indexKeys() {
-		if (keys == null) loadIndex();
+		if (keys == null)
+			loadIndex();
 		return keys;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Props
+	//////////////////////////////////////////////////////////////////////////
+	
+
+	EnvProps props = EnvProps.make();
+	
+	static final String noDef = "_nodef_";
+	static Uri configProps = Uri.fromStr("config.props");
+	static Uri localeEnProps = Uri.fromStr("locale/en.props");
+
+	public Map props(Pod pod, Uri uri, Duration maxAge) {
+		return props.get(pod, uri, maxAge);
+	}
+
+	public String config(Pod pod, String key) {
+		return config(pod, key, null);
+	}
+
+	public String config(Pod pod, String key, String def) {
+		return (String) props.get(pod, configProps, Duration.fromMin(1)).get(key, def);
+	}
+
+	public String locale(Pod pod, String key) {
+		return locale(pod, key, noDef, Locale.cur());
+	}
+
+	public String locale(Pod pod, String key, String def) {
+		return locale(pod, key, def, Locale.cur());
+	}
+
+	public String locale(Pod pod, String key, String def, Locale locale) {
+		Object val;
+		Duration maxAge = Duration.maxVal;
+
+		// 1. 'props(pod, `locale/{locale}.props`)'
+		val = props(pod, Uri.fromStr("locale/" + locale.toStr() + ".props"), maxAge).get(key, null);
+		if (val != null)
+			return (String) val;
+
+		// 2. 'props(pod, `locale/{lang}.props`)'
+		val = props(pod, Uri.fromStr("locale/" + locale.lang + ".props"), maxAge).get(key, null);
+		if (val != null)
+			return (String) val;
+
+		// 3. 'props(pod, `locale/en.props`)'
+		val = props(pod, localeEnProps, maxAge).get(key, null);
+		if (val != null)
+			return (String) val;
+
+		// 4. Fallback to 'pod::key' unless 'def' specified
+		if (def == noDef)
+			return pod + "::" + key;
+		return def;
+	}
 }

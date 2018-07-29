@@ -267,24 +267,24 @@ public class Pod extends FanObj {
 		return log;
 	}
 
-	// public final Map props(Uri uri, Duration maxAge) {
-	// return Env.cur().props(this, uri, maxAge);
-	// }
-	//
-	// public final String config(String key) {
-	// return Env.cur().config(this, key);
-	// }
-	//
-	// public final String config(String key, String def) {
-	// return Env.cur().config(this, key, def);
-	// }
-	//
-	// public final String locale(String key) {
-	// return Env.cur().locale(this, key);
-	// }
-	//
-	// public final String locale(String key, String def) {
-	// return Env.cur().locale(this, key, def);
-	// }
+	 public final Map props(Uri uri, Duration maxAge) {
+		 return Env.cur().props(this, uri, maxAge);
+	 }
+	
+	 public final String config(String key) {
+		 return Env.cur().config(this, key);
+	 }
+	
+	 public final String config(String key, String def) {
+		 return Env.cur().config(this, key, def);
+	 }
+	
+	 public final String locale(String key) {
+		 return Env.cur().locale(this, key);
+	 }
+	
+	 public final String locale(String key, String def) {
+		 return Env.cur().locale(this, key, def);
+	 }
 
 }

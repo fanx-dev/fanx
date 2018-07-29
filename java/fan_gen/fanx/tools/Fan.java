@@ -8,10 +8,12 @@
 package fanx.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
 import fanx.fcode.FPod;
+import fanx.fcode.FStore;
 import fanx.main.BootEnv;
 import fanx.main.Sys;
 import fanx.main.Type;
@@ -306,10 +308,10 @@ public class Fan
     println("  java.vm.version: " + System.getProperty("java.vm.version"));
     println("  java.home:       " + System.getProperty("java.home"));
     //TODO
-//    println("  fan.platform:    " + Env.cur().platform());
+    println("  fan.platform:    " + Sys.env.platform());
 //    println("  fan.version:     " + Sys.sysPod.version());
 //    println("  fan.env:         " + Env.cur());
-//    println("  fan.home:        " + Env.cur().homeDir().osPath());
+    println("  fan.home:        " + Sys.env.homeDir());
 
 //    String[] path = Env.cur().toDebugPath();
 //    if (path != null)
@@ -328,20 +330,33 @@ public class Fan
     version(progName);
 
     long t1 = System.nanoTime();
-    List<String> pods = Sys.env.listPodFiles();
+    List<String> pods = Sys.env.listPodNames();
     long t2 = System.nanoTime();
 
     println("");
     println("Fantom Pods [" + (t2-t1)/1000000L + "ms]:");
 
-    println("  Pod                 Version");
-    println("  ---                 -------");
+    println("  Pod\tVersion");
+    println("  ---\t-------");
     for (int i=0; i<pods.size(); ++i)
     {
-      String pod = pods.get(i);
-      println("  " + pod);
+      String name = pods.get(i);
+      FStore store = Sys.env.loadPod(name);
+      FPod pod = new FPod(name, store);
+      try {
+		pod.read();
+	  } catch (IOException e) {
+		e.printStackTrace();
+      }
+      
+      println(name + "\t" + pod.podVersion);
 //        FanStr.justl(pod.name(), 18L) + "  " +
 //        FanStr.justl(pod.version().toString(), 8));
+      try {
+		store.close();
+	  } catch (IOException e) {
+		e.printStackTrace();
+	  }
     }
   }
 
