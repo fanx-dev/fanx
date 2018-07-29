@@ -377,64 +377,36 @@ public final class FanInt
 // Locale
 //////////////////////////////////////////////////////////////////////////
 
-//  public static String toLocale(long self) { return toLocale(self, null, null); }
+  public static String toLocale(long self) { return toLocale(self, null); }
 //  public static String toLocale(long self, String pattern) { return toLocale(self, pattern, null); }
-//  public static String toLocale(long self, String pattern, Locale locale)
-//  {
+  public static String toLocale(long self, String pattern)
+  {
 //    // get current locale
 //    if (locale == null) locale = Locale.cur();
-//
-//    // if pattern is "B" format as bytes
-//    if (pattern != null && pattern.length() == 1 && pattern.charAt(0) == 'B')
-//      return toLocaleBytes(self);
-//
-//    // get default pattern if necessary
-//    if (pattern == null)
-//      pattern = Env.cur().locale(Sys.sysPod, "int", "#,###", locale);
-//
-//    // parse pattern and get digits
-//    NumPattern p = NumPattern.parse(pattern);
-//    NumDigits d = new NumDigits(self);
-//
-//    // route to common FanNum method
-//    return FanNum.toLocale(p, d, locale);
-//  }
-//
-//  static String toLocaleBytes(long b)
-//  {
-//    if (b < KB)    return b + "B";
-//    if (b < 10*KB) return FanFloat.toLocale((double)b/KB, "#.#") + "KB";
-//    if (b < MB)    return Math.round((double)b/KB) + "KB";
-//    if (b < 10*MB) return FanFloat.toLocale((double)b/MB, "#.#") + "MB";
-//    if (b < GB)    return Math.round((double)b/MB) + "MB";
-//    if (b < 10*GB) return FanFloat.toLocale((double)b/GB, "#.#") + "GB";
-//    return Math.round((double)b/GB) + "GB";
-//  }
-//  private static final long KB = 1024L;
-//  private static final long MB = 1024L*1024L;
-//  private static final long GB = 1024L*1024L*1024L;
+	  return NumFormat.formatInt(self, pattern);
+  }
 
-//  public static boolean localeIsUpper(long self)
-//  {
-//    return Character.isUpperCase((int)self);
-//  }
-//
-//  public static boolean localeIsLower(long self)
-//  {
-//    return Character.isLowerCase((int)self);
-//  }
+  public static boolean localeIsUpper(long self)
+  {
+    return Character.isUpperCase((int)self);
+  }
 
-//  public static long localeUpper(long self)
-//  {
-//    // Java doesn't provide a locale Character API
-//    return Character.toString((char)self).toUpperCase(Locale.cur().java()).charAt(0);
-//  }
-//
-//  public static long localeLower(long self)
-//  {
-//    // Java doesn't provide a locale Character API
-//    return Character.toString((char)self).toLowerCase(Locale.cur().java()).charAt(0);
-//  }
+  public static boolean localeIsLower(long self)
+  {
+    return Character.isLowerCase((int)self);
+  }
+
+  public static long localeUpper(long self)
+  {
+    // Java doesn't provide a locale Character API
+    return Character.toString((char)self).toUpperCase().charAt(0);
+  }
+
+  public static long localeLower(long self)
+  {
+    // Java doesn't provide a locale Character API
+    return Character.toString((char)self).toLowerCase().charAt(0);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion
@@ -497,11 +469,11 @@ public final class FanInt
 
   public static void times(long self, Func f)
   {
-//    if (f.arity() == 0)
-//    {
-//      for (long i=0; i<self; ++i) f.call();
-//    }
-//    else
+    if (f.arity() == 0)
+    {
+      for (long i=0; i<self; ++i) f.call();
+    }
+    else
     {
       for (long i=0; i<self; ++i) f.call(Long.valueOf(i));
     }

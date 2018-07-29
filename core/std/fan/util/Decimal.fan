@@ -12,7 +12,7 @@
 ** numeric type for financial applications.
 **
 @Serializable { simple = true }
-const final class Decimal : Num
+native const struct class Decimal : Num
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ const final class Decimal : Num
   **
   ** Private constructor.
   **
-  private new privateMake()
+  //private new privateMake()
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides

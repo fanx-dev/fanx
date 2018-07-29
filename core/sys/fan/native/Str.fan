@@ -30,7 +30,7 @@ native const final class Str
   ** Construct a string from a list of unicode code points.
   ** Also see `chars`.
   **
-  static Str fromChars(Int[] chars)
+  static Str fromChars(Int[] chars, Int offset := 0, Int len := chars.size)
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides

@@ -20,12 +20,19 @@ import fanx.util.StrUtil;
  */
 public class FanStr
 {
+	public static String fromChars(List chars) {
+		return fromChars(chars, 0, chars.size());
+	}
+	
+	public static String fromChars(List chars, long offset) {
+		return fromChars(chars, offset, chars.size());
+	}
 
-  public static String fromChars(List chars)
+  public static String fromChars(List chars, long offset, long len)
   {
     if (chars.size() == 0) return "";
     StringBuilder s = new StringBuilder((int)chars.size());
-    for (int i=0; i<chars.size(); ++i) {
+    for (int i=(int)offset; i<len; ++i) {
       int codepoint = ((Long)chars.get(i)).intValue();
       s.appendCodePoint(codepoint);
     }
@@ -359,12 +366,12 @@ public class FanStr
   public static void each(String self, Func f)
   {
     int len = self.length();
-//    if (f.arity() == 1)
-//    {
-//      for (int i=0; i<len ; ++i)
-//        f.call(Long.valueOf(self.charAt(i)));
-//    }
-//    else
+    if (f.arity() == 1)
+    {
+      for (int i=0; i<len ; ++i)
+        f.call(Long.valueOf(self.charAt(i)));
+    }
+    else
     {
       for (int i=0; i<len ; ++i)
         f.call(Long.valueOf(self.charAt(i)), Long.valueOf(i));
@@ -373,12 +380,12 @@ public class FanStr
 
   public static void eachr(String self, Func f)
   {
-//    if (f.arity() == 1)
-//    {
-//      for (int i=self.length()-1; i>=0; --i)
-//        f.call(Long.valueOf(self.charAt(i)));
-//    }
-//    else
+    if (f.arity() == 1)
+    {
+      for (int i=self.length()-1; i>=0; --i)
+        f.call(Long.valueOf(self.charAt(i)));
+    }
+    else
     {
       for (int i=self.length()-1; i>=0; --i)
         f.call(Long.valueOf(self.charAt(i)), Long.valueOf(i));
@@ -388,13 +395,13 @@ public class FanStr
   public static boolean any(String self, Func f)
   {
     int len = self.length();
-//    if (f.arity() == 1)
-//    {
-//      for (int i=0; i<len ; ++i)
-//        if (f.callBool(Long.valueOf(self.charAt(i))))
-//          return true;
-//    }
-//    else
+    if (f.arity() == 1)
+    {
+      for (int i=0; i<len ; ++i)
+        if (f.callBool(Long.valueOf(self.charAt(i))))
+          return true;
+    }
+    else
     {
       for (int i=0; i<len ; ++i)
         if (f.callBool(Long.valueOf(self.charAt(i)), Long.valueOf(i)))
@@ -406,13 +413,13 @@ public class FanStr
   public static boolean all(String self, Func f)
   {
     int len = self.length();
-//    if (f.arity() == 1)
-//    {
-//      for (int i=0; i<len ; ++i)
-//        if (!f.callBool(Long.valueOf(self.charAt(i))))
-//          return false;
-//    }
-//    else
+    if (f.arity() == 1)
+    {
+      for (int i=0; i<len ; ++i)
+        if (!f.callBool(Long.valueOf(self.charAt(i))))
+          return false;
+    }
+    else
     {
       for (int i=0; i<len ; ++i)
         if (!f.callBool(Long.valueOf(self.charAt(i)), Long.valueOf(i)))
@@ -834,48 +841,48 @@ public class FanStr
 //    if (cmp < 0) return -1;
 //    return cmp == 0 ? 0 : +1;
 //  }
-//
-//  public static String localeLower(String self)
-//  {
-//    return self.toLowerCase(Locale.cur().java());
-//  }
-//
-//  public static String localeUpper(String self)
-//  {
-//    return self.toUpperCase(Locale.cur().java());
-//  }
-//
-//  public static String localeCapitalize(String self)
-//  {
-//    if (self.length() > 0)
-//    {
-//      int ch = self.charAt(0);
-//      if (Character.isLowerCase(ch))
-//      {
-//        StringBuilder s = new StringBuilder(self.length());
-//        s.append(Character.toString((char)ch).toUpperCase(Locale.cur().java()).charAt(0));
-//        s.append(self, 1, self.length());
-//        return s.toString();
-//      }
-//    }
-//    return self;
-//  }
-//
-//  public static String localeDecapitalize(String self)
-//  {
-//    if (self.length() > 0)
-//    {
-//      int ch = self.charAt(0);
-//      if (Character.isUpperCase(ch))
-//      {
-//        StringBuilder s = new StringBuilder(self.length());
-//        s.append(Character.toString((char)ch).toLowerCase(Locale.cur().java()).charAt(0));
-//        s.append(self, 1, self.length());
-//        return s.toString();
-//      }
-//    }
-//    return self;
-//  }
+
+  public static String localeLower(String self)
+  {
+    return self.toLowerCase();
+  }
+
+  public static String localeUpper(String self)
+  {
+    return self.toUpperCase();
+  }
+
+  public static String localeCapitalize(String self)
+  {
+    if (self.length() > 0)
+    {
+      int ch = self.charAt(0);
+      if (Character.isLowerCase(ch))
+      {
+        StringBuilder s = new StringBuilder(self.length());
+        s.append(Character.toString((char)ch).toUpperCase().charAt(0));
+        s.append(self, 1, self.length());
+        return s.toString();
+      }
+    }
+    return self;
+  }
+
+  public static String localeDecapitalize(String self)
+  {
+    if (self.length() > 0)
+    {
+      int ch = self.charAt(0);
+      if (Character.isUpperCase(ch))
+      {
+        StringBuilder s = new StringBuilder(self.length());
+        s.append(Character.toString((char)ch).toLowerCase().charAt(0));
+        s.append(self, 1, self.length());
+        return s.toString();
+      }
+    }
+    return self;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion
