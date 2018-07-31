@@ -131,10 +131,12 @@ enum class Token
   extensionKeyword,
   rtconstKeyword,
   inlineKeyword,
-  varKeyword,
-  defKeyword,
-  refKeyword,
-  retKeyword,
+  variKeyword,
+  defineKeyword,
+  referKeyword,
+  asyncKeyword,
+  yieldKeyword,
+  lretKeyword,
 
   // misc
   eof("eof");

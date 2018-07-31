@@ -63,7 +63,7 @@ public class FPodEmit
     // durations
     for (int i=0; i<literals.durations.size(); ++i) {
       Object obj = literals.durations.get(i);
-      cls.getField("Dur"+i).set(null, makeLiteral("std::Duration", "fromTicks", obj, long.class));
+      cls.getField("Dur"+i).set(null, makeLiteral("std::Duration", "fromNanos", obj, long.class));
     }
     literals.durations = null;
 

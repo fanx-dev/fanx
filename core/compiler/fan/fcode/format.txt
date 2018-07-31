@@ -17,7 +17,7 @@
   pod.name:      string name
   pod.version:   version string formatted as sys::Version
   pod.depends:   depends formatted as sys::Depend separated by semicolon
-  fcode.version: 1.0.52
+  fcode.version: 1.1.0
 
 //////////////////////////////////////////////////////////////////////////
 // Name Pool

@@ -38,4 +38,6 @@ class Util {
     ObjEncoder.make(out, options).writeObj(obj)
     return out
   }
+
+  native static extension Err trace(Err self, OutStream out := Env.cur.out, [Str:Obj]? options := null)
 }

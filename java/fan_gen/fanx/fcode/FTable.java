@@ -252,8 +252,11 @@ public abstract class FTable
        if (in == null) { size = 0; return this; }
        size = in.u2();
        table = new Object[size];
-       for (int i=0; i<size; ++i)
-         table[i] = ( in.u8() );
+       for (int i=0; i<size; ++i) {
+    	 long sec = in.u8();
+    	 int nans = in.u4();
+         table[i] = sec * 1000000000 + nans;
+       }
        return this;
     }
   }

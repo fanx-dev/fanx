@@ -1,0 +1,10 @@
+
+podName = compiler
+summary = Fantom compiler
+version = 1.1
+srcDirs = fan/*
+depends = sys 2.0, std 1.0
+
+index.compiler.dsl.std::Regex = compiler::RegexDslPlugin
+index.compiler.dsl.sys::Str = compiler::StrDslPlugin
+

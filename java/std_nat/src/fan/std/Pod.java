@@ -2,10 +2,12 @@ package fan.std;
 
 import fan.sys.*;
 import fanx.fcode.*;
+import fanx.interop.Interop;
 import fanx.main.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.zip.ZipInputStream;
 
 import fan.std.Env;
 import fan.std.Log;
@@ -256,6 +258,36 @@ public class Pod extends FanObj {
 //		}
 //		return (fan.std.File) loadFile;
 //	}
+	
+	public static Pod load(InStream in)
+	  {
+	    FPod fpod = null;
+	    try
+	    {
+	      fpod = new FPod(null, null);
+	      fpod.readFully(new ZipInputStream(Interop.toJava(in)));
+	    }
+	    catch (Exception e)
+	    {
+	      throw Err.make(e);
+	    }
+
+	    String name = fpod.podName;
+	    //TODO
+//	    synchronized(podsByName)
+//	    {
+//	      // check for duplicate pod name
+//	      SoftReference ref = (SoftReference)podsByName.get(name);
+//	      if (ref != null && ref.get() != null)
+//	        throw Err.make("Duplicate pod name: " + name);
+//
+//	      // create Pod and add to master table
+//	      Pod pod = new Pod(fpod, new Pod[]{});
+//	      podsByName.put(name, new SoftReference(pod));
+//	      return pod;
+//	    }
+	    return fromFPod(fpod);
+	  }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Utils
