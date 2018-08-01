@@ -213,7 +213,7 @@ abstract class Test
     private set
     get {
       if (&tempDir == null) {
-        &tempDir = Env.cur.tempDir.plus(`test`, false)
+        &tempDir = Env.cur.tempDir.plus(`test/`, false)
         &tempDir.delete()
         &tempDir.create()
       }

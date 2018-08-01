@@ -135,7 +135,7 @@ class EnvTest : Test
     verifyErr(UnresolvedErr#) { Env.cur->findFile(`etc/foo bar/no exist`, true) }
 
     // findAllFiles
-    verify(Env.cur.findAllFiles(`etc/sys/timezones.ftz`).size >= 1)
+    verify(Env.cur.findAllFiles(`etc/sys/log.props`).size >= 1)
     verifyEq(Env.cur.findAllFiles(`bad/unknown file`).size, 0)
   }
 

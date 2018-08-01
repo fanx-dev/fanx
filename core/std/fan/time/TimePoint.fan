@@ -19,6 +19,7 @@ const struct class TimePoint
   private const Int ticks
 
   private new make(Int ticks) {
+    this.ticks = ticks
   }
 
   static const TimePoint epoch := make(0)
@@ -51,11 +52,19 @@ const struct class TimePoint
     make(m)
   }
 
+  static new fromSec(Int sec) {
+    make(sec*1000)
+  }
+
   **
   ** millisecond since 1970
   **
   Int toMillis() {
     ticks
+  }
+
+  Int toSec() {
+    ticks / 1000
   }
 
   **

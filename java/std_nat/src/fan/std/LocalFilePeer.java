@@ -77,7 +77,8 @@ public class LocalFilePeer {
 
 	static void modified(LocalFile self, TimePoint time) {
 		java.io.File jfile = (java.io.File) self.peer;
-		jfile.setLastModified(time.toMillis());
+		long t = time.toMillis();
+		jfile.setLastModified(t);
 	}
 
 	static TimePoint modified(LocalFile self) {

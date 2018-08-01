@@ -60,8 +60,8 @@ internal class UriParser {
           v = s[eq+1..<i]
         }
         if (decode) {
-          ek := Uri.decodeToken(k, true)
-          ev := Uri.decodeToken(v, true)
+          ek := Uri.decodeToken(k, Uri.sectionQuery)
+          ev := Uri.decodeToken(v, Uri.sectionQuery)
           query[ek] = ev
         } else {
           query[k] = v
@@ -80,8 +80,8 @@ internal class UriParser {
         v = s[eq+1..<i]
       }
       if (decode) {
-        ek := Uri.decodeToken(k, true)
-        ev := Uri.decodeToken(v, true)
+        ek := Uri.decodeToken(k, Uri.sectionQuery)
+        ev := Uri.decodeToken(v, Uri.sectionQuery)
         query[ek] = ev
       } else {
         query[k] = v
@@ -315,19 +315,19 @@ const final class Uri
       parser := UriParser()
       parser.parse(s)
 
-      if (parser.scheme != null) parser.scheme = decodeToken(parser.scheme, false)
-      if (parser.userInfo != null) parser.userInfo = decodeToken(parser.userInfo, false)
-      if (parser.host != null) parser.host = decodeToken(parser.host, false)
-      if (parser.pathStr.size > 0) parser.pathStr = decodeToken(parser.pathStr, false)
+      //if (parser.scheme != null) parser.scheme = decodeToken(parser.scheme, sectionPath)
+      if (parser.userInfo != null) parser.userInfo = decodeToken(parser.userInfo, sectionPath)
+      if (parser.host != null) parser.host = decodeToken(parser.host, sectionPath)
+      if (parser.pathStr.size > 0) parser.pathStr = decodeToken(parser.pathStr, sectionPath)
 
       if (parser.query != null) {
         query2 := OrderedMap<Str,Str>()
         parser.query.each |v,k| {
-          query2[decodeToken(k, true)] = decodeToken(v, true)
+          query2[decodeToken(k, sectionQuery)] = decodeToken(v, sectionQuery)
         }
         parser.query = query2
       }
-      if (parser.frag != null) parser.frag = decodeToken(parser.frag, false)
+      if (parser.frag != null) parser.frag = decodeToken(parser.frag, sectionFrag)
 
       return privateMake(parser.scheme, parser.userInfo, parser.host, parser.port, parser.pathStr, parser.query, parser.frag)
     } catch (Err e) {
@@ -358,18 +358,18 @@ const final class Uri
   private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, [Str:Str]? query, Str? frag, Bool encode) {
     buf := StrBuf()
     if (scheme != null) {
-      if (encode) scheme = encodeToken(scheme, false)
+      //if (encode) scheme = encodeToken(scheme, sectionPath)
       buf.add(scheme).add(":")
     }
 
     if (userInfo != null || host != null || port != null) {
       buf.add("//")
       if (userInfo != null) {
-        if (encode) userInfo = encodeToken(userInfo, false)
+        if (encode) userInfo = encodeToken(userInfo, sectionPath)
         buf.add(userInfo).addChar('@')
       }
       if (host != null) {
-        if (encode) host = encodeToken(host, false)
+        if (encode) host = encodeToken(host, sectionPath)
         buf.add(host)
       }
       if (port != null) {
@@ -378,7 +378,7 @@ const final class Uri
     }
 
     if (path != null) {
-      if (encode) path = encodeToken(path, false)
+      if (encode) path = encodeToken(path, sectionPath)
       buf.add(path)
     }
 
@@ -388,8 +388,8 @@ const final class Uri
       query.each |v, k| {
         if (i>0) buf.addChar('&')
         if (encode) {
-          k = encodeToken(k, true)
-          v = v == "" ? "" : encodeToken(v, true)
+          k = encodeToken(k, sectionQuery)
+          v = v == "" ? "" : encodeToken(v, sectionQuery)
         }
         if (v.size == 0)
           buf.add(k)
@@ -399,7 +399,7 @@ const final class Uri
       }
     }
     if (frag != null) {
-      if (encode) frag = encodeToken(frag, false)
+      if (encode) frag = encodeToken(frag, sectionFrag)
       buf.addChar('#').add(frag)
     }
     return buf.toStr
@@ -408,6 +408,15 @@ const final class Uri
 //////////////////////////////////////////////////////////////////////////
 // Encode/Decode
 //////////////////////////////////////////////////////////////////////////
+
+  ** Path token section flag
+  static const Int sectionPath := 1
+
+  ** Query token section flag
+  static const Int sectionQuery := 2
+
+  ** Fragment token section flag
+  static const Int sectionFrag := 3
 
   private static Void percentEncodeByte(StrBuf buf, Int c)
   {
@@ -428,7 +437,7 @@ const final class Uri
   **   Uri.decodeToken("a%2Fb%23c", Uri.sectionPath)  =>  "a\/b\#c"
   **   Uri.decodeToken("a%3Db/c", Uri.sectionQuery)   =>  "a\=b/c"
   **
-  static Str decodeToken(Str s, Bool isQuery) {
+  static Str decodeToken(Str s, Int section) {
     sb := StrBuf()
     ba := ByteArray(s.size)
     bp := 0
@@ -451,7 +460,7 @@ const final class Uri
         sb.add(t)
       }
 
-      if (isQuery && ch == '+') {
+      if (section == Uri.sectionQuery && ch == '+') {
         sb.addChar(' ')
       }
       else {
@@ -476,21 +485,21 @@ const final class Uri
   **   Uri.encodeToken("a/b#c", Uri.sectionPath)   =>  "a%2Fb%23c"
   **   Uri.encodeToken("a=b/c", Uri.sectionQuery)  =>  "a%3Db/c"
   **
-  static Str encodeToken(Str s, Bool isQuery) {
+  static Str encodeToken(Str s, Int section) {
     sb := StrBuf()
     ba := s.toUtf8
     for (i:=0; i<ba.size; ++i) {
       ch := ba[i]
       if (ch < 127) {
-        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~' ) {
+        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~' || ch == '$' ) {
           sb.addChar(ch)
           continue
         }
-        if (!isQuery && ch == '/') {
+        if (section != Uri.sectionQuery && ch == '/') {
           sb.addChar(ch)
           continue
         }
-        if (isQuery && ch == ' ') {
+        if (section == Uri.sectionQuery && ch == ' ') {
           sb.addChar('+')
           continue
         }
@@ -524,8 +533,8 @@ const final class Uri
     buf := StrBuf()
     first := true
     q.each |v, k| {
-      ks := encodeToken(k, true)
-      vs := encodeToken(v, true)
+      ks := encodeToken(k, sectionQuery)
+      vs := encodeToken(v, sectionQuery)
       if (first) first = false
       else buf.addChar('&')
       if (v == "") buf.add(ks)

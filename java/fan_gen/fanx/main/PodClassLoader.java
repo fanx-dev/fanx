@@ -10,6 +10,8 @@ package fanx.main;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.*;
+import java.util.HashMap;
+
 import fanx.emit.*;
 import fanx.fcode.FPod;
 import fanx.fcode.FType;
@@ -23,6 +25,7 @@ public class PodClassLoader
   extends URLClassLoader
 {
 	private FPod pod;
+	private HashMap<String, Box> pendingClasses = new HashMap<String, Box>(); // name -> Box
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -73,14 +76,13 @@ public class PodClassLoader
     {
 //      System.out.println("loading:"+name);
       Class cls = null;
-//      try {
-//    	  cls = super.findClass(name);
-//    	  if (cls != null) return cls;
-//      } catch (Exception e) {
-//      }
+
+      // first check if the classfile in my pending queue
+      cls = findPendingClass(name);
+      if (cls != null) return cls;
 
       // anything starting with "fan." maps to a Fantom Type (or native peer code)
-      cls = loadClassData(name);
+      cls = loadFanClassData(name);
       if (cls != null) return cls;
 
       // look in my own pod zip file for class
@@ -119,7 +121,7 @@ public class PodClassLoader
     }
   }
 
-  private Class loadClassData(String name)
+  private Class loadFanClassData(String name)
     throws Exception
   {
     // anything starting with "fan." maps to a Fantom Type (or native peer code)
@@ -154,29 +156,11 @@ public class PodClassLoader
     // if the type name ends with $ then this is a mixin body
     // class being used before we have loaded the mixin interface,
     // so load them both
+    boolean isMixinBody = false;
     if (typeName.endsWith("$"))
     {
-      int strip = typeName.endsWith("$") ? 1 : 4;
-      String tname = typeName.substring(0, typeName.length()-strip);
-      FType ft = pod.type(tname, false);
-      if (ft == null) return null;
-      ft.load();
-      if (ft.isNative()) return null;
-      FTypeEmit[] emitted = FTypeEmit.emit(ft);
-      
-      FTypeEmit emit = emitted[1];
-      cls = doDefineClass(name, emit.classFile);
-      if (cls != null) ft.clearBuf();
-      return cls;
-      
-//      Class c = null;
-//      for (int j=0; j<emitted.length; ++j)
-//      {
-//        FTypeEmit emit = emitted[j];
-//        String clzName = emit.className.replace('/', '.');
-//        c = doDefineClass(clzName, emit.classFile);
-//      }
-//      if (c != null) return c;
+      typeName = typeName.substring(0, typeName.length()-1);
+      isMixinBody = true;
     }
 
     // if there wasn't a precompiled class, then this must
@@ -186,9 +170,24 @@ public class PodClassLoader
     ft.load();
     if (ft.isNative()) return null;
     FTypeEmit[] emitted = FTypeEmit.emit(ft);
-    FTypeEmit emit = emitted[0];
-    cls = doDefineClass(name, emit.classFile);
-    if (cls != null && !ft.isMixin()) ft.clearBuf();
+    
+    //Load Mixin Body
+    if (emitted.length > 1) {
+    	if (!isMixinBody) {
+    		cls = doDefineClass(name, emitted[0].classFile);
+    		loadFan(name+"$", emitted[1].classFile);
+    	}
+    	else {
+    		loadFan(name.substring(0, name.length()-1), emitted[0].classFile);
+    		cls = doDefineClass(name, emitted[1].classFile);
+    	}
+    }
+    //normal
+    else {
+    	cls = doDefineClass(name, emitted[0].classFile);
+    }
+    
+    if (cls != null) ft.clearBuf();
     return cls;
   }
 
@@ -243,6 +242,38 @@ public class PodClassLoader
       e.printStackTrace();
       return null;
     }
+  }
+  
+//////////////////////////////////////////////////////////////////////////
+// Pending
+//////////////////////////////////////////////////////////////////////////
+  
+  public Class loadFan(String name, Box classfile)
+  {
+    try
+    {
+      synchronized(pendingClasses)
+      {
+        pendingClasses.put(name, classfile);
+      }
+      return loadClass(name);
+    }
+    catch (ClassNotFoundException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  private Class findPendingClass(String name)
+  {
+    Box pending = null;
+    synchronized(pendingClasses)
+    {
+      pending = (Box)pendingClasses.get(name);
+      if (pending != null) pendingClasses.remove(name);
+    }
+    if (pending == null) return null;
+    return doDefineClass(name, pending);
   }
 
 //////////////////////////////////////////////////////////////////////////

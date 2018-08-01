@@ -421,6 +421,9 @@ class FileTest : Test
     verify(start+(-1sec) <= f.modified && f.modified <= TimePoint.now+1sec)
 
     yesterday := TimePoint.now - 1day
+    //The file precision loss
+    wholeSec := yesterday.toSec
+    yesterday = TimePoint.fromSec(wholeSec)
     f.modified = yesterday
     verifyEq(f.modified , yesterday)
   }
