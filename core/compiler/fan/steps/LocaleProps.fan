@@ -50,7 +50,7 @@ class LocaleProps : CompilerStep
     {
       try
       {
-        baseProps = defFile.readProps
+        baseProps = defFile.in.readProps
         baseFileStr = defFile.readAllStr
       }
       catch (Err e)

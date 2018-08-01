@@ -105,7 +105,7 @@ class InitInput : CompilerStep
   private Void initPod()
   {
     ts := DateTime.now.floor(1sec)
-    meta := Str:Str[:] { ordered = true }
+    meta := OrderedMap<Str,Str>()//[:] { ordered = true }
     meta["pod.name"]       = input.podName
     meta["pod.version"]    = input.version.toStr
     meta["pod.depends"]    = input.depends.join(";")

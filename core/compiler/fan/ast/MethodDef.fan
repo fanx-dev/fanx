@@ -125,7 +125,7 @@ class MethodDef : SlotDef, CMethod
   **
   MethodVar addParamVar(CType ctype, Str name)
   {
-    if (vars.size > 0 && !vars[-1].isParam) throw Err("Add param with locals $qname")
+    if (vars.size > 0 && !vars[vars.size-1].isParam) throw Err("Add param with locals $qname")
     param := ParamDef(loc, ctype, name)
     params.add(param)
     var := MethodVar.makeForParam(this, params.size, param, ctype)

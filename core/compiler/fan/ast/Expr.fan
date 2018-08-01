@@ -225,13 +225,13 @@ abstract class Expr : Node
 
       // remove extra parens with binary ops
       s := toStr
-      if (s[0] == '(' && s[-1] == ')') s = s[1..-2]
+      if (s[0] == '(' && s[s.size-1] == ')') s = s[1..-2]
 
       // hide implicit assignments
       if (s.contains("=")) s = s[s.index("=")+1..-1].trim
 
       // remove extra parens with binary ops
-      if (s[0] == '(' && s[-1] == ')' && !s.endsWith("()")) s = s[1..-2]
+      if (s[0] == '(' && s[s.size-1] == ')' && !s.endsWith("()")) s = s[1..-2]
 
       // hide storage operator
       s = s.replace(".@", ".")

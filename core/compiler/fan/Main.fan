@@ -40,7 +40,7 @@ class Main
   **
   ** Pod meta-data name/value pairs to compile into pod.  See `sys::Pod.meta`.
   **
-  Str:Str meta := Str:Str[:] { ordered = true }
+  Str:Str meta := OrderedMap<Str,Str>()//[:] { ordered = true }
 
   **
   ** Pod index name/value pairs to compile into pod.  See `sys::Env.index`.
@@ -137,9 +137,10 @@ class Main
     // boot strap checking
     if (["sys", "build", "compiler", "compilerJava"].contains(podName))
     {
-      devHomeDir := Pod.find("build").config("devHome")
-      if (Env.cur.homeDir == devHomeDir.toUri.toFile)
-        throw ArgErr("Must update 'devHome' for bootstrap build")
+      //TODO
+      //devHomeDir := Pod.find("compiler").config("devHome")
+      //if (Env.cur.homeDir == devHomeDir.toUri.toFile)
+      //  throw ArgErr("Must update 'devHome' for bootstrap build")
     }
   }
 
@@ -188,13 +189,15 @@ class Main
 
     docApi = props.get("docApi", "true") == "true"
 
-    dependsDir = props.get("dependsDir")?.toUri
+    //TODO fix ?.
+    Str? temp := props.get("dependsDir", null)
+    dependsDir = temp == null ? null : temp.toUri
 
     //get outPodDir
     outPodDirStr := props.get("outPodDir", null)
     if (outPodDirStr != null) outPodDir = outPodDirStr.toUri
     else {
-      devHomeDir := Pod.find("build").config("devHome")
+      devHomeDir := Pod.find("compiler").config("devHome")
       if (devHomeDir != null) outPodDir = devHomeDir.toUri + `lib/fan/`
       else {
         outPodDir = Env.cur.workDir.plus(`lib/fan/`).uri

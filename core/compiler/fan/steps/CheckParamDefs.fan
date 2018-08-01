@@ -31,7 +31,7 @@ class CheckParamDefs : CompilerStep
     // unless there aren't any defaults don't bother
     params := m.paramDefs
     num := params.size
-    if (num == 0 || params[-1].def == null)
+    if (num == 0 || params[params.size-1].def == null)
       return
 
     // if a def expr calculates a local used after it,

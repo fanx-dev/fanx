@@ -103,7 +103,7 @@ class WritePod : CompilerStep
   private Void writeStr(Zip zip, Uri path, Str content)
   {
     try
-      zip.writeNext(path, DateTime.now).print(content).close
+      zip.writeNext(path, TimePoint.now).print(content).close
     catch (Err e)
       throw errReport(CompilerErr("Cannot write resource '$path'", loc, e))
   }

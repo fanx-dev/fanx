@@ -2338,7 +2338,7 @@ public class Parser : CompilerSupport
     // if we see ?-> in a function type, that means |X?->ret|
     if (curt === Token.safeArrow && !params.isEmpty)
     {
-      params[-1] = params[-1].toNullable
+      params[params.size-1] = params[params.size-1].toNullable
       consume
       ret = ctype
     }

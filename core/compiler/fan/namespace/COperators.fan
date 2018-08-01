@@ -49,7 +49,7 @@ class COperators
   **
   CMethod[] find(Str prefix)
   {
-    byPrefix[prefix] ?: CMethod#.emptyList
+    byPrefix[prefix] ?: List.defVal//CMethod#.emptyList
   }
 
   private static const Str[] prefixes := ["get", "plus", "minus", "mult", "div", "mod"]

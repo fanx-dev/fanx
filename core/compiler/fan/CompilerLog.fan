@@ -102,7 +102,7 @@ class CompilerLog
     if (rec.err != null)
     {
       if (isDebug)
-        rec.err.trace(out)
+        Util.trace(rec.err, out)//TODO
       else
         print(Str.spaces(indentation*2+4)).printLine(rec.err)
     }
@@ -123,7 +123,7 @@ class CompilerLog
       printLine("$loc: WARN $err.msg")
     else
       printLine("$loc: $err.msg")
-    if (isDebug) err.trace(out)
+    if (isDebug) Util.trace(err, out)
   }
 
 //////////////////////////////////////////////////////////////////////////

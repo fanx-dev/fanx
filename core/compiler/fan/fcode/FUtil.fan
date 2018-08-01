@@ -56,7 +56,7 @@ class FUtil : FConst
   static FAttr[] readAttrs(InStream in)
   {
     size := in.readU2
-    if (size == 0) return FAttr#.emptyList
+    if (size == 0) return List.defVal//FAttr#.emptyList
     fattrs := FAttr[,]
     fattrs.capacity = size
     size.times { fattrs.add(FAttr.make.read(in)) }

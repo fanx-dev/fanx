@@ -245,7 +245,7 @@ class Tokenizer : CompilerSupport
       {
         num := Float.fromStr(str)
         if (dur != null) {
-          return TokenVal(Token.durationLiteral, Duration((num*dur.toFloat).toInt))
+          return TokenVal(Token.durationLiteral, Duration.fromNanos((num*dur.toFloat).toInt))
         }
         else {
           return TokenVal(Token.floatLiteral, num)
@@ -255,7 +255,7 @@ class Tokenizer : CompilerSupport
       // int literal
       num := Int.fromStr(str)
       if (dur != null)
-        return TokenVal(Token.durationLiteral, Duration(num*dur))
+        return TokenVal(Token.durationLiteral, Duration.fromNanos(num*dur))
       else
         return TokenVal(Token.intLiteral, num)
     }

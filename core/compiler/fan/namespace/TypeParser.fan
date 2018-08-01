@@ -32,7 +32,7 @@ class TypeParser
   {
     // if last char is ? then parse as nullable
     //echo("resolve $sig")
-    last := sig[-1]
+    last := sig[sig.size-1]
     if (last == '?') return resolve(ns, sig[0..-2]).toNullable
 
     // if the last character isn't ] or |, then this a non-generic

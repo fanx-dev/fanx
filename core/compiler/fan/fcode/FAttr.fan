@@ -54,7 +54,7 @@ class FFacet : CFacet
 {
   static FFacet[] decode(FPod fpod, FAttr? attr)
   {
-    if (attr == null) return FFacet#.emptyList
+    if (attr == null) return List.defVal//FFacet#.emptyList
     num := attr.data.seek(0).readU2
     ffacets := FFacet[,]; ffacets.capacity = num
     num.times

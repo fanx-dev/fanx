@@ -268,9 +268,9 @@ final class FPod : CPod, FConst
 
   private Void prop(OutStream out, Str n, Str v)
   {
-    out.print(n.toCode(null, true))
+    out.print(n.toCode(0, true))
        .print("=")
-       .print(v.toCode(null, true))
+       .print(v.toCode(0, true))
        .print("\n")
   }
 

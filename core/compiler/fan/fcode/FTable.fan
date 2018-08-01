@@ -62,15 +62,15 @@ class FTable
   static FTable makeDecimals(FPod pod)
   {
     return make(pod,
-      |OutStream out, Obj obj| { out.writeDecimal((Decimal)obj) },
-      |InStream in->Obj| { in.readDecimal })
+      |OutStream out, Obj obj| { out.writeUtf(((Decimal)obj).toStr) },
+      |InStream in->Obj| { Decimal(in.readUtf) })
   }
 
   static FTable makeDurations(FPod pod)
   {
     return make(pod,
-      |OutStream out, Obj obj| { out.writeI8(((Duration)obj).toSec).writeI4(((Duration)obj).ticks % 1000_000_000) },
-      |InStream in->Obj| { Duration(in.readS8*1000_000_000 + in.readS4) })
+      |OutStream out, Obj obj| { out.writeI8(((Duration)obj).toSec).writeI4(((Duration)obj).toNanos % Duration.nsPerSec) },
+      |InStream in->Obj| { Duration.fromNanos(in.readS8 * Duration.nsPerSec + in.readS4) })
   }
 
 //////////////////////////////////////////////////////////////////////////

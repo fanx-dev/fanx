@@ -31,7 +31,7 @@ class FacetDef : Node, CFacet
   override Obj? get(Str name)
   {
     i := names.index(name)
-    if (i == null) return null
+    if (i == -1) return null
     literal := vals[i] as LiteralExpr
     if (literal == null) return null
     return literal.val

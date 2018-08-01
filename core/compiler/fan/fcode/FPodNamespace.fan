@@ -26,7 +26,7 @@ class FPodNamespace : CNamespace
   new make(File? dir)
   {
     if (dir == null) {
-      devHome := Pod.find("build").config("devHome")
+      devHome := Pod.find("compiler").config("devHome")
       if (devHome != null) {
         dir = (devHome+"lib/fan/").toUri.toFile
       }
