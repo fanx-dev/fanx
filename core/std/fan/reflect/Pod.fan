@@ -43,7 +43,7 @@ native final const class Pod
   ** closed.  The pod cannot have resources.  The pod name as defined
   ** by '/pod.def' must be uniquely named or Err is thrown.
   **
-  //static Pod load(InStream in)
+  static Pod load(InStream in)
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor

@@ -1135,7 +1135,7 @@ const final class Uri
   **   `/a/x`.relTo(`/a/b/c`)                       => `../x`
   **
   Uri relTo(Uri base) {
-    same := this.scheme == base.scheme && this.userInfo == base.userInfo
+    same := (this.scheme == base.scheme || this.scheme == null) && this.userInfo == base.userInfo
       && this.host == base.host && this.port == base.port
 
     pos := pathStr.find(base.pathStr)

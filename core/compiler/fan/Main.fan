@@ -185,7 +185,7 @@ class Main
     javaDirs = parseDirs(props.get("javaDirs"))
     jsDirs = parseDirs(props.get("jsDirs"))
 
-    //echo("srcDirs: $srcDirs")
+    //echo("srcDirs: $srcDirs resDirs: $resDirs")
 
     docApi = props.get("docApi", "true") == "true"
 

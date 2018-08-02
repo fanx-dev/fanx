@@ -1,7 +1,10 @@
 set -e
-fan compiler/build.fan
 
-fanc='../../../fantom/fan/bin/fan compiler::Main'
+#fan compiler/build.fan
+#fanc='../../../fantom/fan/bin/fan compiler::Main'
+
+fanc='../env/bin/fanc'
+$fanc compiler/pod.props
 
 $fanc sys/pod.props
 $fanc std/pod.props

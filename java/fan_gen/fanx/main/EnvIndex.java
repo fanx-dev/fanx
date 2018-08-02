@@ -13,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import fanx.fcode.FStore;
+import fanx.fcode.FStore.Input;
 
 public class EnvIndex {
 
@@ -27,8 +28,12 @@ public class EnvIndex {
 			try {
 				FStore store = Sys.env.loadPod(n);
 //				loadPod(map, n, new File(n));
-				addProps(map, store.read("index.props"));
+				Input in = store.read("index.props");
+				if (in != null) {
+					addProps(map, in);
+				}
 			} catch (Throwable e) {
+				e.printStackTrace();
 				System.out.println("ERROR: Env.index load: " + n + "\n  " + e);
 			}
 		}

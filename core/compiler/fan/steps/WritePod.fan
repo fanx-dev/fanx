@@ -44,6 +44,9 @@ class WritePod : CompilerStep
 
     log.info("WritePod [${podFile.toStr}]")
 
+    //may refer by other process
+    if (podFile.exists) podFile.delete
+
     // create output directory
     dir.create
 
@@ -119,6 +122,7 @@ class WritePod : CompilerStep
     {
       path = file.uri
       path = path.relTo(input.baseDir.uri)
+      //echo("$path relTo ${input.baseDir.uri} is $path")
     }
 
     // ignore stupid OS X .DS_Store

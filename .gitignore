@@ -5,3 +5,6 @@ java/libs
 core/baseTest/test
 *.pod
 *.jar
+core/compiler_old
+env/temp
+env/lib/fan_backup
