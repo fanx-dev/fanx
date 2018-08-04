@@ -54,7 +54,8 @@ class JavaType : CType
   override JavaPod pod
   override const Str name
   override const Str qname
-  override Str signature() { qname }
+  override Str extName() { "" }
+  //override Str signature() { qname }
   override CFacet? facet(Str qname) { null }
 
   override CType? base { get { load; return &base } }
@@ -72,7 +73,7 @@ class JavaType : CType
 
   override Bool isGeneric() { false }
   override Bool isParameterized() { false }
-  override Bool isGenericParameter() { false }
+  override Bool hasGenericParameter() { false }
 
   override once CType toListOf() { ListType(this) }
 

@@ -140,7 +140,7 @@ class SourceMap
 
   private JsCompilerSupport support
   private Compiler c
-  private [Str:File?] files := [Str:File][:] { ordered = true }
+  private [Str:File?] files := OrderedMap<Str,File>()//[:] { ordered = true }
   private MapField[] fields := [,]
 }
 

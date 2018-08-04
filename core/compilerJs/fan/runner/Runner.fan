@@ -5,7 +5,7 @@
 // History:
 //   10 Dec 08  Andy Frank  Creation
 //
-
+/*
 using [java] java.lang
 using [java] javax.script
 
@@ -91,4 +91,4 @@ class Runner
   }
 }
 
-
+*/

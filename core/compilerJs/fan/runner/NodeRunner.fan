@@ -207,7 +207,7 @@ class NodeRunner
 
   Str compile(Str text)
   {
-    this.tempPod = "temp${DateTime.now.ticks}"
+    this.tempPod = "temp${TimePoint.nowUnique}"
     input := CompilerInput()
     input.podName   = tempPod
     input.summary   = ""

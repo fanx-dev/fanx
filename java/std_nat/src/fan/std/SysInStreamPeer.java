@@ -112,11 +112,21 @@ public class SysInStreamPeer {
 	}
 
 	public long skip(SysInStream self, long n) {
-		try {
-			return this.inputStream.skip(n);
-		} catch (IOException e) {
-			throw IOErr.make(e);
-		}
+		try
+	    {
+	      long skipped = 0;
+	      while (skipped < n)
+	      {
+	        long x = this.inputStream.skip(n-skipped);
+	        if (x < 0) break;
+	        skipped += x;
+	      }
+	      return skipped;
+	    }
+	    catch (IOException e)
+	    {
+	      throw IOErr.make(e);
+	    }
 	}
 
 	public long readBytes(SysInStream self, ByteArray ba, long off, long len) {

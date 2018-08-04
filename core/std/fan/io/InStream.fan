@@ -628,6 +628,13 @@ class ProxyInStream : InStream
 
   override Endian endian { set{ in.endian = it } get{ in.endian } }
   override Charset charset { set{ in.charset = it } get { in.charset } }
+
+  override Int readChar() { in.readChar }
+  override This unreadChar(Int b) { in.unreadChar(b) }
+  override Int peekChar() { in.peekChar }
+  override Str readChars(Int n) { in.readChars(n) }
+  override Str? readLine(Int max := -1) { in.readLine(max) }
+  override Str readAllStr(Bool normalizeNewlines := true) { in.readAllStr(normalizeNewlines) }
 }
 
 internal class SysInStream : InStream

@@ -27,7 +27,7 @@ mixin CType
   **
   ** Parent pod which defines this type.
   **
-  protected abstract CPod pod()
+  abstract CPod pod()
 
 
   virtual Str podName() { pod.name }

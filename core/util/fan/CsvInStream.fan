@@ -91,7 +91,7 @@ class CsvInStream : ProxyInStream
     while (pos < line.size) cells.add(parseCell)
 
     // handle if last character was delimiter
-    if (!line.isEmpty && line[-1] == delimiter) cells.add("")
+    if (!line.isEmpty && line[line.size-1] == delimiter) cells.add("")
 
     // save away width and return cells
     this.rowWidth = cells.size

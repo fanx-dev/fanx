@@ -267,6 +267,10 @@ class ProxyOutStream : OutStream
     get { out.charset }
     set { out.charset = it }
   }
+
+  override This writeChar(Int ch) { out.writeChar(ch); return this }
+
+  override This writeChars(Str str, Int off := 0, Int len := str.size-off) { out.writeChars(str, off, len); return this }
 }
 
 internal class SysOutStream : OutStream {

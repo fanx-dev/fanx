@@ -70,7 +70,7 @@ class CsvOutStream : ProxyOutStream
   Bool isQuoteRequired(Str cell)
   {
     if (cell.isEmpty) return true
-    if (cell[0].isSpace || cell[-1].isSpace) return true
+    if (cell[0].isSpace || cell[cell.size-1].isSpace) return true
     return cell.any |ch| { ch == delimiter || ch == '"' || ch == '\n' || ch == '\r' }
   }
 

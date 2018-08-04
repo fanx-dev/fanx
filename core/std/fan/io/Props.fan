@@ -38,7 +38,9 @@ class Props {
   **
   static extension Str:Str readProps(InStream in) { doReadProps(in, false) }
 
-  internal static [Str:Obj] doReadProps(InStream in, Bool listVals := false)  // listVals is Str:Str[]
+  static Str:Obj readPropsListVals(InStream in) { doReadProps(in, true) }
+
+  private static [Str:Obj] doReadProps(InStream in, Bool listVals := false)  // listVals is Str:Str[]
   {
     Charset? origCharset := null;
     if (in.charset != Charset.utf8) {

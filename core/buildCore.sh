@@ -12,5 +12,8 @@ $fanc baseTest/pod.props
 $fanc testSys/pod.props
 $fanc build/pod.props
 
+$fanc compilerJs/pod.props
+$fanc compilerJava/pod.props
+
 #../../../fantom/fan/bin/fanp -c sys::List
 

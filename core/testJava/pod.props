@@ -2,6 +2,6 @@
 podName = testJava
 summary = Test suite for Java FFI compiler plugin
 version = 1.0
-depends = sys 2.0, std 1.0, comiplerJava 1.0, testCompiler 1.0
+depends = sys 2.0, std 1.0, comiplerJava 1.0
 srcDirs = fan/*
 

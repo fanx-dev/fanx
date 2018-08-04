@@ -11,6 +11,7 @@
 **
 ** Also see [docLang]`docLang::DateTime`.
 **
+@Serializable { simple = true }
 const struct class Duration
 {
   ** milli second

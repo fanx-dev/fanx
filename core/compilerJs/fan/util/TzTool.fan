@@ -34,7 +34,7 @@ class TzTool
   {
     // load aliases
     if (!aliasProps.exists) log.warn("$aliasProps does not exist")
-    else this.aliases = aliasProps.readProps
+    else this.aliases = aliasProps.in.readProps
   }
 
   private Void orderByContinent()
@@ -162,7 +162,8 @@ class TzTool
   private Void usage()
   {
     out  := Env.cur.out
-    main := Env.cur.mainMethod?.parent?.name ?: "TzTool"
+    //main := Env.cur.mainMethod?.parent?.name ?: "TzTool"
+    main := "TzTool"
     out.printLine(
       "Usage:
          $main [options]

@@ -68,14 +68,14 @@ class JsonTest : Test
 
     // wrap as [s]
     array := JsonInStream("[$s]".in).readJson as Obj?[]
-    verifyType(array, Obj?[]#)
+    verifyIsType(array, Obj?[]#)
     verifyEq(array.size, 1)
     verifyEq(array[0], expected)
     verifyRoundtrip(array)
 
     // wrap as [s, s]
     array = JsonInStream("[$s,$s]".in).readJson as Obj?[]
-    verifyType(array, Obj?[]#)
+    verifyIsType(array, Obj?[]#)
     verifyEq(array.size, 2)
     verifyEq(array[0], expected)
     verifyEq(array[1], expected)
@@ -83,7 +83,7 @@ class JsonTest : Test
 
     // wrap as {"key":s}
     map := JsonInStream("{\"key\":$s}".in).readJson as Str:Obj?
-    verifyType(map, Str:Obj?#)
+    verifyIsType(map, Str:Obj?#)
     verifyEq(map.size, 1)
     verifyEq(map["key"], expected)
     verifyRoundtrip(map)

@@ -38,7 +38,7 @@ class JavaBridge : CBridge
     cpFiles := ClassPath.findSysClassPathFiles
 
     // add all pods in flattened dependency chain to classpath
-    acc := Str:File[:] { ordered = true }
+    acc := OrderedMap<Str,File>()//[:] { ordered = true }
     ns.depends?.each |d| { flattenDepends(acc, d) }
     cpFiles.addAll(acc.vals)
 

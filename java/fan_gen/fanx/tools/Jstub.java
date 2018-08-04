@@ -159,7 +159,7 @@ public class Jstub
     for (int i=0; i<pods.size(); ++i)
       stub((String)pods.get(i));
     
-    System.out.println("DONE");
+//    System.out.println("DONE");
     return 0;
   }
 

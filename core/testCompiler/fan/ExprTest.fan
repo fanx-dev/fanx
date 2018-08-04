@@ -52,12 +52,12 @@ class ExprTest : CompilerTest
     verifyExpr("\"x\\ny\"", "x\ny")
 
     // duration
-    verifyExpr("0ns",     0ns)
-    verifyExpr("1ms",     1000_000ns)
-    verifyExpr("1.2sec",  1_200_000_000ns)
-    verifyExpr("1.5min",  90_000_000_000ns)
-    verifyExpr("1hr",     3_600_000_000_000ns)
-    verifyExpr("0.5day",  43_200_000_000_000ns)
+    //verifyExpr("0ns",     0ns)
+    verifyExpr("1ms",     1ms)
+    verifyExpr("1.2sec",  1200ms)
+    verifyExpr("1.5min",  90_000ms)
+    verifyExpr("1hr",     3_600_000ms)
+    verifyExpr("0.5day",  43_200_000ms)
 
     // uri
     verifyExpr("`x`",  `x`)
@@ -126,13 +126,13 @@ class ExprTest : CompilerTest
     verifyExpr("+a", 2, 2)
     verifyExpr("+a", -2f, -2f)
 
-    verifyExpr("a === b", true, 3ns, 3ns)
-    verifyExpr("a !== b", false, 3ns, 3ns)
+    verifyExpr("a === b", true, 3ms, 3ms)
+    verifyExpr("a !== b", false, 3ms, 3ms)
 
-    verifyExpr("a == null",  false, 3ns, null, "", true)
-    verifyExpr("a === null", false, 3ns, null, "", true)
-    verifyExpr("a != null",  true,  3ns, null, "", true)
-    verifyExpr("a !== null", true,  3ns, null, "", true)
+    verifyExpr("a == null",  false, 3ms, null, "", true)
+    verifyExpr("a === null", false, 3ms, null, "", true)
+    verifyExpr("a != null",  true,  3ms, null, "", true)
+    verifyExpr("a !== null", true,  3ms, null, "", true)
     verifyExpr("null == a",  true,  null, null, "Str? a := null;")
     verifyExpr("null === a", true,  null, null, "Str? a := null;")
     verifyExpr("null != a",  false, null, null, "Str? a := null;")

@@ -156,6 +156,7 @@ class ActorTest : Test
   Void testTimeoutCancel()
   {
     a := Actor(pool, #sleep.func)
+    echo(1sec)
     f := a.send(1sec)
 
     // get with timeout

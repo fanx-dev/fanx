@@ -230,9 +230,11 @@ public class PodClassLoader
       // code path thru Type.emit() for fcode to bytecode generation
       if (fanTypeName != null)
       {
-        Type type = Sys.findType(fanTypeName);
+        Type type = Sys.findType(pod.podName + "::" + fanTypeName, false);
         if (type != null) type.precompiled(cls);
-//        else if (fanTypeName.equals("$Pod")) pod.precompiled(cls);
+        else if (fanTypeName.equals("$Pod")) {
+        	FPodEmit.initFields(pod, cls);
+        }
       }
 
       return cls;

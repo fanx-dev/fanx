@@ -5,7 +5,7 @@
 // History:
 //   26 Jul 09  Andy Frank  Creation
 //
-
+/*
 using compiler
 using compiler::Compiler as FanCompiler
 using [java] java.lang
@@ -102,3 +102,4 @@ class ScriptRunner
       ")
   }
 }
+*/
