@@ -1,0 +1,8 @@
+
+podName = compilerJava
+summary = Compiler FFI Plugin for Java
+version = 1.0
+depends = sys 2.0, std 1.0, compiler 1.1
+srcDirs = fan/*
+
+index.compiler.bridge.java = compilerJava::JavaBridge

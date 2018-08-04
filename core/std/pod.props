@@ -3,5 +3,5 @@ podName = std
 summary = system std lib
 version = 1.0
 depends = sys 2.0
-srcDirs = fan/collection/,fan/io/,fan/time/,fan/util/,fan/reflect/,fan/serial/
+srcDirs = fan/*
 

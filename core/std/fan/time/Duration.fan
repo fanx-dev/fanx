@@ -26,7 +26,8 @@ const struct class Duration
   ** it is the number of nanosecond ticks which have elapsed since system
   ** startup.
   **
-  //static Duration now()
+  @Deprecated
+  static Duration now() { fromNanos(TimePoint.nanoTicks) }
 
   @Deprecated
   static Int nowTicks() { TimePoint.nanoTicks }

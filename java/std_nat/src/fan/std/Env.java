@@ -519,4 +519,17 @@ public class Env extends FanObj {
 			return pod + "::" + key;
 		return def;
 	}
+	
+	public Type compileScript(File f) {
+	    return compileScript(f, null);
+	}
+	
+	public Type compileScript(File f, Map options) {
+	    //TODO: cache
+	    Type main = Pod.find("compiler").type("Main");
+	    Method cs = TypeExt.method(main, "compileScript");
+	    Pod pod = (Pod)cs.call(f, options);
+	    Type type = (Type)pod.types().first();
+	    return type;
+	}
 }

@@ -187,7 +187,7 @@ public class Interop
    */
   public static java.io.File toJava(File file)
   {
-    return ((LocalFilePeer)((LocalFile)file).peer).toJava(file);
+    return LocalFilePeer.toJava(file);
   }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -612,7 +612,7 @@ abstract class InStream
 ** SysInStream
 **************************************************************************
 @NoDoc
-class ProxInStream : InStream
+class ProxyInStream : InStream
 {
   protected InStream in
   new make(InStream in) {

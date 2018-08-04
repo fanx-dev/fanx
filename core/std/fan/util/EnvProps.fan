@@ -76,8 +76,8 @@ internal class FileProps {
   internal static Void load(Str:Str props, File f) {
     try {
       Str:Str t := Props.readProps(f.in)
-      echo(t)
-      echo(f.readAllStr)
+      //echo(t)
+      //echo(f.readAllStr)
       t.each |v,k| {
         if (props.containsKey(k)) return
         props.set(k, v)

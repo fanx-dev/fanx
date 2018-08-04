@@ -111,6 +111,15 @@ public class Sys {
 
 	public static FType findFType(String podName, String typeName, boolean checked) {
 		FPod pod = findPod(podName, checked);
+		if (pod == null) {
+			if (checked) {
+				Type etype = findType("sys::UnknownPodErr");
+				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(etype.getJavaActualClass(), "make",
+						podName);
+				throw re;
+			}
+			return null;
+		}
 		FType type = pod.type(typeName, false);
 		if (type == null) {
 			if (typeName.indexOf('^') != -1) {

@@ -1,0 +1,58 @@
+**************************************************************************
+** title:      Util
+** author:     Kevin McIntire
+** created:    09 Dec 08
+** copyright:  Copyright (c) 2008, Brian Frank and Andy Frank
+** license:    Licensed under the Academic Free License version 3.0
+**************************************************************************
+
+JSON [#json]
+************
+The json APIs provide basic serialization between Fantom and Javascript
+Object Notation (JSON).  Refer to [json.org]`http://www.json.org`
+for more information about JSON.
+
+Type Mapping [#jsonMapping]
+===========================
+JSON types are mapped to Fantom types as follows:
+
+  JSON     Fantom
+  ------   --------
+  object   Str:Obj?
+  array    Obj?[]
+  string   Str
+  number   Int or Float
+  true     Bool
+  false    Bool
+  null     null
+
+In addition when writing Fantom objects the following is supported:
+
+ - [Simples]`docLang::Serialization#simple` are written as a JSON string
+ - [Serializables]`docLang::Serialization#serializable` are written as JSON objects
+   with each non-static, non-transient field being written as a key/val pair
+
+Writing simples or serializables do not "roundtrip". For example if you
+write a 'Date' it is written and will be read back as a normal string.
+
+Writing Json [#jsonWrite]
+=========================
+Writing is accomplised via [JsonOutStream]`util::JsonOutStream`.
+To write to standard out:
+
+  map := ["key":"value", "intKey":123]
+  JsonOutStream(Env.cur.out).writeJson(map)
+
+You can also use the [writeToStr]`util::JsonOutStream.writeJsonToStr` as
+a convenience to write to an in-memory string.
+
+Reading Json [#jsonRread]
+=========================
+Reading JSON is accomplised via [JsonInStream]`util::JsonInStream` which
+takes raw JSON from a stream and produces of the core JSON types.
+For example:
+
+  str := """{"k1":"v1", "k2":3.4159, "k3":[1,2,3], "k4": {"m1":true, "m2":null}}"""
+  Str:Obj? data := JsonInStream(str.in).readJson
+  data["k1"]  =>  v1
+

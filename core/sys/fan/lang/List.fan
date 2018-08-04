@@ -99,6 +99,9 @@ rtconst abstract class List<V>
   **
   abstract Int size
 
+  @NoDoc
+  Int sz() { size }
+
   **
   ** The number of items this list can hold without allocating more memory.
   ** Capacity is always greater or equal to size.  If adding a large

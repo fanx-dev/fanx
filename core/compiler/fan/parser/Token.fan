@@ -132,7 +132,7 @@ enum class Token
   rtconstKeyword,
   inlineKeyword,
   variKeyword,
-  defineKeyword,
+  defiKeyword,
   referKeyword,
   asyncKeyword,
   yieldKeyword,

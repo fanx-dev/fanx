@@ -68,7 +68,8 @@ const struct class DateTime
   **
   ** Return the current time as millisecond ticks since 1 Jan 1970 UTC.
   **
-  //private static Int nowTicks() { TimeUtil.currentTimeMillis }
+  @NoDoc
+  static Int nowTicks() { TimePoint.nowMillis }
 
   @NoDoc
   static Int nowUnique() { TimePoint.nowUnique }

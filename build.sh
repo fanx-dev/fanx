@@ -1,3 +1,3 @@
 
 cd core && build.sh
-cd java && jstub.sh
+cd java && build.sh

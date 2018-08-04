@@ -45,7 +45,7 @@ abstract class OutStream
   ** The buf's position is advanced n bytes upon return.  Throw
   ** IOErr on error.  Return this.
   **
-  This writeBuf(Buf buf, Int n := buf.remaining) {
+  virtual This writeBuf(Buf buf, Int n := buf.remaining) {
     buf.pipeTo(this, n)
     return this
   }

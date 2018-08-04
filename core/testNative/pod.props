@@ -1,0 +1,9 @@
+
+podName = testNative
+summary = Sys natives test suite
+version = 1.0
+depends = sys 2.0
+srcDirs = fan/*
+resDirs = res/*
+
+index.testSys.mult = testNative

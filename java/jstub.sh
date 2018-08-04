@@ -7,7 +7,7 @@ $jstub sys
 $jstub std
 $jstub baseTest
 $jstub testSys
-$jstub compiler
+$jstub concurrent
 
 #javap -c -s -v -constants -l -p -sysinfo -cp libs/basetTest.jar fan.baseTest.Main
 

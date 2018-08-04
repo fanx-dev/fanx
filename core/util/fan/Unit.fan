@@ -57,7 +57,7 @@
 ** derived from the OASIS oBIX specification.
 **
 @Serializable { simple = true }
-const class Unit
+native const class Unit
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -177,6 +177,11 @@ const class Unit
 //////////////////////////////////////////////////////////////////////////
 // Dimension
 //////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Return the string format of the dimension portion of `definition`
+  **
+  Str dim()
 
   **
   ** Kilogram (mass) component of the unit dimension.

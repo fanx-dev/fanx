@@ -229,7 +229,7 @@ class UnitTest : Test
   Void testSerialization()
   {
     mph := Unit("miles_per_hour")
-    s := Buf().writeObj(mph).flip.readAllStr
+    s := Buf(){ out.writeObj(mph) }.flip.readAllStr
     verifyEq(s, Str<|sys::Unit("mph")|>)
     verifySame(s.in.readObj, mph)
   }
