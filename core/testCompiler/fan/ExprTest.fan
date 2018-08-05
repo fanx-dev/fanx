@@ -76,8 +76,8 @@ class ExprTest : CompilerTest
     verifyExpr("Str[]#add", Str[]#.method("add"))
     //verifyExpr("Str:Int#caseInsensitive", Str:Int#.field("caseInsensitive"))
     //verifyExpr("|Str a->Bool|#call.returns", Bool#)
-    verifyExpr("#echo", Obj#.method("echo"))
-    verifyExpr("#echo.returns", Void#)
+    verifyExpr("Obj#echo", Obj#.method("echo"))
+    verifyExpr("Obj#echo.returns", Void#)
 
     // range
     verifyExpr("2..3",  2..3)
@@ -176,9 +176,9 @@ class ExprTest : CompilerTest
 
     // import static no args
     verifyExpr("Env.cur.args()", Env.cur.args)
-    verifyExpr("sys::Env.cur.args()", Env.cur.args)
+    verifyExpr("std::Env.cur.args()", Env.cur.args)
     verifyExpr("Env.cur.args", Env.cur.args)
-    verifyExpr("sys::Env.cur.args", Env.cur.args)
+    verifyExpr("std::Env.cur.args", Env.cur.args)
 
     // import instance target
     verifyExpr("3.increment()", 4)
@@ -280,7 +280,7 @@ class ExprTest : CompilerTest
         Str a(Int x) { v := x.isOdd ? x + 100 : throw ArgErr(); return v.toHex }
         Str b(Int x) { v := x.isOdd ? throw ArgErr() : x + 100; return v.toHex }
         Str c(Int x) { x.isOdd ? throw ReadonlyErr() : throw IOErr() }
-        Str d(Str x) { v := Int.fromStr(x, 10, false) ?: throw IOErr(); return v.toHex }
+        //Str d(Str x) { v := Int.fromStr(x, 10, false) ?: throw IOErr(); return v.toHex }
       }
       ")
 
@@ -291,8 +291,8 @@ class ExprTest : CompilerTest
      verifyErr(ArgErr#) { o->b(5) }
      verifyErr(ReadonlyErr#) { o->c(3) }
      verifyErr(IOErr#) { o->c(4) }
-     verifyEq(o->d("45"), 45.toHex)
-     verifyErr(IOErr#) { o->d("xyz") }
+     //verifyEq(o->d("45"), 45.toHex)
+     //verifyErr(IOErr#) { o->d("xyz") }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ class ExprTest : CompilerTest
 
     // get
     verifyExpr("a[b]", 'b', "abc", 1)
-    verifyExpr("a[b]", 'c', "abc", -1)
+    verifyExpr("a[b]", 'c', "abc", 2)
 
     // set
     verifyExpr("a[b] = 99", [0, 99, 2], [0, 1, 2], 1)
@@ -500,7 +500,7 @@ class ExprTest : CompilerTest
   Void testConstruction()
   {
     verifyExpr("Version(\"3.4.9\")", Version.make([3,4,9]))
-    verifyExpr("sys::Version(\"\${a}.99\")", Version.make([3,6,99]), "3.6")
+    verifyExpr("std::Version(\"\${a}.99\")", Version.make([3,6,99]), "3.6")
     verifyExpr("Range(3,7,true)", Range.make(3, 7,true))
     verifyExpr("sys::Range(3,7,false)", Range.make(3, 7,false))
 
@@ -781,6 +781,7 @@ class ExprTest : CompilerTest
         Int f
         const static Int sf := 1972
       }"
+     //echo(src)
      compile(src)
      // compiler.fpod.dump
 

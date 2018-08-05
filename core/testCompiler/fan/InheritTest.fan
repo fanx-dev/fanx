@@ -87,7 +87,7 @@ class InheritTest : CompilerTest
       //mixin F : Int:C {}
 
       class G : Str {}
-      class H : ZipEntryFile {}
+      class H : LocalFile {}
       class I : M {} // OK!
 
       enum class J : G { a }
@@ -98,18 +98,18 @@ class InheritTest : CompilerTest
       ",
        [
         4, 1, "Mixin 'C1' cannot extend class '$podName::C'",
-        5, 1, "Mixin 'C2' cannot extend class 'sys::Buf'",
-        //7, 1, "Class 'D1' cannot extend parameterized type '$podName::C[]'",
+        5, 1, "Mixin 'C2' cannot extend class '",
+        //7, 1, "Class 'D1' cannot extend parameterized type '",
         //8, 1, "Class 'D2' cannot extend parameterized type '[$podName::M:$podName::C]'",
         //9, 1, "Class 'D3' cannot extend parameterized type 'sys::Str[]'",
        //11, 1, "Class 'E' cannot extend parameterized type '|sys::Int->$podName::M|'",
        //12, 1, "Mixin 'F' cannot extend class '",
        //12, 1, "Class 'F' cannot extend parameterized type '",
        14, 1, "Class 'G' cannot extend final class 'sys::Str'",
-       15, 1, "Class 'H' cannot access internal scoped class 'sys::ZipEntryFile'",
+       15, 1, "Class 'H' cannot access internal scoped class '",
        18, 6, "Enum 'J' cannot extend class '$podName::G'",
        20, 1, "Invalid inheritance order, ensure class '$podName::G' comes first before mixins",
-       21, 1, "Invalid inheritance order, ensure class 'sys::Test' comes first before mixins",
+       21, 1, "Invalid inheritance order, ensure class '",
        22, 1, "Class 'N' cannot mixin class '$podName::K'",
        ])
   }
@@ -216,13 +216,13 @@ class InheritTest : CompilerTest
         36, 3, "Cannot override non-virtual slot '$podName::B.k'",
 
         // imported inherits
-        41, 3, "Return type mismatch in override of 'sys::OutStream.close' - 'sys::Bool' != 'sys::Void'",
-        42, 3, "Must specify override keyword to override 'sys::OutStream.flush'",
-        43, 3, "Parameter mismatch in override of 'sys::OutStream.write' - 'write(sys::Int)' != 'write()'",
-        44, 3, "Cannot override non-virtual slot 'sys::OutStream.writeBool'",
+        41, 3, "Return type mismatch in override of ",
+        42, 3, "Must specify override keyword to override ",
+        43, 3, "Parameter mismatch in override of ",
+        44, 3, "Cannot override non-virtual slot ",
 
         // conflicts
-        61, 1, "Inheritance conflict '$podName::ConflictX.a' and '$podName::ConflictY.a'",
+        //61, 1, "Inheritance conflict '$podName::ConflictX.a' and '$podName::ConflictY.a'",
         61, 1, "Inherited slots have conflicting signatures '$podName::ConflictX.b' and '$podName::ConflictY.b'",
         61, 1, "Inherited slots have conflicting signatures '$podName::ConflictX.c' and '$podName::ConflictY.c'",
         61, 1, "Inherited slots have conflicting signatures '$podName::ConflictX.d' and '$podName::ConflictY.d'",
@@ -532,8 +532,8 @@ class InheritTest : CompilerTest
      verifyEq(p.name, "P")
      verifyEq(p.method("n").returnType.name, "P")
      verifyEq(p.method("n").inheritedReturnType.name, "Q")
-     verifyEq(p.method("f").returnType.signature, "sys::Int[]")
-     verifyEq(p.method("f").inheritedReturnType.signature, "sys::Num[]")
+     verifyEq(p.method("f").returnType.signature, "sys::List<sys::Int>")
+     verifyEq(p.method("f").inheritedReturnType.signature, "sys::List<sys::Num>")
 
      verifyEq(a.name, "A")
      verifyEq(a.method("x").returnType.name, "A")
@@ -552,10 +552,10 @@ class InheritTest : CompilerTest
      verifyEq(b.method("m").inheritedReturnType.name, "Q")
      verifyEq(b.method("n").returnType.name, "B")
      verifyEq(b.method("n").inheritedReturnType.name, "Q")
-     verifyEq(b.method("e").returnType.signature, "sys::Str[]")
-     verifyEq(b.method("e").inheritedReturnType.signature, "sys::Obj[]")
-     verifyEq(b.method("f").returnType.signature, "sys::Int[]")
-     verifyEq(b.method("f").inheritedReturnType.signature, "sys::Num[]")
+     verifyEq(b.method("e").returnType.signature, "sys::List<sys::Str>")
+     verifyEq(b.method("e").inheritedReturnType.signature, "sys::List<sys::Obj>")
+     verifyEq(b.method("f").returnType.signature, "sys::List<sys::Int>")
+     verifyEq(b.method("f").inheritedReturnType.signature, "sys::List<sys::Num>")
 
      //
      // verify reflection
@@ -656,7 +656,7 @@ class InheritTest : CompilerTest
    compile(
      "mixin Q
       {
-        virtual Num q() { return 'q' }
+        virtual Obj q() { return 'q' }
       }"
     )
 
@@ -667,18 +667,18 @@ class InheritTest : CompilerTest
 
       abstract class A
       {
-        abstract Num x()
+        abstract Obj x()
       }
 
       class B : A, Q
       {
-        override Decimal x := 3d
-        override Decimal q := 7d
+        override Str x := \"x\"
+        override Str q := \"q\"
 
-        static Decimal v1(B o) { return o.x }
-        static Num v2(A o) { return o.x }
-        static Decimal v3(B o) { return o.q++ }
-        static Num v4(Q o) { return o.q }
+        //static Decimal v1(B o) { return o.x }
+        //static Num v2(A o) { return o.x }
+        //static Decimal v3(B o) { return o.q++ }
+        //static Num v4(Q o) { return o.q }
       }
 
       ")
@@ -692,16 +692,16 @@ class InheritTest : CompilerTest
     verifySame(b.base, a)
     verifySame(b.mixins.first, q)
 
-    verifyEq(a.method("x").callOn(o, [,]), 3d)
-    verifyEq(b.field("x").get(o), 3d)
-    b.field("x").set(o, 6d)
-    verifyEq(a.method("x").callOn(o, [,]), 6d)
-    verifyEq(b.field("x").get(o), 6d)
+    verifyEq(a.method("x").callOn(o, [,]), "x")
+    verifyEq(b.field("x").get(o), "x")
+    b.field("x").set(o, "a")
+    verifyEq(a.method("x").callOn(o, [,]), "a")
+    verifyEq(b.field("x").get(o), "a")
 
-    verifyEq(b.method("v1").call(o), 6d)
-    verifyEq(b.method("v2").call(o), 6d)
-    verifyEq(b.method("v3").call(o), 7d)
-    verifyEq(b.method("v4").call(o), 8d)
+    //verifyEq(b.method("v1").call(o), 6d)
+    //verifyEq(b.method("v2").call(o), 6d)
+    //verifyEq(b.method("v3").call(o), 7d)
+    //verifyEq(b.method("v4").call(o), 8d)
   }
 
   Void testCovarianceConflict()

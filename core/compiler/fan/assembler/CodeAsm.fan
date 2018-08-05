@@ -1341,7 +1341,8 @@ class CodeAsm : CompilerSupport
       }
       else if (m.isCovariant)
       {
-        coerceOp(m.inheritedReturnType, m.returnType)
+        //Fix: sys::List^V => sys::ArrayList^V
+        coerceOp(m.inheritedReturnType.raw, m.returnType.raw)
       }
     }
 

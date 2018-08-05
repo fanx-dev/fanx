@@ -167,7 +167,7 @@ public class Fan
       
       Object res = null;
       if ((m.getModifiers() & Modifier.STATIC) != 0) {
-    	  if (argObj == null) {
+    	  if (argObj == null || m.getParameterCount() == 0) {
     		  res = m.invoke(null);
     	  }
     	  else {
@@ -177,7 +177,7 @@ public class Fan
     	  java.lang.reflect.Method ctor = findMethod(jclass, "make", null);
     	  Object instance = ctor.invoke(null);
     	  //Object instance = jclass.newInstance();
-    	  if (argObj == null) {
+    	  if (argObj == null || m.getParameterCount() == 0) {
     		  res = m.invoke(instance);
     	  }
     	  else {
