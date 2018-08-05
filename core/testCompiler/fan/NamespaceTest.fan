@@ -17,7 +17,7 @@ class NamespaceTest : CompilerTest
 //////////////////////////////////////////////////////////////////////////
 // Sys
 //////////////////////////////////////////////////////////////////////////
-
+/*
   Void testReflect()
   {
     ns := ReflectNamespace()
@@ -298,7 +298,7 @@ class NamespaceTest : CompilerTest
     verifyEq(f.get("simple"), true)
     verifyEq(f.get("bad"), null)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Raw Generics
 //////////////////////////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ class NamespaceTest : CompilerTest
       compile("class Foo {}")
       {
         it.isScript = false
-        it.depends = [Depend("sys 0+"), Depend("jarJarBinks 1.0"), Depend("testCompiler 99.0")]
+        it.depends = [Depend("sys 2"), Depend("jarJarBinks 1.0"), Depend("testCompiler 99.0")]
       }
     }
     catch (CompilerErr e)
@@ -350,7 +350,7 @@ class NamespaceTest : CompilerTest
       compile("class Foo {}")
       {
         it.isScript = false
-        it.depends  = [Depend("compiler 0+")]
+        it.depends  = [Depend("compiler 1")]
       }
     }
     catch (CompilerErr e)
@@ -373,7 +373,7 @@ class NamespaceTest : CompilerTest
       ",
        [
          1,  1, "Using 'compiler' which is not a declared dependency for '$podName'",
-         2,  1, "Using '$podName' is on pod being compiled",
+         //2,  1, "Using '$podName' is on pod being compiled",
        ]) { it.log.level = LogLevel.silent; it.isScript = false }
   }
 

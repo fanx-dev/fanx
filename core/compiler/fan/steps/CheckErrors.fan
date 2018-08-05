@@ -413,8 +413,8 @@ class CheckErrors : CompilerStep
     if (flags.and(FConst.Native) != 0)
     {
       //TODO
-      //if (curType.isMixin)
-      //  err("Mixins cannot have native methods", m.loc)
+      if (curType.isMixin)
+        err("Mixins cannot have native methods", m.loc)
     }
 
     // normalize method flags after checking

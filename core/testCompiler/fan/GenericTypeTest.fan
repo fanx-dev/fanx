@@ -19,7 +19,7 @@ class GenericTypeTest : CompilerTest
     compile("class Foo<T> { T? t }")
 
     t := pod.types.first
-    verifyEq(t.isGeneric, true)
+    verifyEq(t.name, "Foo")
   }
 
   Void testRef()
@@ -31,6 +31,7 @@ class GenericTypeTest : CompilerTest
              ")
 
     t := pod.types.first
-    verifyEq(t.isGeneric, true)
+    //verifyEq(t.isGeneric, true)
+    verifyEq(t.name, "Foo")
   }
 }

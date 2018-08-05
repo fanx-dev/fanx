@@ -2,6 +2,8 @@
 package bar.baz;
 
 import fan.sys.*;
+import fanx.main.*;
+import fan.std.*;
 
 public class Foo
 {

@@ -56,16 +56,16 @@ class ReflectTest : JavaTest
     verifyEq(list.pod,   Pod.find("sys"))
     verifyEq(list.name,  "List")
     verifyEq(list.qname, "sys::List")
-    verifyEq(list.signature, "[java]java.util::Date[]")
-    verifyEq(list.params["V"].qname, "[java]java.util::Date")
+    //verifyEq(list.signature, "[java]java.util::Date[]")
+    //verifyEq(list.params["V"].qname, "[java]java.util::Date")
 
-    Type map := obj->map
-    verifyEq(map.pod,   Pod.find("sys"))
-    verifyEq(map.name,  "Map")
-    verifyEq(map.qname, "sys::Map")
-    verifyEq(map.signature, "[[java]java.util::Date:[java]java.util::ArrayList]")
-    verifyEq(map.params["K"].qname, "[java]java.util::Date")
-    verifyEq(map.params["V"].qname, "[java]java.util::ArrayList")
+    //Type map := obj->map
+    //verifyEq(map.pod,   Pod.find("sys"))
+    //verifyEq(map.name,  "Map")
+    //verifyEq(map.qname, "sys::Map")
+    //verifyEq(map.signature, "[[java]java.util::Date:[java]java.util::ArrayList]")
+    //verifyEq(map.params["K"].qname, "[java]java.util::Date")
+    //verifyEq(map.params["V"].qname, "[java]java.util::ArrayList")
   }
 
 //////////////////////////////////////////////////////////////////////////

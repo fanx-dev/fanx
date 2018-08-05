@@ -69,8 +69,9 @@ class ConstantFolder : CompilerSupport
     {
       result = method.callOn(target, args)
     }
-    catch
+    catch(Err e)
     {
+      //e.trace
       return call
     }
 

@@ -175,11 +175,11 @@ class FieldTest : CompilerTest
     //verifyEq(m.method("mgets").call, 5)
 
     obj := f.make
-    verifyEq(f.field("s").get, 5)
-    verifyEq(f.field("s").parent, m)
+    //verifyEq(f.field("s").get, 5)
+    //verifyEq(f.field("s").parent, m)
     verifyEq(obj->geta, 5)
     verifyEq(obj->gets, 0)
-    verifyEq(f.field("x").get, null)
+    //verifyEq(f.field("x").get, null)
   }
 
 //////////////////////////////////////////////////////////////////////////

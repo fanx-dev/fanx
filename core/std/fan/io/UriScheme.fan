@@ -14,7 +14,7 @@
 ** of the subclass.  See [docLang]`docLang::Naming` for the details
 ** of scheme handling works.
 **
-const mixin UriScheme
+abstract const class UriScheme
 {
 
   **
@@ -29,7 +29,7 @@ const mixin UriScheme
   **
   ** Default implementation returns type qname.
   **
-  //override Str toStr() { typeof.qname }
+  override Str toStr() { typeof.qname }
 
   **
   ** Resolve the uri to a Fantom object.  If uri cannot

@@ -43,6 +43,14 @@ native const class Method : Slot
   **
   Func func()
 
+  **
+  ** Evaluate the parameter default using reflection.  If this method is
+  ** static or a constructor, then instance should be null.  Raise an exception
+  ** if the parameter default cannot be evaluated independently (such as using
+  ** an expression with previous parameters).
+  **
+  Obj? paramDef(Param param, Obj? instance := null)
+
 //////////////////////////////////////////////////////////////////////////
 // Call Conveniences
 //////////////////////////////////////////////////////////////////////////

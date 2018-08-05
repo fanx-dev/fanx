@@ -343,7 +343,7 @@ public abstract class FTypeEmit
       // throw InvalidRegException; since the param can't be reflected
       // on its own just generate code to raise an exception
       if (this.MethodParamDefErr == 0)
-        this.MethodParamDefErr = method("fan/sys/Method.makeParamDefErr()Lfan/sys/Err;");
+        this.MethodParamDefErr = method("fan/std/Method.makeParamDefErr()Lfan/sys/Err;");
       code.reset();
       code.op2(INVOKESTATIC, this.MethodParamDefErr);
       code.op(ATHROW);

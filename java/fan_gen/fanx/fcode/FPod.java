@@ -282,4 +282,5 @@ public final class FPod
   private Map<String, FType> typeMap;
   
   public Object reflectPod = null;
+  public Object compilerCache = null;
 }

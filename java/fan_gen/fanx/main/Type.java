@@ -112,5 +112,9 @@ public abstract class Type {
 		}
 		return refToType(ftype.pod, ftype.base);
 	}
+	
+	public static Type find(String signature) {
+		return Sys.findType(signature);
+	}
 
 }

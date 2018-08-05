@@ -1412,7 +1412,7 @@ class ParserTest : CompilerTest
     input.srcStr    = src
 
     compiler = Compiler(input)
-    compiler.ns = ReflectNamespace()
+    //compiler.ns = ReflectNamespace()
 
     // use custom pipeline only to parse phase
     loc := Loc("Test")

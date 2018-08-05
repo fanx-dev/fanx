@@ -199,7 +199,7 @@ class CheckErrorsTest : CompilerTest
       class C03 : Public { override Void mPublic() {} }    // ok
       class C04 : Public { override Void mProtected() {} } // ok
 
-      class C05 : Public { override Void mInternal() {} }
+      //class C05 : Public { override Void mInternal() {} }
       class C06 : Public { override Void mPrivate() {} }
       ",
     [
@@ -207,7 +207,7 @@ class CheckErrorsTest : CompilerTest
       4, 22, "Must specify override keyword to override 'sys::Obj.toStr'",
 
       // TODO: internal/privates never make it this far to tell you its a scope problem...
-      8, 22, "Override of unknown virtual slot 'mInternal'",
+      //8, 22, "Override of unknown virtual slot 'mInternal'",
       9, 22, "Override of unknown virtual slot 'mPrivate'",
     ])
 
@@ -271,11 +271,12 @@ class CheckErrorsTest : CompilerTest
      30, 57, "Private setter of field '${p}.fPublicReadonly' not accessible",
      31, 43, "Internal setter of field '${p}.fProtectedInternal' not accessible",
      31, 69, "Internal setter of field '${p}.fProtectedInternal' not accessible",
-     32, 29, "Internal type 'sys::MemBuf' not accessible",
-     33, 29, "Internal type 'sys::MemBuf' not accessible",
-     34, 29, "Internal type 'sys::MemBuf' not accessible",
-     35, 36, "Internal type 'sys::MemBuf' not accessible",
-    ])
+     //32, 29, "Internal type 'sys::MemBuf' not accessible",
+     //33, 29, "Internal type 'sys::MemBuf' not accessible",
+     //34, 29, "Internal type 'sys::MemBuf' not accessible",
+     //35, 36, "Internal type 'sys::MemBuf' not accessible",
+    ]
+    )
   }
 
   Void testClosureProtectionScopes()
@@ -412,11 +413,11 @@ class CheckErrorsTest : CompilerTest
       internal mixin Goo {}",
        [
          3, 3, "Public method 'Bar.a' cannot use internal type '$podName::Foo?'",
-         4, 3, "Public method 'Bar.b' cannot use internal type '[sys::Str:$podName::Foo]'",
+         4, 3, "Public method 'Bar.b' cannot use internal type '",
          5, 3, "Public field 'Bar.f' cannot use internal type '$podName::Foo?'",
-         6, 3, "Public field 'Bar.g' cannot use internal type '$podName::Foo[]?'",
-         7, 3, "Public field 'Bar.h' cannot use internal type '|$podName::Foo->sys::Void|?'",
-         8, 3, "Public field 'Bar.i' cannot use internal type '|sys::Str->$podName::Foo|?'",
+         6, 3, "Public field 'Bar.g' cannot use internal type '",
+         7, 3, "Public field 'Bar.h' cannot use internal type '",
+         8, 3, "Public field 'Bar.i' cannot use internal type '",
          1, 1, "Public type 'Bar' cannot extend from internal class 'Foo'",
          1, 1, "Public type 'Bar' cannot implement internal mixin 'Goo'",
        ])
@@ -958,7 +959,7 @@ class CheckErrorsTest : CompilerTest
         12, 52, "Already caught 'sys::IOErr'",
         13, 52, "Already caught 'sys::Err'",
         14, 44, "Already caught 'sys::Err'",
-        15, 51, "Incomparable types 'sys::Int' and 'sys::Weekday'",
+        15, 51, "Incomparable types 'sys::Int' and '",
         16, 49, "Duplicate case label",
         17, 85, "Duplicate case label",
 
@@ -975,7 +976,7 @@ class CheckErrorsTest : CompilerTest
 
         28, 23, "Try block cannot be empty",
 
-        /// ok 30, 16, "Cannot return a value from Void method",
+        30, 16, "Cannot return a value from Void method",
         31, 15, "Must return a value from non-Void method",
         32, 28, "Must return a value from non-Void method",
         32, 41, "Must return a value from non-Void method",
@@ -999,7 +1000,7 @@ class CheckErrorsTest : CompilerTest
         static Obj m01() { return 2..[,] }
         static Obj m02() { return !4 }
         static Obj m03() { return 4 && true }
-        static Obj m04() { return 0ns || [,] }
+        static Obj m04() { return 0ms || [,] }
         static Void m05(Str x) { x = true }
         Obj m06() { this.make }
         Obj m07() { this.m00 }
@@ -1036,11 +1037,11 @@ class CheckErrorsTest : CompilerTest
       {
       }",
        [4, 29, "Range must be Int..Int, not 'sys::Float..sys::Int'",
-        5, 29, "Range must be Int..Int, not 'sys::Int..sys::Obj?[]'",
+        5, 29, "Range must be Int..Int, not '",
         6, 29, "Cannot apply '!' operator to 'sys::Int'",
         7, 29, "Cannot apply '&&' operator to 'sys::Int'",
-        8, 29, "Cannot apply '||' operator to 'sys::Duration'",
-        8, 36, "Cannot apply '||' operator to 'sys::Obj?[]'",
+        8, 29, "Cannot apply '||' operator to 'std::Duration'",
+        8, 36, "Cannot apply '||' operator to '",
         9, 32, "'sys::Bool' is not assignable to 'sys::Str'",
        10, 20, "Cannot call constructor 'make' on instance",
        11, 20, "Cannot call static method 'm00' on instance",
@@ -1052,12 +1053,14 @@ class CheckErrorsTest : CompilerTest
        15, 28, "Cannot access 'this' in static context",
        15, 38, "Cannot access 'super' in static context",
        16, 34, "Ternary condition must be Bool, not 'sys::Int'",
-       17, 47, "Incomparable types 'sys::Str' and 'sys::Duration'",
-       18, 47, "Incomparable types 'sys::Str' and 'sys::Duration'",
+       17, 47, "Incomparable types 'sys::Str' and 'std::Duration'",
+       17, 47, "Cannot use '===' operator with value types",
+       18, 47, "Incomparable types 'sys::Str' and 'std::Duration'",
+       18, 47, "Cannot use '!==' operator with value types",
        19, 35, "Incomparable types 'sys::Str' and 'sys::Void'",
        20, 35, "Incomparable types 'sys::Str' and 'sys::Int'",
        21, 35, "Incomparable types 'sys::Int' and 'sys::Float'",
-       22, 35, "Incomparable types 'sys::Int' and 'sys::Weekday'",
+       22, 35, "Incomparable types 'sys::Int' and '",
        23, 35, "Incomparable types 'sys::Int' and 'sys::Str'",
        24, 35, "Incomparable types 'sys::Int' and 'sys::Void'",
        25, 34, "Incomparable types 'sys::Int' and 'sys::Float'",
@@ -1068,7 +1071,7 @@ class CheckErrorsTest : CompilerTest
        30, 33, "Calling constructor on abstract class",
        31, 29, "Invalid args plus(sys::Obj?), not (sys::Void)",
        32, 35, "Cannot use 'as' operator with nullable type '$podName::Foo?'",
-       33, 35, "Cannot use 'as' operator with nullable type 'sys::Str[]?'",
+       33, 35, "Cannot use 'as' operator with nullable type '",
     ])
   }
 
@@ -1116,25 +1119,25 @@ class CheckErrorsTest : CompilerTest
       {
         static Obj m00() { return 3.increment(true) }
         static Obj m01() { return 3.plus }
-        static Obj m02() { return 3.plus(3ns) }
+        static Obj m02() { return 3.plus(3ms) }
         static Obj m03() { return 3.plus(4, 5) }
         static Obj m04() { return sys::Str.spaces }
         static Obj m05() { return sys::Str.spaces(true) }
         static Obj m06() { return sys::Str.spaces(1, 2) }
         static Obj m07() { return \"abcb\".index(\"b\", true) }
-        static Void m08() { m := |Int a| {}; m(3ns) }
+        static Void m08() { m := |Int a| {}; m(3ms) }
         static Void m09() { m := |Str a| {}; m() }
       }",
        [3, 31, "Invalid args increment(), not (sys::Bool)",
         4, 31, "Invalid args plus(sys::Int), not ()",
-        5, 31, "Invalid args plus(sys::Int), not (sys::Duration)",
+        5, 31, "Invalid args plus(sys::Int), not (std::Duration)",
         6, 31, "Invalid args plus(sys::Int), not (sys::Int, sys::Int)",
         7, 38, "Invalid args spaces(sys::Int), not ()",
         8, 38, "Invalid args spaces(sys::Int), not (sys::Bool)",
         9, 38, "Invalid args spaces(sys::Int), not (sys::Int, sys::Int)",
        10, 36, "Invalid args index(sys::Str, sys::Int), not (sys::Str, sys::Bool)",
-       11, 40, "Invalid args |sys::Int|, not (sys::Duration)",
-       12, 40, "Invalid args |sys::Str|, not ()",
+       11, 40, "Invalid args ",
+       12, 40, "Invalid args ",
        ])
   }
 
@@ -1262,7 +1265,7 @@ class CheckErrorsTest : CompilerTest
           (Int)o;             // 10
           o is Int;           // 11
           o as Int;           // 12
-          i == 4 ? 0ns : 1ns; // 13
+          i == 4 ? 0ms : 1ms; // 13
           |->| {}             // 14
           i == 2;             // 15
           s === o;            // 16
@@ -1416,15 +1419,15 @@ class CheckErrorsTest : CompilerTest
       {
         Obj m00() { return [3] }    // ok
         Obj m01() { return [null] } // ok
-        Obj m02() { return Num[\"x\", 4ns, 6] }
+        Obj m02() { return Num[\"x\", 4ms, 6] }
         Obj m03() { return Num[null] }
         Obj m04() { return Int[][ [3], [3d] ] }
       }",
        [
          5, 26, "Invalid value type 'sys::Str' for list of 'sys::Num'",
-         5, 31, "Invalid value type 'sys::Duration' for list of 'sys::Num'",
+         5, 31, "Invalid value type 'std::Duration' for list of 'sys::Num'",
          6, 26, "Invalid value type 'null' for list of 'sys::Num'",
-         7, 34, "Invalid value type 'sys::Decimal[]' for list of 'sys::Int[]'",
+         7, 34, "Invalid value type '",
        ])
   }
 
@@ -1434,16 +1437,16 @@ class CheckErrorsTest : CompilerTest
     verifyErrors(
      "class Foo
       {
-        Obj m00() { return Int:Num[3:2ns, 2ns:5, 2ns:2ns] }
+        Obj m00() { return Int:Num[3:2ms, 2ms:5, 2ms:2ms] }
         Obj m01() { return Int:Int[null:2, 3:null] }
       }",
        [
-         3, 32, "Invalid value type 'sys::Duration' for map type '[sys::Int:sys::Num]'",
-         3, 37, "Invalid key type 'sys::Duration' for map type '[sys::Int:sys::Num]'",
-         3, 44, "Invalid key type 'sys::Duration' for map type '[sys::Int:sys::Num]'",
-         3, 48, "Invalid value type 'sys::Duration' for map type '[sys::Int:sys::Num]'",
-         4, 30, "Invalid key type 'null' for map type '[sys::Int:sys::Int]'",
-         4, 40, "Invalid value type 'null' for map type '[sys::Int:sys::Int]'",
+         3, 32, "Invalid value type 'std::Duration' for map type '",
+         3, 37, "Invalid key type 'std::Duration' for map type '",
+         3, 44, "Invalid key type 'std::Duration' for map type '",
+         3, 48, "Invalid value type 'std::Duration' for map type '",
+         4, 30, "Invalid key type 'null' for map type '",
+         4, 40, "Invalid value type 'null' for map type '",
        ])
   }
 
@@ -1457,8 +1460,8 @@ class CheckErrorsTest : CompilerTest
     verifyErrors(
      "class Foo
       {
-        Int m00() { return (Int)(Obj)5ns } // ok - runtime failure
-        Float? m01() { return (Float?)(Obj)5ns } // ok - runtime failure
+        Int m00() { return (Int)(Obj)5ms } // ok - runtime failure
+        Float? m01() { return (Float?)(Obj)5ms } // ok - runtime failure
         Bool m02() { return m00 === 0  }
         Bool m03() { return 2f !== m01  }
       }",
@@ -1529,13 +1532,13 @@ class CheckErrorsTest : CompilerTest
          static Void b20() { b | |Num[] x| y, Obj o| {}  } // wrong arity
       }",
        [
-         5, 30, "Invalid args a(|sys::Num,sys::Num->sys::Num|), not (|sys::Num,sys::Num->sys::Str|)",
-         7, 30, "Invalid args a(|sys::Num,sys::Num->sys::Num|), not (|sys::Num,sys::Num,sys::Num->sys::Num|)",
-         9, 30, "Invalid args a(|sys::Num,sys::Num->sys::Num|), not (|sys::Str,sys::Num,sys::Num->sys::Num|)",
-        10, 30, "Invalid args a(|sys::Num,sys::Num->sys::Num|), not (|sys::Num,sys::Str?,sys::Num->sys::Num|)",
-        11, 30, "Invalid args a(|sys::Num,sys::Num->sys::Num|), not (|sys::Str,sys::Str,sys::Str->sys::Num|)",
-        19, 24, "Invalid args b(||sys::Num[]->sys::Void|->sys::Void|?), not (||sys::Str[]->sys::Void|->sys::Void|)",
-        20, 24, "Invalid args b(||sys::Num[]->sys::Void|->sys::Void|?), not (||sys::Num[]->sys::Void|,sys::Obj->sys::Void|)",
+         5, 30, "Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Str,sys::Num,sys::Num>)",
+         7, 30, "Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Num,sys::Num,sys::Num>)",
+         9, 30, "Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Str,sys::Num,sys::Num>)",
+        10, 30, "Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Num,sys::Str?,sys::Num>)",
+        11, 30, "Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Str,sys::Str,sys::Str>)",
+        19, 24, "Invalid args b(sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>>?), not (sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Str>>>)",
+        20, 24, "Invalid args b(sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>>?), not (sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>,sys::Obj>)",
        ])
 
   }
@@ -1617,15 +1620,15 @@ class CheckErrorsTest : CompilerTest
        [
          3, 3, "Cannot use Void as field type",
          4, 3, "Cannot use This as field type",
-         5, 3, "Invalid type 'sys::Void[]'",
-         6, 3, "Invalid type 'sys::This[]?'",
-         7, 3, "Invalid type '[sys::Void:sys::Obj]'",
-         8, 3, "Invalid type '[sys::Obj:sys::This]?'",
-         9, 3, "Invalid type '|sys::This->sys::Void|?'",
-         10, 3, "Invalid type '|->sys::This|'",
-         11, 3, "Invalid type '|sys::Void->sys::Void|'",
-         12, 3, "Invalid type '|sys::Obj,sys::Void->sys::Void|'",
-         13, 3, "Invalid type '|->sys::This[]?|'",
+         5, 3, "Invalid type 'sys::List<sys::Void>'",
+         6, 3, "Invalid type 'sys::List<sys::This>?'",
+         7, 3, "Invalid type 'std::Map<sys::Void,sys::Obj>'",
+         8, 3, "Invalid type 'std::Map<sys::Obj,sys::This>?'",
+         9, 3, "Invalid type 'sys::Func<sys::Void,sys::This>?'",
+         10, 3, "Invalid type 'sys::Func<sys::This>'",
+         11, 3, "Invalid type 'sys::Func<sys::Void,sys::Void>'",
+         12, 3, "Invalid type 'sys::Func<sys::Void,sys::Obj,sys::Void>'",
+         13, 3, "Invalid type 'sys::Func<sys::List<sys::This>?>'",
        ])
 
     // CheckErrors
@@ -1645,19 +1648,19 @@ class CheckErrorsTest : CompilerTest
          Str m13() { |This|? x; return x.toStr }
        }",
        [
-         3, 3,  "Invalid type 'sys::Void[]?'",
-         4, 3,  "Invalid type '|sys::This->sys::Void|'",
+         3, 3,  "Invalid type",
+         4, 3,  "Invalid type",
          5, 12, "Cannot use Void as parameter type",
          6, 12, "Cannot use This as parameter type",
          7, 12, "Cannot use Void as parameter type",
          8, 12, "Cannot use This as parameter type",
-         9, 12, "Invalid type '|->sys::This|?'",
+         9, 12, "Invalid type",
         10, 15, "'null' is not assignable to 'sys::Void?'",
         10, 15, "Cannot use Void as local variable type",
         10, 33, "Cannot call method on Void",
         11, 15, "Cannot use This as local variable type",
-        12, 15, "Invalid type 'sys::Void[]?'",
-        13, 15, "Invalid type '|sys::This->sys::Void|?'",
+        12, 15, "Invalid type",
+        13, 15, "Invalid type",
        ])
   }
 
@@ -1877,7 +1880,7 @@ class CheckErrorsTest : CompilerTest
          7,  9, "Comparison of non-nullable type 'sys::Int' to null",
          8, 14, "Comparison of non-nullable type 'sys::Float' to null",
          9, 13, "Comparison of non-nullable type 'sys::Str' to null",
-        10, 17, "Comparison of non-nullable type 'sys::File' to null",
+        10, 17, "Comparison of non-nullable type 'std::File' to null",
         12,  9, "Comparison of non-nullable type 'sys::Str' to null",
         17,  9, "Comparison of non-nullable type 'sys::Str' to null",
        ])

@@ -189,7 +189,7 @@ class FacetTest : CompilerTest
        1,  1, "Duplicate facet 'sys::Js'",
        1, 14, "Duplicate facet 'sys::NoDoc'",
        4,  3, "Duplicate facet 'sys::Transient'",
-       5,  3, "Not a facet type 'sys::Str[]'",
+       5,  3, "Not a facet type '",
        6,  3, "Not a facet type '$podName::Foo'",
        7, 12, "Invalid type for facet field 'a': expected 'sys::Str' not 'sys::Int'",
        7, 21, "Unknown facet field '$podName::A.xyz'",

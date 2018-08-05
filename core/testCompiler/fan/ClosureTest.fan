@@ -179,7 +179,7 @@ class ClosureTest : CompilerTest
         static
         {
           Str x := \"\";
-          [0ns, 1ns, 2ns].each|Duration d|
+          [0ms, 1ms, 2ms].each|Duration d|
           {
             x += d.toStr
           }
@@ -189,7 +189,7 @@ class ClosureTest : CompilerTest
 
      t  := pod.types[0]
      verifyEq(t.field("f").get, 6)
-     verifyEq(t.field("g").get, "0ns1ns2ns")
+     verifyEq(t.field("g").get, "0ms1ms2ms")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -582,6 +582,7 @@ class ClosureTest : CompilerTest
     verifyEq(obj->m08(["a", "b"]), Obj?["0a", "1b"])
     verifyEq(obj->m09(["foo", "bar"]), Str["0foo", "1bar"])
     verifyEq(obj->m10(["bar", "c", "first", "alpha"]), ["first", "alpha", "bar", "c"])
+    /*TODO
     verifyEq(obj->m11, |Num->Num|#)
     verifyEq(obj->m12, |Num->Num|#)
     verifyEq(obj->m13, |Num,Num->Num|#)
@@ -590,6 +591,7 @@ class ClosureTest : CompilerTest
     verifyEq(obj->m16, |Num,Num->Int|#)
     verifyEq(obj->m17, |Int,Num->Int|#)
     verifyEq(obj->m18, |Int,Float->Int|#)
+    */
   }
 
   Void testInferenceErrors()
@@ -613,10 +615,10 @@ class ClosureTest : CompilerTest
       }
       ",
       [
-        4, 16, "Invalid args f0(|->sys::Void|), not (|sys::Obj?->sys::Void|)",
-        6, 16, "Invalid args f1(|sys::Str->sys::Void|), not (|sys::Obj?,sys::Obj?->sys::Void|)",
-        8, 16, "Invalid args f2(|sys::Str,sys::Str->sys::Void|), not (|sys::Obj?,sys::Obj?,sys::Obj?->sys::Void|)",
-        9, 16, "Invalid args f2(|sys::Str,sys::Str->sys::Void|), not (|sys::Obj?,sys::Obj?,sys::Obj?,sys::Obj?->sys::Void|)",
+        4, 16, "Invalid args f0",
+        6, 16, "Invalid args f1",
+        8, 16, "Invalid args f2",
+        9, 16, "Invalid args f2",
       ])
   }
 

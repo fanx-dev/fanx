@@ -22,7 +22,7 @@ public class ReflectInvoker implements InvokeTrapper {
 				}
 				return doTrap(null, name, nargs, TypeExt.typeof());
 			}
-			throw UnknownSlotErr.make(name);
+			throw UnknownSlotErr.make(type.qname()+"."+name);
 		}
 		
 		if (slot instanceof Method) {
@@ -44,6 +44,6 @@ public class ReflectInvoker implements InvokeTrapper {
 			}
 		}
 		
-		throw ArgErr.make("Invalid number of args to get or set field '" + name + "'("+args+")");
+		throw ArgErr.make("Invalid number of args to get or set field '" + type.qname()+"."+name + "'("+args+")");
 	}
 }

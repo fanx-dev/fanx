@@ -120,8 +120,7 @@ public class BootEnv implements IEnv {
 	}
 	
 	public String workDir() {
-		int pos = envPaths.size()-1;
-		return envPaths.get(pos);
+		return envPaths.get(0);
 	}
 
 	@Override
@@ -129,7 +128,7 @@ public class BootEnv implements IEnv {
 		return envPaths;
 	}
 
-	public File getPodFile(String name) {
+	public File getPodFile(String name, boolean checked) {
 		for (String p : envPaths) {
 			p = p + "lib/fan/" + name + ".pod";
 			File f = new File(p);
@@ -137,7 +136,8 @@ public class BootEnv implements IEnv {
 				return f;
 		}
 		
-		throw new RuntimeException("Pod not found:" + name);
+		if (checked) throw new RuntimeException("Pod not found:" + name);
+		return null;
 	}
 
 	@Override
@@ -154,6 +154,7 @@ public class BootEnv implements IEnv {
 					return false;
 				}
 			});
+			if (fs == null) continue;
 			for (File pf : fs) {
 				String name = pf.getName();
 				int pos = name.lastIndexOf(".");
@@ -170,7 +171,7 @@ public class BootEnv implements IEnv {
 
 	@Override
 	public FStore loadPod(String name) {
-		File podFile = getPodFile(name);
+		File podFile = getPodFile(name, true);
 		try {
 			FStore podStore = FStore.makeZip(podFile);
 			return podStore;

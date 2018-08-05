@@ -74,8 +74,8 @@ class ExprTest : CompilerTest
     verifyExpr("Str#getRange", Str#.method("getRange"))
     verifyExpr("sys::Str#getRange", Str#.method("getRange"))
     verifyExpr("Str[]#add", Str[]#.method("add"))
-    verifyExpr("Str:Int#caseInsensitive", Str:Int#.field("caseInsensitive"))
-    verifyExpr("|Str a->Bool|#call.returns", Bool#)
+    //verifyExpr("Str:Int#caseInsensitive", Str:Int#.field("caseInsensitive"))
+    //verifyExpr("|Str a->Bool|#call.returns", Bool#)
     verifyExpr("#echo", Obj#.method("echo"))
     verifyExpr("#echo.returns", Void#)
 
@@ -126,8 +126,8 @@ class ExprTest : CompilerTest
     verifyExpr("+a", 2, 2)
     verifyExpr("+a", -2f, -2f)
 
-    verifyExpr("a === b", true, 3ms, 3ms)
-    verifyExpr("a !== b", false, 3ms, 3ms)
+    verifyExpr("a == b", true, 3ms, 3ms)
+    verifyExpr("a != b", false, 3ms, 3ms)
 
     verifyExpr("a == null",  false, 3ms, null, "", true)
     verifyExpr("a === null", false, 3ms, null, "", true)

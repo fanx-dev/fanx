@@ -48,9 +48,16 @@ class LoadPod : CompilerStep
     fpod.zip = Zip.write(buf.out)
     fpod.write
     fpod.zip.close
+    buf.flip
+
+    //save to temp file for FPodNamespace
+    tempFile := Env.cur.tempDir+`scriptPods/${pod.name}.pod`
+    tempFile.out.writeBuf(buf).close
+    buf.seek(0)
 
     // have Sys load it up
-    return Pod.load(buf.flip.in)
+    pod := Pod.load(buf.in)
+    return pod
   }
 
 }

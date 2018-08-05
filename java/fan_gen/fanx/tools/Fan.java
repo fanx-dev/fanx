@@ -42,13 +42,12 @@ public class Fan
     File file = new File(target);
     if (file.exists() && target.toLowerCase().endsWith(".fan") && !file.isDirectory())
     {
-//      return executeFile(file, args);
+      return executeFile(file, args);
     }
     else
     {
       return executeType(target, args);
     }
-	return 0;
   }
 
 //  private void checkInstall()
@@ -88,60 +87,30 @@ public class Fan
 //      e.printStackTrace();
 //    }
 //  }
-
-//  private int executeFile(File file, String[] args)
-//    throws Exception
-//  {
-//    Pod pod = compileScript(file, args);
-//    if (pod == null) return -1;
-//
-//    List types = pod.types();
-//    Type type = null;
-//    Method main = null;
-//    for (int i=0; i<types.sz(); ++i)
-//    {
-//      type = (Type)types.get(i);
-//      main = type.method("main", false);
-//      if (main != null) break;
-//    }
-//
-//    if (main == null)
-//    {
-//      System.out.println("ERROR: missing main method: " + ((Type)types.get(0)).name() + ".main()");
-//      return -1;
-//    }
-//
-//    return callMain(type, main);
-//  }
-//
-//  static Pod compileScript(File file, String[] args)
-//  {
-//    LocalFile f = (LocalFile)(new LocalFile(file).normalize());
-//
-//    Map options = new Map(Sys.StrType, Sys.ObjType);
-//    for (int i=0; args != null && i<args.length; ++i)
-//      if (args[i].equals("-fcodeDump")) options.add("fcodeDump", Boolean.TRUE);
-//
-//    try
-//    {
-//      // use Fantom reflection to run compiler::Main.compileScript(File)
-//      return Env.cur().compileScript(f, options).pod();
-//    }
-//    catch (Err e)
-//    {
-//      System.out.println("ERROR: cannot compile script");
-//      //if (!e.getClass().getName().startsWith("fan.compiler"))
-//        e.trace();
-//      return null;
-//    }
-//    catch (Exception e)
-//    {
-//      System.out.println("ERROR: cannot compile script");
-//      e.printStackTrace();
-//      return null;
-//    }
-//  }
   
+  static public interface ScriptCompiler {
+	  public abstract int executeScript(String file, String[] args);
+  }
+  
+  private static Class<?> getEnvClass() throws ClassNotFoundException {
+	  FPod pod = Sys.findPod("std");
+      Class<?> jclass = pod.podClassLoader.loadClass("fan.std.Env");
+      return jclass;
+  }
+
+  private int executeFile(File file, String[] args)
+  {
+	  try {
+		  FPod pod = Sys.findPod("std");
+	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.FanScriptCompiler");
+		  ScriptCompiler scriptCompiler = (ScriptCompiler)Reflection.getStaticField(clz, "cur");
+		  return scriptCompiler.executeScript(file.getCanonicalPath(), args);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return -1;
+		}
+  }
+
   private java.lang.reflect.Method findMethod(Class<?> clz, String name, Class<?> argClass) throws NoSuchMethodException, SecurityException {
 	try { 
 	  java.lang.reflect.Method met = clz.getMethod(name);
@@ -216,10 +185,7 @@ public class Fan
     	  }
       }
       
-      if (res instanceof Integer) {
-    	  return (Integer)res;
-      }
-      return 0;
+      return toResult(res);
     }
     catch (Throwable e)
     {
@@ -231,53 +197,16 @@ public class Fan
       }
       return -1;
     }
+    finally {
+    	cleanup();
+    }
   }
-
-//  static int callMain(Type t, Method m)
-//  {
-//    // main method
-//    Sys.bootEnv.setMainMethod(m);
-//
-//    // check parameter type and build main arguments
-//    List args;
-//    List params = m.params();
-//    if (params.sz() == 0)
-//    {
-//      args = null;
-//    }
-//    else if (((Param)params.get(0)).type().is(Sys.StrType.toListOf()) &&
-//             (params.sz() == 1 || ((Param)params.get(1)).hasDefault()))
-//    {
-//      args = new List(Sys.ObjType, new Object[] { Env.cur().args() });
-//    }
-//    else
-//    {
-//      System.out.println("ERROR: Invalid parameters for main: " + m.signature());
-//      return -1;
-//    }
-//
-//    // invoke
-//    try
-//    {
-//      if (m.isStatic())
-//        return toResult(m.callList(args));
-//      else
-//        return toResult(m.callOn(t.make(), args));
-//    }
-//    catch (Err ex)
-//    {
-//      ex.trace();
-//      return -1;
-//    }
-//    finally
-//    {
-//      cleanup();
-//    }
-//  }
 
   static int toResult(Object obj)
   {
+	if (obj == null) return 0;
     if (obj instanceof Long) return ((Long)obj).intValue();
+    if (obj instanceof Integer) return ((Integer)obj).intValue();
     return 0;
   }
 
@@ -285,10 +214,12 @@ public class Fan
   {
     try
     {
-//       Env.cur().out().flush();
-//       Env.cur().err().flush();
+    	Class<?> clz = getEnvClass();
+	    Reflection.callStaticMethod(clz, "cleanup");
     }
     catch (Throwable e) {}
+    System.out.flush();
+	System.err.flush();
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -312,16 +243,17 @@ public class Fan
 //    println("  fan.version:     " + Sys.sysPod.version());
 //    println("  fan.env:         " + Env.cur());
     println("  fan.home:        " + Sys.env.homeDir());
+//    println("  wordDir:        " + Sys.env.workDir());
 
-//    String[] path = Env.cur().toDebugPath();
-//    if (path != null)
-//    {
-//      println("");
-//      println("Env Path:");
-//      for (int i=0; i<path.length; ++i)
-//      println("  " + path[i]);
-//      println("");
-//    }
+    List<String> path = Sys.env.envPaths();
+    if (path != null)
+    {
+      println("");
+      println("Env Path:");
+      for (int i=0; i<path.size(); ++i)
+    	  println("  " + path.get(i));
+      println("");
+    }
   }
 
 

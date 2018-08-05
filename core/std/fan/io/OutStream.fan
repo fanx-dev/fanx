@@ -170,7 +170,7 @@ abstract class OutStream
   ** Write one byte, one if true or zero if false.  This method is paired
   ** with `InStream.readBool`.  Throw IOErr on error.  Return this.
   **
-  virtual This writeBool(Bool b) { write(b?1:0) }
+  This writeBool(Bool b) { write(b?1:0) }
 
   **
   ** Write a Str in modified UTF-8 format according the 'java.io.DataOutput'

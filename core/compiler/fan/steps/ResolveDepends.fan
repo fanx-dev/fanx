@@ -45,7 +45,7 @@ class ResolveDepends : CompilerStep
     myName := input.podName
     isSys := myName == "sys"
     if (compiler.depends.isEmpty && !isSys)
-      compiler.depends.add(CDepend.fromStr("sys 0+"))
+      compiler.depends.add(CDepend.fromStr("sys 2"))
 
     // we initialize the CNamespace.depends map
     // as we process each dependency

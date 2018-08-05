@@ -72,7 +72,7 @@ class ItBlockTest : CompilerTest
      verifyEq(x->j, 12)
 
      x = t.method("e").call
-     verifyEq(x->typeof, Str?[]#)
+     verify(x->typeof->fits(Str?[]#))
      verifyEq(x->size, 33)
      verifyEq(x->capacity, 33)
 
@@ -525,13 +525,13 @@ class ItBlockTest : CompilerTest
       {
       }
       ",
-      [ 3, 34, "Invalid args a(|$podName::Bar->sys::Void|), not (|sys::Str->sys::Void|)",
-        4, 34, "Invalid args b(|$podName::Bar->sys::Void|?), not (|sys::Str->sys::Void|)",
-        7, 34, "Invalid args a(|$podName::Bar->sys::Void|), not (null)",
-        9, 30, "Invalid args a(|$podName::Bar->sys::Void|), not (|$podName::Foo->sys::Void|)",
-       10, 37, "Invalid args a(|$podName::Bar->sys::Void|), not (|$podName::Foo->sys::Void|)",
-       19, 37, "Invalid args a(|$podName::SubBar->sys::Void|), not (|sys::Int->sys::Void|)",
-       20, 37, "Invalid args b(|$podName::SubBar->sys::Void|?), not (|sys::Int->sys::Void|)",
+      [ 3, 34, "Invalid args a",
+        4, 34, "Invalid args b",
+        7, 34, "Invalid args a",
+        9, 30, "Invalid args a",
+       10, 37, "Invalid args a",
+       19, 37, "Invalid args a",
+       20, 37, "Invalid args b",
       ])
   }
 

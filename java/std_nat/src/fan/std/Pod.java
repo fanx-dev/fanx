@@ -259,35 +259,29 @@ public class Pod extends FanObj {
 //		return (fan.std.File) loadFile;
 //	}
 	
-	public static Pod load(InStream in)
-	  {
+	public static Pod load(InStream in) {
 	    FPod fpod = null;
 	    try
 	    {
 	      fpod = new FPod(null, null);
 	      fpod.readFully(new ZipInputStream(Interop.toJava(in)));
+	      Sys.addPod(fpod);
 	    }
 	    catch (Exception e)
 	    {
 	      throw Err.make(e);
 	    }
 
-	    String name = fpod.podName;
-	    //TODO
-//	    synchronized(podsByName)
-//	    {
-//	      // check for duplicate pod name
-//	      SoftReference ref = (SoftReference)podsByName.get(name);
-//	      if (ref != null && ref.get() != null)
-//	        throw Err.make("Duplicate pod name: " + name);
-//
-//	      // create Pod and add to master table
-//	      Pod pod = new Pod(fpod, new Pod[]{});
-//	      podsByName.put(name, new SoftReference(pod));
-//	      return pod;
-//	    }
 	    return fromFPod(fpod);
-	  }
+	}
+	
+	public Object _getCompilerCache() {
+		return fpod.compilerCache;
+	}
+	
+	public void _setCompilerCache(Object val) {
+		fpod.compilerCache = val;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Utils

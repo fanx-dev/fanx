@@ -9,11 +9,14 @@ package fanx.main;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
 import java.util.HashMap;
 
 import fanx.emit.*;
 import fanx.fcode.FPod;
+import fanx.fcode.FStore;
 import fanx.fcode.FType;
 import fanx.util.*;
 
@@ -285,10 +288,22 @@ public class PodClassLoader
 //  public URL findResource(String name)
 //  {
 //    if (!name.startsWith("/")) name = "/" + name;
-//    fan.sys.File file = pod.file(Uri.fromStr(name), false);
+//    pod.store.read(path)(Uri.fromStr(name), false);
 //    if (file == null) return null;
 //    return file.toJavaURL();
 //  }
+  public InputStream getResourceAsStream(String name) {
+	FStore.Input input = null;
+	try {
+		input = pod.store.read(name);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	if (input != null) {
+		return input;
+	}
+	return super.getResourceAsStream(name);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Debug

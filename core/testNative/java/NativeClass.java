@@ -8,6 +8,8 @@
 package fan.testNative;
 
 import fan.sys.*;
+import fanx.main.*;
+import fan.std.*;
 
 /**
  * NativeClass
@@ -32,6 +34,12 @@ public class NativeClass
   public String readResource(String name) throws java.io.IOException
   {
     java.io.InputStream in = getClass().getResourceAsStream(name);
+    ClassLoader cl = getClass().getClassLoader();
+    echo(cl);
+    java.util.Enumeration<java.net.URL> ls = cl.getResources(name);
+    if (ls.hasMoreElements()) {
+      echo(ls.nextElement());
+    }
     return new java.io.BufferedReader(new java.io.InputStreamReader(in)).readLine();
   }
 

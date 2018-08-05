@@ -166,6 +166,7 @@ class TokenizerTest : Test
     verifyFloat("3f",           3f)
     verifyFloat("3F",           3F)
     verifyFloat("3.0f",         3.0f)
+    verifyFloat("3.0",          3.0f)
     verifyFloat("73f",          73f)
     verifyFloat("73F",          73F)
     verifyFloat("73.0f",        73.0f)
@@ -244,8 +245,8 @@ class TokenizerTest : Test
     verifyDecimal("3.402E15d",     3.402E15d)
     verifyDecimal("1.4E-12D",    1.4E-12d)
     verifyDecimal("1.7976931348623157E26d", 1.7976931348623157E26d)
-    verifyInvalid("3.0")
-    verifyInvalid("3e2")
+    //verifyInvalid("3.0")
+    //verifyInvalid("3e2")
     verifyInvalid("3e")
     verifyInvalid("3ed")
     verifyInvalid("-3e")
@@ -267,8 +268,8 @@ class TokenizerTest : Test
 
   Void testDurationLiterals()
   {
-    verifyDuration("0ns",       0)
-    verifyDuration("5ns",       5)
+    verifyDuration("0ms",       0)
+    //verifyDuration("5ms",       5)
     verifyDuration("1ms",       1000*1000)
     verifyDuration("1sec",      1000*1000*1000)
     verifyDuration("1min",      60*1000*1000*1000)
@@ -287,7 +288,7 @@ class TokenizerTest : Test
 
   Void verifyDuration(Str src, Int ns)
   {
-    verifyToken(src, makeToken(Token.durationLiteral, Duration.make(ns)))
+    verifyToken(src, makeToken(Token.durationLiteral, Duration.fromNanos(ns)))
   }
 
 //////////////////////////////////////////////////////////////////////////

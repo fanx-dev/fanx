@@ -10,6 +10,7 @@ import java.util.Iterator;
 import fan.sys.ArgErr;
 import fan.sys.Err;
 import fan.sys.FanObj;
+import fan.sys.FanType;
 import fan.sys.Func;
 import fan.sys.List;
 import fan.sys.NotImmutableErr;
@@ -400,7 +401,8 @@ public class Env extends FanObj {
 	}
 
 	public File findPodFile(String name) {
-		java.io.File jfile = sysEnv().getPodFile(name);
+		java.io.File jfile = sysEnv().getPodFile(name, false);
+		if (jfile == null) return null;
 		File file = LocalFilePeer.fromJava(jfile);
 
 		// verify case since Windoze is case insensitive
@@ -525,11 +527,18 @@ public class Env extends FanObj {
 	}
 	
 	public Type compileScript(File f, Map options) {
-	    //TODO: cache
-	    Type main = Pod.find("compiler").type("Main");
-	    Method cs = TypeExt.method(main, "compileScript");
-	    Pod pod = (Pod)cs.call(f, options);
-	    Type type = (Type)pod.types().first();
-	    return type;
+	    Pod pod = FanScriptCompiler.cur.doCompileScript(f, options);
+	    // get the primary type
+	    List types = pod.types();
+	    Type t = null;
+	    for (int i=0; i<types.sz(); ++i)
+	    {
+	      t = (Type)types.get(i);
+	      if (FanType.isPublic(t)) break;
+	    }
+	    if (t == null)
+	      throw Err.make("Script file defines no public classes: " +  f);
+	    return t;
 	}
+	
 }

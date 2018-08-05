@@ -36,6 +36,7 @@ abstract class CompilerTest : Test
     input.mode        = CompilerInputMode.str
     input.srcStr      = src
     input.srcStrLoc   = Loc.make("Script")
+    input.depends = [Depend("sys 2"), Depend("std 1")]
     f?.call(input)
 
     compiler = Compiler.make(input)
@@ -45,6 +46,7 @@ abstract class CompilerTest : Test
 
   Void verifyErrors(Str src, Obj[] errors, |CompilerInput in|? f := null)
   {
+    if (dumpErrors) echo("=============verifyErrors")
     try
     {
       compile(src) { f?.call(it); it.log.level = LogLevel.silent }
@@ -60,7 +62,7 @@ abstract class CompilerTest : Test
     doVerifyErrors(errors)
   }
 
-  Void doVerifyErrors(Obj[] errs, CompilerErr[] actual := compiler.errs)
+  Void doVerifyErrors(Obj?[] errs, CompilerErr[] actual := compiler.errs)
   {
     c := compiler
     if (dumpErrors)
@@ -68,7 +70,10 @@ abstract class CompilerTest : Test
     verifyEq("size=${actual.size}", "size=${errs.size / 3}")
     for (i := 0; i<errs.size/3; ++i)
     {
-      verifyEq(actual[i].msg,      errs[i*3+2])
+      emsg := errs[i*3+2]
+      if (!actual[i].msg.startsWith(emsg)) {
+        verifyEq(actual[i].msg, emsg)
+      }
       verifyEq(actual[i].loc.line, errs[i*3+0])
       verifyEq(actual[i].loc.col,  errs[i*3+1])
     }
@@ -81,7 +86,7 @@ abstract class CompilerTest : Test
   Compiler? compiler      // compile()
   Pod? pod                // compiled pod
   Int podNameSuffix := 0
-  Bool dumpErrors := false
+  Bool dumpErrors := true
   Depend[]? depends
 
 }

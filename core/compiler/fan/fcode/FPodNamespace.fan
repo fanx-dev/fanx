@@ -54,9 +54,14 @@ class FPodNamespace : CNamespace
       else
         file = Env.cur.findPodFile(podName)
     }
-    catch return null
-    if (file == null) return null
-    if (!file.exists) return null
+    catch (Err e) {
+       return null
+    }
+
+    if (file == null || !file.exists) {
+      file = Env.cur.tempDir+`scriptPods/${podName}.pod`
+      if (!file.exists) return null
+    }
 
     // load it
     fpod := FPod(this, podName, Zip.open(file))
@@ -70,5 +75,4 @@ class FPodNamespace : CNamespace
 
   ** where to look for pod or null to delegate to Env.findPodFile
   const File? dir
-
 }

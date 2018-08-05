@@ -8,6 +8,8 @@
 package fan.testNative;
 
 import fan.sys.*;
+import fanx.main.*;
+import fan.std.*;
 
 /**
  * Verify Java native integration

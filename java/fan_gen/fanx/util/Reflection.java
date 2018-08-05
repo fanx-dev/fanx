@@ -121,6 +121,20 @@ public class Reflection {
 		return null;
 	}
 	
+	public static Object getStaticField(Class<?> clz, String name) {
+		try {
+			Field mBase;
+			mBase = findField(clz, name);
+			mBase.setAccessible(true);
+			return mBase.get(null);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static Object callMethod(Object obj, String name, Object... arg) {
         try {
         	Method method = findMethod(obj.getClass(), name, arg);

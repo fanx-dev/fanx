@@ -1,6 +1,7 @@
 package fanx.main;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +34,11 @@ public class Sys {
 
 		public String workDir();
 
-		public File getPodFile(String name);
+		public File getPodFile(String name, boolean checked);
 	}
 
 	public static IEnv env;
-	private static Map<String, FPod> pods = new HashMap<String, FPod>();
+	private static Map<String, SoftReference<FPod>> pods = new HashMap<String, SoftReference<FPod>>();
 
 	public static boolean isAndroid = false;
 	static {
@@ -49,7 +50,7 @@ public class Sys {
 		}
 
 		// check FAN_ENV environment variable
-		String var = System.getenv("FAN_ENV");
+		String var = System.getenv("FAN_SYS_ENV");
 		if (var != null) {
 			try {
 				env = (IEnv) Class.forName(var).newInstance();
@@ -81,10 +82,7 @@ public class Sys {
 		int pos = signature.indexOf("::");
 		if (pos <= 0 || pos >= len - 2) {
 			if (checked) {
-				Type etype = findType("sys::ArgErr");
-				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(etype.getJavaActualClass(), "make",
-						signature);
-				throw re;
+				throw makeErr("sys::ArgErr", signature);
 			}
 			return null;
 		}
@@ -113,10 +111,7 @@ public class Sys {
 		FPod pod = findPod(podName, checked);
 		if (pod == null) {
 			if (checked) {
-				Type etype = findType("sys::UnknownPodErr");
-				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(etype.getJavaActualClass(), "make",
-						podName);
-				throw re;
+				throw makeErr("sys::UnknownPodErr", podName);
 			}
 			return null;
 		}
@@ -127,10 +122,7 @@ public class Sys {
 			}
 
 			if (checked) {
-				Type etype = findType("sys::UnknownTypeErr");
-				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(etype.getJavaActualClass(), "make",
-						podName + "::" + typeName);
-				throw re;
+				throw makeErr("sys::UnknownTypeErr", podName + "::" + typeName);
 			}
 		}
 		return type;
@@ -139,33 +131,48 @@ public class Sys {
 	public static FPod findPod(String podName) {
 		return findPod(podName, true);
 	}
+	
+	public static synchronized void addPod(FPod pod) {
+		String podName = pod.podName;
+		SoftReference<FPod> ref = pods.get(podName);
+		if (ref != null && ref.get() != null)
+	        throw new RuntimeException("Duplicate pod name: " + podName);
+		
+		pods.put(podName, new SoftReference<FPod>(pod));
+		if (pod.podClassLoader == null) {
+			PodClassLoader cl = new PodClassLoader(pod);
+			pod.podClassLoader = cl;
+		}
+	}
+	
+	public static RuntimeException makeErr(String qname, String msg) {
+		Type type = findType(qname, false);
+		if (type == null) {
+			throw new RuntimeException("not found type:"+qname+",msg:"+msg);
+		}
+		RuntimeException re = (RuntimeException) Reflection.callStaticMethod(type.getJavaActualClass(), "make", msg);
+		return re;
+	}
 
-	public static FPod findPod(String podName, boolean checked) {
+	public static synchronized FPod findPod(String podName, boolean checked) {
 		try {
-			synchronized (Sys.class) {
-				FPod p = pods.get(podName);
-				if (p != null)
-					return p;
-
-				FStore podStore = env.loadPod(podName);
-				FPod pod = new FPod(podName, podStore);
-				pod.read();
-
-				pods.put(podName, pod);
-
-				PodClassLoader cl = new PodClassLoader(pod);
-				pod.podClassLoader = cl;
+			SoftReference<FPod> sref = pods.get(podName);
+			FPod pod = sref != null ? sref.get() : null;
+			if (pod != null)
 				return pod;
-			}
+
+			FStore podStore = env.loadPod(podName);
+			pod = new FPod(podName, podStore);
+			pod.read();
+
+			pods.put(podName, new SoftReference<FPod>(pod));
+
+			PodClassLoader cl = new PodClassLoader(pod);
+			pod.podClassLoader = cl;
+			return pod;
 		} catch (Exception e) {
 			if (checked) {
-				Type type = findType("sys::UnknownPodErr", false);
-				if (type == null) {
-					throw new RuntimeException(e);
-				}
-				RuntimeException re = (RuntimeException) Reflection.callStaticMethod(type.getJavaActualClass(), "make",
-						podName);
-				throw re;
+				throw makeErr("sys::UnknownPodErr", podName);
 			}
 		}
 		return null;
