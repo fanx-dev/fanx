@@ -10,14 +10,13 @@
 ** AtomicBool is used to manage a boolean variable shared
 ** between actor/threads with atomic updates.
 **
-@Js
-final const class AtomicBool
+final const native class AtomicBool
 {
 
   **
   ** Construct with initial value
   **
-  new make(Bool val := false) { this.val = val }
+  new make(Bool val := false)
 
   **
   ** The current boolean value
@@ -39,6 +38,6 @@ final const class AtomicBool
   **
   ** Return 'val.toStr'
   **
-  override Str toStr() { val.toStr }
+  override Str toStr()
 
 }

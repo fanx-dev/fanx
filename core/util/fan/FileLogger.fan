@@ -83,7 +83,7 @@ const class FileLogger : ActorPool
       {
         rec := (LogRec)msg
         state.out.printLine(rec)
-        if (rec.err != null) Util.trace(rec.err, state.out)
+        if (rec.err != null) rec.err.traceTo(state.out)
         state.out.flush
       }
       else

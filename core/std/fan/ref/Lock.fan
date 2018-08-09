@@ -6,7 +6,7 @@
 //   2018-5-18 Jed Young Creation
 //
 
-native const class Lock
+final native const class Lock
 {
 
   ** Acquires the lock only if it is free at the time of invocation.

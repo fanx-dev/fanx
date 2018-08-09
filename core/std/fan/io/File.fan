@@ -475,6 +475,14 @@ abstract const class File
   //Void writeObj(Obj? obj, [Str:Obj]? options := null)
 
   **
+  ** Convenience for [out.writeChars]`OutStream.writeChars`
+  ** The output stream is guaranteed to be closed.
+  **
+  Void writeAllStr(Str str) {
+    this.out.use { it.writeChars(str) }
+  }
+
+  **
   ** Return the platform's separator for names within
   ** in a path: backslash on Windows, forward slash on Unix.
   **

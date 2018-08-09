@@ -18,9 +18,11 @@ native const final class Unsafe<T>
   **
   new make(T val)
 
+  ** as same as 'get'
+  T val()
+
   **
   ** Get the wrapped object.
   **
-  T val()
-
+  T get()
 }

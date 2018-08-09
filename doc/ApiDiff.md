@@ -35,7 +35,10 @@ Some Fantom API return nullable Int, for example: InStrem.read(), Str.index().
 To avoid int boxing, prefer -1 instead of null.
 
 ### More Container ###
-LinkedList Set Tuple and more.
+LinkedList, Set, Tuple, ConcMap, LRUCache and more.
+```
+  Tuple<Int, Str> tuple := Tuple(1, "a")
+```
 
 ### DateTime ###
 Added TimePoint class.
@@ -56,4 +59,62 @@ The static constructor return nonNullable type.
 
 ### Charset ###
 It's more Unicode compliant.
+
+### More Tools ###
+Lock, Lazy, SoftRef, TheadLocal,...
+```
+  const Lazy<Bar> lazyBar := Lazy<Bar> |->Bar|{ Bar() }
+  bar := lazyBar.get
+```
+
+### Closures with Resources ###
+```
+  outStream.use { it.print("Hi") }
+  lock.sync { ... }
+```
+
+### Map Iterator ###
+```
+  itr := map.iterator
+  while (tir.hasMore) {
+    pair := itr.next
+  }
+```
+
+### Assert ###
+```
+  assert(a == b, "error")
+```
+
+### Static Logger ###
+```
+  Log.debug("pod", "msg")
+```
+
+### String Format ###
+```
+  String.fromat("%s %d %f", ["Hi", 12, 0.3])
+```
+
+### JSON ###
+```
+  obj := Json.read("""{abc="abc"}""")
+  str := Json.write(obj)
+```
+
+### Actor ###
+```
+  class Bar {
+    Str foo(Str str) {
+      echo(str)
+      return "OK"
+    }
+  }
+
+  actor := ActorProxy { return Bar() }
+  actor->foo("Hi")
+
+  static const AcotrLocal<Bar> local := ActorLocal<Bar>()
+```
+
 

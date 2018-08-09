@@ -10,14 +10,13 @@
 ** AtomicInt is used to manage an integer variable shared
 ** between actor/threads with atomic updates.
 **
-@Js
-final const class AtomicInt
+final const native class AtomicInt
 {
 
   **
   ** Construct with initial value
   **
-  new make(Int val := 0) { this.val = val }
+  new make(Int val := 0)
 
   **
   ** The current integer value
@@ -90,6 +89,6 @@ final const class AtomicInt
   **
   ** Return 'val.toStr'
   **
-  override Str toStr() { val.toStr }
+  override Str toStr()
 
 }

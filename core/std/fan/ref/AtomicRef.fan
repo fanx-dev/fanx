@@ -11,27 +11,26 @@
 ** between actor/threads with atomic updates.  Only immutable
 ** objects may be shared.
 **
-@Js
-final const class AtomicRef
+final const native class AtomicRef<T>
 {
 
   **
   ** Construct with initial value.
   ** Throw NotImmutableErr if initialized to a mutable value.
   **
-  new make(Obj? val := null) { this.val = val }
+  new make(T? val := null)
 
   **
   ** The current value.
   ** Throw NotImmutableErr if set to a mutable value.
   **
-  native Obj? val
+  native T? val
 
   **
   ** Atomically set the value and return the previous value.
   ** Throw NotImmutableErr if 'val' is mutable.
   **
-  native Obj? getAndSet(Obj? val)
+  native T? getAndSet(T? val)
 
   **
   ** Atomically set the value to 'update' if current value is
@@ -39,11 +38,11 @@ final const class AtomicRef
   ** Return true if updated, or false if current value was not equal
   ** to the expected value. Throw NotImmutableErr if 'update' is mutable.
   **
-  native Bool compareAndSet(Obj? expect, Obj? update)
+  native Bool compareAndSet(T? expect, T? update)
 
   **
   ** Return 'val.toStr'
   **
-  override Str toStr() { val?.toStr ?: "null" }
+  override Str toStr()
 
 }

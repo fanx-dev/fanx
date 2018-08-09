@@ -26,6 +26,8 @@ public final class Unsafe
   public Type typeof() { if (type == null) { type = Sys.findType("std::Unsafe"); } return type;  }
 
   public Object val() { return val; }
+  
+  public Object get() { return val; }
 
   public boolean isImmutable() { return true; }
 

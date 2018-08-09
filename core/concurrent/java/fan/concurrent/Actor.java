@@ -127,7 +127,7 @@ public class Actor
   }
 
   public static Map locals() { return (Map)locals.get(); }
-  private static final ThreadLocal locals = new ThreadLocal()
+  private static final java.lang.ThreadLocal locals = new java.lang.ThreadLocal()
   {
     protected Object initialValue()
     {

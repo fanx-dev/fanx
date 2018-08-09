@@ -7,7 +7,7 @@ public class LocalePeer {
 		defaultLocale = Locale.make(jl.getLanguage(), jl.getCountry());
 	}
 
-	static ThreadLocal<Locale> threadLocale = new ThreadLocal<Locale>() {
+	static java.lang.ThreadLocal<Locale> threadLocale = new java.lang.ThreadLocal<Locale>() {
 		@Override
 		protected Locale initialValue() {
 			return defaultLocale;

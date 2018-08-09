@@ -99,14 +99,14 @@ The pod.props file:
 ```
 Run build:
 ```
-  fanc yourPath/pod.props
+  fanb yourPath/pod.props
 ```
 
 ### Local Return (Not Sure) ###
 A new keyword 'ret' as same as 'return' but only be used in closures.
 ```
   list.eachWhile |v| {
-    if (v == 0) ret null
+    if (v == 0) lret null
     ret v
   }
 ```

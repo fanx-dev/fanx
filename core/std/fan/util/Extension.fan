@@ -1,6 +1,6 @@
 
 
-class Util {
+class Extension {
 
   **
   ** Read a serialized object from the stream according to
@@ -39,5 +39,5 @@ class Util {
     return out
   }
 
-  native static extension Err trace(Err self, OutStream out := Env.cur.out, [Str:Obj]? options := null)
+  native static extension Err traceTo(Err self, OutStream out := Env.cur.out, [Str:Obj]? options := null)
 }
