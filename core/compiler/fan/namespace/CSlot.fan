@@ -204,16 +204,15 @@ mixin CMethod : CSlot
       ")"
   }
 
+  ** more loose for ParameterizedType type
   static Bool sameType(CType ai, CType bi) {
-    if (ai === bi) return true
+    if (ai == bi) return true
+    if (ai.isNullable != bi.isNullable) return false
+
     ai = ai.deref.toNonNullable
     bi = bi.deref.toNonNullable
-    if (ai == bi) return true
-
-    if (ai.isNullable != bi.isNullable) return false
     if (ai.qname == bi.qname) return true
     //echo("$ai $bi $ai.typeof, $bi.typeof $ai->paramName $bi->paramName")
-
     if (ai is GenericParamType && bi is GenericParamType) {
       ag := (GenericParamType)ai
       bg := (GenericParamType)bi
