@@ -97,29 +97,6 @@ rtconst class HashMap<K,V> : Map
     this.loadFactor = loadFactor
   }
 
-  override Bool equals(Obj? that) {
-    if (this === that) return true
-    if (that isnot Map) return false
-    o := that as [K:V]
-    if (this.size != o.size) return false
-    return all |v,k| {
-      if (v == null) {
-        return (o.get(k) == null && o.containsKey(k))
-      }
-      return o.get(k) == v
-    }
-  }
-
-  override Int hash() {
-    Int h := 0
-    //The HashMap is unordered
-    each |v,k| {
-      if (v != null) h += v.hash
-      if (k != null) h += k.hash
-    }
-    return h
-  }
-
   override Int size { private set }
 
   private Int getHash(K? key) {

@@ -51,12 +51,31 @@ rtconst abstract class Map<K,V>
   **   a == b  =>  true
   **   a == c  =>  false
   **
-  override abstract Bool equals(Obj? that)
+  override Bool equals(Obj? that) {
+    if (this === that) return true
+    if (that isnot Map) return false
+    o := that as [K:V]
+    if (this.size != o.size) return false
+    return all |v,k| {
+      if (v == null) {
+        return (o.get(k) == null && o.containsKey(k))
+      }
+      return o.get(k) == v
+    }
+  }
 
   **
   ** Return platform dependent hashcode based on hash of the keys and values.
   **
-  override abstract Int hash()
+  override Int hash() {
+    Int h := 0
+    //The HashMap is unordered
+    each |v,k| {
+      if (v != null) h += v.hash
+      if (k != null) h += k.hash
+    }
+    return h
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods

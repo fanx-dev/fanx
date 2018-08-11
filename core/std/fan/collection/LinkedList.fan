@@ -47,6 +47,10 @@ class LinkedList {
 
   LinkedElem last() { head.previous }
 
+  **
+  ** Returns an element following the last element of the container.
+  ** This element acts as a placeholder
+  **
   LinkedElem end() { head }
 
   Void add(LinkedElem e) {

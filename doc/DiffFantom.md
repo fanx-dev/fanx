@@ -117,4 +117,10 @@ Auto generate toStr hash make and equals methods.
   data class Point { Float x; Float y }
 ```
 
+### Variable Initialization ###
+```
+  Str str := "Hi"
+  Str str = "Hi"
+  str := "Hi"
+```
 

@@ -2,6 +2,6 @@
 podName = baseTest
 summary = test compiler and sys lib
 version = 2.0
-srcDirs = test/,fan/
+srcDirs = test/
 depends = sys 2.0, std 1.0
 

@@ -35,7 +35,7 @@ Some Fantom API return nullable Int, for example: InStrem.read(), Str.index().
 To avoid int boxing, prefer -1 instead of null.
 
 ### More Container ###
-LinkedList, Set, Tuple, ConcMap, LRUCache and more.
+LinkedList, Set, Tuple, ConcMap, LRUCache, TreeMap and more.
 ```
   Tuple<Int, Str> tuple := Tuple(1, "a")
 ```
@@ -114,6 +114,7 @@ Lock, Lazy, SoftRef, TheadLocal,...
   actor := ActorProxy { return Bar() }
   actor->foo("Hi")
 
+  //ActorLocal
   static const AcotrLocal<Bar> local := ActorLocal<Bar>()
 ```
 
