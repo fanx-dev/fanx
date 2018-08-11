@@ -527,17 +527,7 @@ public class Env extends FanObj {
 	}
 	
 	public Type compileScript(File f, Map options) {
-	    Pod pod = FanScriptCompiler.cur.doCompileScript(f, options);
-	    // get the primary type
-	    List types = pod.types();
-	    Type t = null;
-	    for (int i=0; i<types.sz(); ++i)
-	    {
-	      t = (Type)types.get(i);
-	      if (FanType.isPublic(t)) break;
-	    }
-	    if (t == null)
-	      throw Err.make("Script file defines no public classes: " +  f);
+	    Type t = ScriptCompiler.cur.compile(f, options);
 	    return t;
 	}
 	

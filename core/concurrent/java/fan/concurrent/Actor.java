@@ -269,24 +269,8 @@ public class Actor
   {
     if (obj == null) return null;
     if (FanObj.isImmutable(obj)) return obj;
-
-    if (_safeLogErr)
-    {
-      _safeLogErr = false;
-      System.out.println("==");
-      System.out.println("==");
-      System.out.println("== Actor msg serialization is deprecated;");
-      System.out.println("== See http://fantom.org/forum/topic/2428");
-      System.out.println("==");
-      System.out.println("==");
-    }
-
-    Buf buf = MemBuf.make(512);
-    Util.writeObj(buf.out(), obj);
-    buf.flip();
-    return Util.readObj(buf.in());
+    throw ConstErr.make(FanObj.typeof(obj).toString());
   }
-  private static volatile boolean _safeLogErr = true;
 
 //////////////////////////////////////////////////////////////////////////
 // Queue

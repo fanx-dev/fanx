@@ -9,6 +9,7 @@ package fanx.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -88,10 +89,6 @@ public class Fan
 //    }
 //  }
   
-  static public interface ScriptCompiler {
-	  public abstract int executeScript(String file, String[] args);
-  }
-  
   private static Class<?> getEnvClass() throws ClassNotFoundException {
 	  FPod pod = Sys.findPod("std");
       Class<?> jclass = pod.podClassLoader.loadClass("fan.std.Env");
@@ -102,9 +99,11 @@ public class Fan
   {
 	  try {
 		  FPod pod = Sys.findPod("std");
-	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.FanScriptCompiler");
-		  ScriptCompiler scriptCompiler = (ScriptCompiler)Reflection.getStaticField(clz, "cur");
-		  return scriptCompiler.executeScript(file.getCanonicalPath(), args);
+	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.ScriptCompiler");
+		  Object scriptCompiler = Reflection.getStaticField(clz, "cur");
+		  Object res = Reflection.callMethod(scriptCompiler, "execute"
+				  , file.getAbsolutePath(), toList(args));
+		  return ((Long)res).intValue();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return -1;
@@ -130,6 +129,26 @@ public class Fan
 //			  }
 //		  }
 //		  return null;
+  }
+  
+  static Object toList(String[] args) 
+		  throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	  if (args.length > 0) {
+		  FPod pod = Sys.findPod("sys");
+	      Class<?> argClass = null;
+	      Object argObj = null;
+	      if (args.length > 0) {
+	    	  argClass = pod.podClassLoader.loadClass("fan.sys.List");
+	    	  java.lang.reflect.Method m = argClass.getMethod("make", long.class);
+	    	  argObj = m.invoke(null, (long)args.length);
+	    	  java.lang.reflect.Method addm = argClass.getMethod("add", Object.class);
+	    	  for (String s : args) {
+	    		  addm.invoke(argObj, s);
+	    	  }
+	      }
+	      return argObj;
+      }
+	  return null;
   }
 
   private int executeType(String target, String[] args)
