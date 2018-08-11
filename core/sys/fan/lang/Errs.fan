@@ -346,3 +346,10 @@ const class TimeoutErr : Err
   }
 
 }
+
+const class AssertErr : Err
+{
+  new make(Str msg := "", Err? cause := null): super(msg, cause) {
+  }
+}
+

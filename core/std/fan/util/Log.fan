@@ -7,6 +7,32 @@
 //  21 Dec 07  Brian Frank  Revamp
 //
 
+/*
+internal class LogMgr {
+  private Str:Log map := [:]
+  private |LogRec rec|[] handlers := [,]
+  private Lock lock := Lock()
+
+  new make() {
+    handlers.add |r|{ r.print }
+  }
+
+  Log[] logs() { lock.sync { map.vals } }
+
+  Log find(Str name, Bool checked) {
+    res := lock.sync { map.get(name) }
+    if (checked && res == null) throw Err()
+    return res
+  }
+
+  Void doRegister(Log log) {
+    lock.sync {
+      map[log.name] = log
+    }
+  }
+}
+*/
+
 **
 ** LogLevel provides a set of discrete levels used to customize logging.
 ** See `docLang::Logging` for details.
@@ -155,6 +181,9 @@ const class Log
   Void debug(Str msg, Err? err := null) {
     log(LogRec.make(DateTime.now, LogLevel.debug, name, msg, err))
   }
+
+  ** static log
+  native static Void slog(Str name, LogRec rec)
 
   **
   ** Publish a log entry.  The convenience methods `err`, `warn`

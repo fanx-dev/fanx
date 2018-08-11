@@ -75,11 +75,23 @@ public class LogPeer {
 	public synchronized void level(Log self, LogLevel l) {
 		this.level = l;
 	}
+	
+	public static void slog(String name, LogRec rec) {
+		synchronized(handlers) {
+			for (Func handler : handlers) {
+				try {
+					handler.call(rec);
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	public void log(Log self, LogRec rec) {
 		if (!self.isEnabled(rec.level))
 			return;
-		synchronized(this) {
+		synchronized(handlers) {
 			for (Func handler : handlers) {
 				try {
 					handler.call(rec);

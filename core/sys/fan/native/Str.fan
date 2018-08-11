@@ -661,4 +661,9 @@ native const final class Str
   static new fromUtf8(ByteArray ba, Int offset := 0, Int len := ba.size)
 
   protected override Void finalize()
+
+  **
+  ** Returns a formatted string using the specified format string and arguments.
+  **
+  static Str format(Str format, Obj[] args)
 }

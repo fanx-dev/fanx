@@ -1043,6 +1043,14 @@ public class FanStr
 		throw UnsupportedErr.make(e);
 	}
   }
+  
+  public static String format(String format, List args) {
+	  Object[] objs = new Object[(int)args.size()];
+	  for (int i=0; i<args.size(); ++i) {
+		  objs[i] = args.get(i);
+	  }
+	  return String.format(format, objs);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

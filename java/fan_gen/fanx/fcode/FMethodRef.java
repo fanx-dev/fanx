@@ -116,7 +116,14 @@ public class FMethodRef
     if (jsig == null)
     {
       StringBuilder s = new StringBuilder();
-      s.append(parent.jimpl()).append('.').append(name).append('(');
+      s.append(parent.jimpl()).append('.').append(name);
+      
+      //convert call assert to assert_
+      if (parent.isObj() && "assert".equals(name)) {
+    	s.append('_');  
+      }
+      
+      s.append('(');
       for (int i=0; i<params.length; ++i) params[i].jsig(s);
       s.append(')');
       ret.jsig(s);

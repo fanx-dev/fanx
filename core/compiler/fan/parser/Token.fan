@@ -85,7 +85,7 @@ enum class Token
   // keywords
   abstractKeyword,
   asKeyword,
-  assertKeyword,
+  //assertKeyword,
   breakKeyword,
   caseKeyword,
   catchKeyword,

@@ -144,4 +144,8 @@ native rtconst abstract class Obj
   **
   static Void echo(Obj? x := "")
 
+  **
+  ** throw AssertErr if a boolean condition is false
+  **
+  static Void assert(Bool condition, Str msg := "")
 }

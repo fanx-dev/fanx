@@ -247,5 +247,13 @@ public class FanObj extends IObj implements Comparable {
 		String str = toStr(obj);
 		System.out.println(str);
 	}
+	
+	public static void assert_(boolean condition) {
+		assert_(condition, "");
+	}
+	
+	public static void assert_(boolean condition, String msg) {
+		if (!condition) throw AssertErr.make(msg);
+	}
 
 }
