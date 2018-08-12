@@ -231,6 +231,8 @@ public final class Future
 
   public final Future completeErr(Err e)
   {
+	//this.callerStatk.printStackTrace();
+	
     ArrayList wd;
     synchronized (this)
     {
@@ -305,5 +307,6 @@ public final class Future
   private volatile int state;  // processing state of message
   private Object result;       // result or exception of processing
   private ArrayList whenDone;  // list of messages to deliver when done
+  Throwable callerStatk;
 
 }

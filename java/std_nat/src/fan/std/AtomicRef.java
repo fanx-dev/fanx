@@ -24,7 +24,13 @@ public final class AtomicRef extends FanObj {
 	}
 	
 	public AtomicRef(Object val) {
+		if (!FanObj.isImmutable(val)) throw NotImmutableErr.make();
 		this.val = new AtomicReference(val);
+	}
+	
+	public static AtomicRef make() {
+		AtomicRef self = new AtomicRef(null);
+		return self;
 	}
 
 	public static AtomicRef make(Object val) {

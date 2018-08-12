@@ -4,11 +4,6 @@
 
 ### Extension Methods API ###
 Most Convenience methods are changed to extension methods to break the dependency.
-```
-  mixin StrUil {
-    extensiosn static Regex toRegex(Str self) { Regex(self) }
-  }
-```
 
 Math Methods:
 ```
@@ -93,8 +88,11 @@ Lock, Lazy, SoftRef, TheadLocal,...
 
 ### String Format ###
 ```
-  String.fromat("%s %d %f", ["Hi", 12, 0.3])
+  Str.fromat("%s %d %f", ["Hi", 12, 0.3])
 ```
+
+### More Str Util ###
+Str.splitBy, Str.splitAny, Str.extract
 
 ### JSON ###
 ```
@@ -103,17 +101,16 @@ Lock, Lazy, SoftRef, TheadLocal,...
 ```
 
 ### Actor Enhance ###
+The ActorPool.defVal is a default param of Actor's constructor
 ```
   class Bar {
-    Str foo(Str str) {
-      echo(str)
-      return "OK"
-    }
+    Str foo(Str str) { str+"2" }
   }
 
-  actor := ActorProxy { return Bar() }
+  actor := ActorProxy |->|{ Bar() }
   actor->foo("Hi")
-
+```
+```
   //ActorLocal
   static const AcotrLocal<Bar> local := ActorLocal<Bar>()
 ```

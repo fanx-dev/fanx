@@ -23,7 +23,8 @@ public class Actor
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
-
+	
+  public static Actor make() { return make(ActorPool.defVal(), null); }
   public static Actor make(ActorPool pool) { return make(pool, null); }
   public static Actor make(ActorPool pool, Func receive)
   {
@@ -150,6 +151,7 @@ public class Actor
 
     // get the future instance to manage this message's lifecycle
     Future f = new Future(msg);
+    f.callerStatk = new RuntimeException("async task fail");
 
     // either enqueue immediately or schedule with pool
     if (dur != null)

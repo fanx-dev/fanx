@@ -26,6 +26,10 @@ public final class AtomicBool extends FanObj {
 	public AtomicBool(boolean v) {
 		this.val = new AtomicBoolean(v);
 	}
+	
+	public static AtomicBool make() {
+		return new AtomicBool(false);
+	}
 
 	public static AtomicBool make(boolean v) {
 		return new AtomicBool(v);

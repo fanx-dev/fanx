@@ -12,7 +12,6 @@
 ** See [docLang::Actors]`docLang::Actors` and
 ** [examples]`examples::concurrent-actors`.
 **
-@Js
 native const class Actor
 {
 
@@ -28,7 +27,7 @@ native const class Actor
   ** NotImmutableErr is thrown.  If receive is null, then you must subclass
   ** Actor and override the `receive` method.
   **
-  new make(ActorPool pool, |Obj? -> Obj?|? receive := null)
+  new make(ActorPool pool := ActorPool.defVal, |Obj? -> Obj?|? receive := null)
 
   **
   ** Create an actor with a coalescing message loop.  This constructor

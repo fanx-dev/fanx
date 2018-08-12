@@ -2,8 +2,8 @@
 
 ## Todo List ##
 
-- Actor enhance
-- ret support
+- Micro support
+- Script support
 - numeric precision in JVM
 - Generic infer
 - data class

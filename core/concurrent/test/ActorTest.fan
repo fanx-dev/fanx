@@ -99,7 +99,7 @@ class ActorTest : Test
   {
     Int[]? r := Actor.locals.get("foo")
     if (r == null) Actor.locals.set("foo", r = Int[,])
-    if (msg.toStr.startsWith("result")) return r
+    if (msg.toStr.startsWith("result")) return r.toImmutable
     r.add(msg)
     return null
   }
@@ -122,12 +122,12 @@ class ActorTest : Test
     f = a.send("serial")
     verifyEq(f.get, SerMsg { i = 123_321 })
     verifyEq(f.get, SerMsg { i = 123_321 })
-    verifyNotSame(f.get, f.get)
+    //verifyNotSame(f.get, f.get)
     verifySame(f.state, FutureState.ok)
 
     // non-serializable mutables
-    verifyErr(IOErr#) { a.send(this) }
-    verifyErr(IOErr#) { a.send("mutable").get }
+    verifyErr(ConstErr#) { a.send(this) }
+    verifyErr(ConstErr#) { a.send("mutable").get }
 
     // receive raises error
     f = a.send("throw")
@@ -560,7 +560,7 @@ class ActorTest : Test
     if (msg == "throw") throw IndexErr("foo bar")
     Str[] msgs := Actor.locals["msgs"]
     msgs.add(msg)
-    return msgs
+    return msgs.toImmutable
   }
 
   Void verifyAllSame(Obj[] list)
@@ -588,19 +588,19 @@ class ActorTest : Test
     ferr := Future[,]
     fcancel := Future[,]
 
-    ferr.add(a.send(["throw"]))
-    f1s.add(a.send(["1", 1]))
-    f2s.add(a.send(["2", 10]))
-    f2s.add(a.send(["2", 20]))
-    ferr.add(a.send(["throw"]))
-    f2s.add(a.send(["2", 30]))
-    fcancel.add(a.send(["cancel"]))
-    fcancel.add(a.send(["cancel"]))
-    f3s.add(a.send(["3", 100]))
-    f1s.add(a.send(["1", 2]))
-    f3s.add(a.send(["3", 200]))
-    fcancel.add(a.send(["cancel"]))
-    ferr.add(a.send(["throw"]))
+    ferr.add(a.send(["throw"].toImmutable))
+    f1s.add(a.send(["1", 1].toImmutable))
+    f2s.add(a.send(["2", 10].toImmutable))
+    f2s.add(a.send(["2", 20].toImmutable))
+    ferr.add(a.send(["throw"].toImmutable))
+    f2s.add(a.send(["2", 30].toImmutable))
+    fcancel.add(a.send(["cancel"].toImmutable))
+    fcancel.add(a.send(["cancel"].toImmutable))
+    f3s.add(a.send(["3", 100].toImmutable))
+    f1s.add(a.send(["1", 2].toImmutable))
+    f3s.add(a.send(["3", 200].toImmutable))
+    fcancel.add(a.send(["cancel"].toImmutable))
+    ferr.add(a.send(["throw"].toImmutable))
 
     fcancel.first.cancel
 
@@ -626,7 +626,7 @@ class ActorTest : Test
 
   static Obj? coalesceCoalesce(Obj[] a, Obj[] b)
   {
-    Obj[,].add(a[0]).addAll(a[1..-1]).addAll(b[1..-1])
+    Obj[,].add(a[0]).addAll(a[1..-1]).addAll(b[1..-1]).toImmutable
   }
 
   static Obj? coalesceReceive(Obj? msg)
@@ -683,7 +683,7 @@ class ActorTest : Test
     verifySame(f.typeof, Future#)
 
     // can only complete with immutable value
-    verifyErr(IOErr#) { f.complete(this) }  // TODO: NotImmutableErr
+    verifyErr(ConstErr#) { f.complete(this) }  // TODO: NotImmutableErr
     verifySame(f.state, FutureState.pending)
 
     // verify complete
@@ -798,10 +798,12 @@ class ActorTest : Test
 **************************************************************************
 
 @Serializable
-internal class SerMsg
+const internal class SerMsg
 {
+  new make(|This|? f := null) { f(this) }
+
   override Int hash() { i }
   override Bool equals(Obj? that) { that is SerMsg && i == that->i }
-  Int i := 7
+  const Int i := 7
 }
 

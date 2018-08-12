@@ -102,7 +102,7 @@ Run build:
   fanb yourPath/pod.props
 ```
 
-### Local Return (Not Sure) ###
+### Local Return ###
 A new keyword 'ret' as same as 'return' but only be used in closures.
 ```
   list.eachWhile |v| {

@@ -26,6 +26,10 @@ public final class AtomicInt extends FanObj {
 	public AtomicInt(long val) {
 		this.val = new AtomicLong(val);
 	}
+	
+	public static AtomicInt make() {
+		return new AtomicInt(0);
+	}
 
 	public static AtomicInt make(long val) {
 		return new AtomicInt(val);

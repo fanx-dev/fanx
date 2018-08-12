@@ -11,7 +11,6 @@
 **
 ** See [docLang::Actors]`docLang::Actors`
 **
-@Js
 native final const class Future
 {
 
@@ -95,7 +94,6 @@ native final const class Future
 **************************************************************************
 
 ** State of a Future's asynchronous computation
-@Js
 enum class FutureState
 {
   pending,

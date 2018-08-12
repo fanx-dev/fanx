@@ -12,7 +12,6 @@
 **
 ** See [docLang::Actors]`docLang::Actors`
 **
-@Js
 native const class ActorPool
 {
   static ActorPool defVal()
