@@ -2,9 +2,9 @@
 
 ## Todo List ##
 
-- more sys class
+- Actor enhance
 - ret support
 - numeric precision in JVM
-- locale and config
+- Generic infer
 - data class
 

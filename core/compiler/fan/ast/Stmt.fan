@@ -291,6 +291,7 @@ class ReturnStmt : Stmt
   Expr? expr           // expr to return of null if void return
   MethodVar? leaveVar  // to stash result for leave from protected region
   Bool isSynthetic     // was return inserted by compiler
+  Bool isLocal := false
 }
 
 **************************************************************************

@@ -69,6 +69,11 @@ mixin CType
   **
   virtual Bool isVal() { flags.and(FConst.Struct) != 0 }
 
+  Bool isJavaVal() {
+    n := qname
+    return n == "sys::Bool" || n == "sys::Float" || n == "sys::Int"
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Nullable
 //////////////////////////////////////////////////////////////////////////

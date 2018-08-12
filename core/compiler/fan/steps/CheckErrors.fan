@@ -509,7 +509,7 @@ class CheckErrors : CompilerStep
       f.isStatic == isStaticInit &&
       !f.isAbstract && !f.isNative && f.isStorage &&
       (!f.isOverride || f.concreteBase == null) &&
-      !f.fieldType.isNullable && !f.fieldType.isVal && f.init == null
+      !f.fieldType.isNullable && !f.fieldType.isJavaVal && f.init == null
     }
     if (fields.isEmpty) return
 

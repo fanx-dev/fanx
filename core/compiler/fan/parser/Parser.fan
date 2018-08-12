@@ -529,7 +529,7 @@ public class Parser : CompilerSupport
     // field initializer
     if (curt === Token.defAssign || curt === Token.assign)
     {
-      if (curt === Token.assign) err("Must use := for field initialization")
+      //if (curt === Token.assign) err("Must use := for field initialization")
       consume
       curSlot = field
       inFieldInit = true
@@ -896,6 +896,7 @@ public class Parser : CompilerSupport
       case Token.forKeyword:      return forStmt
       case Token.ifKeyword:       return ifStmt
       case Token.returnKeyword:   return returnStmt
+      case Token.lretKeyword:     return returnStmt
       case Token.switchKeyword:   return switchStmt
       case Token.throwKeyword:    return throwStmt
       case Token.tryKeyword:      return tryStmt
@@ -990,7 +991,7 @@ public class Parser : CompilerSupport
 
     if (curt === Token.defAssign || curt === Token.assign)
     {
-      if (curt === Token.assign) err("Must use := for declaration assignments")
+      //if (curt === Token.assign) err("Must use := for declaration assignments")
       consume
       stmt.init = expr
     }
@@ -1027,7 +1028,17 @@ public class Parser : CompilerSupport
   private ReturnStmt returnStmt()
   {
     stmt := ReturnStmt(cur)
-    consume(Token.returnKeyword)
+    if (curt === Token.lretKeyword) {
+      if (curClosure == null) {
+        throw err("Can't use the 'lret' in non-closure")
+      }
+      consume(Token.lretKeyword)
+      stmt.isLocal = true
+    }
+    else {
+      consume(Token.returnKeyword)
+    }
+
     if (!endOfStmt(null))
     {
       stmt.expr = expr

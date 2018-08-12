@@ -102,7 +102,7 @@ Lock, Lazy, SoftRef, TheadLocal,...
   str := Json.write(obj)
 ```
 
-### Actor ###
+### Actor Enhance ###
 ```
   class Bar {
     Str foo(Str str) {

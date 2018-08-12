@@ -411,8 +411,9 @@ class ParserTest : CompilerTest
         Int c { Set {} }
         Int d { get private set }
       }",
-    [3, 9, "Must use := for field initialization",
-     4, 5, "Must use := for field initialization",
+    [
+     //3, 9, "Must use := for field initialization",
+     //4, 5, "Must use := for field initialization",
      4, 3,  "Type inference not supported for fields",
      5, 11, "Expected 'get' or 'set', not 'Set'",
      6, 15, "Expected end of statement: semicolon, newline, or end of block; not 'private'"])
@@ -1020,7 +1021,7 @@ class ParserTest : CompilerTest
         Obj e() { return a is Kaggle }
       }",
     [3,  20, "Invalid list literal; use '[,]' for empty Obj[] list",
-     4,  19, "Must use := for declaration assignments",
+     //4,  19, "Must use := for declaration assignments",
      5,  20, "Invalid map type 'sys::Str' for map literal",
      6,  25, "Unknown type 'GooGoo'",
      7,  25, "Unknown type 'Kaggle'",
