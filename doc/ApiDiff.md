@@ -86,18 +86,19 @@ Lock, Lazy, SoftRef, TheadLocal,...
   Log.debug("pod", "msg")
 ```
 
-### String Format ###
+### More Str Utils ###
+Str.splitBy, Str.splitAny, Str.extract
 ```
   Str.fromat("%s %d %f", ["Hi", 12, 0.3])
 ```
 
-### More Str Util ###
-Str.splitBy, Str.splitAny, Str.extract
-
-### JSON ###
+### New JSON Api ###
+The new api support 'encoding' and 'nonstandard' options and xpath.
 ```
-  obj := Json.read("""{abc="abc"}""")
-  str := Json.write(obj)
+  val := JVal.readJson("""{name=["abc"]}""")
+  val.xpath("name[0]")
+  val->name->getAt(0)
+  str := JVal.writeJson(val)
 ```
 
 ### Actor Enhance ###

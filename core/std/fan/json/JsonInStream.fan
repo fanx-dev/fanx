@@ -12,7 +12,7 @@
 **
 ** See [pod doc]`pod-doc#json` for details.
 **
-@Js
+@NoDoc
 class JsonInStream : ProxyInStream
 {
   **
@@ -69,7 +69,7 @@ class JsonInStream : ProxyInStream
   private Void parsePair(Str:Obj? obj)
   {
     skipWhitespace
-    key := parseStr
+    key := parseKey
 
     skipWhitespace
 
@@ -160,6 +160,18 @@ class JsonInStream : ProxyInStream
     return num
   }
 
+  private Str parseKey() {
+    if (cur == JsonToken.quote) {
+      return parseStr
+    }
+    s := StrBuf()
+    while (cur.isAlphaNum || cur == '_' || cur == '$' || cur == '-' || cur == '.') {
+      s.addChar(cur)
+      consume
+    }
+    return s.toStr
+  }
+
   private Str parseStr()
   {
     s := StrBuf()
@@ -214,7 +226,7 @@ class JsonInStream : ProxyInStream
     throw err("Invalid escape sequence")
   }
 
-  private List parseArray()
+  private Obj?[] parseArray()
   {
     array := [,]
     expect(JsonToken.arrayStart)
@@ -269,7 +281,6 @@ class JsonInStream : ProxyInStream
 **
 ** JsonToken represents the tokens in JSON.
 **
-@Js
 internal class JsonToken
 {
   internal static const Int objectStart := '{'

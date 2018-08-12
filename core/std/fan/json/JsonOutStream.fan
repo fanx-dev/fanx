@@ -12,9 +12,11 @@
 **
 ** See [pod doc]`pod-doc#json` for details.
 **
-@Js
+@NoDoc
 class JsonOutStream : ProxyOutStream
 {
+  Bool std := true
+  Bool encode := false
 
   **
   ** Convenience for `writeJson` to an in-memory string.
@@ -51,6 +53,16 @@ class JsonOutStream : ProxyOutStream
     else if (obj is Map)  writeJsonMap(obj)
     else if (obj is List) writeJsonList(obj)
     else if (obj == null) writeJsonNull
+    else if (obj is JVal) {
+      j := (JVal)obj
+      if (j.isStr) writeJsonStr(j.obj)
+      else if (j.isNum) writeJsonNum(j.obj)
+      else if (j.isBool) writeJsonBool(j.obj)
+      else if (j.isMap) writeJsonMap(j.obj)
+      else if (j.isList) writeJsonList(j.obj)
+      else if (j.isNull) writeJsonNull
+      else writeJsonObj(j.obj)
+    }
     else writeJsonObj(obj)
     return this
   }
@@ -82,7 +94,7 @@ class JsonOutStream : ProxyOutStream
     writeChar(JsonToken.objectEnd)
   }
 
-  private Void writeJsonMap(Map map)
+  private Void writeJsonMap(Str:Obj? map)
   {
     writeChar(JsonToken.objectStart)
     notFirst := false
@@ -109,6 +121,11 @@ class JsonOutStream : ProxyOutStream
     writeChar(JsonToken.arrayEnd)
   }
 
+  private Void writeJsonKey(Str str) {
+    if (std || !Uri.isName(str)) writeJsonStr(str)
+    else writeChars(str)
+  }
+
   private Void writeJsonStr(Str str)
   {
     writeChar(JsonToken.quote)
@@ -130,7 +147,10 @@ class JsonOutStream : ProxyOutStream
       }
       else
       {
-        writeChar('\\').writeChar('u').print(char.toHex(4))
+        if (encode)
+           writeChar('\\').writeChar('u').print(char.toHex(4))
+        else
+           writeChar(char)
       }
     }
     writeChar(JsonToken.quote)
@@ -153,7 +173,7 @@ class JsonOutStream : ProxyOutStream
 
   private Void writeJsonPair(Str key, Obj? val)
   {
-    writeJsonStr(key)
+    writeJsonKey(key)
     writeChar(JsonToken.colon)
     writeJson(val)
   }
