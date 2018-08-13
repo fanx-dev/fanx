@@ -27,7 +27,7 @@ To add methods out side the class
   str.foo
 ```
 
-### Numeric Precision ###
+### Numeric Precision (TODO) ###
 Support Numeric Precision by Facets
 ```
   Point {
@@ -103,11 +103,11 @@ Run build:
 ```
 
 ### Local Return ###
-A new keyword 'ret' as same as 'return' but only be used in closures.
+A new keyword 'lret' as same as 'return' but only be used in closures.
 ```
   list.eachWhile |v| {
     if (v == 0) lret null
-    ret v
+    lret v
   }
 ```
 
@@ -122,5 +122,11 @@ Auto generate toStr hash make and equals methods.
   Str str := "Hi"
   Str str = "Hi" //ok
   str := "Hi"
+```
+
+### Closure Inference ###
+To omit the function signature not only it-block.
+```
+ a := Actor(pool) { it + 1 }
 ```
 

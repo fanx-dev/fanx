@@ -68,22 +68,9 @@ Lock, Lazy, SoftRef, TheadLocal,...
   lock.sync { ... }
 ```
 
-### Map Iterator ###
-```
-  itr := map.iterator
-  while (tir.hasMore) {
-    pair := itr.next
-  }
-```
-
 ### Assert ###
 ```
   assert(a == b, "error")
-```
-
-### Static Logger ###
-```
-  Log.debug("pod", "msg")
 ```
 
 ### More Str Utils ###
