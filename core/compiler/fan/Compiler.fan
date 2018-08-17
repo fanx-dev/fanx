@@ -90,6 +90,7 @@ class Compiler
     Parse(this).run
     OrderByInheritance(this).run
     CheckInheritance(this).run
+    InitDataClass(this).run
     Inherit(this).run
     DefaultCtor(this).run
     InitEnum(this).run

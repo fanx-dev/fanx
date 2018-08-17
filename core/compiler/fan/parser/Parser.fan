@@ -152,6 +152,11 @@ public class Parser : CompilerSupport
     // class
     else
     {
+      //data class
+      if (curt === Token.identifier && cur.val == "data") {
+        flags = flags.or(Parser.Data)
+        consume
+      }
       // enum class
       if (curt === Token.identifier && cur.val == "enum")
       {

@@ -36,7 +36,7 @@ class FCodePrinter : FConst
       while (true)
       {
         op := buf.read
-        if (op == null) break
+        if (op == -1) break
         this.op(FOp.vals[op])
       }
     }

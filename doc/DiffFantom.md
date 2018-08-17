@@ -111,7 +111,7 @@ A new keyword 'lret' as same as 'return' but only be used in closures.
   }
 ```
 
-### Data Class (TODO) ###
+### Data Class ###
 Auto generate toStr hash make and equals methods.
 ```
   data class Point { Float x; Float y }

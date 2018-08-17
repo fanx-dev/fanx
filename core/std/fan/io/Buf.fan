@@ -415,7 +415,7 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.read]`InStream.read`
   **
-  Int? read() { privateIn.read }
+  Int read() { privateIn.read }
 
   **
   ** Convenience for [in.readBuf]`InStream.readBuf`
@@ -443,7 +443,7 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.peek]`InStream.peek`
   **
-  Int? peek() { privateIn.peek }
+  Int peek() { privateIn.peek }
 
   **
   ** Convenience for [in.readU1]`InStream.readU1`
@@ -508,7 +508,7 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.readChar]`InStream.readChar`
   **
-  Int? readChar() { privateIn.readChar }
+  Int readChar() { privateIn.readChar }
 
   **
   ** Convenience for [in.unreadChar]`InStream.unreadChar`
@@ -521,7 +521,7 @@ rtconst abstract class Buf
   **
   ** Convenience for [in.peekChar]`InStream.peekChar`
   **
-  Int? peekChar() { privateIn.peekChar }
+  Int peekChar() { privateIn.peekChar }
 
   **
   ** Convenience for [in.readChars]`InStream.readChars`
