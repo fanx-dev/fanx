@@ -1285,7 +1285,12 @@ class CheckErrors : CompilerStep
         err("Must call super method '$m.qname' with exactly $m.params.size arguments", call.target.loc)
     }
 
-    // don't allow safe calls on non-nullable type
+    // don't allow safe calls on static type
+    if (call.isSafe && call.target != null && call.target.id === ExprId.staticTarget) {
+      err("Cannot use null-safe call on static target type '$call.target.ctype'", call.target.loc)
+      return
+    }
+
     if (call.isSafe && call.target != null && !call.target.ctype.isNullable)
       err("Cannot use null-safe call on non-nullable type '$call.target.ctype'", call.target.loc)
 

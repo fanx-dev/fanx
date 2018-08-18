@@ -1536,6 +1536,9 @@ class ClosureExpr : Expr
          call.code.add(ReturnStmt.makeSynthetic(loc, c))
       }
     }
+    else {
+      return
+    }
 
     // sanity check
     if (t.usesThis)

@@ -198,7 +198,9 @@ class CallResolver : CompilerSupport
     }
 
     //try find extesion methods
-    if (found == null && target != null && target.id !== ExprId.staticTarget) {
+    //the extesion method is not support safe call, e.g. obj?.foo
+    if (found == null && target != null && target.id !== ExprId.staticTarget
+      && !expr.isSafe) {
       findExtesion(base)
     }
 
@@ -272,10 +274,11 @@ class CallResolver : CompilerSupport
   }
 
   private Bool findExtesion(CType base) {
+    meths := curType.unit.extensionMethods[name]
+    if (meths == null) return false
+
     founds := CMethod[,]
-    meths := curType.unit.extensionMethods
     meths.each |m| {
-      if (m.name != name) return
       param := m.params.first
       if (param == null) return
       CType paramType := param.paramType

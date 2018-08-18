@@ -42,14 +42,15 @@ class CompilationUnit : Node
   }
 
   // get all imported extendsion methods
-  //TODO: optimize to map
-  once CMethod[] extensionMethods() {
-    meths := CMethod[,]
+  once Str:CMethod[] extensionMethods() {
+    meths := Str:CMethod[][:]
     importedTypes.each |types|{
       types.each |type| {
         type.methods.each |m| {
           if (m.isStatic && (m.flags.and(FConst.Extension) != 0)) {
-             meths.add(m)
+             ms := meths[m.name]
+             if (ms == null) { ms = CMethod[,]; meths[m.name] = ms }
+             ms.add(m)
           }
         }
       }

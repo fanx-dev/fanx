@@ -568,7 +568,7 @@ class ItBlockTest : CompilerTest
         4, 27, "Invalid use of 'it' outside of it-block",
         5, 20, "Invalid use of 'it' outside of it-block",
         6, 21, "Cannot apply it-block to Void expr",
-        7, 21, "Cannot apply it-block to Void expr",  // it-block params < f0
+        //7, 21, "Cannot apply it-block to Void expr",  // it-block params < f0
        10, 31, "Unknown variable 'x'",
        11, 31, "No comma operator method found: '$podName::B.add'",
       ])
