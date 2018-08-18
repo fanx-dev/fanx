@@ -1520,8 +1520,22 @@ class ClosureExpr : Expr
     // between the explicit signature and the inferred
     // signature, take the most specific types; this is where
     // we take care of functions with generic parameters like V
-    t = t.toArity(((FuncType)cls.base).arity)
-    t = signature.mostSpecific(t)
+    if (((FuncType)cls.base).arity <= t.arity) {
+      t = t.toArity(((FuncType)cls.base).arity)
+      t = signature.mostSpecific(t)
+    }
+    else if (isItBlock && t.arity == 0) {
+      call.paramDefs.clear
+      c := CallExpr.makeWithMethod(loc, ThisExpr(loc), doCall, [LiteralExpr.makeNull(loc, cls.ns)])
+      call.code.stmts.clear
+      if (t.ret.isVoid) {
+         call.code.add(c.toStmt)
+         call.code.add(ReturnStmt.makeSynthetic(loc, LiteralExpr.makeNull(loc, cls.ns)))
+      }
+      else {
+         call.code.add(ReturnStmt.makeSynthetic(loc, c))
+      }
+    }
 
     // sanity check
     if (t.usesThis)

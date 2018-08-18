@@ -38,7 +38,7 @@ Support Numeric Precision by Facets
 ```
 
 ### Struct Type ###
-A struct type is a value type
+A struct type is a pass by value type
 ```
   const struct class Point {
     const Int x
@@ -48,10 +48,11 @@ A struct type is a value type
 ```
 
 ### RunTime Immutable ###
+To make sure safe when override toImmutable methods.
 ```
   rtconst Buf {
     override Bool isImmutable() { ... }
-    override This toImuutable() { ... }
+    override This toImmutable() { ... }
   }
 ```
 
@@ -62,7 +63,7 @@ It's more portable to write a new backend platforms.
 Future targets might include Objective-C, the LLVM, WebAssembly.
 
 ### Static Namespace ###
-FanCore allow same name static slots in inheritance.
+fanx allow same name static slots in inheritance.
 ```
    class Base {
      static Void foo() {}
@@ -78,7 +79,7 @@ FanCore allow same name static slots in inheritance.
 ```
 
 ### Return From Void ###
-FanCore not allow return a value from Void method, except return a Void type.
+not allow return a value from Void method, except return a Void type.
 
 ### Float Literals ###
 The Default Number is Float
@@ -112,7 +113,7 @@ A new keyword 'lret' as same as 'return' but only be used in closures.
 ```
 
 ### Data Class ###
-Auto generate toStr hash make and equals methods.
+Auto generate toStr, hash, make, equals, compare methods if absent.
 ```
   data class Point { Float x; Float y }
 ```
@@ -120,13 +121,14 @@ Auto generate toStr hash make and equals methods.
 ### Initialization Assignment ###
 ```
   Str str := "Hi"
-  Str str = "Hi" //ok
+  Str str = "Hi" //both ok make javaer more comfortable
   str := "Hi"
 ```
 
 ### Closure Inference ###
-To omit the function signature not only it-block.
+To omit the function signature if params size less than one, not only it-block.
 ```
- a := Actor(pool) { it + 1 }
+  Void foo(|->| f) { f() }
+  foo { echo("Hi") }
 ```
 

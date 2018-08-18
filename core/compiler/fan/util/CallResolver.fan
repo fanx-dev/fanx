@@ -444,29 +444,33 @@ class CallResolver : CompilerSupport
   **
   static Expr inferClosureTypeFromCall(CompilerSupport support, CallExpr call, CType base)
   {
-    // check if last argument is closure
-    c := call.args.last as ClosureExpr
-    if (c == null) return call
+    ClosureExpr? lastC := null
+    lastOk := false
+    call.args.each |arg, i| {
+      // check if last argument is closure
+      c := arg as ClosureExpr
+      if (i == call.args.size - 1) lastC = c
+      if (c == null) return
 
-    // if the resolved slot is a method where the last param
-    // is expected to be a function type, then use that to
-    // infer the type signature of the closure
-    m := call.method
-    lastParam := m.params.last?.paramType?.deref?.toNonNullable as FuncType
-    if (lastParam != null && call.args.size == m.params.size &&
-        c.signature.params.size <= lastParam.params.size)
-    {
-      if (call.method.name == "with")
-        lastParam = FuncType.makeItBlock(base)
-      else
-        lastParam = lastParam.parameterizeThis(base)
-      c.setInferredSignature(lastParam)
-      return call
+      // if the resolved slot is a method where the last param
+      // is expected to be a function type, then use that to
+      // infer the type signature of the closure
+      m := call.method
+      paramType := m.params.getSafe(i)?.paramType?.deref?.toNonNullable as FuncType
+      if (paramType != null)
+      {
+        if (call.method.name == "with")
+          paramType = FuncType.makeItBlock(base)
+        else
+          paramType = paramType.parameterizeThis(base)
+        c.setInferredSignature(paramType)
+        if (lastC != null) lastOk = true
+      }
     }
 
     // otherwise if the closure is an it-block, we infer
     // its type to be the result of the target expression
-    if (c.isItBlock)
+    if (!lastOk && lastC != null && lastC.isItBlock)
     {
       // if call is This, switch it to base (passes thru to toWith)
       if (call.ctype.isThis) call.ctype = base
@@ -481,7 +485,7 @@ class CallResolver : CompilerSupport
       // remove the function parameter and turn this into:
       //  call(args).toWith(c)
       call.args.removeAt(-1)
-      return c.toWith(call)
+      return lastC.toWith(call)
     }
     return call
   }

@@ -781,7 +781,7 @@ class CheckErrors : CompilerStep
     }
 
     // can't use return inside an it-block (might be confusing)
-    if (!stmt.isSynthetic && curType.isClosure && curType.closure.isItBlock)
+    if (!stmt.isSynthetic && curType.isClosure && curType.closure.isItBlock && !stmt.isLocal)
       err("Cannot use return inside it-block", stmt.loc)
 
     // can't leave control of a finally block
