@@ -1697,7 +1697,7 @@ class CheckErrors : CompilerStep
     // consider the slot internal if its parent is internal
     isInternal := slot.isInternal || (slot.parent.isInternal && !slot.parent.isParameterized)
 
-    if (slot.isPrivate && curType != slot.parent)
+    if (slot.isPrivate && curType != slot.parent && curType.qname != slot.parent.qname)
       return "Private $msg '$slot.qname' not accessible"
 
     else if (slot.isProtected && !curType.fits(slot.parent) && curType.pod != slot.parent.pod)

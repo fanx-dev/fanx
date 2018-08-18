@@ -303,7 +303,7 @@ class FuncType : ParameterizedType
 
   static CType toMostSpecific(CType a, CType b)
   {
-    if (b.hasGenericParameter) return a
+    if (b.deref.toNonNullable is GenericParamType) return a
     if (a.isObj || a.isVoid || a.hasGenericParameter) return b
     return a
   }

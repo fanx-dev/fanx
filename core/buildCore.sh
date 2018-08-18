@@ -5,6 +5,7 @@ set -e
 
 fanc='../env/bin/fanc'
 $fanc compiler/pod.props
+cp ../env/lib/compiler.pod ../env/lib/fan/
 
 $fanc sys/pod.props
 $fanc std/pod.props

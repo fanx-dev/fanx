@@ -317,6 +317,7 @@ class Main
     input.srcStrLoc      = Loc.makeFile(file)
     input.mode           = CompilerInputMode.str
     input.output         = CompilerOutputMode.transientPod
+    input.depends        = [Depend("sys 2.0"), Depend("std 1.0")]
 
     if (options != null)
     {

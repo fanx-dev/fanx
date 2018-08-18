@@ -5,19 +5,12 @@
 //   2017-1-21  Jed Young  Creation
 //
 
-rtconst class Tuple<A, B, C, D> {
+rtconst class Tuple<A, B, C> {
   private Bool immutable := false
 
-  A first { set { onModify; &first = it } }
-  B second { set { onModify; &second = it } }
-  C third { set { onModify; &third = it } }
-  D fourth { set { onModify; &fourth = it } }
-
-  private Void onModify() {
-    if (immutable) {
-      throw ReadonlyErr()
-    }
-  }
+  A first { private set }
+  B second { private set }
+  C third { private set }
 
   new make(|This| f) { f(this) }
 
@@ -36,25 +29,18 @@ rtconst class Tuple<A, B, C, D> {
     this.third = c
   }
 
-  new make4(A a, B b, C c, D d) {
-    this.first = a
-    this.second = b
-    this.third = c
-    this.fourth = d
-  }
-
   override Bool isImmutable() {
     return immutable
   }
 
-  override Tuple<A, B, C, D> toImmutable() {
+  override Tuple<A, B, C> toImmutable() {
     if (immutable) return this
 
-    t := Tuple<A, B, C, D>{}
-    t.first = this.first.toImmutable
-    t.second = this.second.toImmutable
-    t.third = this.third.toImmutable
-    t.fourth = this.fourth.toImmutable
+    t := Tuple<A, B, C>(
+      this.first?.toImmutable,
+      this.second?.toImmutable,
+      this.third?.toImmutable
+    )
     t.immutable = true
     return t
   }
