@@ -18,7 +18,7 @@ class DasmTest : Test
   {
     // read our fanx.test.InteropTest class
     DasmClass? c := null
-    zip := Zip.open(Env.cur.homeDir + `lib/java/sys.jar`)
+    zip := Zip.open(Env.cur.homeDir + `lib/java/fanx.jar`)
     try
       c = Dasm(zip.contents[`/fanx/test/InteropTest.class`].in).read
     finally

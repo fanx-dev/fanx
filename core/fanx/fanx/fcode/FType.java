@@ -161,7 +161,7 @@ public class FType
   		Map<String, FSlot > map = new HashMap<String, FSlot>();
   		
   		for (FField f : fields) {
-			if (f.isSynthetic()) continue;
+//			if (f.isSynthetic()) continue;
 			map.put(f.name, f);
 		}
 		
@@ -177,7 +177,7 @@ public class FType
 				continue;
 			}
 			
-			if (f.isSynthetic()) continue;
+//			if (f.isSynthetic()) continue;
 			map.put(f.name, f);
 		}
 		slotsMap = map;

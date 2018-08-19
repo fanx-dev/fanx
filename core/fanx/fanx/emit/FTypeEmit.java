@@ -387,15 +387,15 @@ public abstract class FTypeEmit
     // direct mixin inheritances (but not my class extension) - these
     // are the ones I need routers for (but I can skip generating
     // routers for any mixins implemented by my super class)
-    HashMap<String,FatMethod> methodToMixin = new HashMap<String,FatMethod>();
-    resolveMethodMixins(type, methodToMixin);
+    HashMap<String,FatMethod> methods = new HashMap<String,FatMethod>();
+    resolveMethodForMixin(type, methods);
 
     // emit routers for concrete instance methods
-    Iterator<FatMethod> it = methodToMixin.values().iterator();
+    Iterator<FatMethod> it = methods.values().iterator();
     while (it.hasNext())
     {
       FatMethod fm = (FatMethod)it.next();
-      //self class methods
+      //class methods
       if (fm == null) continue;
       
 //      fm.type.load();
@@ -404,24 +404,33 @@ public abstract class FTypeEmit
     }
   }
 
-  private void resolveMethodMixins(FType t, HashMap<String,FatMethod> methodToMixin)
+  private void resolveMethodForMixin(FType t, HashMap<String,FatMethod> methods)
   {
 	  t.load();
 	  if (!t.isMixin()) {
-		  //self
-		  for (Map.Entry<String, FSlot> entry : type.getSlotsMap().entrySet()) {
-			  if (entry.getValue().isStatic()) continue;
-			  methodToMixin.put(entry.getKey(), null);
+		  //skip sys::Obj
+		  if (t.base == 0xFFFF) return;
+		  
+		  //if is not mixin clear to null
+		  for (Map.Entry<String, FSlot> entry : t.getSlotsMap().entrySet()) {
+			  FSlot slot = entry.getValue();
+			  if (slot.isStatic()) continue;
+			  if (t != type && slot.isAbstract()) continue;
+			  String name = entry.getKey();
+			  if ("isMixin".equals(name)) {
+				  System.out.print(name);
+			  }
+			  methods.put(name, null);
 		  }
 	  }
 	  else {
 		  for (FMethod m : t.methods) {
 			  if (m.isStatic() || m.isAbstract()) continue;
-			  if (!methodToMixin.containsKey(m.name)) {
+			  if (!methods.containsKey(m.name)) {
 				  FatMethod fm = new FatMethod();
 				  fm.method = m;
 				  fm.type = t;
-				  methodToMixin.put(m.name, fm);
+				  methods.put(m.name, fm);
 			  }
 		  }
 	  }
@@ -431,12 +440,19 @@ public abstract class FTypeEmit
 //    if (((t.flags & FConst.Mixin) != 0)
 //    		&& acc.get(qname) == null)
 //      acc.put(qname, t);
+//	
+	//base class
+	if (t.base != 0xFFFF) {
+		FTypeRef ref = t.pod.typeRef(t.base);
+		FType x = Sys.findFType(ref.podName, ref.typeName);
+		resolveMethodForMixin(x, methods);
+	}
 
-    // recurse
+    //mixin
     for (int i=0; i<t.mixins.length; ++i) {
     	FTypeRef ref = t.pod.typeRef(t.mixins[i]);
 		FType x = Sys.findFType(ref.podName, ref.typeName);
-		resolveMethodMixins(x, methodToMixin);
+		resolveMethodForMixin(x, methods);
     }
   }
 

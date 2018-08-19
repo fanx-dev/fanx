@@ -349,6 +349,14 @@ class MixinTest : Test
     verifyEq(t.method("equals").parent, MxGoo#)
   }
 
+  Void testMixInherit() {
+    FanxM x := FanxC()
+    FanxM y := FanxB()
+
+    verifyEq(x.foo, "abs")
+    verifyEq(y.foo, "mix")
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Test special .NET handling
 //////////////////////////////////////////////////////////////////////////
@@ -372,6 +380,28 @@ class MixinTest : Test
     verifyEq(m.foo(), a)
     verifyEq(m.bar(), b)
   }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// Helper Types
+//////////////////////////////////////////////////////////////////////////
+
+mixin FanxM {
+  virtual Str foo() { "mix" }
+}
+
+mixin FanxMM : FanxM {
+}
+
+abstract class FanxA : FanxM {
+  override Str foo() { "abs" }
+}
+
+class FanxC : FanxA, FanxMM {
+}
+
+class FanxB : FanxM {
 }
 
 

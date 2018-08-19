@@ -146,12 +146,12 @@ class NamespaceTest : JavaTest
   Void testUsing()
   {
     compile(
-      "using [java] java.util
+      "using [java] java.util::ArrayList as JArrayList
        using [java] java.util::HashMap
        using [java] java.util::Date as JDate
        class Foo
        {
-         Str a() { return ArrayList().getClass.getName }
+         Str a() { return JArrayList().getClass.getName }
          Str b() { return HashMap().getClass.getName }
          Str c() { return JDate().getClass.getName }
        }")
