@@ -15,7 +15,7 @@ class AnnotationsTest : JavaTest
   Void test()
   {
     compile(
-     Str<|using sys::Test
+     Str<|using std::Test
           using [java] java.lang
           using [java] java.lang.annotation
           using [java] fanx.interop

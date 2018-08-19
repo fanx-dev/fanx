@@ -57,6 +57,7 @@ class ClassPath
     // {fan}lib/java/ext/{plat}
     addJars(entries, Env.cur.homeDir + `lib/java/ext/`)
     addJars(entries, Env.cur.homeDir + `lib/java/ext/${Env.cur.platform}/`)
+    addJars(entries, Env.cur.homeDir + `lib/java/stub/`)
 
     // -classpath
     Env.cur.vars.get("java.class.path", "").split(File.pathSep[0]).each |Str path|
@@ -176,8 +177,8 @@ class ClassPath
     packageName := uri.path[0..-2].join(".")
     if (isBoot)
     {
-      if (packageName.startsWith("com.sun") || packageName.startsWith("sun"))
-        return
+      //if (packageName.startsWith("com.sun") || packageName.startsWith("sun"))
+      //  return
     }
 
     // get simple name of class

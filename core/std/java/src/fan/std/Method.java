@@ -7,6 +7,7 @@ import fan.sys.*;
 import fanx.fcode.*;
 import fanx.fcode.FAttrs.FFacet;
 import fanx.main.*;
+import fanx.util.FanUtil;
 
 public class Method extends Slot {
 
@@ -54,6 +55,31 @@ public class Method extends Slot {
 		method.reflect = new java.lang.reflect.Method[(int)params.size()+1];
 		return method;
 	}
+	
+	/**
+	   * Map a Java Method to a Fantom Method.
+	   */
+	  public static Method fromJava(java.lang.reflect.Method java)
+	  {
+	    Type parent   = FanUtil.toFanType(java.getDeclaringClass(), true);
+	    String name   = java.getName();
+	    int flags     = FanUtil.memberModifiersToFanFlags(java.getModifiers());
+	    List facets = List.make(1);
+	    Type ret      = FanUtil.toFanType(java.getReturnType(), true);
+
+	    Class[] paramClasses = java.getParameterTypes();
+	    List params = List.make(paramClasses.length);
+	    for (int i=0; i<paramClasses.length; ++i)
+	    {
+	      Param param = new Param("p"+i, FanUtil.toFanType(java.getDeclaringClass(), true), 0);
+	      params.add(param);
+	    }
+
+	    int mask = 0;
+	    Method fan = new Method(parent, name, flags, facets, -1, ret, ret, params.ro(), mask);
+	    fan.reflect = new java.lang.reflect.Method[] { java };
+	    return fan;
+	  }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Methods

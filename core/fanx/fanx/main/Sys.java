@@ -9,6 +9,8 @@ import java.util.Map;
 import fanx.fcode.FPod;
 import fanx.fcode.FStore;
 import fanx.fcode.FType;
+import fanx.fcode.FTypeRef;
+import fanx.util.FanUtil;
 import fanx.util.Reflection;
 
 public class Sys {
@@ -92,6 +94,12 @@ public class Sys {
 			pos2 = signature.length();
 
 		String typeName = signature.substring(pos + 2, pos2);
+		
+		if (podName.startsWith("[java]")) {
+			Type t = JavaType.loadJavaType(podName, typeName);
+			return t;
+		}
+		
 		FType ftype = findFType(podName, typeName, checked);
 		if (ftype == null)
 			return null;
@@ -102,12 +110,37 @@ public class Sys {
 		}
 		return res;
 	}
+	
+	public static Type getTypeByRefId(FPod pod, int typeRefId) {
+		FTypeRef ref = pod.typeRef(typeRefId);
+		if (ref.podName.startsWith("[java]")) {
+			Type t = JavaType.loadJavaType(ref.podName, ref.typeName);
+			return t;
+		}
+		
+		FType ft = Sys.findFType(ref.podName, ref.typeName);
+		Type t = Type.fromFType(ft, ref.signature);
+		if (ref.signature.endsWith("?")) {
+			t = t.toNullable();
+		}
+		return t;
+	}
+	
+	public static FType getFTypeByRefId(FPod pod, int typeRefId) {
+		FTypeRef ref = pod.typeRef(typeRefId);
+		if (ref.podName.startsWith("[java]")) {
+			return null;
+		}
+		FType x = Sys.findFType(ref.podName, ref.typeName);
+		return x;
+	}
 
-	public static FType findFType(String podName, String typeName) {
+	private static FType findFType(String podName, String typeName) {
 		return findFType(podName, typeName, true);
 	}
 
-	public static FType findFType(String podName, String typeName, boolean checked) {
+	private static FType findFType(String podName, String typeName, boolean checked) {
+
 		FPod pod = findPod(podName, checked);
 		if (pod == null) {
 			if (checked) {
@@ -131,24 +164,24 @@ public class Sys {
 	public static FPod findPod(String podName) {
 		return findPod(podName, true);
 	}
-	
+
 	public static synchronized void addPod(FPod pod) {
 		String podName = pod.podName;
 		SoftReference<FPod> ref = pods.get(podName);
 		if (ref != null && ref.get() != null)
-	        throw new RuntimeException("Duplicate pod name: " + podName);
-		
+			throw new RuntimeException("Duplicate pod name: " + podName);
+
 		pods.put(podName, new SoftReference<FPod>(pod));
 		if (pod.podClassLoader == null) {
 			PodClassLoader cl = new PodClassLoader(pod);
 			pod.podClassLoader = cl;
 		}
 	}
-	
+
 	public static RuntimeException makeErr(String qname, String msg) {
 		Type type = findType(qname, false);
 		if (type == null) {
-			throw new RuntimeException("not found type:"+qname+",msg:"+msg);
+			throw new RuntimeException("not found type:" + qname + ",msg:" + msg);
 		}
 		RuntimeException re = (RuntimeException) Reflection.callStaticMethod(type.getJavaActualClass(), "make", msg);
 		return re;
@@ -177,5 +210,4 @@ public class Sys {
 		}
 		return null;
 	}
-
 }

@@ -11,6 +11,7 @@ import fan.sys.IOErr;
 import fan.sys.List;
 import fan.sys.UnknownFacetErr;
 import fan.sys.UnknownSlotErr;
+import fan.sys.UnsupportedErr;
 import fanx.fcode.FAttrs.FFacet;
 import fanx.fcode.FConst;
 import fanx.fcode.FField;
@@ -33,6 +34,16 @@ public class TypeExt {
 	}
 
 	public static Object make(Type self, List args) {
+		
+		if (self.ftype() == null) {
+			// right now we don't support constructors with arguments
+		    if (args != null && args.sz() > 0)
+		      throw UnsupportedErr.make("Cannot call make with args on Java type: " + self);
+	
+		    // route to Class.newInstance
+		    try { return self.getJavaActualClass().newInstance(); }
+		    catch (Exception e) { throw Err.make(e); }
+		}
 		
 		Method m = method(self, "make", false);
 		if (m != null && m.isPublic()) {
@@ -193,10 +204,7 @@ public class TypeExt {
 	////////////////////////////////////////////////////////////////////////////
 
 	public static String doc(Type self) {
-		FType ftype = self.ftype();
-		if (ftype == null)
-			return null;
-		return ftype.doc().tyeDoc();
+		return self.doc(null);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -219,6 +227,7 @@ public class TypeExt {
 	}
 
 	public static Pod pod(Type type) {
+		if (type.ftype() == null) return null;
 		return Pod.fromFPod(type.ftype().pod);
 	}
 
@@ -285,7 +294,13 @@ public class TypeExt {
 	}
 
 	public static Method method(Type type, String name, boolean checked) {
-		return (Method) slot(type, name, checked);
+		Slot s = slot(type, name, checked);
+		if (s instanceof Field)
+	    {
+	      Field f = (Field)s;
+	      if (f.overload != null) return f.overload;
+	    }
+		return (Method) s;
 	}
 
 	public static Method method(Type type, String name) {
@@ -362,29 +377,91 @@ public class TypeExt {
 
 				slots.put(f.name, Method.fromFCode(f, type));
 			}
-		}
 		
-		// link java reflect
-		Class<?> jclz = type.getJavaImplClass();
-		Class<?> aclz = type.getJavaActualClass();
-		boolean specialImpl = jclz != aclz;
-		
-		java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
-		for (java.lang.reflect.Method jmth : jmths) {
-			linkMethod(type, slots, specialImpl, jmth, false);
-		}
-		
-		//bind mixin imple
-		if (jclz.isInterface()) {
-			try {
-				Class<?> clz = Class.forName(jclz.getName()+"$");
-				java.lang.reflect.Method[] jmths2 = clz.getDeclaredMethods();
-				for (java.lang.reflect.Method jmth : jmths2) {
-					linkMethod(type, slots, true, jmth, true);
-				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+			// link java reflect
+			Class<?> jclz = type.getJavaImplClass();
+			Class<?> aclz = type.getJavaActualClass();
+			boolean specialImpl = jclz != aclz;
+			
+			java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
+			for (java.lang.reflect.Method jmth : jmths) {
+				linkMethod(type, slots, specialImpl, jmth, false);
 			}
+			
+			//bind mixin imple
+			if (jclz.isInterface()) {
+				try {
+					Class<?> clz = Class.forName(jclz.getName()+"$");
+					java.lang.reflect.Method[] jmths2 = clz.getDeclaredMethods();
+					for (java.lang.reflect.Method jmth : jmths2) {
+						linkMethod(type, slots, true, jmth, true);
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			// reflect Java members
+		    java.lang.reflect.Field[] jfields = type.getJavaActualClass().getFields();
+		    java.lang.reflect.Method[] jmethods = type.getJavaActualClass().getMethods();
+		    // set all the Java members accessible for reflection
+		    try
+		    {
+		      for (int i=0; i<jfields.length; ++i) jfields[i].setAccessible(true);
+		      for (int i=0; i<jmethods.length; ++i) jmethods[i].setAccessible(true);
+		    }
+		    catch (Exception e)
+		    {
+		      System.out.println("ERROR: " + type + ".initSlots setAccessible: " + e);
+		    }
+		    
+		    // map the fields
+		    for (int i=0; i<jfields.length; ++i)
+		    {
+		      Field f = Field.fromJava(jfields[i]);
+		      slots.put(f.name, f);
+		    }
+		    
+		    // map the methods
+		    for (int i=0; i<jmethods.length; ++i)
+		    {
+		      // check if we already have a slot by this name
+		      java.lang.reflect.Method j = jmethods[i];
+		      Method m = Method.fromJava(j);
+		      
+		      Slot existing = (Slot)slots.get(j.getName());
+
+		      // if this method overloads a field
+		      if (existing instanceof Field)
+		      {
+		        // if this is the first method overload over
+		        // the field then create a link via Field.overload
+		        Field x = (Field)existing;
+		        if (x.overload == null)
+		        {
+		          x.overload = m;
+		          continue;
+		        }
+
+		        // otherwise set existing to first method and fall-thru to next check
+		        existing = x.overload;
+		      }
+
+		      // if this method overloads another method then all
+		      // we do is add this version to our Method.reflect
+		      if (existing instanceof Method)
+		      {
+		        Method x = (Method)existing;
+		        java.lang.reflect.Method [] temp = new java.lang.reflect.Method[x.reflect.length+1];
+		        System.arraycopy(x.reflect, 0, temp, 0, x.reflect.length);
+		        temp[x.reflect.length] = j;
+		        x.reflect = temp;
+		        continue;
+		      }
+		      
+		      slots.put(m.name, m);
+		    }
 		}
 
 		type.slots = slots;

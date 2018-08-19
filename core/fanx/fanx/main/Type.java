@@ -10,6 +10,7 @@ package fanx.main;
 import java.util.Map;
 
 import fanx.fcode.FConst;
+import fanx.fcode.FDoc;
 import fanx.fcode.FPod;
 import fanx.fcode.FType;
 import fanx.fcode.FTypeRef;
@@ -87,7 +88,26 @@ public abstract class Type {
 	public FType ftype() {
 		return null;
 	}
-
+	
+	public int lineNumber() {
+		FType ft = ftype();
+		if (ft == null) return -1;
+		return ft.attrs.lineNum;
+	}
+	
+	public String sourceFile() {
+		FType ft = ftype();
+		if (ft == null) return null;
+		return ft.attrs.sourceFile;
+	}
+	
+	public String doc(String slot) {
+		FType ft = ftype();
+		if (ft == null) return null;
+		if (slot == null) return ft.doc().tyeDoc();
+		return ft.doc().slotDoc(slot);
+	}
+	
 	public static Type fromFType(FType ftype, String signature) {
 		if (ftype.reflectType == null) {
 			//need new instance for every signature?
@@ -98,20 +118,13 @@ public abstract class Type {
 		return res;
 	}
 	
-	public static Type refToType(FPod pod, int typeRefId) {
-		FTypeRef tref = pod.typeRef(typeRefId);
-		FType ft = Sys.findFType(tref.podName, tref.typeName);
-		Type t = Type.fromFType(ft, tref.signature);
-		return t;
-	}
+//	public static Type refToType(FPod pod, int typeRefId) {
+//		return Sys.getTypeByRefId(pod, typeRefId);
+//	}
+	
+	public abstract Type[] mixins();
 
-	public Type base() {
-		FType ftype = this.ftype();
-		if (ftype.base == 0xFFFF) {
-			return null;
-		}
-		return refToType(ftype.pod, ftype.base);
-	}
+	public abstract Type base();
 	
 	public static Type find(String signature) {
 		return Sys.findType(signature);

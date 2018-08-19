@@ -149,7 +149,7 @@ class CheckErrorsTest : JavaTest
   {
     verifyErrors(
      "using [java] java.util::Date as JDate
-      using [java] fanx.interop
+      using [java] fanx.interop::IntArray as JIntArray
       class Foo : JDate
       {
         new makeA() : super() {}
@@ -169,7 +169,7 @@ class CheckErrorsTest : JavaTest
         new make() : super.make() {}
       }
 
-      class Foo3 : IntArray
+      class Foo3 : JIntArray
       {
         new ctor() {}
       }
@@ -244,10 +244,10 @@ class CheckErrorsTest : JavaTest
       ",
        [
           4, 3, "Return type mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.add' - 'sys::Int' != 'sys::Num'",
-          5, 3, "Parameter mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.addDecimal' - 'addDecimal(sys::Decimal?[]?, sys::Decimal?)' != 'addDecimal(sys::Decimal?[]?, sys::Decimal)'",
+          5, 3, "Parameter mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.addDecimal' - '",
           6, 3, "Parameter mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.addfs' - 'addfs(sys::Float, sys::Str?)' != 'addfs(sys::Float?, sys::Str?)'",
-          7, 3, "Parameter mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.arrayGet' - 'arrayGet(sys::Obj?[]?, sys::Int)' != 'arrayGet(sys::Obj?[], sys::Int)'",
-          8, 3, "Return type mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.arraySelf' - '[java]fanx.test::InteropTest\$JavaOverrides?[]?' != '[java]fanx.test::InteropTest\$JavaOverrides[]?'",
+          7, 3, "Parameter mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.arrayGet' - '",
+          8, 3, "Return type mismatch in override of '[java]fanx.test::InteropTest\$JavaOverrides.arraySelf' - '",
        ])
   }
 
@@ -271,10 +271,10 @@ class CheckErrorsTest : JavaTest
       }
       ",
        [
-          7, 19, "Invalid args funcA(|->sys::Void|)",
-          8, 19, "Invalid args funcA(|sys::Str?->sys::Int|)",
-          9, 19, "Invalid args funcA(|sys::Str?,sys::Int->sys::Str?|)",
-         10, 19, "Invalid args funcA(|sys::Int->sys::Str?|)",
+          7, 19, "Invalid args funcA",
+          8, 19, "Invalid args funcA",
+          9, 19, "Invalid args funcA",
+         10, 19, "Invalid args funcA",
        ])
   }
 

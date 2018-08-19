@@ -217,5 +217,21 @@ public class StrUtil
       return String.valueOf(a).compareTo(String.valueOf(b));
     }
   };
+  
+  public static String capitalize(String self)
+  {
+    if (self.length() > 0)
+    {
+      int ch = self.charAt(0);
+      if ('a' <= ch && ch <= 'z')
+      {
+        StringBuilder s = new StringBuilder(self.length());
+        s.append((char)(ch & ~0x20));
+        s.append(self, 1, self.length());
+        return s.toString();
+      }
+    }
+    return self;
+  }
 
 }

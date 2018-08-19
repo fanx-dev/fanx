@@ -17,6 +17,9 @@ public class ClassType extends Type
 	private Class<?> jActualClass;
 	private NullableType nullable;
 	
+	private Type base;
+	private Type[] mixins;
+	
 	public ClassType(FType t) {
 		ftype = t;
 		nullable = new NullableType(this);
@@ -95,5 +98,29 @@ public class ClassType extends Type
 	
 	@Override
 	public FType ftype() { return this.ftype; }
+	
+	@Override
+	public Type base() {
+		if (base != null) return base;
+		FType ftype = this.ftype();
+		if (ftype.base == 0xFFFF) {
+			return null;
+		}
+		base = Sys.getTypeByRefId(ftype.pod, ftype.base);
+		return base;
+	}
+	
+	@Override
+	public Type[] mixins() {
+		if (mixins != null) return mixins;
+		Type[] ms = new Type[ftype.mixins.length];
+		for (int i=0; i<ftype.mixins.length; ++i) {
+			int mixin = ftype.mixins[i];
+			Type t = Sys.getTypeByRefId(ftype.pod, mixin);
+			ms[i] = t;
+		}
+		mixins = ms;
+		return ms;
+	}
 	
 }

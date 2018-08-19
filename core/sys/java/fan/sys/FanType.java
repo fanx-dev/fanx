@@ -135,8 +135,8 @@ public class FanType {
 			return Long.valueOf(flags(self));
 		if (name.equals("toClass"))
 			return toClass(self);
-		if (name.equals("lineNumber")) { return Long.valueOf(self.ftype().attrs.lineNum); }
-		if (name.equals("sourceFile")) { return self.ftype().attrs.sourceFile; }
+		if (name.equals("lineNumber")) { return Long.valueOf(self.lineNumber()); }
+		if (name.equals("sourceFile")) { return self.sourceFile(); }
 		
 		// if (name.equals("finish")) { finish(); return self; }
 		return FanObj.doTrap(self, name, args, typeof(self));//(self, name, args);
@@ -193,9 +193,7 @@ public class FanType {
 
 	public static List mixins(Type self) {
 		List acc = List.make(4);
-		FType ftype = self.ftype();
-		for (int mixin : ftype.mixins) {
-			Type t = Type.refToType(ftype.pod, mixin);
+		for (Type t : self.mixins()) {
 			acc.add(t);
 		}
 		return acc.trim().ro();
@@ -244,10 +242,7 @@ public class FanType {
 	////////////////////////////////////////////////////////////////////////////
 
 	public static String doc(Type self) {
-		FType ftype = self.ftype();
-		if (ftype == null)
-			return null;
-		return ftype.doc().tyeDoc();
+		return self.doc(null);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

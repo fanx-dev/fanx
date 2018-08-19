@@ -88,4 +88,14 @@ public class NullableType extends Type {
 	public FType ftype() {
 		return root.ftype();
 	}
+	
+	@Override
+	public Type[] mixins() {
+		return root.mixins();
+	}
+	
+	@Override
+	public Type base() {
+		return root.base();
+	}
 }

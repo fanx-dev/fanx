@@ -443,16 +443,14 @@ public abstract class FTypeEmit
 //	
 	//base class
 	if (t.base != 0xFFFF) {
-		FTypeRef ref = t.pod.typeRef(t.base);
-		FType x = Sys.findFType(ref.podName, ref.typeName);
-		resolveMethodForMixin(x, methods);
+		FType x = Sys.getFTypeByRefId(t.pod, t.base);
+		if (x != null) resolveMethodForMixin(x, methods);
 	}
 
     //mixin
     for (int i=0; i<t.mixins.length; ++i) {
-    	FTypeRef ref = t.pod.typeRef(t.mixins[i]);
-		FType x = Sys.findFType(ref.podName, ref.typeName);
-		resolveMethodForMixin(x, methods);
+		FType x = Sys.getFTypeByRefId(t.pod, t.mixins[i]);
+		if (x != null) resolveMethodForMixin(x, methods);
     }
   }
 

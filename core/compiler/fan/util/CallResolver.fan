@@ -201,7 +201,8 @@ class CallResolver : CompilerSupport
     //the extesion method is not support safe call, e.g. obj?.foo
     if (found == null && target != null && target.id !== ExprId.staticTarget
       && !expr.isSafe) {
-      findExtesion(base)
+      try findExtesion(base)
+      catch (Err e) e.trace
     }
 
     // if still not found, then error

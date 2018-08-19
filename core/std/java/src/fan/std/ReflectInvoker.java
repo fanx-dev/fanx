@@ -34,6 +34,11 @@ public class ReflectInvoker implements InvokeTrapper {
 		}
 		else if (slot instanceof Field) {
 			Field f = (Field)slot;
+			
+			// handle FFI field overloaded with a method
+		     if (f.overload != null)
+		        return f.overload.func().callOn(self, args);
+		    
 			int argc = args == null ? 0 : (int)args.size();
 			if (argc == 0) {
 				return f.get(self);

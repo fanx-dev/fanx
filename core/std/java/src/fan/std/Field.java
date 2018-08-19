@@ -1,10 +1,13 @@
 package fan.std;
 
+import java.lang.reflect.Modifier;
+
 import fan.std.Map;
 import fan.sys.*;
 import fanx.fcode.*;
 import fanx.fcode.FAttrs.FFacet;
 import fanx.main.*;
+import fanx.util.FanUtil;
 
 /**
  * Field is a slot which "stores" a value.
@@ -87,6 +90,35 @@ public class Field extends Slot {
 		
 		return field;
 	}
+	
+	/**
+	   * Map a Java Field to a Fantom field.
+	   */
+	  public static Field fromJava(java.lang.reflect.Field java)
+	  {
+	    Type parent   = FanUtil.toFanType(java.getDeclaringClass(), true);
+	    String name   = java.getName();
+	    int flags     = FanUtil.memberModifiersToFanFlags(java.getModifiers());
+	    List facets = List.make(1);
+	    Type of       = FanUtil.toFanType(java.getType(), true);
+
+	    // map Java transients to facets
+	    if (Modifier.isTransient(java.getModifiers())) {
+	      Object f = TypeExt.make(Sys.findType("sys::Transient"));
+	      facets.add(f);
+	    }
+	    
+	    // map Java enum constants as Fantom enum constants
+	    if (java.isEnumConstant()) flags |= FConst.Enum;
+
+	    Field fan = new Field(parent, name, flags, facets, -1, of);
+	    fan.reflect = java;
+	    try {
+	    	java.setAccessible(true);
+	    } catch (Throwable e) {
+	    }
+	    return fan;
+	  }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Signature

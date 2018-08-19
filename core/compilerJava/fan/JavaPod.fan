@@ -54,10 +54,15 @@ class JavaPod : CPod
 
   override CType[] types
 
-  override JavaType? resolveType(Str typeName, Bool checked)
+  override CType? resolveType(Str typeName, Bool checked)
   {
-    if (typeName[0] == '[')
-      return resolveType(typeName[1..-1], checked)?.toArrayOf
+    if (typeName[0] == '[') {
+      JavaType? jt := resolveType(typeName[1..-1], checked)
+      return jt?.toArrayOf
+    }
+    if (packageName == "java.lang" && typeName == "Void") {
+      return ns.voidType
+    }
 
     x := types.find |JavaType t->Bool| { return t.name == typeName }
     if (x != null) return x

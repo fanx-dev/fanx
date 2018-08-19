@@ -203,7 +203,7 @@ public abstract class Slot extends FanObj {
 
 	public String doc() {
 		// parent.doc(); // ensure parent has loaded documentation
-		return parent.ftype().doc().slotDoc(name);
+		return parent.doc(name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
