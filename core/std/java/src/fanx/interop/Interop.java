@@ -283,7 +283,7 @@ public class Interop
    */
   public static java.util.HashMap toJava(Map map)
   {
-	  java.util.HashMap jmap = new java.util.HashMap();
+	  final java.util.HashMap jmap = new java.util.HashMap();
 	  map.each(new Func(){
 		@Override
 		public long arity() {

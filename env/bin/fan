@@ -5,4 +5,4 @@
 #
 
 export FAN_HOME=$(dirname $(cd `dirname $0`; pwd))"/"
-java -cp $FAN_HOME/lib/java/fan_gen.jar fanx.tools.Fan "$@"
+java -cp $FAN_HOME/lib/java/fanx.jar fanx.tools.Fan "$@"

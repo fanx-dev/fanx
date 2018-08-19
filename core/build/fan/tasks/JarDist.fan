@@ -123,7 +123,7 @@ class JarDist : JdkTask
       // stub into Java classfiles using JStub
       Exec(script,
         [javaExe,
-         "-cp", (script.devHomeDir + `lib/java/fan_gen.jar`).osPath,
+         "-cp", (script.devHomeDir + `lib/java/fanx.jar`).osPath,
          "-Dfan.home=$Env.cur.workDir.osPath",
          "fanx.tools.Jstub",
          "-d", tempDir.osPath,

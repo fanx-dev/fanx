@@ -8,3 +8,4 @@ core/baseTest/test
 core/compiler_old
 env/temp
 env/lib/fan_backup
+core/fanx/bin

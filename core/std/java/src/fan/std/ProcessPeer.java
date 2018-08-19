@@ -38,7 +38,7 @@ public class ProcessPeer {
 			String[] strings = new String[(int) self.command.size()];
 			for (int i = 0; i < self.command.size(); ++i)
 				strings[i] = (String) self.command.get(i);
-			ProcessBuilder builder = new ProcessBuilder(strings);
+			final ProcessBuilder builder = new ProcessBuilder(strings);
 
 			// environment
 			if (env != null) {

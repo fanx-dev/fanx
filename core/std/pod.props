@@ -4,4 +4,6 @@ summary = system std lib
 version = 1.0
 depends = sys 2.0
 srcDirs = fan/*
+javaDirs = java/
+meta.license.name = Academic Free License 3.0
 

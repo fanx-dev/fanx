@@ -142,8 +142,9 @@ class BuildPod : BuildScript
     // boot strap checking
     if (["sys", "std", "build", "compiler", "compilerJava"].contains(podName))
     {
-      if (Env.cur.homeDir == devHomeDir)
-        throw fatal("Must update 'devHome' for bootstrap build")
+      if (Env.cur.homeDir == devHomeDir) {
+        //throw fatal("Must update 'devHome' for bootstrap build")
+      }
     }
   }
 
@@ -280,11 +281,11 @@ class BuildPod : BuildScript
 
     // env
     jtemp    := scriptDir + `temp-java/`
-    jstub    := jtemp + "${podName}.jar".toUri
+    //jstub    := jtemp + "${podName}.jar".toUri
     jdk      := JdkTask(this)
     javaExe  := jdk.javaExe
     jarExe   := jdk.jarExe
-    sysJar   := devHomeDir + `lib/java/fan_gen.jar`
+    sysJar   := devHomeDir + `lib/java/fanx.jar`
     libFan   := devHomeDir + `lib/fan/`
     curPod   := outPodDir.toFile + `${podName}.pod`
     depends  := depends.map |s->Depend| { Depend(applyMacros(s)) }
@@ -296,7 +297,7 @@ class BuildPod : BuildScript
                 "-cp", sysJar.osPath,
                 "-Dfan.home=$devHomeDir.osPath",
                 "fanx.tools.Jstub",
-                "-d", jtemp.osPath,
+                "-d", (devHomeDir+`lib/java/stub/`).osPath,
                 podName]).run
 
     // compile
@@ -304,21 +305,21 @@ class BuildPod : BuildScript
     {
       javac := CompileJava(this)
       javac.outDir = jtemp
-      javac.cp.add(jstub)
+      //javac.cp.add(jstub)
       javac.cpAddExtJars
       javac.cp.add(sysJar)
       javac.cpAddJars((devHomeDir + `lib/java/`))
-      javac.cpAddJars((devHomeDir + `../java/libs/`))
+      javac.cpAddJars((devHomeDir + `lib/java/stub/`))
       depends.each |Depend d| { javac.cp.add(Env.cur.findPodFile(d.name)) }
       javac.src = javaDirs
       javac.run
     }
 
     // extract stub jar into the temp directory
-    Exec(this, [jarExe, "-xf", jstub.osPath], jtemp).run
+    //Exec(this, [jarExe, "-xf", jstub.osPath], jtemp).run
 
     // now we can nuke the stub jar (and manifest)
-    Delete(this, jstub).run
+    //Delete(this, jstub).run
     Delete(this, jtemp + `meta-inf/`).run
 
     // append files to the pod zip (we use java's jar tool)
