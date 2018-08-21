@@ -8,6 +8,7 @@
 package fanx.emit;
 
 import fanx.fcode.*;
+import fanx.main.JavaType;
 import fanx.main.Sys;
 import fanx.main.Type;
 import fanx.util.*;
@@ -80,7 +81,7 @@ public class FPodEmit
       FTypeRef t = fpod.typeRef(i);
       if (t.isFFI()) 
     	  cls.getField("Type" + i)
-    	  .set(null, /*TOO Env.cur().loadJavaType(pod, t.podName, t.typeName)*/null);
+    	  .set(null, JavaType.loadJavaType(fpod.podClassLoader, t.podName, t.typeName));
     }
   }
 

@@ -89,6 +89,8 @@ public abstract class Type {
 		return null;
 	}
 	
+	public abstract boolean isJava();
+	
 	public int lineNumber() {
 		FType ft = ftype();
 		if (ft == null) return -1;
@@ -118,9 +120,9 @@ public abstract class Type {
 		return res;
 	}
 	
-//	public static Type refToType(FPod pod, int typeRefId) {
-//		return Sys.getTypeByRefId(pod, typeRefId);
-//	}
+	public static Type refToType(FPod pod, int typeRefId) {
+		return Sys.getTypeByRefId(pod, typeRefId);
+	}
 	
 	public abstract Type[] mixins();
 

@@ -36,6 +36,9 @@ internal class JavaDasmLoader
   **
   Void load()
   {
+    //TODO
+    if (self.classfile.isDir) return
+
     // dassemble the classfile into memory
     cf := Dasm(self.classfile.in).read
 
@@ -290,6 +293,7 @@ internal class JavaDasmLoader
 
     // anything in fan.sys package is really a sys pod type
     if (package == "fan.sys") return ns.resolveType("sys::$name?")
+    if (package == "fan.std") return ns.resolveType("std::$name?")
 
     // Java FFI
     sig := "[java]${package}::${name}?"

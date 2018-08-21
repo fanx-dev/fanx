@@ -574,4 +574,13 @@ rtconst class ArrayList<V> : List
     nlist.immutable = true
     return nlist
   }
+//////////////////////////////////////////////////////////////////////////
+// FFI
+//////////////////////////////////////////////////////////////////////////
+  new fromJava(Type of, Obj array) {
+    this.array = ObjArray.fromJava(of, array)
+    this.type = of
+  }
+
+  override Obj toJava(Obj clz) { array.toJava(clz) }
 }

@@ -51,6 +51,11 @@ public class ClassType extends Type
 	}
 	
 	@Override
+	public boolean isJava() {
+		return false;
+	}
+	
+	@Override
 	public boolean isGenericType() {
 		return ftype.isGeneric();
 	}

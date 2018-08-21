@@ -379,14 +379,14 @@ public class FanUtil {
   /**
    * Given a Fantom type, get the Java type signature: fan/sys/Duration
    */
-  public static String toJavaTypeSig(FTypeRef t) {
-    return toJavaTypeSig(t.podName, t.typeName, t.isNullable());
+  public static String toJavaTypeSig(Type t) {
+    return toJavaTypeSig(t.podName(), t.name(), t.isNullable());
   }
 
   /**
    * Given a Fantom type, get the Java member signature. Lfan/sys/Duration;
    */
-  public static String toJavaMemberSig(FTypeRef t) {
+  public static String toJavaMemberSig(Type t) {
     String sig = toJavaTypeSig(t);
 
     // java type sig for primitives and array is member signature
@@ -397,6 +397,19 @@ public class FanUtil {
 
     // Lfan/foo/Bar;
     return "L" + sig + ";";
+  }
+  
+  public static String toJavaMemberSig(FTypeRef t) {
+	    String sig = toJavaTypeSig(t.podName, t.typeName, t.isNullable());
+
+	    // java type sig for primitives and array is member signature
+	    if (sig.length() == 1)
+	      return sig;
+	    if (sig.charAt(0) == '[')
+	      return sig;
+
+	    // Lfan/foo/Bar;
+	    return "L" + sig + ";";
   }
 
   /**

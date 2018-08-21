@@ -65,8 +65,10 @@ public class Field extends Slot {
 		if (f.attrs.facets != null) {
 			facets.capacity(f.attrs.facets.length);
 			for (FFacet facet : f.attrs.facets) {
-				Facet fa = TypeExt.decode(facet, ftype.pod);
-				facets.add(fa);
+				Facet fa = TypeExt.tryDecodeFacet(facet, ftype.pod);
+				if (fa != null) {
+					facets.add(fa);
+				}
 			}
 		}
 		Field field = new Field(parent, f.name, f.flags, facets, 0, type);

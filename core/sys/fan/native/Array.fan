@@ -22,6 +22,9 @@ native class ObjArray {
   This copyFrom(ObjArray that, Int thatOffset, Int thisOffset, Int length)
 
   protected override Void finalize()
+
+  static ObjArray fromJava(Type of, Obj array)
+  Obj toJava(Obj clz)
 }
 
 native class FloatArray {

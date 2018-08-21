@@ -35,7 +35,7 @@ public class TypeExt {
 
 	public static Object make(Type self, List args) {
 		
-		if (self.ftype() == null) {
+		if (self.isJava()) {
 			// right now we don't support constructors with arguments
 		    if (args != null && args.sz() > 0)
 		      throw UnsupportedErr.make("Cannot call make with args on Java type: " + self);
@@ -127,8 +127,10 @@ public class TypeExt {
 				}
 				if (ftype.attrs.facets != null) {
 					for (FFacet facet : ftype.attrs.facets) {
-						Facet f = decode(facet, ftype.pod);
-						map.put(FanType.of(f), f);
+						Facet f = tryDecodeFacet(facet, ftype.pod);
+						if (f != null) {
+							map.put(FanType.of(f), f);
+						}
 					}
 				}
 			}
@@ -162,14 +164,14 @@ public class TypeExt {
 		}
 	}
 	
-	static Facet decode(FFacet facet, FPod pod) {
+	static Facet tryDecodeFacet(FFacet facet, FPod pod) {
 		try
 	    {
+			Type type = Sys.getTypeByRefId(pod, facet.type);
+			if (type.isJava()) return null;
+			
 			// if no string use make/defVal
 			if (facet.val.length() == 0) {
-				FTypeRef tr = pod.typeRef(facet.type);
-				String typeName = tr.podName + "::" + tr.typeName;
-				Type type = Sys.findType(typeName);
 				return (Facet)TypeExt.make(type);
 			}
 			

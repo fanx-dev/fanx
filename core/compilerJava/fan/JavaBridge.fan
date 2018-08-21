@@ -741,7 +741,7 @@ class JavaBridge : CBridge
   {
     return JavaMethod(
       this.ns.listType,
-      "make",
+      "fromJava",
       FConst.Public + FConst.Static,
       this.ns.listType.toNullable,
       [
@@ -757,7 +757,7 @@ class JavaBridge : CBridge
   {
     return JavaMethod(
       this.ns.listType,
-      "asArray",
+      "toJava",
       FConst.Public,
       objectArrayType,
       [JavaParam("cls", classType)])

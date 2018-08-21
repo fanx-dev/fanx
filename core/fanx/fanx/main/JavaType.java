@@ -85,6 +85,10 @@ public class JavaType extends Type {
 	public boolean isNullable() {
 		return false;
 	}
+	@Override
+	public boolean isJava() {
+		return true;
+	}
 
 	@Override
 	public Class<?> getJavaActualClass() {
@@ -198,7 +202,7 @@ public class JavaType extends Type {
 	 * (avoid loading classes). The JavaType will delegate to `loadJavaClass`
 	 * when it is time to load the Java class mapped by the FFI type.
 	 */
-	public final static JavaType loadJavaType(String podName, String typeName) {
+	public final static JavaType loadJavaType(ClassLoader loader, String podName, String typeName) {
 		// we shouldn't be using this method for pure Fantom types
 		if (!podName.startsWith("[java]"))
 			throw Sys.makeErr("sys::ArgErr", "Unsupported FFI type: " + podName + "::" + typeName);
@@ -218,7 +222,7 @@ public class JavaType extends Type {
 
 			// resolve class to create new JavaType for this class name
 			try {
-				Class cls = nameToClass(clsName);
+				Class cls = nameToClass(loader, clsName);
 				t = new JavaType(cls);
 				javaTypeCache.put(clsName, t);
 				return t;
@@ -228,7 +232,7 @@ public class JavaType extends Type {
 		}
 	}
 
-	private static Class nameToClass(String name) throws ClassNotFoundException {
+	private static Class nameToClass(ClassLoader loader, String name) throws ClassNotFoundException {
 		// first try primitives because Class.forName doesn't work for them
 		Class cls = (Class) primitiveClasses.get(name);
 		if (cls != null)
@@ -242,13 +246,13 @@ public class JavaType extends Type {
 
 			// resolve component class "[Lfoo.Bar;"
 			String compName = name.substring(2, name.length() - 1);
-			Class comp = nameToClass(compName);
+			Class comp = nameToClass(loader, compName);
 			return java.lang.reflect.Array.newInstance(comp, 0).getClass();
 		}
 
 		// if we have a pod class loader use it
-		// if (loadingPod != null)
-		// return loadingPod.classLoader.loadClass(name);
+		if (loader != null)
+			 return loader.loadClass(name);
 
 		// fallback to Class.forName
 		return Class.forName(name);

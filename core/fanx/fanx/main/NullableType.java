@@ -43,6 +43,10 @@ public class NullableType extends Type {
 	public boolean isNullable() {
 		return true;
 	}
+	@Override
+	public boolean isJava() {
+		return root.isJava();
+	}
 	
 	@Override
 	public Class<?> getJavaActualClass() {

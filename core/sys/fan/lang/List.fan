@@ -863,4 +863,12 @@ rtconst abstract class List<V>
   override abstract Bool isImmutable()
 
   override abstract V[] toImmutable()
+
+//////////////////////////////////////////////////////////////////////////
+// FFI
+//////////////////////////////////////////////////////////////////////////
+  static List fromJava(Type of, Obj array) {
+    ArrayList.fromJava(of, array)
+  }
+  abstract Obj toJava(Obj clz)
 }

@@ -86,6 +86,7 @@ public class Sys {
 			if (checked) {
 				throw makeErr("sys::ArgErr", signature);
 			}
+//			System.out.println("ERROR1:"+signature);
 			return null;
 		}
 		String podName = signature.substring(0, pos);
@@ -96,13 +97,15 @@ public class Sys {
 		String typeName = signature.substring(pos + 2, pos2);
 		
 		if (podName.startsWith("[java]")) {
-			Type t = JavaType.loadJavaType(podName, typeName);
+			Type t = JavaType.loadJavaType(null, podName, typeName);
 			return t;
 		}
 		
 		FType ftype = findFType(podName, typeName, checked);
-		if (ftype == null)
+		if (ftype == null) {
+//			System.out.println("ERROR2:"+signature);
 			return null;
+		}
 		Type res = Type.fromFType(ftype, signature);
 
 		if (nullable) {
@@ -114,7 +117,7 @@ public class Sys {
 	public static Type getTypeByRefId(FPod pod, int typeRefId) {
 		FTypeRef ref = pod.typeRef(typeRefId);
 		if (ref.podName.startsWith("[java]")) {
-			Type t = JavaType.loadJavaType(ref.podName, ref.typeName);
+			Type t = JavaType.loadJavaType(pod.podClassLoader, ref.podName, ref.typeName);
 			return t;
 		}
 		
