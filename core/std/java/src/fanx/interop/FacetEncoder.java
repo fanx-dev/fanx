@@ -24,57 +24,10 @@ import fanx.util.*;
 /**
  * FFacetEmit is used to emit Fantom facets as Java annotations.
  */
-public class FFacetEmit implements FConst {
+public class FacetEncoder implements FConst {
 
-	public static void emitFacet(Emitter emit, FPod pod, FAttrs attrs, AttrEmit attr) {
-		FFacetEmit x = new FFacetEmit(emit, pod, attrs);
-		if (x.num == 0)
-			return;
-
-		x.doEmit(attr.info);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Construction
-	//////////////////////////////////////////////////////////////////////////
-
-	public FFacetEmit(Emitter emit, FPod pod, FAttrs attrs) {
+	public FacetEncoder(Emitter emit) {
 		this.emit = emit;
-		this.pod = pod;
-		this.facets = attrs.facets;
-		this.num = computeNumJavaFacets();
-	}
-
-	private int computeNumJavaFacets() {
-		if (facets == null)
-			return 0;
-		int num = 0;
-		for (int i = 0; i < facets.length; ++i)
-			if (pod.typeRef(facets[i].type).isFFI())
-				num++;
-		return num;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// RuntimeVisibleAnnotation Generation
-	//////////////////////////////////////////////////////////////////////////
-
-	private void doEmit(Box info) {
-		info.u2(num);
-		try {
-			for (int i = 0; i < facets.length; ++i) {
-				FAttrs.FFacet facet = facets[i];
-				FTypeRef type = pod.typeRef(facet.type);
-				if (type.isFFI())
-					encode(info, type, facet.val);
-			}
-		} catch (Exception e) {
-			System.out.println("ERROR: Cannot emit annotations for " + emit.className);
-			System.out.println("  Facet type: " + curType);
-			e.printStackTrace();
-			info.len = 0;
-			info.u2(0);
-		}
 	}
 
 	private void encode(Box info, FTypeRef type, String val) throws Exception {
@@ -205,7 +158,7 @@ public class FFacetEmit implements FConst {
 
 		// Fantom compiler encodes FFI facets as map string name/value pairs
 		Map map = (Map) ObjDecoder.decode(str);
-		Elem[] acc = new Elem[(int) map.size()];
+		final Elem[] acc = new Elem[(int) map.size()];
 
 		map.each(new Func() {
 			int n = 0;
@@ -277,9 +230,10 @@ public class FFacetEmit implements FConst {
 	static final Elem[] noElems = new Elem[0];
 
 	private final Emitter emit; // class emitter
-	private final FPod pod; // pod being emitted
-	private final FAttrs.FFacet[] facets; // all the facets (java and non-java)
-	private final int num; // num of Java annotations in facets
+	// private final FPod pod; // pod being emitted
+	// private final FAttrs.FFacet[] facets; // all the facets (java and
+	// non-java)
+	// private final int num; // num of Java annotations in facets
 	private FTypeRef curType; // current facet type
 	private Class curClass; // current facet class
 }

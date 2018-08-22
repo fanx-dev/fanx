@@ -120,9 +120,9 @@ public abstract class Type {
 		return res;
 	}
 	
-	public static Type refToType(FPod pod, int typeRefId) {
-		return Sys.getTypeByRefId(pod, typeRefId);
-	}
+//	public static Type refToType(FPod pod, int typeRefId) {
+//		return Sys.getTypeByRefId(pod, typeRefId);
+//	}
 	
 	public abstract Type[] mixins();
 

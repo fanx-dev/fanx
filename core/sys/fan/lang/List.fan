@@ -867,8 +867,10 @@ rtconst abstract class List<V>
 //////////////////////////////////////////////////////////////////////////
 // FFI
 //////////////////////////////////////////////////////////////////////////
-  static List fromJava(Type of, Obj array) {
+  @NoDoc
+  static Obj?[] fromJava(Type of, Obj array) {
     ArrayList.fromJava(of, array)
   }
+  @NoDoc
   abstract Obj toJava(Obj clz)
 }

@@ -577,10 +577,11 @@ rtconst class ArrayList<V> : List
 //////////////////////////////////////////////////////////////////////////
 // FFI
 //////////////////////////////////////////////////////////////////////////
+  @NoDoc
   new fromJava(Type of, Obj array) {
     this.array = ObjArray.fromJava(of, array)
     this.type = of
   }
-
+  @NoDoc
   override Obj toJava(Obj clz) { array.toJava(clz) }
 }

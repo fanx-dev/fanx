@@ -3,9 +3,9 @@ java/fan_gen/bin
 *.class
 java/libs
 core/baseTest/test
-*.pod
-*.jar
 core/compiler_old
 env/temp
 env/lib/fan_backup
 core/fanx/bin
+devEnv
+*.pod

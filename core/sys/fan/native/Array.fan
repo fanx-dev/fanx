@@ -23,7 +23,10 @@ native class ObjArray {
 
   protected override Void finalize()
 
+  @NoDoc
   static ObjArray fromJava(Type of, Obj array)
+
+  @NoDoc
   Obj toJava(Obj clz)
 }
 

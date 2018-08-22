@@ -5,8 +5,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/std_nat"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sys_nat"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/fanx"/>
-	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/env/lib/java/stub/concurrent.jar"/>
-	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/env/lib/java/stub/std.jar"/>
-	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/env/lib/java/stub/sys.jar"/>
+	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/devEnv/lib/java/stub/concurrent.jar"/>
+	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/devEnv/lib/java/stub/std.jar"/>
+	<classpathentry kind="lib" path="/Users/yangjiandong/workspace/code/fanCore/devEnv/lib/java/stub/sys.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

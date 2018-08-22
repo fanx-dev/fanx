@@ -12,6 +12,21 @@ public class ObjArray extends FanObj {
 		array = a;
 	}
 	
+	public ObjArray fromJava(Type of, Object[] a) {
+		return new ObjArray(a);
+	}
+	
+	public Object toJava(Type of) {
+		// short circuit if values is already correct array type
+	    if (of.getJavaActualClass() == array.getClass().getComponentType())
+	      return array;
+
+	    // make a safe copy of correct length and type
+	    Object[] r = (Object[]) Array.newInstance(of.getJavaActualClass(), array.length);
+	    System.arraycopy(array, 0, r, 0, array.length);
+	    return r;
+	}
+	
 	public Object raw() { return array; }
 	
 	public static ObjArray make(long size, Type of) {
