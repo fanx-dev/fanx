@@ -1,6 +1,7 @@
 
-OUT=../../env/lib/java
+OUT=../../devEnv/lib/java
 NAME=fanx
+mkdir -p ../../devEnv/lib/java/stub
 
 rm -rf temp
 mkdir temp

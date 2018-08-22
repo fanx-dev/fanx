@@ -143,7 +143,7 @@ class BuildPod : BuildScript
     if (["sys", "std", "build", "compiler", "compilerJava"].contains(podName))
     {
       if (Env.cur.homeDir == devHomeDir) {
-        //throw fatal("Must update 'devHome' for bootstrap build")
+        throw fatal("Must update 'devHome' for bootstrap build")
       }
     }
   }

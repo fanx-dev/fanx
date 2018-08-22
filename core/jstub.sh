@@ -1,7 +1,7 @@
 #! /bin/sh
 set -e
 
-jstub='../env/bin/jstub -d ../env/lib/java/stub'
+jstub='../env/bin/jstub -d ../devEnv/lib/java/stub'
 
 $jstub sys
 $jstub std

@@ -280,11 +280,14 @@ internal class TestRunner {
       }
     }
 
+    echo("***")
     if (failures == 0) {
       echo("All tests passed! totalVerifyCount:$verifyCount")
+      echo("***")
       return 0
     } else {
       echo("$failures FAILURES, totalVerifyCount:$verifyCount")
+      echo("***")
       return -1
     }
   }

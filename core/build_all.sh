@@ -10,7 +10,6 @@ cd ../
 
 echo 'build compiler self'
 $fanc compiler/pod.props
-cp ../env/lib/compiler.pod ../env/lib/fan/
 $fanc build/pod.props
 
 echo 'build sys and std'
