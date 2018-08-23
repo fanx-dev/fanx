@@ -192,7 +192,7 @@ class ObjDecoder
     }
     catch (Err e)
     {
-      throw ParseErr.make(e.toStr + " [Line " + line + "]", e)
+      throw ParseErr.make(e.toStr + " [Line " + line + "]"+m?.signature, e)
     }
   }
 

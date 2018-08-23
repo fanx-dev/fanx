@@ -9,6 +9,7 @@ package fanx.interop;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -310,16 +311,23 @@ public class Interop
 	  return new fan.sys.ByteArray(a);
   }
   
-  public static fan.sys.List toFanList(Object[] objs) {
-	  List list = List.make(objs.length);
+  public static fan.sys.List toFanList(Type of, Object[] objs) {
+	  List list = List.make(objs.length, of);
 	  for (Object o : objs) {
 		  list.add(o);
 	  }
 	  return list;
   }
   
-  public static Object[] toJavaArray(fan.sys.List list) {
-	  Object[] objs = new Object[(int)list.size()];
+  public static Object[] toJavaArray(fan.sys.List list, Class clz) {
+	  if (list instanceof fan.sys.ArrayList) {
+		  fan.sys.ArrayList al = (fan.sys.ArrayList)list;
+		  ObjArray oa = (ObjArray) Reflection.getField(al, "array");
+		  JavaType jt = JavaType.loadJavaType(clz);
+		  return (Object[])(oa.toJava(clz));
+	  }
+	  
+	  Object[] objs = (Object[]) Array.newInstance(clz, (int)list.size());
 	  for (int i=0; i<list.size(); ++i) {
 		  objs[i] = list.get(i);
 	  }

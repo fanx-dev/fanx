@@ -599,7 +599,7 @@ class JavaBridge : CBridge
       {
         // (Foo[])list.asArray(cls)
         clsLiteral := CallExpr.makeWithMethod(loc, null, JavaType.classLiteral(this, expectedOf))
-        asArray := CallExpr.makeWithMethod(loc, expr, listAsArray, [clsLiteral])
+        asArray := CallExpr.makeWithMethod(loc, null, listAsArray, [expr, clsLiteral])
         return TypeCheckExpr.coerce(asArray, expected)
       }
     }
@@ -740,8 +740,8 @@ class JavaBridge : CBridge
   once CMethod listMakeFromArray()
   {
     return JavaMethod(
-      this.ns.listType,
-      "fromJava",
+      interopType,
+      "toFanList",
       FConst.Public + FConst.Static,
       this.ns.listType.toNullable,
       [
@@ -756,11 +756,18 @@ class JavaBridge : CBridge
   once CMethod listAsArray()
   {
     return JavaMethod(
-      this.ns.listType,
-      "toJava",
-      FConst.Public,
+      interopType,
+      "toJavaArray",
+      FConst.Public+FConst.Static,
       objectArrayType,
-      [JavaParam("cls", classType)])
+      [
+        JavaParam("list", this.ns.listType),
+        JavaParam("cls", classType)
+      ])
+  }
+
+  once JavaType interopType() {
+    return ns.resolveType("[java]fanx.interop::Interop")
   }
 
   **

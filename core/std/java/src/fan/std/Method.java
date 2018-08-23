@@ -2,6 +2,7 @@ package fan.std;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 import fan.sys.*;
 import fanx.fcode.*;
@@ -249,6 +250,10 @@ public class Method extends Slot {
 		
 		private Object callWith(int argc, Object a, Object b, Object c, Object d, Object e, Object f, Object g,
 				Object h) {
+			
+			// if parent is FFI Java class, then route to JavaType for handling
+		    if (parent.isJava()) return JavaInvoker.call(Method.this, argc, a, b, c, d, e, f, g, h);
+		      
 			boolean isStatic = !isInstance();
 			int min = minParams();
 			int max = isStatic ? (int)params.size() : (int)params.size()+1;
@@ -263,6 +268,7 @@ public class Method extends Slot {
 			}
 			
 			if (!isStatic) --argc;
+			
 			java.lang.reflect.Method jm = reflect[argc];
 			if (jm == null) {
 				throw ArgErr.make("arguments num err:" + argc);
@@ -387,6 +393,7 @@ public class Method extends Slot {
 			
 			return jm.invoke(instance, args);
 		} catch (IllegalArgumentException e) {
+			System.err.println("call "+jm + ",("+Arrays.toString(args) +"),on:"+instance);
 			throw ArgErr.make(e);
 		} catch (InvocationTargetException e) {
 			if (e.getCause() instanceof Err)

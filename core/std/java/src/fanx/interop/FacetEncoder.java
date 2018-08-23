@@ -30,7 +30,7 @@ public class FacetEncoder implements FConst {
 		this.emit = emit;
 	}
 
-	private void encode(Box info, FTypeRef type, String val) throws Exception {
+	public void encode(Box info, FTypeRef type, String val) throws Exception {
 		// reset type class
 		this.curType = type;
 		this.curClass = null;

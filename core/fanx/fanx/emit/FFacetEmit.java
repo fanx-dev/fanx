@@ -108,7 +108,7 @@ class FFacetEmit
 	 Class clz = Sys.findPod("std").podClassLoader.loadClass("fanx.interop.FacetEncoder");
 	 Constructor ctor = clz.getConstructor(Emitter.class);
 	 Object facetEncoder = ctor.newInstance(emit);
-	 Reflection.callMethod(facetEncoder, "encode", type, val);
+	 Reflection.callMethod(facetEncoder, "encode", info, type, val);
   }
   
 ////////////////////////////////////////////////////////////////////////////

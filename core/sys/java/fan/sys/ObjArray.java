@@ -17,12 +17,16 @@ public class ObjArray extends FanObj {
 	}
 	
 	public Object toJava(Type of) {
+	    return toJava(of.getJavaActualClass());
+	}
+	
+	public Object toJava(Class of) {
 		// short circuit if values is already correct array type
-	    if (of.getJavaActualClass() == array.getClass().getComponentType())
+	    if (of == array.getClass().getComponentType())
 	      return array;
 
 	    // make a safe copy of correct length and type
-	    Object[] r = (Object[]) Array.newInstance(of.getJavaActualClass(), array.length);
+	    Object[] r = (Object[]) Array.newInstance(of, array.length);
 	    System.arraycopy(array, 0, r, 0, array.length);
 	    return r;
 	}

@@ -2,6 +2,7 @@ package fan.std;
 
 import java.util.regex.Pattern;
 
+import fan.sys.FanStr;
 import fan.sys.List;
 import fanx.interop.Interop;
 
@@ -29,6 +30,6 @@ public class RegexPeer {
 	}
 
 	public List split(Regex self, String s, long limit) {
-		return Interop.toFanList(pattern.split(s, (int) limit));
+		return Interop.toFanList(FanStr.type, pattern.split(s, (int) limit));
 	}
 }

@@ -405,22 +405,13 @@ public class TypeExt {
 		}
 		else {
 			// reflect Java members
-		    java.lang.reflect.Field[] jfields = type.getJavaActualClass().getFields();
-		    java.lang.reflect.Method[] jmethods = type.getJavaActualClass().getMethods();
-		    // set all the Java members accessible for reflection
-		    try
-		    {
-		      for (int i=0; i<jfields.length; ++i) jfields[i].setAccessible(true);
-		      for (int i=0; i<jmethods.length; ++i) jmethods[i].setAccessible(true);
-		    }
-		    catch (Exception e)
-		    {
-		      System.out.println("ERROR: " + type + ".initSlots setAccessible: " + e);
-		    }
+		    java.lang.reflect.Field[] jfields = type.getJavaActualClass().getDeclaredFields();
+		    java.lang.reflect.Method[] jmethods = type.getJavaActualClass().getDeclaredMethods();
 		    
 		    // map the fields
 		    for (int i=0; i<jfields.length; ++i)
 		    {
+		      if ((jfields[i].getModifiers() & Modifier.PRIVATE) != 0) continue;
 		      Field f = Field.fromJava(jfields[i]);
 		      slots.put(f.name, f);
 		    }
@@ -430,6 +421,12 @@ public class TypeExt {
 		    {
 		      // check if we already have a slot by this name
 		      java.lang.reflect.Method j = jmethods[i];
+		      if ((j.getModifiers() & Modifier.PRIVATE) != 0) continue;
+		      
+		      try {
+			    	j.setAccessible(true);
+			    } catch (Throwable e) {
+			    }
 		      Method m = Method.fromJava(j);
 		      
 		      Slot existing = (Slot)slots.get(j.getName());
