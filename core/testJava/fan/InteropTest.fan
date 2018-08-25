@@ -317,6 +317,7 @@ class InteropTest : JavaTest
   {
     compile(
      """using [java] fanx.interop
+        using [java] fanx.interop::IntArray as JIntArray
         using [java] fanx.test
         using [java] java.text
         class Foo
@@ -341,7 +342,7 @@ class InteropTest : JavaTest
 
           Obj? getInts() { x.ints }
           Int getIntsAt(Int i) { x.ints[i] }
-          Void setInts() { x.ints = IntArray(2); x.ints.set(0, 10); x.ints.set(1, 20) }
+          Void setInts() { x.ints = JIntArray(2); x.ints.set(0, 10); x.ints.set(1, 20) }
         }""")
 
     obj := pod.types.first.make
@@ -424,6 +425,7 @@ class InteropTest : JavaTest
     compile(
      "using [java] fanx.test
       using [java] fanx.interop
+      using [java] fanx.interop::${fanArray} as J${fanArray}
       class Foo
       {
         InteropTest x := InteropTest().initArray
@@ -435,7 +437,7 @@ class InteropTest : JavaTest
         // sets
         Bool test3() { array := x.${kind}Array($a, $b); array[1] = $a; $fanOf v := array[1]; return v == $a }
         // new
-        Bool test4() { array := ${fanArray}(8); return (Int)array.size == 8 }
+        Bool test4() { array := J${fanArray}(8); return (Int)array.size == 8 }
       }")
 
     obj := pod.types.first.make
@@ -745,25 +747,27 @@ class InteropTest : JavaTest
   Void testCollections()
   {
     compile(
-     "using [java] java.util
+     "using [java] java.util::ArrayList as JArrayList
+      using [java] java.util::HashMap as JHashMap
+      using [java] java.util
       using [java] fanx.interop
       class Foo
       {
         // java.util.List => List
-        Obj m00() { a := ArrayList(); a.add(1); a.add(2); return Interop.toFan(a) }
-        Obj m01() { a := ArrayList(); a.add(1); a.add(2); return Interop.toFan(a, Int#) }
+        Obj m00() { a := JArrayList(); a.add(1); a.add(2); return Interop.toFan(a) }
+        Obj m01() { a := JArrayList(); a.add(1); a.add(2); return Interop.toFan(a, Int#) }
 
         // Iterator => List
-        Obj m02() { a := ArrayList(); a.add(3); a.add(4); return Interop.toFan(a.iterator()) }
-        Obj m03() { a := ArrayList(); a.add(3); a.add(4); return Interop.toFan(a.iterator(), Int#) }
+        Obj m02() { a := JArrayList(); a.add(3); a.add(4); return Interop.toFan(a.iterator()) }
+        Obj m03() { a := JArrayList(); a.add(3); a.add(4); return Interop.toFan(a.iterator(), Int#) }
 
         // Enumeration => List
         Obj m04() { a := Vector(); a.add(3); a.add(4); return Interop.toFan(a.elements()) }
         Obj m05() { a := Vector(); a.add(3); a.add(4); return Interop.toFan(a.elements(), Int#) }
 
         // HashMap => Map
-        Obj m06() { a := HashMap(); a.put(3, \"x\"); return Interop.toFan(a) }
-        Obj m07() { a := HashMap(); a.put(3, \"x\"); return Interop.toFan(a, Int:Str#) }
+        Obj m06() { a := JHashMap(); a.put(3, \"x\"); return Interop.toFan(a) }
+        Obj m07() { a := JHashMap(); a.put(3, \"x\"); return Interop.toFan(a) }
       }
       ")
 

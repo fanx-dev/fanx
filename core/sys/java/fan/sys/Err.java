@@ -139,7 +139,7 @@ public class Err
   {
 	super(actual);
     this.actual = actual;
-    this.msg = actual.getMessage();
+    this.msg = actual.toString();
   }
 
   /**

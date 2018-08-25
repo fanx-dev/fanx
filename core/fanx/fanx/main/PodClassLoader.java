@@ -111,7 +111,7 @@ public class PodClassLoader
       return super.findClass(name);
 //      throw new ClassNotFoundException(name);
     }
-    catch (Exception e)
+    catch (java.lang.ClassNotFoundException e)
     {
       String s = e.toString();
       if (s.contains("swt"))
@@ -119,7 +119,10 @@ public class PodClassLoader
         String msg = "cannot load SWT library; see http://fantom.org/doc/docTools/Setup.html#swt";
         System.out.println("\nERROR: " + msg + "\n");
       }
-      e.printStackTrace();
+      throw e;
+    }
+    catch (Exception e)
+    {
       throw new RuntimeException(e);
     }
   }

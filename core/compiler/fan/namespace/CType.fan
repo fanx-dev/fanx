@@ -454,13 +454,13 @@ mixin CType
   Bool isBool()    { qname == "sys::Bool" }
   Bool isInt()     { qname == "sys::Int" }
   Bool isFloat()   { qname == "sys::Float" }
-  Bool isDecimal() { qname == "sys::Decimal" }
+  Bool isDecimal() { qname == "std::Decimal" }
   Bool isRange()   { qname == "sys::Range" }
   Bool isStr()     { qname == "sys::Str" }
   Bool isThis()    { qname == "sys::This" }
   Bool isType()    { qname == "sys::Type" }
   Bool isVoid()    { qname == "sys::Void" }
-  Bool isBuf()     { qname == "sys::Buf" }
+  Bool isBuf()     { qname == "std::Buf" }
   Bool isList()    { fits(ns.listType) }
   Bool isMap()     { fits(ns.mapType) }
   Bool isFunc()    { fits(ns.funcType) }

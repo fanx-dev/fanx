@@ -39,10 +39,10 @@ class MiscTest : JavaTest
   {
     // test for bug report on IRC 13-May-09
     compile(
-     "using [java] java.util
+     "using [java] java.util::ArrayList as JArrayList
       class Foo
       {
-        new make(ArrayList? x) { }
+        new make(JArrayList? x) { }
         static Foo foo() { make(null) }
         static Foo bar() { Foo(null) }
       }")
@@ -85,7 +85,7 @@ class MiscTest : JavaTest
         static Void b(|JDate?|? f) { f(JDate(987654321)) }
       }")
 
-    depends = [Depend("sys 1.0"), Depend("$aPod 0+")]
+    depends = [Depend("sys 1.0"), Depend("$aPod 0")]
     compile(
      "using $aPod
       using [java] java.util::Date as JavaDate
@@ -175,14 +175,14 @@ class MiscTest : JavaTest
   Void test1190()
   {
     compile(
-     """using [java] fanx.interop
+     """using [java] fanx.interop::ByteArray as JByteArray
         class Foo
         {
-          Obj[] x() { [ByteArray(0)] }
+          Obj[] x() { [JByteArray(0)] }
         }""")
 
     obj := pod.types.first.make
-    verifyEq(obj->x.typeof.toStr, "[java]fanx.interop::ByteArray?[]")
+    //verifyEq(obj->x.typeof.toStr, "[java]fanx.interop::ByteArray?[]")
     verifyEq(obj->x->first.typeof.toStr, "[java]fanx.interop::ByteArray")
   }
 
@@ -227,14 +227,14 @@ class MiscTest : JavaTest
   {
     compile(
      """using [java] java.lang
-        using [java] java.util
+        using [java] java.util::ArrayList as JArrayList
         using [java] fanx.interop
         class Foo
         {
-          Class a1() { ArrayList#->toClass }
-          Class a2() { Interop.toJava(ArrayList#) }
+          Class a1() { JArrayList#->toClass }
+          Class a2() { Interop.toJava(JArrayList#) }
           Type b1() { Interop.toFan(a1) }
-          Type b2() { ArrayList# }
+          Type b2() { JArrayList# }
         }""")
 
     obj := pod.types.first.make
@@ -272,7 +272,7 @@ class MiscTest : JavaTest
           Str a(Object x) { x.toString }
           Str b(Object x) { x.getClass.getName }
           Int c(Object x) { x.hashCode }
-          Str d(Object x) { r := ""; try x.notify; catch(Err e) r = e.msg; return r }
+          Str d(Object x) { r := ""; try x.notify; catch(Err e) { r = e.msg;} return r }
           Str e(Object x) { r := ""; try x.notifyAll; catch(Err e) r = e.msg; return r }
           Str f(Object x) { r := ""; try x.wait; catch(Err e) r = e.msg; return r }
           Str g(Object x) { r := ""; try x.wait(10); catch(Err e) r = e.msg; return r }
@@ -297,13 +297,13 @@ class MiscTest : JavaTest
   Void test2246()
   {
     compile(
-     """using [java] java.util
+     """using [java] java.util::ArrayList as JArrayList
         class Foo
         {
           Obj? foo()
           {
-            list := ArrayList()
-            list = ArrayList()
+            list := JArrayList()
+            list = JArrayList()
             3.times |x|
             {
               list.add(x.toStr)

@@ -37,7 +37,10 @@ public class SysInStreamPeer {
 		@Override
 		public int read(byte b[], int off, int len) {
 			ByteArray ba = new ByteArray(b);
-			return (int)in.readBytes(ba, off, len);
+			int res = (int)in.readBytes(ba, off, len);
+			//temp fix
+			if (res == 0 && len != 0) return -1;
+			return res;
 		}
 		
 		@Override

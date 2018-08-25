@@ -348,7 +348,7 @@ internal class JavaReflect
     // anything in fan.sys package is really a sys pod type
     package := cls.getPackage.getName
     name := cls.getName[cls.getName.indexr(".")+1..-1]
-    if (package == "fan.sys") return ns.resolveType("sys::$name?")
+    if (package == "fan.sys" || package == "fan.std") return ns.resolveType("sys::$name?")
 
     // Java FFI
     sig := "[java]${package}::${name}?"
@@ -368,6 +368,7 @@ internal class JavaReflect
       case "java.lang.Object": return ns.objType
       case "java.lang.String":  return ns.strType
       case "java.math.BigDecimal": return ns.decimalType
+      case "fanx.main.Type": return ns.typeType
       default: return null
     }
   }

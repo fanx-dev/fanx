@@ -210,7 +210,7 @@ public class Interop
   {
 	  List flist = List.make(list.size(), of);
 	  Iterator e = list.iterator();
-	  while (e.hasNext()) list.add(e.next());
+	  while (e.hasNext()) flist.add(e.next());
 	  return flist;
   }
 
@@ -312,6 +312,7 @@ public class Interop
   }
   
   public static fan.sys.List toFanList(Type of, Object[] objs) {
+	  if (objs == null) return null;
 	  List list = List.make(objs.length, of);
 	  for (Object o : objs) {
 		  list.add(o);
@@ -320,6 +321,8 @@ public class Interop
   }
   
   public static Object[] toJavaArray(fan.sys.List list, Class clz) {
+	  if (list == null) return null;
+	  
 	  if (list instanceof fan.sys.ArrayList) {
 		  fan.sys.ArrayList al = (fan.sys.ArrayList)list;
 		  ObjArray oa = (ObjArray) Reflection.getField(al, "array");

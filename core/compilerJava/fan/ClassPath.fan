@@ -183,7 +183,7 @@ class ClassPath
 
     // get simple name of class
     name := uri.basename
-    if (name == "Void") return
+    if (packageName == "java.lang" && name == "Void") return
 
     // get or add package
     package := acc[packageName]
