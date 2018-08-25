@@ -324,7 +324,7 @@ public class Interop
 		  fan.sys.ArrayList al = (fan.sys.ArrayList)list;
 		  ObjArray oa = (ObjArray) Reflection.getField(al, "array");
 		  JavaType jt = JavaType.loadJavaType(clz);
-		  return (Object[])(oa.toJava(clz));
+		  return (Object[])(oa.toJava(clz, (int)list.size()));
 	  }
 	  
 	  Object[] objs = (Object[]) Array.newInstance(clz, (int)list.size());

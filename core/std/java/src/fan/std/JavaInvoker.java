@@ -97,8 +97,10 @@ public class JavaInvoker {
 			}
 			
 		  try {
-			return invoke(m, instance, args);
+			Object res = invoke(m, instance, args);
+			return res;
 		} catch (Exception e1) {
+			System.out.println("call: "+m.qname() + "; " + argc + "," + a + "," + b + "," + c);
 			throw Err.make(e1);
 		}
 	  }

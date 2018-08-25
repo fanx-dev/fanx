@@ -52,10 +52,10 @@ class ReflectTest : JavaTest
     verifyEq(array.qname, "[java]java.util::[Date")
     verifyEq(array.signature, "[java]java.util::[Date")
 
-    Type list := obj->list
-    verifyEq(list.pod,   Pod.find("sys"))
-    verifyEq(list.name,  "List")
-    verifyEq(list.qname, "sys::List")
+    //Type list := obj->list
+    //verifyEq(list.pod,   Pod.find("sys"))
+    //verifyEq(list.name,  "List")
+    //verifyEq(list.qname, "sys::List")
     //verifyEq(list.signature, "[java]java.util::Date[]")
     //verifyEq(list.params["V"].qname, "[java]java.util::Date")
 
@@ -212,6 +212,7 @@ class ReflectTest : JavaTest
     date := t.make
     verifyEq(t.method("getYear").callOn(date, [,]), now.year-1900)
     verifyEq(t.method("getYear").call(date), now.year-1900)
+    tp := t.method("getYear").callList([date])
     verifyEq(t.method("getYear").callList([date]), now.year-1900)
     verifyEq(date->getYear, now.year-1900)
     verifyEq(date->toString, date.toStr)

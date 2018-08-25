@@ -74,31 +74,45 @@ public class Sys {
 	}
 
 	public static Type findType(String signature, boolean checked) {
-		int len = signature.length();
-		boolean nullable = false;
-		if (signature.charAt(len - 1) == '?') {
-			nullable = true;
-			signature = signature.substring(0, len - 1);
+		String str = signature;
+		if (str.length() < 1) {
+			throw makeErr("sys::ArgErr", signature);
 		}
-
-		int pos = signature.indexOf("::");
-		if (pos <= 0 || pos >= len - 2) {
+		
+		if (str.charAt(str.length() - 1) == '?') {
+			str = str.substring(0, str.length() - 1);
+			Type nonNull = findType(str, checked);
+			return nonNull.toNullable();
+		}
+		
+		String ffi = null;
+		if (str.charAt(0) == '[') {
+			int p = str.indexOf(']');
+			if (p < 0) throw makeErr("sys::ArgErr", signature);
+			ffi = str.substring(1, p);
+		}
+		
+		int pos = str.indexOf("::");
+		if (pos < 0) {
 			if (checked) {
 				throw makeErr("sys::ArgErr", signature);
 			}
 //			System.out.println("ERROR1:"+signature);
 			return null;
 		}
-		String podName = signature.substring(0, pos);
-		int pos2 = signature.indexOf('<');
+		String podName = str.substring(0, pos);
+		int pos2 = str.indexOf('<');
 		if (pos2 < 0)
-			pos2 = signature.length();
+			pos2 = str.length();
 
-		String typeName = signature.substring(pos + 2, pos2);
-		
-		if (podName.startsWith("[java]")) {
-			Type t = JavaType.loadJavaType(null, podName, typeName);
-			return t;
+		String typeName = str.substring(pos + 2, pos2);
+
+		if (ffi != null) {
+			if ("java".equals(ffi)) {
+				Type t = JavaType.loadJavaType(null, podName, typeName);
+				return t;
+			}
+			throw makeErr("sys::ArgErr", str);
 		}
 		
 		FType ftype = findFType(podName, typeName, checked);
@@ -106,11 +120,7 @@ public class Sys {
 //			System.out.println("ERROR2:"+signature);
 			return null;
 		}
-		Type res = Type.fromFType(ftype, signature);
-
-		if (nullable) {
-			return res.toNullable();
-		}
+		Type res = Type.fromFType(ftype, str);
 		return res;
 	}
 	
@@ -118,6 +128,9 @@ public class Sys {
 		FTypeRef ref = pod.typeRef(typeRefId);
 		if (ref.podName.startsWith("[java]")) {
 			Type t = JavaType.loadJavaType(pod.podClassLoader, ref.podName, ref.typeName);
+			if (ref.signature.endsWith("?")) {
+				t = t.toNullable();
+			}
 			return t;
 		}
 		

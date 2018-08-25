@@ -325,6 +325,27 @@ public class Method extends Slot {
 		
 		public Object callList(List args) {
 			boolean isStatic = !isInstance();
+			if (parent.isJava()) {
+				int argc = (int)args.size();
+				if (!isStatic) --argc;
+				Object[] jargs = new Object[argc];
+				int i = 0;
+				if (!isStatic) i = 1;
+				for (int j=0; j<argc; ++i, ++j) {
+					jargs[j] = args.get(i);
+				}
+				Object obj = isStatic ? null : args.get(0);
+				Object res;
+				try {
+					res = JavaInvoker.invoke(Method.this, obj, jargs);
+					return res;
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw Err.make("Cannot call '" + this + "': " + e);
+				}
+			}
+			
+			
 			int min = minParams();
 			int max = isStatic ? (int)params.size() : (int)params.size()+1;
 			
@@ -356,7 +377,8 @@ public class Method extends Slot {
 				jargs[j] = args.get(i);
 			}
 			Object obj = isStatic ? null : args.get(0);
-			return invoke(obj, jargs, jm);
+			Object res = invoke(obj, jargs, jm);
+			return res;
 		}
 	}
 
