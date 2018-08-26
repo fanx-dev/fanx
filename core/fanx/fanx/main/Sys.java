@@ -93,7 +93,7 @@ public class Sys {
 		}
 		
 		int pos = str.indexOf("::");
-		if (pos < 0) {
+		if (pos < 0 || pos >= str.length()-2) {
 			if (checked) {
 				throw makeErr("sys::ArgErr", signature);
 			}
@@ -113,6 +113,13 @@ public class Sys {
 				return t;
 			}
 			throw makeErr("sys::ArgErr", str);
+		}
+		
+		if (podName.length() == 0) {
+			if (checked) {
+				throw makeErr("sys::ArgErr", signature);
+			}
+			return null;
 		}
 		
 		FType ftype = findFType(podName, typeName, checked);
