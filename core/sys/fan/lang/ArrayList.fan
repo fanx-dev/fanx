@@ -6,7 +6,7 @@
 //   2018-5-18 Jed Young Creation
 //
 
-rtconst class ArrayList<V> : List
+rtconst class ArrayList<V> : List<V>
 {
   private ObjArray array
   private Type type

@@ -205,6 +205,10 @@ public class Parser : CompilerSupport
       gparams := GenericParamType[,]
       while (true) {
         paramName := consumeId
+        conflict := unit.importedTypes[paramName]
+        if (conflict != null) {
+          throw err("generic type conflict: $conflict", cur)
+        }
         param := GenericParamType(ns, paramName, def, gparams.size)
         gparams.add(param)
         if (curt === Token.comma) {
@@ -221,6 +225,10 @@ public class Parser : CompilerSupport
       }
       def.genericParameters = gparams
     }
+
+    // open current type
+    curType = def
+    closureCount = 0
 
     // inheritance
     if (curt === Token.colon)
@@ -253,10 +261,6 @@ public class Parser : CompilerSupport
 
     // start class body
     consume(Token.lbrace)
-
-    // open current type
-    curType = def
-    closureCount = 0
 
     // if enum, parse values
     if (isEnum) enumDefs(def)
@@ -1696,7 +1700,7 @@ public class Parser : CompilerSupport
       return ctor
     }
 
-    throw err("Unexpected type literal", loc)
+    throw err("Unexpected type literal $ctype", loc)
   }
 
   **
@@ -2245,7 +2249,7 @@ public class Parser : CompilerSupport
   ** Simple type signature:
   **   <simpleType>  :=  <id> ["::" <id>]
   **
-  private CType simpleType(Bool allowParameterized := true)
+  private CType simpleType(Bool allowDefaultParameterized := true)
   {
     loc := cur
     id := consumeId
@@ -2270,6 +2274,8 @@ public class Parser : CompilerSupport
         if (gt != null) return gt
       }
 
+      d := curType as TypeDef
+      //echo("$curType ${curType?.isGeneric} ${curType?.typeof} ${d?.genericParameters}")
       // not found in imports
       err("Unknown type '$id'", loc)
       return ns.voidType
@@ -2289,11 +2295,8 @@ public class Parser : CompilerSupport
     type := types.first
     //generic param
     if (curt === Token.lt) {
-      if (!allowParameterized) {
-        err("Can not be parameterized type", loc)
-      }
       if (!type.isGeneric) {
-        err("$type is not Generic", loc)
+        errReport(CompilerErr("$type is not Generic", loc))
       }
       consume
       params := CType[,]
@@ -2311,8 +2314,11 @@ public class Parser : CompilerSupport
       }
       type = ParameterizedType.create(type, params)
     }
-    else if (type.isGeneric && allowParameterized) {
-      type = ParameterizedType.create(type)
+    else if (type.isGeneric) {
+      if (allowDefaultParameterized)
+        type = ParameterizedType.create(type)
+      else
+        errReport(CompilerErr("$type must be parameterized", loc))
     }
 
     // got it

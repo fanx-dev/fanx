@@ -70,14 +70,22 @@ class ParameterizedType : ProxyType {
   override once CType toNullable() { NullableType(this) }
   override CType toNonNullable() { return this }
 
-  override Bool isGeneric() { false }
+  override Bool isGeneric() { root.isGeneric }
   override Bool isParameterized() { true }
 
   override once CType toListOf() { ListType(this) }
 
   override once COperators operators() { COperators(this) }
 
-  override once Str:CSlot slots() { parameterizeSlots }
+  private [Str:CSlot]? parameterizeSlots
+  override Str:CSlot slots() {
+    if (parameterizeSlots != null && parameterizeSlots.size == root.slots.size) return parameterizeSlots
+    parameterizeSlots = root.slots.map |CSlot slot->CSlot| {
+      s := parameterizeSlot(slot)
+      return s
+    }
+    return parameterizeSlots
+  }
 
   override Bool isValid() { root.isValid && genericParams.all { it.isValid }}
 
@@ -104,7 +112,9 @@ class ParameterizedType : ProxyType {
     if (this == t) return true
 
     if (t.qname == root.qname) {
-      if (t.isGeneric) return true
+      if (t.isGeneric && t isnot ParameterizedType) {
+        return true
+      }
       if(defaultParameterized) return true
       ParameterizedType o := t.deref.raw.toNonNullable
       if (o.defaultParameterized) return true
@@ -129,11 +139,6 @@ class ParameterizedType : ProxyType {
       if (mixins[i].fits(t)) return true
 
     return false
-  }
-
-  private Str:CSlot parameterizeSlots()
-  {
-    root.slots.map |CSlot slot->CSlot| { parameterizeSlot(slot) }
   }
 
   private CSlot parameterizeSlot(CSlot slot)
@@ -181,6 +186,14 @@ class ParameterizedType : ProxyType {
     }
 
     return genericParams.getSafe(gp.index, gp.bound)
+  }
+
+  override once CType? base() {
+    parameterize(root.base)
+  }
+
+  override once CType[] mixins() {
+    root.mixins.map { parameterize(it) }
   }
 
   override once Str extName() {
@@ -253,6 +266,8 @@ class FuncType : ParameterizedType
 
   override Bool fits(CType ty)
   {
+    if (ty === ns.funcType) return true
+
     //echo("Func.fits: $this => $ty")
     t := ty.deref.raw.toNonNullable
     if (this == t) return true
@@ -260,7 +275,6 @@ class FuncType : ParameterizedType
 
     if (this.qname == t.qname) {
       if (defaultParameterized) return true
-      if (t.isGeneric) return true
     }
     //TODO: not sure
     //if (t.name.size == 1 && t.pod.name == "sys") return true

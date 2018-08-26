@@ -75,7 +75,7 @@ internal class MapEntryList : LinkedList {
 // HashMap
 //////////////////////////////////////////////////////////////////////////
 
-rtconst class HashMap<K,V> : Map
+rtconst class HashMap<K,V> : Map<K,V>
 {
   private MapEntryList?[] array
   //private Type type

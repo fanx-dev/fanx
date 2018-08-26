@@ -32,7 +32,7 @@ internal class AvlNode {
 **
 ** AVL Tree (named after inventors Adelson-Velsky and Landis) is an balanced binary tree.
 **
-class TreeMap<K,V> : Map {
+class TreeMap<K,V> : Map<K,V> {
   private AvlNode? root := null
 
   private Bool readOnly

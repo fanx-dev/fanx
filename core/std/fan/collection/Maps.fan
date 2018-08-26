@@ -6,7 +6,7 @@
 //   2018-6-18 Jed Young Creation
 //
 
-rtconst class OrderedMap<K,V> : HashMap {
+rtconst class OrderedMap<K,V> : HashMap<K,V> {
   private LinkedList list := LinkedList()
 
   new make(Int capacity:=16) : super.make(capacity) {
@@ -114,7 +114,7 @@ rtconst class OrderedMap<K,V> : HashMap {
 // CaseInsensitiveMap
 //////////////////////////////////////////////////////////////////////////
 
-rtconst class CIMap<K,V> : HashMap {
+rtconst class CIMap<K,V> : HashMap<K,V> {
   new make(Int capacity:=16) : super.make(capacity) {
   }
 

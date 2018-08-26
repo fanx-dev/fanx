@@ -4,9 +4,7 @@ set -e
 fanc='../env/bin/fanb'
 
 echo 'build fanx java'
-cd fanx
 sh build_jar.sh
-cd ../
 
 echo 'build compiler self'
 $fanc compiler/pod.props

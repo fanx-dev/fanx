@@ -86,8 +86,8 @@ class CheckInheritance : CompilerStep
       err("Class '$t.name' cannot extend mixin '$base'", t.loc)
 
     // check extends parameterized type
-    if (base.isParameterized)
-      err("Class '$t.name' cannot extend parameterized type '$base'", t.loc)
+    if (!base.isParameterized && base.isGeneric)
+      err("Class '$t.name' cannot extend generic type '$base'", t.loc)
 
     // check extends final
     if (base.isFinal)
