@@ -176,6 +176,17 @@ public class Jstub
     System.out.println("  -d             output directory");
     System.out.println("  -v             verbose mode");
     System.out.println("  -nozip         generate classfiles instead of zip");
+    
+    System.out.println("  fan.home:        " + Sys.env.homeDir());
+
+		List<String> path = Sys.env.envPaths();
+		if (path != null) {
+			System.out.println("");
+			System.out.println("Env Path:");
+			for (int i = 0; i < path.size(); ++i)
+				System.out.println("  " + path.get(i));
+			System.out.println("");
+		}
   }
 
 //////////////////////////////////////////////////////////////////////////

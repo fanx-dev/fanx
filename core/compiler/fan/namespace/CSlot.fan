@@ -109,6 +109,8 @@ mixin CField : CSlot
   **
   Bool isGeneric() { fieldType.hasGenericParameter }
 
+  virtual CField? generic() { null }
+
   **
   ** Is this field the parameterization of a generic field,
   ** with the generic type replaced with a real type.

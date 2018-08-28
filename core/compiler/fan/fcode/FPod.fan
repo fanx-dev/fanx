@@ -119,9 +119,11 @@ final class FPod : CPod, FConst
 
   Int addFieldRef(CField field)
   {
+    if (field.isParameterized) field = field.generic
+
     p := addTypeRef(field.parent)
     n := addName(field.name)
-    t := addTypeRef(field.fieldType)
+    t := addTypeRef(field.fieldType.raw)
     return fieldRefs.add(FFieldRef(p, n, t))
   }
 

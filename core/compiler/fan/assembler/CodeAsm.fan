@@ -1099,6 +1099,9 @@ class CodeAsm : CompilerSupport
         else
           op(FOp.LoadInstance, index)
       }
+
+      if (field.isParameterized)
+        coerceOp(ns.objType, field.fieldType)
     }
 
     // if safe, handle null case
@@ -1136,6 +1139,10 @@ class CodeAsm : CompilerSupport
   private Void storeField(FieldExpr fexpr)
   {
     field := fexpr.field
+
+    if (field.isParameterized)
+        coerceOp(field.fieldType, ns.objType)
+
     if (fexpr.useAccessor)
     {
       setter := field.setter  // if null then bug in useAccessor

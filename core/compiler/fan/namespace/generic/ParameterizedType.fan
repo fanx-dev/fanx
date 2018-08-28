@@ -31,6 +31,7 @@ class ParameterizedType : ProxyType {
         objType := baseType.ns.objType.toNullable
         params = [objType, objType]
       }
+
       return MapType(params.first, params.last, defaultParameterized)
     }
     else if (baseType.qname == "sys::Func") {
@@ -70,7 +71,7 @@ class ParameterizedType : ProxyType {
   override once CType toNullable() { NullableType(this) }
   override CType toNonNullable() { return this }
 
-  override Bool isGeneric() { root.isGeneric }
+  //override Bool isGeneric() { root.isGeneric }
   override Bool isParameterized() { true }
 
   override once CType toListOf() { ListType(this) }
@@ -119,13 +120,14 @@ class ParameterizedType : ProxyType {
       if(defaultParameterized) return true
       ParameterizedType o := t.deref.raw.toNonNullable
       if (o.defaultParameterized) return true
+
       if (this.genericArgs.size != o.genericArgs.size) {
-        echo("fits: $this != $t: size: ${this.genericArgs.size}!=${o.genericArgs.size}")
+        //echo("fits1: $this != $t: size: ${this.genericArgs.size}!=${o.genericArgs.size}; $this.typeof $t.typeof")
         return false
       }
       for (i:=0; i<genericArgs.size; ++i) {
-        if (!this.genericArgs[i].fits(o.genericArgs[i])) {
-          echo("fits: $this != $ty, param:$i")
+        if (!this.genericArgs[i].fits(o.genericArgs[i]) && !o.genericArgs[i].fits(this.genericArgs[i])) {
+          //echo("fits2: $this != $ty, param:$i; $this.typeof $t.typeof")
           return false
         }
       }
@@ -154,7 +156,7 @@ class ParameterizedType : ProxyType {
     else
     {
       f := (CField)slot
-      if (!f.fieldType.hasGenericParameter) return slot
+      if (!f.isGeneric) return slot
       p := ParameterizedField(this, f)
       return p
     }

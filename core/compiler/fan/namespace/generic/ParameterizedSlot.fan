@@ -36,7 +36,7 @@ class ParameterizedField : CField
   override Bool isParameterized() { true }
 
   override CType parent { private set }
-  private CField generic { private set }
+  override CField? generic { private set }
 }
 
 **************************************************************************
