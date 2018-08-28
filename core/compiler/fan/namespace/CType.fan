@@ -197,7 +197,10 @@ mixin CType
   **
   virtual CType parameterizeThis(CType thisType) { this }
 
-  virtual GenericParamType? getGenericParamType(Str name) { null }
+  **
+  ** find GenericParameter by name
+  **
+  virtual GenericParameter? getGenericParameter(Str name) { null }
 
 //////////////////////////////////////////////////////////////////////////
 // Inheritance

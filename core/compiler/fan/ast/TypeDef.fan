@@ -348,7 +348,7 @@ class TypeDef : DefNode, CType
     out.w("}").nl
   }
 
-  override GenericParamType? getGenericParamType(Str name) {
+  override GenericParameter? getGenericParameter(Str name) {
     param := genericParameters.find { it.paramName == name }
     if (param != null) {
       return param
@@ -378,5 +378,5 @@ class TypeDef : DefNode, CType
   FacetDef[]? indexedFacets        // used by WritePod
 
   //genericParameter
-  GenericParamType[] genericParameters := [,]
+  GenericParameter[] genericParameters := [,]
 }

@@ -86,17 +86,17 @@ class FType : CType
 
   override Bool hasGenericParameter() { false }
 
-  override GenericParamType? getGenericParamType(Str name) {
+  override GenericParameter? getGenericParameter(Str name) {
     if (genericParams.size == 0) return null
     return genericParameters[name]
   }
 
-  private once [Str:GenericParamType] genericParameters() {
-    res := [Str:GenericParamType][:]
+  private once [Str:GenericParameter] genericParameters() {
+    res := [Str:GenericParameter][:]
     genericParams.size.times |i| {
       n := fpod.n(genericParams[i])
       t := fpod.toType(genericParamBounds[i])
-      gt := GenericParamType(ns, n, this, i, t)
+      gt := GenericParameter(ns, n, this, i, t)
       res[n] = gt
     }
     return res

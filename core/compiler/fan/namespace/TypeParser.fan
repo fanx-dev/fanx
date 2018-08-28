@@ -49,7 +49,7 @@ class TypeParser
         parentName := typeName[0..<pos]
         name := typeName[pos+1..-1]
         parent := ns.resolvePod(podName, null).resolveType(parentName, true)
-        gptype := parent.getGenericParamType(name)
+        gptype := parent.getGenericParameter(name)
         return gptype
       }
       return ns.resolvePod(podName, null).resolveType(typeName, true)
@@ -229,7 +229,7 @@ class TypeParser
         while (isIdChar(cur)) consume
         name := sig[start2..<pos]
         parent := ns.resolveType(qname)
-        gptype := parent.getGenericParamType(name)
+        gptype := parent.getGenericParameter(name)
         if (gptype == null) {
           echo("$parent, $name, $qname, $sig")
         }

@@ -212,12 +212,13 @@ mixin CMethod : CSlot
     ai = ai.deref.toNonNullable
     bi = bi.deref.toNonNullable
     if (ai.qname == bi.qname) return true
-    //echo("$ai $bi $ai.typeof, $bi.typeof $ai->paramName $bi->paramName")
-    if (ai is GenericParamType && bi is GenericParamType) {
-      ag := (GenericParamType)ai
-      bg := (GenericParamType)bi
+    /*
+    if (ai is GenericParameter && bi is GenericParameter) {
+      ag := (GenericParameter)ai
+      bg := (GenericParameter)bi
       return ag.paramName == bg.paramName
     }
+    */
     return false
   }
 

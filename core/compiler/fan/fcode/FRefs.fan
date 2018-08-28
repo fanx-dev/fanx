@@ -29,7 +29,7 @@ const class FTypeRef
     return podName == x.podName && typeName == x.typeName && sig == x.sig
   }
 
-  Bool isGenericInstance() { sig.size > 1 }
+  //Bool isGenericInstance() { sig.size > 1 }
 
   Str signature(FPod pod)
   {

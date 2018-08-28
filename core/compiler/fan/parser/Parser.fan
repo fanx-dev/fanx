@@ -202,14 +202,14 @@ public class Parser : CompilerSupport
     //GenericType Param
     if (curt === Token.lt) {
       consume
-      gparams := GenericParamType[,]
+      gparams := GenericParameter[,]
       while (true) {
         paramName := consumeId
         conflict := unit.importedTypes[paramName]
         if (conflict != null) {
           throw err("generic type conflict: $conflict", cur)
         }
-        param := GenericParamType(ns, paramName, def, gparams.size)
+        param := GenericParameter(ns, paramName, def, gparams.size)
         gparams.add(param)
         if (curt === Token.comma) {
           consume
@@ -2227,7 +2227,7 @@ public class Parser : CompilerSupport
     // check for ":" for map type
     if (curt === Token.colon)
     {
-      if (t.isNullable && (t.deref isnot GenericParamType)) throw err("Map type cannot have nullable key type")
+      if (t.isNullable && (t.deref isnot GenericParameter)) throw err("Map type cannot have nullable key type")
       consume(Token.colon)
       key := t
       val := ctype
@@ -2270,7 +2270,7 @@ public class Parser : CompilerSupport
       //  return ns.genericParameter(id)
 
       if (curType != null && curType.isGeneric) {
-        gt := curType.getGenericParamType(id)
+        gt := curType.getGenericParameter(id)
         if (gt != null) return gt
       }
 

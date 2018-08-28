@@ -1664,10 +1664,8 @@ class CheckErrors : CompilerStep
 
     if (t is ParameterizedType)
     {
-      if (t is ParameterizedType) {
-        x := (ParameterizedType)t
-        x.genericParams.each |p| { checkTypeProtection(p, loc) }
-      }
+      x := (ParameterizedType)t
+      x.genericArgs.each |p| { checkTypeProtection(p, loc) }
     }
     else
     {
