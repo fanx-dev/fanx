@@ -101,7 +101,7 @@ public class Fan
 		  FPod pod = Sys.findPod("std");
 	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.ScriptCompiler");
 		  Object scriptCompiler = Reflection.getStaticField(clz, "cur");
-		  Object res = Reflection.callMethod(scriptCompiler, "execute"
+		  Object res = Reflection.callMethodThrow(scriptCompiler, "execute"
 				  , file.getAbsolutePath(), toList(args));
 		  return ((Long)res).intValue();
 		} catch (Throwable e) {

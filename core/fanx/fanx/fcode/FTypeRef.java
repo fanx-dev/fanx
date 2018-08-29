@@ -103,6 +103,7 @@ public final class FTypeRef
     int pos = typeName.indexOf('^');
     if (pos != -1) {
     	mask |= GENERIC_PARAM;
+    	genericParameterInited = false;
     }
     
     this.mask = mask;
@@ -123,6 +124,7 @@ public final class FTypeRef
 	  FType ftype = pod.type(parent);
 	  FTypeRef bound = ftype.findGenericParamBound(paramName);
 	  this.jname = bound.jname();
+	  genericParameterInited = true;
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -190,7 +192,10 @@ public final class FTypeRef
    */
   public String jname()
   {
-    if (jname == null) jname = FanUtil.toJavaTypeSig(podName, typeName, isNullable());
+    if (jname == null) {
+    	if (!genericParameterInited) throw new RuntimeException("unlinkedGenericParameter");
+    	jname = FanUtil.toJavaTypeSig(podName, typeName, isNullable());
+    }
     return jname;
   }
 
@@ -364,5 +369,7 @@ public final class FTypeRef
   public final int stackType;      // stack type constant
   public final String signature;   // full fan signature (qname or parameterized)
   private String jname;            // fan/sys/Duration, java/lang/Boolean, Z
+  
+  private boolean genericParameterInited = true;
 
 }

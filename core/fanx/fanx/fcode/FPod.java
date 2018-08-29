@@ -99,7 +99,7 @@ public final class FPod
     //replace the generic param with the bound type
     for (int i=0; i<typeRefs.size; ++i) {
     	FTypeRef ref = (FTypeRef)typeRefs.get(i);
-    	ref.initGenericParam(this);;
+    	ref.initGenericParam(this);
     }
   }
 
@@ -150,7 +150,14 @@ public final class FPod
       else if (name.equals("fcode/durations.def")) literals.durations.read(in);
       else if (name.equals("fcode/uris.def")) literals.uris.read(in);
       else System.out.println("WARNING: unexpected file in pod: " + name);
+      
+      
     }
+    
+		for (int i = 0; i < typeRefs.size; ++i) {
+			FTypeRef ref = (FTypeRef) typeRefs.get(i);
+			ref.initGenericParam(this);
+		}
   }
   
   private static Map<String, String> readProps(FStore.Input in) throws IOException {

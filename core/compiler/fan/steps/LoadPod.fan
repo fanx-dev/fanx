@@ -57,6 +57,8 @@ class LoadPod : CompilerStep
 
     // have Sys load it up
     pod := Pod.load(buf.in)
+
+    tempFile.deleteOnExit
     return pod
   }
 

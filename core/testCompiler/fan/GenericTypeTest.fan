@@ -70,7 +70,7 @@ class GenericTypeTest : CompilerTest
             }
             """)
   }
-/*
+
   Void testBoxing() {
     compile(
     """class Bar<V> {
@@ -103,5 +103,5 @@ class GenericTypeTest : CompilerTest
     assert(t is Type)
     t.make->main
   }
-  */
+
 }

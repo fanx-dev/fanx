@@ -150,6 +150,11 @@ public class Reflection {
         return null;
 	}
 	
+	public static Object callMethodThrow(Object obj, String name, Object... arg) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    	Method method = findMethod(obj.getClass(), name, arg);
+		return method.invoke(obj, arg);
+	}
+	
 	public static Object callStaticMethod(Class<?> clz, String name, Object... arg) {
         try {
         	Method method = findMethod(clz, name, arg);
