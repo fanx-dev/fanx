@@ -25,6 +25,7 @@ mixin CSlot
   Bool isAbstract()  { flags.and(FConst.Abstract)  != 0 }
   Bool isAccessor()  { flags.and(FConst.Getter.or(FConst.Setter)) != 0 }
   Bool isConst()     { flags.and(FConst.Const)     != 0 }
+  Bool isReadonly()  { flags.and(FConst.Readonly)  != 0 }
   Bool isCtor()      { flags.and(FConst.Ctor)      != 0 }
   Bool isEnum()      { flags.and(FConst.Enum)      != 0 }
   Bool isGetter()    { flags.and(FConst.Getter)    != 0 }

@@ -382,7 +382,7 @@ class Inherit : CompilerStep
 
     // const field cannot override a field (const fields cannot be set,
     // therefore they can override only methods)
-    if (def.isConst)
+    if (def.isConst || def.isReadonly)
       throw err("Const field '$def.name' cannot override field '$base.qname'", loc)
 
     // correct override

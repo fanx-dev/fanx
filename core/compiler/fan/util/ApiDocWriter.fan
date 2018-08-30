@@ -190,6 +190,7 @@ class ApiDocWriter
     s := StrBuf()
     if (flags.and(FConst.Abstract)  != 0) s.join("abstract")
     if (flags.and(FConst.Const)     != 0) s.join("const")
+    if (flags.and(FConst.Readonly)  != 0) s.join("readonly")
     if (flags.and(FConst.Enum)      != 0) s.join("enum")
     if (flags.and(FConst.Facet)     != 0) s.join("facet")
     if (flags.and(FConst.Final)     != 0) s.join("final")

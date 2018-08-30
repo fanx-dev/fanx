@@ -43,7 +43,8 @@ mixin FConst
   const static Int Virtual    := 0x00040000
   const static Int Struct     := 0x00080000
   const static Int Extension  := 0x00100000
-  const static Int RuntimeConst:= 0x00200000
+  const static Int RuntimeConst:=0x00200000
+  const static Int Readonly   := 0x00400000
   const static Int FlagsMask  := 0x00ffffff
 
 //////////////////////////////////////////////////////////////////////////

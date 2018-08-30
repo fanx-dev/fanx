@@ -165,6 +165,13 @@ class CheckErrors : CompilerStep
 
   private Void checkConstType(TypeDef t)
   {
+    if (t.isVal) {
+      t.fieldDefs.each |FieldDef f| {
+        if (!f.isConst && !f.isStatic && f.isStorage && !f.isReadonly)
+          err("Struct type '$t.name' cannot contain non-readonly field '$f.name'", f.loc)
+      }
+    }
+
     // if not const then nothing to check
     if (!t.isConst) return
 
@@ -277,7 +284,6 @@ class CheckErrors : CompilerStep
       // invalid const flag combo
       if (flags.and(FConst.Abstract) != 0) err("Invalid combination of 'const' and 'abstract' modifiers", loc)
       else if (flags.and(FConst.Virtual) != 0 && flags.and(FConst.Override) == 0) err("Invalid combination of 'const' and 'virtual' modifiers", loc)
-
       // invalid type
       if (!f.fieldType.isConstFieldType)
         err("Const field '$f.name' has non-const type '$f.fieldType'", loc)
@@ -286,6 +292,11 @@ class CheckErrors : CompilerStep
     {
       // static fields must be const
       if (flags.and(FConst.Static) != 0) err("Static field '$f.name' must be const", loc)
+    }
+
+    if (flags.and(FConst.Readonly) != 0) {
+      if (flags.and(FConst.Abstract) != 0) err("Invalid combination of 'readonly' and 'abstract' modifiers", loc)
+      if (flags.and(FConst.Const) != 0) err("Invalid combination of 'const' and 'readonly' modifiers", loc)
     }
 
     // check invalid protection combinations on setter (getter
@@ -372,6 +383,7 @@ class CheckErrors : CompilerStep
     // these modifiers are never allowed on a method
     if (flags.and(FConst.Final) != 0)     err("Cannot use 'final' modifier on method", loc)
     if (flags.and(FConst.Const) != 0)     err("Cannot use 'const' modifier on method", loc)
+    if (flags.and(FConst.Readonly) != 0)  err("Cannot use 'readonly' modifier on method", loc)
 
     // check invalid protection combinations
     checkProtectionFlags(flags, loc)
@@ -1115,7 +1127,7 @@ class CheckErrors : CompilerStep
       checkSlotProtection(field.setter, lhs.loc, true)
 
     // if not-const we are done
-    if (!field.isConst) return rhs
+    if (!field.isConst && !field.isReadonly) return rhs
 
     // for purposes of const field checking, consider closures
     // inside a constructor or static initializer to be ok
@@ -1137,14 +1149,15 @@ class CheckErrors : CompilerStep
 
     // we allow setting an instance ctor field in an
     // it-block, otherwise dive in for further checking
-    if (!(curType.isClosure && curType.closure.isItBlock))
+    if (!(curType.isClosure && curType.closure.isItBlock) || field.parent.isVal)
     {
       // check attempt to set field outside of owning class or subclass
       if (inType != field.parent)
       {
         if (!inType.fits(field.parent) || !inMethod.isInstanceCtor)
         {
-          err("Cannot set const field '$field.qname'", lhs.loc)
+          if (field.parent.isVal) err("Cannot set struct field '$field.qname'", lhs.loc)
+          else err("Cannot set const field '$field.qname'", lhs.loc)
           return rhs
         }
       }
@@ -1152,19 +1165,22 @@ class CheckErrors : CompilerStep
       // check attempt to set instance field outside of ctor
       if (!field.isStatic && !(inMethod.isInstanceInit || inMethod.isInstanceCtor))
       {
-        err("Cannot set const field '$field.name' outside of constructor", lhs.loc)
+        if (field.parent.isVal) err("Cannot set struct field '$field.qname'", lhs.loc)
+        else err("Cannot set const field '$field.name' outside of constructor", lhs.loc)
         return rhs
       }
     }
 
     // any other errors should already be logged at this point (see isConstFieldType)
-
-    // if non-const make an implicit call toImmutable
-    ftype := field.fieldType
-    if (ftype.isConst)
-      return rhs
-    else
-      return implicitToImmutable(ftype, rhs)
+    if (field.isConst) {
+      // if non-const make an implicit call toImmutable
+      ftype := field.fieldType
+      if (ftype.isConst)
+        return rhs
+      else
+        return implicitToImmutable(ftype, rhs)
+    }
+    return rhs
   }
 
   private Expr implicitToImmutable(CType fieldType, Expr rhs)
@@ -1392,7 +1408,7 @@ class CheckErrors : CompilerStep
       // field storage (only defining class gets it); allow closures
       // same scope priviledges as enclosing class
       enclosing := curType.isClosure ? curType.closure.enclosingType : curType
-      if (!field.isConst && field.parent != curType && field.parent != enclosing)
+      if (!field.isConst && !field.isReadonly && field.parent != curType && field.parent != enclosing)
       {
         err("Field storage for '$field.qname' not accessible", f.loc)
         return
@@ -1420,7 +1436,7 @@ class CheckErrors : CompilerStep
   private Bool useFieldAccessor(CField f)
   {
     // if const field then use field directly
-    if (f.isConst || f.getter == null) return false
+    if (f.isConst || f.isReadonly || f.getter == null) return false
 
     // always use accessor if field is imported from another
     // pod (in which case it isn't a def in my compilation unit)

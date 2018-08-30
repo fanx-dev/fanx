@@ -133,6 +133,7 @@ public class Parser : CompilerSupport
     flags := flags(false)
     if (flags.and(ProtectionMask.not) == 0) flags = flags.or(FConst.Public)
     //if (compiler.isSys) flags = flags.or(FConst.Native)
+    if (flags.and(FConst.Readonly) != 0) err("Cannot use 'readonly' modifier on type", cur)
 
     // local working variables
     loc     := cur
@@ -178,10 +179,10 @@ public class Parser : CompilerSupport
       }
       // struct class
       if (curt == Token.identifier && cur.val == "struct") {
-        if (flags.and(FConst.Const) == 0) err("The struct class must 'const'", loc)
+        //if (flags.and(FConst.Const) == 0) err("The struct class must 'const'", loc)
         if (flags.and(FConst.Final) != 0) err("The 'final' modifier is implied on struct", loc)
         if (flags.and(FConst.Abstract) != 0) err("Cannot use 'abstract' modifier on struct", loc)
-        flags = flags.or(FConst.Struct + FConst.Const + FConst.Final)
+        flags = flags.or(FConst.Struct + FConst.Final)
         consume
       }
       consume(Token.classKeyword)
@@ -320,6 +321,7 @@ public class Parser : CompilerSupport
       {
         case Token.abstractKeyword:  flags = flags.or(FConst.Abstract)
         case Token.constKeyword:     flags = flags.or(FConst.Const)
+        case Token.readonlyKeyword:  flags = flags.or(FConst.Readonly)
         case Token.finalKeyword:     flags = flags.or(FConst.Final)
         case Token.internalKeyword:  flags = flags.or(FConst.Internal);  protection = true
         case Token.nativeKeyword:    flags = flags.or(FConst.Native)
@@ -532,7 +534,7 @@ public class Parser : CompilerSupport
     // const always has storage, otherwise assume no storage
     // until proved otherwise in ResolveExpr step or we
     // auto-generate getters/setters
-    if (field.isConst)
+    if (field.isConst || field.isReadonly)
       field.flags = field.flags.or(FConst.Storage)
 
     // field initializer
@@ -554,7 +556,7 @@ public class Parser : CompilerSupport
       err("Type inference not supported for fields", loc)
 
     // if not const, define getter/setter methods
-    if (!field.isConst) defGetAndSet(field)
+    if (!field.isConst && !field.isReadonly) defGetAndSet(field)
 
     // explicit getter or setter
     if (curt === Token.lbrace)
@@ -566,14 +568,14 @@ public class Parser : CompilerSupport
     }
 
     // generate synthetic getter or setter code if necessary
-    if (!field.isConst)
+    if (!field.isConst && !field.isReadonly)
     {
       if (field.get.code == null) genSyntheticGet(field)
       if (field.set.code == null) genSyntheticSet(field)
     }
 
     // const override has getter only
-    if (field.isConst && field.isOverride)
+    if ((field.isConst || field.isReadonly) && field.isOverride)
     {
       defGet(field)
       genSyntheticGet(field)
@@ -664,7 +666,7 @@ public class Parser : CompilerSupport
         endOfStmt
 
       // const field cannot have getter/setter
-      if (f.isConst)
+      if (f.isConst || f.isReadonly)
       {
         err("Const field '$f.name' cannot have ${id}ter", idLoc)
         return
