@@ -11,11 +11,6 @@ facet class I16 {}
 facet class I32 {}
 facet class I64 {}
 
-facet class U8 {}
-facet class U16 {}
-facet class U32 {}
-facet class U64 {}
-
 **
 ** Int is used to represent a signed 64-bit integer.
 **

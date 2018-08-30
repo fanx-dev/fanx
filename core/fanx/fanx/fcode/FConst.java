@@ -45,6 +45,7 @@ public interface FConst
   public static final int Struct     = 0x00080000;
   public static final int Extension  = 0x00100000;
   public static final int RuntimeConst= 0x00200000;
+  public static final int Readonly   = 0x00400000;
   public static final int FlagsMask  = 0x00ffffff;
 
 //////////////////////////////////////////////////////////////////////////

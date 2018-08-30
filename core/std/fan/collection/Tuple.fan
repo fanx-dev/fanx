@@ -5,14 +5,12 @@
 //   2017-1-21  Jed Young  Creation
 //
 
-rtconst class Tuple<A, B, C> {
-  private Bool immutable := false
+rtconst struct class Tuple<A, B, C> {
+  private readonly Bool immutable := false
 
-  A first { private set }
-  B second { private set }
-  C third { private set }
-
-  new make(|This| f) { f(this) }
+  readonly A first
+  readonly B second
+  readonly C third
 
   new make1(A a) {
     this.first = a
@@ -29,6 +27,13 @@ rtconst class Tuple<A, B, C> {
     this.third = c
   }
 
+  new makeConst(A a, B b, C c) {
+    this.first = a?.toImmutable
+    this.second = b?.toImmutable
+    this.third = c?.toImmutable
+    this.immutable = true
+  }
+
   override Bool isImmutable() {
     return immutable
   }
@@ -36,12 +41,11 @@ rtconst class Tuple<A, B, C> {
   override Tuple<A, B, C> toImmutable() {
     if (immutable) return this
 
-    t := Tuple<A, B, C>(
-      this.first?.toImmutable,
-      this.second?.toImmutable,
-      this.third?.toImmutable
+    t := Tuple<A, B, C>.makeConst(
+      this.first,
+      this.second,
+      this.third
     )
-    t.immutable = true
     return t
   }
 }
