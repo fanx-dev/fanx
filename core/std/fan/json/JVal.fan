@@ -175,6 +175,7 @@ class JVal {
     return asVal(list[i])
   }
 
+  @Operator
   This add(Obj? elem) {
     list := (Obj?[])obj
     elem = asVal(elem)
@@ -182,12 +183,14 @@ class JVal {
     return this
   }
 
+  @Operator
   JVal get(Str name, JVal defVal := JVal(null)) {
     map := asMap
     res := map.get(name, defVal)
     return asVal(res)
   }
 
+  @Operator
   This set(Str name, Obj? elem) {
     map := (Str:Obj?)obj
     elem = asVal(elem)

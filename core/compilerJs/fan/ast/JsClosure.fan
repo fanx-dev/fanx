@@ -122,5 +122,5 @@ class JsPodClosures : JsNode
   private Str:Str specKeyToVar := [:]
 
   ** Func spec field variable name to prototype function (for params and return type)
-  private Str:JsMethod varToFunc := OrderedMap<Str:JsMethod>()//[:] { ordered = true }
+  private Str:JsMethod varToFunc := OrderedMap<Str,JsMethod>()//[:] { ordered = true }
 }

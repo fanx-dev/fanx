@@ -40,7 +40,8 @@ public class LogPeer {
 	}
 	
 	static LogPeer make(Log log) {
-		return new LogPeer();
+		LogPeer peer = new LogPeer();
+		return peer;
 	}
 
 	public static synchronized List list() {

@@ -5,12 +5,12 @@
 // History:
 //   2 Dec 05  Brian Frank  Creation
 //
-
+/*
 facet class I8 {}
 facet class I16 {}
 facet class I32 {}
 facet class I64 {}
-
+*/
 **
 ** Int is used to represent a signed 64-bit integer.
 **

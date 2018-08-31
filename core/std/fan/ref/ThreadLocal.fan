@@ -5,7 +5,7 @@
 // History:
 //   2018-5-18 Jed Young Creation
 //
-
+/*
 final native const class ThreadLocal<T> {
 
   new make(|->T|? initial := null)
@@ -19,3 +19,4 @@ final native const class ThreadLocal<T> {
   ** Removes the current thread's value for this thread-local variable
   Void remove()
 }
+*/

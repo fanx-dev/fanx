@@ -27,16 +27,6 @@ To add methods out side the class
   str.foo
 ```
 
-### Numeric Precision (TODO) ###
-Support Numeric Precision by Facets
-```
-  Point {
-    @I16 Int x
-    @I16 Int y
-    @U8  Int z
-  }
-```
-
 ### Struct Type ###
 A struct type is a pass by value type
 ```
@@ -56,51 +46,13 @@ To make sure safe when override toImmutable methods.
   }
 ```
 
-### Portable Library ###
-The sys pod is written in Fantom with little native code.
-
-It's more portable to write a new backend platforms.
-Future targets might include Objective-C, the LLVM, WebAssembly.
-
-### Static Namespace ###
-fanx allow same name static slots in inheritance.
+### Readonly keyword ###
+readonly is shallow const
 ```
-   class Base {
-     static Void foo() {}
-   }
-   class Sub : Base {
-     static Void foo() {}
-
-     static Void main() {
-       foo  //call Sub.foo
-       Base.foo //call Base.foo
-     }
-   }
-```
-
-### Return From Void ###
-not allow return a value from Void method, except return a Void type.
-
-### Float Literals ###
-The Default Number is Float
-```
-  f := 0.1   //Float
-  f := 0.2f  //Float
-  f := 0.3d  //Decimal
-```
-
-### Build Script ###
-The pod.props file:
-```
-  podName = testlib
-  summary = test lib
-  version = 2.0
-  srcDirs = fan/*
-  depends = sys 1.0
-```
-Run build:
-```
-  fanb yourPath/pod.props
+  class Bar {
+    const Str name
+    readonly StrBuf buf
+  }
 ```
 
 ### Local Return ###
@@ -131,4 +83,56 @@ To omit the function signature if params size less than one, not only it-block.
   Void foo(|->| f) { f() }
   foo { echo("Hi") }
 ```
+
+### Build Script ###
+The pod.props file:
+```
+  podName = testlib
+  summary = test lib
+  version = 2.0
+  srcDirs = fan/*
+  depends = sys 1.0
+```
+Run build:
+```
+  fanb yourPath/pod.props
+```
+
+### Portable Library ###
+The sys pod is written in Fantom with little native code.
+
+It's more portable to write a new backend platforms.
+Future targets might include Objective-C, the LLVM, WebAssembly.
+
+### More Container ###
+LinkedList, Set, Tuple, ConcMap, LRUCache, TreeMap and more.
+```
+  Tuple<Int, Str> tuple := Tuple(1, "a")
+```
+
+### New JSON Api ###
+The new api support 'encoding' and 'nonstandard' options and xpath.
+```
+  val := JVal.readJson("""{name=["abc"]}""")
+  val.xpath("name[0]")
+  val->name->getAt(0)
+  str := JVal.writeJson(val)
+```
+
+### Actor Enhance ###
+The ActorPool.defVal is a default param of Actor's constructor
+```
+  class Bar {
+    Str foo(Str str) { str+"2" }
+  }
+
+  actor := ActorProxy |->|{ Bar() }
+  actor->foo("Hi")
+```
+```
+  //ActorLocal
+  static const AcotrLocal<Bar> local := ActorLocal<Bar>()
+```
+
+
 

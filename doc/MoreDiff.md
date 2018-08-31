@@ -1,6 +1,34 @@
 
 
-# API Different #
+# More Different #
+
+### Static Namespace ###
+fanx allow same name static slots in inheritance.
+```
+   class Base {
+     static Void foo() {}
+   }
+   class Sub : Base {
+     static Void foo() {}
+
+     static Void main() {
+       foo  //call Sub.foo
+       Base.foo //call Base.foo
+     }
+   }
+```
+
+### Return From Void ###
+not allow return a value from Void method, except return a Void type.
+
+### Float Literals ###
+The Default Number is Float
+```
+  f := 0.1   //Float
+  f := 0.2f  //Float
+  f := 0.3d  //Decimal
+```
+
 
 ### Extension Methods API ###
 Most Convenience methods are changed to extension methods to break the dependency.
@@ -28,12 +56,6 @@ Math Methods:
 ### Deprecated Boxing ###
 Some Fantom API return nullable Int, for example: InStrem.read(), Str.index().
 To avoid int boxing, prefer -1 instead of null.
-
-### More Container ###
-LinkedList, Set, Tuple, ConcMap, LRUCache, TreeMap and more.
-```
-  Tuple<Int, Str> tuple := Tuple(1, "a")
-```
 
 ### DateTime ###
 Added TimePoint class.
@@ -79,28 +101,5 @@ Str.splitBy, Str.splitAny, Str.extract
   Str.fromat("%s %d %f", ["Hi", 12, 0.3])
 ```
 
-### New JSON Api ###
-The new api support 'encoding' and 'nonstandard' options and xpath.
-```
-  val := JVal.readJson("""{name=["abc"]}""")
-  val.xpath("name[0]")
-  val->name->getAt(0)
-  str := JVal.writeJson(val)
-```
-
-### Actor Enhance ###
-The ActorPool.defVal is a default param of Actor's constructor
-```
-  class Bar {
-    Str foo(Str str) { str+"2" }
-  }
-
-  actor := ActorProxy |->|{ Bar() }
-  actor->foo("Hi")
-```
-```
-  //ActorLocal
-  static const AcotrLocal<Bar> local := ActorLocal<Bar>()
-```
 
 

@@ -32,8 +32,10 @@ const struct class DateTime
   //   weekday     3 bits   0x7    28
   //   dst         1 bit    0x1    31
 
-  @I32 private const Int fields     // bitmask month, day, etc
-  @I32 private const Int yearField // year
+  //@I32
+  private const Int fields     // bitmask month, day, etc
+  //@I32
+  private const Int yearField // year
 
   //private static const Int minTicks   := Int.minVal
   //private static const Int maxTicks   := Int.maxVal

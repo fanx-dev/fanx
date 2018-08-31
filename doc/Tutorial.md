@@ -25,10 +25,20 @@ Fields and Methods
   //Type Inference
   p := Person("B", 30)
 
+```
+
+Statically and Dynamic Typed
+========
+the "->" operator to call a method dynamically.
+
+```
+  //static invoke
   p.age = 10
   p.say("A")
-  p->say("A") //dynamic reflect call
 
+  //dynamic invoke
+  p->age = 10
+  p->say("A")
 ```
 
 Literals
@@ -52,7 +62,7 @@ Literals
 
 Immutability
 ========
-Strong immutable
+immutable class
 ```
   const class ImmutablePoint
   {
@@ -130,7 +140,6 @@ The pod build script:
   srcDirs = test/,fan/
   depends = sys 1.0, std 1.0, reflect 1.0
 ```
-
 
 Mixins
 ========

@@ -1,6 +1,11 @@
 #! /bin/sh
 set -e
 
+WORK_PATH=$(cd "$(dirname "$0")"; pwd)
+echo "work path $WORK_PATH"
+mkdir -p $WORK_PATH/../devEnv/lib/fan
+export FAN_ENV_PATH=$WORK_PATH/../devEnv/
+
 fanc='../env/bin/fanb'
 
 echo 'build fanx java'

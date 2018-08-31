@@ -93,6 +93,8 @@ const class Log
   new make(Str name, Bool register) {
     Uri.checkName(name)
     this.name = name
+    val := Env.cur.props(Int#.pod, `log.props`, 1min).get(name)
+    if (val != null) level = LogLevel(val)
     if (register) doRegister(this)
   }
 

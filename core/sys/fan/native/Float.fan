@@ -6,10 +6,10 @@
 //    2 Dec 05  Brian Frank  Creation
 //   11 Oct 06  Brian Frank  Rename Real to Float
 //
-
+/*
 facet class F32 {}
 facet class F64 {}
-
+*/
 **
 ** Float is used to represent a 64-bit floating point number.
 **
