@@ -1301,7 +1301,7 @@ class TypeCheckExpr : Expr
   new coerce(Expr target, CType to)
     : super.make(target.loc, ExprId.coerce)
   {
-    if (to.hasGenericParameter) to = to.raw // TODO: not sure about this
+    if (to.hasGenericParameter) to = to.raw
     this.target = target
     this.from   = target.ctype
     this.check  = to

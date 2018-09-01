@@ -235,7 +235,7 @@ class DecimalTest : Test
     verifyToLocale(-123_456_789_123_456_789_123_456_789.55d, "#,###.0",  "-123,456,789,123,456,789,123,456,789.6")
 
     // default, alternate locale
-    verifyToLocale(12345.68d, null, "12,345.68")
+    verifyToLocale(12345.68d, null, "12,346")
     /*
     Locale("fr-FR").use
     {

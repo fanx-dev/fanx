@@ -1,8 +1,6 @@
 
 # Different from Fantom #
 
-## Language Diff ##
-
 ### Generics ###
 ```
   class Foo<T> {
@@ -38,7 +36,7 @@ A struct type is a pass by value type
 ```
 
 ### RunTime Immutable ###
-To make sure safe when override toImmutable methods.
+To override the toImmutable methods.
 ```
   rtconst Buf {
     override Bool isImmutable() { ... }
@@ -64,7 +62,7 @@ Auto generate toStr, hash, make, equals, compare methods if absent.
 ### Initialization Assignment ###
 ```
   Str str := "Hi"
-  Str str = "Hi" //both ok make javaer more comfortable
+  Str str = "Hi" //both ok
   str := "Hi"
 ```
 
@@ -78,9 +76,9 @@ To omit the function signature if params size less than one, not only it-block.
 ### Local Return ###
 A new keyword 'lret' as same as 'return' but only be used in closures.
 ```
-  list.eachWhile |v| {
-    if (v == 0) lret null
-    lret v
+  list.eachWhile {
+    if (it == 0) lret null
+    lret it
   }
 ```
 
@@ -102,7 +100,7 @@ Run build:
 The sys pod is written in Fantom with little native code.
 
 It's more portable to write a new backend platforms.
-Future targets might include Objective-C, the LLVM, WebAssembly.
+Future targets might include C, LLVM, WebAssembly.
 
 ### More Container ###
 LinkedList, Set, Tuple, ConcMap, LRUCache, TreeMap and more.
@@ -120,7 +118,6 @@ The new api support 'encoding' and 'nonstandard' options and xpath.
 ```
 
 ### Actor Enhance ###
-The ActorPool.defVal is a default param of Actor's constructor
 ```
   class Bar {
     Str foo(Str str) { str+"2" }
@@ -134,5 +131,6 @@ The ActorPool.defVal is a default param of Actor's constructor
   static const AcotrLocal<Bar> local := ActorLocal<Bar>()
 ```
 
+[MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
 
 

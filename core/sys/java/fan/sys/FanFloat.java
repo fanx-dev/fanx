@@ -214,7 +214,14 @@ public final class FanFloat
 
       // get default pattern if necessary
       if (pattern == null)
-        pattern = "#,###.0##";//Env.cur().locale(Sys.sysPod, "float", "#,###.0##", locale);
+      {
+          // If large, then route to FanInt.toLocale
+          if (Math.abs(self) >= 100d)
+            return FanInt.toLocale(Math.round(self));
+
+          pattern = toDefaultLocalePattern(self);
+      }
+
 
       // TODO: if value is < 10^-3 or > 10^7 it will be
       // converted to exponent string, so just bail on that
@@ -230,6 +237,25 @@ public final class FanFloat
       //e.printStackTrace();
       return String.valueOf(self);
     }
+  }
+  
+  static String toDefaultLocalePattern(final double self)
+  {
+    final double abs  = Math.abs(self);
+    final double fabs = Math.floor(abs);
+
+    if (fabs >= 10d) return "#0.0#";
+    if (fabs >= 1d)  return "#0.0##";
+
+    // format a fractional number (no decimal part)
+    final double frac = abs - fabs;
+    if (frac < 0.00000001d) return "0.0";
+    if (frac < 0.0000001d)  return "0.0000000##";
+    if (frac < 0.000001d)   return "0.000000##";
+    if (frac < 0.00001d)    return "0.00000##";
+    if (frac < 0.0001d)     return "0.0000##";
+    if (frac < 0.001d)      return "0.000##";
+    return "0.0##";
   }
 
 //////////////////////////////////////////////////////////////////////////

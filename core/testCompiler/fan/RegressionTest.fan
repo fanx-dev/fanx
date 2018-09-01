@@ -819,6 +819,29 @@ class RegressionTest : CompilerTest
 
   }
 
+//////////////////////////////////////////////////////////////////////////
+// #2684 Verification error with generic cast to Map
+//////////////////////////////////////////////////////////////////////////
+
+  Void test2684()
+  {
+    compile(
+      """class Foo
+         {
+            [Str:Obj]? map1
+             Obj? foo() { Str:Obj?["a":"b"] }
+             Obj? bar()
+             {
+               map2 := map1 ?: Str:Obj?[:]
+               map3 := foo
+               map2.setAll(map3)
+               return map2
+            }
+         }
+         """)
+    o := pod.types.first.make
+    verifyEq(o->bar, Str:Obj?["a":"b"])
+  }
 
 }
 

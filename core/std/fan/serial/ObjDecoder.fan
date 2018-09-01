@@ -231,7 +231,7 @@ class ObjDecoder
       // if first parameter is an function then pass toSet
       // as an it-block for setting the fields
       Param? p := makeCtor.params.first
-      if (args == null && p != null && p.type.fits(Func#))
+      if (args == null && p != null && p.type.fits(Func#) && t.isConst)
       {
         args = [Field.makeSetFunc(toSet)]
         setAfterCtor = false

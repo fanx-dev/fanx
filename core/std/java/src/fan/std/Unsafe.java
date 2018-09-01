@@ -33,4 +33,5 @@ public final class Unsafe
 
   private Object val;
 
+  public String toStr() { return "Unsafe(" + val + ")"; }
 }

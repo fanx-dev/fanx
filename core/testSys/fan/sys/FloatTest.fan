@@ -738,6 +738,34 @@ class FloatTest : Test
     verifyLocale(Float.pi, "0.0000", "3.1416")
     verifyLocale(Float.pi, "0.00000", "3.14159")
 
+    // null (default) format
+    verifyLocale( 1000.6f, null, "1,001")
+    verifyLocale(-1000.6f, null, "-1,001")
+    verifyLocale( 100.6f,  null, "101")
+    verifyLocale(-100.6f,  null, "-101")
+    verifyLocale( 10.129f, null, "10.13")
+    verifyLocale(-10.129f, null, "-10.13")
+    verifyLocale( 1.129f,  null, "1.129")
+    verifyLocale(-1.129f,  null, "-1.129")
+    verifyLocale( 0.129f,         null,  "0.129")
+    verifyLocale(-0.129f,         null, "-0.129")
+    verifyLocale( 0.0129f,        null,  "0.013")
+    verifyLocale(-0.0129f,        null, "-0.013")
+    verifyLocale( 0.00129f,       null,  "0.001")
+    verifyLocale(-0.00129f,       null, "-0.001")
+    verifyLocale( 0.000129f,      null,  "0.00013")
+    verifyLocale(-0.000129f,      null, "-0.00013")
+    verifyLocale( 0.0000129f,     null,  "0.000013")
+    verifyLocale(-0.0000129f,     null, "-0.000013")
+    verifyLocale( 0.00000129f,    null,  "0.0000013")
+    verifyLocale(-0.00000129f,    null, "-0.0000013")
+    verifyLocale( 0.000000129f,   null,  "0.00000013")
+    verifyLocale(-0.000000129f,   null, "-0.00000013")
+    verifyLocale( 0.0000000129f,  null,  "0.000000013")
+    verifyLocale(-0.0000000129f,  null, "-0.000000013")
+    verifyLocale( 0.00000000129f, null,  "0.0")
+    verifyLocale(-0.00000000129f, null, "-0.0")
+
     Locale("en-US").use
     {
       verifyEq(0.0003f.toLocale("0.0##"), "0.0")
@@ -755,7 +783,7 @@ class FloatTest : Test
     }
 
     // default, alternate locale
-    verifyLocale(12345.4f, null, "12,345.4")
+    verifyLocale(12345.4f, null, "12,345")
     Locale("fr-FR").use
     {
       verifyEq(12345.4f.toLocale("#,###.0"), "12\u00a0345,4")

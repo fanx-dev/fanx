@@ -1020,6 +1020,19 @@ class ListTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// FlatMap
+//////////////////////////////////////////////////////////////////////////
+
+  Void testFlatMap()
+  {
+    list := ['a', 'b']
+    verifyEq(list.flatMap |v| { [v.toChar, v.toChar.upper] }, Obj?["a", "A", "b", "B"])
+    verifyEq(list.flatMap |v->Str[]| { [v.toChar, v.toChar.upper] }, Str["a", "A", "b", "B"])
+    verifyEq(list.flatMap |v->Str?[]| { [v.toChar, v.toChar.upper] }, Str?["a", "A", "b", "B"])
+    verifyEq(list.flatMap |v, i->Int[]| { [v, i] }, ['a', 0, 'b', 1])
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Any/All
 //////////////////////////////////////////////////////////////////////////
 

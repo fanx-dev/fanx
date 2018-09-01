@@ -172,8 +172,9 @@ public final class FanDecimal
 //    if (locale == null) locale = Locale.cur();
 
     // get default pattern if necessary
-    if (pattern == null)
-      pattern = "#,###.0##";//Env.cur().locale(Sys.sysPod, "decimal", "#,###.0##", locale);
+    if (pattern == null) {
+    	return FanFloat.toLocale(self.doubleValue(), pattern);
+    }
 
     return NumFormat.formatDigits(self.toString(), pattern);
   }

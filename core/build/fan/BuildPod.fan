@@ -482,8 +482,11 @@ class BuildPod : BuildScript
     log.info("test [$podName]")
     log.indent
 
-    fant := Exec.exePath(devHomeDir + `bin/fant`)
-    Exec(this, [fant, podName]).run
+    fant := devHomeDir + `bin/fant`
+    cmd  := [fant.osPath, podName]
+    if (Env.cur.os == "win32") cmd = ["cmd", "/C"].addAll(cmd)
+
+    Exec(this, cmd).run
 
     log.unindent
   }

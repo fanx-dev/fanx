@@ -19,7 +19,7 @@ internal const class CachedScript {
 }
 
 internal const class ScriptCompiler {
-  const ConcMap<Str,CachedScript> cache := ConcMap<Str,CachedScript>(16)
+  const ConcurrentMap<Str,CachedScript> cache := ConcurrentMap(16)
   static const ScriptCompiler cur := ScriptCompiler()
 
   Type compile(File file, [Str:Obj]? options := null) {

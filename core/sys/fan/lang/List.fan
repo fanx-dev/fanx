@@ -526,6 +526,27 @@ rtconst abstract class List<V>
   }
 
   **
+  ** This is a combination of `map` and `flatten`.  Each item in
+  ** this list is mapped to zero or more new items by the given function
+  ** and the results are returned in a single flattened list.  Note
+  ** unlike `flatten` only one level of flattening is performed.
+  ** The new list is typed based on the return type of c.  This
+  ** method is readonly safe.
+  **
+  ** Example:
+  **   list := ["a", "b"]
+  **   list.flatMap |v->Str[]| { [v, v.upper] } => ["a", "A", "b", "B"]
+  **
+  Obj?[] flatMap(|V item, Int index->Obj?[]| c) {
+    nlist := List.make(size)
+    each |obj, i| {
+      result := c(obj, i)
+      nlist.addAll(result)
+    }
+    return nlist
+  }
+
+  **
   ** Reduce is used to iterate through every item in the list
   ** to reduce the list into a single value called the reduction.
   ** The initial value of the reduction is passed in as the init
