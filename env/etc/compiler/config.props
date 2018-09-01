@@ -5,6 +5,6 @@
 //   22 Jul 09  Brian Frank  Creation
 //
 
-// Must be configured boot build in substitute/release installation
-devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
+// compile time dependent path
+//devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
 

@@ -13,8 +13,8 @@ buildVersion=1.0.70
 // can be cleared or set the env var FAN_BUILD_JAVACPARAMS to a space
 javacParams=-source 1.7 -target 1.7
 
-// Must be configured boot build in substitute/release installation
-devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
+// build output dir; default is Env.cur.workDir
+//devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
 
 //jdkHome=/C:/Program Files/Java/jdk1.7/
 jdkHome=/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/

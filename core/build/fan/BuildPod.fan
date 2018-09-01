@@ -298,7 +298,7 @@ class BuildPod : BuildScript
                 "-Dfan.home=$devHomeDir.osPath",
                 "fanx.tools.Jstub",
                 "-d", (devHomeDir+`lib/java/stub/`).osPath,
-                podName]).run
+                (devHomeDir+`lib/fan/${podName}.pod`).osPath]).run
 
     // compile
     if (!javaDirs.isEmpty)

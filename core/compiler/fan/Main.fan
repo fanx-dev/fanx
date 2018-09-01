@@ -135,13 +135,14 @@ class Main
     if (summary == null) throw ArgErr("Must set BuildPod.summary")
 
     // boot strap checking
-    if (["sys", "build", "compiler", "compilerJava"].contains(podName))
+    /*
+    if (["std", "sys", "build", "compiler", "compilerJava"].contains(podName))
     {
-      //TODO
-      //devHomeDir := Pod.find("compiler").config("devHome")
-      //if (Env.cur.homeDir == devHomeDir.toUri.toFile)
-      //  throw ArgErr("Must update 'devHome' for bootstrap build")
+      devHomeDir := Pod.find("compiler").config("devHome")
+      if (devHomeDir == null || Env.cur.homeDir == devHomeDir.toUri.toFile)
+        throw ArgErr("Must update 'devHome' for bootstrap build")
     }
+    */
   }
 
   private Uri[]? parseDirs(Str? str) {
