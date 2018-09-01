@@ -115,7 +115,7 @@ public static Map contents(ZipFile zipFile)
  {
    ZipEntry entry = (ZipEntry)e.nextElement();
    ZipEntryFile f = new fan.std.ZipEntryFile(zipFile, entry);
-   c.set(f.uri, f);
+   c.set(f._uri, f);
  }
  return c;
 }

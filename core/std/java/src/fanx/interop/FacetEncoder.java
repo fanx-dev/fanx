@@ -24,7 +24,7 @@ import fanx.util.*;
 /**
  * FFacetEmit is used to emit Fantom facets as Java annotations.
  */
-public class FacetEncoder implements FConst {
+class FacetEncoder implements FConst {
 
 	public FacetEncoder(Emitter emit) {
 		this.emit = emit;

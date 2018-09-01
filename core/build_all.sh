@@ -4,7 +4,7 @@ set -e
 WORK_PATH=$(cd "$(dirname "$0")"; pwd)
 echo "work path $WORK_PATH"
 mkdir -p $WORK_PATH/../devEnv/lib/fan
-export FAN_ENV_PATH=$WORK_PATH/../devEnv/
+export FAN_ENV_PATH=""
 
 fanc='../env/bin/fanb'
 
@@ -18,6 +18,8 @@ $fanc build/pod.props
 echo 'build sys and std'
 $fanc sys/pod.props
 $fanc std/pod.props
+
+export FAN_ENV_PATH=$WORK_PATH/../devEnv/
 
 echo 'build sys test'
 $fanc baseTest/pod.props

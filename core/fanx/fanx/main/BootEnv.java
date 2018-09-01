@@ -37,7 +37,7 @@ public class BootEnv implements IEnv {
 		envPaths = new ArrayList<String>(4);
 
 		String workDirs = System.getenv("FAN_ENV_PATH");
-		if (workDirs != null) {
+		if (workDirs != null && workDirs.length() > 0) {
 			String[] paths = workDirs.split(File.pathSeparator);
 			for (String p : paths) {
 				checkSlash(p);

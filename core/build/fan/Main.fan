@@ -76,7 +76,7 @@ class Main
     outPodDirStr := props.get("outPodDir", null)
     if (outPodDirStr != null) build.outPodDir = outPodDirStr.toUri
     else {
-      devHomeDir := Pod.find("compiler").config("devHome")
+      devHomeDir := this.typeof.pod.config("devHome")
       if (devHomeDir != null) build.outPodDir = devHomeDir.toUri + `lib/fan/`
       else {
         build.outPodDir = Env.cur.workDir.plus(`lib/fan/`).uri

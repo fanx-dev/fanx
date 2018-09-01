@@ -62,7 +62,7 @@ abstract const class File
   **
   ** Protected constructor for subclasses.
   **
-  protected new privateMake(Uri uri) { this.uri = uri }
+  protected new privateMake(Uri uri) { this._uri = uri }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -96,7 +96,8 @@ abstract const class File
   ** Return the Uri path used to create this File.
   ** This Uri may be absolute or relative.
   **
-  const Uri uri
+  Uri uri() { _uri }
+  private const Uri _uri
 
   **
   ** Convenience for [uri.isDir]`Uri.isDir`

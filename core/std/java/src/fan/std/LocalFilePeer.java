@@ -16,7 +16,7 @@ import fan.sys.List;
 
 public class LocalFilePeer {
 	static void init(LocalFile self) {
-		String path = self.uri.pathStr;
+		String path = self.uri().pathStr;
 		self.peer = new java.io.File(path);
 	}
 
@@ -26,7 +26,7 @@ public class LocalFilePeer {
 		String uri = file.getPath();
 		if (file.isDirectory())
 			uri = uri + "/";
-		f.uri = Uri.fromStr(uri);
+		f._uri = Uri.fromStr(uri);
 		return f;
 	}
 	
@@ -48,7 +48,7 @@ public class LocalFilePeer {
 
 		LocalFile f = new LocalFile();
 		f.peer = file;
-		f.uri = uri;
+		f._uri = uri;
 		return f;
 	}
 

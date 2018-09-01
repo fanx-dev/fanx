@@ -242,7 +242,7 @@ public class Pod extends FanObj {
 			}
 			for (int i = 0; i < filesList.size(); ++i) {
 				fan.std.File f = (fan.std.File) filesList.get(i);
-				filesMap.set(f.uri, f);
+				filesMap.set(f.uri(), f);
 			}
 		}
 	}
