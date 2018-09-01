@@ -205,7 +205,7 @@ class ApiDocWriter
     if (flags.and(FConst.Synthetic) != 0) s.join("synthetic")
     if (flags.and(FConst.Virtual)   != 0) s.join("virtual")
     if (flags.and(FConst.Ctor)      != 0) s.join("new")
-    if (flags.and(FConst.Extension) != 0) s.join("extesion")
+    if (flags.and(FConst.Extension) != 0) s.join("extension")
     if (flags.and(FConst.Struct)    != 0) s.join("struct")
     return s.toStr
   }

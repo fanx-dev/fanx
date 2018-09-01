@@ -24,7 +24,7 @@ internal class UriParser {
 
   private Void normalize() {
     if (pathStr == "") {
-      pathStr = "/"
+      //pathStr = "/"
     }
     else if (pathStr.startsWith("./")) {
       pathStr = pathStr[2..-1]
@@ -1042,7 +1042,7 @@ const final class Uri
     toAppPath := toAppend.pathStr
     Str? resPath := null
     query := toAppend.query
-    if (toAppend.query.isEmpty && toAppPath == "/") {
+    if (toAppend.query.isEmpty && (toAppPath == "/" || toAppPath == "")) {
        query = this.query
     }
 

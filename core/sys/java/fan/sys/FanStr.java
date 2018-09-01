@@ -148,8 +148,7 @@ public class FanStr
     try
     {
       int i = (int)index;
-      //I don't want a bug sine the find/index return -1
-//      if (i < 0) i = self.length()+i;
+      if (i < 0) i = self.length()+i;
       return self.charAt(i);
     }
     catch (IndexOutOfBoundsException e)

@@ -197,8 +197,8 @@ class CallResolver : CompilerSupport
       }
     }
 
-    //try find extesion methods
-    //the extesion method is not support safe call, e.g. obj?.foo
+    //try find extension methods
+    //the extension method is not support safe call, e.g. obj?.foo
     if (found == null && target != null && target.id !== ExprId.staticTarget
       && !expr.isSafe) {
       try findExtesion(base)

@@ -297,7 +297,7 @@ class StrTest : Test
 
   Void verifyGet(Str s, Int i, Int expected)
   {
-    if (expected > 0 && i >= 0)
+    if (expected > 0)
     {
       verifyEq(s[i], expected)
       verifyEq(s.get(i), expected)

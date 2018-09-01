@@ -114,6 +114,9 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
 // CaseInsensitiveMap
 //////////////////////////////////////////////////////////////////////////
 
+**
+** case insensitive map
+**
 rtconst class CIMap<K,V> : HashMap<K,V> {
   new make(Int capacity:=16) : super.make(capacity) {
   }

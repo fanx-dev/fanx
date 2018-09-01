@@ -174,7 +174,7 @@ class EnvTest : Test
       verifySame(cached, Env.cur.props(pod, uri, 1min))
 
       // check that we refresh the cache
-      newCached := Env.cur.props(pod, uri, 1ms)
+      newCached := Env.cur.props(pod, uri, 0ms)
       verifyNotSame(cached, newCached)
       verifyEq(cached["foo"], null)
       verifyEq(newCached["foo"], "bar")

@@ -141,6 +141,18 @@ The pod build script:
   depends = sys 1.0, std 1.0, reflect 1.0
 ```
 
+Concurrency
+========
+The actor-model concurrency.
+```
+  class Bar {
+    Str foo(Str str) { str+"2" }
+  }
+
+  actor := ActorProxy |->|{ Bar() }
+  actor->foo("Hi")
+```
+
 Mixins
 ========
 The interface with implementations

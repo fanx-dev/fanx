@@ -1,7 +1,5 @@
-java/fan_gen/bin
 *.prefs
 *.class
-java/libs
 core/baseTest/test
 core/compiler_old
 env/temp
@@ -9,3 +7,4 @@ env/lib/fan_backup
 core/fanx/bin
 devEnv
 *.pod
+core/build_lib.sh

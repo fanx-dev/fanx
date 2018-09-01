@@ -9,7 +9,7 @@
 /**
  * ObjEncoder serializes an object to an output stream.
  */
-class ObjEncoder
+internal class ObjEncoder
 {
 
 //////////////////////////////////////////////////////////////////////////

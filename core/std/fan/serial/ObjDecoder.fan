@@ -10,7 +10,7 @@
 /**
  * ObjDecoder parses an object tree from an input stream.
  */
-class ObjDecoder
+internal class ObjDecoder
 {
 
 //////////////////////////////////////////////////////////////////////////

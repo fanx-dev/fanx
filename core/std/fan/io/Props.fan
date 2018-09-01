@@ -6,6 +6,9 @@
 //   16 Mar 06  Brian Frank  Creation
 //
 
+**
+** Fantom props file format
+**
 class Props {
   /////////////////////////////////////////////////////////////////////////////
   // read
