@@ -11,8 +11,8 @@ WORK_PATH=$(cd "$(dirname "$0")"; pwd)
 echo "work path $WORK_PATH"
 mkdir -p $WORK_PATH/../devEnv/lib/fan
 
-#export FAN_ENV_PATH=$WORK_PATH/../devEnv/
-export FAN_ENV_PATH=""
+export FAN_ENV_PATH=$WORK_PATH/../devEnv/
+#export FAN_ENV_PATH=""
 
 fanc='../env/bin/fanb'
 

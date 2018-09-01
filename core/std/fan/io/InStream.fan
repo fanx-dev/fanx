@@ -54,7 +54,7 @@ abstract class InStream
   ** `readBufFully` if you must block until all n bytes read.
   ** Throw IOErr on error.
   **
-  Int readBuf(Buf buf, Int n) {
+  virtual Int readBuf(Buf buf, Int n) {
     return buf.pipeFrom(this, n)
   }
 

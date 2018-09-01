@@ -311,6 +311,14 @@ public class Interop
 	  return new fan.sys.ByteArray(a);
   }
   
+  public static byte[] toJavaByteArray(fan.std.MemBuf a) {
+	  return a.buf.array();
+  }
+  
+  public static fan.std.MemBuf toFanBuf(byte[] a) {
+	  return fan.std.MemBuf.makeBuf(new fan.sys.ByteArray(a));
+  }
+  
   public static fan.sys.List toFanList(Type of, Object[] objs) {
 	  if (objs == null) return null;
 	  List list = List.make(objs.length, of);

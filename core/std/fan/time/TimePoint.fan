@@ -108,4 +108,16 @@ const struct class TimePoint
   ** Subtract a duration to compute a new time.
   **
   @Operator TimePoint minus(Duration duration) { make(ticks-duration.toMillis) }
+
+  **
+  ** Return a new TimePoint with this time's nanosecond ticks truncated
+  ** according to the specified accuracy.  For example 'floor(1min)'
+  ** will truncate this time to the minute such that seconds
+  ** are 0.0.  This method is strictly based on absolute ticks,
+  ** it does not take into account wall-time rollovers.
+  **
+  TimePoint floor(Duration accuracy) {
+    if (toMillis % accuracy.toMillis == 0) return this;
+    return fromMillis(toMillis - (toMillis % accuracy.toMillis))
+  }
 }

@@ -15,8 +15,13 @@ class Extension {
   **   - "makeArgs": Obj[] arguments to pass to the root
   **     object's make constructor via 'Type.make'
   **
-  static extension Obj? readObj(InStream in, [Str:Obj]? options := null) {
-    return ObjDecoder.make(in, options).readRootObj
+  static extension Obj? readObj(InStream in, Bool close := true, [Str:Obj]? options := null) {
+    try {
+      return ObjDecoder.make(in, options).readRootObj
+    }
+    finally {
+      in.close
+    }
   }
 
   **
@@ -34,8 +39,13 @@ class Extension {
   **     aren't serializable. If true then we output null and a comment.
   **     Default is false.
   **
-  static extension OutStream writeObj(OutStream out, Obj? obj, [Str:Obj]? options := null) {
-    ObjEncoder.make(out, options).writeObj(obj)
+  static extension OutStream writeObj(OutStream out, Obj? obj, Bool close := true, [Str:Obj]? options := null) {
+    try {
+      ObjEncoder.make(out, options).writeObj(obj)
+    }
+    finally {
+      out.close
+    }
     return out
   }
 

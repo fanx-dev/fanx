@@ -28,7 +28,7 @@ const class Locale
   ** If invalid format and checked is false return null,
   ** otherwise throw ParseErr.
   **
-  static new fromStr(Str s, Bool checked := true) {
+  static Locale? fromStr(Str s, Bool checked := true) {
     len := s.size
     try
     {
@@ -49,7 +49,7 @@ const class Locale
     }
     catch (Err e) {
     }
-    if (!checked) return en;
+    if (!checked) return null;
     throw ParseErr.make("Locale:$s");
   }
 

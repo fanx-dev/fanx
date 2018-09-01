@@ -1219,5 +1219,5 @@ const final class Uri
   **
   Str toCode() { "`$this`" }
 
-  static extension Uri toUri(Str str) { Uri(str) }
+  static extension Uri? toUri(Str? str) { str == null ? null : Uri(str) }
 }

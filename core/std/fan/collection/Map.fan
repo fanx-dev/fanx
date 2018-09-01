@@ -223,7 +223,7 @@ rtconst abstract class Map<K,V>
   **   m.setList(["1","2"]) |Str s->Int| { return s.toInt }
   **   m  =>  [0:0, 1:1, 2:2]
   **
-  This setList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
+  This setList(V[] list, |V item, Int index->K|? c := null) {
     modify
     for (i:=0; i<list.size; ++i) {
       key := list[i]
@@ -249,7 +249,7 @@ rtconst abstract class Map<K,V>
   **   m.addList(["1","2"]) |Str s->Int| { return s.toInt }
   **   m  =>  [0:0, 1:1, 2:2]
   **
-  This addList(Obj?[] list, |Obj? item, Int index->Obj?|? c := null) {
+  This addList(V[] list, |V item, Int index->K|? c := null) {
     modify
     for (i:=0; i<list.size; ++i) {
       key := list[i]
@@ -343,7 +343,7 @@ rtconst abstract class Map<K,V>
   **
   ** Example:
   **
-  virtual Str join(Str separator, |Obj? val, Obj? key->Str|? c := null) {
+  virtual Str join(Str separator, |V val, K key->Str|? c := null) {
     buf := StrBuf()
     first := true
     this.each |v, k| {
