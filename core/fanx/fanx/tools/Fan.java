@@ -25,7 +25,7 @@ import fanx.util.*;
  */
 public class Fan
 {
-
+  final static String version = "1.0";
 //////////////////////////////////////////////////////////////////////////
 // Execute
 //////////////////////////////////////////////////////////////////////////
@@ -257,12 +257,10 @@ public class Fan
     println("  java.vm.vendor:  " + System.getProperty("java.vm.vendor"));
     println("  java.vm.version: " + System.getProperty("java.vm.version"));
     println("  java.home:       " + System.getProperty("java.home"));
-    //TODO
+    
     println("  fan.platform:    " + Sys.env.platform());
-//    println("  fan.version:     " + Sys.sysPod.version());
-//    println("  fan.env:         " + Env.cur());
+    println("  fan.version:     " + version);
     println("  fan.home:        " + Sys.env.homeDir());
-//    println("  wordDir:        " + Sys.env.workDir());
 
     List<String> path = Sys.env.envPaths();
     if (path != null)

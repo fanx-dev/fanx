@@ -51,14 +51,15 @@ class LoadPod : CompilerStep
     buf.flip
 
     //save to temp file for FPodNamespace
-    tempFile := Env.cur.tempDir+`scriptPods/${pod.name}.pod`
-    tempFile.out.writeBuf(buf).close
-    buf.seek(0)
+    //tempFile := Env.cur.tempDir+`scriptPods/${pod.name}.pod`
+    //tempFile.out.writeBuf(buf).close
+    //buf.seek(0)
 
     // have Sys load it up
     pod := Pod.load(buf.in)
 
-    tempFile.deleteOnExit
+    //tempFile.deleteOnExit
+    pod._setCompilerCache(buf)
     return pod
   }
 

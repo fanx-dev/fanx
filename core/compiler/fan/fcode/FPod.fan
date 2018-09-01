@@ -207,6 +207,55 @@ final class FPod : CPod, FConst
     ftypes.each |FType t| { t.read }
   }
 
+  Void readStream() {
+    ftypes = FType[,]
+    ftypesByName = Str:FType[:]
+    entry := zip.readNext
+    while (entry != null)
+    {
+      path := entry.pathStr
+      name := path.startsWith("/") ? path[1..-1] : path
+      in := entry.in
+      //echo(name)
+      if (name.equals("meta.props")) meta = in.readProps
+      else if (name.startsWith("fcode/") && name.endsWith(".fcode")) {
+        name = name[6..<(name.size-".fcode".size)]
+        ok := false
+        for (i:=0; i<ftypes.size; ++i) {
+          t := ftypes[i]
+          if (t.name == name) {
+            t.read(in)
+            ok = true; break
+          }
+        }
+        if (!ok) throw IOErr("Unexpected fcode file: " + name)
+      }
+      else if (name.equals("fcode/names.def")) names.read(in);
+      else if (name.equals("fcode/typeRefs.def")) typeRefs.read(in);
+      else if (name.equals("fcode/fieldRefs.def")) fieldRefs.read(in);
+      else if (name.equals("fcode/methodRefs.def")) methodRefs.read(in);
+      else if (name.equals("fcode/types.def")) {
+        in.readU2.times
+        {
+          ftype := FType(this).readMeta(in)
+          ftypes.add(ftype)
+          ftypesByName[ftype.name] = ftype
+          ns.typeCache[ftype.qname] = ftype
+        }
+      }
+      else if (name.equals("fcode/ints.def")) ints.read(in);
+      else if (name.equals("fcode/floats.def")) floats.read(in);
+      else if (name.equals("fcode/decimals.def")) decimals.read(in);
+      else if (name.equals("fcode/strs.def")) strs.read(in);
+      else if (name.equals("fcode/durations.def")) durations.read(in);
+      else if (name.equals("fcode/uris.def")) uris.read(in);
+      else echo("WARNING: unexpected file in pod: " + name);
+      in.close
+
+      entry = zip.readNext
+    }
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Write
 //////////////////////////////////////////////////////////////////////////

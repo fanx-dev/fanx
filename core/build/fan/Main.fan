@@ -94,7 +94,7 @@ class Main
   **
   ** mini build for boost
   **
-  virtual Void main(Str[] args)
+  virtual Int main(Str[] args)
   {
     build = BuildPod()
     scriptFile = args.first.toUri.toFile.normalize
@@ -102,7 +102,7 @@ class Main
     parse(props)
     nargs := args.dup
     nargs.removeAt(0)
-    build.main(nargs)
+    return build.main(nargs)
   }
 
   static Uri[] allDir(Uri base, Uri dir)

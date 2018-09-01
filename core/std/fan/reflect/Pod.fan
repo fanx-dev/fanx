@@ -164,4 +164,8 @@ native final const class Pod
   ** Convenience for `Env.locale` using `Locale.cur`.
   **
   Str? locale(Str name, Str? defV := "pod::name")
+
+
+  @NoDoc Obj? _getCompilerCache()
+  @NoDoc Void _setCompilerCache(Obj? obj)
 }

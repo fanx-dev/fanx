@@ -59,8 +59,14 @@ class FPodNamespace : CNamespace
     }
 
     if (file == null || !file.exists) {
-      file = Env.cur.tempDir+`scriptPods/${podName}.pod`
-      if (!file.exists) return null
+      pod := Pod.find(podName, false)
+      if (pod == null) return null
+      Buf? buf := pod._getCompilerCache
+      if (buf == null) return null
+      buf.seek(0)
+      fpod := FPod(this, podName, Zip.read(buf.in))
+      fpod.readStream
+      return fpod
     }
 
     // load it

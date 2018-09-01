@@ -217,9 +217,10 @@ class FType : CType
     out.close
   }
 
-  Void read()
+  Void read(InStream? in := null)
   {
-    in := fpod.in(uri)
+    if (!hollow) return
+    if (in == null) in = fpod.in(uri)
 
     ffields = FField[,]
     in.readU2.times { ffields.add(FField(this).read(in)) }
@@ -233,6 +234,8 @@ class FType : CType
     ffacets = FFacet.decode(fpod, attr(FConst.FacetsAttr))
 
     in.close
+
+    hollow = false
   }
 
 //////////////////////////////////////////////////////////////////////////

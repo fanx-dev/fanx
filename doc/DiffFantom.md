@@ -47,20 +47,11 @@ To make sure safe when override toImmutable methods.
 ```
 
 ### Readonly keyword ###
-readonly is shallow const
+readonly is a shallow const
 ```
   class Bar {
     const Str name
     readonly StrBuf buf
-  }
-```
-
-### Local Return ###
-A new keyword 'lret' as same as 'return' but only be used in closures.
-```
-  list.eachWhile |v| {
-    if (v == 0) lret null
-    lret v
   }
 ```
 
@@ -82,6 +73,15 @@ To omit the function signature if params size less than one, not only it-block.
 ```
   Void foo(|->| f) { f() }
   foo { echo("Hi") }
+```
+
+### Local Return ###
+A new keyword 'lret' as same as 'return' but only be used in closures.
+```
+  list.eachWhile |v| {
+    if (v == 0) lret null
+    lret v
+  }
 ```
 
 ### Build Script ###
