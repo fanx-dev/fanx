@@ -103,7 +103,7 @@ internal class ConstBufInStream : InStream {
   }
   override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
     m := avail
-    if (m <= 0) return 0
+    if (m <= 0) return -1
     len = len.min(m)
     buf.getBytes(buf.pos, ba, off, len)
     this.pos += len

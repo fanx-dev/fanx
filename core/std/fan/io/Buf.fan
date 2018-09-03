@@ -600,7 +600,7 @@ rtconst abstract class Buf
     pos = 0
     while (total < size) {
       n := in.readBytes(temp, 0, temp.size.min(size - total))
-      if (n <= 0) {
+      if (n < 0) {
         break
       }
       memToHex(temp, n, sb)
@@ -669,7 +669,7 @@ rtconst abstract class Buf
     in := this.in
     while (total < len) {
       n := in.readBytes(temp, 0, temp.size.min(len - total))
-      if (n <= 0) {
+      if (n < 0) {
         break
       }
       out.writeBytes(temp, 0, n)
@@ -682,7 +682,7 @@ rtconst abstract class Buf
     ba := ByteArray(1024)
     while (total < len) {
       n := in.readBytes(ba, 0, ba.size.min(len - total))
-      if (n <= 0)
+      if (n < 0)
         return total == 0 ? -1 : total
       setBytes(pos, ba, 0, n)
       this.pos += n

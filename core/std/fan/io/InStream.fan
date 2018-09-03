@@ -131,7 +131,7 @@ abstract class InStream
     while (got < total)
     {
       r := readBuf(buf, total-got)
-      if (r == -1 || r == 0) throw IOErr("Unexpected end of stream")
+      if (r == -1) throw IOErr("Unexpected end of stream")
       got += r
     }
 
@@ -573,7 +573,7 @@ abstract class InStream
         while (true)
         {
           n := readBuf(buf.clear(), bufSize);
-          if (n <= 0) break;
+          if (n < 0) break;
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }
@@ -585,7 +585,7 @@ abstract class InStream
         {
           if (toPipeVal - total < bufSize) bufSize = toPipeVal - total;
           n := readBuf(buf.clear(), bufSize);
-          if (n <= 0) throw IOErr.make("Unexpected end of stream");
+          if (n < 0) throw IOErr.make("Unexpected end of stream");
           out.writeBuf(buf.flip(), buf.remaining());
           total += n;
         }
@@ -605,6 +605,33 @@ abstract class InStream
     try f(this)
     finally this.close
   }
+
+  **
+  ** Read the entire stream into a 'Str:Str' of name/value pairs using the
+  ** Fantom props file format.  This format is similiar but different than
+  ** the Java properties file format:
+  **   - Input must be UTF-8 encoded (current charset is ignored)
+  **   - Name/value pairs formatted as logical line: '<name>=<value>'
+  **   - Any Unicode character allowed in name or value
+  **   - Leading and trailing whitespace trimmed from both name and value
+  **   - Duplicate name keys within one file is an error condition
+  **   - Comment to end of line is '//' if start of line or preceeded
+  **     by whitespace
+  **   - Block comment is '/* */' (may be nested)
+  **   - Use trailing '\' to continue logical line to another actual line,
+  **     any leading whitespace (space or tab char) is trimmed from beginning
+  **     of continued line
+  **   - Fantom Str literal escape sequences supported: '\n \r \t or \uxxxx'
+  **   - The '$' character is treated as a normal character and should not be
+  **     escaped, but convention is to indicate a variable in a format string
+  **   - Convention is that name is lower camel case with dot separators
+  **
+  ** Throw IOErr if there is a problem reading the stream or an invalid
+  ** props format is encountered.  This InStream is guaranteed to be closed.
+  **
+  ** Also see `Env.props`.
+  **
+  Str:Str readProps() { Props.readProps(this) }
 
 }
 

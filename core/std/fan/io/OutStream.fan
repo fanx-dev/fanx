@@ -241,6 +241,15 @@ abstract class OutStream
     try f(this)
     finally this.close
   }
+
+  **
+  ** Write the given map of Str name/value pairs to the output stream
+  ** according to the Fantom props file format (see `InStream.readProps` for
+  ** full specification).  The props are written using UTF-8 regardless
+  ** of this stream's current charset.  If close argument is true, then
+  ** automatically close the stream.  Return this.
+  **
+  OutStream writeProps([Str:Str] props, Bool close := true) { Props.writeProps(this, props, close) }
 }
 
 **************************************************************************

@@ -9,38 +9,12 @@
 **
 ** Fantom props file format
 **
-class Props {
+internal class Props {
   /////////////////////////////////////////////////////////////////////////////
   // read
   /////////////////////////////////////////////////////////////////////////////
 
-  **
-  ** Read the entire stream into a 'Str:Str' of name/value pairs using the
-  ** Fantom props file format.  This format is similiar but different than
-  ** the Java properties file format:
-  **   - Input must be UTF-8 encoded (current charset is ignored)
-  **   - Name/value pairs formatted as logical line: '<name>=<value>'
-  **   - Any Unicode character allowed in name or value
-  **   - Leading and trailing whitespace trimmed from both name and value
-  **   - Duplicate name keys within one file is an error condition
-  **   - Comment to end of line is '//' if start of line or preceeded
-  **     by whitespace
-  **   - Block comment is '/* */' (may be nested)
-  **   - Use trailing '\' to continue logical line to another actual line,
-  **     any leading whitespace (space or tab char) is trimmed from beginning
-  **     of continued line
-  **   - Fantom Str literal escape sequences supported: '\n \r \t or \uxxxx'
-  **   - The '$' character is treated as a normal character and should not be
-  **     escaped, but convention is to indicate a variable in a format string
-  **   - Convention is that name is lower camel case with dot separators
-  **
-  ** Throw IOErr if there is a problem reading the stream or an invalid
-  ** props format is encountered.  This InStream is guaranteed to be closed.
-  **
-  ** Also see `Env.props`.
-  **
-  static extension Str:Str readProps(InStream in) { doReadProps(in, false) }
-
+  static Str:Str readProps(InStream in) { doReadProps(in, false) }
   static Str:Obj readPropsListVals(InStream in) { doReadProps(in, true) }
 
   private static [Str:Obj] doReadProps(InStream in, Bool listVals := false)  // listVals is Str:Str[]
@@ -211,14 +185,7 @@ class Props {
   // write
   /////////////////////////////////////////////////////////////////////////////
 
-  **
-  ** Write the given map of Str name/value pairs to the output stream
-  ** according to the Fantom props file format (see `InStream.readProps` for
-  ** full specification).  The props are written using UTF-8 regardless
-  ** of this stream's current charset.  If close argument is true, then
-  ** automatically close the stream.  Return this.
-  **
-  static extension OutStream writeProps(OutStream out, [Str:Str] props, Bool close := true)
+  static OutStream writeProps(OutStream out, [Str:Str] props, Bool close := true)
   {
     Charset? origCharset := null
     if (out.charset != Charset.utf8) {
