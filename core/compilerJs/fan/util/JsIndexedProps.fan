@@ -52,7 +52,7 @@ class JsIndexedProps
     if (f == null) return
 
 
-    Props.readPropsListVals(f.in).each |v, n|
+    f.in.readPropsListVals.each |v, n|
     {
       list := index[n]
       if (list == null) index[n] = list = Str[,]

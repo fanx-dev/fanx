@@ -633,6 +633,8 @@ abstract class InStream
   **
   Str:Str readProps() { Props.readProps(this) }
 
+  @NoDoc
+  Str:Str[] readPropsListVals() { Props.readPropsListVals(this) }
 }
 
 **************************************************************************

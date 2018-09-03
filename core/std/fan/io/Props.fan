@@ -15,7 +15,7 @@ internal class Props {
   /////////////////////////////////////////////////////////////////////////////
 
   static Str:Str readProps(InStream in) { doReadProps(in, false) }
-  static Str:Obj readPropsListVals(InStream in) { doReadProps(in, true) }
+  static Str:Str[] readPropsListVals(InStream in) { doReadProps(in, true) }
 
   private static [Str:Obj] doReadProps(InStream in, Bool listVals := false)  // listVals is Str:Str[]
   {
