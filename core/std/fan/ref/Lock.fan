@@ -6,6 +6,7 @@
 //   2018-5-18 Jed Young Creation
 //
 
+@NoDoc
 final native const class Lock
 {
 

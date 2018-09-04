@@ -46,11 +46,9 @@ Literals
 ```
   //List
   [0, 1, 2]
-  Int[0, 1, 2]
 
   //Map
   [1:"one", 2:"two"]
-  Int:Str[1:"one", 2:"two"]
 
   //Range
   0..5    // 0 to 5
@@ -58,32 +56,14 @@ Literals
 
   //string interpolation
   "$x + $y = ${x+y}"
-```
 
-Immutability
-========
-immutable class
-```
-  const class ImmutablePoint
-  {
-    const Int x
-    const Int y
-    new make(Int x, Int y) { this.x = x; this.y = y }
-  }
-  class MutablePoint
-  {
-    Int x
-    Int y
-    new make(Int x, Int y) { this.x = x; this.y = y }
-  }
-
-  const ImmutablePoint p
-  const MutablePoint p //compile error
+  //Duration
+  100ms   //100 milliseconds
 ```
 
 Nullable Types
 ========
-A non-nullable type is guaranteed to never store the null value
+A non-nullable type is guaranteed to never store the null value.
 ```
   Str? a := null //might stores null
   Str b //never stores null
@@ -97,12 +77,28 @@ Functional and Closures
 Functions are first class objects
 ```
   // print 0 to 9
-  10.times |Int i| { echo(i) }
-  10.times |i| { echo(i) }
   10.times { echo(it) }
 
   //sort
   files = files.sort |a, b| { a.modified <=> b.modified }
+```
+
+Immutability and Concurrency
+========
+A immutable class is that all fields are deep immutable.
+```
+  //immutable class
+  const class Str { ... }
+
+  const Str p
+  const StrBuf p //compile error
+```
+
+The actor-model concurrency.
+The runtime make sure no shared mutable state between threads.
+```
+  actor := Actor |msg| { echo(msg) }
+  actor.send("Hi")
 ```
 
 Declarative Programming
@@ -139,18 +135,6 @@ The pod build script:
   version = 2.0
   srcDirs = test/,fan/
   depends = sys 1.0, std 1.0, reflect 1.0
-```
-
-Concurrency
-========
-The actor-model concurrency.
-```
-  class Bar {
-    Str foo(Str str) { str+"2" }
-  }
-
-  actor := ActorProxy |->|{ Bar() }
-  actor->foo("Hi")
 ```
 
 Mixins
