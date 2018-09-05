@@ -582,7 +582,7 @@ class MapTest : Test
 
   Void testCaseInsensitive()
   {
-    m := CIMap<Str,Int>()
+    m := CaseInsensitiveMap<Str,Int>()
     //m.caseInsensitive = true
 
     // add, get, containsKey
@@ -1031,7 +1031,7 @@ class MapTest : Test
     verifyEq(mx2.keys, ["one", "two", "three", "four"])
 
     // case insensitive
-    mc := CIMap<Str,Int>()
+    mc := CaseInsensitiveMap<Str,Int>()
     //mc.caseInsensitive = true
     mc.add("One",   1)
     mc.add("TWO",   2)
@@ -1104,7 +1104,7 @@ class MapTest : Test
     verifyEq(m.vals, ["FOO", "BAR", "ZOO", "WHO"])
 
     // case insensitive
-    m = CIMap()
+    m = CaseInsensitiveMap()
     //m.caseInsensitive = true
     m["foo"] = "foo"
     m["bar"] = "bar"

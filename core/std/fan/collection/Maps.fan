@@ -117,12 +117,12 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
 **
 ** case insensitive map
 **
-rtconst class CIMap<K,V> : HashMap<K,V> {
+rtconst class CaseInsensitiveMap<K,V> : HashMap<K,V> {
   new make(Int capacity:=16) : super.make(capacity) {
   }
 
   protected override This createEmpty() {
-    return CIMap()
+    return CaseInsensitiveMap()
   }
 
   @Operator override This set(K key, V val) {

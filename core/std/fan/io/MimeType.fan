@@ -95,7 +95,7 @@ const final class MimeType
   **
   static [Str:Str]? parseParams(Str s, Bool checked := true) {
     try {
-      params := CIMap<Str,Str>()
+      params := CaseInsensitiveMap<Str,Str>()
       i := 0
       while (i < s.size) {
         i = parsePair(s, i, params)

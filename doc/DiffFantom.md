@@ -103,7 +103,7 @@ It's more portable to write a new backend platforms.
 Future targets might include C, LLVM, WebAssembly.
 
 ### More Container ###
-LinkedList, Set, Tuple, ConcMap, LRUCache, TreeMap and more.
+LinkedList, Set, Tuple, ConcurrentMap, LRUCache, TreeMap and more.
 ```
   Tuple<Int, Str> tuple := Tuple(1, "a")
 ```

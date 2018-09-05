@@ -69,7 +69,7 @@ The Depend class only support simple version constraint.
 The List.fits and Func.returns are no longer available.
 
 ### Map ###
-The Map.caseInsensitive and Map.ordered replaced by Orderedmap and CIMap.
+The Map.caseInsensitive and Map.ordered replaced by Orderedmap and CaseInsensitiveMap.
 
 ### Static Cotr ###
 The static constructor return nonNullable type.
@@ -78,7 +78,7 @@ The static constructor return nonNullable type.
 It's more Unicode compliant.
 
 ### More Tools ###
-Lock, Lazy, SoftRef, TheadLocal,...
+Lock, Lazy, SoftRef,...
 ```
   const Lazy<Bar> lazyBar := Lazy<Bar> |->Bar|{ Bar() }
   bar := lazyBar.get
@@ -96,9 +96,9 @@ Lock, Lazy, SoftRef, TheadLocal,...
 ```
 
 ### More Str Utils ###
-Str.splitBy, Str.splitAny, Str.extract
+Str.splitBy, Str.splitAny, Str.extract, Str.format
 ```
-  Str.fromat("%s %d %f", ["Hi", 12, 0.3])
+  Str.format("%s %d %f", ["Hi", 12, 0.3])
 ```
 
 
