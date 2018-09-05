@@ -53,20 +53,25 @@ abstract class OutStream
   **
   ** Writes len bytes from the specified byte array starting at offset off to this output stream.
   **
-  abstract This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size)
+  virtual This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+    for (i:=0; i<len; ++i) {
+      write(ba[off+i])
+    }
+    return this
+  }
 
   **
   ** Flush the stream so any buffered bytes are written out.  Default
   ** implementation does nothing.  Throw IOErr on error.  Return this.
   **
-  abstract This flush()
+  virtual This flush() { this }
 
   **
   ** If this output stream is mapped to a file device, then
   ** synchronize all memory buffers to the physical storage device.
   ** Throw IOErr on error.  Return this.
   **
-  abstract This sync()
+  virtual This sync() { this }
 
   **
   ** Close the output stream.  This method is guaranteed to never
@@ -74,7 +79,7 @@ abstract class OutStream
   ** or false if the stream was closed abnormally.  Default implementation
   ** does nothing and returns true.
   **
-  abstract Bool close()
+  virtual Bool close() { true }
 
 //////////////////////////////////////////////////////////////////////////
 // Binary Data

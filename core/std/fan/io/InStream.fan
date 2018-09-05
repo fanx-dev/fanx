@@ -36,7 +36,7 @@ abstract class InStream
   ** blocking.  Return zero if no bytes available or it is unknown.
   ** Throw IOErr on error.
   **
-  abstract Int avail()
+  virtual Int avail() { 0 }
 
   **
   ** Read the next unsigned byte from the input stream.
@@ -61,14 +61,22 @@ abstract class InStream
   **
   ** Reads up to len bytes of data from the input stream into an array of bytes.
   **
-  abstract Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size)
+  virtual Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+    i := 0
+    for (; i<len; ++i) {
+      c := read
+      if (c == -1) break
+      ba[off+i] = c
+    }
+    return i
+  }
 
   **
   ** Pushback a byte so that it is the next byte to be read.  There
   ** is a finite limit to the number of bytes which may be pushed
   ** back.  Return this.
   **
-  abstract This unread(Int b)
+  virtual This unread(Int b) { throw UnsupportedErr("unread") }
 
   **
   ** Close the input stream.  This method is guaranteed to never
@@ -76,7 +84,7 @@ abstract class InStream
   ** or false if the stream was closed abnormally.  Default implementation
   ** does nothing and returns true.
   **
-  abstract Bool close()
+  virtual Bool close() { true }
 
   **
   ** Attempt to skip 'n' number of bytes.  Return the number of bytes
