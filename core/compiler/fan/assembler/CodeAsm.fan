@@ -1077,7 +1077,7 @@ class CodeAsm : CompilerSupport
 
       // if parameterized or covariant, then coerce
       if (field.isParameterized)
-        coerceOp(ns.objType, field.fieldType)
+        coerceOp(ns.objType.toNullable, field.fieldType)
       else if (field.isCovariant)
         coerceOp(field.inheritedReturnType, field.fieldType)
     }
@@ -1101,7 +1101,7 @@ class CodeAsm : CompilerSupport
       }
 
       if (field.isParameterized)
-        coerceOp(ns.objType, field.fieldType)
+        coerceOp(ns.objType.toNullable, field.fieldType)
     }
 
     // if safe, handle null case
@@ -1141,7 +1141,7 @@ class CodeAsm : CompilerSupport
     field := fexpr.field
 
     if (field.isParameterized)
-        coerceOp(field.fieldType, ns.objType)
+        coerceOp(field.fieldType, ns.objType.toNullable)
 
     if (fexpr.useAccessor)
     {

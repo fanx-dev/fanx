@@ -8,3 +8,6 @@ $fant testCompiler
 $fant testNative
 $fant testJava
 
+$fant concurrent
+$fant util
+
