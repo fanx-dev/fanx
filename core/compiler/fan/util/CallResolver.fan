@@ -394,7 +394,7 @@ class CallResolver : CompilerSupport
 
     call.method = method
     if (method.isInstanceCtor) {
-      if (method.parent.isGeneric) {
+      if (expr.target != null) {
         //echo("$expr.typeof $expr $expr.target")
         //echo("$expr.loc.file $expr.loc.line")
         call.ctype = expr.target.ctype

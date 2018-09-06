@@ -622,21 +622,21 @@ class MapTest : Test
     verifyEq(m.containsKey("CHARLIE"), true)
 
     // keys, values
-    //verifyEq(m.keys.sort, ["B", "Charlie", "a"])
+    verifyEq(m.keys.sort, ["B", "Charlie", "a"])
     verifyEq(m.vals.sort, ['a', 'b', 'c'])
 
     // getOrAdd
     verifyEq(m.getOrAdd("cHaRlIe") { throw Err() }, 'c')
     verifyEq(m.getOrAdd("Delta") { 'd' }, 'd')
     verifyEq(m.getOrAdd("delta") { throw Err() }, 'd')
-    //verifyEq(m.keys.sort, ["B", "Charlie", "Delta", "a"])
+    verifyEq(m.keys.sort, ["B", "Charlie", "Delta", "a"])
     m.remove("delta")
 
     // each
     x := Str:Int[:]
     m.each |Int v, Str k| { x[k] = v }
-    //verifyEq(x, ["a":'a', "B":'b', "Charlie":'c'])
-    verifyEq(x, ["a":'a', "b":'b', "charlie":'c'])
+    verifyEq(x, ["a":'a', "B":'b', "Charlie":'c'])
+    //verifyEq(x, ["a":'a', "b":'b', "charlie":'c'])
 
     // find, findAll, exclude, reduce, map
     /*
@@ -651,7 +651,7 @@ class MapTest : Test
     */
     // dup
     d := m.dup
-    //verifyEq(d.keys.sort, ["B", "Charlie", "a"])
+    verifyEq(d.keys.sort, ["B", "Charlie", "a"])
     verifyEq(d.vals.sort, ['a', 'b', 'c'])
     d["charlie"] = 'x'
     verifyEq(m["Charlie"], 'c')
@@ -663,14 +663,15 @@ class MapTest : Test
     verifyEq(m.remove("CHARLIE"), 'c')
     verifyEq(m["charlie"], null)
     verifyEq(m.containsKey("Charlie"), false)
-    //verifyEq(m.keys.sort, ["B", "a"])
+    verifyEq(m.keys.sort, ["B", "a"])
+
 
     // addAll (both not insensitive, and insensitive)
     m.addAll(["DAD":'d', "Egg":'e'])
     q := Str:Int[:]; //q.caseInsensitive = true;
     q["foo"] = 'f'
     m.addAll(q)
-    //verifyEq(m.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
+    verifyEq(m.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
     verifyEq(m["dad"], 'd')
     verifyEq(m["egg"], 'e')
     verifyEq(m["b"], 'b')
@@ -680,7 +681,7 @@ class MapTest : Test
     m.setAll(["dad":'D', "EGG":'E'])
     q["FOO"] = 'F'
     m.setAll(q)
-    //verifyEq(m.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
+    verifyEq(m.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
     verifyEq(m["DaD"], 'D')
     verifyEq(m["eGg"], 'E')
     verifyEq(m["b"], 'b')
@@ -691,7 +692,7 @@ class MapTest : Test
     // to readonly
     r := m.ro
     //verifyEq(r.caseInsensitive, true)
-    //verifyEq(r.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
+    verifyEq(r.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
     verifyEq(r["DaD"], 'D')
     verifyEq(r["eGg"], 'E')
     verifyEq(r["b"], 'b')
@@ -702,7 +703,7 @@ class MapTest : Test
     // to immutable
     i := m.toImmutable
     //verifyEq(i.caseInsensitive, true)
-    //verifyEq(i.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
+    verifyEq(i.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
     verifyEq(i["DaD"], 'D')
     verifyEq(i["eGg"], 'E')
     verifyEq(i["b"], 'b')
@@ -715,8 +716,8 @@ class MapTest : Test
     //verifyEq(rw.caseInsensitive, true)
     verifyEq(rw.remove("Dad"), 'D')
     rw["fOo"] = '^'
-    //verifyEq(r.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
-    //verifyEq(rw.keys.sort, ["B", "Egg", "a", "foo"])
+    verifyEq(r.keys.sort, ["B", "DAD", "Egg", "a", "foo"])
+    verifyEq(rw.keys.sort, ["B", "Egg", "a", "foo"])
     verifyEq(r["DaD"], 'D')
     verifyEq(r["eGg"], 'E')
     verifyEq(r["b"], 'b')
@@ -727,6 +728,7 @@ class MapTest : Test
     verifyEq(rw["Foo"], '^')
 
     // set false
+    /*
     m.clear
     //m.caseInsensitive = false
     m.add("Alpha", 'a').add("Beta", 'b')
@@ -735,13 +737,14 @@ class MapTest : Test
     //verifyEq(m["ALPHA"], null)
     verifyEq(m.containsKey("Beta"), true)
     //verifyEq(m.containsKey("beta"), false)
+    */
 
     // equals
     m.clear
     //m.caseInsensitive = true
     m.add("Alpha", 'a').add("Beta", 'b')
-    //verifyEq(m, ["Alpha":'a', "Beta":'b'])
-    verifyEq(m, ["alpha":'a', "beta":'b'])
+    verifyEq(m, ["Alpha":'a', "Beta":'b'])
+    //verifyEq(m, ["alpha":'a', "beta":'b'])
     verifyNotEq(m, ["alpha":'a', "Beta":'b'])
     verifyNotEq(m, ["Alpha":'x', "Beta":'b'])
     verifyNotEq(m, ["Beta":'b'])

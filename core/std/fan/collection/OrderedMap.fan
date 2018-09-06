@@ -6,6 +6,10 @@
 //   2018-6-18 Jed Young Creation
 //
 
+**
+** the map maintains the order in which key/value pairs are added to the map.
+** The implementation is based on using a linked list in addition to the normal hashmap.
+**
 rtconst class OrderedMap<K,V> : HashMap<K,V> {
   private LinkedList list := LinkedList()
 
@@ -110,48 +114,3 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CaseInsensitiveMap
-//////////////////////////////////////////////////////////////////////////
-
-**
-** case insensitive map
-**
-rtconst class CaseInsensitiveMap<K,V> : HashMap<K,V> {
-  new make(Int capacity:=16) : super.make(capacity) {
-  }
-
-  protected override This createEmpty() {
-    return CaseInsensitiveMap()
-  }
-
-  @Operator override This set(K key, V val) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
-    k := key.toStr.lower
-    super.set(k, val)
-    return this
-  }
-
-  override This add(K key, V val) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
-    k := key.toStr.lower
-    super.add(k, val)
-    return this
-  }
-
-  @Operator override V? get(K key, V? defV := null) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
-    k := key.toStr.lower
-    return super.get(k, defV)
-  }
-
-  override Bool containsKey(K key) {
-    k := key.toStr.lower
-    return super.containsKey(k)
-  }
-
-  override V? remove(K key) {
-    k := key.toStr.lower
-    return super.remove(k)
-  }
-}

@@ -90,7 +90,7 @@ rtconst abstract class Map<K,V>
   ** Get the number of key/value pairs in the list.  This
   ** method is readonly safe.
   **
-  abstract Int size { protected set }
+  abstract Int size()
 
   **
   ** Get the value for the specified key.  If key is not mapped,

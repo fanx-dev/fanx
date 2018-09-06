@@ -225,7 +225,8 @@ const final class MimeType
   **
   override Bool equals(Obj? that) {
     if (that is MimeType) {
-      return str == ((MimeType)that).str
+      x := ((MimeType)that)
+      return mediaType == x.mediaType && subType == x.subType && params == x.params
     }
     return false
   }

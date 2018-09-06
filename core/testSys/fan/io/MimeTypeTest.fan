@@ -87,7 +87,7 @@ class MimeTypeTest : Test
     verifyFromStr("Text/Plain; a=\"q;x\"", "text", "plain", ["a":"q;x"])
     verifyFromStr("a/b; foo=\"bar==baz;\"", "a", "b", ["foo":"bar==baz;"])
     verifyFromStr("a/b; foo = \"bar==baz;\"; x=z", "a", "b", ["foo":"bar==baz;", "x":"z"])
-    verifyFromStr("a/b; Foo=\"Bar==Baz;\"; x = Z ; y=\"=;\" ;", "a", "b", ["foo":"Bar==Baz;", "x":"Z", "y":"=;"])
+    verifyFromStr("a/b; Foo=\"Bar==Baz;\"; x = Z ; y=\"=;\" ;", "a", "b", ["Foo":"Bar==Baz;", "x":"Z", "y":"=;"])
     verifyFromStr("a/b; charset=foo (comment)", "a", "b", ["charset":"foo (comment)"])
 
     verifyFromStrBad("foo")
