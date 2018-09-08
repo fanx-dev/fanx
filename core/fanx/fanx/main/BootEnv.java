@@ -27,9 +27,12 @@ public class BootEnv implements IEnv {
 	}
 
 	public BootEnv() {
-		homeDir = System.getenv("FAN_HOME");
+		homeDir = System.getProperty("fan.home");
 		if (homeDir == null) {
-			throw new NullPointerException("ERROR: Not set FAN_HOME");
+			homeDir = System.getenv("FAN_HOME");
+			if (homeDir == null) {
+				throw new NullPointerException("ERROR: Not set fan.home");
+			}
 		}
 		
 		checkSlash(homeDir);

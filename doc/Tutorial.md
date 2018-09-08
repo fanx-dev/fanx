@@ -83,7 +83,7 @@ Functions are first class objects
   files = files.sort |a, b| { a.modified <=> b.modified }
 ```
 
-Immutability and Concurrency
+Immutability
 ========
 A immutable class is that all fields are deep immutable.
 ```
@@ -94,6 +94,8 @@ A immutable class is that all fields are deep immutable.
   const StrBuf p //compile error
 ```
 
+Concurrency
+========
 The actor-model concurrency.
 The runtime make sure no shared mutable state between threads.
 ```

@@ -4,5 +4,5 @@
 # jstub: launcher for JStub program
 #
 
-export FAN_HOME=$(dirname $(cd `dirname $0`; pwd))"/"
-java -cp $FAN_HOME/lib/java/fanx.jar fanx.tools.Jstub "$@"
+FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
+java -cp $FAN_HOME/lib/java/fanx.jar -Dfan.home=$FAN_HOME"/" fanx.tools.Jstub "$@"

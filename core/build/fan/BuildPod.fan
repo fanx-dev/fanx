@@ -295,7 +295,7 @@ class BuildPod : BuildScript
     jtemp.create
     Exec(this, [javaExe,
                 "-cp", sysJar.osPath,
-                "-Dfan.home=$devHomeDir.osPath",
+                "-Dfan.home=$devHomeDir",
                 "fanx.tools.Jstub",
                 "-d", (devHomeDir+`lib/java/stub/`).osPath,
                 (devHomeDir+`lib/fan/${podName}.pod`).osPath]).run

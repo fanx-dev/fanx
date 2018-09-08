@@ -418,6 +418,14 @@ public class FMethodEmit
   protected MethodEmit doEmit()
   {
     this.sig = signature();
+    int jflags = this.jflags;
+    if (emit instanceof FClassEmit && !method.isAbstract() && !method.isStatic() 
+    		&& ((method.flags & FConst.Ctor) == 0)
+    		&& ((method.flags & FConst.Virtual) == 0)
+    		&& ((method.flags & FConst.Override) == 0)) {
+    	jflags |= EmitConst.FINAL;
+    }
+    
     this.me = emit.emitMethod(name, sig, jflags);
     if (code != null)
     {
