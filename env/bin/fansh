@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#
-# fansh: interactive shell
-#
-
-${0%/*}/fan fansh "$@"

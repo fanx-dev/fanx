@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#
-# fanp: fcode disassembler
-#
-
-${0%/*}/fan "compiler::Main" "$@"
