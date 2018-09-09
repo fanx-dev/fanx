@@ -35,6 +35,9 @@ public class BootEnv implements IEnv {
 			}
 		}
 		
+		if (os.startsWith("win")) {
+			homeDir = homeDir.replace("\\", "/");
+		}
 		checkSlash(homeDir);
 		
 		envPaths = new ArrayList<String>(4);
