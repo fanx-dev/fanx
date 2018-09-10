@@ -1,10 +1,9 @@
 *.prefs
 *.class
-core/baseTest/test
-core/compiler_old
+src/baseTest/test
 env/temp
 env/lib/fan_backup
-core/fanx/bin
+src/fanx/bin
 devEnv
 *.pod
-core/build_lib.sh
+src/build_lib.sh
