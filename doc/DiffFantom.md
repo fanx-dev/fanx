@@ -57,6 +57,8 @@ readonly is a shallow const
 Auto generate toStr, hash, make, equals, compare methods if absent.
 ```
   data class Point { Float x; Float y }
+  p := Point(0.1, 2.0)
+  echo(p)
 ```
 
 ### Initialization Assignment ###
@@ -75,6 +77,7 @@ To omit the function signature if params size less than one, not only it-block.
 
 ### Local Return ###
 A new keyword 'lret' as same as 'return' but only be used in closures.
+The return keyword will be deprecated in closures.
 ```
   list.eachWhile {
     if (it == 0) lret null
@@ -114,6 +117,7 @@ The new api support 'encoding' and 'nonstandard' options and xpath.
   val := JVal.readJson("""{name=["abc"]}""")
   val.xpath("name[0]")
   val->name->getAt(0)
+  s := val.asStr //safe cast
   str := JVal.writeJson(val)
 ```
 
@@ -123,12 +127,12 @@ The new api support 'encoding' and 'nonstandard' options and xpath.
     Str foo(Str str) { str+"2" }
   }
 
-  actor := ActorProxy |->|{ Bar() }
+  actor := ActorProxy { Bar() }
   actor->foo("Hi")
 ```
 ```
   //ActorLocal
-  static const AcotrLocal<Bar> local := ActorLocal<Bar>()
+  static const AcotrLocal<Bar> local := ActorLocal()
 ```
 
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
