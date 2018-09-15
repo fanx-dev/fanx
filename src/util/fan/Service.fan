@@ -135,7 +135,7 @@ const mixin Service
   **
   ** Services are required to implement equality by reference.
   **
-  final override Bool equals(Obj? that) { this == that }
+  final override Bool equals(Obj? that) { this === that }
 
   **
   ** Services are required to implement equality by reference.
@@ -171,13 +171,18 @@ const mixin Service
   ** autoamatically calls `install`.  If already running,
   ** do nothing.  Return this.
   **
-  This start() { serviceMgr.val.setState(this, 1); return this }
+  This start() {
+    install
+    serviceMgr.val.setState(this, 1)
+    onStart
+    return this
+  }
 
   **
   ** Stop this service.  If not running, do nothing.
   ** Return this.
   **
-  This stop() { serviceMgr.val.setState(this, 0); return this }
+  This stop() { serviceMgr.val.setState(this, 0); onStop; return this }
 
   **
   ** Uninstall this service from the VM's service registry.

@@ -53,12 +53,12 @@ const class LogRec
   ** Return standard log format.
   **
   override Str toStr() {
-    ts := time.toLocale("hh:mm:ss DD-MMM-YY");
+    ts := time.toLocale("YYYY-MM-DD hh:mm:ss");
     s := StrBuf()
-    s.add('[').add(ts).add(']')
-     .add(' ').add('[').add(level).add(']')
-     .add(' ').add('[').add(logName).add(']')
-     .add(' ').add(msg);
+    s.addChar('[').add(ts).addChar(']')
+     .addChar(' ').addChar('[').add(level).addChar(']')
+     .addChar(' ').addChar('[').add(logName).addChar(']')
+     .addChar(' ').add(msg);
     return s.toStr
   }
 

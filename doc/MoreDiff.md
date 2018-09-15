@@ -80,7 +80,7 @@ It's more Unicode compliant.
 ### More Tools ###
 Lock, Lazy, SoftRef,...
 ```
-  const Lazy<Bar> lazyBar := Lazy<Bar> |->Bar|{ Bar() }
+  const Lazy<Bar> lazyBar := Lazy<Bar> { Bar() }
   bar := lazyBar.get
 ```
 

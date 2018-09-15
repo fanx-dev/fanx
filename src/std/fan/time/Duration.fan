@@ -144,14 +144,14 @@ const struct class Duration
   static const Duration defVal := zero
 
   **
-  ** Min value is equivalent to 'make(Int.minVal)'.
+  ** Min value is equivalent to 'make(Int.minVal/nsPerMilli)'.
   **
-  static const Duration minVal := make(Int.minVal)
+  static const Duration minVal := make(Int.minVal/1000000)
 
   **
-  ** Max value is equivalent to 'make(Int.maxVal)'.
+  ** Max value is equivalent to 'make(Int.maxVal/nsPerMilli)'.
   **
-  static const Duration maxVal := make(Int.maxVal)
+  static const Duration maxVal := make(Int.maxVal/1000000)
 
   static const Int nsPerDay   := 86400000000000
   static const Int nsPerHr    := 3600000000000

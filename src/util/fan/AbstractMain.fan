@@ -58,7 +58,7 @@ abstract class AbstractMain
   virtual Str appName()
   {
     t := Type.of(this)
-    if (t.pod.meta["pod.isScript"] == "true") return t->sourceFile->toUri->basename
+    if (t.pod.meta["pod.isScript"] == "true") return Uri.fromStr(t->sourceFile).basename
     if (t.name == "Main") return t.pod.name
     return t.name
   }

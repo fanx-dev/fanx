@@ -38,7 +38,7 @@ A struct type is a pass by value type
 ### RunTime Immutable ###
 To override the toImmutable methods.
 ```
-  rtconst Buf {
+  rtconst class Buf {
     override Bool isImmutable() { ... }
     override This toImmutable() { ... }
   }
