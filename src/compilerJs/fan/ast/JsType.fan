@@ -115,8 +115,10 @@ class JsType : JsNode
   ** Return true if type is javascript safe
   static Bool isJsSafe(CType ctype)
   {
+    if (ctype.facet("sys::NoJs") != null) return false
     // TODO FIXIT: don't check sys yet
-    ctype.pod.name == "sys" || ctype.isSynthetic || ctype.facet("sys::Js") != null
+    //ctype.pod.name == "sys" || ctype.isSynthetic || ctype.facet("sys::Js") != null
+    return true
   }
 
   TypeDef def            // compiler TypeDef

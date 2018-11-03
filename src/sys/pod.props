@@ -6,4 +6,5 @@ version = 2.0
 srcDirs = fan/*
 javaDirs = java/
 meta.license.name = Academic Free License 3.0
-
+compileJs = true
+jsDirs = js/

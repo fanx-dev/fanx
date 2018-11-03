@@ -130,6 +130,8 @@ class BuildPod : BuildScript
   **
   Uri outDocDir := Env.cur.workDir.plus(`doc/`).uri
 
+  Bool compileJs := false
+
 //////////////////////////////////////////////////////////////////////////
 // Validate
 //////////////////////////////////////////////////////////////////////////
@@ -231,6 +233,7 @@ class BuildPod : BuildScript
     ci.mode        = CompilerInputMode.file
     ci.outDir      = outPodDir.toFile
     ci.output      = CompilerOutputMode.podFile
+    ci.compileJs   = compileJs
 
     if (dependsDir != null)
     {

@@ -38,9 +38,15 @@ class JsPod : JsNode
         return
       }
 
+      if (def.qname == "sys::Obj") return
+
       // check for @js facet or explicit js output
-      if (def.hasFacet("sys::Js") || jsOutput)
+      if (def.hasFacet("sys::Js"))
         types.add(JsType(s,def))
+      
+      if ((s.compiler.input.compileJs || jsOutput) && !def.hasFacet("sys::NoJs")) {
+        types.add(JsType(s,def))
+      }
     }
 
     // resource files
@@ -120,7 +126,7 @@ class JsPod : JsNode
     file := natives[key]
     if (file == null)
     {
-      support.err("Missing native impl for $t.sig", Loc("${t.name}.fan"))
+      support.warn("Missing native impl for $t.sig", Loc("${t.name}.fan"))
     }
     else
     {

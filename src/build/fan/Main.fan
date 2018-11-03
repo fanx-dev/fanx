@@ -64,6 +64,8 @@ class Main
     build.javaDirs = parseDirs(props.get("javaDirs"))
     build.jsDirs = parseDirs(props.get("jsDirs"))
 
+    build.compileJs = props.get("compileJs", "false") == "true"
+
     //echo("srcDirs: $srcDirs resDirs: $resDirs")
 
     build.docApi = props.get("docApi", "true") == "true"
