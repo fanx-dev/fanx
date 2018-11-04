@@ -16,7 +16,7 @@ class JsType : JsNode
   new make(JsCompilerSupport s, TypeDef def) : super(s)
   {
     this.def         = def
-    this.base        = JsTypeRef(s, def.base, def.loc)
+    this.base        = def.base == null ? null : JsTypeRef(s, def.base, def.loc)
     this.qname       = qnameToJs(def)
     this.pod         = def.pod.name
     this.name        = def.name
@@ -122,7 +122,7 @@ class JsType : JsNode
   }
 
   TypeDef def            // compiler TypeDef
-  JsTypeRef base         // base type qname
+  JsTypeRef? base        // base type qname
   Str qname              // type qname
   Str pod                // pod name for type
   Str name               // simple type name

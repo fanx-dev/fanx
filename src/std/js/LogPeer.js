@@ -1,4 +1,6 @@
 
+fan.std.LogPeer = function(){}
+
 
 fan.std.LogPeer.make = function(self) {
 	var t = fan.std.LogPeer();

@@ -4,43 +4,43 @@ fan.sys.IntArray = fan.sys.Obj.$extend(fan.sys.Obj);
 fan.sys.IntArray.prototype.$ctor = function() {}
 fan.sys.IntArray.prototype.$typeof = function() { return fan.sys.IntArray.$type; }
 
-fan.sys.IntArray.makeS1(long size) {
+fan.sys.IntArray.makeS1 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Int8Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeU1(long size) {
+fan.sys.IntArray.makeU1 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Uint8Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeS2(long size) {
+fan.sys.IntArray.makeS2 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Int16Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeU2(long size) {
+fan.sys.IntArray.makeU2 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Uint16Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeS4(long size) {
+fan.sys.IntArray.makeS4 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Int32Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeU4(long size) {
+fan.sys.IntArray.makeU4 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Uint32Array(size);
 	return self
 }
 
-fan.sys.IntArray.makeS8(long size) {
+fan.sys.IntArray.makeS8 = function(size) {
 	self = new fan.sys.IntArray()
 	self.m_array = new Int8Array(size);
 	return self
@@ -68,16 +68,16 @@ fan.sys.IntArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	na = fan.sys.IntArray.make(newSize, of);
-	len = this.m_array.length > newSize ? newSize : this.m_array.length;
-	for (i = 0; i<len; ++i) {
+	var na = fan.sys.IntArray.make(newSize, of);
+	var len = this.m_array.length > newSize ? newSize : this.m_array.length;
+	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]
 	}
 	return na;
 }
 
 fan.sys.IntArray.prototype.fill = function(val, times) {
-	for (i = 0; i < times; ++i) {
+	for (var i = 0; i < times; ++i) {
 		this.m_array[i] = val;
 	}
 	return this;
@@ -89,7 +89,7 @@ fan.sys.IntArray.prototype.copyFrom = function(that, thatOffset, thisOffset, len
 		return this;
 	}
 
-	for (i = 0; i<length; ++i) {
+	for (var i = 0; i<length; ++i) {
 		this.m_array[thisOffset + i] = that.m_array[i+thatOffset]
 	}
 	return this;

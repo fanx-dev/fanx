@@ -1,7 +1,9 @@
 
+fan.std.LocalFilePeer = function(){}
+
 
 fan.std.LocalFilePeer.init = function(self) {
-	String path = self.uri().pathStr;
+	var path = self.uri().m_pathStr;
 	self.peer = new File("", uri.toStr());
 }
 

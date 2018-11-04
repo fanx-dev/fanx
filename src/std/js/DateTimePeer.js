@@ -1,29 +1,28 @@
 
-fan.std.DateTimePeer.cached = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.cur());
-fan.std.DateTimePeer.cachedUtc = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.utc());
+fan.std.DateTimePeer = function(){}
 
 fan.std.DateTimePeer.now = function(tolerance) {
 	var d = new Date();
 	var now = d.getMilliseconds();
 
-    var c = cached;
+    var c = fan.std.DateTimePeer.cached;
     if (tolerance != null && now - c.ticks <= tolerance.toMillis())
         return c;
 
-    cached = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.cur());
-    return cached;
+    fan.std.DateTimePeer.cached = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.cur());
+    return fan.std.DateTimePeer.cached;
 }
 
 fan.std.DateTimePeer.nowUtc = function(tolerance) {
 	var d = new Date();
 	var now = d.getMilliseconds();
 
-    var c = cachedUtc;
+    var c = fan.std.DateTimePeer.cachedUtc;
     if (tolerance != null && now - c.ticks <= tolerance.toMillis())
         return c;
 
-    cachedUtc = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.utc());
-    return cachedUtc;
+    fan.std.DateTimePeer.cachedUtc = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.utc());
+    return fan.std.DateTimePeer.cachedUtc;
 }
 
 fan.std.DateTimePeer.fromTicks = function(ticks, tz) {
@@ -42,54 +41,56 @@ fan.std.DateTimePeer.fromTicks = function(ticks, tz) {
 		System.out.println("ERROR");
 	}
 	
-	DateTime dt = DateTime.privateMake(year, month, day, hour, min, sec, ns, ticks, dst, weekday, tz);
+	var dt = fan.std.DateTime.privateMake(year, month, day, hour, min, sec, ns, ticks, dst, weekday, tz);
 	return dt;
 }
 
-fan.std.DateTimePeer.make = function(long year, Month month, long day, long hour, long min, long sec, long ns, TimeZone tz) {
+fan.std.DateTimePeer.make = function( year,  month,  day,  hour,  min,  sec,  ns,  tz) {
 	var cal = new Date(year, month, day, hour, min, sec, ns/1000000);
 	
-	cal.set(Calendar.MILLISECOND, (int)ns/1000000);
-	long dst = 0;
-	long weekday = cal.getDay();
-	long ticks = cal.getTime()();
+	//cal.set(Calendar.MILLISECOND, (int)ns/1000000);
+	var dst = 0;
+	var weekday = cal.getDay();
+	var ticks = cal.getTime()();
 	
-	DateTime dt = DateTime.privateMake(year, month.ordinal(), day, hour, min, sec, ns, ticks, dst, weekday, tz);
+	var dt = fan.std.DateTime.privateMake(year, month.ordinal(), day, hour, min, sec, ns, ticks, dst, weekday, tz);
 	return dt;
 }
 	
 fan.std.DateTimePeer.dayOfYear = function(self) {
-	Calendar c = toCalendar(self);
-	return c.get(Calendar.DAY_OF_YEAR);
+	// Calendar c = toCalendar(self);
+	// return c.get(Calendar.DAY_OF_YEAR);
+	return 0
 }
 
 fan.std.DateTimePeer.weekOfYear = function(self, startOfWeek) {
-	Calendar c = toCalendar(self);
-	return c.get(Calendar.WEEK_OF_YEAR);
+	// Calendar c = toCalendar(self);
+	// return c.get(Calendar.WEEK_OF_YEAR);
+	return 0;
 }
 
 fan.std.DateTimePeer.hoursInDay = function(self) {
 	var dst = 0
 	return 24 + (dst/Duration.milliPerHr);
 }
-
-fan.std.DateTimePeer.replace = function(String pattern, char from, String to, boolean isSingle) {
+/*
+fan.std.DateTimePeer.replace = function(pattern, from, to, isSingle) {
 	if (isSingle === undefined) {
 		isSingle = false
 	}
-	var in = false;
+	var in_ = false;
 	var sb = new Array();
-	for (int i=0; i<pattern.length(); ++i) {
-		char c = pattern.charAt(i);
+	for (var i=0; i<pattern.length(); ++i) {
+		var c = pattern.charAt(i);
 		if (c == '\'') {
-			if (in) in = false;
-			else in = true;
+			if (in_) in_ = false;
+			else in_ = true;
 			
 			sb.push(c);
 			continue;
 		}
 		
-		if (in) {
+		if (in_) {
 			sb.push(c);
 			continue;
 		}
@@ -114,7 +115,7 @@ fan.std.DateTimePeer.replace = function(String pattern, char from, String to, bo
 	}
 	return sb.join("");
 }
-
+*/
 // private static String toJavaPattern(String pattern) {
 // 	String old = pattern;
 // 	if (pattern == null) {
@@ -145,17 +146,16 @@ fan.std.DateTimePeer.toLocale = function( self,  pattern,  locale) {
 fan.std.DateTimePeer.fromLocale = function(str,  pattern,  tz, checked) {
 	try {
 		var date = new Date(str)
-		return DateTime.fromJava(date.getTime(), tz);
-	} catch (Exception e) {
+		return fan.std.DateTime.fromJava(date.getTime(), tz);
+	} catch (e) {
 		if (checked) {
-			throw ParseErr.make(str);
+			throw fan.std.ParseErr.make(str);
 		}
 		return null;
 	}
 }
 
 fan.std.DateTimePeer.weekdayInMonth = function( year,  mon,  weekday,  pos) {
-    throw ArgErr.make("TODO: year:"+year+",month:"+mon +",weekday:"+weekday+",pos:"+pos);
+    throw fan.sys.ArgErr.make("TODO: year:"+year+",month:"+mon +",weekday:"+weekday+",pos:"+pos);
 }
-
 

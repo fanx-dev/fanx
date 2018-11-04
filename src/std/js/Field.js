@@ -10,7 +10,7 @@
 /**
  * Field.
  */
-fan.std.Field = fan.sys.Obj.$extend(fan.sys.Slot);
+fan.std.Field = fan.sys.Obj.$extend(fan.std.Slot);
 
 //////////////////////////////////////////////////////////////////////////
 // Factories

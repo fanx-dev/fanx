@@ -7,6 +7,7 @@
 //   20 May 09  Andy Frank  Refactor to new OO model
 //
 
+fan.sys.EnumPeer = function(){}
 
 fan.sys.EnumPeer.doFromStr = function(t, name, checked)
 {

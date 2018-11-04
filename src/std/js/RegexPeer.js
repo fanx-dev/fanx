@@ -1,3 +1,4 @@
+fan.std.RegexPeer = function(){}
 
 
 fan.std.RegexPeer.matches = function(self, s)

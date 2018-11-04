@@ -38,8 +38,6 @@ class JsPod : JsNode
         return
       }
 
-      if (def.qname == "sys::Obj") return
-
       // check for @js facet or explicit js output
       if (def.hasFacet("sys::Js"))
         types.add(JsType(s,def))
@@ -78,6 +76,9 @@ class JsPod : JsNode
       }
     }
 
+    out.w("fan.${this.name}.init\$ = function() {").nl
+    out.indent
+
     // write type info
     writeTypeInfo(out)
 
@@ -88,7 +89,15 @@ class JsPod : JsNode
     writeClosureFields(out)
 
     // write static init
-    types.each |t| { t.writeStatic(out) }
+    types.each |t| { if (!t.isNative) t.writeStatic(out) }
+
+    out.unindent
+    out.w("}").nl
+
+    if (name == "std") out.w("fan.sys.init\$();")
+    if (name != "sys") {
+      out.w("fan.${this.name}.init\$();").nl
+    }
 
     // write remaining natives
     natives.each |f|
@@ -98,7 +107,8 @@ class JsPod : JsNode
       in.close
     }
     out.w("}).call(this);").nl
-    out.w("//# sourceMappingURL=/pod/${name}/${name}.js.map").nl
+    //TODO
+    //out.w("//# sourceMappingURL=/pod/${name}/${name}.js.map").nl
   }
 
   static Void writeNs(JsWriter out, Str name)
@@ -117,7 +127,14 @@ class JsPod : JsNode
   static const Str requireSys :=
     "var root=this;
      var fan=root.fan;
-     if (!fan && (typeof require !== 'undefined')) fan = require('sys.js');
+     if (fan === undefined) {
+        if (typeof exports !== 'undefined') {
+          fan = exports;
+        } else {
+          fan = root.fan = {};
+        }
+     }
+     if (!fan.sys && (typeof require !== 'undefined')) fan = require('sys.js');
      "
 
   Void writePeer(JsWriter out, JsType t, Bool isPeer)
@@ -139,7 +156,7 @@ class JsPod : JsNode
 
   Void writeTypeInfo(JsWriter out)
   {
-    out.w("fan.${name}.\$pod = fan.sys.Pod.\$add('$name');").nl
+    out.w("fan.${name}.\$pod = fan.std.Pod.\$add('$name');").nl
     out.w("with (fan.${name}.\$pod)").nl
     out.w("{").nl
 
@@ -150,7 +167,7 @@ class JsPod : JsNode
     reflect.each |t|
     {
       adder  := t.isMixin ? "\$am" : "\$at"
-      base   := "$t.base.pod::$t.base.name"
+      base   := t.base == null ? "null" : "$t.base.pod::$t.base.name"
       mixins := t.mixins.join(",") |m| { "'$m.pod::$m.name'" }
       facets := t.facets.join(",") |f| { "'$f.type.sig':$f.val.toCode" }
       flags  := t->flags
@@ -171,20 +188,20 @@ class JsPod : JsNode
       t.methods.each |m|
       {
         if (m.isFieldAccessor) return
-        params := m.params.join(",") |p| { "new fan.sys.Param('$p.reflectName','$p.paramType.sig',$p.hasDef)" }
+        params := m.params.join(",") |p| { "new fan.std.Param('$p.reflectName','$p.paramType.sig',$p.hasDef)" }
         facets := m.facets.join(",") |f| { "'$f.type.sig':$f.val.toCode" }
-        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.make(fan.sys.Param.\$type,[$params]),{$facets})")
+        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.make(fan.std.Param.\$type,[$params]),{$facets})")
       }
       out.w(";").nl
     }
 
     // pod meta
     out.indent
-    out.w("m_meta = fan.sys.Map.make(fan.sys.Str.\$type, fan.sys.Str.\$type);").nl
+    out.w("m_meta = fan.std.Map.make(fan.sys.Str.\$type, fan.sys.Str.\$type);").nl
     meta.each |v, k|
     {
       out.w("m_meta.set($k.toCode, $v.toCode);").nl
-      if (k == "pod.version") out.w("m_version = fan.sys.Version.fromStr($v.toCode);").nl
+      if (k == "pod.version") out.w("m_version = fan.std.Version.fromStr($v.toCode);").nl
     }
     out.w("m_meta = m_meta.toImmutable();").nl
     out.unindent

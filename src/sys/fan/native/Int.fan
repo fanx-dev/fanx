@@ -350,7 +350,7 @@ native const struct class Int : Num
   **   100_000.toLocale("B")        =>  98KB
   **   (3*1024*1024).toLocale("B")  =>  3MB
   **
-  //Str toLocale(Str? pattern := null, Locale locale := Locale.cur)
+  Str toLocale(Str? pattern := null)
 /*
   **
   ** Return if this Unicode char is an uppercase letter in

@@ -1,4 +1,7 @@
 
+fan.std.SysInStreamPeer = function(){}
+
+
 fan.std.SysInStreamPeer.make = function(self) {
   return new fan.std.SysInStreamPeer();
 }

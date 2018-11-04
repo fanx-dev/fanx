@@ -271,6 +271,6 @@ native const struct class Float : Num
   **   0.1234f.toLocale("0.00")        =>  0.12
   **   70.12f.toLocale("0.0000")       =>  70.1200
   **
-  //Str toLocale(Str? pattern := null, Locale locale := Locale.cur)
+  Str toLocale(Str? pattern := null)
 
 }

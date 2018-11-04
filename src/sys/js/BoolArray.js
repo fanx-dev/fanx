@@ -34,14 +34,14 @@ fan.sys.BoolArray.prototype.realloc = function(newSize) {
 
 	na = fan.sys.BoolArray.make(newSize, of);
 	len = this.m_array.length > newSize ? newSize : this.m_array.length;
-	for (i = 0; i<len; ++i) {
+	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]
 	}
 	return na;
 }
 
 fan.sys.BoolArray.prototype.fill = function(val, times) {
-	for (i = 0; i < times; ++i) {
+	for (var i = 0; i < times; ++i) {
 		this.m_array[i] = val;
 	}
 	return this;
@@ -53,7 +53,7 @@ fan.sys.BoolArray.prototype.copyFrom = function(that, thatOffset, thisOffset, le
 		return this;
 	}
 
-	for (i = 0; i<length; ++i) {
+	for (var i = 0; i<length; ++i) {
 		this.m_array[thisOffset + i] = that.m_array[i+thatOffset]
 	}
 	return this;

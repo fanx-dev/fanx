@@ -10,7 +10,7 @@
 /**
  * Method.
  */
-fan.std.Method = fan.sys.Obj.$extend(fan.sys.Slot);
+fan.std.Method = fan.sys.Obj.$extend(fan.std.Slot);
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor

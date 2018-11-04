@@ -1,6 +1,8 @@
 
+fan.std.ExtensionPeer = function(){}
 
-fan.std.Extension.trace = function(self, out, options) {
+
+fan.std.ExtensionPeer.trace = function(self, out, options) {
 	self.trace(out, options);
 	return self;
 }

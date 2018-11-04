@@ -1,3 +1,5 @@
+fan.std.SysOutStreamPeer = function(){}
+
 
 fan.std.SysOutStreamPeer.make = function(self) {
 	return new fan.std.SysOutStreamPeer();

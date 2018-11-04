@@ -1,3 +1,4 @@
+fan.std.TimeZonePeer = function(){}
 
 
 fan.std.TimeZonePeer.make = function(self) {
@@ -14,7 +15,7 @@ fan.std.TimeZonePeer.cur = function() {
 	return fan.std.TimeZonePeer.m_cur;
 }
 
-fan.std.TimeZonePeer.prototype.dstOffset(self, year) {
+fan.std.TimeZonePeer.prototype.dstOffset = function(self, year) {
 	var d = new Date();
 	return d.getTimezoneOffset();
 }

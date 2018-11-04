@@ -1,8 +1,9 @@
 
+fan.std.BufCryptoPeer = function(){}
 
-fan.sys.Buf.CRC16_ODD_PARITY = [ 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0 ];
+fan.std.BufCryptoPeer.CRC16_ODD_PARITY = [ 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0 ];
 
-fan.sys.Buf.CRC32_a_table =
+fan.std.BufCryptoPeer.CRC32_a_table =
   "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 " +
   "0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 " +
   "1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 " +
@@ -36,12 +37,13 @@ fan.sys.Buf.CRC32_a_table =
   "BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF " +
   "B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D ";
 
-fan.sys.Buf.CRC32_b_table = fan.sys.Buf.CRC32_a_table.split(' ').map(function(s){ return parseInt(s,16) });
+fan.std.BufCryptoPeer.CRC32_b_table = fan.std.BufCryptoPeer.CRC32_a_table.split(' ').map(function(s){ return parseInt(s,16) });
 
 
 //////////////////////////////////////////////////////////////////////////
 // CRC
 //////////////////////////////////////////////////////////////////////////
+
 
 fan.std.BufCryptoPeer.crc = function(buf, algorithm)
 {
@@ -66,7 +68,7 @@ fan.std.BufCryptoPeer.$crc16 = function(dataToCrc, seed)
   seed = (seed & 0xFFFF) >>> 8;
   var index1 = (dat & 0x0F);
   var index2 = (dat >>> 4);
-  if ((fan.sys.Buf.CRC16_ODD_PARITY[index1] ^ fan.sys.Buf.CRC16_ODD_PARITY[index2]) == 1)
+  if ((fan.std.BufCryptoPeer.CRC16_ODD_PARITY[index1] ^ fan.std.BufCryptoPeer.CRC16_ODD_PARITY[index2]) == 1)
     seed ^= 0xC001;
   dat  <<= 6;
   seed ^= dat;
@@ -84,7 +86,7 @@ fan.std.BufCryptoPeer.crc32 = function(buf)
   var crc = -1;
   for (var i=0, iTop=array.length; i<iTop; i++)
   {
-    crc = ( crc >>> 8 ) ^ fan.sys.Buf.CRC32_b_table[(crc ^ array[i]) & 0xFF];
+    crc = ( crc >>> 8 ) ^ fan.std.BufCryptoPeer.CRC32_b_table[(crc ^ array[i]) & 0xFF];
   }
   return (crc ^ (-1)) >>> 0;
 };
@@ -128,7 +130,7 @@ fan.std.BufCryptoPeer.toDigest = function(buf, algorithm)
   switch (algorithm)
   {
     case "MD5":
-      digest = fan.sys.Buf_Md5(buf);  break;
+      digest = fan.std.Buf_Md5(buf);  break;
     case "SHA1":
     case "SHA-1":
       // fall-through
@@ -150,7 +152,7 @@ fan.std.BufCryptoPeer.hmac = function(buf, algorithm, keyBuf)
   switch (algorithm)
   {
     case "MD5":
-      digest = fan.sys.Buf_Md5(buf, key);  break;
+      digest = fan.std.Buf_Md5(buf, key);  break;
     case "SHA1":
     case "SHA-1":
       // fall thru

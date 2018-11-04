@@ -4,7 +4,7 @@ fan.sys.ByteArray = fan.sys.Obj.$extend(fan.sys.Obj);
 fan.sys.ByteArray.prototype.$ctor = function() {}
 fan.sys.ByteArray.prototype.$typeof = function() { return fan.sys.ByteArray.$type; }
 
-fan.sys.ByteArray.make(long size) {
+fan.sys.ByteArray.make = function(size) {
 	self = new fan.sys.ByteArray()
 	self.m_array = new Uint8ClampedArray	(size);
 	return self
@@ -32,8 +32,8 @@ fan.sys.ByteArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	na = fan.sys.ByteArray.make(newSize, of);
-	len = this.m_array.length > newSize ? newSize : this.m_array.length;
+	var na = fan.sys.ByteArray.make(newSize, of);
+	var len = this.m_array.length > newSize ? newSize : this.m_array.length;
 	for (i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]
 	}
@@ -41,7 +41,7 @@ fan.sys.ByteArray.prototype.realloc = function(newSize) {
 }
 
 fan.sys.ByteArray.prototype.fill = function(val, times) {
-	for (i = 0; i < times; ++i) {
+	for (var i = 0; i < times; ++i) {
 		this.m_array[i] = val;
 	}
 	return this;
@@ -53,7 +53,7 @@ fan.sys.ByteArray.prototype.copyFrom = function(that, thatOffset, thisOffset, le
 		return this;
 	}
 
-	for (i = 0; i<length; ++i) {
+	for (var i = 0; i<length; ++i) {
 		this.m_array[thisOffset + i] = that.m_array[i+thatOffset]
 	}
 	return this;

@@ -1,3 +1,4 @@
+fan.std.UuidPeer = function(){}
 
 fan.std.UuidPeer.make = function()
 {

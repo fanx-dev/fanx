@@ -9,7 +9,7 @@
 //
 // Pod
 //
-fan.sys.Pod.$sysPod = fan.sys.Pod.find("sys");
+//fan.sys.Pod.$sysPod = fan.sys.Pod.find("sys");
 
 //
 // Bool
@@ -35,6 +35,7 @@ fan.sys.Float.m_defVal = fan.sys.Float.make(0);
 //
 // Num
 //
+/*
 fan.sys.NumPattern.cache("00");    fan.sys.NumPattern.cache("000");       fan.sys.NumPattern.cache("0000");
 fan.sys.NumPattern.cache("0.0");   fan.sys.NumPattern.cache("0.00");      fan.sys.NumPattern.cache("0.000");
 fan.sys.NumPattern.cache("0.#");   fan.sys.NumPattern.cache("#,###.0");   fan.sys.NumPattern.cache("#,###.#");
@@ -42,7 +43,7 @@ fan.sys.NumPattern.cache("0.##");  fan.sys.NumPattern.cache("#,###.00");  fan.sy
 fan.sys.NumPattern.cache("0.###"); fan.sys.NumPattern.cache("#,###.000"); fan.sys.NumPattern.cache("#,###.###");
 fan.sys.NumPattern.cache("0.0#");  fan.sys.NumPattern.cache("#,###.0#");  fan.sys.NumPattern.cache("#,###.0#");
 fan.sys.NumPattern.cache("0.0##"); fan.sys.NumPattern.cache("#,###.0##"); fan.sys.NumPattern.cache("#,###.0##");
-
+*/
 //
 // Str
 //

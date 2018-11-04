@@ -4,13 +4,13 @@ fan.sys.FloatArray = fan.sys.Obj.$extend(fan.sys.Obj);
 fan.sys.FloatArray.prototype.$ctor = function() {}
 fan.sys.FloatArray.prototype.$typeof = function() { return fan.sys.FloatArray.$type; }
 
-fan.sys.FloatArray.makeF4(long size) {
+fan.sys.FloatArray.makeF4 = function(size) {
 	self = new fan.sys.FloatArray()
 	self.m_array = new Float32Array(size);
 	return self
 }
 
-fan.sys.FloatArray.makeF8(long size) {
+fan.sys.FloatArray.makeF8 = function(size) {
 	self = new fan.sys.FloatArray()
 	self.m_array = new Float64Array(size);
 	return self
@@ -38,16 +38,16 @@ fan.sys.FloatArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	na = fan.sys.FloatArray.make(newSize, of);
-	len = this.m_array.length > newSize ? newSize : this.m_array.length;
-	for (i = 0; i<len; ++i) {
+	var na = fan.sys.FloatArray.make(newSize, of);
+	var len = this.m_array.length > newSize ? newSize : this.m_array.length;
+	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]
 	}
 	return na;
 }
 
 fan.sys.FloatArray.prototype.fill = function(val, times) {
-	for (i = 0; i < times; ++i) {
+	for (var i = 0; i < times; ++i) {
 		this.m_array[i] = val;
 	}
 	return this;
@@ -59,7 +59,7 @@ fan.sys.FloatArray.prototype.copyFrom = function(that, thatOffset, thisOffset, l
 		return this;
 	}
 
-	for (i = 0; i<length; ++i) {
+	for (var i = 0; i<length; ++i) {
 		this.m_array[thisOffset + i] = that.m_array[i+thatOffset]
 	}
 	return this;

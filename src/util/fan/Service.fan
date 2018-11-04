@@ -57,20 +57,24 @@ internal class ServiceMgr {
 
   Void add(Service s) {
     lock.sync|->Obj?|{
+      if (stateMap.containsKey(s)) return null
+
+      lst := byName[s.typeof.qname]
+      if (lst == null) {
+        lst = [s]
+        byName[s.typeof.qname] = lst
+      } else {
+        lst.add(s)
+      }
+
       services.add(s)
       stateMap[s] = 0
-      lst := byName.get(s.typeof.qname)
-      if (lst == null) {
-        lst = [,]
-        byName[s.typeof.qname] = lst
-      }
-      lst.add(s)
       return null
     }
   }
 
   Void remove(Service s) {
-    lock.sync|->Obj?|{
+    lock.sync|->Obj?| {
       services.remove(s)
       stateMap.remove(s)
       lst := byName[s.typeof.qname]

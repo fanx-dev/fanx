@@ -1,3 +1,4 @@
+fan.std.FilePeer = function(){}
 
 
 fan.std.FilePeer.make = function(uri, checkSlash) {

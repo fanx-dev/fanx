@@ -1,3 +1,4 @@
+fan.std.TimePointPeer = function(){}
 
 
 fan.std.TimePointPeer.nowMillis = function() {
