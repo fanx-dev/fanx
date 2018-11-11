@@ -434,7 +434,7 @@ fan.sys.Str.trimToNull = function(self)
 fan.sys.Str.split = function(self, sep, trimmed)
 {
   if (sep == null) return fan.sys.Str.splitws(self);
-  var toks = fan.sys.List.make(fan.sys.Str.$type, []);
+  var toks = fan.sys.List.makeFromJs(fan.sys.Str.$type, []);
   var trim = (trimmed != null) ? trimmed : true;
   var len = self.length;
   var x = 0;
@@ -460,7 +460,7 @@ fan.sys.Str.splitStr = function(val, s, e, trim)
 
 fan.sys.Str.splitws = function(val)
 {
-  var toks = fan.sys.List.make(fan.sys.Str.$type, []);
+  var toks = fan.sys.List.makeFromJs(fan.sys.Str.$type, []);
   var len = val.length;
   while (len > 0 && val.charCodeAt(len-1) <= 32) --len;
   var x = 0;
@@ -480,7 +480,7 @@ fan.sys.Str.splitws = function(val)
 
 fan.sys.Str.splitLines = function(self)
 {
-  var lines = fan.sys.List.make(fan.sys.Str.$type, []);
+  var lines = fan.sys.List.makeFromJs(fan.sys.Str.$type, []);
   var len = self.length;
   var s = 0;
   for (var i=0; i<len; ++i)
@@ -637,7 +637,7 @@ fan.sys.Str.toRegex = function(self) { return fan.sys.Regex.fromStr(self); }
 
 fan.sys.Str.chars = function(self)
 {
-  var ch = fan.sys.List.make(fan.sys.Int.$type, []);
+  var ch = fan.sys.List.makeFromJs(fan.sys.Int.$type, []);
   for (var i=0; i<self.length; i++) ch.add(self.charCodeAt(i));
   return ch;
 }

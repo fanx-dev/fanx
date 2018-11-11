@@ -21,7 +21,7 @@ fan.std.TimeZonePeer.prototype.dstOffset = function(self, year) {
 }
 
 fan.std.TimeZonePeer.listFullNames = function() {
-	var list =  fan.sys.List.make();
+	var list =  fan.sys.List.make(4);
 	list.add(fan.std.TimeZonePeer.m_cur);
 	return list;
 }

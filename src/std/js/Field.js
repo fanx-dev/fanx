@@ -19,7 +19,7 @@ fan.std.Field = fan.sys.Obj.$extend(fan.std.Slot);
 fan.std.Field.makeSetFunc = function(map)
 {
   return fan.sys.Func.make(
-    fan.sys.List.make(fan.sys.Param.$type),
+    fan.sys.List.make(8, fan.sys.Param.$type),
     fan.sys.Void.$type,
     function(obj)
     {

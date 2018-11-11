@@ -27,15 +27,16 @@ fan.sys.Type.prototype.$ctor = function(qname, base, mixins, facets, flags)
   // mixins
   if (fan.sys.Type.$type != null)
   {
-    var acc = fan.sys.List.make(fan.sys.Type.$type, []);
+    var acc = fan.sys.List.makeFromJs(fan.sys.Type.$type, []);
     for (var i=0; i<mixins.length; i++)
       acc.add(fan.sys.Type.find(mixins[i]));
-    this.m_mixins = acc.ro();
+    acc.m_readOnly = true;
+    this.m_mixins = acc;
   }
 
   var s = qname.split("::");
   this.m_qname    = qname;
-  this.m_pod      = fan.sys.Pod.find(s[0]);
+  this.m_pod      = fan.std.Pod.find(s[0]);
   this.m_name     = s[1];
   this.m_base     = base == null ? null : fan.sys.Type.find(base);
   this.m_myFacets = new fan.sys.Facets(facets);
@@ -105,7 +106,7 @@ fan.sys.Type.prototype.isVal = function()
 fan.sys.Type.prototype.isClass = function()   { return !this.m_isMixin && this.m_base.m_qname != "sys::Enum"; }
 fan.sys.Type.prototype.isEnum = function()    { return this.m_base != null && this.m_base.m_qname == "sys::Enum"; }
 fan.sys.Type.prototype.isMixin = function()   { return this.m_isMixin; }
-fan.sys.Type.prototype.log = function()       { return fan.sys.Log.get(this.m_pod.m_name); }
+fan.sys.Type.prototype.log = function()       { return fan.std.Log.get(this.m_pod.m_name); }
 fan.sys.Type.prototype.toStr = function()     { return this.signature(); }
 fan.sys.Type.prototype.toLocale = function()  { return this.signature(); }
 fan.sys.Type.prototype.$typeof = function()   { return fan.sys.Type.$type; }
@@ -124,11 +125,11 @@ fan.sys.Type.prototype.toNonNullable = function() { return this; }
 //////////////////////////////////////////////////////////////////////////
 // Generics
 //////////////////////////////////////////////////////////////////////////
-
+/*
 fan.sys.Type.prototype.isGenericType = function()
 {
   return this == fan.sys.List.$type ||
-         this == fan.sys.Map.$type ||
+         this == fan.std.Map.$type ||
          this == fan.sys.Func.$type;
 }
 
@@ -155,7 +156,7 @@ fan.sys.Type.prototype.isGeneric = function() { return this.isGenericType(); }
 fan.sys.Type.prototype.params = function()
 {
   if (fan.sys.Type.$noParams == null)
-    fan.sys.Type.$noParams = fan.sys.Map.make(fan.sys.Str.$type, fan.sys.Type.$type).ro();
+    fan.sys.Type.$noParams = fan.std.Map.make(fan.sys.Str.$type, fan.sys.Type.$type).ro();
   return fan.sys.Type.$noParams;
 }
 
@@ -193,6 +194,7 @@ fan.sys.Type.prototype.parameterize = function(params)
 
   throw fan.sys.UnsupportedErr.make("not generic: " + this);
 }
+*/
 
 fan.sys.Type.prototype.toListOf = function()
 {
@@ -202,8 +204,12 @@ fan.sys.Type.prototype.toListOf = function()
 
 fan.sys.Type.prototype.emptyList = function()
 {
-  if (this.$emptyList == null)
-    this.$emptyList = fan.sys.List.make(this).toImmutable();
+  if (this.$emptyList == null) {
+    this.$emptyList = fan.sys.List.make(0, this);
+    //.toImmutable();
+    this.$emptyList.m_readOnly = true;
+    this.$emptyList.m_immutable = true;
+  }
   return this.$emptyList;
 }
 
@@ -231,8 +237,8 @@ fan.sys.Type.prototype.make = function(args)
   var defVal = this.slot("defVal", false);
   if (defVal != null && defVal.isPublic())
   {
-    if (defVal instanceof fan.sys.Field) return defVal.get(null);
-    if (defVal instanceof fan.sys.Method) return defVal.invoke(null, null);
+    if (defVal instanceof fan.std.Field) return defVal.get(null);
+    if (defVal instanceof fan.std.Method) return defVal.invoke(null, null);
   }
 
   throw fan.sys.Err.make("Type missing 'make' or 'defVal' slots: " + this);
@@ -272,8 +278,8 @@ fan.sys.Type.prototype.field = function(name, checked)
 // addMethod
 fan.sys.Type.prototype.$am = function(name, flags, returns, params, facets)
 {
-  var r = fanx_TypeParser.load(returns);
-  var m = new fan.sys.Method(this, name, flags, r, params, facets);
+  var r = fan.sys.Type.find(returns);
+  var m = new fan.std.Method(this, name, flags, r, params, facets);
   this.m_slotsInfo.push(m);
   return this;
 }
@@ -281,8 +287,8 @@ fan.sys.Type.prototype.$am = function(name, flags, returns, params, facets)
 // addField
 fan.sys.Type.prototype.$af = function(name, flags, of, facets)
 {
-  var t = fanx_TypeParser.load(of);
-  var f = new fan.sys.Field(this, name, flags, t, facets);
+  var t = fan.sys.Type.find(of);
+  var f = new fan.std.Field(this, name, flags, t, facets);
   this.m_slotsInfo.push(f);
   return this;
 }
@@ -313,7 +319,7 @@ fan.sys.Type.prototype.inheritance = function()
 fan.sys.Type.$inheritance = function(self)
 {
   var map = {};
-  var acc = fan.sys.List.make(fan.sys.Type.$type);
+  var acc = fan.sys.List.make(8, fan.sys.Type.$type);
 
   // handle Void as a special case
   if (self == fan.sys.Void.$type)
@@ -394,160 +400,6 @@ fan.sys.Type.checkMixin = function(mixin, that)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Facets
-//////////////////////////////////////////////////////////////////////////
-
-fan.sys.Type.prototype.hasFacet = function(type)
-{
-  return this.facet(type, false) != null;
-}
-
-fan.sys.Type.prototype.facets = function()
-{
-  if (this.m_inheritedFacets == null) this.loadFacets();
-  return this.m_inheritedFacets.list();
-}
-
-fan.sys.Type.prototype.facet = function(type, checked)
-{
-  if (checked === undefined) checked = true;
-  if (this.m_inheritedFacets == null) this.loadFacets();
-  return this.m_inheritedFacets.get(type, checked);
-}
-
-fan.sys.Type.prototype.loadFacets = function()
-{
-  var f = this.m_myFacets.dup();
-  var inheritance = this.inheritance();
-  for (var i=0; i<inheritance.size(); ++i)
-  {
-    var x = inheritance.get(i);
-    if (x.m_myFacets) f.inherit(x.m_myFacets);
-  }
-  this.m_inheritedFacets = f;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Util
-//////////////////////////////////////////////////////////////////////////
-
-fan.sys.Type.prototype.reflect = function()
-{
-  if (this.m_slotsByName != null) return this;
-  this.doReflect();
-  return this;
-}
-
-fan.sys.Type.prototype.doReflect = function()
-{
-  // these are working accumulators used to build the
-  // data structures of my defined and inherited slots
-  var slots = [];
-  var nameToSlot  = {};   // String -> Slot
-  var nameToIndex = {};   // String -> Int
-
-  // merge in base class and mixin classes
-  for (var i=0; i<this.m_mixins.size(); i++) this.$mergeType(this.m_mixins.get(i), slots, nameToSlot, nameToIndex);
-  this.$mergeType(this.m_base, slots, nameToSlot, nameToIndex);
-
-  // merge in all my slots
-  for (var i=0; i<this.m_slotsInfo.length; i++)
-  {
-    var slot = this.m_slotsInfo[i]
-    this.$mergeSlot(slot, slots, nameToSlot, nameToIndex);
-  }
-
-  // break out into fields and methods
-  var fields  = [];
-  var methods = [];
-  for (var i=0; i<slots.length; i++)
-  {
-    var slot = slots[i];
-    if (slot instanceof fan.sys.Field) fields.push(slot);
-    else methods.push(slot);
-  }
-
-  // set lists
-  this.m_slotList    = fan.sys.List.make(fan.sys.Slot.$type, slots);
-  this.m_fieldList   = fan.sys.List.make(fan.sys.Field.$type, fields);
-  this.m_methodList  = fan.sys.List.make(fan.sys.Method.$type, methods);
-  this.m_slotsByName = nameToSlot;
-}
-
-/**
- * Merge the inherit's slots into my slot maps.
- *  slots:       Slot[] by order
- *  nameToSlot:  String name -> Slot
- *  nameToIndex: String name -> Long index of slots
- */
-fan.sys.Type.prototype.$mergeType = function(inheritedType, slots, nameToSlot, nameToIndex)
-{
-  if (inheritedType == null) return;
-  var inheritedSlots = inheritedType.reflect().slots();
-  for (var i=0; i<inheritedSlots.size(); i++)
-    this.$mergeSlot(inheritedSlots.get(i), slots, nameToSlot, nameToIndex);
-}
-
-/**
- * Merge the inherited slot into my slot maps.  Assume this slot
- * trumps any previous definition (because we process inheritance
- * and my slots in the right order)
- *  slots:       Slot[] by order
- *  nameToSlot:  String name -> Slot
- *  nameToIndex: String name -> Long index of slots
- */
-fan.sys.Type.prototype.$mergeSlot = function(slot, slots, nameToSlot, nameToIndex)
-{
-  // skip constructors which aren't mine
-  if (slot.isCtor() && slot.m_parent != this) return;
-
-  var name = slot.m_name;
-  var dup  = nameToIndex[name];
-  if (dup != null)
-  {
-    // if the slot is inherited from Obj, then we can
-    // safely ignore it as an override - the dup is most
-    // likely already the same Object method inherited from
-    // a mixin; but the dup might actually be a more specific
-    // override in which case we definitely don't want to
-    // override with the sys::Object version
-    if (slot.parent() == fan.sys.Obj.$type)
-      return;
-
-    // if given the choice between two *inherited* slots where
-    // one is concrete and abstract, then choose the concrete one
-    var dupSlot = slots[dup];
-    if (slot.parent() != this && slot.isAbstract() && !dupSlot.isAbstract())
-      return;
-
-// TODO FIXIT: this is not triggering -- possibly due to how we generate
-// the type info via compilerJs?
-    // check if this is a Getter or Setter, in which case the Field
-    // trumps and we need to cache the method on the Field
-    // Note: this works because we assume the compiler always generates
-    // the field before the getter and setter in fcode
-    if ((slot.m_flags & (fan.sys.FConst.Getter | fan.sys.FConst.Setter)) != 0)
-    {
-      var field = slots[dup];
-      if ((slot.m_flags & fan.sys.FConst.Getter) != 0)
-        field.m_getter = slot;
-      else
-        field.m_setter = slot;
-      return;
-    }
-
-    nameToSlot[name] = slot;
-    slots[dup] = slot;
-  }
-  else
-  {
-    nameToSlot[name] = slot;
-    slots.push(slot);
-    nameToIndex[name] = slots.length-1;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Static Methods
 //////////////////////////////////////////////////////////////////////////
 
@@ -556,7 +408,7 @@ fan.sys.Type.prototype.$mergeSlot = function(slot, slots, nameToSlot, nameToInde
  */
 fan.sys.Type.find = function(sig, checked)
 {
-  return fanx_TypeParser.load(sig, checked);
+  return fan.sys.Sys.findType(sig, checked);
 }
 
 /**

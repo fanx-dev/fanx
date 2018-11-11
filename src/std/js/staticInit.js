@@ -1,5 +1,9 @@
 
 
-
-fan.std.DateTimePeer.cached = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.cur());
-fan.std.DateTimePeer.cachedUtc = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.utc());
+fan.std.Map.fromLiteral = function(keys, vals)
+{
+  var map = fan.std.Map.make(keys.length);
+  for (var i=0; i<keys.length; i++)
+    map.set(keys[i], vals[i]);
+  return map;
+}

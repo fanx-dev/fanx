@@ -76,7 +76,17 @@ class JsPod : JsNode
       }
     }
 
-    out.w("fan.${this.name}.init\$ = function() {").nl
+    userInit := natives["staticInit.js"]
+    if (userInit != null) {
+      in := userInit.in
+      out.minify(in)
+      in.close
+      natives.remove("staticInit.js")
+    }
+
+    //---------------------------
+    //init reflect info
+    out.w("fan.${this.name}.initReflect\$ = function() {").nl
     out.indent
 
     // write type info
@@ -88,17 +98,33 @@ class JsPod : JsNode
     // write closure fields (must be after writeTypeInfo)
     writeClosureFields(out)
 
-    // write static init
-    types.each |t| { if (!t.isNative) t.writeStatic(out) }
-
     out.unindent
     out.w("}").nl
 
-    if (name == "std") out.w("fan.sys.init\$();")
-    if (name != "sys") {
-      out.w("fan.${this.name}.init\$();").nl
+    //---------------------------
+    //init static
+    out.w("fan.${this.name}.initStatic\$ = function() {").nl
+    out.indent
+    // write static init
+    types.each |t| { if (!t.isNative) t.writeStatic(out) }
+    out.unindent
+    out.w("}").nl
+
+    //---------------------------
+
+    if (name == "std") {
+      out.w("fan.sys.initReflect\$();").nl
+      out.w("fan.sys.initStatic\$();").nl
+
+      out.w("fan.${this.name}.initReflect\$();").nl
+      out.w("fan.${this.name}.initStatic\$();").nl
+    }
+    else if (name != "sys") {
+      out.w("fan.${this.name}.initReflect\$();").nl
+      out.w("fan.${this.name}.initStatic\$();").nl
     }
 
+    //---------------------------
     // write remaining natives
     natives.each |f|
     {
@@ -167,11 +193,11 @@ class JsPod : JsNode
     reflect.each |t|
     {
       adder  := t.isMixin ? "\$am" : "\$at"
-      base   := t.base == null ? "null" : "$t.base.pod::$t.base.name"
+      base   := t.base == null ? "null" : "'$t.base.pod::$t.base.name'"
       mixins := t.mixins.join(",") |m| { "'$m.pod::$m.name'" }
       facets := t.facets.join(",") |f| { "'$f.type.sig':$f.val.toCode" }
       flags  := t->flags
-      out.w("  fan.${t.pod}.${t.name}.\$type = $adder('$t.name','$base',[$mixins],{$facets},$flags);").nl
+      out.w("  fan.${t.pod}.${t.name}.\$type = $adder('$t.name',$base,[$mixins],{$facets},$flags);").nl
     }
 
     // then write slot info
@@ -190,20 +216,20 @@ class JsPod : JsNode
         if (m.isFieldAccessor) return
         params := m.params.join(",") |p| { "new fan.std.Param('$p.reflectName','$p.paramType.sig',$p.hasDef)" }
         facets := m.facets.join(",") |f| { "'$f.type.sig':$f.val.toCode" }
-        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.make(fan.std.Param.\$type,[$params]),{$facets})")
+        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.makeFromJs(fan.std.Param.\$type,[$params]),{$facets})")
       }
       out.w(";").nl
     }
 
     // pod meta
     out.indent
-    out.w("m_meta = fan.std.Map.make(fan.sys.Str.\$type, fan.sys.Str.\$type);").nl
+    out.w("m_meta = {};").nl
     meta.each |v, k|
     {
-      out.w("m_meta.set($k.toCode, $v.toCode);").nl
-      if (k == "pod.version") out.w("m_version = fan.std.Version.fromStr($v.toCode);").nl
+      out.w("m_meta[$k.toCode] = $v.toCode;").nl
+      //if (k == "pod.version") out.w("m_version = fan.std.Version.fromStr($v.toCode);").nl
     }
-    out.w("m_meta = m_meta.toImmutable();").nl
+    //out.w("m_meta = m_meta.toImmutable();").nl
     out.unindent
 
     // end with block

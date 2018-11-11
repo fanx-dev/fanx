@@ -128,9 +128,9 @@ fan.std.TypeExt.doReflect = function()
   }
 
   // set lists
-  this.m_slotList    = fan.sys.List.make(fan.sys.Slot.$type, slots);
-  this.m_fieldList   = fan.sys.List.make(fan.sys.Field.$type, fields);
-  this.m_methodList  = fan.sys.List.make(fan.sys.Method.$type, methods);
+  this.m_slotList    = fan.sys.List.makeFromJs(fan.sys.Slot.$type, slots);
+  this.m_fieldList   = fan.sys.List.makeFromJs(fan.sys.Field.$type, fields);
+  this.m_methodList  = fan.sys.List.makeFromJs(fan.sys.Method.$type, methods);
   this.m_slotsByName = nameToSlot;
 }
 

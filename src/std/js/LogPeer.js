@@ -12,7 +12,7 @@ fan.std.LogPeer.m_byName = [];
 
 fan.std.LogPeer.list = function()
 {
-  var list = fan.sys.List.make(fan.std.LogPeer.$typ, fan.std.LogPeer.m_byName.length);
+  var list = fan.sys.List.make(fan.std.LogPeer.m_byName.length, fan.std.LogPeer.$typ);
   for (var k in fan.std.LogPeer.m_byName) {
   	list.add(fan.std.LogPeer.m_byName[k]);
   }
@@ -77,7 +77,7 @@ fan.std.LogPeer.printLogRec = function(rec, out) {
 
 fan.std.LogPeer.handlers = function()
 {
-  return fan.sys.List.make(fan.sys.Func.$type, fan.std.LogPeer.m_handlers).ro();
+  return fan.sys.List.makeFromJs(fan.sys.Func.$type, fan.std.LogPeer.m_handlers).ro();
 }
 
 fan.std.LogPeer.addHandler = function(func)

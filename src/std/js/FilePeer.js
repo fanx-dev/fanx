@@ -15,7 +15,7 @@ fan.std.FilePeer.os = function(osPath) {
 }
 
 fan.std.FilePeer.osRoots = function(osPath) {
-	return new fan.sys.List.make();
+	return new fan.sys.List.make(1);
 }
 
 fan.std.FilePeer.createTemp = function(prefix, suffix, dir) {

@@ -23,7 +23,7 @@ fan.std.Env.cur = function()
 
 fan.std.Env.prototype.$ctor = function()
 {
-  this.m_args = fan.sys.List.make(fan.sys.Str.$type).toImmutable();
+  this.m_args = fan.sys.List.make(8, fan.sys.Str.$type).toImmutable();
 
   this.m_index = fan.sys.Map.make(fan.sys.Str.$type, new fan.sys.ListType(fan.sys.Str.$type));
   this.m_index = this.m_index.toImmutable();

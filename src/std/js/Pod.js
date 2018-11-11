@@ -26,7 +26,7 @@ fan.std.Pod.list = function()
   if (fan.std.Pod.$list == null)
   {
     var pods = fan.std.Pod.$pods;
-    var list = fan.sys.List.make(fan.std.Pod.$type);
+    var list = fan.sys.List.make(32, fan.std.Pod.$type);
     for (var n in pods) list.add(pods[n]);
     fan.std.Pod.$list = list.sort().toImmutable();
   }
@@ -42,7 +42,7 @@ fan.std.Pod.prototype.$ctor = function(name)
   this.m_name  = name;
   this.m_types = [];
   this.m_meta = [];
-  this.m_version = fan.sys.Version.m_defVal;
+  this.m_version = fan.std.Version.m_defVal;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +63,9 @@ fan.std.Pod.prototype.meta = function()
 
 fan.std.Pod.prototype.version = function()
 {
+  if (this.m_version === undefined) {
+    this.m_version = fan.std.Version.fromStr(this.m_meta["version"]);
+  }
   return this.m_version;
 }
 

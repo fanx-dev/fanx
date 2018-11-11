@@ -416,7 +416,7 @@ class JsMapLiteralExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    out.w("fan.sys.Map.fromLiteral([", loc)
+    out.w("fan.std.Map.fromLiteral([", loc)
     keys.each |k,i| { if (i > 0) out.w(","); k.write(out) }
     out.w("],[")
     vals.each |v,i| { if (i > 0) out.w(","); v.write(out) }

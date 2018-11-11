@@ -19,7 +19,7 @@ fan.sys.BoolArray.prototype.set = function(pos, val) {
 }
 
 fan.sys.BoolArray.prototype.size = function() {
-	return this.m_size;
+	return this.m_array.length;
 }
 
 fan.sys.BoolArray.prototype.realloc = function(newSize) {
@@ -32,7 +32,7 @@ fan.sys.BoolArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	na = fan.sys.BoolArray.make(newSize, of);
+	na = fan.sys.BoolArray.make(newSize, this.m_of);
 	len = this.m_array.length > newSize ? newSize : this.m_array.length;
 	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]

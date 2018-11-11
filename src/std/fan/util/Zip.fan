@@ -18,6 +18,7 @@
 **   3. `Zip.write` is used to write a zip file to an output stream.
 **      Each entry must is written to the stream using `writeNext`
 **
+@NoJs
 native final class Zip
 {
 

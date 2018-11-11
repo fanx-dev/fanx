@@ -17,7 +17,7 @@ fan.std.RegexPeer.split = function(self, s, limit)
   if (limit === undefined) limit = 0;
 
   if (limit === 1)
-    return fan.sys.List.make(fan.sys.Str.$type, [s]);
+    return fan.sys.List.makeFromJs(fan.sys.Str.$type, [s]);
 
   var array = [];
   if (self.m_regexp === undefined) self.m_regexp = new RegExp(self.m_source);
@@ -38,6 +38,6 @@ fan.std.RegexPeer.split = function(self, s, limit)
   {
     while (array[array.length-1] == "") { array.pop(); }
   }
-  return fan.sys.List.make(fan.sys.Str.$type, array);
+  return fan.sys.List.makeFromJs(fan.sys.Str.$type, array);
 }
 

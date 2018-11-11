@@ -21,7 +21,7 @@ fan.sys.ObjArray.prototype.set = function(pos, val) {
 }
 
 fan.sys.ObjArray.prototype.size = function() {
-	return this.m_size;
+	return this.m_array.length;
 }
 
 fan.sys.ObjArray.prototype.realloc = function(newSize) {
@@ -34,7 +34,7 @@ fan.sys.ObjArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	var na = fan.sys.ObjArray.make(newSize, of);
+	var na = fan.sys.ObjArray.make(newSize, this.m_of);
 	var len = this.m_array.length > newSize ? newSize : this.m_array.length;
 	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]

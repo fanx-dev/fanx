@@ -55,7 +55,7 @@ fan.sys.IntArray.prototype.set = function(pos, val) {
 }
 
 fan.sys.IntArray.prototype.size = function() {
-	return this.m_size;
+	return this.m_array.length;
 }
 
 fan.sys.IntArray.prototype.realloc = function(newSize) {
@@ -68,7 +68,7 @@ fan.sys.IntArray.prototype.realloc = function(newSize) {
 		return this;
 	}
 
-	var na = fan.sys.IntArray.make(newSize, of);
+	var na = fan.sys.IntArray.make(newSize, this.m_of);
 	var len = this.m_array.length > newSize ? newSize : this.m_array.length;
 	for (var i = 0; i<len; ++i) {
 		na.m_array[i] = this.m_array[i]

@@ -71,7 +71,11 @@ class JsPodClosures : JsNode
     varToFunc.each |JsMethod func, Str var|
     {
       loc := func.loc
-      out.w("${var} = new fan.sys.ClosureFuncSpec\$(", loc)
+      t := var["fan".size+1..-1]
+      pos2 := t.find(".")
+      podName := t[0..<pos2]
+      typeName := t[pos2+1..-1]
+      out.w("${var} = new fan.sys.ClosureFuncSpec\$(\"$podName::$typeName\",", loc)
 
       // return type
       JsTypeLiteralExpr.writeType(func.ret, out)
