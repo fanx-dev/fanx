@@ -3,16 +3,49 @@ fan.std.TypeExt = fan.sys.Obj.$extend(fan.sys.Obj);
 fan.std.TypeExt.prototype.$ctor = function() {}
 fan.std.TypeExt.prototype.$typeof = function() { return fan.std.TypeExt.$type; }
 
+fan.std.TypeExt.hasFacet = function(self, type)
+{
+  return self.hasFacet(type);
+}
+
+fan.std.TypeExt.facets = function(self)
+{
+  return self.facets();
+}
+
+fan.std.TypeExt.facet = function(self, type, checked)
+{
+  return self.facet(type, checked);
+}
+
+fan.std.TypeExt.slots   = function(self) { return self.slots(); }
+fan.std.TypeExt.methods = function(self) { return self.methods(); }
+fan.std.TypeExt.fields  = function(self) { return self.fields(); }
+
+fan.std.TypeExt.slot = function(self, name, checked)
+{
+  return self.slot(name, checked);
+}
+
+fan.std.TypeExt.method = function(self, name, checked)
+{
+  return self.method(name, checked);
+}
+
+fan.std.TypeExt.field = function(self, name, checked)
+{
+  return self.field(name, checked);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
 
-fan.std.TypeExt.slots   = function() { return this.reflect().m_slotList.ro(); }
-fan.std.TypeExt.methods = function() { return this.reflect().m_methodList.ro(); }
-fan.std.TypeExt.fields  = function() { return this.reflect().m_fieldList.ro(); }
+fan.sys.Type.prototype.slots   = function() { return this.reflect().m_slotList.ro(); }
+fan.sys.Type.prototype.methods = function() { return this.reflect().m_methodList.ro(); }
+fan.sys.Type.prototype.fields  = function() { return this.reflect().m_fieldList.ro(); }
 
-fan.std.TypeExt.slot = function(name, checked)
+fan.sys.Type.prototype.slot = function(name, checked)
 {
   if (checked === undefined) checked = true;
   var slot = this.reflect().m_slotsByName[name];
@@ -21,34 +54,34 @@ fan.std.TypeExt.slot = function(name, checked)
   return null;
 }
 
-fan.std.TypeExt.method = function(name, checked)
+fan.sys.Type.prototype.method = function(name, checked)
 {
   var slot = this.slot(name, checked);
   if (slot == null) return null;
-  return fan.sys.ObjUtil.coerce(slot, fan.sys.Method.$type);
+  return fan.sys.ObjUtil.coerce(slot, fan.std.Method.$type);
 }
 
-fan.std.TypeExt.field = function(name, checked)
+fan.sys.Type.prototype.field = function(name, checked)
 {
   var slot = this.slot(name, checked);
   if (slot == null) return null;
-  return fan.sys.ObjUtil.coerce(slot, fan.sys.Field.$type);
+  return fan.sys.ObjUtil.coerce(slot, fan.std.Field.$type);
 }
 
 // addMethod
-fan.std.TypeExt.$am = function(name, flags, returns, params, facets)
+fan.sys.Type.prototype.$am = function(name, flags, returns, params, facets)
 {
-  var r = fanx_TypeParser.load(returns);
-  var m = new fan.sys.Method(this, name, flags, r, params, facets);
+  var r = fan.sys.Type.find(returns);
+  var m = new fan.std.Method(this, name, flags, r, params, facets);
   this.m_slotsInfo.push(m);
   return this;
 }
 
 // addField
-fan.std.TypeExt.$af = function(name, flags, of, facets)
+fan.sys.Type.prototype.$af = function(name, flags, of, facets)
 {
-  var t = fanx_TypeParser.load(of);
-  var f = new fan.sys.Field(this, name, flags, t, facets);
+  var t = fan.sys.Type.find(of);
+  var f = new fan.std.Field(this, name, flags, t, facets);
   this.m_slotsInfo.push(f);
   return this;
 }
@@ -57,25 +90,25 @@ fan.std.TypeExt.$af = function(name, flags, of, facets)
 // Facets
 //////////////////////////////////////////////////////////////////////////
 
-fan.std.TypeExt.hasFacet = function(type)
+fan.sys.Type.prototype.hasFacet = function(type)
 {
   return this.facet(type, false) != null;
 }
 
-fan.std.TypeExt.facets = function()
+fan.sys.Type.prototype.facets = function()
 {
   if (this.m_inheritedFacets == null) this.loadFacets();
   return this.m_inheritedFacets.list();
 }
 
-fan.std.TypeExt.facet = function(type, checked)
+fan.sys.Type.prototype.facet = function(type, checked)
 {
   if (checked === undefined) checked = true;
   if (this.m_inheritedFacets == null) this.loadFacets();
   return this.m_inheritedFacets.get(type, checked);
 }
 
-fan.std.TypeExt.loadFacets = function()
+fan.sys.Type.prototype.loadFacets = function()
 {
   var f = this.m_myFacets.dup();
   var inheritance = this.inheritance();
@@ -91,14 +124,14 @@ fan.std.TypeExt.loadFacets = function()
 // Util
 //////////////////////////////////////////////////////////////////////////
 
-fan.std.TypeExt.reflect = function()
+fan.sys.Type.prototype.reflect = function()
 {
   if (this.m_slotsByName != null) return this;
   this.doReflect();
   return this;
 }
 
-fan.std.TypeExt.doReflect = function()
+fan.sys.Type.prototype.doReflect = function()
 {
   // these are working accumulators used to build the
   // data structures of my defined and inherited slots
@@ -107,7 +140,9 @@ fan.std.TypeExt.doReflect = function()
   var nameToIndex = {};   // String -> Int
 
   // merge in base class and mixin classes
-  for (var i=0; i<this.m_mixins.size(); i++) this.$mergeType(this.m_mixins.get(i), slots, nameToSlot, nameToIndex);
+  if (this.m_mixins) {
+    for (var i=0; i<this.m_mixins.size(); i++) this.$mergeType(this.m_mixins.get(i), slots, nameToSlot, nameToIndex);
+  }
   this.$mergeType(this.m_base, slots, nameToSlot, nameToIndex);
 
   // merge in all my slots
@@ -123,14 +158,14 @@ fan.std.TypeExt.doReflect = function()
   for (var i=0; i<slots.length; i++)
   {
     var slot = slots[i];
-    if (slot instanceof fan.sys.Field) fields.push(slot);
+    if (slot instanceof fan.std.Field) fields.push(slot);
     else methods.push(slot);
   }
 
   // set lists
-  this.m_slotList    = fan.sys.List.makeFromJs(fan.sys.Slot.$type, slots);
-  this.m_fieldList   = fan.sys.List.makeFromJs(fan.sys.Field.$type, fields);
-  this.m_methodList  = fan.sys.List.makeFromJs(fan.sys.Method.$type, methods);
+  this.m_slotList    = fan.sys.List.makeFromJs(fan.std.Slot.$type, slots);
+  this.m_fieldList   = fan.sys.List.makeFromJs(fan.std.Field.$type, fields);
+  this.m_methodList  = fan.sys.List.makeFromJs(fan.std.Method.$type, methods);
   this.m_slotsByName = nameToSlot;
 }
 
@@ -140,7 +175,7 @@ fan.std.TypeExt.doReflect = function()
  *  nameToSlot:  String name -> Slot
  *  nameToIndex: String name -> Long index of slots
  */
-fan.std.TypeExt.$mergeType = function(inheritedType, slots, nameToSlot, nameToIndex)
+fan.sys.Type.prototype.$mergeType = function(inheritedType, slots, nameToSlot, nameToIndex)
 {
   if (inheritedType == null) return;
   var inheritedSlots = inheritedType.reflect().slots();
@@ -156,7 +191,7 @@ fan.std.TypeExt.$mergeType = function(inheritedType, slots, nameToSlot, nameToIn
  *  nameToSlot:  String name -> Slot
  *  nameToIndex: String name -> Long index of slots
  */
-fan.std.TypeExt.$mergeSlot = function(slot, slots, nameToSlot, nameToIndex)
+fan.sys.Type.prototype.$mergeSlot = function(slot, slots, nameToSlot, nameToIndex)
 {
   // skip constructors which aren't mine
   if (slot.isCtor() && slot.m_parent != this) return;
@@ -206,3 +241,4 @@ fan.std.TypeExt.$mergeSlot = function(slot, slots, nameToSlot, nameToIndex)
     nameToIndex[name] = slots.length-1;
   }
 }
+

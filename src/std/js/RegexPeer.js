@@ -1,18 +1,24 @@
 fan.std.RegexPeer = function(){}
 
+fan.std.RegexPeer.make = function(self) {
+  return new fan.std.RegexPeer();
+}
 
-fan.std.RegexPeer.matches = function(self, s)
+fan.std.RegexPeer.prototype.init = function(self) {
+    self.m_regexp = new RegExp(self.m_source);
+}
+
+fan.std.RegexPeer.prototype.matches = function(self, s)
 {
   return this.matcher(s).matches();
 }
 
-fan.std.RegexPeer.matcher = function(self, s)
+fan.std.RegexPeer.prototype.matcher = function(self, s)
 {
-  if (self.m_regexp === undefined) self.m_regexp = new RegExp(self.m_source);
   return new fan.std.RegexMatcher(self.m_regexp, self.m_source, s);
 }
 
-fan.std.RegexPeer.split = function(self, s, limit)
+fan.std.RegexPeer.prototype.split = function(self, s, limit)
 {
   if (limit === undefined) limit = 0;
 
@@ -20,7 +26,6 @@ fan.std.RegexPeer.split = function(self, s, limit)
     return fan.sys.List.makeFromJs(fan.sys.Str.$type, [s]);
 
   var array = [];
-  if (self.m_regexp === undefined) self.m_regexp = new RegExp(self.m_source);
   var re = self.m_regexp;
   while (true)
   {

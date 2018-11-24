@@ -25,18 +25,18 @@ fan.std.Env.prototype.$ctor = function()
 {
   this.m_args = fan.sys.List.make(8, fan.sys.Str.$type).toImmutable();
 
-  this.m_index = fan.sys.Map.make(fan.sys.Str.$type, new fan.sys.ListType(fan.sys.Str.$type));
+  this.m_index = fan.std.Map.make();
   this.m_index = this.m_index.toImmutable();
 
-  this.m_vars = fan.sys.Map.make(fan.sys.Str.$type, fan.sys.Str.$type)
-  this.m_vars.caseInsensitive$(true);
+  this.m_vars = fan.std.CaseInsensitiveMap.make(16);
+  //this.m_vars.caseInsensitive$(true);
   this.m_vars = this.m_vars.toImmutable();
 
   // pod props map, keyed by pod.name
-  this.m_props = fan.sys.Map.make(fan.sys.Str.$type, fan.sys.Map.$type);
+  this.m_props = fan.std.Map.make();
 
   // env.out
-  this.m_out = new fan.sys.SysOutStream(new fan.sys.ConsoleOutStream());
+  this.m_out = new fan.std.ConsoleOutStream();
 }
 
 fan.std.Env.prototype.$setIndex = function(index)
@@ -161,7 +161,7 @@ fan.std.Env.prototype.$props = function(key)
   var map = this.m_props.get(key);
   if (map == null)
   {
-    map = fan.sys.Map.make(fan.sys.Str.$type, fan.sys.Str.$type)
+    map = fan.std.Map.make()
     this.m_props.add(key, map);
   }
   return map;

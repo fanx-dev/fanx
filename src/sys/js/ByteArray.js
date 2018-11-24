@@ -6,7 +6,7 @@ fan.sys.ByteArray.prototype.$typeof = function() { return fan.sys.ByteArray.$typ
 
 fan.sys.ByteArray.make = function(size) {
 	self = new fan.sys.ByteArray()
-	self.m_array = new Uint8ClampedArray	(size);
+	self.m_array = new Uint8ClampedArray(size);
 	return self
 }
 

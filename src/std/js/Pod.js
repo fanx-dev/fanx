@@ -71,7 +71,7 @@ fan.std.Pod.prototype.version = function()
 
 fan.std.Pod.prototype.uri = function()
 {
-  if (this.m_uri == null) this.m_uri = fan.sys.Uri.fromStr("fan://" + this.m_name);
+  if (this.m_uri == null) this.m_uri = fan.std.Uri.fromStr("fan://" + this.m_name);
   return this.m_uri;
 }
 

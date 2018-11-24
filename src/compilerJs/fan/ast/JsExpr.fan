@@ -226,7 +226,7 @@ class JsDecimalLiteralExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    out.w("fan.sys.Decimal.make($val)", loc)
+    out.w("fan.std.Decimal.make($val)", loc)
   }
   Decimal val
 }
@@ -262,7 +262,7 @@ class JsDurationLiteralExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    out.w("fan.sys.Duration.fromStr(\"$val.toStr\")", loc)
+    out.w("fan.std.Duration.fromStr(\"$val.toStr\")", loc)
   }
   Duration val
 }
@@ -280,7 +280,7 @@ class JsUriLiteralExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    out.w("fan.sys.Uri.fromStr(", loc)
+    out.w("fan.std.Uri.fromStr(", loc)
     out.w(val.toStr.toCode('\"', true), loc)
     out.w(")")
   }

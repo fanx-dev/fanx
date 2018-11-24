@@ -79,8 +79,8 @@ fan.sys.Str.getSafe = function(self, index, def)
 fan.sys.Str.getRange = function(self, range)
 {
   var size = self.length;
-  var s = range.$start(size);
-  var e = range.$end(size);
+  var s = range.startIndex(size);
+  var e = range.endIndex(size);
   if (e+1 < s) throw fan.sys.IndexErr.make(range);
   return self.substr(s, (e-s)+1);
 }
@@ -127,6 +127,24 @@ fan.sys.Str.contains = function(self, arg)
 fan.sys.Str.containsChar = function(self, arg)
 {
   return self.indexOf(fan.sys.Int.toChar(arg)) != -1
+}
+
+fan.sys.Str.find = function(self, s, off)
+{
+  var i = 0;
+  if (off != null) i = off;
+  if (i < 0) i = self.length+i;
+  var r = self.indexOf(s, i);
+  return r;
+}
+
+fan.sys.Str.findr = function(self, s, off)
+{
+  var i = -1;
+  if (off != null) i = off;
+  if (i < 0) i = self.length+i;
+  var r = self.lastIndexOf(s, i);
+  return r;
 }
 
 fan.sys.Str.index = function(self, s, off)
@@ -764,3 +782,80 @@ fan.sys.Str.javaToJs = function(java)
   return js;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// UTF8
+//////////////////////////////////////////////////////////////////////////
+
+fan.sys.Str.toUtf8 = function(str) {
+    var n = str.length,
+    idx = 0,
+    utf8 = new Uint8Array(new ArrayBuffer(n * 4)),
+    i, j, c;
+
+  //http://user1.matsumoto.ne.jp/~goma/js/utf.js
+  for (i = 0; i < n; ++i) {
+    c = str.charCodeAt(i);
+    if (c <= 0x7F) {
+      utf8[idx++] = c;
+    } else if (c <= 0x7FF) {
+      utf8[idx++] = 0xC0 | (c >>> 6);
+      utf8[idx++] = 0x80 | (c & 0x3F);
+    } else if (c <= 0xFFFF) {
+      utf8[idx++] = 0xE0 | (c >>> 12);
+      utf8[idx++] = 0x80 | ((c >>> 6) & 0x3F);
+      utf8[idx++] = 0x80 | (c & 0x3F);
+    } else {
+      j = 4;
+      while (c >> (6 * j)) j++;
+      utf8[idx++] = ((0xFF00 >>> j) & 0xFF) | (c >>> (6 * --j));
+      while (j--)
+        utf8[idx++] = 0x80 | ((c >>> (6 * j)) & 0x3F);
+    }
+  }
+  var res = fan.sys.ByteArray.make(idx);
+  for (var i =0; i<idx; ++i) {
+    res.set(i, utf8[i]);
+  }
+  return res;
+}
+
+/* utf.js - UTF-8 <=> UTF-16 convertion
+ *
+ * Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+ * Version: 1.0
+ * LastModified: Dec 25 1999
+ * This library is free.  You can redistribute it and/or modify it.
+ */
+fan.sys.Str.fromUtf8 = function(byteArray) {
+  var out, i, len, c;
+  var char2, char3;
+  var array = byteArray.m_array;
+
+  out = "";
+  len = array.length;
+  i = 0;
+  while(i < len) {
+    c = array[i++];
+    switch(c >> 4)
+    { 
+      case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+        // 0xxxxxxx
+        out += String.fromCharCode(c);
+        break;
+      case 12: case 13:
+        // 110x xxxx   10xx xxxx
+        char2 = array[i++];
+        out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+        break;
+      case 14:
+        // 1110 xxxx  10xx xxxx  10xx xxxx
+        char2 = array[i++];
+        char3 = array[i++];
+        out += String.fromCharCode(((c & 0x0F) << 12) |
+                       ((char2 & 0x3F) << 6) |
+                       ((char3 & 0x3F) << 0));
+        break;
+    }
+  }
+  return out;
+}
