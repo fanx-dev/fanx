@@ -19,3 +19,7 @@ fan.sys.List.make = function(arg1, arg2) {
 	}
 	return fan.sys.List.orign_make(arg1, arg2);
 }
+
+fan.sys.List.prototype.toJs = function() {
+	return this.m_array.m_array;
+}

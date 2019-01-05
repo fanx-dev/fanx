@@ -37,6 +37,47 @@ fan.std.TypeExt.field = function(self, name, checked)
   return self.field(name, checked);
 }
 
+fan.std.TypeExt.pod = function(self)
+{
+  return self.pod();
+}
+
+fan.std.TypeExt.doc = function(self)
+{
+  return self.doc();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Make
+//////////////////////////////////////////////////////////////////////////
+
+fan.std.TypeExt.make = function(self, args)
+{
+  if (args === undefined) args = null;
+
+  var make = self.method("make", false);
+  if (make != null && make.isPublic())
+  {
+    if (self.isAbstract() && !make.isStatic())
+      throw fan.sys.Err.make("Cannot instantiate abstract class: " + self.m_qname);
+
+    var numArgs = args == null ? 0 : args.size();
+    var params = make.params();
+    if ((numArgs == params.size()) ||
+        (numArgs < params.size() && params.get(numArgs).hasDefault()))
+      return make.invoke(null, args);
+  }
+
+  var defVal = self.slot("defVal", false);
+  if (defVal != null && defVal.isPublic())
+  {
+    if (defVal instanceof fan.std.Field) return defVal.get(null);
+    if (defVal instanceof fan.std.Method) return defVal.invoke(null, null);
+  }
+
+  throw fan.sys.Err.make("Type missing 'make' or 'defVal' slots: " + self);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////

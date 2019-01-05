@@ -11,19 +11,19 @@ fan.std.AtomicRef.make = function(v) {
 }
 
 fan.std.AtomicRef.prototype.get = function() {
-	return self.m_val;
+	return this.m_val;
 }
 
 fan.std.AtomicRef.prototype.val = function() {
-	return self.m_val;
+	return this.m_val;
 }
 
 fan.std.AtomicRef.prototype.val$ = function(v) {
-	self.m_val = v;
+	this.m_val = v;
 }
 
 fan.std.AtomicRef.prototype.set$ = function(v) {
-	self.m_val = v;
+	this.m_val = v;
 }
 
 fan.std.AtomicRef.prototype.getAndSet = function(v) {

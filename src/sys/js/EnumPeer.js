@@ -9,9 +9,10 @@
 
 fan.sys.EnumPeer = function(){}
 
-fan.sys.EnumPeer.doFromStr = function(t, name, checked)
+fan.sys.EnumPeer.doFromStr = function(type, name, checked)
 {
   // the compiler marks the value fields with the Enum flag
+  var t = fan.sys.Type.find(type)
   var slot = t.slot(name, false);
   if (slot != null && (slot.m_flags & fan.sys.FConst.Enum) != 0)
   {

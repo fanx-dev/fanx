@@ -60,7 +60,7 @@ fan.std.DateTimePeer.make = function( year,  month,  day,  hour,  min,  sec,  ns
 	//cal.set(Calendar.MILLISECOND, (int)ns/1000000);
 	var dst = 0;
 	var weekday = cal.getDay();
-	var ticks = cal.getTime()();
+	var ticks = cal.getTime();
 	
 	var dt = fan.std.DateTime.privateMake(year, month.ordinal(), day, hour, min, sec, ns, ticks, dst, weekday, tz);
 	return dt;

@@ -12,19 +12,19 @@ fan.std.AtomicBool.make = function(v) {
 }
 
 fan.std.AtomicBool.prototype.get = function() {
-	return self.m_val;
+	return this.m_val;
 }
 
 fan.std.AtomicBool.prototype.val = function() {
-	return self.m_val;
+	return this.m_val;
 }
 
 fan.std.AtomicBool.prototype.val$ = function(v) {
-	self.m_val = v;
+	this.m_val = v;
 }
 
 fan.std.AtomicBool.prototype.set$ = function(v) {
-	self.m_val = v;
+	this.m_val = v;
 }
 
 fan.std.AtomicBool.prototype.getAndSet = function(v) {

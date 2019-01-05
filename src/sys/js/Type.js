@@ -212,7 +212,7 @@ fan.sys.Type.prototype.emptyList = function()
   }
   return this.$emptyList;
 }
-
+/*
 //////////////////////////////////////////////////////////////////////////
 // Make
 //////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ fan.sys.Type.prototype.make = function(args)
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-/*
+
 fan.sys.Type.prototype.slots   = function() { return this.reflect().m_slotList.ro(); }
 fan.sys.Type.prototype.methods = function() { return this.reflect().m_methodList.ro(); }
 fan.sys.Type.prototype.fields  = function() { return this.reflect().m_fieldList.ro(); }

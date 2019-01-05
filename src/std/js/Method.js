@@ -58,7 +58,7 @@ fan.std.Method.prototype.invoke = function(instance, args)
   var func = (this.isCtor() || this.isStatic())
     ? eval(this.m_$qname)
     : instance[this.m_$name];
-  var vals = args==null ? [] : args.m_values;
+  var vals = args==null ? [] : args.toJs();
 
   // if not found, assume this is primitive that needs
   // to map into a static call
@@ -164,7 +164,7 @@ fan.std.MethodFunc.prototype.params = function()
     {
       var temp = [];
       temp[0] = new fan.sys.Param("this", this.m_method.m_parent, 0);
-      fparams = fan.sys.List.make(fan.sys.Param.$type, temp.concat(mparams.m_values));
+      fparams = fan.sys.List.make(fan.sys.Param.$type, temp.concat(mparams.toJs()));
     }
     this.m_fparams = fparams.ro();
   }

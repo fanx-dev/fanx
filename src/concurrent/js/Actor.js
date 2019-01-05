@@ -22,9 +22,9 @@ fan.concurrent.Actor.locals = function()
 {
   if (fan.concurrent.Actor.$locals == null)
   {
-    var k = fan.sys.Str.$type;
-    var v = fan.sys.Obj.$type.toNullable();
-    fan.concurrent.Actor.$locals = fan.sys.Map.make(k, v);
+    //var k = fan.sys.Str.$type;
+    //var v = fan.sys.Obj.$type.toNullable();
+    fan.concurrent.Actor.$locals = fan.std.Map.make();
   }
   return fan.concurrent.Actor.$locals;
 }

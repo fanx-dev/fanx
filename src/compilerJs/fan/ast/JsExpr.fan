@@ -961,6 +961,20 @@ class JsFieldExpr : JsExpr
 
   private Void writeNorm(JsWriter out)
   {
+    callStaticInit := false
+    if (field.isStatic && !useAccessor && setArg == null) {
+      callStaticInit = true
+      out.w("((")
+      parent.write(out)
+      out.w(".static\$init && !")
+      parent.write(out)
+      out.w(".static\$inited ? (")
+      parent.write(out)
+      out.w(".static\$inited=true,")
+      parent.write(out)
+      out.w(".static\$init()) : null),")
+    }
+
     old := support.thisName
     if (isSafe)
     {
@@ -998,6 +1012,8 @@ class JsFieldExpr : JsExpr
       }
     }
     if (isSafe) out.w(" }($old))", loc)
+
+    if (callStaticInit) out.w(")")
   }
 
   private Void writeTarget(JsWriter out)

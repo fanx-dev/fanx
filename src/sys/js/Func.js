@@ -71,8 +71,8 @@ fan.sys.Func.prototype.returns = function() { return this.m_return; }
 fan.sys.Func.prototype.method = function() { return null; }
 
 fan.sys.Func.prototype.call = function() { return this.m_func.apply(null, arguments); }
-fan.sys.Func.prototype.callList = function(args) { return this.m_func.apply(null, args.m_values); }
-fan.sys.Func.prototype.callOn = function(obj, args) { return this.m_func.apply(obj, args.m_values); }
+fan.sys.Func.prototype.callList = function(args) { return this.m_func.apply(null, args===null?null:args.toJs()); }
+fan.sys.Func.prototype.callOn = function(obj, args) { return this.m_func.apply(obj, args===null?null:args.toJs()); }
 
 fan.sys.Func.prototype.enterCtor = function(obj) {}
 fan.sys.Func.prototype.exitCtor = function() {}

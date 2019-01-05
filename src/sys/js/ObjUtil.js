@@ -35,7 +35,7 @@ fan.sys.ObjUtil.equals = function(a, b, op)
 
   var f = a.$fanType;
   if (f === fan.sys.Float.$type) return fan.sys.Float.equals(a, b);
-  if (f === fan.sys.Decimal.$type) return fan.sys.Decimal.equals(a, b);
+  if (f === fan.std.Decimal.$type) return fan.std.Decimal.equals(a, b);
 
   return a === b;
 }

@@ -227,39 +227,42 @@ fan.sys.Float.toCode = function(self)
 // Locale
 //////////////////////////////////////////////////////////////////////////
 
-fan.sys.Float.toLocale = function(self, pattern, locale)
+fan.sys.Float.toLocale = function(self, pattern)
 {
-  if (locale === undefined || locale == null) locale = fan.sys.Locale.cur();
+  //if (locale === undefined || locale == null) locale = fan.std.Locale.cur();
   if (pattern === undefined) pattern = null;
   try
   {
     // handle special values
-    if (isNaN(self)) return locale.numSymbols().nan;
-    if (self == fan.sys.Float.m_posInf) return locale.numSymbols().posInf;
-    if (self == fan.sys.Float.m_negInf) return locale.numSymbols().negInf;
+    if (isNaN(self)) return "NaN";
+    if (self == fan.sys.Float.m_posInf) return "+INF";
+    if (self == fan.sys.Float.m_negInf) return "-INF";
 
     // get default pattern if necessary
     if (pattern == null)
     {
       if (Math.abs(self) >= 100.0)
-        return fan.sys.Int.toLocale(Math.round(self), null, locale);
+        return fan.sys.Int.toLocale(Math.round(self), null);
 
       pattern = fan.sys.Float.toDefaultLocalePattern(self);
     }
 
     // TODO: if value is < 10^-3 or > 10^7 it will be
     // converted to exponent string, so just bail on that
-// TODO FIXIT
     var string = ''+self;
+// TODO FIXIT
 //    if (string.indexOf('E') > 0)
 //      string = new java.text.DecimalFormat("0.#########").format(self);
+    return fan.sys.NumFormat.formatDigits(string, pattern);
 
+    /*
     // parse pattern and get digits
     var p = fan.sys.NumPattern.parse(pattern);
     var d = fan.sys.NumDigits.makeStr(string);
 
     // route to common FanNum method
     return fan.sys.Num.toLocale(p, d, locale);
+    */
   }
   catch (err)
   {

@@ -20,6 +20,7 @@ const final class MimeType
   static const MimeType textPlain  := parse("text/plain")
   static const MimeType textHtml   := parse("text/html")
   static const MimeType textXml    := parse("text/xml")
+  static const MimeType textCss    := parse("text/css")
   static const MimeType textJsUtf8 := parse("text/javascript; charset=utf-8")
   static const MimeType textJs     := parse("text/javascript")
   static const MimeType textJson   := parse("application/json")
@@ -49,6 +50,7 @@ const final class MimeType
         if (s.equals("text/plain")) return textPlain;
         if (s.equals("text/html"))  return textHtml;
         if (s.equals("text/xml"))   return textXml;
+        if (s.equals("text/css"))   return textCss;
         if (s.equals("text/javascript; charset=utf-8")) return textJsUtf8
         if (s.equals("text/javascript")) return textJs
         if (s.equals("text/plain; charset=utf-8")) return textPlainUtf8;
@@ -176,6 +178,7 @@ const final class MimeType
       case "txt":   return textPlainUtf8;
       case "html":  return textHtmlUtf8;
       case "xml":   return textXmlUtf8;
+      case "css":   return textCss;
       case "htm":   return textHtmlUtf8;
       case "json":  return textJsonUtf8;
       case "js":    return textJs;

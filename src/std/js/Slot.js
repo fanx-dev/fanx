@@ -45,8 +45,8 @@ fan.std.Slot.findMethod = function(qname, checked)
 {
   if (checked === undefined) checked = true;
   var slot = fan.std.Slot.find(qname, checked);
-  if (slot instanceof fan.sys.Method || checked)
-    return fan.sys.ObjUtil.coerce(slot, fan.sys.Method.$type);
+  if (slot instanceof fan.std.Method || checked)
+    return fan.sys.ObjUtil.coerce(slot, fan.std.Method.$type);
   return null;
 }
 
@@ -95,7 +95,7 @@ fan.std.Slot.prototype.parent = function() { return this.m_parent; }
 fan.std.Slot.prototype.qname = function() { return this.m_qname; }
 fan.std.Slot.prototype.$name = function() { return this.m_name; }
 fan.std.Slot.prototype.isField = function() { return this instanceof fan.sys.Field; }
-fan.std.Slot.prototype.isMethod = function() { return this instanceof fan.sys.Method; }
+fan.std.Slot.prototype.isMethod = function() { return this instanceof fan.std.Method; }
 
 //////////////////////////////////////////////////////////////////////////
 // Flags

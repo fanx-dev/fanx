@@ -137,8 +137,10 @@ fan.std.Pod.find = function(name, checked)
 {
   if (checked === undefined) checked = true;
   var p = fan.std.Pod.$pods[name];
-  if (p == null && checked)
+  if (p == null && checked) {
+    //console.log("not find Pod :"+name+" in " + fan.std.Pod.$pods);
     throw fan.sys.UnknownPodErr.make(name);
+  }
   return p;
 }
 
@@ -148,6 +150,7 @@ fan.std.Pod.$add = function(name)
     throw fan.sys.Err.make("Pod already exists " + name);
   var p = new fan.std.Pod(name);
   fan.std.Pod.$pods[name] = p;
+  //console.log("add Pod :"+name);
   return p;
 }
 fan.std.Pod.$pods = [];

@@ -48,8 +48,8 @@ fan.sys.ByteArray.prototype.fill = function(val, times) {
 }
 
 fan.sys.ByteArray.prototype.copyFrom = function(that, thatOffset, thisOffset, length) {
-	if (this == that) {
-		this.m_array.copyWithin(thisOffset, thisOffset, thisOffset+length)
+	if (this === that) {
+		this.m_array.copyWithin(thisOffset, thatOffset, thatOffset+length)
 		return this;
 	}
 
