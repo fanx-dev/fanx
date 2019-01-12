@@ -226,6 +226,7 @@ abstract class CNamespace
   once CType? voidType             () { findType("sys", "Void") }
   once CType? fieldNotSetErrType   () { findType("sys", "FieldNotSetErr") }
   once CType? notImmutableErrType  () { findType("sys", "NotImmutableErr") }
+  once CType? thisType             () { findType("sys", "This") }
 
   once CType? decimalType() { findType("std", "Decimal") }
   once CType? durationType() { findType("std", "Duration") }
