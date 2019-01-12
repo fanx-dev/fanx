@@ -242,7 +242,7 @@ public class FanUtil {
    * Given a Fantom qname, get the Java type signature: sys::Obj =>
    * java/lang/Object foo::Bar => fan/foo/Bar
    */
-  public static String toJavaTypeSig(String podName, String typeName, boolean nullable) {
+  public static String toJavaTypeSig(String podName, String typeName, boolean nullable, String extName) {
     if (podName.equals("sys")) {
       switch (typeName.charAt(0)) {
       case 'B':
@@ -254,12 +254,22 @@ public class FanUtil {
 //          return "java/math/BigDecimal";
 //        break;
       case 'F':
-        if (typeName.equals("Float"))
-          return nullable ? "java/lang/Double" : "D";
+        if (typeName.equals("Float")) {
+        	if (nullable) return "java/lang/Double";
+            if (extName.equals("")) { return "D"; }
+            else if (extName.equals("32")) { return "F"; }
+            else if (extName.equals("64")) { return "D"; }
+        }
         break;
       case 'I':
-        if (typeName.equals("Int"))
-          return nullable ? "java/lang/Long" : "J";
+        if (typeName.equals("Int")) {
+          if (nullable) return "java/lang/Long";
+          if (extName.equals("")) { return "J"; }
+          else if (extName.equals("8")) { return "B"; }
+          else if (extName.equals("16")) { return "S"; }
+          else if (extName.equals("32")) { return "I"; }
+          else if (extName.equals("64")) { return "J"; }
+        }
         break;
       case 'N':
         if (typeName.equals("Num"))
@@ -380,7 +390,7 @@ public class FanUtil {
    * Given a Fantom type, get the Java type signature: fan/sys/Duration
    */
   public static String toJavaTypeSig(Type t) {
-    return toJavaTypeSig(t.podName(), t.name(), t.isNullable());
+    return toJavaTypeSig(t.podName(), t.name(), t.isNullable(), "");
   }
 
   /**
@@ -400,7 +410,7 @@ public class FanUtil {
   }
   
   public static String toJavaMemberSig(FTypeRef t) {
-	    String sig = toJavaTypeSig(t.podName, t.typeName, t.isNullable());
+	    String sig = toJavaTypeSig(t.podName, t.typeName, t.isNullable(), t.extName);
 
 	    // java type sig for primitives and array is member signature
 	    if (sig.length() == 1)
@@ -423,10 +433,20 @@ public class FanUtil {
           return 'V';
         if (t.typeName.equals("Bool"))
           return 'I';
-        if (t.typeName.equals("Int"))
-          return 'J';
-        if (t.typeName.equals("Float"))
-          return 'D';
+        if (t.typeName.equals("Int")) {
+        	String extName = t.extName;
+        	if (extName.equals("")) { return 'J'; }
+            else if (extName.equals("8")) { return 'B'; }
+            else if (extName.equals("16")) { return 'S'; }
+            else if (extName.equals("32")) { return 'I'; }
+            else if (extName.equals("64")) { return 'J'; }
+        }
+        if (t.typeName.equals("Float")) {
+        	String extName = t.extName;
+        	if (extName.equals("")) { return 'D'; }
+            else if (extName.equals("32")) { return 'F'; }
+            else if (extName.equals("64")) { return 'D'; }
+        }
       }
       if (t.podName.startsWith("[java]")) {
         // FFI primitives

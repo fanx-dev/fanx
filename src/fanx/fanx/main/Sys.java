@@ -176,6 +176,16 @@ public class Sys {
 			if (typeName.indexOf('^') != -1) {
 				return findFType("sys", "Obj", checked);
 			}
+			
+			if (podName.equals("sys")) {
+				if (typeName.equals("Int8") || typeName.equals("Int16") ||
+						typeName.equals("Int32")  || typeName.equals("Int64") ) {
+					return findFType("sys", "Int", checked);
+				}
+				else if (typeName.equals("Float32")  || typeName.equals("Float64") ) {
+					return findFType("sys", "Float", checked);
+				}
+			}
 
 			if (checked) {
 				throw makeErr("sys::UnknownTypeErr", podName + "::" + typeName);

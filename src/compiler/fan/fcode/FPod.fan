@@ -54,9 +54,13 @@ final class FPod : CPod, FConst
     return null
   }
 
-  override CType[] types()
+  once override CType[] types()
   {
-    return ftypes
+    if (virtualType == null) return ftypes
+    res := CType[,]
+    res.addAll(ftypes)
+    res.addAll(virtualType)
+    return res
   }
 
   CType? toType(Int index)
@@ -185,7 +189,7 @@ final class FPod : CPod, FConst
     // read type meta-data
     in := this.in(`/fcode/types.def`)
     ftypes = FType[,]
-    ftypesByName = Str:FType[:]
+    ftypesByName = Str:CType[:]
     if (in != null)
     {
       in.readU2.times
@@ -197,6 +201,26 @@ final class FPod : CPod, FConst
       }
       in.close
     }
+
+    if (name == "sys") {
+      virtualType = [,]
+      intType := ftypesByName["Int"]
+      floatType := ftypesByName["Float"]
+
+      registerType("Int8", intType, "8")
+      registerType("Int16", intType, "16")
+      registerType("Int32", intType, "32")
+      registerType("Int64", intType, "64")
+      registerType("Float32", floatType, "32")
+      registerType("Float64", floatType, "64")
+    }
+  }
+
+  private Void registerType(Str name, CType root, Str extName) {
+    int8Type := SizedPrimitiveType(root, extName)
+    ftypesByName[name] = int8Type
+    ns.typeCache[name] = int8Type
+    virtualType.add(int8Type)
   }
 
   **
@@ -366,6 +390,7 @@ final class FPod : CPod, FConst
   FTable strs               // Str literals
   FTable durations          // Duration literals
   FTable uris               // Uri literals
-  [Str:FType]? ftypesByName // if loaded
+  [Str:CType]? ftypesByName // if loaded
+  CType[]? virtualType      // compiler hack for sized primitive Type
 
 }

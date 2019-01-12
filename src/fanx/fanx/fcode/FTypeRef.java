@@ -27,13 +27,14 @@ public final class FTypeRef
     this.id = id;
     this.podName  = podName;
     this.typeName = typeName;
+    this.extName = sig;
 
     // compute mask
     int mask = 0;
     int stackType = OBJ;
     boolean nullable = false;
     if (sig.endsWith("?")) { mask |= NULLABLE; nullable = true; }
-    if (!sig.startsWith(":") && sig.length() > 1)  mask |= GENERIC_INSTANCE;
+    if (sig.startsWith("<"))  mask |= GENERIC_INSTANCE;
     if (podName.startsWith("[java]"))
     {
       // [java]::
@@ -78,14 +79,24 @@ public final class FTypeRef
           if (typeName.equals("Float"))
           {
             mask |= SYS_FLOAT;
-            if (!nullable) { mask |= PRIMITIVE_DOUBLE; stackType = DOUBLE; }
+            if (!nullable) {
+              if (sig.equals("")) { mask |= PRIMITIVE_DOUBLE; stackType = DOUBLE; }
+              else if (sig.equals("32")) { mask |= PRIMITIVE_FLOAT; stackType = FLOAT; }
+              else if (sig.equals("64")) { mask |= PRIMITIVE_DOUBLE; stackType = DOUBLE; }
+            }
           }
           break;
         case 'I':
           if (typeName.equals("Int"))
           {
             mask |= SYS_INT;
-            if (!nullable) { mask |= PRIMITIVE_LONG; stackType = LONG; }
+            if (!nullable) {
+              if (sig.equals("")) { mask |= PRIMITIVE_LONG; stackType = LONG; }
+              else if (sig.equals("8")) { mask |= PRIMITIVE_BYTE; stackType = BYTE; }
+              else if (sig.equals("16")) { mask |= PRIMITIVE_SHORT; stackType = SHORT; }
+              else if (sig.equals("32")) { mask |= PRIMITIVE_INT; stackType = INT; }
+              else if (sig.equals("64")) { mask |= PRIMITIVE_LONG; stackType = LONG; }
+            }
           }
           break;
 //        case 'L':
@@ -194,7 +205,7 @@ public final class FTypeRef
   {
     if (jname == null) {
     	if (!genericParameterInited) throw new RuntimeException("unlinkedGenericParameter");
-    	jname = FanUtil.toJavaTypeSig(podName, typeName, isNullable());
+    	jname = FanUtil.toJavaTypeSig(podName, typeName, isNullable(), extName);
     }
     return jname;
   }
@@ -369,6 +380,7 @@ public final class FTypeRef
   public final int stackType;      // stack type constant
   public final String signature;   // full fan signature (qname or parameterized)
   private String jname;            // fan/sys/Duration, java/lang/Boolean, Z
+  public final String extName;
   
   private boolean genericParameterInited = true;
 

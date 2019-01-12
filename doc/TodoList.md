@@ -2,6 +2,8 @@
 
 ## Todo List ##
 
-- numeric precision in JVM
 - Generic infer
-
+- named param
+- finally
+- sync
+- parser

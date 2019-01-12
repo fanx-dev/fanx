@@ -989,6 +989,7 @@ public class FCodeEmit
     {
       if (from.isRef()) { intUnbox(!from.isInt()); return; }
       if (from.isPrimitiveIntLike()) { code.op(I2L); return; }
+      if (from.isPrimitiveLong()) return;
     }
 
     // Double, float -> double
@@ -996,6 +997,7 @@ public class FCodeEmit
     {
       if (from.isRef()) { floatUnbox(!from.isFloat()); return; }
       if (from.isPrimitiveFloat()) { code.op(F2D); return; }
+      if (from.isPrimitiveDouble()) return;
     }
 
     // long, Long -> int, byte, short

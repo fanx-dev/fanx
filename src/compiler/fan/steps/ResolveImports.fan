@@ -195,8 +195,8 @@ class ResolveImports : CompilerStep
   {
     toAdd.each |CType t|
     {
-      list := types[t.name]
-      if (list == null) types[t.name] = list = CType[,]
+      list := types[t.name+t.extName]
+      if (list == null) types[t.name+t.extName] = list = CType[,]
       list.add(t)
     }
   }

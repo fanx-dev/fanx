@@ -654,3 +654,13 @@ class PlaceHolderType : CType {
   override Str:CSlot slots() { throw UnsupportedErr() }
   override COperators operators() { ns.objType.operators }
 }
+
+**
+** Int8/Int16/Int32/Int64/Float32/Float64
+**
+class SizedPrimitiveType : ProxyType {
+  override Str extName
+  new make(CType root, Str extName) : super(root) {
+    this.extName = extName
+  }
+}
