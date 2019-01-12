@@ -135,6 +135,28 @@ The new api support 'encoding' and 'nonstandard' options and xpath.
   static const AcotrLocal<Bar> local := ActorLocal()
 ```
 
+
+### Static Namespace ###
+fanx allow same name static slots in inheritance.
+```
+   class Base {
+     static Void foo() {}
+   }
+   class Sub : Base {
+     static Void foo() {}
+
+     static Void main() {
+       foo  //call Sub.foo
+       Base.foo //call Base.foo
+     }
+   }
+```
+
+### Primitive type ###
+
+More primitive type: Int8/Int16/Int32/Int64/Float32/Float64.
+
+
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
 
 

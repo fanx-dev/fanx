@@ -8,3 +8,4 @@
 - Add JS support
 - Fix JS static init dependency
 - Support primitive type (Int8/Int16/Int32/Int64/Float32/Float64)
+- Fix data class ctor

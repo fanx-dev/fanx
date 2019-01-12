@@ -7,6 +7,7 @@ Fields and Methods
   class Person
   {
     Str name
+
     //Field Accessors
     Int age {
       set { checkAge(val); &age = it }
@@ -129,7 +130,7 @@ Fantom serialization format just is a subset of Fantom source grammar.
 
 Modularity
 =======
-Pods are the unit of versioning and deployment. They are combined together using clear dependencies.
+Pods are the unit of versioning deployment and namespace. They are combined together using clear dependencies.
 The pod build script:
 ```
   podName = testlib

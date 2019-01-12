@@ -25,7 +25,7 @@ import fanx.util.*;
  */
 public class Fan
 {
-  final static String version = "1.0";
+  final static String version = "2.0";
 //////////////////////////////////////////////////////////////////////////
 // Execute
 //////////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ public class Fan
   static void version(String progName)
   {
     println(progName);
-    println("Copyright (c) 2006-2017, Brian Frank and Andy Frank");
+    println("Copyright (c) 2019, chunquedong");
     println("Licensed under the Academic Free License version 3.0");
     println("");
     println("Java Runtime:");
@@ -259,7 +259,7 @@ public class Fan
     println("  java.home:       " + System.getProperty("java.home"));
     
     println("  fan.platform:    " + Sys.env.platform());
-    println("  fan.version:     " + version);
+    println("  fanx.version:     " + version);
     println("  fan.home:        " + Sys.env.homeDir());
 
     List<String> path = Sys.env.envPaths();
@@ -283,7 +283,7 @@ public class Fan
     long t2 = System.nanoTime();
 
     println("");
-    println("Fantom Pods [" + (t2-t1)/1000000L + "ms]:");
+    println("Fanx Pods [" + (t2-t1)/1000000L + "ms]:");
 
     println("  Pod\tVersion");
     println("  ---\t-------");
@@ -331,12 +331,12 @@ public class Fan
         }
         else if (a == "-version")
         {
-          version("Fantom Launcher");
+          version("Fanx Launcher");
           return 3;
         }
         else if (a == "-pods")
         {
-          pods("Fantom Launcher");
+          pods("Fanx Launcher");
           return 4;
         }
         else if (a.charAt(0) == '-')
@@ -364,7 +364,7 @@ public class Fan
 
   void help()
   {
-    println("Fantom Launcher");
+    println("Fanx Launcher");
     println("Usage:");
     println("  fan [options] <pod>::<type>.<method> [args]*");
     println("  fan [options] <filename> [args]*");

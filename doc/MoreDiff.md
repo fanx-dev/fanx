@@ -2,22 +2,6 @@
 
 # More Different #
 
-### Static Namespace ###
-fanx allow same name static slots in inheritance.
-```
-   class Base {
-     static Void foo() {}
-   }
-   class Sub : Base {
-     static Void foo() {}
-
-     static Void main() {
-       foo  //call Sub.foo
-       Base.foo //call Base.foo
-     }
-   }
-```
-
 ### Return From Void ###
 not allow return a value from Void method, except return a Void type.
 
