@@ -38,7 +38,7 @@ class ExprFlat : CompilerStep
       case StmtId.nop:             return
       case StmtId.expr:            processExpr(((ExprStmt)stmt))
       case StmtId.localDef:        processExpr((LocalDefStmt)stmt)
-      case StmtId.jumpStmt:        processExpr((IfStmt)stmt)
+      case StmtId.jumpStmt:        processExpr((JumpStmt)stmt)
       case StmtId.returnStmt:      processExpr((ReturnStmt)stmt)
       case StmtId.targetLable:     addStmt(stmt)
       case StmtId.throwStmt:       processExpr((ThrowStmt)stmt)

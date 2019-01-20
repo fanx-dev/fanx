@@ -235,9 +235,16 @@ public final class FPod
     if (in == null) { types = new FType[0]; return; }
 
     // if we have types, then ensure we have correct fcode
-    if (!FConst.FCodeVersion.equals(fcodeVersion))
+    if (FConst.FCodeVersion.equals(fcodeVersion)) {
+    	fcodeVer = 111;
+    }
+    else if (fcodeVersion.equals("1.1.0")) {
+    	fcodeVer = 110;
+    }
+    else {
       throw new IOException("Invalid fcode version: " + fcodeVersion + " != " + FConst.FCodeVersion);
-
+    }
+    
     types = new FType[in.u2()];
     for (int i=0; i<types.length; ++i)
     {
@@ -290,4 +297,6 @@ public final class FPod
   
   public Object reflectPod = null;
   public Object compilerCache = null;
+  
+  public int fcodeVer;
 }

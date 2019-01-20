@@ -27,7 +27,6 @@ class CodeAsm : CompilerSupport
     this.errCount  = 0
     this.lines     = Buf.make; lines.writeI2(-1)
     this.lineCount = 0
-    this.loopStack = Loop[,]
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,75 +36,95 @@ class CodeAsm : CompilerSupport
   Void block(Block block)
   {
     block.stmts.each |Stmt s| { stmt(s) }
+    if (block.stmts.last?.id === StmtId.targetLable) {
+      op(FOp.Return)
+    }
+    genErrTable(block)
   }
 
-  Void stmt(Stmt stmt)
+  private Void stmt(Stmt stmt)
   {
     switch (stmt.id)
     {
       case StmtId.nop:           return
       case StmtId.expr:          expr(((ExprStmt)stmt).expr)
       case StmtId.localDef:      localVarDefStmt((LocalDefStmt)stmt)
-      case StmtId.ifStmt:        ifStmt((IfStmt)stmt)
+      //case StmtId.ifStmt:        ifStmt((IfStmt)stmt)
       case StmtId.returnStmt:    returnStmt((ReturnStmt)stmt)
       case StmtId.throwStmt:     throwStmt((ThrowStmt)stmt)
-      case StmtId.forStmt:       forStmt((ForStmt)stmt)
-      case StmtId.whileStmt:     whileStmt((WhileStmt)stmt)
-      case StmtId.breakStmt:     breakOrContinueStmt(stmt)
-      case StmtId.continueStmt:  breakOrContinueStmt(stmt)
-      case StmtId.switchStmt:    switchStmt((SwitchStmt)stmt)
-      case StmtId.tryStmt:       tryStmt((TryStmt)stmt)
+      //case StmtId.forStmt:       forStmt((ForStmt)stmt)
+      //case StmtId.whileStmt:     whileStmt((WhileStmt)stmt)
+      //case StmtId.breakStmt:     breakOrContinueStmt(stmt)
+      //case StmtId.continueStmt:  breakOrContinueStmt(stmt)
+      //case StmtId.switchStmt:    switchStmt((SwitchStmt)stmt)
+      //case StmtId.tryStmt:       tryStmt((TryStmt)stmt)
+      case StmtId.jumpStmt:      jumpStmt((JumpStmt)stmt)
+      case StmtId.targetLable:   targetLabel((TargetLabel)stmt)
+      case StmtId.switchTable:   switchTable((SwitchTable)stmt)
+      case StmtId.exceptionStart:  return
+      case StmtId.exceptionHandler:exceptionHandler(stmt)
       default:                   throw Err(stmt.id.toStr)
     }
   }
 
-  private Void ifStmt(IfStmt stmt)
-  {
-    endLabel := -1
-    c := Cond.make
+  private Void jumpToLabel(FOp op, TargetLabel label) {
+    pos := jump(op, label.pos)
+    label.backpatchs.add(pos)
+  }
 
+  private Void jumpStmt(JumpStmt stmt) {
     // optimize: if (true)
-    if (stmt.condition.id == ExprId.trueLiteral)
-    {
-      block(stmt.trueBlock)
+    if (stmt.condition != null && stmt.condition.id == ExprId.trueLiteral) {
       return
     }
 
     // optimize: if (false)
-    if (stmt.condition.id == ExprId.falseLiteral)
+    if (stmt.condition == null || stmt.condition.id == ExprId.falseLiteral)
     {
-      if (stmt.falseBlock != null)
-        block(stmt.falseBlock)
+      if (stmt.isLeave) {
+        jumpToLabel(FOp.Leave, stmt.target)
+      }
+      else {
+        jumpToLabel(FOp.Jump, stmt.target)
+      }
       return
     }
 
-    // check condition - if the condition is itself a CondExpr
-    // then we just have it branch directly to the true/false
-    // block rather than wasting instructions to push true/false
-    // onto the stack
-    if (stmt.condition is CondExpr)
-    {
-      cond((CondExpr)stmt.condition, c)
+    expr(stmt.condition)
+    jumpToLabel(FOp.JumpFalse, stmt.target)
+  }
+
+  private Void targetLabel(TargetLabel label) {
+    label.pos = mark
+    label.backpatchs.each |p| { backpatch(p, label.pos) }
+  }
+
+  private Void switchTable(SwitchTable stmt) {
+    expr(stmt.condition)
+    op(FOp.Switch)
+    code.writeI2(stmt.jumps.size)
+
+    stmt.jumps.each |label| {
+      if (label == null) {
+        label = stmt.defJump ?: stmt.endLabel
+      }
+      label.backpatchs.add(mark)
+      code.writeI2(label.pos)
     }
-    else
-    {
-      expr(stmt.condition)
-      c.jumpFalses.add(jump(FOp.JumpFalse))
+  }
+
+  private Void exceptionHandler(ExceptionHandler handler) {
+    switch (handler.type) {
+      case ExceptionHandler.typeCatch:
+        if (handler.errType == null) op(FOp.CatchAllStart)
+        else {
+          //localVarDefStmt
+        }
+      case ExceptionHandler.typeFinallyStart:
+        op(FOp.FinallyStart)
+      case ExceptionHandler.typeFinallyEnd:
+        op(FOp.FinallyEnd)
     }
-
-    // true block
-    c.jumpTrues.each |Int pos| { backpatch(pos) }
-    block(stmt.trueBlock)
-    if (!stmt.trueBlock.isExit && stmt.falseBlock != null)
-      endLabel = jump(FOp.Jump)
-
-    // false block
-    c.jumpFalses.each |Int pos| { backpatch(pos) }
-    if (stmt.falseBlock != null)
-      block(stmt.falseBlock)
-
-    // end
-    if (endLabel != -1) backpatch(endLabel)
   }
 
   private Void returnStmt(ReturnStmt stmt)
@@ -127,32 +146,6 @@ class CodeAsm : CompilerSupport
         opType(FOp.Pop, stmt.expr.ctype)
         exprOnStack = false
       }
-    }
-
-    // if we are in a protected region, then we can't return immediately,
-    // rather we need to save the result into a temporary local; and use
-    // a "leave" instruction which we will backpatch in finishCode() with
-    // the actual return sequence;
-    if (inProtectedRegion)
-    {
-      // if returning a result then stash in temp local
-      if (exprOnStack)
-      {
-        returnLocal = stmt.leaveVar
-        op(FOp.StoreVar, returnLocal.register)
-      }
-
-      // jump to any finally blocks we are inside
-      protectedRegions.eachr |ProtectedRegion region|
-      {
-        if (region.hasFinally)
-          region.jumpFinallys.add(jump(FOp.JumpFinally))
-      }
-
-      // generate leave instruction and register for backpatch
-      if (leavesToReturn == null) leavesToReturn = Int[,]
-      leavesToReturn.add(jump(FOp.Leave))
-      return
     }
 
     // process as normal return
@@ -193,420 +186,22 @@ class CodeAsm : CompilerSupport
     }
   }
 
-//////////////////////////////////////////////////////////////////////////
-// Loops
-//////////////////////////////////////////////////////////////////////////
+  private Void genErrTable(Block block) {
+    block.stmts.each |Stmt s| {
+      if (s.id === StmtId.exceptionStart) {
+        ExceptionRegion r := s
+        r.catchs.each |c|{
+          addToErrTable(r.tryStart.pos, r.tryEnd.pos, c.start.pos, c.errType)
+        }
 
-  private Void whileStmt(WhileStmt stmt)
-  {
-    // push myself onto the loop stack so that breaks
-    // and continues can register for backpatching
-    loop := Loop(stmt)
-    loopStack.push(loop)
-
-    // assemble the while loop code
-    continueLabel := mark
-    expr(stmt.condition)
-    breakJump := jump(FOp.JumpFalse)
-    block(stmt.block)
-    jump(FOp.Jump, continueLabel)
-    breakLabel := mark
-    backpatch(breakJump)
-
-    // backpatch continues/breaks
-    loop.continues.each |Int pos| { backpatch(pos, continueLabel) }
-    loop.breaks.each |Int pos| { backpatch(pos, breakLabel) }
-
-    // pop loop from stack
-    loopStack.pop
-
-    // TODO - the fcode will often contain Jumps to Jumps which can be optimized
-  }
-
-  private Void forStmt(ForStmt stmt)
-  {
-    breakJump := -1
-
-    // push myself onto the loop stack so that breaks
-    // and continues can register for backpatching
-    loop := Loop(stmt)
-    loopStack.push(loop)
-
-    // assemble init if available
-    if (stmt.init != null) this.stmt(stmt.init)
-
-    // assemble the for loop code
-    condLabel := mark
-    if (stmt.condition != null)
-    {
-      expr(stmt.condition)
-      breakJump = jump(FOp.JumpFalse)
-    }
-    block(stmt.block)
-    updateLabel := mark
-    if (stmt.update != null) expr(stmt.update)
-    jump(FOp.Jump, condLabel)
-    endLabel := mark
-    if (breakJump != -1) backpatch(breakJump, endLabel)
-
-    // backpatch continues/breaks
-    loop.continues.each |Int pos| { backpatch(pos, updateLabel) }
-    loop.breaks.each |Int pos| { backpatch(pos, endLabel) }
-
-    // pop loop from stack
-    loopStack.pop
-
-    // TODO - the fcode will often contain Jumps to Jumps which can be optimized
-  }
-
-  private Void breakOrContinueStmt(Stmt stmt)
-  {
-    // associated loop should be top of stack
-    loop := loopStack.peek
-    if (loop.stmt !== stmt->loop)
-      throw err("Internal compiler error", stmt.loc)
-
-    // if we are inside a protection region which was pushed onto
-    // my loop's own stack that means this break or continue
-    // needs to jump out of the protected region - that requires
-    // calling each region's finally block and using a "leave"
-    // instruction rather than a standard "jump"
-    Int? toBackpatch := null
-    if (!loop.protectedRegions.isEmpty)
-    {
-      // jump to any finally blocks we are inside
-      loop.protectedRegions.eachr |ProtectedRegion region|
-      {
-        if (region.hasFinally)
-          region.jumpFinallys.add(jump(FOp.JumpFinally))
-      }
-
-      // generate leave instruction
-      toBackpatch = jump(FOp.Leave)
-    }
-    else
-    {
-      // generate standard jump instruction
-      toBackpatch = jump(FOp.Jump)
-    }
-
-    // register for backpatch
-    if (stmt.id === StmtId.breakStmt)
-      loop.breaks.add(toBackpatch)
-    else
-      loop.continues.add(toBackpatch)
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Switch
-//////////////////////////////////////////////////////////////////////////
-
-  private Void switchStmt(SwitchStmt stmt)
-  {
-    // A table switch is a series of contiguous (or near contiguous)
-    // cases which can be represented an offset into a jump table.
-    minMax := computeTableRange(stmt)
-    if (minMax != null)
-      tableSwitchStmt(stmt, minMax[0], minMax[1])
-    else
-      equalsSwitchStmt(stmt)
-  }
-
-  **
-  ** Compute the range of this switch and return as a list of '[min, max]'
-  ** if the switch is a candidate for a table switch as a series of
-  ** contiguous (or near contiguous) cases which can be represented an
-  ** offset into a jump table.  Return null if the switch is not numeric
-  ** or too sparse to use as a table switch.
-  **
-  private Int[]? computeTableRange(SwitchStmt stmt)
-  {
-    // we only compute ranges for Ints and Enums
-    ctype := stmt.condition.ctype
-    if (!ctype.isInt && !ctype.isEnum)
-      return null
-
-    // now we need to determine contiguous range
-    min := 2147483647
-    max := -2147483648
-    count := 0
-    try
-    {
-      stmt.cases.each |Case c|
-      {
-        for (i:=0; i<c.cases.size; ++i)
-        {
-          count++
-          expr := c.cases[i]
-          // TODO: need to handle static const Int fields here
-          literal := expr.asTableSwitchCase
-          if (literal == null) throw CompilerErr("return null", c.loc)
-          if (literal < min) min = literal
-          if (literal > max) max = literal
+        if (r.finallyStart != null) {
+          addToErrTable(r.tryStart.pos, r.tryEnd.pos, r.finallyStart.start.pos, null)
+          r.catchs.each |c|{
+            addToErrTable(c.start.pos, c.end.pos, r.finallyStart.start.pos, null)
+          }
         }
       }
     }
-    catch (CompilerErr e)
-    {
-      return null
-    }
-
-    // if no cases, then don't use tableswitch
-    if (count == 0) return null
-
-    // enums and anything with less than 32 jumps is immediately
-    // allowed, otherwise base the table on a percentage of count
-    delta := max - min
-    if (ctype.isEnum || delta < 32 || count*32 > delta)
-      return [min,max]
-    else
-      return null
-  }
-
-  private Void tableSwitchStmt(SwitchStmt stmt, Int min, Int max)
-  {
-    stmt.isTableswitch = true
-    conditionType := stmt.condition.ctype
-    isEnum := conditionType.isEnum
-
-    // push condition onto the stack
-    expr(stmt.condition)
-
-    // get a real int onto the stack
-    if (conditionType.isInt && conditionType.isNullable)
-      coerceOp(conditionType, ns.intType)
-    else if (isEnum)
-      op(FOp.CallVirtual, fpod.addMethodRef(ns.enumOrdinal))
-
-    // if min is not zero, then do a subtraction so that
-    // our condition is a zero based index into the jump table
-    if (min != 0)
-    {
-      op(FOp.LoadInt, fpod.ints.add(-min))
-      op(FOp.CallVirtual, fpod.addMethodRef(ns.intPlus))
-    }
-
-    // now allocate our jump table
-    count := max - min + 1
-    jumps := Case?[,]
-    jumps.size = count
-
-    // walk thru each case, and map the jump offset to a block
-    stmt.cases.each |Case c|
-    {
-      for (i:=0; i<c.cases.size; ++i)
-      {
-        expr    := c.cases[i]
-        literal := expr.asTableSwitchCase
-        offset  := literal - min
-        jumps[offset] = c
-      }
-    }
-
-    // now write the switch bytecodes
-    op(FOp.Switch)
-    code.writeI2(count)
-    jumpStart := code.size
-    fill := count*2
-    fill.times |->| { code.write(0xff) }  // we'll backpatch the jump offsets last
-
-    // default block goes first - it's the switch fall
-    // thru, save offset to back patch jump
-    defaultStart := mark
-    defaultEnd := switchBlock(stmt.defaultBlock)
-
-    // now write each case block
-    caseEnds := Int?[,]
-    caseEnds.size = stmt.cases.size
-    stmt.cases.each |Case c, Int i|
-    {
-      c.startOffset = code.size
-      caseEnds[i] = switchBlock(c.block)
-    }
-
-    // backpatch the jump table
-    end := code.size
-    code.seek(jumpStart)
-    jumps.each |Case? c, Int i|
-    {
-      if (c == null)
-        code.writeI2(defaultStart)
-      else
-        code.writeI2(c.startOffset)
-    }
-    code.seek(end)
-
-    // backpatch all the case blocks to jump here when done
-    if (defaultEnd != -1) backpatch(defaultEnd)
-    caseEnds.each |Int pos|
-    {
-      if (pos != -1) backpatch(pos)
-    }
-  }
-
-  private Void equalsSwitchStmt(SwitchStmt stmt)
-  {
-    stmt.isTableswitch = false
-
-    // push condition onto the stack
-    condition := stmt.condition
-    expr(condition)
-
-    // walk thru each case, keeping track of all the
-    // places we need to backpatch when cases match
-    jumpPositions := Int[,]
-    jumpCases := Case[,]
-    stmt.cases.each |Case c|
-    {
-      for (i:=0; i<c.cases.size; ++i)
-      {
-        opType(FOp.Dup, condition.ctype)
-        compareOp(stmt.condition.ctype, FOp.CmpEQ, c.cases[i])
-        jumpPositions.add(jump(FOp.JumpTrue))
-        jumpCases.add(c)
-      }
-    }
-
-    // default block goes first - it's the switch fall
-    // thru, save offset to back patch jump
-    defaultStart := mark
-    defaultEnd := switchBlock(stmt.defaultBlock, condition.ctype)
-
-    // now write each case block
-    caseEnds := Int?[,]
-    caseEnds.size = stmt.cases.size
-    stmt.cases.each |Case c, Int i|
-    {
-      c.startOffset = code.size
-      caseEnds[i] = switchBlock(c.block, condition.ctype)
-    }
-
-    // backpatch the jump table
-    end := code.size
-    jumpPositions.each |Int pos, Int i|
-    {
-      backpatch(pos, jumpCases[i].startOffset)
-    }
-    code.seek(end)
-
-    // backpatch all the case blocks to jump here when done
-    if (defaultEnd != -1) backpatch(defaultEnd)
-    caseEnds.each |Int pos|
-    {
-      if (pos != -1) backpatch(pos)
-    }
-  }
-
-  private Int switchBlock(Block? block, CType? popType := null)
-  {
-    if (popType != null) opType(FOp.Pop, popType)
-    if (block != null)
-    {
-      this.block(block)
-      if (block.isExit) return -1
-    }
-    return jump(FOp.Jump)
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Try
-//////////////////////////////////////////////////////////////////////////
-
-  private Bool inProtectedRegion()
-  {
-    return protectedRegions != null && !protectedRegions.isEmpty
-  }
-
-  private Void tryStmt(TryStmt stmt)
-  {
-    // enter a "protected region" which means that we can't
-    // jump or return out of this region directly - we have to
-    // use a special "leave" jump of the protected region
-    if (protectedRegions == null) protectedRegions = ProtectedRegion[,]
-    region := ProtectedRegion(stmt)
-    protectedRegions.push(region)
-    if (!loopStack.isEmpty) loopStack.peek.protectedRegions.push(region)
-
-    // assemble body of try block
-    start := mark
-    block(stmt.block)
-    end := mark
-
-    // if the block isn't guaranteed to exit:
-    //  1) if we have a finally, then jump to finally
-    //  2) jump over catch blocks
-    tryDone := -1
-    finallyStart := -1
-    if (!stmt.block.isExit)
-    {
-      if (region.hasFinally)
-      {
-        region.jumpFinallys.add(jump(FOp.JumpFinally))
-        end = mark
-      }
-      tryDone = jump(FOp.Leave)
-    }
-
-    // assemble catch blocks
-    catchDones := Int?[,]
-    catchDones.size = stmt.catches.size
-    stmt.catches.each |Catch c, Int i|
-    {
-      catchDones[i] = tryCatch(c, start, end, region)
-    }
-
-    // assemble finally block
-    if (region.hasFinally)
-    {
-      // wrap try block and each catch block with catch all to finally
-      addToErrTable(start, end, mark, null)
-      stmt.catches.each |Catch c|
-      {
-        addToErrTable(c.start, c.end, mark, null)
-      }
-
-      // handler code
-      region.jumpFinallys.each |Int pos| { backpatch(pos) }
-      op(FOp.FinallyStart)
-      block(stmt.finallyBlock)
-      op(FOp.FinallyEnd)
-    }
-
-    // mark next statement as jump destination for try block
-    if (tryDone != -1) backpatch(tryDone)
-    catchDones.each |Int pos| { if (pos != -1) backpatch(pos) }
-
-    // leave protected region
-    if (!loopStack.isEmpty) loopStack.peek.protectedRegions.pop
-    protectedRegions.pop
-  }
-
-  private Int tryCatch(Catch c, Int start, Int end, ProtectedRegion region)
-  {
-    // assemble catch block - if there isn't a local variable
-    // we emit the CatchAllStart, otherwise the block will
-    // start off with a LocalVarDef which will write out the
-    // CatchErrStart opcode
-    handler := mark
-    c.start = mark
-    if (c.errVariable == null) op(FOp.CatchAllStart)
-    block(c.block)
-    done := -1
-    if (!c.block.isExit)
-    {
-      if (region.hasFinally)
-        region.jumpFinallys.add(jump(FOp.JumpFinally))
-
-      done = jump(FOp.Leave)
-    }
-    c.end = mark
-    op(FOp.CatchEnd)
-
-    // fill in err table
-    addToErrTable(start, end, handler, c.errType)
-
-    // return position to backpatch
-    return done
   }
 
   private Void addToErrTable(Int start, Int end, Int handler, CType? errType)
@@ -1635,16 +1230,6 @@ class CodeAsm : CompilerSupport
   **
   Buf finishCode()
   {
-    // if we had to return from a protected region, then now we
-    // need to generate the actual return instructions and backpatch
-    // all the leaves
-    if (leavesToReturn != null)
-    {
-      leavesToReturn.each |Int pos| { backpatch(pos) }
-      if (returnLocal != null) op(FOp.LoadVar, returnLocal.register)
-      op(FOp.Return)
-    }
-
     // check final size
     if (code.size >= 0x7fff) throw err("Method too big", loc)
     return code
@@ -1691,48 +1276,14 @@ class CodeAsm : CompilerSupport
   FPod fpod
   MethodDef? curMethod
   Buf code
+
   Buf errTable
   Int errCount
+
   Buf lines
   Int lineCount
   Int lastLine := -1
   Int lastOffset := -1
-  Loop[] loopStack
-
-  // protected region fields
-  ProtectedRegion[]? protectedRegions // stack of protection regions
-  Int[]? leavesToReturn    // list of Leave positions to backpatch
-  MethodVar? returnLocal    // where we stash return value
-}
-
-**************************************************************************
-** Loop
-**************************************************************************
-
-class Loop
-{
-  new make(Stmt stmt) { this.stmt = stmt }
-
-  Stmt stmt                  // WhileStmt or ForStmt
-  Int[] breaks := Int[,]     // backpatch positions
-  Int[] continues := Int[,]  // backpatch positions
-  ProtectedRegion[] protectedRegions := ProtectedRegion[,] // stack
-}
-
-**************************************************************************
-** ProtectedRegion
-**************************************************************************
-
-class ProtectedRegion
-{
-  new make(TryStmt stmt)
-  {
-    hasFinally = stmt.finallyBlock != null
-    if (hasFinally) jumpFinallys = Int[,]
-  }
-
-  Bool hasFinally      // does this region have a finally
-  Int[]? jumpFinallys  // list of JumpFinally positions to backpatch
 }
 
 **************************************************************************

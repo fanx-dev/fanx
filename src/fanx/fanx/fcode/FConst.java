@@ -17,7 +17,7 @@ public interface FConst
 // Stuff
 //////////////////////////////////////////////////////////////////////////
 
-  public static final String FCodeVersion = "1.1.0";
+  public static final String FCodeVersion = "1.1.1";
 
 //////////////////////////////////////////////////////////////////////////
 // Flags
@@ -120,10 +120,10 @@ public interface FConst
   public static final int Switch          =  47; // ()        switch jump table 2 count + 2*count
   public static final int Throw           =  48; // ()        throw Err on top of stack
   public static final int Leave           =  49; // (jmp)     jump out of a try or catch block
-  public static final int JumpFinally     =  50; // (jmp)     jump to a finally block
+  public static final int _JumpFinally     =  50; // (jmp)     jump to a finally block
   public static final int CatchAllStart   =  51; // ()        start catch all block - do not leave Err on stack
   public static final int CatchErrStart   =  52; // (type)    start catch block - leave typed Err on stack
-  public static final int CatchEnd        =  53; // ()        start catch block - leave typed Err on stack
+  public static final int _CatchEnd        =  53; // ()        start catch block - leave typed Err on stack
   public static final int FinallyStart    =  54; // ()        starting instruction of a finally block
   public static final int FinallyEnd      =  55; // ()        ending instruction of a finally block
   public static final int CallSuper       =  56; // (method)  call super method. it's only for JVM

@@ -651,7 +651,8 @@ abstract class LowerLevelStmt : Stmt {
 }
 
 class TargetLabel : LowerLevelStmt {
-  Int pos
+  Int pos := -1
+  Int[] backpatchs := [,]
 
   new make(Loc loc) : super(loc, StmtId.targetLable) {}
   
@@ -691,12 +692,14 @@ class SwitchTable : LowerLevelStmt {
   Expr condition
   TargetLabel?[] jumps
   TargetLabel? defJump
+  TargetLabel endLabel
 
   new make(Loc loc, Expr? condition)
     : super(loc, StmtId.switchTable)
   {
     this.condition = condition
     jumps = [,]
+    endLabel = TargetLabel(loc)
   }
   
   override Void walkChildren(Visitor v, VisitDepth depth)
@@ -717,7 +720,7 @@ class ExceptionRegion : LowerLevelStmt {
   TargetLabel tryStart
   TargetLabel tryEnd
   TargetLabel exceptionEnd
-  ExceptionHandler[]? catchs
+  ExceptionHandler[] catchs
   ExceptionHandler? finallyStart
   
   TryStmt stmt
@@ -725,6 +728,7 @@ class ExceptionRegion : LowerLevelStmt {
   new make(Loc loc, TryStmt stmt)
     : super(loc, StmtId.exceptionStart)
   {
+    catchs = ExceptionHandler[,]
     this.tryStart = TargetLabel(loc)
     this.tryEnd = TargetLabel(loc)
     this.exceptionEnd = TargetLabel(loc)
@@ -744,7 +748,8 @@ class ExceptionHandler : LowerLevelStmt {
   static const Int typeFinallyStart := 2
   static const Int typeFinallyEnd := 3
   
-  TargetLabel pos
+  TargetLabel start
+  TargetLabel? end
   Int type
   CType? errType
 
@@ -752,7 +757,7 @@ class ExceptionHandler : LowerLevelStmt {
     : super(loc, StmtId.exceptionHandler)
   {
     this.type = type
-    this.pos = TargetLabel(loc)
+    this.start = TargetLabel(loc)
   }
   
   override Void print(AstWriter out)

@@ -360,6 +360,10 @@ class StmtFlat : CompilerStep
         table.jumps[offset] = label
         
         block(c.block)
+
+        jmp := JumpStmt.makeGoto(c.loc)
+        jmp.target = table.endLabel
+        addStmt(jmp)
       }
     }
     
@@ -370,6 +374,7 @@ class StmtFlat : CompilerStep
       
       block(stmt.defaultBlock)
     }
+    addStmt(table.endLabel)
   }
 
   private Void equalsSwitchStmt(SwitchStmt stmt)
@@ -450,10 +455,14 @@ class StmtFlat : CompilerStep
     {
       handler := ExceptionHandler(c.loc, ExceptionHandler.typeCatch)
       handler.errType = c.errType
-      addStmt(handler.pos)
-      addStmt(handler)
-      block(c.block)
       exception.catchs.add(handler)
+      addStmt(handler.start)
+      addStmt(handler)
+
+      block(c.block)
+
+      handler.end = TargetLabel(c.loc)
+      addStmt(handler.end)
       
       if (!c.block.isExit)
       {
@@ -470,14 +479,18 @@ class StmtFlat : CompilerStep
     if (exception.hasFinally)
     {
       finallyStart := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyStart)
-      addStmt(finallyStart.pos)
-      addStmt(finallyStart)
-      block(stmt.finallyBlock)
       exception.finallyStart = finallyStart
+      addStmt(finallyStart.start)
+      addStmt(finallyStart)
+
+      block(stmt.finallyBlock)
       
+      finallyStart.end = TargetLabel(stmt.finallyBlock.loc)
+      addStmt(finallyStart.end)
+
       finallyEnd := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyEnd)
-      addStmt(finallyEnd.pos)
       addStmt(finallyEnd)
+      addStmt(finallyEnd.start)
     }
     
     addStmt(exception.exceptionEnd)

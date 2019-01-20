@@ -133,10 +133,10 @@ public class FCodeEmit
 
         case Throw:               doThrow(); break;
         case Leave:               jump(); break;  // no diff than Jump in Java
-        case JumpFinally:         jumpFinally(); break;
+        case _JumpFinally:        jumpFinally(); break;
         case CatchAllStart:       code.op(POP); break;
         case CatchErrStart:       catchErrStart(); break;
-        case CatchEnd:            break;
+        case _CatchEnd:           break;
         case FinallyStart:        finallyStart(); break;
         case FinallyEnd:          finallyEnd(); break;
 
@@ -1072,37 +1072,55 @@ public class FCodeEmit
 
   private void jumpFinally()
   {
-    code.op(JSR);
-    JumpNode j = branch();
-    j.isFinally = true;
+	  if (pod.fcodeVer == 110) {
+	    code.op(JSR);
+	    JumpNode j = branch();
+	    j.isFinally = true;
+	  }
   }
 
   private void finallyStart()
   {
-    // create a new temporary local variable to stash stack pointer
-    if (finallyEx < 0)
-    {
-      finallyEx = code.maxLocals;
-      finallySp = code.maxLocals+1;
-      code.maxLocals += 2;
-    }
-
-    // generate the "catch all" block - this section of code
-    // is always 8 bytes, hence the eight byte offset we have to
-    // add to the JumpFinally/JSR offset to skip it to get the
-    // real finally block start instruction
-    code.op1(ASTORE, finallyEx); // stash exception (ensure fixed width instr)
-    code.op2(JSR, 6);            // call finally "subroutine"
-    code.op1(ALOAD, finallyEx);  // stash exception (ensure fixed width instr)
-    code.op(ATHROW);             // rethrow it
-
-    // generate start of finally block
-    code.op1(ASTORE, finallySp); // stash stack pointer
+	if (pod.fcodeVer == 110) {
+	    // create a new temporary local variable to stash stack pointer
+	    if (finallyEx < 0)
+	    {
+	      finallyEx = code.maxLocals;
+	      finallySp = code.maxLocals+1;
+	      code.maxLocals += 2;
+	    }
+	
+	    // generate the "catch all" block - this section of code
+	    // is always 8 bytes, hence the eight byte offset we have to
+	    // add to the JumpFinally/JSR offset to skip it to get the
+	    // real finally block start instruction
+	    code.op1(ASTORE, finallyEx); // stash exception (ensure fixed width instr)
+	    code.op2(JSR, 6);            // call finally "subroutine"
+	    code.op1(ALOAD, finallyEx);  // stash exception (ensure fixed width instr)
+	    code.op(ATHROW);             // rethrow it
+	
+	    // generate start of finally block
+	    code.op1(ASTORE, finallySp); // stash stack pointer
+	}
+	else {
+		if (finallyEx < 0)
+	    {
+	      finallyEx = code.maxLocals;
+	      code.maxLocals += 1;
+	    }
+		code.op1(ASTORE, finallyEx);
+	}
   }
 
   private void finallyEnd()
   {
-    code.op1(RET, finallySp);
+	  if (pod.fcodeVer == 110) {
+		  code.op1(RET, finallySp);
+	  }
+	  else {
+		  code.op1(ALOAD, finallyEx);
+		  code.op(ATHROW);
+	  }
   }
 
 //////////////////////////////////////////////////////////////////////////

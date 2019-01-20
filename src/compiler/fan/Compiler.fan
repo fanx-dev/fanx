@@ -105,6 +105,7 @@ class Compiler
     ClosureVars(this).run
     ClosureToImmutable(this).run
     ConstChecks(this).run
+    StmtFlat(this).run
   }
 
   **
