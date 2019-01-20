@@ -3,7 +3,7 @@
 // Licensed under the Academic Free License version 3.0
 //
 // History:
-//   2018-08-12  Brian Frank  Creation
+//   2018-08-12  Jed Young Creation
 //
 
 class InitDataClass : CompilerStep

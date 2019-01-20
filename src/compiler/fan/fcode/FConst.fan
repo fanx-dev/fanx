@@ -45,6 +45,7 @@ mixin FConst
   const static Int Extension  := 0x00100000
   const static Int RuntimeConst:=0x00200000
   const static Int Readonly   := 0x00400000
+  const static Int Async      := 0x00800000
   const static Int FlagsMask  := 0x00ffffff
 
 //////////////////////////////////////////////////////////////////////////

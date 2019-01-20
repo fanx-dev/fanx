@@ -255,9 +255,10 @@ class FPrinter : FConst
     if (flags.and(FConst.Synthetic) != 0) s.add("synthetic ")
     if (flags.and(FConst.Virtual)   != 0) s.add("virtual ")
     if (flags.and(FConst.Struct)    != 0) s.add("struct ")
-    if (flags.and(FConst.Extension)    != 0) s.add("extension ")
-    if (flags.and(FConst.RuntimeConst)    != 0) s.add("rtconst ")
-    if (flags.and(FConst.Readonly)    != 0) s.add("readonly ")
+    if (flags.and(FConst.Extension) != 0) s.add("extension ")
+    if (flags.and(FConst.RuntimeConst)!= 0) s.add("rtconst ")
+    if (flags.and(FConst.Readonly)  != 0) s.add("readonly ")
+    if (flags.and(FConst.Async)     != 0) s.add("async ")
     return s.toStr[0..-2]
   }
 

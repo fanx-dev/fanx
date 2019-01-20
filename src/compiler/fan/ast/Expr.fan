@@ -1667,6 +1667,24 @@ class ThrowExpr : Expr
   Expr exception   // exception to throw
 }
 
+class YieldExpr : Expr {
+  Expr expr
+  
+  new make(Loc loc, Expr expr)
+    : super(loc, ExprId.yieldExpr)
+  {
+    this.expr = expr
+    this.ctype = expr.ctype
+  }
+
+  override Void walkChildren(Visitor v)
+  {
+    expr = expr.walk(v)
+  }
+
+  override Str toStr() { "yield $expr" }
+}
+
 **************************************************************************
 ** ExprId
 **************************************************************************
@@ -1719,7 +1737,8 @@ enum class ExprId
   complexLiteral,   // ComplexLiteral
   closure,          // ClosureExpr
   dsl,              // DslExpr
-  throwExpr         // ThrowExpr
+  throwExpr,        // ThrowExpr
+  yieldExpr         // ThrowExpr
 }
 
 **************************************************************************

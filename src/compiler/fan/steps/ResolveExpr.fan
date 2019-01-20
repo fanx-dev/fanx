@@ -174,6 +174,10 @@ class ResolveExpr : CompilerStep
       case ExprId.closure:         resolveClosure(expr)
       case ExprId.dsl:             return resolveDsl(expr)
       case ExprId.throwExpr:       expr.ctype = ns.nothingType
+      case ExprId.yieldExpr:
+        yexpr := ((YieldExpr)expr)
+        yexpr.expr = resolveExpr(yexpr.expr)
+        yexpr.ctype = yexpr.expr.ctype
     }
 
     return expr

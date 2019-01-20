@@ -335,6 +335,7 @@ public class Parser : CompilerSupport
         case Token.staticKeyword:    flags = flags.or(FConst.Static)
         case Token.virtualKeyword:   flags = flags.or(FConst.Virtual)
         case Token.rtconstKeyword:   flags = flags.or(FConst.RuntimeConst)
+        case Token.asyncKeyword:     flags = flags.or(FConst.Async)
         default:                     done = true
       }
       if (done) break
@@ -1616,6 +1617,7 @@ public class Parser : CompilerSupport
       case Token.itKeyword:       consume; return ItExpr(loc)
       case Token.trueKeyword:     consume; return LiteralExpr.makeTrue(loc, ns)
       case Token.pound:           consume; return SlotLiteralExpr(loc, curType, consumeId)
+      case Token.yieldKeyword:    consume; return YieldExpr(loc, this.expr)
     }
 
     if (curt == Token.pipe)

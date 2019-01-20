@@ -237,6 +237,7 @@ abstract class CNamespace
   once CType? methodType() { findType("std", "Method") }
   once CType? testType() { findType("std", "Test") }
   once CType? uriType() { findType("std", "Uri") }
+  once CType? iterType() { findType("sys", "Iter") }
 
   once CMethod? objTrap            () { sysMethod(objType,    "trap") }
   once CMethod? objWith            () { sysMethod(objType,    "with") }

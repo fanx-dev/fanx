@@ -78,7 +78,7 @@ abstract class Stmt : Node
 **
 ** NopStmt is no operation do nothing statement.
 **
-class NopStmt : Stmt
+class NopStmt : LowerLevelStmt
 {
   new make(Loc loc) : super(loc, StmtId.nop) {}
 
@@ -100,7 +100,7 @@ class NopStmt : Stmt
 ** ExprStmt is a statement with a stand along expression such
 ** as an assignment or method call.
 **
-class ExprStmt : Stmt
+class ExprStmt : LowerLevelStmt
 {
   new make(Expr expr)
     : super(expr.loc, StmtId.expr)
@@ -250,7 +250,7 @@ class IfStmt : Stmt
 **
 ** ReturnStmt returns from the method
 **
-class ReturnStmt : Stmt
+class ReturnStmt : LowerLevelStmt
 {
   new make(Loc loc, Expr? expr := null)
     : super(loc, StmtId.returnStmt)
@@ -301,7 +301,7 @@ class ReturnStmt : Stmt
 **
 ** ThrowStmt throws an exception
 **
-class ThrowStmt : Stmt
+class ThrowStmt : LowerLevelStmt
 {
   new make(Loc loc, Expr exception)
     : super(loc, StmtId.throwStmt)
@@ -641,6 +641,134 @@ class Case : Node
 }
 
 **************************************************************************
+** Lower level Stmt
+**************************************************************************
+
+abstract class LowerLevelStmt : Stmt {
+  new make(Loc loc, StmtId id) : super(loc, id) {}
+  override Bool isExit() { false }
+  override Bool isDefiniteAssign(|Expr lhs->Bool| f) { false }
+}
+
+class TargetLabel : LowerLevelStmt {
+  Int pos
+
+  new make(Loc loc) : super(loc, StmtId.targetLable) {}
+  
+  override Void print(AstWriter out)
+  {
+    out.w("label_$pos:").nl
+  }
+}
+
+class JumpStmt : LowerLevelStmt {
+  Expr? condition
+  TargetLabel? target
+  //is leave protected region
+  Bool isLeave := false
+
+  new make(Loc loc, Expr? condition)
+    : super(loc, StmtId.jumpStmt)
+  {
+    this.condition = condition
+  }
+  
+  new makeGoto(Loc loc) : this.make(loc, null) {
+  }
+  
+  override Void walkChildren(Visitor v, VisitDepth depth)
+  {
+    condition = walkExpr(v, depth, condition)
+  }
+  
+  override Void print(AstWriter out)
+  {
+    out.w("if ($condition) gogo label_${target.id}").nl
+  }
+}
+
+class SwitchTable : LowerLevelStmt {
+  Expr condition
+  TargetLabel?[] jumps
+  TargetLabel? defJump
+
+  new make(Loc loc, Expr? condition)
+    : super(loc, StmtId.switchTable)
+  {
+    this.condition = condition
+    jumps = [,]
+  }
+  
+  override Void walkChildren(Visitor v, VisitDepth depth)
+  {
+    condition = walkExpr(v, depth, condition)
+  }
+  
+  override Void print(AstWriter out)
+  {
+    out.w("switch ($condition) {")
+    jumps.each |jmp| { out.w(jmp.id).w(",") }
+    if (defJump != null) out.w(defJump.id)
+    out.w("}").nl
+  }
+}
+
+class ExceptionRegion : LowerLevelStmt {
+  TargetLabel tryStart
+  TargetLabel tryEnd
+  TargetLabel exceptionEnd
+  ExceptionHandler[]? catchs
+  ExceptionHandler? finallyStart
+  
+  TryStmt stmt
+
+  new make(Loc loc, TryStmt stmt)
+    : super(loc, StmtId.exceptionStart)
+  {
+    this.tryStart = TargetLabel(loc)
+    this.tryEnd = TargetLabel(loc)
+    this.exceptionEnd = TargetLabel(loc)
+    this.stmt = stmt
+  }
+  
+  Bool hasFinally() { stmt.finallyBlock != null }
+  
+  override Void print(AstWriter out)
+  {
+    out.w("try {").nl
+  }
+}
+
+class ExceptionHandler : LowerLevelStmt {
+  static const Int typeCatch := 1
+  static const Int typeFinallyStart := 2
+  static const Int typeFinallyEnd := 3
+  
+  TargetLabel pos
+  Int type
+  CType? errType
+
+  new make(Loc loc, Int type)
+    : super(loc, StmtId.exceptionHandler)
+  {
+    this.type = type
+    this.pos = TargetLabel(loc)
+  }
+  
+  override Void print(AstWriter out)
+  {
+    switch (type) {
+      case typeCatch:
+      out.w("catch($errType)").nl
+      case typeFinallyStart:
+      out.w("finally {").nl
+      case typeFinallyEnd:
+      out.w("}").nl
+    }
+  }
+}
+
+**************************************************************************
 ** StmtId
 **************************************************************************
 
@@ -657,5 +785,10 @@ enum class StmtId
   breakStmt,
   continueStmt,
   tryStmt,
-  switchStmt
+  switchStmt,
+  jumpStmt,
+  targetLable,
+  switchTable,
+  exceptionStart,
+  exceptionHandler
 }
