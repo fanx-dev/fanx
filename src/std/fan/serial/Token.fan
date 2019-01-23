@@ -81,7 +81,7 @@ internal class Token
       case URI_LITERAL:    return "Uri literal"
       case NULL_LITERAL:   return "null"
       case DOT:            return "."
-      case SEMICOLON:      return ""
+      case SEMICOLON:      return ";"
       case COMMA:          return ","
       case COLON:          return ":"
       case DOUBLE_COLON:   return "::"

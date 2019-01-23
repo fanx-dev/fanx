@@ -667,6 +667,7 @@ class JumpStmt : LowerLevelStmt {
   TargetLabel? target
   //is leave protected region
   Bool isLeave := false
+  Bool ifFalse := true //jump when condition is false
 
   new make(Loc loc, Expr? condition)
     : super(loc, StmtId.jumpStmt)
@@ -716,21 +717,24 @@ class SwitchTable : LowerLevelStmt {
   }
 }
 
-class ExceptionRegion : LowerLevelStmt {
-  TargetLabel tryStart
-  TargetLabel tryEnd
+class Exception : LowerLevelStmt {
   TargetLabel exceptionEnd
-  ExceptionHandler[] catchs
+
+  Int tryStart
+  ExceptionHandler tryEnd
+  ExceptionHandler[] catchStarts
+  ExceptionHandler[] catchEnds
   ExceptionHandler? finallyStart
+  ExceptionHandler? finallyEnd
   
   TryStmt stmt
 
   new make(Loc loc, TryStmt stmt)
-    : super(loc, StmtId.exceptionStart)
+    : super(loc, StmtId.exception)
   {
-    catchs = ExceptionHandler[,]
-    this.tryStart = TargetLabel(loc)
-    this.tryEnd = TargetLabel(loc)
+    catchStarts = ExceptionHandler[,]
+    catchEnds = ExceptionHandler[,]
+    this.tryEnd = ExceptionHandler(loc, ExceptionHandler.typeTryEnd, this)
     this.exceptionEnd = TargetLabel(loc)
     this.stmt = stmt
   }
@@ -744,27 +748,33 @@ class ExceptionRegion : LowerLevelStmt {
 }
 
 class ExceptionHandler : LowerLevelStmt {
-  static const Int typeCatch := 1
-  static const Int typeFinallyStart := 2
-  static const Int typeFinallyEnd := 3
+  static const Int typeTryEnd := 1
+  static const Int typeCatchStart := 2
+  static const Int typeCatchEnd := 3
+  static const Int typeFinallyStart := 4
+  static const Int typeFinallyEnd := 5
   
-  TargetLabel start
-  TargetLabel? end
   Int type
   CType? errType
+  Exception parent
+  Int pos := -1
 
-  new make(Loc loc, Int type)
+  new make(Loc loc, Int type, Exception parent)
     : super(loc, StmtId.exceptionHandler)
   {
     this.type = type
-    this.start = TargetLabel(loc)
+    this.parent = parent
   }
   
   override Void print(AstWriter out)
   {
     switch (type) {
-      case typeCatch:
-      out.w("catch($errType)").nl
+      case typeTryEnd:
+      out.w("}").nl
+      case typeCatchStart:
+      out.w("catch($errType){").nl
+      case typeCatchEnd:
+      out.w("}").nl
       case typeFinallyStart:
       out.w("finally {").nl
       case typeFinallyEnd:
@@ -794,6 +804,6 @@ enum class StmtId
   jumpStmt,
   targetLable,
   switchTable,
-  exceptionStart,
+  exception,
   exceptionHandler
 }

@@ -238,7 +238,7 @@ public class Sys {
 			return pod;
 		} catch (Exception e) {
 			if (checked) {
-				throw makeErr("sys::UnknownPodErr", podName);
+				throw makeErr("sys::UnknownPodErr", podName+":"+e.getMessage());
 			}
 		}
 		return null;

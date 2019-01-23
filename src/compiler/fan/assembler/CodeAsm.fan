@@ -36,10 +36,6 @@ class CodeAsm : CompilerSupport
   Void block(Block block)
   {
     block.stmts.each |Stmt s| { stmt(s) }
-    if (block.stmts.last?.id === StmtId.targetLable) {
-      op(FOp.Return)
-    }
-    genErrTable(block)
   }
 
   private Void stmt(Stmt stmt)
@@ -61,8 +57,8 @@ class CodeAsm : CompilerSupport
       case StmtId.jumpStmt:      jumpStmt((JumpStmt)stmt)
       case StmtId.targetLable:   targetLabel((TargetLabel)stmt)
       case StmtId.switchTable:   switchTable((SwitchTable)stmt)
-      case StmtId.exceptionStart:  return
-      case StmtId.exceptionHandler:exceptionHandler(stmt)
+      case StmtId.exception:     exceptionStart((Exception)stmt)
+      case StmtId.exceptionHandler:exceptionHandler((ExceptionHandler)stmt)
       default:                   throw Err(stmt.id.toStr)
     }
   }
@@ -73,25 +69,15 @@ class CodeAsm : CompilerSupport
   }
 
   private Void jumpStmt(JumpStmt stmt) {
-    // optimize: if (true)
-    if (stmt.condition != null && stmt.condition.id == ExprId.trueLiteral) {
-      return
-    }
-
-    // optimize: if (false)
-    if (stmt.condition == null || stmt.condition.id == ExprId.falseLiteral)
+    // goto;
+    if (stmt.condition == null)
     {
-      if (stmt.isLeave) {
-        jumpToLabel(FOp.Leave, stmt.target)
-      }
-      else {
-        jumpToLabel(FOp.Jump, stmt.target)
-      }
+      jumpToLabel(stmt.isLeave ? FOp.Leave : FOp.Jump, stmt.target)
       return
     }
 
     expr(stmt.condition)
-    jumpToLabel(FOp.JumpFalse, stmt.target)
+    jumpToLabel(stmt.ifFalse ? FOp.JumpFalse : FOp.JumpTrue, stmt.target)
   }
 
   private Void targetLabel(TargetLabel label) {
@@ -113,17 +99,39 @@ class CodeAsm : CompilerSupport
     }
   }
 
+  private Void exceptionStart(Exception exception) {
+    exception.tryStart = mark
+  }
+
   private Void exceptionHandler(ExceptionHandler handler) {
+
     switch (handler.type) {
-      case ExceptionHandler.typeCatch:
+      case ExceptionHandler.typeTryEnd:
+        handler.pos = mark
+      case ExceptionHandler.typeCatchStart:
+        handler.pos = mark
+        addToErrTable(handler.parent.tryStart, handler.parent.tryEnd.pos, handler.pos, handler.errType)
+
         if (handler.errType == null) op(FOp.CatchAllStart)
         else {
           //localVarDefStmt
         }
+      case ExceptionHandler.typeCatchEnd:
+        handler.pos = mark
       case ExceptionHandler.typeFinallyStart:
+        handler.pos = mark
+        addToErrTable(handler.parent.tryStart, handler.parent.tryEnd.pos, handler.pos, null)
+        handler.parent.catchStarts.each |catchStart, i| {
+          catchEnd := handler.parent.catchEnds[i]
+          addToErrTable(catchStart.pos, catchEnd.pos, handler.pos, null)
+        }
+
         op(FOp.FinallyStart)
       case ExceptionHandler.typeFinallyEnd:
+        handler.pos = mark
         op(FOp.FinallyEnd)
+      default:
+        throw Err("Unknow type $handler.type")
     }
   }
 
@@ -183,24 +191,6 @@ class CodeAsm : CompilerSupport
     else if (stmt.init != null)
     {
       expr(stmt.init)
-    }
-  }
-
-  private Void genErrTable(Block block) {
-    block.stmts.each |Stmt s| {
-      if (s.id === StmtId.exceptionStart) {
-        ExceptionRegion r := s
-        r.catchs.each |c|{
-          addToErrTable(r.tryStart.pos, r.tryEnd.pos, c.start.pos, c.errType)
-        }
-
-        if (r.finallyStart != null) {
-          addToErrTable(r.tryStart.pos, r.tryEnd.pos, r.finallyStart.start.pos, null)
-          r.catchs.each |c|{
-            addToErrTable(c.start.pos, c.end.pos, r.finallyStart.start.pos, null)
-          }
-        }
-      }
     }
   }
 

@@ -43,7 +43,7 @@ class ExprFlat : CompilerStep
       case StmtId.targetLable:     addStmt(stmt)
       case StmtId.throwStmt:       processExpr((ThrowStmt)stmt)
       case StmtId.switchTable:     addStmt(stmt)
-      case StmtId.exceptionStart:  addStmt(stmt)
+      case StmtId.exception:       addStmt(stmt)
       case StmtId.exceptionHandler:addStmt(stmt)
       default:                     throw Err(stmt.id.toStr)
     }

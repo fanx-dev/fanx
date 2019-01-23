@@ -11,7 +11,7 @@ class StmtFlatLoop {
   TargetLabel continueLabel
   TargetLabel breakLabel
   Stmt stmt
-  ExceptionRegion[] protectedRegions := ExceptionRegion[,] // stack
+  Exception[] protectedRegions := [,] // stack
   
   new make(Stmt stmt) {
     this.stmt = stmt
@@ -24,7 +24,7 @@ class StmtFlat : CompilerStep
 {
   private Stmt[] stmts := [,]
   private StmtFlatLoop[] loopStack := [,]
-  private ExceptionRegion[]? protectedRegions // stack of protection regions
+  private Exception[]? protectedRegions // stack of protection regions
   
   new make(Compiler compiler)
     : super(compiler)
@@ -44,6 +44,10 @@ class StmtFlat : CompilerStep
     loopStack.clear
     protectedRegions = null
     block(def.code)
+
+    if (stmts.last?.id === StmtId.targetLable) {
+      stmts.add(ReturnStmt(stmts.last.loc))
+    }
     def.code.stmts = stmts.dup
   }
 
@@ -77,6 +81,7 @@ class StmtFlat : CompilerStep
   }
   
   private Expr toTempVar(Expr expr) {
+    if (expr.id === ExprId.localVar) return expr
     var := curMethod.addLocalVar(expr.ctype, null, null)
     lvar := LocalVarExpr(expr.loc, var)
     assign := BinaryExpr.makeAssign(lvar, expr)
@@ -97,6 +102,17 @@ class StmtFlat : CompilerStep
 
   private Void ifStmt(IfStmt stmt)
   {
+    // optimize: if (true)
+    if (stmt.condition.id === ExprId.trueLiteral) {
+      block(stmt.trueBlock)
+      return
+    }
+    // optimize: if (false)
+    else if (stmt.condition.id === ExprId.falseLiteral) {
+      if (stmt.falseBlock != null) block(stmt.falseBlock)
+      return
+    }
+
     jmpFalse := jumpTo(stmt.loc, stmt.condition)
     
     block(stmt.trueBlock)
@@ -109,9 +125,7 @@ class StmtFlat : CompilerStep
     addStmt(jmpFalse)
         
     if (stmt.falseBlock != null) {
-
       block(stmt.falseBlock)
-      
       addStmt(jmpEnd)
     }
   }
@@ -124,11 +138,18 @@ class StmtFlat : CompilerStep
     if (inProtectedRegion)
     {
       if (stmt.expr != null) {
-        stmt.expr = toTempVar(stmt.expr)
+        //fix return void
+        if (stmt.expr.ctype.isVoid) {
+          addStmt(stmt.expr.toStmt)
+          stmt.expr = null
+        }
+        else {
+          stmt.expr = toTempVar(stmt.expr)
+        }
       }
 
       // jump to any finally blocks we are inside
-      protectedRegions.eachr |ExceptionRegion region|
+      protectedRegions.eachr |region|
       {
         if (region.hasFinally)
           inlineFinally(region)
@@ -150,6 +171,11 @@ class StmtFlat : CompilerStep
 
   private Void whileStmt(WhileStmt stmt)
   {
+    // optimize: while (false)
+    if (stmt.condition.id === ExprId.falseLiteral) {
+      return
+    }
+
     // push myself onto the loop stack so that breaks
     // and continues can register for backpatching
     loop := StmtFlatLoop(stmt)
@@ -210,7 +236,7 @@ class StmtFlat : CompilerStep
     loopStack.pop
   }
   
-  private Void inlineFinally(ExceptionRegion region) {
+  private Void inlineFinally(Exception region) {
     block(region.stmt.finallyBlock)
   }
 
@@ -231,7 +257,7 @@ class StmtFlat : CompilerStep
     if (!loop.protectedRegions.isEmpty)
     {
       // jump to any finally blocks we are inside
-      loop.protectedRegions.eachr |ExceptionRegion region|
+      loop.protectedRegions.eachr |region|
       {
         if (region.hasFinally) inlineFinally(region)
       }
@@ -346,27 +372,7 @@ class StmtFlat : CompilerStep
     table.jumps.size = count
     addStmt(table)
 
-    // walk thru each case, and map the jump offset to a block
-    stmt.cases.each |Case c|
-    {
-      for (i:=0; i<c.cases.size; ++i)
-      {
-        expr    := c.cases[i]
-        literal := expr.asTableSwitchCase
-        offset  := literal - min
-        
-        label := TargetLabel(c.loc)
-        addStmt(label)
-        table.jumps[offset] = label
-        
-        block(c.block)
-
-        jmp := JumpStmt.makeGoto(c.loc)
-        jmp.target = table.endLabel
-        addStmt(jmp)
-      }
-    }
-    
+    // default block goes first - it's the switch fall
     if (stmt.defaultBlock != null) {
       label := TargetLabel(stmt.defaultBlock.loc)
       addStmt(label)
@@ -374,6 +380,40 @@ class StmtFlat : CompilerStep
       
       block(stmt.defaultBlock)
     }
+    //default break
+    jmpEnd := JumpStmt.makeGoto(stmt.loc)
+    jmpEnd.target = table.endLabel
+    addStmt(jmpEnd)
+
+    //emit blok
+    blocks := TargetLabel[,] { size = stmt.cases.size }
+    stmt.cases.each |Case c, i|
+    {
+      label := TargetLabel(c.loc)
+      addStmt(label)
+      blocks[i] = label
+      
+      block(c.block)
+
+      //default break
+      jmp := JumpStmt.makeGoto(c.loc)
+      jmp.target = table.endLabel
+      addStmt(jmp)
+    }
+
+    // backpatch the jump table
+    stmt.cases.each |Case c, bi|
+    {
+      for (i:=0; i<c.cases.size; ++i)
+      {
+        expr    := c.cases[i]
+        literal := expr.asTableSwitchCase
+        offset  := literal - min
+        
+        table.jumps[offset] = blocks[bi]
+      }
+    }
+    
     addStmt(table.endLabel)
   }
 
@@ -384,27 +424,44 @@ class StmtFlat : CompilerStep
     condition := toTempVar(stmt.condition)
     endLabel := TargetLabel(stmt.loc)
 
-    // walk thru each case, keeping track of all the
-    // places we need to backpatch when cases match
-    stmt.cases.each |Case c|
+    blocks := TargetLabel[,] { size = stmt.cases.size }
+
+    stmt.cases.each |Case c, bi|
     {
+      label := TargetLabel(c.loc)
+      blocks[bi] = label
       for (i:=0; i<c.cases.size; ++i)
       {
         expr := ShortcutExpr.makeBinary(condition, Token.eq, c.cases[i])
-        falseLable := jumpTo(c.loc, expr)
-        block(c.block)
-        
-        //default break stmt
-        jmp := JumpStmt.makeGoto(c.loc)
-        jmp.target = endLabel
-        addStmt(jmp)
-        
-        addStmt(falseLable)
+        jump := JumpStmt(c.loc, expr)
+        jump.ifFalse = false
+        jump.target = label
+        addStmt(jump)
       }
     }
-    
+
+    // default block goes first - it's the switch fall
     if (stmt.defaultBlock != null) {
       block(stmt.defaultBlock)
+    }
+    //default break stmt
+    jmpEnd := JumpStmt.makeGoto(stmt.loc)
+    jmpEnd.target = endLabel
+    addStmt(jmpEnd)
+
+    // walk thru each case, keeping track of all the
+    // places we need to backpatch when cases match
+    stmt.cases.each |Case c, i|
+    {
+      //add label
+      addStmt(blocks[i])
+
+      block(c.block)
+      
+      //default break stmt
+      jmp := JumpStmt.makeGoto(c.loc)
+      jmp.target = endLabel
+      addStmt(jmp)
     }
     
     addStmt(endLabel)
@@ -421,17 +478,16 @@ class StmtFlat : CompilerStep
 
   private Void tryStmt(TryStmt stmt)
   {
-    exception := ExceptionRegion(stmt.loc, stmt)
+    exception := Exception(stmt.loc, stmt)
     // enter a "protected region" which means that we can't
     // jump or return out of this region directly - we have to
     // use a special "leave" jump of the protected region
-    if (protectedRegions == null) protectedRegions = ExceptionRegion[,]
+    if (protectedRegions == null) protectedRegions = Exception[,]
     protectedRegions.push(exception)
     if (!loopStack.isEmpty) loopStack.peek.protectedRegions.push(exception)
 
     // assemble body of try block
     addStmt(exception)
-    addStmt(exception.tryStart)
     block(stmt.block)
     addStmt(exception.tryEnd)
 
@@ -453,16 +509,16 @@ class StmtFlat : CompilerStep
     // assemble catch blocks
     stmt.catches.each |Catch c, Int i|
     {
-      handler := ExceptionHandler(c.loc, ExceptionHandler.typeCatch)
+      handler := ExceptionHandler(c.loc, ExceptionHandler.typeCatchStart, exception)
       handler.errType = c.errType
-      exception.catchs.add(handler)
-      addStmt(handler.start)
+      exception.catchStarts.add(handler)
       addStmt(handler)
 
       block(c.block)
 
-      handler.end = TargetLabel(c.loc)
-      addStmt(handler.end)
+      catchEnd := ExceptionHandler(c.loc, ExceptionHandler.typeCatchEnd, exception)
+      exception.catchEnds.add(catchEnd)
+      addStmt(catchEnd)
       
       if (!c.block.isExit)
       {
@@ -478,19 +534,15 @@ class StmtFlat : CompilerStep
     // assemble finally block
     if (exception.hasFinally)
     {
-      finallyStart := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyStart)
+      finallyStart := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyStart, exception)
       exception.finallyStart = finallyStart
-      addStmt(finallyStart.start)
       addStmt(finallyStart)
 
       block(stmt.finallyBlock)
       
-      finallyStart.end = TargetLabel(stmt.finallyBlock.loc)
-      addStmt(finallyStart.end)
-
-      finallyEnd := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyEnd)
+      finallyEnd := ExceptionHandler(stmt.finallyBlock.loc, ExceptionHandler.typeFinallyEnd, exception)
+      exception.finallyEnd = finallyEnd
       addStmt(finallyEnd)
-      addStmt(finallyEnd.start)
     }
     
     addStmt(exception.exceptionEnd)
