@@ -193,3 +193,12 @@ Aspect Oriented Programming
   bar~>foo(arg)
 ```
 
+### Async/Await Coroutine ###
+The C#/Javascript like async/await pattern.
+```
+  async Void foo(Int id) {
+    user := await getUser(id)
+    image := await getImage(user.image)
+    imageView.image = image
+  }
+```
