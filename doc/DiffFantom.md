@@ -25,6 +25,23 @@ To add methods out side the class
   str.foo
 ```
 
+### Async/Await Coroutine ###
+The C#/Javascript like async/await pattern.
+```
+  async Void foo(Int id) {
+    user := await getUser(id)
+    image := await getImage(user.image)
+    imageView.image = image
+  }
+```
+
+### Checked Dynamic Invoke ###
+Aspect Oriented Programming by `~>` invoke
+```
+  //same as bar.trap("foo", arg)
+  bar~>foo(arg)
+```
+
 ### Struct Type ###
 A struct type is a pass by value type
 ```
@@ -155,6 +172,12 @@ fanx allow same name static slots in inheritance.
 ### Primitive type ###
 
 More primitive type: Int8/Int16/Int32/Int64/Float32/Float64.
+
+### Named Param ###
+
+```
+  foo(name:0, name2:1)
+```
 
 
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)

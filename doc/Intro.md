@@ -26,6 +26,9 @@ Fields and Methods
   //Type Inference
   p := Person("B", 30)
 
+  //named param
+  p := Person(name:"B", age:30)
+
 ```
 
 Statically and Dynamic Typed
@@ -181,5 +184,12 @@ To add methods out side the class
 
   //shortcut of Whatever.foo(str)
   str.foo
+```
+
+Aspect Oriented Programming
+=======
+```
+  //same as bar.trap("foo", arg)
+  bar~>foo(arg)
 ```
 
