@@ -74,24 +74,47 @@ class InitDataClass : CompilerStep
     pvar := UnknownVarExpr(loc, null, "func\$")
 
     m.code = Block(curType.loc)
-    /*
-    loc := curType.loc
-    curType.fieldDefs.each |field| {
-      if (field.isStatic || field.hasFacet("sys::Transient")) return
-      s := ExprStmt(
-         BinaryExpr.makeAssign(
-           FieldExpr(loc, ThisExpr(loc, curType), field),
-           LocalVarExpr(loc, m.addParamVar(field.fieldType, field.name))
-         )
-      )
-      m.code.stmts.add(s)
-    }
-    m.code.stmts.add(ReturnStmt.makeSynthetic(curType.loc))
-    */
+
     //func.call(this)
     callExpr := CallExpr.makeWithMethod(loc, pvar, ns.funcCall, [ThisExpr(loc, curType)])
     callExpr.isSafe = true
     m.code.stmts.add(callExpr.toStmt)
+    m.code.stmts.add(ReturnStmt.makeSynthetic(curType.loc))
+    curType.addSlot(m)
+
+    addCtorFromArgs
+  }
+
+  private Void addCtorFromArgs() {
+    // our constructor definition
+    m := MethodDef(curType.loc, curType)
+    m.name = "makeFrom"
+    m.flags = FConst.Ctor + FConst.Public + FConst.Synthetic
+    m.ret = TypeRef(curType.loc, ns.voidType)
+    loc := curType.loc
+
+    if (!curType.base.isObj) {
+      m.ctorChain = CallExpr(curType.loc, SuperExpr(curType.loc), "make")
+      m.ctorChain.isCtorChain = true
+    }
+
+    m.code = Block(curType.loc)
+    
+    curType.fieldDefs.each |field| {
+      if (field.isStatic || field.hasFacet("sys::Transient")) return
+
+      param := ParamDef(loc, field.fieldType, field.name)
+      m.params.add(param)
+      pvar := UnknownVarExpr(loc, null, field.name)
+
+      s := ExprStmt(
+         BinaryExpr.makeAssign(
+           FieldExpr(loc, ThisExpr(loc, curType), field),
+           pvar
+         )
+      )
+      m.code.stmts.add(s)
+    }
     m.code.stmts.add(ReturnStmt.makeSynthetic(curType.loc))
     curType.addSlot(m)
   }

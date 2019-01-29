@@ -66,6 +66,7 @@ abstract class JsExpr : JsNode
       case ExprId.itExpr:          return JsItExpr(s, expr)
       case ExprId.staticTarget:    return JsStaticTargetExpr(s, expr)
       case ExprId.throwExpr:       return JsThrowExpr(s, expr)
+      case ExprId.awaitExpr:       return JsAwaitExpr(s, expr)
 
       // Not implemented
       //case ExprId.unknownVar
@@ -1072,4 +1073,21 @@ class JsThrowExpr : JsExpr
     exception.write(out)
   }
   JsExpr exception  // the exception to throw
+}
+
+**************************************************************************
+** JsAwaitExpr
+**************************************************************************
+
+class JsAwaitExpr : JsExpr {
+  new make(JsCompilerSupport s, AwaitExpr te) : super(s, te)
+  {
+    this.expr = JsExpr.makeFor(s, te)
+  }
+  override Void write(JsWriter out)
+  {
+    out.w("await ", loc)
+    expr.write(out)
+  }
+  JsExpr expr
 }

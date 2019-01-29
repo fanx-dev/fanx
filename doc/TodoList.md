@@ -4,6 +4,4 @@
 
 - Generic infer
 - named param
-- finally
-- sync
 - parser

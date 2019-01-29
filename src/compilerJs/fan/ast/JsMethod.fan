@@ -19,6 +19,7 @@ class JsMethod : JsSlot
     this.isInstanceCtor = m.isInstanceCtor
     this.isGetter   = m.isGetter
     this.isSetter   = m.isSetter
+    this.isAsync    = m.flags.and(FConst.Async) != 0
     this.params     = m.params.map |CParam p->JsMethodParam| { JsMethodParam(s, p) }
     this.ret        = JsTypeRef(s, m.ret, m.loc)
     this.hasClosure = ClosureFinder(m).exists
@@ -60,7 +61,9 @@ class JsMethod : JsSlot
 
     out.w(parent, loc)
     if (!isStatic && !isInstanceCtor) out.w(".prototype")
-    out.w(".$methName = function${sig(methParams)}", loc).nl
+    out.w(".$methName = ")
+    if (isAsync) out.w("async ")
+    out.w("function${sig(methParams)}", loc).nl
     out.w("{").nl
     out.indent
 
@@ -126,6 +129,7 @@ class JsMethod : JsSlot
   Bool hasClosure         // does this method contain a closure
   JsExpr? ctorChain       // ctorChain if has one
   JsBlock? code           // method body if has one
+  Bool isAsync
 }
 
 **************************************************************************
