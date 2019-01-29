@@ -894,6 +894,7 @@ class CallExpr : NameExpr
   }
 
   Expr[] args         // Expr[] arguments to pass
+  [Int:Str]? paramNames  // args pos to name for named param
   Bool isDynamic      // true if this is a -> dynamic call
   Bool isCtorChain    // true if this is MethodDef.ctorChain call
   Bool noParens       // was this call accessed without parens

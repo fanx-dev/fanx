@@ -7,6 +7,7 @@
 - Fix virtual once
 - Add JS support
 - Fix JS static init dependency
-- Support primitive type (Int8/Int16/Int32/Int64/Float32/Float64)
+- More primitive type (Int8/Int16/Int32/Int64/Float32/Float64)
 - Fix data class ctor
-- Support async/await pattern coroutine
+- The async/await pattern coroutine
+- Named param

@@ -1605,6 +1605,7 @@ class CheckErrors : CompilerStep
 
     if (!isErr)
     {
+      checkNamedParam(call)
       call.args = newArgs
       return
     }
@@ -1621,6 +1622,18 @@ class CheckErrors : CompilerStep
   internal static Str paramTypeStr(CType base, CParam param)
   {
     return param.paramType.parameterizeThis(base).inferredAs.signature
+  }
+
+  private Void checkNamedParam(CallExpr call)
+  {
+    if (call.paramNames == null) return
+    //args := call.args
+    params := call.method.params
+    call.paramNames.each |name, i| {
+      if (params[i].name != name) {
+        err("named param err: ${params[i].name} != $name in call $call.name", call.loc)
+      }
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////

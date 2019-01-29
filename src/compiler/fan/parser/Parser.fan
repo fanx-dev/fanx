@@ -1842,6 +1842,13 @@ public class Parser : CompilerSupport
     {
       while (true)
       {
+        //named param
+        if (curt === Token.identifier && peekt === Token.colon) {
+          name := consumeId
+          consume(Token.colon)
+          if (call.paramNames == null) call.paramNames = [Int:Str][:]
+          call.paramNames[call.args.size] = name
+        }
         call.args.add(expr)
         if (curt === Token.rparen) break
         consume(Token.comma)
