@@ -480,7 +480,7 @@ class ResolveExpr : CompilerStep
   private Expr resolveCall(CallExpr call)
   {
     // dynamic calls are just syntactic sugar for Obj.trap
-    if (call.isDynamic)
+    if (call.isDynamic && !call.isCheckedCall)
     {
       call.method = ns.objTrap
       call.ctype = ns.objType.toNullable

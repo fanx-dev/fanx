@@ -1728,13 +1728,21 @@ public class Parser : CompilerSupport
       case Token.dot: consume;  return idExpr(target, false, false)
 
       // if "->id" dynamic call
-      case Token.arrow: consume; return idExpr(target, true, false)
+      case Token.arrow: consume; return idExpr(target, true, false, false)
+
+      // if "~>" checked dynamic call
+      case Token.tildeArrow:
+        consume; return idExpr(target, true, false, true)
 
       // if "?.id" safe call
       case Token.safeDot: consume; return idExpr(target, false, true)
 
       // if "?->id" safe dynamic call
-      case Token.safeArrow: consume; return idExpr(target, true, true)
+      case Token.safeArrow: consume; return idExpr(target, true, true, false)
+
+      // if "?~>id" safe checked dynamic call
+      case Token.safeTildeArrow:
+        consume; return idExpr(target, true, true, true)
     }
 
     // if target[...]
@@ -1764,7 +1772,7 @@ public class Parser : CompilerSupport
   **   <local>   :=  <id>
   **   <field>   :=  ["*"] <id>
   **
-  private Expr idExpr(Expr? target, Bool dynamicCall, Bool safeCall)
+  private Expr idExpr(Expr? target, Bool dynamicCall, Bool safeCall, Bool checkedCall := true)
   {
     loc := cur
 
@@ -1778,6 +1786,7 @@ public class Parser : CompilerSupport
     {
       call := callExpr(target)
       call.isDynamic = dynamicCall
+      call.isCheckedCall = checkedCall
       call.isSafe = safeCall
       return call
     }
@@ -1792,6 +1801,7 @@ public class Parser : CompilerSupport
       call.target    = target
       call.name      = name
       call.isDynamic = dynamicCall
+      call.isCheckedCall = checkedCall
       call.isSafe    = safeCall
       call.noParens  = true
       call.args.add(closure)
@@ -1805,6 +1815,7 @@ public class Parser : CompilerSupport
       call.target    = target
       call.name      = name
       call.isDynamic = true
+      call.isCheckedCall = checkedCall
       call.isSafe    = safeCall
       call.noParens  = true
       return call

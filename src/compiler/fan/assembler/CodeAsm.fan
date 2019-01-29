@@ -858,7 +858,9 @@ class CodeAsm : CompilerSupport
     op(FOp.CallVirtual, fpod.addMethodRef(ns.objTrap))
 
     // pop return if no leave
-    if (!call.leave) opType(FOp.Pop, call.ctype)
+    if (!call.leave) opType(FOp.Pop, ns.objType.toNullable)
+    else if (call.isCheckedCall && call.ctype.isVal)
+      coerceOp(ns.objType.toNullable, call.ctype)
   }
 
   private Void invokeCall(CallExpr call, Bool leave := call.leave)

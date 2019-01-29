@@ -3,5 +3,7 @@
 ## Todo List ##
 
 - Generic infer
-- named param
+- safe op for extension method
+- await in condition expr
+- static async method
 - parser

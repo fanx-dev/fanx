@@ -859,6 +859,7 @@ class Tokenizer : CompilerSupport
         if (cur == ':') { consume; return TokenVal(Token.elvis) }
         if (cur == '.') { consume; return TokenVal(Token.safeDot) }
         if (cur == '-' && peek == '>') { consume; consume; return TokenVal(Token.safeArrow) }
+        if (cur == '~' && peek == '>') { consume; consume; return TokenVal(Token.safeTildeArrow) }
         return TokenVal(Token.question)
       case '@':
         return TokenVal(Token.at)
@@ -876,6 +877,7 @@ class Tokenizer : CompilerSupport
       case '}':
         return TokenVal(Token.rbrace)
       case '~':
+        if (cur == '>') { consume; return TokenVal(Token.tildeArrow) }
         return TokenVal(Token.tilde)
       case '$':
         return TokenVal(Token.dollar)

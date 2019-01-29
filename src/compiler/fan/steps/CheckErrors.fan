@@ -1252,7 +1252,7 @@ class CheckErrors : CompilerStep
     }
 
     // arguments
-    if (!call.isDynamic)
+    if (!call.isDynamic || call.isCheckedCall)
     {
       // do normal call checking and coercion
       checkArgs(call)

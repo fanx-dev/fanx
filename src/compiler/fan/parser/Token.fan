@@ -75,9 +75,11 @@ enum class Token
   assignSlash   ("/="),
   assignPercent ("%="),
   arrow         ("->"),
+  tildeArrow    ("~>"),
   elvis         ("?:"),
   safeDot       ("?."),
   safeArrow     ("?->"),
+  safeTildeArrow("?~>"),
   docComment    ("**"),
   dollar        ("\$"),
   lparenSynthetic ("("),  // synthetic () grouping of interpolated string exprs

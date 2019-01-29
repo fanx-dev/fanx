@@ -11,3 +11,4 @@
 - Fix data class ctor
 - The async/await pattern coroutine
 - Named param
+- AOP support by checked dynamic call '~>'

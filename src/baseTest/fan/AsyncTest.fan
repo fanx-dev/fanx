@@ -1,6 +1,6 @@
 using concurrent
 
-class Main {
+class AsyncTest {
 
   async Void foo(Int n) {
     for (i:=0; i<n; ++i) {
