@@ -28,7 +28,12 @@ class ExprFlat : CompilerStep
 
     stmts.clear
     def.code.stmts.each |Stmt s| { stmt(s) }
+    if (stmts.last?.id === StmtId.targetLable) {
+      stmts.add(ReturnStmt(stmts.last.loc))
+    }
     def.code.stmts = stmts.dup
+
+    //curType.dump
   }
 
   private Void stmt(Stmt stmt)
@@ -54,6 +59,8 @@ class ExprFlat : CompilerStep
   }
   
   private Expr toTempVar(Expr expr) {
+    if (expr.id === ExprId.localVar) return expr
+
     var := curMethod.addLocalVar(expr.ctype, null, null)
     lvar := LocalVarExpr(expr.loc, var)
     assign := BinaryExpr.makeAssign(lvar, expr)
@@ -62,21 +69,38 @@ class ExprFlat : CompilerStep
   }
   
   private Void processExpr(Stmt stmt) {
+
     hasYield := false
+    hasBool := false
+    count := 0
     stmt.walk(ExprVisitor(|Expr t->Expr| {
-      if (t.id === ExprId.yieldExpr) {
+      if (t.id === ExprId.awaitExpr) {
         hasYield = true
       }
+      else if (t.id === ExprId.boolOr || t.id === ExprId.boolAnd || t.id === ExprId.ternary) {
+        hasBool = true
+      }
+      ++count
       return t
     }), VisitDepth.expr)
 
     if (hasYield) {
-      stmt.walk(ExprVisitor {
-        toTempVar(it)
-      }, VisitDepth.expr)
-    }
-    addStmt(stmt)
-  }
+      if (hasBool) throw err("unsupport await int expr")
 
+      stmt.walk(ExprVisitor.make|Expr e->Expr| {
+        //localDef init
+        if (e.id === ExprId.assign) return e
+        return toTempVar(e)
+      }, VisitDepth.expr)
+
+      //already become a local var
+      if (stmt.id != StmtId.expr) {
+        addStmt(stmt)
+      }
+    }
+    else {
+      addStmt(stmt)
+    }
+  }
 
 }

@@ -137,6 +137,7 @@ enum class Token
   asyncKeyword,
   yieldKeyword,
   lretKeyword,
+  awaitKeyword,
 
   // misc
   eof("eof");

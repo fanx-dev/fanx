@@ -106,6 +106,8 @@ class Compiler
     ClosureToImmutable(this).run
     ConstChecks(this).run
     StmtFlat(this).run
+    ExprFlat(this).run
+    InitAsync(this).run
   }
 
   **

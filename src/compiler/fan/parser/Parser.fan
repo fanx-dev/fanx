@@ -1617,7 +1617,7 @@ public class Parser : CompilerSupport
       case Token.itKeyword:       consume; return ItExpr(loc)
       case Token.trueKeyword:     consume; return LiteralExpr.makeTrue(loc, ns)
       case Token.pound:           consume; return SlotLiteralExpr(loc, curType, consumeId)
-      case Token.yieldKeyword:    consume; return YieldExpr(loc, this.expr)
+      case Token.awaitKeyword:    consume; return AwaitExpr(loc, this.expr)
     }
 
     if (curt == Token.pipe)

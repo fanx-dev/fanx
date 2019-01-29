@@ -685,7 +685,8 @@ class JumpStmt : LowerLevelStmt {
   
   override Void print(AstWriter out)
   {
-    out.w("if ($condition) gogo label_${target.id}").nl
+    out.w("if ($condition) goto ")
+    target.print(out)
   }
 }
 
@@ -710,9 +711,9 @@ class SwitchTable : LowerLevelStmt {
   
   override Void print(AstWriter out)
   {
-    out.w("switch ($condition) {")
-    jumps.each |jmp| { out.w(jmp.id).w(",") }
-    if (defJump != null) out.w(defJump.id)
+    out.w("switch ($condition) {").nl
+    jumps.each |jmp,i| { out.w(i).w("->").w(jmp).nl }
+    if (defJump != null) out.w("default:").w(defJump.id).nl
     out.w("}").nl
   }
 }

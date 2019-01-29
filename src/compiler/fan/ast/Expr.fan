@@ -1,4 +1,4 @@
-//
+  //
 // Copyright (c) 2006, Brian Frank and Andy Frank
 // Licensed under the Academic Free License version 3.0
 //
@@ -1667,11 +1667,11 @@ class ThrowExpr : Expr
   Expr exception   // exception to throw
 }
 
-class YieldExpr : Expr {
+class AwaitExpr : Expr {
   Expr expr
   
   new make(Loc loc, Expr expr)
-    : super(loc, ExprId.yieldExpr)
+    : super(loc, ExprId.awaitExpr)
   {
     this.expr = expr
     this.ctype = expr.ctype
@@ -1682,7 +1682,8 @@ class YieldExpr : Expr {
     expr = expr.walk(v)
   }
 
-  override Str toStr() { "yield $expr" }
+  override Str toStr() { "await $expr" }
+  override Bool isStmt() { true }
 }
 
 **************************************************************************
@@ -1738,7 +1739,7 @@ enum class ExprId
   closure,          // ClosureExpr
   dsl,              // DslExpr
   throwExpr,        // ThrowExpr
-  yieldExpr         // ThrowExpr
+  awaitExpr
 }
 
 **************************************************************************

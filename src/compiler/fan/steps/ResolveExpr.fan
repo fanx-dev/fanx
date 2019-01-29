@@ -174,10 +174,20 @@ class ResolveExpr : CompilerStep
       case ExprId.closure:         resolveClosure(expr)
       case ExprId.dsl:             return resolveDsl(expr)
       case ExprId.throwExpr:       expr.ctype = ns.nothingType
-      case ExprId.yieldExpr:
-        yexpr := ((YieldExpr)expr)
+      case ExprId.awaitExpr:
+        yexpr := ((AwaitExpr)expr)
         yexpr.expr = resolveExpr(yexpr.expr)
-        yexpr.ctype = yexpr.expr.ctype
+        if (yexpr.expr.ctype.qname == ns.asyncType.qname) {
+          awaitType := ((ParameterizedType)yexpr.expr.ctype).genericArgs.first
+          if (awaitType == null) {
+              yexpr.ctype = awaitType
+            } else {
+              yexpr.ctype = ns.objType.toNullable
+            }
+        }
+        else {
+          yexpr.ctype = yexpr.expr.ctype
+        }
     }
 
     return expr

@@ -21,11 +21,8 @@
 
 trans to =>
 
-  class Async$foo : Iter {
-    Int state
+  class Async$foo : concurrent::Async<T> {
     Type self
-    Obj? yieldObj
-    Type? result
 
     Type param1
     Type var1
@@ -37,15 +34,10 @@ trans to =>
       self.foo$async(this)
       return this.state != -1
     }
-    Obj? get() { return this.yieldObj }
   }
 
-  Type foo(p1) {
-    //ctx := foo_(p1)
-    //while (ctx.next) {
-    //}
-    //return ctx.get
-    throw Err("Cant call aysnc")
+  Asyc<Type> foo(p1) {
+    return foo_(p1).run
   }
 
   Iter foo_(p1, p2) {
@@ -61,11 +53,11 @@ trans to =>
          s2
          goto s6
          s3
-         ctx.yieldObj = expr
+         ctx.awaitObj = expr
          ctx.sate = 2
          break
       case 1:
-         s4 := ctx.result
+         s4 := ctx.awaitObj
          s5
          s6
          ctx.result = x
@@ -89,6 +81,7 @@ trans to =>
 class InitAsync : CompilerStep {
   
   private TypeDef? ctxCls //context class
+  private CType? asyncCls
   private Loc? loc  //method loc
   private Str? name  //method name
   private MethodDef? implMethod //async method
@@ -113,8 +106,11 @@ class InitAsync : CompilerStep {
     loc = def.loc
     name = def.name
     isStatic = def.isStatic
+
+    if (isStatic) throw err("Unsupport static async")
     
     process
+    //curType.dump
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,9 +126,9 @@ class InitAsync : CompilerStep {
     genInternalMethod
     
     genNext
-    genGet
+    //genGet
 
-    genSyncMethod
+    genExportMethod
 
     removeLocalVar
     genSwitch
@@ -141,15 +137,13 @@ class InitAsync : CompilerStep {
 
   private Void genCtx()
   {
+    asyncCls = ParameterizedType.create(ns.asyncType, [curMethod.returnType])
     ctxCls = TypeDef(ns, loc, curUnit, "Async\$"+name)
     ctxCls.flags   = FConst.Internal + FConst.Final + FConst.Synthetic
-    ctxCls.base    = ns.iterType
+    ctxCls.base    = asyncCls
     addTypeDef(ctxCls)
 
-    addField(ns.intType, "state")
     addField(curType, "self")
-    addField(ns.objType.toNullable, "yieldObj")
-    addField(curMethod.ret.toNullable, "result")
 
     curMethod.vars.each |v| {
       addField(v.ctype, "var_" + v.name)
@@ -177,14 +171,26 @@ class InitAsync : CompilerStep {
     ctor.code = Block(loc)
     ctxCls.addSlot(ctor)
 
-    ctor.ctorChain = CallExpr(curType.loc, SuperExpr(curType.loc), "make")
+    ctor.ctorChain = CallExpr(curType.loc, SuperExpr(curType.loc), asyncCls.method("make"))
     ctor.ctorChain.isCtorChain = true
+
+    //self param
+    if (!isStatic) {
+      field := ctxCls.fieldDef("self")
+      s := ExprStmt(
+         BinaryExpr.makeAssign(
+           FieldExpr(loc, ThisExpr(loc, curType), field, false),
+           LocalVarExpr(loc, ctor.addParamVar(field.fieldType, field.name))
+         )
+      )
+      ctor.code.stmts.add(s)
+    }
 
     curMethod.paramDefs.each |param| {
       field := ctxCls.fieldDef("var_"+param.name)
       s := ExprStmt(
          BinaryExpr.makeAssign(
-           FieldExpr(loc, ThisExpr(loc, curType), field),
+           FieldExpr(loc, ThisExpr(loc, curType), field, false),
            LocalVarExpr(loc, ctor.addParamVar(field.fieldType, field.name))
          )
       )
@@ -201,36 +207,23 @@ class InitAsync : CompilerStep {
     m.ret = ns.boolType
     m.code = Block(loc)
     ctxCls.addSlot(m)
-    
+
     //self.foo$async(this)
-    field := ctxCls.fieldDef("self")
-    cs := CallExpr.makeWithMethod(loc, 
-      FieldExpr(loc, ThisExpr(loc, ctxCls), field), implMethod,
-      [ThisExpr(loc, ctxCls)])
+    field := ctxCls.field("self")
+    fieldE := FieldExpr(loc, ThisExpr(loc, curType), field, false)
+    cs := CallExpr.makeWithMethod(loc, fieldE, implMethod, [ThisExpr(loc, ctxCls)])
     m.code.add(cs.toStmt)
     
     //return this.state != -1
-    field2 := ctxCls.fieldDef("state")
+    field2 := asyncCls.field("state")
+    field2E := FieldExpr(loc, ThisExpr(loc, curType), field2, false)
     cmp := ShortcutExpr.makeBinary(
-            FieldExpr(loc, ThisExpr(loc, ctxCls), field2),
-            Token.eq,
+            field2E,
+            Token.notEq,
             LiteralExpr(loc, ExprId.intLiteral, ns.intType, -1)
           )
+    cmp.ctype = ns.boolType
     s := ReturnStmt.make(loc, cmp)
-    m.code.add(s)
-  }
-  
-  private Void genGet()
-  {
-    m := MethodDef(loc, ctxCls)
-    m.name  = "get"
-    m.flags = FConst.Public + FConst.Synthetic + FConst.Override
-    m.ret = ns.objType.toNullable
-    m.code = Block(loc)
-    ctxCls.addSlot(m)
-
-    field := ctxCls.fieldDef("yieldObj")
-    s := ReturnStmt.make(loc,FieldExpr(loc, ThisExpr(loc, ctxCls), field))
     m.code.add(s)
   }
   
@@ -241,7 +234,8 @@ class InitAsync : CompilerStep {
     doCall.flags = FConst.Internal + FConst.Synthetic
     if (isStatic) doCall.flags += FConst.Static
     doCall.ret = ns.voidType
-    doCall.paramDefs = [ParamDef(loc, ctxCls, "async\$ctx")]
+    //doCall.paramDefs = [ParamDef(loc, ctxCls, "async\$ctx")]
+    doCall.addParamVar(ctxCls, "\$ctx")
     //doCall.code = Block(loc)
     curType.addSlot(doCall)
     
@@ -254,71 +248,50 @@ class InitAsync : CompilerStep {
     doCall.name  = name+"_"
     doCall.flags = FConst.Internal + FConst.Synthetic
     if (isStatic) doCall.flags += FConst.Static
-    doCall.ret = ns.iterType
+    doCall.ret = asyncCls
     doCall.paramDefs = curMethod.paramDefs.dup
     doCall.code = Block(loc)
     curType.addSlot(doCall)
     
-    Expr[]? args
+    Expr[]? args := Expr[,]
+    if (!isStatic) {
+      args.add(ThisExpr(loc, curType))
+    }
+
     if (doCall.paramDefs.size > 0) {
-      args = Expr[,]
       doCall.paramDefs.each |param| {
-        var := MethodVar.makeForParam(doCall, doCall.params.size, param, param.paramType)
+        var := MethodVar.makeForParam(doCall, doCall.vars.size+1, param, param.paramType)
         doCall.vars.add(var)
         lvar := LocalVarExpr(loc, var)
         args.add(lvar)
       }
     }
-    cs := CallExpr.makeWithMethod(loc, null, ctxCls.methodDef("make"), args)
+    cs := CallExpr.makeWithMethod(loc, null, ctxCls.method("make"), args)
     doCall.code.add(ReturnStmt.make(loc, cs))
   }
   
-  private Void genSyncMethod() {
+  private Void genExportMethod() {
     implMethod.code = curMethod.code
+    curMethod.ret = asyncCls
     curMethod.code = Block(loc)
     curMethod.vars.clear
-    /*
+    
     Expr[]? args
     if (curMethod.paramDefs.size > 0) {
       args = Expr[,]
       curMethod.paramDefs.each |param| {
-        var := MethodVar.makeForParam(doCall, curMethod.params.size, param, param.paramType)
+        var := MethodVar.makeForParam(curMethod, curMethod.vars.size+1, param, param.paramType)
         curMethod.vars.add(var)
         lvar := LocalVarExpr(loc, var)
         args.add(lvar)
       }
     }
     
-    //ctx := foo_(p1)
+    //return foo_(p1).run
     internalMethod := curType.methodDef(name+"_")
-    ctx := CallExpr.makeWithMethod(loc, internalMethod, ThisExpr(loc, curType), args)
-    var := curMethod.addLocalVar(ctx.ctype, null, null)
-    lvar := LocalVarExpr(expr.loc, var)
-    assign := BinaryExpr.makeAssign(lvar, expr)
-    curMethod.code.add(assign.toStmt)
-    
-    //while (ctx.next) {}
-    continueLable := TargetLable(loc)
-    curMethod.code.add(continueLable)
-    condJump := JumpStmt(loc, CallExpr.makeWithMethod(loc, ctxCls.methodDef("next"), lvar))
-    curMethod.code.add(condJump)
-    //continue
-    jmp := JumpStmt.makeGoto(loc)
-    jmp.target = continueLable
-    curMethod.code.add(jmp)
-    //end
-    condJump.target := TargetLable(loc)
-    curMethod.code.add(condJump.target)
-    
-    //  return ctx.get
-    retStmt := ReturnStmt.make(loc, CallExpr.makeWithMethod(loc, ctxCls.methodDef("get"), lvar))
-    curMethod.code.add(retStmt)
-    */
-    thr := ThrowStmt(loc,
-      CallExpr.makeWithMethod(loc, null, ns.errType.method("make"),
-        [Expr.makeForLiteral(loc, ns, "Cant call async method directly")])
-      )
-    curMethod.code.add(thr)
+    ctx := CallExpr.makeWithMethod(loc, ThisExpr(loc, curType), internalMethod, args)
+    ctx = CallExpr.makeWithMethod(loc, ctx, asyncCls.method("run"))
+    curMethod.code.add(ReturnStmt(loc, ctx))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -340,20 +313,20 @@ class InitAsync : CompilerStep {
 
   private Stmt replaceLocalDef(LocalDefStmt stmt)
   {
-    if (stmt.init == null)
+    if (stmt.init == null) {
+      if (stmt.isCatchVar) {
+        stmt.var = implMethod.addLocalVar(stmt.ctype, stmt.name, null)
+        return stmt
+      }
       return NopStmt(stmt.loc)
+    }
 
-    Expr? init = ((BinaryExpr)stmt.init).rhs
-    // ctx.var1 = initExpr
-    s := BinaryExpr.makeAssign(
-           LocalVarExpr(loc, implMethod.vars.first),
-           init
-         )
-    return s.toStmt
+    return stmt.init.toStmt
   }
   
   private Expr fieldExpr(Loc loc, Str name) {
-    field := ctxCls.fieldDef(name)
+    field := ctxCls.field(name)
+    if (field == null) field = asyncCls.field(name)
     return FieldExpr(loc, LocalVarExpr(loc, implMethod.vars.first), field, false)
   }
 
@@ -370,55 +343,118 @@ class InitAsync : CompilerStep {
 
   private Void genSwitch() {
     Stmt[] stmts := [,]
-    count := 0
+    //count := 0
     breakLabel := TargetLabel(loc)
 
     table := SwitchTable(loc, fieldExpr(loc, "state"))
     stmts.add(table)
 
+    //default goto end
+    defJump := JumpStmt.makeGoto(loc)
+    defJump.target = breakLabel
+    stmts.add(defJump)
+
+    //jump 0
     label := TargetLabel(loc)
     stmts.add(label)
-    table.jumps[count] = label
+    table.jumps.add(label)
 
     implMethod.code.stmts.each |stmt| {
       if (stmt.id === StmtId.expr) {
         ExprStmt exprStmt := stmt
         if (exprStmt.expr.id === ExprId.assign) {
           BinaryExpr assignExpr := exprStmt.expr
-          if (assignExpr.rhs.id === ExprId.yieldExpr) {
-              YieldExpr c := assignExpr.rhs
-              genYield(count, c.expr, breakLabel, table, stmts)
+          if (assignExpr.rhs.id === ExprId.awaitExpr) {
+              AwaitExpr c := assignExpr.rhs
+              genYield(c.expr, breakLabel, table, stmts)
 
-              //ctx.var1 = ctx.result
-              resField := fieldExpr(stmt.loc, "result")
+              //ctx.var1 = ctx.awaitObj
+              resField := fieldExpr(stmt.loc, "awaitObj")
               assignExpr.rhs = TypeCheckExpr.coerce(resField, assignExpr.lhs.ctype)
               stmts.add(assignExpr.toStmt)
+
+              //if (ctx.err != null) throw Err()
+              genCheckErr(stmts, stmt.loc)
               return
           }
         }
-        else if (exprStmt.expr.id == ExprId.yieldExpr) {
-          YieldExpr c := exprStmt.expr
-          genYield(count, c.expr, breakLabel, table, stmts)
+        else if (exprStmt.expr.id == ExprId.awaitExpr) {
+          AwaitExpr c := exprStmt.expr
+          genYield(c.expr, breakLabel, table, stmts)
+
+          //if (ctx.err != null) throw Err()
+          genCheckErr(stmts, stmt.loc)
           return
         }
+      }
+      else if (stmt.id === StmtId.returnStmt) {
+        ReturnStmt retStmt := stmt
+
+        //ctx.state = -1
+        setState := BinaryExpr.makeAssign(fieldExpr(stmt.loc, "state")
+            , Expr.makeForLiteral(stmt.loc, ns, -1))
+        stmts.add(setState.toStmt)
+
+        if (retStmt.expr != null) {
+          //ctx.result = expr
+          setRes := BinaryExpr.makeAssign(fieldExpr(stmt.loc, "result"), 
+              TypeCheckExpr.coerce(retStmt.expr, ns.objType.toNullable))
+          stmts.add(setRes.toStmt)
+        }
+
+        //break;
+        jump := JumpStmt.makeGoto(stmt.loc)
+        jump.target = breakLabel
+        stmts.add(jump)
+        return
+      }
+      else if (stmt.id === StmtId.localDef) {
+        //catch var
+        LocalDefStmt defStmt := stmt
+        if (!defStmt.isCatchVar) throw Err("Must catch var")
+        stmts.add(stmt)
+        lvar := LocalVarExpr(stmt.loc, defStmt.var)
+        store := BinaryExpr.makeAssign(fieldExpr(stmt.loc, "var_"+defStmt.name), lvar)
+        stmts.add(store.toStmt)
+        return
       }
       stmts.add(stmt)
     }
     stmts.add(breakLabel)
+    if (stmts.last?.id === StmtId.targetLable) {
+      stmts.add(ReturnStmt(stmts.last.loc))
+    }
     implMethod.code.stmts = stmts
   }
 
-  private Void genYield(Int count, Expr c, TargetLabel breakLabel, SwitchTable table, Stmt[] stmts) {
-    //ctx.yieldObj = foo_()
+  private Void genCheckErr(Stmt[] stmts, Loc loc) {
+    //if (ctx.err != null) throw Err()
+    err := fieldExpr(loc, "err")
+    cmp := ShortcutExpr.makeBinary(
+            err,
+            Token.notEq,
+            LiteralExpr.makeNull(loc, ns)
+          )
+    cmp.ctype = ns.boolType
+    jump := JumpStmt(loc, cmp)
+    jump.target = TargetLabel(loc)
+    stmts.add(jump)
+    stmts.add(ThrowStmt(loc, err))
+    stmts.add(jump.target)
+  }
+
+  private Void genYield(Expr c, TargetLabel breakLabel, SwitchTable table, Stmt[] stmts) {
+    //ctx.awaitObj = foo_()
     if (c.id == ExprId.call) {
       ((CallExpr)c).method = curType.methodDef(name+"_")
     }
-    setRes := BinaryExpr.makeAssign(fieldExpr(c.loc, "yieldObj"), c)
+    setRes := BinaryExpr.makeAssign(fieldExpr(c.loc, "awaitObj"),
+              TypeCheckExpr.coerce(c,ns.objType.toNullable))
     stmts.add(setRes.toStmt)
 
     //ctx.state = 3
     setState := BinaryExpr.makeAssign(fieldExpr(c.loc, "state")
-        , Expr.makeForLiteral(c.loc, ns, count+1))
+        , Expr.makeForLiteral(c.loc, ns, table.jumps.size))
     stmts.add(setState.toStmt)
 
     //break
@@ -427,9 +463,8 @@ class InitAsync : CompilerStep {
     stmts.add(jump)
 
     //next block
-    ++count
     label := TargetLabel(c.loc)
     stmts.add(label)
-    table.jumps[count] = label
+    table.jumps.add(label)
   }
 }
