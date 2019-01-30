@@ -1,15 +1,14 @@
 
 abstract class Async<T>  {
-	Int state := 0
+	protected Int state := 0
 	Obj? awaitObj
 
-	T? result
+	T? result { protected set }
 	Err? err
-	|Async<T>|? whenDone
+	@NoDoc |Async<T>|? whenDone { protected set }
 
 	abstract Bool next()
 	
-
 	Void then(|This| f) { whenDone = f }
 
 	This run() {

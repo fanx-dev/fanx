@@ -1855,10 +1855,15 @@ public class Parser : CompilerSupport
       {
         //named param
         if (curt === Token.identifier && peekt === Token.colon) {
-          name := consumeId
-          consume(Token.colon)
-          if (call.paramNames == null) call.paramNames = [Int:Str][:]
-          call.paramNames[call.args.size] = name
+          if ((cur.val as Str).getSafe(0, 'x').isUpper) {
+            //May be a MapLiteral 'Obj:Obj[:]', just discard parse named param
+          }
+          else {
+            name := consumeId
+            consume(Token.colon)
+            if (call.paramNames == null) call.paramNames = [Int:Str][:]
+            call.paramNames[call.args.size] = name
+          }
         }
         call.args.add(expr)
         if (curt === Token.rparen) break
