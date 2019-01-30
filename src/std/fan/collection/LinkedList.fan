@@ -5,7 +5,7 @@
 //   2017-1-21  Jed Young  Creation
 //
 
-class LinkedElem {
+virtual class LinkedElem {
   LinkedElem? next
   LinkedElem? previous
   Obj? val
@@ -25,7 +25,7 @@ class LinkedElem {
   }
 }
 
-class LinkedList {
+virtual class LinkedList {
   protected LinkedElem head := LinkedElem("LinkedList.head")
 
   new make() {

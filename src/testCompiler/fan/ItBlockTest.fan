@@ -515,7 +515,7 @@ class ItBlockTest : CompilerTest
         Void m20() { bar := SubBar(); bar.b |Int f| {} }
       }
 
-      class Bar
+      virtual class Bar
       {
         Void a(|This| f) {}
         Void b(|This|? f) {}

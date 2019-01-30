@@ -43,7 +43,7 @@ class CompilerJsTest : Test
   }
 }
 
-class CompilerJsA
+virtual class CompilerJsA
 {
   Str foo() { getFoo }
   private Str getFoo() { "a" }

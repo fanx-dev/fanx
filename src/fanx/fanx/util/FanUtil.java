@@ -523,8 +523,12 @@ public class FanUtil {
 
     if (Modifier.isAbstract(m))
       flags |= FConst.Abstract;
+    
     if (Modifier.isFinal(m))
       flags |= FConst.Final;
+    else
+      flags |= FConst.Virtual;
+    
     if (Modifier.isInterface(m))
       flags |= FConst.Mixin;
 

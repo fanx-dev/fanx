@@ -36,6 +36,8 @@ class OrderByInheritance : CompilerStep
     log.debug("OrderByInheritance")
     ordered.capacity = types.size
 
+    types.each |TypeDef t| { initVirtualFlags(t) }
+
     // create the todo map which is our working input,
     // check for duplicate type names in this loop
     types.each |TypeDef t|
@@ -51,6 +53,20 @@ class OrderByInheritance : CompilerStep
     // use ordered types for rest of pipeline
     if (ordered.size != compiler.types.size) throw Err("Internal error")
     compiler.types = ordered
+  }
+
+  private Void initVirtualFlags(TypeDef t) {
+    if (t.flags.and(FConst.Virtual) != 0 ||
+        t.flags.and(FConst.Abstract) != 0 ||
+        t.flags.and(FConst.Final) != 0) return
+    
+    vir := t.slotDefs.any |s| {
+      if (s.flags.and(FConst.Virtual) != 0 || t.flags.and(FConst.Abstract) != 0) {
+        return true
+      }
+      return false
+    }
+    if (vir) t.flags = t.flags.or(FConst.Virtual)
   }
 
 //////////////////////////////////////////////////////////////////////////

@@ -185,7 +185,7 @@ mixin FacetsM2 : FacetsM1 {}
 mixin FacetsM3 {}
 
 @FacetsF3 { n = "FacetsC1" }
-class FacetsC1 : FacetsM2, FacetsM3 {}
+virtual class FacetsC1 : FacetsM2, FacetsM3 {}
 
 @FacetsF1 { n = "FacetsC2" }
 class  FacetsC2 : FacetsC1 {}

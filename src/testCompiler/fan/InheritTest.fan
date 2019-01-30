@@ -21,10 +21,10 @@ class InheritTest : CompilerTest
   Void testOrderByInheritance()
   {
     compile(
-     "class B : A {}
-      class D : C {}
-      class A {}
-      class C : B {}")
+     "virtual class B : A {}
+      virtual class D : C {}
+      virtual class A {}
+      virtual class C : B {}")
      verifyEq(compiler.types[0].name, "A")
      verifyEq(compiler.types[1].name, "B")
      verifyEq(compiler.types[2].name, "C")
@@ -52,16 +52,16 @@ class InheritTest : CompilerTest
 
     // cyclic inheritance errors
     verifyErrors(
-     "class A : A {}
-      class B : C {}
-      class C : D {}
-      class D : B {}
+     "virtual class A : A {}
+      virtual class B : C {}
+      virtual class C : D {}
+      virtual class D : B {}
       mixin X : Z {}
       mixin Y : X {}
       mixin Z : X {}
       ",
-       [1, 1, "Cyclic inheritance for 'A'",
-        2, 1, "Cyclic inheritance for 'B'",
+       [1, 9, "Cyclic inheritance for 'A'",
+        2, 9, "Cyclic inheritance for 'B'",
         5, 1, "Cyclic inheritance for 'X'",
        ])
   }
@@ -73,7 +73,7 @@ class InheritTest : CompilerTest
   Void testCheckInheritance()
   {
     verifyErrors(
-     "class C {}
+     "virtual class C {}
       mixin M {}
 
       mixin C1 : C {}
@@ -86,13 +86,13 @@ class InheritTest : CompilerTest
       //class E : |Int x->M| {}
       //mixin F : Int:C {}
 
-      class G : Str {}
+      virtual class G : Str {}
       class H : LocalFile {}
       class I : M {} // OK!
 
       enum class J : G { a }
 
-      class K : C1, G {}
+      virtual class K : C1, G {}
       class L : C1, Test, C2 {}
       class N : G, C1, K {}
       ",
@@ -105,10 +105,10 @@ class InheritTest : CompilerTest
        //11, 1, "Class 'E' cannot extend parameterized type '|sys::Int->$podName::M|'",
        //12, 1, "Mixin 'F' cannot extend class '",
        //12, 1, "Class 'F' cannot extend parameterized type '",
-       14, 1, "Class 'G' cannot extend final class 'sys::Str'",
+       14, 9, "Class 'G' cannot extend final class 'sys::Str'",
        15, 1, "Class 'H' cannot access internal scoped class '",
        18, 6, "Enum 'J' cannot extend class '$podName::G'",
-       20, 1, "Invalid inheritance order, ensure class '$podName::G' comes first before mixins",
+       20, 9, "Invalid inheritance order, ensure class '$podName::G' comes first before mixins",
        21, 1, "Invalid inheritance order, ensure class '",
        22, 1, "Class 'N' cannot mixin class '$podName::K'",
        ])
@@ -121,7 +121,7 @@ class InheritTest : CompilerTest
   Void testInheritErrors()
   {
     verifyErrors(
-      "class A
+      "virtual class A
        {
          new ctor() { return }
          Bool a() { return false }
@@ -1292,7 +1292,7 @@ class InheritTest : CompilerTest
   Void testConstSubclass()
   {
     compile(
-     "class X
+     "virtual class X
       {
         const Int x := 1
       }

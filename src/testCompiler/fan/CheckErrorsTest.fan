@@ -57,7 +57,7 @@ class CheckErrorsTest : CompilerTest
          2,  9, "Cannot use 'private' modifier on type",
          3, 11, "Cannot use 'protected' modifier on type",
          4, 16, "Cannot use 'static' modifier on type",
-         4, 16, "Cannot use 'virtual' modifier on type",
+         //4, 16, "Cannot use 'virtual' modifier on type",
          5,  6, "Cannot use 'once' modifier on type",
          6, 17, "Invalid combination of 'public' and 'internal' modifiers",
          7, 16, "Invalid combination of 'abstract' and 'final' modifiers",
@@ -68,16 +68,16 @@ class CheckErrorsTest : CompilerTest
   {
     // errors
     verifyErrors(
-     "class A { abstract Void x()  }
-      class B { abstract Void x(); abstract Void y(); }
+     "virtual class A { abstract Void x()  }
+      virtual class B { abstract Void x(); abstract Void y(); }
       class C : B {}
       class D : A { abstract Void y(); }
       class E : B, X { override Void a() {} override Void x() {} }
       mixin X { abstract Void a(); abstract Void b(); }
       ",
        [
-         1,  1, "Class 'A' must be abstract since it contains abstract slots",
-         2,  1, "Class 'B' must be abstract since it contains abstract slots",
+         1,  9, "Class 'A' must be abstract since it contains abstract slots",
+         2,  9, "Class 'B' must be abstract since it contains abstract slots",
          3,  1, "Class 'C' must be abstract since it inherits but doesn't override '$podName::B.x'",
          3,  1, "Class 'C' must be abstract since it inherits but doesn't override '$podName::B.y'",
          4,  1, "Class 'D' must be abstract since it inherits but doesn't override '$podName::A.x'",
@@ -106,7 +106,7 @@ class CheckErrorsTest : CompilerTest
   {
     // check errors stage
     verifyErrors(
-     "const class Q {}
+     "virtual const class Q {}
       const mixin X {}
       const mixin Y {}
       mixin Z {}
@@ -160,7 +160,7 @@ class CheckErrorsTest : CompilerTest
         protected         Int fProtectedInternal { internal set }
       }
 
-      internal class InternalClass
+      virtual internal class InternalClass
       {
         Void m() {}
       }
@@ -310,7 +310,7 @@ class CheckErrorsTest : CompilerTest
         }
       }
 
-      class Goo
+      virtual class Goo
       {
         protected static Int z() { return 'z' }
       }")
@@ -409,7 +409,7 @@ class CheckErrorsTest : CompilerTest
         internal Foo? fi // ok
       }
 
-      internal class Foo {}
+      virtual internal class Foo {}
       internal mixin Goo {}",
        [
          3, 3, "Public method 'Bar.a' cannot use internal type '$podName::Foo?'",
@@ -489,7 +489,7 @@ class CheckErrorsTest : CompilerTest
         native static Int f37
       }
 
-      class Bar
+      virtual class Bar
       {
         virtual Int f31
       }
@@ -603,7 +603,7 @@ class CheckErrorsTest : CompilerTest
 
     // CheckErrors step
     verifyErrors(
-     "const class Foo : Bar
+     "virtual const class Foo : Bar
       {
         static Int a := 3
 
@@ -635,7 +635,7 @@ class CheckErrorsTest : CompilerTest
         once Int p() { return 3 }  // 30
       }
 
-      class Bar {}
+      virtual class Bar {}
       class Roo : Foo {}
       enum class Boo { none;  private Int x }
 
@@ -694,7 +694,7 @@ class CheckErrorsTest : CompilerTest
         26,  3, "Const field 'n' has non-const type '[sys::Buf:sys::Int]'",
         */
 
-         1,  7, "Const type 'Foo' cannot subclass non-const class 'Bar'", // further tests in testConstInheritance
+         1,  15, "Const type 'Foo' cannot subclass non-const class 'Bar'", // further tests in testConstInheritance
         22,  3, "Const type 'Foo' cannot contain non-const field 'j'",
         30,  3, "Const type 'Foo' cannot contain once method 'p'",
 
@@ -867,8 +867,8 @@ class CheckErrorsTest : CompilerTest
   {
     // errors
     verifyErrors(
-     "class A { new make(Str n) {}  }
-      class B { private new make() {} }
+     "virtual class A { new make(Str n) {}  }
+      virtual class B { private new make() {} }
       class C : A { }
       class D : B { }
       class E : A { new makeIt() {} }

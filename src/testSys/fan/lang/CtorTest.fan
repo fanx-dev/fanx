@@ -180,7 +180,7 @@ class CtorTest : Test
 // CtorNone
 //////////////////////////////////////////////////////////////////////////
 
-class CtorNone
+virtual class CtorNone
 {
   Str x := "none"
 }
@@ -193,7 +193,7 @@ class CtorSubNone : CtorNone
 // CtorAutoGen
 //////////////////////////////////////////////////////////////////////////
 
-class CtorAutoGen
+virtual class CtorAutoGen
 {
   new foobar() { x = "bsf" }
   Str x
@@ -212,7 +212,7 @@ class CtorSubAutoGen2 : CtorAutoGen
 // CtorBase
 //////////////////////////////////////////////////////////////////////////
 
-class CtorBase
+virtual class CtorBase
 {
   new make(Str x) { this.x = x; this.y = "y"; }
   new makeDef()   { this.x = "defx"; this.y = "defy"; }
@@ -231,7 +231,7 @@ class CtorSubBase : CtorBase
 // CtorDefs
 //////////////////////////////////////////////////////////////////////////
 
-class CtorDefs
+virtual class CtorDefs
 {
   new make(Int a, Int b := 2, Int c := 3)
   {
@@ -260,7 +260,7 @@ class CtorSubDefs : CtorDefs
 // CtorOrdering
 //////////////////////////////////////////////////////////////////////////
 
-class CtorOrderA
+virtual class CtorOrderA
 {
   new make(Str? a := null) { q += ",1" }
   Str q := "0"

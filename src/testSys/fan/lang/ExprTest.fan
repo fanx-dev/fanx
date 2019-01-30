@@ -221,6 +221,6 @@ class ExprTest : Test
   ExprTest? chain
 }
 
-class ExprX { This add(ExprX? k) { kids.add(k); return this } ExprX?[] kids := ExprX?[,]  }
+virtual class ExprX { This add(ExprX? k) { kids.add(k); return this } ExprX?[] kids := ExprX?[,]  }
 class ExprY : ExprX { ExprX? a }
 class ExprZ : ExprX  {}

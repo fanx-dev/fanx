@@ -427,7 +427,8 @@ mixin CType
   **
   ** Return if this Type is final and cannot be subclassed.
   **
-  Bool isFinal() { flags.and(FConst.Final) != 0 }
+  Bool isFinal() { flags.and(FConst.Final) != 0 ||
+       (flags.and(FConst.Virtual) == 0  && flags.and(FConst.Abstract) == 0) }
 
   **
   ** Is this a public scoped class

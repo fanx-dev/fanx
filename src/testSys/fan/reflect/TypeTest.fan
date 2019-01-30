@@ -466,8 +466,8 @@ facet class TypeFacetM1 { const Str? n }
 ** Inference Types
 **************************************************************************
 
-  internal class TiA {}
-  internal class TiB : TiA, TiM {}
+  internal virtual class TiA {}
+  internal virtual class TiB : TiA, TiM {}
   internal class TiC : TiB {}
   internal mixin TiM {}
   internal mixin TiO : TiM {}
@@ -477,9 +477,9 @@ facet class TypeFacetM1 { const Str? n }
 **************************************************************************
 
   abstract class TypeInheritTestAbstract {}
-  internal class TypeInheritTestA { Int a := 5  }
+  internal virtual class TypeInheritTestA { Int a := 5  }
   internal mixin TypeInheritTestM1 { Int m() { 10 } }
-  internal class TypeInheritTestB : TypeInheritTestA { Str b := "foo" }
+  internal virtual class TypeInheritTestB : TypeInheritTestA { Str b := "foo" }
   internal class TypeInheritTestC : TypeInheritTestB, TypeInheritTestM1
 {
   Float c := 7.5f

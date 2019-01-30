@@ -563,18 +563,18 @@ class MxClsDefs : MxDefs
   override Int bar() { return 23 }
 }
 
-  class NetBase { Int foo() { return 5 } }
+virtual class NetBase { Int foo() { return 5 } }
   class NetChild : NetBase, NetMixin { override Int bar() { return 7 } }
 
-  class NetBase2 : NetBase { Int bar() { return 33 } }
+virtual class NetBase2 : NetBase { Int bar() { return 33 } }
   class NetChild2 : NetBase2, NetMixin {}
 
   mixin NetMixin2 : NetMixin  { override Int foo() { return 17 } }
   class NetChild3 : NetMixin2 { override Int bar() { return 19 } }
 
-  class NetBase3 { Int bar() { return 99 } }
+virtual class NetBase3 { Int bar() { return 99 } }
   class NetChild4 : NetBase3, NetMixin2 {}
 
   mixin NetDefMixin { abstract Int foo(Int a := 3, Int b := 5) }
-  class NetDefBase  { Int foo(Int a := 3, Int b := 5) { return a + b } }
+virtual class NetDefBase  { Int foo(Int a := 3, Int b := 5) { return a + b } }
   class NetDefChild : NetDefBase, NetDefMixin {}

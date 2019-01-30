@@ -124,7 +124,6 @@ class CheckErrors : CompilerStep
     if (flags.and(FConst.Private) != 0)   err("Cannot use 'private' modifier on type", loc)
     if (flags.and(FConst.Protected) != 0) err("Cannot use 'protected' modifier on type", loc)
     if (flags.and(FConst.Static) != 0)    err("Cannot use 'static' modifier on type", loc)
-    if (flags.and(FConst.Virtual) != 0)   err("Cannot use 'virtual' modifier on type", loc)
 
     // check invalid protection combinations
     checkProtectionFlags(flags, loc)
@@ -132,6 +131,8 @@ class CheckErrors : CompilerStep
     // check abstract and final
     if (flags.and(FConst.Abstract) != 0 && flags.and(FConst.Final) != 0)
       err("Invalid combination of 'abstract' and 'final' modifiers", loc)
+    if (flags.and(FConst.Virtual) != 0 && flags.and(FConst.Final) != 0)
+      err("Invalid combination of 'virtual' and 'final' modifiers", loc)
   }
 
   private Void checkAbstractSlots(TypeDef t)

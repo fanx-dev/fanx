@@ -179,6 +179,11 @@ More primitive type: Int8/Int16/Int32/Int64/Float32/Float64.
   foo(name:0, name2:1)
 ```
 
+### Virtual Class ###
+Class default is 'final'
+```
+  virtual class Base {}
+```
 
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
 

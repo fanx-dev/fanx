@@ -355,7 +355,7 @@ class ErrTest : Test
 // Supplemental classes
 //////////////////////////////////////////////////////////////////////////
 
-const class TestOneErr : Err
+virtual const class TestOneErr : Err
 {
   new make(Str msg := "", Err? cause := null) : super(msg, cause) {}
   const Float r := -3f

@@ -12,7 +12,7 @@
 **
 ** See [docLang::Actors]`docLang::Actors`
 **
-native const class ActorPool
+virtual native const class ActorPool
 {
   static ActorPool defVal()
 

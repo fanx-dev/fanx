@@ -12,3 +12,5 @@
 - The async/await pattern coroutine
 - Named param
 - AOP support by checked dynamic call '~>'
+- Class default is 'final'
+

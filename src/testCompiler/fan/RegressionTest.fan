@@ -451,7 +451,7 @@ class RegressionTest : CompilerTest
   Void test1345()
   {
     compile(
-      """class A
+      """virtual class A
          {
            new make(Int x) { this.x = x }
            Int x

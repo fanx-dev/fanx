@@ -21,7 +21,7 @@ class MiscTest : CompilerTest
   Void testDefaultCtor()
   {
     compile(
-     "class Foo
+     "virtual class Foo
       {
         Int x() { return 7 }
       }")
@@ -36,9 +36,9 @@ class MiscTest : CompilerTest
       "class A { Void make() {} }
        class B { Int make }
        class C : Foo { } // ok
-       class D { static D make() { return null } private new privateMake() { return } }
+       virtual class D { static D make() { return null } private new privateMake() { return } }
        class E : D {}
-       class Foo { new make(Int x := 0) {} }
+       virtual class Foo { new make(Int x := 0) {} }
        ",
        [1, 1, "Default constructor 'make' conflicts with slot at Script(1,11)",
         2, 1, "Default constructor 'make' conflicts with slot at Script(2,11)",
@@ -882,7 +882,7 @@ class MiscTest : CompilerTest
   Void testFromStrSubs()
   {
     compile(
-       "class Foo
+       "virtual class Foo
         {
           Foo b(Str s) { return Bar(s) }
           Foo? fromStr(Str s) { return null }

@@ -118,7 +118,7 @@ const class InterruptedErr : Err
 ** IOErr indicates an input/output error typically associated
 ** with a file system or socket.
 **
-const class IOErr : Err
+const virtual class IOErr : Err
 {
 
   **
