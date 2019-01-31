@@ -177,6 +177,16 @@ class CodeAsm : CompilerSupport
     op(FOp.Throw)
   }
 
+  private Void callNew(CMethod method, Int? argCount := null) {
+    mref := fpod.addMethodRef(method, argCount)
+    if (method.isInstanceCtor) {
+      op(FOp.CallNew, mref)
+    }
+    else {
+      op(FOp.CallStatic, mref)
+    }
+  }
+
   private Void localVarDefStmt(LocalDefStmt stmt)
   {
     if (stmt.isCatchVar)
@@ -190,8 +200,8 @@ class CodeAsm : CompilerSupport
       // with a wrapper, call the wrapper constructor
       if (var.isWrapped)
       {
-        wrapCtor := fpod.addMethodRef(var.wrapField.parent.method("make"), 1)
-        op(FOp.CallNew, wrapCtor)
+        //wrapCtor := fpod.addMethodRef(var.wrapField.parent.method("make"), 1)
+        callNew(var.wrapField.parent.method("make"), 1)
       }
 
       // store back to local register
@@ -336,9 +346,9 @@ class CodeAsm : CompilerSupport
     expr(r.start);
     expr(r.end);
     if (r.exclusive)
-      op(FOp.CallNew, fpod.addMethodRef(ns.rangeMakeExclusive))
+      callNew(ns.rangeMakeExclusive)
     else
-      op(FOp.CallNew, fpod.addMethodRef(ns.rangeMakeInclusive))
+      callNew(ns.rangeMakeInclusive)
   }
 
   private Void listLiteral(ListLiteralExpr list)
@@ -349,7 +359,7 @@ class CodeAsm : CompilerSupport
 
     op(FOp.LoadInt,  fpod.ints.add(list.vals.size))
     op(FOp.LoadType, fpod.addTypeRef(v))
-    op(FOp.CallNew,  fpod.addMethodRef(ns.listMake))
+    callNew(ns.listMake)
 
     add := fpod.addMethodRef(ns.listAdd)
     for (i:=0; i<list.vals.size; ++i)
@@ -363,7 +373,7 @@ class CodeAsm : CompilerSupport
   {
     //op(FOp.LoadType, fpod.addTypeRef(map.ctype))
     op(FOp.LoadInt,  fpod.ints.add(map.keys.size))
-    op(FOp.CallNew,  fpod.addMethodRef(ns.mapMake, 1))
+    callNew(ns.mapMake, 1)
 
     set := fpod.addMethodRef(ns.mapSet)
     for (i:=0; i<map.keys.size; ++i)
@@ -854,7 +864,7 @@ class CodeAsm : CompilerSupport
     else
     {
       op(FOp.LoadInt,  fpod.ints.add(call.args.size))
-      op(FOp.CallNew,  fpod.addMethodRef(ns.listMakeObj))
+      callNew(ns.listMakeObj)
       add := fpod.addMethodRef(ns.listAdd)
       call.args.each |Expr arg|
       {
@@ -894,7 +904,7 @@ class CodeAsm : CompilerSupport
     {
       op(FOp.CallStatic, index)
     }
-    else if (m.isCtor)
+    else if (m.isInstanceCtor)
     {
       if (call.target == null || call.target.id == ExprId.staticTarget)
         op(FOp.CallNew, index)
@@ -1131,7 +1141,7 @@ class CodeAsm : CompilerSupport
   private Void addStr(ShortcutExpr expr, Bool topLevel)
   {
     if (topLevel)
-      op(FOp.CallNew, fpod.addMethodRef(ns.strBufMake, 0))
+      callNew(ns.strBufMake, 0)
 
     lhs := expr.target
     rhs := expr.args.first
