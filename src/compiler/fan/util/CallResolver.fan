@@ -406,6 +406,11 @@ class CallResolver : CompilerSupport
     else
       call.ctype = method.returnType
 
+    //rewrite for async method
+    if (method.flags.and(FConst.Async) != 0) {
+      call.ctype = ParameterizedType.create(ns.asyncType, [call.ctype])
+    }
+
     return call
   }
 
