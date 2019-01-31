@@ -28,9 +28,7 @@ class ExprFlat : CompilerStep
 
     stmts.clear
     def.code.stmts.each |Stmt s| { stmt(s) }
-    if (stmts.last?.id === StmtId.targetLable) {
-      stmts.add(ReturnStmt(stmts.last.loc))
-    }
+ 
     def.code.stmts = stmts.dup
 
     //curType.dump
@@ -40,7 +38,7 @@ class ExprFlat : CompilerStep
   {
     switch (stmt.id)
     {
-      case StmtId.nop:             return
+      case StmtId.nop:             addStmt(stmt)
       case StmtId.expr:            processExpr(((ExprStmt)stmt))
       case StmtId.localDef:        processExpr((LocalDefStmt)stmt)
       case StmtId.jumpStmt:        processExpr((JumpStmt)stmt)

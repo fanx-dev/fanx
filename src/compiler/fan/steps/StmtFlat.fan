@@ -45,9 +45,6 @@ class StmtFlat : CompilerStep
     protectedRegions = null
     block(def.code)
 
-    if (stmts.last?.id === StmtId.targetLable) {
-      stmts.add(ReturnStmt(stmts.last.loc))
-    }
     def.code.stmts = stmts.dup
   }
 

@@ -35,6 +35,15 @@ class CodeAsm : CompilerSupport
 
   Void block(Block block)
   {
+    if (block.stmts.last?.id === StmtId.targetLable) {
+      loc := block.stmts.last.loc
+      if (curMethod != null && curMethod.ret.isVoid) {
+        block.stmts.add(ReturnStmt.makeSynthetic(loc))
+      }
+      else {
+        block.stmts.add(ThrowStmt(loc, LiteralExpr.makeNull(loc, ns)))
+      }
+    }
     block.stmts.each |Stmt s| { stmt(s) }
   }
 
@@ -42,7 +51,7 @@ class CodeAsm : CompilerSupport
   {
     switch (stmt.id)
     {
-      case StmtId.nop:           return
+      case StmtId.nop:           op(FOp.Nop)
       case StmtId.expr:          expr(((ExprStmt)stmt).expr)
       case StmtId.localDef:      localVarDefStmt((LocalDefStmt)stmt)
       //case StmtId.ifStmt:        ifStmt((IfStmt)stmt)

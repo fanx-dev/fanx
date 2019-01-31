@@ -1,6 +1,6 @@
 
 
-class VCBase {
+virtual class VCBase {
   //internal Str foo1() { "Hi1" }
   private  Str foo2() { "Hi2" }
 }

@@ -73,7 +73,7 @@ public class FCodeEmit
       int opcode = consumeOp();
       switch (opcode)
       {
-        case Nop:                 break;
+        case Nop:                 code.op(NOP); break;
         case LoadNull:            code.op(ACONST_NULL); break;
         case LoadFalse:           loadFalse(); break;
         case LoadTrue:            loadTrue(); break;

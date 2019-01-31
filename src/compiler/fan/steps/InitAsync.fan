@@ -421,9 +421,6 @@ class InitAsync : CompilerStep {
       stmts.add(stmt)
     }
     stmts.add(breakLabel)
-    if (stmts.last?.id === StmtId.targetLable) {
-      stmts.add(ReturnStmt(stmts.last.loc))
-    }
     implMethod.code.stmts = stmts
   }
 

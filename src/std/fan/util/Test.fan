@@ -272,6 +272,7 @@ internal class TestRunner {
     }
     else {
       types.each |type| {
+        if (!type.fits(Test#)) return
         type.methods.each |Method m| {
           if (m.name.startsWith("test")) {
             runTest(type, m)

@@ -1,14 +1,14 @@
-using concurrent
+//using concurrent
 
-class AsyncTest {
+class AsyncTest : Test {
 
-  async Void testLoop(Int n) {
+  async Void doLoop(Int n) {
     for (i:=0; i<n; ++i) {
       await i
     }
   }
 
-  async Int testTry(Int n) {
+  async Int doTry(Int n) {
     try {
       t := await n + 1
       throw Err(t.toStr)
@@ -20,7 +20,7 @@ class AsyncTest {
     }
   }
 
-  async Int testValue(Int n) {
+  async Int doValue(Int n) {
     return await n + 1
   }
 
@@ -34,14 +34,14 @@ class AsyncTest {
     }
   }
 
-  Void main() {
+  Void test() {
     init
 
-    x := testValue(10)
-    assert(x is Async)
-  	testLoop(10)
+    x := doValue(10)
+    verify(x is Async)
+  	doLoop(10)
 
-    f := testTry(10)
-    assert(f.result == 100)
+    f := doTry(10)
+    verify(f.result == 100)
   }
 }

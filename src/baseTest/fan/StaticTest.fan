@@ -3,7 +3,7 @@ mixin SMix {
   static Void foo() {}
 }
 
-class SBase {
+virtual class SBase {
   static Void foo() {}
 }
 
