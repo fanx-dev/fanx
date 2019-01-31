@@ -129,6 +129,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   **
   //Func retype(Type t)
 
-  internal native Void enterCtor()
+  internal native Void enterCtor(Obj obj)
   internal native Void exitCtor()
+  internal native Void checkInCtor(Obj obj)
 }

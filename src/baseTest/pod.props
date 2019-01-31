@@ -1,7 +1,7 @@
 
 podName = baseTest
-summary = test compiler and sys lib
+summary = test for boot vm from draft
 version = 2.0
 srcDirs = fan/
-depends = sys 2.0, std 1.0
+depends = sys 2.0
 
