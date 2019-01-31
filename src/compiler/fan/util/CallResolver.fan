@@ -407,7 +407,7 @@ class CallResolver : CompilerSupport
       call.ctype = method.returnType
 
     //rewrite for async method
-    if (method.flags.and(FConst.Async) != 0) {
+    if (method.flags.and(FConst.Async) != 0 && method.parent.podName == pod.name) {
       call.ctype = ParameterizedType.create(ns.asyncType, [call.ctype])
     }
 
