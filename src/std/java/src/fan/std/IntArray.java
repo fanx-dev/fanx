@@ -1,7 +1,8 @@
-package fan.sys;
+package fan.std;
 
 import fanx.main.Sys;
 import fanx.main.Type;
+import fan.sys.FanObj;
 
 public abstract class IntArray extends FanObj {
 	public static IntArray makeS1(long size) {
@@ -54,7 +55,7 @@ public abstract class IntArray extends FanObj {
 
 	public final Type typeof() {
 		if (type == null)
-			type = Sys.findType("sys::IntArray");
+			type = Sys.findType("std::IntArray");
 		return type;
 	}
 
