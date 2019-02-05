@@ -6,7 +6,7 @@
 //   2019-02-04  Jed Young Creation
 //
 
-class GenDefaultParam : CompilerStep
+class GenParamDefault : CompilerStep
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ class GenDefaultParam : CompilerStep
 
   override Void run()
   {
-    log.debug("GenDefaultParam")
+    log.debug("GenParamDefault")
     walk(compiler, VisitDepth.slotDef)
     bombIfErr
 

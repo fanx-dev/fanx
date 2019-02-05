@@ -105,10 +105,11 @@ class Compiler
     ClosureVars(this).run
     ClosureToImmutable(this).run
     ConstChecks(this).run
-    GenDefaultParam(this).run
+    GenParamDefault(this).run
+    
     StmtFlat(this).run
     ExprFlat(this).run
-    InitAsync(this).run
+    GenAsync(this).run
   }
 
   **

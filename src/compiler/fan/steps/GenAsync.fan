@@ -78,7 +78,7 @@ trans to =>
     }
   }
 */
-class InitAsync : CompilerStep {
+class GenAsync : CompilerStep {
   
   private TypeDef? ctxCls //context class
   private CType? asyncCls
@@ -94,7 +94,7 @@ class InitAsync : CompilerStep {
 
   override Void run()
   {
-    log.debug("InitAsync")
+    log.debug("GenAsync")
     walk(compiler, VisitDepth.slotDef)
     bombIfErr
   }
