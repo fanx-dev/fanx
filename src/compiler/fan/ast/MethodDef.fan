@@ -128,9 +128,27 @@ class MethodDef : SlotDef, CMethod
     if (vars.size > 0 && !vars[vars.size-1].isParam) throw Err("Add param with locals $qname")
     param := ParamDef(loc, ctype, name)
     params.add(param)
-    var := MethodVar.makeForParam(this, params.size, param, ctype)
+
+    reg := params.size-1
+    if (!isStatic) reg++
+    var := MethodVar.makeForParam(this, reg, param, ctype)
     vars.add(var)
     return var
+  }
+
+  **
+  ** Why maintain register
+  **
+  Void resetVarRegister() {
+    reg := 0
+    if (!isStatic) reg++
+    vars.each |v| {
+      if (v.register != reg) {
+        echo("ERROR:register err: $v.register != $reg in vars:$vars")
+        v.register = reg
+      }
+      ++reg
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////

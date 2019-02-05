@@ -203,8 +203,8 @@ public abstract class FTypeEmit
     }
 
     // generate method for each parameter default to use for reflection
-    for (int i=0; i<m.paramCount; ++i)
-      if (m.vars[i].def != null) emitMethodParamDef(m, m.vars[i]);
+    //for (int i=0; i<m.paramCount; ++i)
+    //  if (m.vars[i].def != null) emitMethodParamDef(m, m.vars[i]);
 
     // Java annotations
     FFacetEmit.emitMethod(me, pod, m.attrs);
@@ -305,6 +305,7 @@ public abstract class FTypeEmit
     }
   }
   
+  /*  
   public static String paramDefMethodName(String methodName, String paramName)
   {
     return "pdef$" + methodName + "$" + paramName;
@@ -349,7 +350,7 @@ public abstract class FTypeEmit
       code.op(ATHROW);
     }
   }
-
+*/
   void emitFuncParamNames(FMethod m)
   {
     // build up string list of param names

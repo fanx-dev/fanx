@@ -64,7 +64,7 @@ public class FMethodEmit
     MethodEmit main = doEmit();
 
     // emit param default wrappers
-    emitWrappers(main);
+    //emitWrappers(main);
 
     return main;
   }
@@ -98,7 +98,7 @@ public class FMethodEmit
     MethodEmit body = doEmit();
 
     // emit body default parameter wrappers
-    MethodEmit[] wrappers = emitWrappers(body);
+    //MethodEmit[] wrappers = emitWrappers(body);
 
     // then emit the factory
     this.name = ctorName;
@@ -115,10 +115,11 @@ public class FMethodEmit
     // wrappers to do default params because the factory's
     // signature doesn't match up to what the Fantom compiler
     // generated (ctor assumes local_0 is this pointer)
+    /*
     for (int i=0; i<method.paramCount; ++i)
       if (method.vars[i].def != null)
         emitCtorFactory(init, wrappers[i], i);
-
+	*/
     // return static factory as our primary Java method
     return factory;
   }
@@ -184,7 +185,7 @@ public class FMethodEmit
     MethodEmit body = doEmit();
 
     // emit body default parameter wrappers
-    emitWrappers(body);
+    //emitWrappers(body);
 
     // then emit the factory
     this.name = ctorName;
@@ -204,7 +205,7 @@ public class FMethodEmit
     code.emitLineNumber(lineNum);
 
     // emit factory default parameter wrappers
-    emitWrappers(factory);
+    //emitWrappers(factory);
     return factory;
   }
 
@@ -251,7 +252,7 @@ public class FMethodEmit
     code.op(FCodeEmit.returnOp(ret));
 
     // emit default parameter wrappers
-    emitWrappers(main);
+    //emitWrappers(main);
     return main;
   }
 
@@ -271,6 +272,7 @@ public class FMethodEmit
     // emit main
     doEmit();
 
+    /*
     // emit a signature for each overload based on param defaults
     for (int i=0; i<method.paramCount; ++i)
     {
@@ -280,6 +282,7 @@ public class FMethodEmit
         doEmit();
       }
     }
+    */
   }
 
   /**
@@ -300,7 +303,7 @@ public class FMethodEmit
     MethodEmit main = doEmit();
 
     // emit param default wrappers
-    emitWrappers(main);
+    //emitWrappers(main);
   }
 
   /**
@@ -350,10 +353,10 @@ public class FMethodEmit
 //////////////////////////////////////////////////////////////////////////
 // Param Default Wrappers
 //////////////////////////////////////////////////////////////////////////
-
   /**
    * Emit wrappers, return wrapper methods indexed by param length or null.
    */
+  /*
   private MethodEmit[] emitWrappers(MethodEmit main)
   {
     // change flags so that defaults aren't abstract
@@ -373,10 +376,11 @@ public class FMethodEmit
     this.jflags = oldFlags;
     return wrappers;
   }
-
+  */
   /**
    * Emit wrapper.
    */
+  /*
   private MethodEmit emitWrapper(MethodEmit main, int paramLen)
   {
     // use explicit param count, and clear code
@@ -406,6 +410,7 @@ public class FMethodEmit
 
     return me;
   }
+  */
 
 //////////////////////////////////////////////////////////////////////////
 // Emit

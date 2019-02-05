@@ -105,6 +105,7 @@ class Compiler
     ClosureVars(this).run
     ClosureToImmutable(this).run
     ConstChecks(this).run
+    GenDefaultParam(this).run
     StmtFlat(this).run
     ExprFlat(this).run
     InitAsync(this).run

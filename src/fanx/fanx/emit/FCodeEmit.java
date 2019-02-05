@@ -1250,7 +1250,8 @@ public class FCodeEmit
   private Reg reg(int fanIndex)
   {
     if (regs == null) throw new IllegalStateException("Use of variable with undefined regs");
-    if (fanIndex >= regs.length) throw new InvalidRegException("" + fanIndex);
+    if (fanIndex >= regs.length) 
+    	throw new InvalidRegException("" + fanIndex);
     return regs[fanIndex];
   }
 

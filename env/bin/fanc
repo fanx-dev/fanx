@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+${0%/*}/fan "compiler::Main" "$@"

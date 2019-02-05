@@ -49,7 +49,7 @@ native const class Method : Slot
   ** if the parameter default cannot be evaluated independently (such as using
   ** an expression with previous parameters).
   **
-  Obj? paramDef(Param param, Obj? instance := null)
+  //Obj? paramDef(Param param, Obj? instance := null)
 
 //////////////////////////////////////////////////////////////////////////
 // Call Conveniences

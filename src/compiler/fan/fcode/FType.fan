@@ -118,7 +118,7 @@ class FType : CType
     ffields.each  |FField f|  { slots[f.name] = f }
     fmethods.each |FMethod m|
     {
-      f := (FField?)slots[m.name]
+      f := slots[m.name] as FField
       if (f != null)
       {
         // if already mapped to field must be getter/setter
@@ -128,6 +128,9 @@ class FType : CType
           f.setter = m
         else
           throw Err("Conflicting slots: $f and $m")
+      }
+      else if (m.flags.and(FConst.Overloading) != 0) {
+        //
       }
       else
       {

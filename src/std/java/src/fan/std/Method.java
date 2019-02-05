@@ -462,7 +462,7 @@ public class Method extends Slot {
 	// e.printStackTrace();
 	// }
 	// }
-
+/*
 	public Object paramDef(Param param) {
 		return paramDef(param, null);
 	}
@@ -493,7 +493,7 @@ public class Method extends Slot {
 	public static String paramDefMethodName(String methodName, String paramName) {
 		return "pdef$" + methodName + "$" + paramName;
 	}
-
+*/
 	//////////////////////////////////////////////////////////////////////////
 	// Fields
 	//////////////////////////////////////////////////////////////////////////

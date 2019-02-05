@@ -55,7 +55,8 @@ class CheckParamDefs : CompilerStep
 
         if (!param.name.equals(var.name)) throw err("invalid state", loc)
 
-        param.def = BinaryExpr.makeAssign(LocalVarExpr(loc, var), param.def, true)
+        //TODO: verify JS
+        //param.def = BinaryExpr.makeAssign(LocalVarExpr(loc, var), param.def, true)
       }
     }
   }

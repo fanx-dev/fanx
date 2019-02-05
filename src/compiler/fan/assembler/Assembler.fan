@@ -97,6 +97,8 @@ class Assembler : CompilerSupport, FConst
 
   FMethod assembleMethod(FType fparent, MethodDef def)
   {
+    def.resetVarRegister
+    
     attrs := AttrAsm(compiler, fpod)
 
     m := FMethod(fparent)

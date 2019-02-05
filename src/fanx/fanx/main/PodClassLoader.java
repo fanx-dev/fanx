@@ -49,9 +49,6 @@ public class PodClassLoader
 	    	}
     	}
     	
-//    	for (String path : Sys.env.envPaths()) {
-//    		addURL(new File(path, "lib/java/"+pod.podName+"_nat.jar").toURI().toURL());
-//    	}
 	} catch (MalformedURLException e) {
 		e.printStackTrace();
 	}

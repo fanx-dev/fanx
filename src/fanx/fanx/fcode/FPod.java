@@ -236,6 +236,9 @@ public final class FPod
 
     // if we have types, then ensure we have correct fcode
     if (FConst.FCodeVersion.equals(fcodeVersion)) {
+    	fcodeVer = 112;
+    }
+    else if (fcodeVersion.equals("1.1.1")) {
     	fcodeVer = 111;
     }
     else if (fcodeVersion.equals("1.1.0")) {
