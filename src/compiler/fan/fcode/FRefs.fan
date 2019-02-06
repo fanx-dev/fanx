@@ -113,13 +113,14 @@ const class FFieldRef
 const class FMethodRef
 {
 
-  new make(Int parent, Int name, Int ret, Int[] params)
+  new make(Int parent, Int name, Int ret, Int[] params, Int flags)
   {
     this.parent  = parent
     this.name    = name
     this.ret     = ret
     this.params  = params
     this.hashcode = parent.shiftl(23).xor(name.shiftl(7)).xor(ret)
+    this.flags = flags
   }
 
   override Int hash()
@@ -152,6 +153,7 @@ const class FMethodRef
     out.writeI2(ret)
     out.write(params.size)
     params.each |Int param| { out.writeI2(param) }
+    out.write(flags)
   }
 
   static FMethodRef read(InStream in)
@@ -161,7 +163,8 @@ const class FMethodRef
     ret    := in.readU2
     p := Int[,]
     in.readU1.times { p.add(in.readU2) }
-    return make(parent, name, ret, p)
+    flags := in.readU1
+    return make(parent, name, ret, p, flags)
   }
 
   const Int parent    // typeRefs index
@@ -169,4 +172,5 @@ const class FMethodRef
   const Int ret       // typeRefs index
   const Int[] params  // typeRefs indices
   const Int hashcode
+  const Int flags // the orignal method param that include default param
 }

@@ -221,6 +221,23 @@ public final class FPod
     if (podName == null) podName = metaName;
     if (!podName.equals(metaName))
       throw new IOException("Pod name mismatch " + podName + " != " + metaName);
+    
+    // if we have types, then ensure we have correct fcode
+    if (FConst.FCodeVersion.equals(fcodeVersion)) {
+    	fcodeVer = 113;//add methodRef.arity
+    }
+    else if (fcodeVersion.equals("1.1.2")) {
+    	fcodeVer = 112;//overload for param default
+    }
+    else if (fcodeVersion.equals("1.1.1")) {
+    	fcodeVer = 111;//remove jumpFinally
+    }
+    else if (fcodeVersion.equals("1.1.0")) {
+    	fcodeVer = 110;
+    }
+    else {
+      throw new IOException("Invalid fcode version: " + fcodeVersion + " != " + FConst.FCodeVersion);
+    }
   }
 
   private String meta(String key) throws IOException
@@ -234,20 +251,6 @@ public final class FPod
   {
     if (in == null) { types = new FType[0]; return; }
 
-    // if we have types, then ensure we have correct fcode
-    if (FConst.FCodeVersion.equals(fcodeVersion)) {
-    	fcodeVer = 112;
-    }
-    else if (fcodeVersion.equals("1.1.1")) {
-    	fcodeVer = 111;
-    }
-    else if (fcodeVersion.equals("1.1.0")) {
-    	fcodeVer = 110;
-    }
-    else {
-      throw new IOException("Invalid fcode version: " + fcodeVersion + " != " + FConst.FCodeVersion);
-    }
-    
     types = new FType[in.u2()];
     for (int i=0; i<types.length; ++i)
     {

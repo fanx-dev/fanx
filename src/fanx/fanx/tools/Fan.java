@@ -290,7 +290,7 @@ public class Fan
     for (int i=0; i<pods.size(); ++i)
     {
       String name = pods.get(i);
-      FStore store = Sys.env.loadPod(name);
+      FStore store = Sys.env.loadPod(name, true);
       FPod pod = new FPod(name, store);
       try {
 		pod.read();

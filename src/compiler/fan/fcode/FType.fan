@@ -129,7 +129,7 @@ class FType : CType
         else
           throw Err("Conflicting slots: $f and $m")
       }
-      else if (m.flags.and(FConst.Overloading) != 0) {
+      else if (m.flags.and(FConst.Overload) != 0) {
         //
       }
       else

@@ -15,3 +15,4 @@
 - Class default is 'final'
 - Inline finally block and remove JumpFinally opcode
 - Emit param default in front-end compiler
+- Add flags for MethodRef

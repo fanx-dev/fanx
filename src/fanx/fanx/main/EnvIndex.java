@@ -26,7 +26,7 @@ public class EnvIndex {
 		for (int i = 0; i < podNames.size(); ++i) {
 			String n = podNames.get(i);
 			try {
-				FStore store = Sys.env.loadPod(n);
+				FStore store = Sys.env.loadPod(n, true);
 //				loadPod(map, n, new File(n));
 				Input in = store.read("index.props");
 				if (in != null) {

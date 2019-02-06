@@ -339,7 +339,7 @@ public class TypeExt {
 				}
 			}
 
-			if ((slot.flags & FConst.Overloading) != 0) {
+			if ((slot.flags & FConst.Overload) != 0) {
 				continue;
 			}
 			out.put(name, slot);
@@ -380,7 +380,7 @@ public class TypeExt {
 					field.setter = Method.fromFCode(f, type);
 					continue;
 				}
-				if ((f.flags & FConst.Overloading) != 0) {
+				if ((f.flags & FConst.Overload) != 0) {
 					continue;
 				}
 

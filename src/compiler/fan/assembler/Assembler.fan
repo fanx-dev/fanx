@@ -120,6 +120,7 @@ class Assembler : CompilerSupport, FConst
       {
         f.defNameIndex = name(ParamDefaultAttr)
         f.def = assembleExpr(v.paramDef.def)
+        assert((f.def != null) == f.hasDefault)
       }
       return f
     }

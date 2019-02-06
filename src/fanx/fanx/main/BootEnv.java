@@ -176,9 +176,10 @@ public class BootEnv implements IEnv {
 	}
 
 	@Override
-	public FStore loadPod(String name) {
-		File podFile = getPodFile(name, true);
+	public FStore loadPod(String name, boolean checked) {
 		try {
+			File podFile = getPodFile(name, checked);
+			if (!checked && podFile == null) return null;
 			FStore podStore = FStore.makeZip(podFile);
 			return podStore;
 		} catch (Exception e) {

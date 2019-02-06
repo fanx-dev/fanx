@@ -29,12 +29,13 @@ public class FMethodRef
   /**
    * Construct from read.
    */
-  private FMethodRef(FTypeRef parent, String name, FTypeRef ret, FTypeRef[] params)
+  private FMethodRef(FTypeRef parent, String name, FTypeRef ret, FTypeRef[] params, int flags)
   {
     this.parent  = parent;
     this.name    = name;
     this.ret     = ret;
     this.params  = params;
+    this.flags = flags;
     this.special = toSpecial();
   }
 
@@ -576,7 +577,9 @@ public class FMethodRef
       params = new FTypeRef[numParams];
       for (int i=0; i<numParams; ++i) params[i] = fpod.typeRef(in.u2());
     }
-    return new FMethodRef(parent, name, ret, params);
+    
+    int flags = (fpod.fcodeVer >= 113) ? in.u1() : -1;
+    return new FMethodRef(parent, name, ret, params, flags);
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -591,6 +594,8 @@ public class FMethodRef
   public final String name;
   public final FTypeRef ret;
   public final FTypeRef[] params;
+  public final int flags;
+  
   private String jsig;         // cache for standard Java signature
   private String jsigAlt;      // alternate cache for ctors and non-virtuals signature
   private int mask;            // cache for mask - lazy init when jsig is initialized

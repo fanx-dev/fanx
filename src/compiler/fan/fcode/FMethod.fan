@@ -123,7 +123,7 @@ class FMethodVar : FConst, CParam
 
   override Str name() { fpod.n(nameIndex) }
   override CType paramType() { fpod.toType(typeRef) }
-  override Bool hasDefault() { def != null }
+  override Bool hasDefault() { flags.and(FConst.ParamDefault) != 0 }
   override Str toStr() { "$paramType $name" }
 
   Bool isParam()  { flags.and(FConst.Param) != 0 }

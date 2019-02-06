@@ -27,6 +27,7 @@ class MethodVar
     : this.make(method, register, paramType, p.name, FConst.Param, null)
   {
     this.paramDef = p
+    if (p.def != null) this.flags = this.flags.or(FConst.ParamDefault)
   }
 
   Bool isParam() { flags.and(FConst.Param) != 0 }

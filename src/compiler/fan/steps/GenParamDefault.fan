@@ -51,7 +51,7 @@ class GenParamDefault : CompilerStep
     // our constructor definition
     m := MethodDef(curMethod.loc, curType)
     m.name = curMethod.name
-    m.flags = curMethod.flags.or(FConst.Synthetic).or(FConst.Overloading)
+    m.flags = curMethod.flags.or(FConst.Synthetic).or(FConst.Overload)
               .and(FConst.Async.not).and(FConst.Native.not).and(FConst.Abstract.not)
     m.ret = curMethod.ret
     m.inheritedRet = curMethod.inheritedRet

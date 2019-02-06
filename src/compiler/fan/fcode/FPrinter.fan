@@ -122,7 +122,7 @@ class FPrinter : FConst
       role := v.isParam ?  "Param" : "Local"
       if (m.flags.and(FConst.Static) == 0) reg++
       printLine("    [" + role + " " + reg + "] " + pod.n(v.nameIndex) + " -> " + typeRef(v.typeRef))
-      if (v.def != null) code(v.def)
+      if (v.hasDefault) code(v.def)
     }
     if (m.code != null)
     {
@@ -259,6 +259,7 @@ class FPrinter : FConst
     if (flags.and(FConst.RuntimeConst)!= 0) s.add("rtconst ")
     if (flags.and(FConst.Readonly)  != 0) s.add("readonly ")
     if (flags.and(FConst.Async)     != 0) s.add("async ")
+    if (flags.and(FConst.Overload)  != 0) s.add("overload ")
     return s.toStr[0..-2]
   }
 

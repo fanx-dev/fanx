@@ -17,7 +17,7 @@ public interface FConst
 // Stuff
 //////////////////////////////////////////////////////////////////////////
 
-  public static final String FCodeVersion = "1.1.2";
+  public static final String FCodeVersion = "1.1.3";
 
 //////////////////////////////////////////////////////////////////////////
 // Flags
@@ -47,7 +47,7 @@ public interface FConst
   public static final int RuntimeConst= 0x00200000;
   public static final int Readonly   = 0x00400000;
   public static final int Async      = 0x00800000;
-  public static final int Overloading= 0x01000000;
+  public static final int Overload   = 0x01000000;
   public static final int FlagsMask  = 0x0fffffff;
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public interface FConst
 //////////////////////////////////////////////////////////////////////////
 
   public static final int Param = 0x0001;  // parameter or local variable
+  public static final int ParamDefault = 0x0002; //the param has default
 
 //////////////////////////////////////////////////////////////////////////
 // Attributes

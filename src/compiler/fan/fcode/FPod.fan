@@ -145,7 +145,11 @@ final class FPod : CPod, FConst
     Int[] params := method.params.map |CParam x->Int| { addTypeRef(x.paramType.raw) }
     if (argCount != null && argCount < params.size)
       params = params[0..<argCount]
-    return methodRefs.add(FMethodRef(p, n, r, params))
+
+    flags := 0
+    if (method.flags.and(FConst.Setter) != 0) flags = FConst.RefSetter
+    if (method.flags.and(FConst.Overload) != 0) flags = flags.or(FConst.RefOverload)
+    return methodRefs.add(FMethodRef(p, n, r, params, flags))
   }
 
   Void dump(OutStream out := Env.cur.out)

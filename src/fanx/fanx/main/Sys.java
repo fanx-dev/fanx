@@ -20,7 +20,7 @@ public class Sys {
 	public static final String TypeClassJsig = "L" + Sys.TypeClassPathName + ";";
 
 	public static interface IEnv {
-		public abstract FStore loadPod(String name);
+		public abstract FStore loadPod(String name, boolean checked);
 
 		public abstract String platform();
 
@@ -210,24 +210,30 @@ public class Sys {
 			pod.podClassLoader = cl;
 		}
 	}
-
+	
 	public static RuntimeException makeErr(String qname, String msg) {
 		Type type = findType(qname, false);
 		if (type == null) {
 			throw new RuntimeException("not found type:" + qname + ",msg:" + msg);
 		}
+		
 		RuntimeException re = (RuntimeException) Reflection.callStaticMethod(type.getJavaActualClass(), "make", msg);
 		return re;
 	}
 
 	public static synchronized FPod findPod(String podName, boolean checked) {
-		try {
-			SoftReference<FPod> sref = pods.get(podName);
-			FPod pod = sref != null ? sref.get() : null;
-			if (pod != null)
-				return pod;
+		SoftReference<FPod> sref = pods.get(podName);
+		FPod pod = sref != null ? sref.get() : null;
+		if (pod != null)
+			return pod;
 
-			FStore podStore = env.loadPod(podName);
+		FStore podStore = env.loadPod(podName, false);
+		if (podStore == null) {
+			if (checked) throw makeErr("sys::UnknownPodErr", "not found pod:"+podName);
+			return null;
+		}
+		
+		try {
 			pod = new FPod(podName, podStore);
 			pod.read();
 
@@ -238,9 +244,11 @@ public class Sys {
 			return pod;
 		} catch (Exception e) {
 			if (checked) {
-				throw makeErr("sys::UnknownPodErr", podName+":"+e.getMessage());
+				e.printStackTrace();
+				throw makeErr("sys::UnknownPodErr", "bad pod file:"+podName);
 			}
 		}
+		
 		return null;
 	}
 }

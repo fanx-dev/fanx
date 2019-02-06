@@ -176,7 +176,7 @@ public class FType
         //field.setter = f;
   			continue;
   		}
-      if ((f.flags & FConst.Overloading) != 0) {
+      if ((f.flags & FConst.Overload) != 0) {
         continue;
       }
   		

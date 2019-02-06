@@ -44,7 +44,7 @@ public class FMethodVar
     return this;
   }
   
-  public boolean hasDefault() { return def != null; }
+  public boolean hasDefault() { return (flags & ParamDefault) != 0; }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

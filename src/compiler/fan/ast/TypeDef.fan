@@ -108,7 +108,7 @@ class TypeDef : DefNode, CType
         return
       }
 
-      if (m.flags.and(FConst.Overloading) != 0) {
+      if (m.flags.and(FConst.Overload) != 0) {
         slotDefList.add(m)
         return
       }

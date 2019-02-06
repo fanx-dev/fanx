@@ -17,7 +17,7 @@
   pod.name:      string name
   pod.version:   version string formatted as sys::Version
   pod.depends:   depends formatted as sys::Depend separated by semicolon
-  fcode.version: 1.1.1
+  fcode.version: 1.1.3
 
 //////////////////////////////////////////////////////////////////////////
 // Name Pool
@@ -54,7 +54,7 @@
   durations.def
   {
     u2 size
-    s8[size] values
+    (s8 sec; s4 nanos)[size] values
   }
 
   uris.def
@@ -88,7 +88,7 @@
     Foo[]        -> { "sys", "List",   "<acme::Foo>" } }
     Int:Str      -> { "sys", "Map",    "<sys::Int,sys::Str>" }
     |Real->Void| -> { "sys", "Method", "<sys::Void,sys::Real>" }
-    Int16        -> { "sys", "Int",    "32" }
+    Int16        -> { "sys", "Int",    "16" }
 
 //////////////////////////////////////////////////////////////////////////
 // SlotRefs
@@ -120,6 +120,7 @@
     u2 retType (typeRefs.def)
     u1 paramCount
     u2[paramCount] params (typeRefs.def)
+    u1 flags
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,6 +140,7 @@
     u2 mixinCount
     u2 mixin[mixinCount] (typeRefs.def)
     u4 flags
+    
     u1 genericCount
     u2[genericCount] genericParams (names.def)
     u2[genericCount] genericParamBounds (typeRefs.def)
