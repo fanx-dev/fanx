@@ -47,7 +47,7 @@ native const struct class Int : Num
   ** Private constructor.
   **
   //TODO static new
-  static private new privateMake()
+  private new privateMake()
 
   **
   ** Default value is zero.

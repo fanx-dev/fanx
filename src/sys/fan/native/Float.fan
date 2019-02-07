@@ -59,7 +59,7 @@ native const struct class Float : Num
   ** Private constructor.
   **
   //TODO static new
-  static private new privateMake()
+  private new privateMake()
 
   **
   ** Float value for positive infinity.

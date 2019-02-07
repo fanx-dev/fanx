@@ -19,7 +19,7 @@ native const abstract class Num
   **
   ** internal constructor.
   **
-  //internal new make()
+  internal new make()
 
 //////////////////////////////////////////////////////////////////////////
 // Virtuals
