@@ -501,7 +501,11 @@ class ResolveExpr : CompilerStep
         return resolveCallOnLocalVar(call, LocalVarExpr(call.loc, binding))
     }
 
-    return CallResolver(compiler, curType, curMethod, call).resolve
+    res := CallResolver(compiler, curType, curMethod, call).resolve
+    if (call.isDynamic) {
+      res.ctype = ns.objType.toNullable
+    }
+    return res
   }
 
   **

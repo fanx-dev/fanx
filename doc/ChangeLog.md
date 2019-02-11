@@ -16,3 +16,21 @@
 - Inline finally block and remove JumpFinally opcode
 - Emit param default in front-end compiler
 - Add flags for MethodRef
+
+## Build 1.0 (2018-09-10) ##
+- Generics
+- Extension Method
+- Struct Type
+- RunTime Immutable
+- Readonly keyword
+- Data Class
+- Initialization Assignment
+- Closure Inference
+- Local Return
+- Build Script
+- Portable Library
+- More Container
+- New JSON Api
+- Actor Enhance
+- Return From Void
+- Float Literals

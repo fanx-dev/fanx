@@ -1259,7 +1259,8 @@ class CheckErrors : CompilerStep
       // do normal call checking and coercion
       checkArgs(call)
     }
-    else
+    
+    if (call.isDynamic)
     {
       // if dynamic all ensure all the args are boxed
       call.args.each |Expr arg, Int i| { call.args[i] = box(call.args[i]) }
