@@ -3,7 +3,7 @@
 src/baseTest/test
 env/temp
 env/lib/fan_backup
-src/fanx/bin
+src/javaEmit/bin
 devEnv
 *.pod
 src/build_lib.sh
