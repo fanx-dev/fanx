@@ -61,13 +61,15 @@ enum class FOp
   Switch             (),                  //  47  switch jump table 2 count + 2*count
   Throw              (),                  //  48  throw Err on top of stack
   Leave              (FOpArg.Jump),       //  49  jump out of a try or catch block
-  _JumpFinally        (FOpArg.Jump),       //  50  jump to a finally block
+  _JumpFinally       (FOpArg.Jump),       //  50  jump to a finally block
   CatchAllStart      (),                  //  51  start catch all block - do not leave Err on stack
   CatchErrStart      (FOpArg.TypeRef),    //  52  start catch block - leave typed Err on stack
-  _CatchEnd           (),                  //  53  start catch block - leave typed Err on stack
+  _CatchEnd          (),                  //  53  start catch block - leave typed Err on stack
   FinallyStart       (),                  //  54  starting instruction of a finally block
   FinallyEnd         (),                  //  55  ending instruction of a finally block
-  CallSuper          (FOpArg.MethodRef)   //  56  call super method. it's only for JVM
+  CallSuper          (FOpArg.MethodRef),  //  56  call super method. it's only for JVM
+  LoadFieldLiteral   (FOpArg.FieldRef),   //  57
+  LoadMethodLiteral  (FOpArg.MethodRef)   //  58
 
   private new make(FOpArg arg := FOpArg.None) { this.arg = arg }
 

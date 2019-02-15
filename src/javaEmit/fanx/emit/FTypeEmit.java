@@ -8,6 +8,8 @@
 package fanx.emit;
 
 import java.util.*;
+
+import fanx.emit.FTypeEmit.LiteralType;
 import fanx.fcode.*;
 import fanx.fcode.FAttrs.FFacet;
 import fanx.main.Sys;
@@ -297,11 +299,24 @@ public abstract class FTypeEmit
     // LoadType opcode, then we need to generate a static field called
     // type${pod}${name} we can use to cache the type once it is looked up
     if (typeLiteralFields == null) return;
-    Iterator it = typeLiteralFields.values().iterator();
-    while (it.hasNext())
+    for (Map.Entry<String, LiteralType> entry : typeLiteralFields.entrySet())
     {
-      String fieldName = (String)it.next();
-      emitField(fieldName, Sys.TypeClassJsig, EmitConst.PRIVATE|EmitConst.STATIC);
+      String fieldName = entry.getKey();
+      String fieldType = "";
+      switch (entry.getValue()) {
+	  case Type:
+		  fieldType = Sys.TypeClassJsig;
+		  break;
+	  case Field:
+		  fieldType = "Lfan/std/Field;";
+		  break;
+	  case Method:
+		  fieldType = "Lfan/std/Method;";
+		  break;
+	  default:
+		  throw new RuntimeException("unknow type:"+entry.getValue());
+	  }
+      emitField(fieldName, fieldType, EmitConst.PRIVATE|EmitConst.STATIC);
     }
   }
   
@@ -542,6 +557,30 @@ public abstract class FTypeEmit
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
+  enum LiteralType {
+	  Type,Field,Method
+  }
+  
+  public String literalField(LiteralType type, int i) {
+	  String fieldName = "";
+	  switch (type) {
+	  case Type:
+		  fieldName = "type$literal$"+i;
+		  break;
+	  case Field:
+		  fieldName = "field$literal$"+i;
+		  break;
+	  case Method:
+		  fieldName = "method$literal$"+i;
+		  break;
+	  }
+	  
+	  if (typeLiteralFields == null) typeLiteralFields= new HashMap<String, LiteralType>();
+	  if (!typeLiteralFields.containsKey(fieldName)) {
+		  typeLiteralFields.put(fieldName, type);
+	  }
+	  return fieldName;
+  }
 
   public Box classFile;
 //  ClassType parent;
@@ -554,7 +593,7 @@ public abstract class FTypeEmit
   boolean hasStaticInit;         // true if we already emitted <clinit>
 //  FuncType funcType;             // if type is a function
   boolean isFuncType;
-  HashMap typeLiteralFields;     // signature Strings we need to turn into cached fields
+  private HashMap<String, LiteralType> typeLiteralFields;     // signature Strings we need to turn into cached fields
   private boolean hasPeer = false;      // do we have any native methods requiring a peer
 //  private boolean hasNative = false;      // do we have any native methods requiring a peer
   int lineNum;                   // line number of current type (or zero)

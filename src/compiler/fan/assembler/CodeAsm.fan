@@ -333,12 +333,18 @@ class CodeAsm : CompilerSupport
 
   private Void slotLiteral(SlotLiteralExpr expr)
   {
+    /*
     op(FOp.LoadType, fpod.addTypeRef(expr.parent))
     op(FOp.LoadStr, fpod.strs.add(expr.name))
     if (expr.slot is CField)
       op(FOp.CallStatic, fpod.addMethodRef(ns.typeField, 2))
     else
       op(FOp.CallStatic, fpod.addMethodRef(ns.typeMethod, 2))
+    */
+    if (expr.slot is CField)
+      op(FOp.LoadFieldLiteral, fpod.addFieldRef(expr.slot))
+    else
+      op(FOp.LoadMethodLiteral, fpod.addMethodRef(expr.slot))
   }
 
   private Void rangeLiteral(RangeLiteralExpr r)

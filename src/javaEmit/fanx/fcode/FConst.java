@@ -123,13 +123,15 @@ public interface FConst
   public static final int Switch          =  47; // ()        switch jump table 2 count + 2*count
   public static final int Throw           =  48; // ()        throw Err on top of stack
   public static final int Leave           =  49; // (jmp)     jump out of a try or catch block
-  public static final int _JumpFinally     =  50; // (jmp)     jump to a finally block
+  public static final int _JumpFinally    =  50; // (jmp)     jump to a finally block
   public static final int CatchAllStart   =  51; // ()        start catch all block - do not leave Err on stack
   public static final int CatchErrStart   =  52; // (type)    start catch block - leave typed Err on stack
-  public static final int _CatchEnd        =  53; // ()        start catch block - leave typed Err on stack
+  public static final int _CatchEnd       =  53; // ()        start catch block - leave typed Err on stack
   public static final int FinallyStart    =  54; // ()        starting instruction of a finally block
   public static final int FinallyEnd      =  55; // ()        ending instruction of a finally block
   public static final int CallSuper       =  56; // (method)  call super method. it's only for JVM
+  public static final int LoadFieldLiteral =  57;
+  public static final int LoadMethodLiteral=  58;
   
   public static final String[] OpNames =
   {
@@ -189,7 +191,9 @@ public interface FConst
     "CatchEnd",           //  53
     "FinallyStart",       //  54
     "FinallyEnd",         //  55
-    "CallSuper",         //   56
+    "CallSuper",          //  56
+    "LoadFieldLiteral",   //  57
+    "LoadMethodLiteral",  //  58
   };
 
   public static final int[] OpSkips =
@@ -251,6 +255,8 @@ public interface FConst
     0,  //  54 FinallyStart
     0,  //  55 FinallyEnd
     2,  //  56 CallSuper
+    2,  //  57 LoadField
+    2,  //  58 LoadMethod
   };
 
   public static final String[] OpSigs =
@@ -312,6 +318,8 @@ public interface FConst
     "()",         //  54 FinallyStart
     "()",         //  55 FinallyEnd
     "(method)",   //  56 CallSuper
+    "(field)",    //  57 LoadField
+    "(method)",   //  58 LoadMethod
   };
 
 }

@@ -16,6 +16,7 @@
 - Inline finally block and remove JumpFinally opcode
 - Emit param default in front-end compiler
 - Add flags for MethodRef
+- Add LoadFieldLiteral/LoadMethodLiteral Opcode
 
 ## Build 1.0 (2018-09-10) ##
 - Generics
