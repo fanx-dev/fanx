@@ -78,7 +78,7 @@ internal const class FanScheme : UriScheme
     podName := uri.auth
     pod := Pod.find(podName, false)
     if (pod == null) throw UnresolvedErr(uri.toStr)
-    if (uri.pathStr.size == 0) return pod
+    if (uri.pathStr.size == 0 || uri.pathStr == "/") return pod
 
     // dive into file of pod
     return pod.file(uri)

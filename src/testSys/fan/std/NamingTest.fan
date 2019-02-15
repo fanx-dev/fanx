@@ -18,8 +18,8 @@ class NamingTest : Test
 
   Void testSchemeFind()
   {
-    verifyScheme(UriScheme.find("fan"),  "sys::FanScheme", "fan")
-    verifyScheme(UriScheme.find("file"), "sys::FileScheme", "file")
+    verifyScheme(UriScheme.find("fan"),  "std::FanScheme", "fan")
+    verifyScheme(UriScheme.find("file"), "std::FileScheme", "file")
 
     verifyEq(UriScheme.find("foobar", false), null)
     verifyErr(UnresolvedErr#) { UriScheme.find("foobar") }
