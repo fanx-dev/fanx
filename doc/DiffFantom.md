@@ -1,5 +1,5 @@
 
-# Different from Fantom #
+# Differences from Fantom #
 
 ### Generics ###
 ```

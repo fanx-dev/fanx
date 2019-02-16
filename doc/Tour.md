@@ -1,20 +1,17 @@
 
 # Tutorial #
 
-Fields and Methods
+Class and Methods
 =======
+Familiar C-like syntax
 ```
   class Person
   {
     Str name
-
-    //Field Accessors
-    Int age {
-      set { checkAge(val); &age = it }
-    }
+    Int age
 
     //method with default parameter
-    Void say(Str a := "x") { echo("Hi $a") }
+    Void say(Str a = "default") { echo("Hi $a") }
 
     //named constructor
     new make(Str name, Int age) {
@@ -29,6 +26,19 @@ Fields and Methods
   //named param
   p := Person(name:"B", age:30)
 
+```
+
+Field Accessors
+========
+No more boiler plate getters and setters.
+```
+  class Person
+  {
+    Str name
+    Int age {
+      set { checkAge(val); &age = it }
+    }
+  }
 ```
 
 Statically and Dynamic Typed
@@ -85,6 +95,9 @@ Functions are first class objects
 
   //sort
   files = files.sort |a, b| { a.modified <=> b.modified }
+
+  //iter
+  ["one", "two", "three"].map { it.size }.each { echo(it) }
 ```
 
 Immutability

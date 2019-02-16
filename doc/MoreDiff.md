@@ -1,6 +1,6 @@
 
 
-# More Different #
+# More Differences #
 
 ### Return From Void ###
 not allow return a value from Void method, except return a Void type.
