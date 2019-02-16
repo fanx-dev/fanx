@@ -6,7 +6,8 @@
 //   2018-5-18 Jed Young Creation
 //
 
-internal rtconst class ArrayList<V> : List<V>
+@NoDoc
+rtconst class ArrayList<V> : List<V>
 {
   private ObjArray array
   private Type type
