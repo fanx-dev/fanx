@@ -1,2 +1,2 @@
 
-call %~fs0\..\fan.bat build::Main %*
+call "%~fs0\..\fan.bat" build::Main %*

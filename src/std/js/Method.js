@@ -104,7 +104,7 @@ fan.std.Method.prototype.call = function()
   var instance = null;
   var args = arguments;
 
-  if (!this.isStatic())
+  if (!this.isCtor() && !this.isStatic())
   {
     instance = args[0];
     args = Array.prototype.slice.call(args).slice(1);

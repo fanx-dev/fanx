@@ -75,6 +75,7 @@ internal class MapEntryList : LinkedList {
 // HashMap
 //////////////////////////////////////////////////////////////////////////
 
+@NoDoc
 rtconst class HashMap<K,V> : Map<K,V>
 {
   private MapEntryList?[] array

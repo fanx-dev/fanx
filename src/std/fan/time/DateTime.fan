@@ -100,7 +100,7 @@ const struct class DateTime
   native static new make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 
 
-  protected new privateMake(Int year, Int month, Int day, Int hour, Int min, Int sec, Int ns
+  internal new privateMake(Int year, Int month, Int day, Int hour, Int min, Int sec, Int ns
      , Int ticks, Int dst, Int weekday, TimeZone tz := TimeZone.cur) {
     //if (year < 1901 || year > 2099) throw ArgErr.make("year " + year.toStr);
     if (month < 0 || month > 11)    throw ArgErr.make("month " + month.toStr);

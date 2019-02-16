@@ -159,8 +159,16 @@ rtconst abstract class List<V>
   ** Return if this list contains the specified item.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  Bool contains(Obj? item) {
+  Bool contains(V item) {
     findIndex |v,i->Bool| { v == item } != -1
+  }
+
+  **
+  ** Return if this list contains the specified item.
+  ** Equality is determined by '==='.  This method is readonly safe.
+  **
+  Bool containsSame(V item) {
+    findIndex |v,i->Bool| { v === item } != -1
   }
 
   **
@@ -185,7 +193,7 @@ rtconst abstract class List<V>
   ** range.  If the item is not found return -1.  This method
   ** is readonly safe.
   **
-  Int index(Obj? item, Int offset := 0) {
+  Int index(V item, Int offset := 0) {
     findIndex( |v,i->Bool| { v == item }, offset)
   }
 
@@ -193,7 +201,7 @@ rtconst abstract class List<V>
   ** Reverse index lookup.  This method works just like `index`
   ** except that it searches backward from the starting offset.
   **
-  Int indexr(Obj? item, Int offset := -1) {
+  Int indexr(V item, Int offset := -1) {
     findrIndex( |v,i->Bool| { v == item }, offset)
   }
 
@@ -201,7 +209,7 @@ rtconst abstract class List<V>
   ** Return integer index just like `List.index` except
   ** use '===' same operator instead of the '==' equals operator.
   **
-  Int indexSame(Obj? item, Int offset := 0) {
+  Int indexSame(V item, Int offset := 0) {
     findIndex( |v,i->Bool| { v === item }, offset)
   }
 

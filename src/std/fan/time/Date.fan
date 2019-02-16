@@ -311,4 +311,18 @@ const struct class Date
     return "Date(\"" + toStr + "\")"
   }
 
+  **
+  ** Get yesterday's Date using specified timezone.
+  **
+  static Date yesterday(TimeZone tz := TimeZone.cur) {
+    today(tz) - 1day
+  }
+
+  **
+  ** Get tomorrow's Date using specified timezone.
+  **
+  static Date tomorrow(TimeZone tz := TimeZone.cur) {
+    today(tz) + 1day
+  }
+
 }

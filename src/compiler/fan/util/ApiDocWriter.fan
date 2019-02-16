@@ -207,6 +207,10 @@ class ApiDocWriter
     if (flags.and(FConst.Ctor)      != 0) s.join("new")
     if (flags.and(FConst.Extension) != 0) s.join("extension")
     if (flags.and(FConst.Struct)    != 0) s.join("struct")
+    if (flags.and(FConst.RuntimeConst)!= 0) s.join("rtconst")
+    if (flags.and(FConst.Readonly)  != 0) s.join("readonly")
+    if (flags.and(FConst.Async)     != 0) s.join("async")
+    if (flags.and(FConst.Overload)  != 0) s.join("overload")
     return s.toStr
   }
 

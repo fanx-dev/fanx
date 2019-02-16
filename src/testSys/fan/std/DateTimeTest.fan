@@ -168,6 +168,12 @@ class DateTimeTest : Test
     verifyEq(Date.today, DateTime.now.date)
     verifyEq(Date.today(TimeZone.utc), DateTime.nowUtc.date)
 
+    verifyEq(Date.yesterday, DateTime.now.date - 1day)
+    verifyEq(Date.yesterday(TimeZone.utc), DateTime.nowUtc.date - 1day)
+
+    verifyEq(Date.tomorrow, DateTime.now.date + 1day)
+    verifyEq(Date.tomorrow(TimeZone.utc), DateTime.nowUtc.date + 1day)
+
     dt1   := DateTime.now(null)
     //ticks := DateTime.nowTicks
     dt2   := DateTime.now(null)

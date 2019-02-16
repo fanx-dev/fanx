@@ -6,6 +6,7 @@
 //   2011-4-2  Jed Young  Creation
 //
 
+@NoDoc
 native class ObjArray {
   new make(Int size, Type? type)
 
