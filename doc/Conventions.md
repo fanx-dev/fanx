@@ -42,6 +42,11 @@ Fields before Methods
   }
 ```
 
+Field Naming
+-------
+- Slot names are lower camel case such as "fooBar" (this includes all fields and methods, even const fields)
+- Never use screaming caps such as "FOO_BAR"
+
 Others
 -----
 As same as [Fantom](http://fantom.org/doc/docLang/Conventions)

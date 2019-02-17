@@ -1,8 +1,13 @@
 
 # Fanx Programming Language
 
-- [Setup](https://github.com/chunquedong/fanx/blob/master/doc/Setup.md)
-- [Tour](https://github.com/chunquedong/fanx/blob/master/doc/Tour.md)
+## Introduction
+- [Setup](Setup.md)
+- [Tutorial](Tour.md)
+- [Diffence from Fantom](DiffFantom.md)
 
-- [DiffFantom](https://github.com/chunquedong/fanx/blob/master/doc/DiffFantom.md)
-- [ChangeLog](https://github.com/chunquedong/fanx/blob/master/doc/ChangeLog.md)
+## Others
+- [Build from Sources](Build.md)
+- [Platforms and Status](Platforms.md)
+- [Code Conventions](Conventions.md)
+- [Change Log](ChangeLog.md)

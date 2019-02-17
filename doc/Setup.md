@@ -46,10 +46,3 @@ The search path is specified with the FAN_ENV_PATH envirnomenal variable:
 ```
 export FAN_ENV_PATH=/apps/devEnv/
 ```
-
-### Build from Sources ###
-```
-  cd src
-  sh build_all.sh
-  sh test_all.sh
-```
