@@ -296,7 +296,7 @@ fan.sys.Str.upper = function(self)
   }
   return upper;
 }
-
+/*
 fan.sys.Str.capitalize = function(self)
 {
   if (self.length > 0)
@@ -428,7 +428,7 @@ fan.sys.Str.reverse = function(self)
     rev += self[i];
   return rev;
 }
-
+*/
 fan.sys.Str.trim = function(self, trimStart, trimEnd)
 {
   if (self.length == 0) return self;
@@ -495,7 +495,7 @@ fan.sys.Str.splitws = function(val)
   if (toks.size() == 0) toks.add("");
   return toks;
 }
-
+/*
 fan.sys.Str.splitLines = function(self)
 {
   var lines = fan.sys.List.makeFromJs(fan.sys.Str.$type, []);
@@ -514,13 +514,13 @@ fan.sys.Str.splitLines = function(self)
   lines.add(self.substring(s, len));
   return lines;
 }
-
+*/
 fan.sys.Str.replace = function(self, oldstr, newstr)
 {
   if (oldstr == '') return self;
   return self.split(oldstr).join(newstr);
 }
-
+/*
 fan.sys.Str.numNewlines = function(self)
 {
   var numLines = 0;
@@ -537,7 +537,7 @@ fan.sys.Str.numNewlines = function(self)
   }
   return numLines;
 }
-
+*/
 fan.sys.Str.isAscii = function(self)
 {
   for (var i=0; i<self.length; i++)

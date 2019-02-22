@@ -327,7 +327,6 @@ native const final class Str
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
-
   **
   ** Get the a Str containing the specified number of spaces.  Also
   ** see `justl` and `justr` to justify an existing string.
@@ -343,7 +342,7 @@ native const final class Str
     }
     return sb.toStr
   }
-
+  
   **
   ** Return this string with all uppercase characters replaced
   ** to lowercase.  The case conversion is for ASCII only.
@@ -379,216 +378,6 @@ native const final class Str
       sb.addChar(ch)
     }
     return sb.toStr
-  }
-
-  **
-  ** Return this string with the first character converted
-  ** uppercase.  The case conversion is for ASCII only.
-  ** Also see `decapitalize` and `localeCapitalize`.
-  **
-  ** Example:
-  **   "foo".capitalize => "Foo"
-  **
-  Str capitalize() {
-    if (this.size > 0)
-    {
-      fch := this.get(0);
-      sb := StrBuf()
-      sb.add(fch.upper)
-      for (i:=1; i<size; ++i) {
-        sb.addChar(get(i))
-      }
-      return sb.toStr
-    }
-    return this;
-  }
-
-  **
-  ** Return this string with the first character converted
-  ** lowercase.  The case conversion is for ASCII only.
-  ** Also see `capitalize` and `localeDecapitalize`.
-  **
-  ** Example:
-  **   "Foo".decapitalize => "foo"
-  **
-  Str decapitalize() {
-    if (this.size > 0)
-    {
-      fch := this.get(0);
-      sb := StrBuf()
-      sb.add(fch.lower)
-      for (i:=1; i<size; ++i) {
-        sb.addChar(get(i))
-      }
-      return sb.toStr
-    }
-    return this;
-  }
-
-  **
-  ** Translate a programmer name like "fooBar" to "Foo Bar".
-  ** This method capitalizes the first letter, then walks
-  ** the string looking for ASCII capital letters and inserting
-  ** a space.  Any underbars are replaced with a space.  Also
-  ** see `fromDisplayName`.
-  **
-  ** Examples:
-  **   "foo".toDisplayName       ->  "Foo
-  **   "fooBar".toDisplayName    ->  "Foo Bar"
-  **   "fooBarBaz".toDisplayName ->  "Foo Bar Baz"
-  **   "foo33".toDisplayName     ->  "Foo 33"
-  **   "fooXML".toDisplayName    ->  "Foo XML"
-  **   "Foo".toDisplayName       ->  "Foo"
-  **   "foo_bar".toDisplayName   ->  "Foo Bar"
-  **
-  Str toDisplayName() {
-    self := this
-    if (self.size() == 0) return "";
-    StrBuf s = StrBuf(self.size()+4);
-
-    // capitalize first word
-    c := self.get(0);
-    if ('a' <= c && c <= 'z') c = c.upper;
-    s.addChar(c);
-
-    // insert spaces before every capital
-    last := c;
-    for (i:=1; i<self.size(); ++i)
-    {
-      c = self.get(i);
-      if ('A' <= c && c <= 'Z' && last != '_')
-      {
-        next := i+1 < self.size() ? self.get(i+1) : 'Q';
-        if (!('A' <= last && last <= 'Z' ) || !('A' <= next && next <= 'Z'))
-          s.addChar(' ');
-      }
-      else if ('a' <= c && c <= 'z')
-      {
-        if (('0' <= last && last <= '9')) { s.addChar(' '); c = c.upper; }
-        else if (last == '_') c = c.upper;
-      }
-      else if ('0' <= c && c <= '9')
-      {
-        if (!('0' <= last && last <= '9')) s.addChar(' ');
-      }
-      else if (c == '_')
-      {
-        s.addChar(' ');
-        last = c;
-        continue;
-      }
-      s.addChar(c);
-      last = c;
-    }
-    return s.toStr();
-  }
-
-  **
-  ** Translate a display name like "Foo Bar" to a programmatic
-  ** name "fooBar".  This method decapitalizes the first letter,
-  ** then walks the string removing spaces.  Also see `toDisplayName`.
-  **
-  ** Examples:
-  **   "Foo".fromDisplayName         ->  "foo"
-  **   "Foo Bar".fromDisplayName     ->  "fooBar"
-  **   "Foo Bar Baz".fromDisplayName ->  "fooBarBaz"
-  **   "Foo 33 Bar".fromDisplayName  ->  "foo33Bar"
-  **   "Foo XML".fromDisplayName     ->  "fooXML"
-  **   "foo bar".fromDisplayName     ->  "fooBar"
-  **
-  Str fromDisplayName() {
-    self := this
-    if (self.size() == 0) return "";
-    s := StrBuf(self.size());
-    c := self.get(0);
-    c2 := self.size() == 1 ? 0 : self.get(1);
-    if ('A' <= c && c <= 'Z' && !('A' <= c2 && c2 <= 'Z')) c = c.lower;
-    s.addChar(c);
-    last := c;
-    for (i:=1; i<self.size(); ++i)
-    {
-      c = self.get(i);
-      if (c != ' ')
-      {
-        if (last == ' ' && 'a' <= c && c <= 'z') c = c.upper
-        s.addChar(c);
-      }
-      last = c;
-    }
-    return s.toStr();
-  }
-
-  **
-  ** If size is less than width, then add spaces to the right
-  ** to create a left justified string.  Also see `padr`.
-  **
-  ** Examples:
-  **   "xyz".justl(2) => "xyz"
-  **   "xyz".justl(4) => "xyz "
-  **
-  Str justl(Int width) { padr(width, ' ') }
-
-  **
-  ** If size is less than width, then add spaces to the left
-  ** to create a right justified string.  Also see `padl`.
-  **
-  ** Examples:
-  **   "xyz".justr(2) => "xyz"
-  **   "xyz".justr(4) => " xyz"
-  **
-  Str justr(Int width) { padl(width, ' ') }
-
-  **
-  ** If size is less than width, then add the given char to the
-  ** left to achieve the specified width.  Also see `justr`.
-  **
-  ** Examples:
-  **   "3".padl(3, '0') => "003"
-  **   "123".padl(2, '0') => "123"
-  **
-  Str padl(Int width, Int ch := ' ') {
-    self := this
-    w := width;
-    if (self.size() >= w) return self;
-    c := ch;
-    s := StrBuf(w);
-    for (i:=self.size(); i<w; ++i) s.addChar(c);
-    s.add(self);
-    return s.toStr;
-  }
-
-  **
-  ** If size is less than width, then add the given char to
-  ** the left to acheive the specified with.  Also see `justl`.
-  **
-  ** Examples:
-  **   "xyz".padr(2, '.') => "xyz"
-  **   "xyz".padr(5, '-') => "xyz--"
-  **
-  Str padr(Int width, Int ch := ' ') {
-    self := this
-    w := width;
-    if (self.size() >= w) return self;
-    c := ch;
-    s := StrBuf(w);
-    s.add(self);
-    for (i:=self.size(); i<w; ++i) s.addChar(c);
-    return s.toStr;
-  }
-
-  **
-  ** Reverse the contents of this string.
-  **
-  ** Example:
-  **   "stressed".reverse => "desserts"
-  **
-  Str reverse() {
-    self := this
-    if (self.size() < 2) return self;
-    s := StrBuf(self.size());
-    for (i:=self.size()-1; i>=0; --i)
-      s.addChar(self.get(i));
-    return s.toStr();
   }
 
   **
@@ -749,37 +538,6 @@ native const final class Str
   }
 
   **
-  ** Split this string into individual lines where lines are
-  ** terminated by \n, \r\n, or \r.  The returned strings
-  ** do not contain the newline character.
-  **
-  ** Examples:
-  **   "x\ny".splitLines  => ["x", "y"]
-  **   "".splitLines      => [""]
-  **   "x".splitLines     => ["x"]
-  **   "\r\n".splitLines  => ["", ""]
-  **   "x\n".splitLines   => ["x", ""]
-  **
-  Str[] splitLines() {
-    self := this
-    lines := List<Str>.make(16);
-    len := self.size();
-    s := 0;
-    for (i:=0; i<len; ++i)
-    {
-      c := self.get(i);
-      if (c == '\n' || c == '\r')
-      {
-        lines.add(self[s..<i]);
-        s = i+1;
-        if (c == '\r' && s < len && self.get(s) == '\n') { i++; s++; }
-      }
-    }
-    lines.add(self[s..<len]);
-    return lines;
-  }
-
-  **
   ** Replace all occurrences of 'from' with 'to'.
   **
   ** Examples:
@@ -787,26 +545,6 @@ native const final class Str
   **   "aababa".replace("ab", "-")   =>  "a--a"
   **
   Str replace(Str from, Str to)
-
-  **
-  ** Count the number of newline combinations: "\n", "\r", or "\r\n".
-  **
-  Int numNewlines() {
-    self := this
-    numLines := 0;
-    len := self.size();
-    for (i:=0; i<len; ++i)
-    {
-      c := self.get(i);
-      if (c == '\n') numLines++;
-      else if (c == '\r')
-      {
-        numLines++;
-        if (i+1<len && self.get(i+1) == '\n') i++;
-      }
-    }
-    return numLines;
-  }
 
   **
   ** Return if every character in this Str is a US-ASCII character

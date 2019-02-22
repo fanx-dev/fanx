@@ -14,7 +14,7 @@ buildVersion=1.0.70
 javacParams=-source 1.7 -target 1.7
 
 // build output dir; default is Env.cur.workDir
-//devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
+devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
 
 //jdkHome=/C:/Program Files/Java/jdk1.7/
 jdkHome=/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/

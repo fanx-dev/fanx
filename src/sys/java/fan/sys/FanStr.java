@@ -478,7 +478,7 @@ public class FanStr
     }
     return s.toString();
   }
-
+/*
   public static String capitalize(String self)
   {
     if (self.length() > 0)
@@ -627,7 +627,7 @@ public class FanStr
       s.append(self.charAt(i));
     return s.toString();
   }
-
+*/
   public static String trim(String self)
   {
     int len = self.length();
@@ -711,7 +711,7 @@ public class FanStr
     if (toks.size() == 0) toks.add("");
     return toks;
   }
-
+/*
   public static List splitLines(String self)
   {
     List lines = List.make(16);
@@ -730,13 +730,13 @@ public class FanStr
     lines.add(self.substring(s, len));
     return lines;
   }
-
+*/
   public static String replace(String self, String from, String to)
   {
     if (self.length() == 0) return self;
     return StrUtil.replace(self, from, to);
   }
-
+/*
   public static long numNewlines(String self)
   {
     int numLines = 0;
@@ -753,7 +753,7 @@ public class FanStr
     }
     return numLines;
   }
-
+*/
   public static boolean isAscii(String self)
   {
     int len = self.length();
