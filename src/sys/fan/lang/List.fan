@@ -22,13 +22,13 @@ rtconst abstract class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  static new make(Int capacity, Type type := Obj#) {
+  static new make(Int capacity, Type type := Obj#.toNullable) {
     return ArrayList<V>(capacity, type)
   }
 
   @NoDoc
   static Obj?[] makeObj(Int capacity := 4) {
-    return ArrayList<Obj?>(capacity, Obj#)
+    return ArrayList<Obj?>(capacity, Obj#.toNullable)
   }
 
   protected new privateMake() {}

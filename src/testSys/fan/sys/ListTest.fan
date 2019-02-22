@@ -481,10 +481,11 @@ class ListTest : Test
     verify(x.capacity > 7)
     verifyEq(x, Str?[null, null, null])
 
-    y := ["a", "b", "c"]
+    y := Str["a", "b", "c"]
     y->size = 2
     verifyEq(y, ["a", "b"])
-    //verifyErr(ArgErr#) { y.size = 3 }
+    echo("$y.of $y.of.isNullable")
+    verifyErr(ArgErr#) { y.size = 3 }
   }
 
 //////////////////////////////////////////////////////////////////////////

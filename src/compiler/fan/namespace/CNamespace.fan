@@ -255,6 +255,7 @@ abstract class CNamespace
   once CMethod? listMake           () { sysMethod(listType,    "make") }
   once CMethod? listMakeObj        () { sysMethod(listType,    "makeObj") }
   once CMethod? listAdd            () { sysMethod(listType,    "add") }
+  once CMethod? listToNullable     () { sysMethod(listType,    "toNullable") }
   once CMethod? mapMake            () { sysMethod(mapType,    "make") }
   once CMethod? mapSet             () { sysMethod(mapType,    "set") }
   once CMethod? enumOrdinal        () { sysMethod(enumType,    "ordinal") }

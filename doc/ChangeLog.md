@@ -3,6 +3,8 @@
 
 ## Build 2.1 (working) ##
 - No doc test code
+- Allow method body in native class
+- Fix growing non-nullable List
 
 ## Build 2.0 (2019-02-16) ##
 - Fix Service bug

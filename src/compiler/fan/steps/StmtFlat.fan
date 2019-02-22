@@ -383,7 +383,7 @@ class StmtFlat : CompilerStep
     addStmt(jmpEnd)
 
     //emit blok
-    blocks := TargetLabel[,] { size = stmt.cases.size }
+    blocks := TargetLabel?[,] { size = stmt.cases.size }
     stmt.cases.each |Case c, i|
     {
       label := TargetLabel(c.loc)
@@ -421,7 +421,7 @@ class StmtFlat : CompilerStep
     condition := toTempVar(stmt.condition)
     endLabel := TargetLabel(stmt.loc)
 
-    blocks := TargetLabel[,] { size = stmt.cases.size }
+    blocks := TargetLabel?[,] { size = stmt.cases.size }
 
     stmt.cases.each |Case c, bi|
     {
