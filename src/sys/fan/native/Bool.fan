@@ -22,7 +22,12 @@ native const struct class Bool
   ** If invalid format and checked is false return null, otherwise
   ** throw ParseErr.
   **
-  static new fromStr(Str s, Bool checked := true)
+  static new fromStr(Str s, Bool checked := true) {
+    if (s == "true") return true;
+    if (s == "false") return false;
+    if (!checked) return false
+    throw ParseErr("Bool:" + s)
+  }
 
   **
   ** Private constructor.
@@ -32,7 +37,7 @@ native const struct class Bool
   **
   ** Default value is false.
   **
-  const static Bool defVal
+  const static Bool defVal := false
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides
@@ -46,12 +51,12 @@ native const struct class Bool
   **
   ** Return 1231 for true and 1237 for false.
   **
-  override Int hash()
+  override Int hash() { this ? 1231 : 1237 }
 
   **
   ** Return "true" or "false".
   **
-  override Str toStr()
+  override Str toStr() { this ? "true" : "false" }
 
   **
   ** Return localized strings for "true" and "false" using current locale.
@@ -91,6 +96,6 @@ native const struct class Bool
   **
   ** Get this Bool as a Fantom code literal - returns `toStr`.
   **
-  Str toCode()
+  Str toCode() { toStr }
 
 }

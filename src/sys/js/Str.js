@@ -729,7 +729,7 @@ fan.sys.Str.toCode = function(self, quote, escu)
   if (q != 0) s += q;
   return s;
 }
-
+/*
 fan.sys.Str.toXml = function(self)
 {
   var s = null;
@@ -770,7 +770,7 @@ fan.sys.Str.xmlEsc[60] = "&lt;";
 fan.sys.Str.xmlEsc[62] = "&gt;";
 fan.sys.Str.xmlEsc[39] = "&#39;";
 fan.sys.Str.xmlEsc[34] = "&quot;";
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Rhino
 //////////////////////////////////////////////////////////////////////////

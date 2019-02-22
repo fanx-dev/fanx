@@ -18,17 +18,27 @@ native class ObjArray {
 
   ObjArray realloc(Int newSize)
 
-  This fill(Obj? obj, Int times)
+  This fill(Obj? obj, Int times) {
+    for (i := 0; i < times; ++i) {
+      this[i] = obj
+    }
+    return this
+  }
 
-  This copyFrom(ObjArray that, Int thatOffset, Int thisOffset, Int length)
+  This copyFrom(ObjArray that, Int thatOffset, Int thisOffset, Int length) {
+    for (i := 0; i<length; ++i) {
+      this[i+thisOffset] = that[i+thatOffset]
+    }
+    return this
+  }
 
   protected override Void finalize()
 
   @NoDoc
-  static ObjArray fromJava(Type of, Obj array)
+  static ObjArray? fromJava(Type of, Obj array) { null }
 
   @NoDoc
-  Obj toJava(Obj clz)
+  Obj toJava(Obj clz) { clz }
 }
 
 native class ByteArray {
@@ -42,9 +52,19 @@ native class ByteArray {
 
   ByteArray realloc(Int newSize)
 
-  This fill(Int byte, Int times)
+  This fill(Int byte, Int times) {
+    for (i := 0; i < times; ++i) {
+      this[i] = byte
+    }
+    return this
+  }
 
-  This copyFrom(ByteArray that, Int thatOffset, Int thisOffset, Int length)
+  This copyFrom(ByteArray that, Int thatOffset, Int thisOffset, Int length) {
+    for (i := 0; i<length; ++i) {
+      this[i+thisOffset] = that[i+thatOffset]
+    }
+    return this
+  }
 
   protected override Void finalize()
 }

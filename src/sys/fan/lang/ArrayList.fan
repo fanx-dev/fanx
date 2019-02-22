@@ -60,9 +60,9 @@ rtconst class ArrayList<V> : List<V>
         }
         &size = it
       } else if (it > &size) {
-        //if (type.isNullable == false) {
-        //  throw ArgErr("growing non-nullable list")
-        //}
+        if (!type.isNullable) {
+          throw ArgErr("growing non-nullable list")
+        }
         if (it > capacity) {
           capacity = it
         }

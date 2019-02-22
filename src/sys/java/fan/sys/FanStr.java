@@ -958,7 +958,7 @@ public class FanStr
   }
 
   private static int hex(int nib) { return "0123456789abcdef".charAt(nib); }
-
+/*
   public static String toXml(String self)
   {
     StringBuilder s = null;
@@ -1001,7 +1001,7 @@ public class FanStr
     xmlEsc['\''] = "&#39;";
     xmlEsc['"']  = "&quot;";
   }
-
+*/
 //  public static InStream in(String self)
 //  {
 //    return new StrInStream(self);

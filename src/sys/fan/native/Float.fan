@@ -6,10 +6,7 @@
 //    2 Dec 05  Brian Frank  Creation
 //   11 Oct 06  Brian Frank  Rename Real to Float
 //
-/*
-facet class F32 {}
-facet class F64 {}
-*/
+
 **
 ** Float is used to represent a 64-bit floating point number.
 **
@@ -53,7 +50,7 @@ native const struct class Float : Num
   **
   ** Default value is 0f.
   **
-  static const Float defVal
+  static const Float defVal := 0f
 
   **
   ** Private constructor.
@@ -64,30 +61,30 @@ native const struct class Float : Num
   **
   ** Float value for positive infinity.
   **
-  const static Float posInf
+  const static Float posInf := 1f/0f
 
   **
   ** Float value for negative infinity.
   **
-  const static Float negInf
+  const static Float negInf := -1f/0f
 
   **
   ** Float value for Not-A-Number.
   **
-  const static Float nan
+  const static Float nan := 0f/0f
 
   **
   ** Float value for e which is the base of natural logarithms.
   **
   @NoDoc
-  const static Float e
+  const static Float e := 2.718281828459045
 
   **
   ** Float value for pi which is the ratio of the
   ** circumference of a circle to its diameter.
   **
   @NoDoc
-  const static Float pi
+  const static Float pi := 3.141592653589793
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -137,18 +134,18 @@ native const struct class Float : Num
   **
   ** Return if this is negative zero value.
   **
-  Bool isNegZero()
+  Bool isNegZero() { bits() == 0x8000000000000000 }
 
   **
   ** If this value is negative zero then return
   ** normalized zero, otherwise return this value.
   **
-  Float normNegZero()
+  Float normNegZero() { bits() == 0x8000000000000000 ? 0f : this }
 
   **
   ** Return bits().
   **
-  override Int hash()
+  override Int hash() { bits() }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -160,10 +157,10 @@ native const struct class Float : Num
   @Operator Float negate()
 
   ** Increment by one.  Shortcut is ++a or a++.
-  @Operator Float increment()
+  @Operator Float increment() { this + 1.0 }
 
   ** Decrement by one.  Shortcut is --a or a--.
-  @Operator Float decrement()
+  @Operator Float decrement() { this - 1.0 }
 
   ////////// mult //////////
 

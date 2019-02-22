@@ -741,7 +741,7 @@ public class Parser : CompilerSupport
     consume(Token.rparen)
 
     // if no body expected
-    if (parent.isNative) flags = flags.or(FConst.Native)
+    //if (parent.isNative) flags = flags.or(FConst.Native)
     if (flags.and(FConst.Abstract) != 0 || flags.and(FConst.Native) != 0)
     {
       if (curt === Token.lbrace)
@@ -761,8 +761,9 @@ public class Parser : CompilerSupport
       method.ctorChain = ctorChain(method);
 
     // body
-    if (curt != Token.lbrace)
-      err("Expecting method body")
+    if (curt != Token.lbrace) {
+      if (!parent.isNative) err("Expecting method body")
+    }
     else
       method.code = block
 

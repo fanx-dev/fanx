@@ -104,6 +104,18 @@ public class StrBuf
 	sb.appendCodePoint((int)ch);
     return this;
   }
+
+  public StrBuf addStr(String str)
+  {
+  sb.append(str, 0, str.length());
+    return this;
+  }
+
+  public StrBuf addStr(String str, long off)
+  {
+  sb.append(str, (int)off, str.length());
+    return this;
+  }
   
   public StrBuf addStr(String str, long off, long len)
   {

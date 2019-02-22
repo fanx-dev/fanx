@@ -90,7 +90,10 @@ native rtconst abstract class Obj
   ** an object.  The default implementation calls the function
   ** with 'this', and then returns 'this'.
   **
-  virtual This with(|This| f)
+  virtual This with(|This| f) {
+    f(this)
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Type
@@ -147,5 +150,7 @@ native rtconst abstract class Obj
   **
   ** throw AssertErr if a boolean condition is false
   **
-  static Void assert(Bool condition, Str msg := "")
+  static Void assert(Bool condition, Str msg := "") {
+    if (!condition) throw AssertErr(msg)
+  }
 }

@@ -47,7 +47,25 @@ native const final class Str
   ** See `localeCompare` for localized case insensitive
   ** comparisions.
   **
-  Bool equalsIgnoreCase(Str s)
+  Bool equalsIgnoreCase(Str s) {
+    a := this
+    b := s
+    if (a == b) return true;
+
+    an := a.size
+    bn := b.size
+    if (an != bn) return false;
+
+    for (i:=0; i<an; ++i)
+    {
+      ac := a.get(i);
+      bc := b.get(i);
+      if ('A' <= ac && ac <= 'Z') ac = ac.or(0x20)
+      if ('A' <= bc && bc <= 'Z') bc = bc.or(0x20)
+      if (ac != bc) return false;
+    }
+    return true;
+  }
 
   **
   ** Compare based on Unicode character values.  Case is not
@@ -73,7 +91,26 @@ native const final class Str
   **   "hi".compareIgnoreCase("HI")  =>  0
   **   "b".compareIgnoreCase("a")    =>  1
   **
-  Int compareIgnoreCase(Str s)
+  Int compareIgnoreCase(Str s) {
+    a := this
+    b := s
+    if (a == b) return 0;
+
+    an := a.size();
+    bn := b.size();
+
+    for (i:=0; i<an && i<bn; ++i)
+    {
+      ac := a.get(i);
+      bc := b.get(i);
+      if ('A' <= ac && ac <= 'Z') ac = ac.or(0x20)
+      if ('A' <= bc && bc <= 'Z') bc = bc.or(0x20)
+      if (ac != bc) return ac < bc ? -1 : +1;
+    }
+
+    if (an == bn) return 0;
+    return an < bn ? -1 : +1;
+  }
 
   **
   ** The hash for a Str is platform dependent.
@@ -98,7 +135,7 @@ native const final class Str
   **
   ** Return if 'size() == 0'.
   **
-  Bool isEmpty()
+  Bool isEmpty() { size == 0 }
 
   **
   ** Return number of characters in this string.
@@ -170,7 +207,7 @@ native const final class Str
   ** Return if this string contains the specified string.
   ** Convenience for index(s) != null
   **
-  Bool contains(Str s)
+  Bool contains(Str s) { find(s) != -1 }
 
   **
   ** Return if this string contains the specified character.
@@ -194,7 +231,11 @@ native const final class Str
   ** Unlike `get`, this method does not throw IndexErr when the index
   ** is out or range, instead it returns 'def'.
   **
-  Int getSafe(Int index, Int defV := 0)
+  Int getSafe(Int index, Int defV := 0) {
+    if (index < 0) index += size
+    if (index < 0 || index >= size) return defV
+    return get(index)
+  }
 
   **
   ** Return a substring based on the specified range.  Negative indexes
@@ -233,7 +274,11 @@ native const final class Str
   ** Example:
   **   "abc".each |Int c| { echo(c.toChar) }
   **
-  Void each(|Int ch, Int index| c)
+  Void each(|Int ch, Int index| c) {
+    for (i:=0; i<size; ++i) {
+      c(get(i), i)
+    }
+  }
 
   **
   ** Reverse each - call the specified function for every char in
@@ -243,7 +288,11 @@ native const final class Str
   ** Example:
   **   "abc".eachr |Int c| { echo(c.toChar) }
   **
-  Void eachr(|Int ch, Int index| c)
+  Void eachr(|Int ch, Int index| c) {
+    for (i:=size-1; i>=0; ++i) {
+      c(get(i), i)
+    }
+  }
 
   **
   ** Return true if c returns true for any of the characters in
@@ -253,7 +302,12 @@ native const final class Str
   **   "Foo".any |c| { c.isUpper } => true
   **   "foo".any |c| { c.isUpper } => false
   **
-  Bool any(|Int ch, Int index->Bool| c)
+  Bool any(|Int ch, Int index->Bool| c) {
+    for (i:=0; i<size; ++i) {
+      if (c(get(i), i)) return true
+    }
+    return false
+  }
 
   **
   ** Return true if c returns true for all of the characters in
@@ -263,7 +317,12 @@ native const final class Str
   **   "Bar".all |c| { c.isUpper } => false
   **   "BAR".all |c| { c.isUpper } => true
   **
-  Bool all(|Int ch, Int index->Bool| c)
+  Bool all(|Int ch, Int index->Bool| c) {
+    for (i:=0; i<size; ++i) {
+      if (!c(get(i), i)) return false
+    }
+    return true
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -277,7 +336,13 @@ native const final class Str
   **   Str.spaces(1)  =>  " "
   **   Str.spaces(2)  =>  "  "
   **
-  static Str spaces(Int n)
+  static Str spaces(Int n) {
+    sb := StrBuf()
+    for (i:=0; i<n; ++i) {
+      sb.addChar(' ')
+    }
+    return sb.toStr
+  }
 
   **
   ** Return this string with all uppercase characters replaced
@@ -287,7 +352,15 @@ native const final class Str
   ** Example:
   **   "Apple".lower => "apple"
   **
-  Str lower()
+  Str lower() {
+    sb := StrBuf()
+    for (i:=0; i<size; ++i) {
+      ch := this.get(i)
+      if ('A' <= ch && ch <= 'Z') ch = ch.or(0x20)
+      sb.addChar(ch)
+    }
+    return sb.toStr
+  }
 
   **
   ** Return this string with all lowercase characters replaced
@@ -297,7 +370,16 @@ native const final class Str
   ** Example:
   **   "Foo Bar".upper => "FOO BAR"
   **
-  Str upper()
+  Str upper() {
+    sb := StrBuf()
+    n := size
+    for (i:=0; i<n; ++i) {
+      ch := this.get(i)
+      if ('A' <= ch && ch <= 'Z') ch = ch.and(0x20.not)
+      sb.addChar(ch)
+    }
+    return sb.toStr
+  }
 
   **
   ** Return this string with the first character converted
@@ -307,7 +389,19 @@ native const final class Str
   ** Example:
   **   "foo".capitalize => "Foo"
   **
-  Str capitalize()
+  Str capitalize() {
+    if (this.size > 0)
+    {
+      fch := this.get(0);
+      sb := StrBuf()
+      sb.add(fch.upper)
+      for (i:=1; i<size; ++i) {
+        sb.addChar(get(i))
+      }
+      return sb.toStr
+    }
+    return this;
+  }
 
   **
   ** Return this string with the first character converted
@@ -317,7 +411,19 @@ native const final class Str
   ** Example:
   **   "Foo".decapitalize => "foo"
   **
-  Str decapitalize()
+  Str decapitalize() {
+    if (this.size > 0)
+    {
+      fch := this.get(0);
+      sb := StrBuf()
+      sb.add(fch.lower)
+      for (i:=1; i<size; ++i) {
+        sb.addChar(get(i))
+      }
+      return sb.toStr
+    }
+    return this;
+  }
 
   **
   ** Translate a programmer name like "fooBar" to "Foo Bar".
@@ -335,7 +441,47 @@ native const final class Str
   **   "Foo".toDisplayName       ->  "Foo"
   **   "foo_bar".toDisplayName   ->  "Foo Bar"
   **
-  Str toDisplayName()
+  Str toDisplayName() {
+    self := this
+    if (self.size() == 0) return "";
+    StrBuf s = StrBuf(self.size()+4);
+
+    // capitalize first word
+    c := self.get(0);
+    if ('a' <= c && c <= 'z') c = c.upper;
+    s.addChar(c);
+
+    // insert spaces before every capital
+    last := c;
+    for (i:=1; i<self.size(); ++i)
+    {
+      c = self.get(i);
+      if ('A' <= c && c <= 'Z' && last != '_')
+      {
+        next := i+1 < self.size() ? self.get(i+1) : 'Q';
+        if (!('A' <= last && last <= 'Z' ) || !('A' <= next && next <= 'Z'))
+          s.addChar(' ');
+      }
+      else if ('a' <= c && c <= 'z')
+      {
+        if (('0' <= last && last <= '9')) { s.addChar(' '); c = c.upper; }
+        else if (last == '_') c = c.upper;
+      }
+      else if ('0' <= c && c <= '9')
+      {
+        if (!('0' <= last && last <= '9')) s.addChar(' ');
+      }
+      else if (c == '_')
+      {
+        s.addChar(' ');
+        last = c;
+        continue;
+      }
+      s.addChar(c);
+      last = c;
+    }
+    return s.toStr();
+  }
 
   **
   ** Translate a display name like "Foo Bar" to a programmatic
@@ -350,7 +496,27 @@ native const final class Str
   **   "Foo XML".fromDisplayName     ->  "fooXML"
   **   "foo bar".fromDisplayName     ->  "fooBar"
   **
-  Str fromDisplayName()
+  Str fromDisplayName() {
+    self := this
+    if (self.size() == 0) return "";
+    s := StrBuf(self.size());
+    c := self.get(0);
+    c2 := self.size() == 1 ? 0 : self.get(1);
+    if ('A' <= c && c <= 'Z' && !('A' <= c2 && c2 <= 'Z')) c = c.lower;
+    s.addChar(c);
+    last := c;
+    for (i:=1; i<self.size(); ++i)
+    {
+      c = self.get(i);
+      if (c != ' ')
+      {
+        if (last == ' ' && 'a' <= c && c <= 'z') c = c.upper
+        s.addChar(c);
+      }
+      last = c;
+    }
+    return s.toStr();
+  }
 
   **
   ** If size is less than width, then add spaces to the right
@@ -360,7 +526,7 @@ native const final class Str
   **   "xyz".justl(2) => "xyz"
   **   "xyz".justl(4) => "xyz "
   **
-  Str justl(Int width)
+  Str justl(Int width) { padr(width, ' ') }
 
   **
   ** If size is less than width, then add spaces to the left
@@ -370,7 +536,7 @@ native const final class Str
   **   "xyz".justr(2) => "xyz"
   **   "xyz".justr(4) => " xyz"
   **
-  Str justr(Int width)
+  Str justr(Int width) { padl(width, ' ') }
 
   **
   ** If size is less than width, then add the given char to the
@@ -380,7 +546,16 @@ native const final class Str
   **   "3".padl(3, '0') => "003"
   **   "123".padl(2, '0') => "123"
   **
-  Str padl(Int width, Int char := ' ')
+  Str padl(Int width, Int ch := ' ') {
+    self := this
+    w := width;
+    if (self.size() >= w) return self;
+    c := ch;
+    s := StrBuf(w);
+    for (i:=self.size(); i<w; ++i) s.addChar(c);
+    s.add(self);
+    return s.toStr;
+  }
 
   **
   ** If size is less than width, then add the given char to
@@ -390,7 +565,16 @@ native const final class Str
   **   "xyz".padr(2, '.') => "xyz"
   **   "xyz".padr(5, '-') => "xyz--"
   **
-  Str padr(Int width, Int char := ' ')
+  Str padr(Int width, Int ch := ' ') {
+    self := this
+    w := width;
+    if (self.size() >= w) return self;
+    c := ch;
+    s := StrBuf(w);
+    s.add(self);
+    for (i:=self.size(); i<w; ++i) s.addChar(c);
+    return s.toStr;
+  }
 
   **
   ** Reverse the contents of this string.
@@ -398,7 +582,14 @@ native const final class Str
   ** Example:
   **   "stressed".reverse => "desserts"
   **
-  Str reverse()
+  Str reverse() {
+    self := this
+    if (self.size() < 2) return self;
+    s := StrBuf(self.size());
+    for (i:=self.size()-1; i>=0; --i)
+      s.addChar(self.get(i));
+    return s.toStr();
+  }
 
   **
   ** Trim whitespace from the beginning and end of the string.  For the purposes
@@ -412,7 +603,13 @@ native const final class Str
   **    "  foo\n".trim  =>  "foo"
   **    "   ".trim      =>  ""
   **
-  Str trim()
+  Str trim() {
+    self := this
+    len := self.size();
+    if (len == 0) return self;
+    if (self.get(0) > ' ' && self.get(len-1) > ' ') return self;
+    return self.trimStart.trimEnd
+  }
 
   **
   ** Trim whitespace from the beginning and end of the string.
@@ -428,7 +625,10 @@ native const final class Str
   **    "".trimToNull         =>  null
   **    "   ".trimToNull      =>  null
   **
-  Str? trimToNull()
+  Str? trimToNull() {
+    trimmed := this.trim()
+    return trimmed.size() == 0 ? null : trimmed;
+  }
 
   **
   ** Trim whitespace only from the beginning of the string.
@@ -438,7 +638,15 @@ native const final class Str
   **    "foo".trim    =>  "foo"
   **    " foo ".trim  =>  "foo "
   **
-  Str trimStart()
+  Str trimStart() {
+    self := this
+    len := self.size();
+    if (len == 0) return self;
+    if (self.get(0) > ' ') return self;
+    pos := 1;
+    while (pos < len && self.get(pos) <= ' ') pos++;
+    return self[pos..size-1];
+  }
 
   **
   ** Trim whitespace only from the end of the string.
@@ -448,7 +656,15 @@ native const final class Str
   **    "foo".trim    =>  "foo"
   **    " foo ".trim  =>  " foo"
   **
-  Str trimEnd()
+  Str trimEnd() {
+    self := this
+    len := self.size();
+    if (len == 0) return self;
+    pos := len-1;
+    if (self.get(pos) > ' ') return self;
+    while (pos >= 0 && self.get(pos) <= ' ') pos--;
+    return self[0..<pos+1]
+  }
 
   **
   ** Split a string into a list of substrings using the
@@ -484,7 +700,53 @@ native const final class Str
   **   "22#33".split('#', false)  =>  ["22","33"]
   **   " x ; y".split(';', false) =>  [" x "," y"]
   **
-  Str[] split(Int? separator := null, Bool trim := true)
+  Str[] split(Int? separator := null, Bool trimmed := true) {
+    self := this
+    if (separator == null) return splitws(self);
+    Int sep := separator;
+    Bool trim = trimmed;
+    toks := List<Str>.make(16);
+    len := self.size();
+    x := 0;
+    for (i:=0; i<len; ++i)
+    {
+      if (self.get(i) != sep) continue;
+      if (x <= i) toks.add(splitStr(self, x, i, trim));
+      x = i+1;
+    }
+    if (x <= len) toks.add(splitStr(self, x, len, trim));
+    return toks;
+  }
+
+  private static Str splitStr(Str val, Int s, Int e, Bool trim)
+  {
+    if (trim)
+    {
+      while (s < e && val.get(s) <= ' ') ++s;
+      while (e > s && val.get(e-1) <= ' ') --e;
+    }
+    return val[s..<e]
+  }
+
+  public static Str[] splitws(Str val)
+  {
+    toks := List<Str>.make(16);
+    len := val.size();
+    while (len > 0 && val.get(len-1) <= ' ') --len;
+    x := 0;
+    while (x < len && val.get(x) <= ' ') ++x;
+    for (i:=x; i<len; ++i)
+    {
+      if (val.get(i) > ' ') continue;
+      toks.add(val[x..<i]);
+      x = i + 1;
+      while (x < len && val.get(x) <= ' ') ++x;
+      i = x;
+    }
+    if (x <= len) toks.add(val[x..<len]);
+    if (toks.size == 0) toks.add("");
+    return toks;
+  }
 
   **
   ** Split this string into individual lines where lines are
@@ -498,7 +760,24 @@ native const final class Str
   **   "\r\n".splitLines  => ["", ""]
   **   "x\n".splitLines   => ["x", ""]
   **
-  Str[] splitLines()
+  Str[] splitLines() {
+    self := this
+    lines := List<Str>.make(16);
+    len := self.size();
+    s := 0;
+    for (i:=0; i<len; ++i)
+    {
+      c := self.get(i);
+      if (c == '\n' || c == '\r')
+      {
+        lines.add(self[s..<i]);
+        s = i+1;
+        if (c == '\r' && s < len && self.get(s) == '\n') { i++; s++; }
+      }
+    }
+    lines.add(self[s..<len]);
+    return lines;
+  }
 
   **
   ** Replace all occurrences of 'from' with 'to'.
@@ -512,38 +791,109 @@ native const final class Str
   **
   ** Count the number of newline combinations: "\n", "\r", or "\r\n".
   **
-  Int numNewlines()
+  Int numNewlines() {
+    self := this
+    numLines := 0;
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      c := self.get(i);
+      if (c == '\n') numLines++;
+      else if (c == '\r')
+      {
+        numLines++;
+        if (i+1<len && self.get(i+1) == '\n') i++;
+      }
+    }
+    return numLines;
+  }
 
   **
   ** Return if every character in this Str is a US-ASCII character
   ** less than 128.
   **
-  Bool isAscii()
+  Bool isAscii() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+      if (self.get(i) >= 128) return false;
+    return true;
+  }
 
   **
   ** Return if every character in this Str is whitespace: space \t \n \r \f
   **
-  Bool isSpace()
+  Bool isSpace() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      ch := self.get(i);
+      if (!ch.isSpace)
+        return false;
+    }
+    return true;
+  }
 
   **
   ** Return if every character in this Str is ASCII uppercase: 'A'-'Z'.
   **
-  Bool isUpper()
+  Bool isUpper() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      ch := self.get(i);
+      if (!ch.isUpper)
+        return false;
+    }
+    return true;
+  }
 
   **
   ** Return if every character in this Str is ASCII lowercase: 'a'-'z'.
   **
-  Bool isLower()
+  Bool isLower() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      ch := self.get(i);
+      if (!ch.isLower)
+        return false;
+    }
+    return true;
+  }
 
   **
   ** Return if every char is an ASCII [letter]`Int.isAlpha`.
   **
-  Bool isAlpha()
+  Bool isAlpha() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      ch := self.get(i);
+      if (!ch.isAlpha)
+        return false;
+    }
+    return true;
+  }
 
   **
   ** Return if every char is an ASCII [alpha-numeric]`Int.isAlphaNum`.
   **
-  Bool isAlphaNum()
+  Bool isAlphaNum() {
+    self := this
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      ch := self.get(i);
+      if (!ch.isAlphaNum)
+        return false;
+    }
+    return true;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale
@@ -596,17 +946,17 @@ native const final class Str
   **
   ** Convenience for `Bool.fromStr` using this string.
   **
-  Bool toBool(Bool checked := true)
+  Bool toBool(Bool checked := true) { Bool.fromStr(this, checked) }
 
   **
   ** Convenience for `Int.fromStr` using this string.
   **
-  Int toInt(Int radix := 10, Bool checked := true)
+  Int toInt(Int radix := 10, Bool checked := true) { Int.fromStr(this, radix, checked) }
 
   **
   ** Convenience for `Float.fromStr` using this string.
   **
-  Float toFloat(Bool checked := true)
+  Float toFloat(Bool checked := true) { Float.fromStr(this, checked) }
 
   **
   ** Convenience for `Decimal.fromStr` using this string.
@@ -623,7 +973,58 @@ native const final class Str
   ** less than 0x20 are escaped as '\uXXXX'.  If 'escapeUnicode' is
   ** true then any char over 0x7F it is escaped as '\uXXXX'.
   **
-  Str toCode(Int quote := '"', Bool escapeUnicode := false)
+  Str toCode(Int quote := '"', Bool escapeUnicode := false) {
+    self := this
+    s := StrBuf(self.size()+10);
+
+    // opening quote
+    escu := escapeUnicode;
+    q := 0;
+    if (quote != 0)
+    {
+      q = quote;
+      s.addChar(q);
+    }
+
+    // NOTE: these escape sequences are duplicated in ObjEncoder
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      c := self.get(i);
+      switch (c)
+      {
+        case '\n': s.addChar('\\').addChar('n'); break;
+        case '\r': s.addChar('\\').addChar('r'); break;
+        case '\f': s.addChar('\\').addChar('f'); break;
+        case '\t': s.addChar('\\').addChar('t'); break;
+        case '\\': s.addChar('\\').addChar('\\'); break;
+        case '"':  if (q == '"')  s.addChar('\\').addChar('"');  else s.addChar(c); break;
+        case '`':  if (q == '`')  s.addChar('\\').addChar('`');  else s.addChar(c); break;
+        case '\'': if (q == '\'') s.addChar('\\').addChar('\''); else s.addChar(c); break;
+        case '$':  s.addChar('\\').addChar('\$'); break;
+        default:
+          if (c < ' ' || (escu && c > 127))
+          {
+            s.addChar('\\').addChar('u')
+             .addChar(hex((c.shiftr(12).and(0xf))))
+             .addChar(hex((c.shiftr(8).and(0xf))))
+             .addChar(hex((c.shiftr(4).and(0xf))))
+             .addChar(hex(c.and(0xf)))
+          }
+          else
+          {
+            s.addChar(c);
+          }
+      }
+    }
+
+    // closing quote
+    if (q != 0) s.addChar(q);
+
+    return s.toStr();
+  }
+
+  private static Int hex(Int nib) { return "0123456789abcdef".get(nib); }
 
   **
   ** Return this string as valid XML text.  The special control
@@ -632,7 +1033,7 @@ native const final class Str
   ** by the ']' char.  Also see `OutStream.writeXml` which is more
   ** efficient if streaming.
   **
-  Str toXml()
+  //Str toXml()
 
   **
   ** Convenience for `Uri.fromStr` using this string.

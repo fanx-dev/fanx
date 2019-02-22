@@ -5,12 +5,7 @@
 // History:
 //   2 Dec 05  Brian Frank  Creation
 //
-/*
-facet class I8 {}
-facet class I16 {}
-facet class I32 {}
-facet class I64 {}
-*/
+
 **
 ** Int is used to represent a signed 64-bit integer.
 **
@@ -52,19 +47,19 @@ native const struct class Int : Num
   **
   ** Default value is zero.
   **
-  const static Int defVal
+  const static Int defVal := 0
 
   **
   ** Maximum value which can be stored in a
   ** signed 64-bit Int: 9,223,372,036,854,775,807
   **
-  const static Int maxVal
+  const static Int maxVal := 9_223_372_036_854_775_807
 
   **
   ** Minimum value which can be stored in a
   ** signed 64-bit Int: -9,223,372,036,854,775,808
   **
-  const static Int minVal
+  const static Int minVal //:= -9_223_372_036_854_775_808
 
   //const static Int invalidVal
 
@@ -85,7 +80,7 @@ native const struct class Int : Num
   **
   ** Return this.
   **
-  override Int hash()
+  override Int hash() { this }
 
 //////////////////////////////////////////////////////////////////////////
 // Operations
@@ -208,17 +203,17 @@ native const struct class Int : Num
   ** Return the absolute value of this integer.  If this value is
   ** positive then return this, otherwise return the negation.
   **
-  Int abs()
+  Int abs() { this >= 0 ? this : -this }
 
   **
   ** Return the smaller of this and the specified Int values.
   **
-  Int min(Int that)
+  Int min(Int that) { this < that ? this : that }
 
   **
   ** Return the larger of this and the specified Int values.
   **
-  Int max(Int that)
+  Int max(Int that) { this > that ? this : that }
 
   **
   ** Return this value raised to the specified power.
@@ -229,12 +224,12 @@ native const struct class Int : Num
   **
   ** Return if this integer is evenly divisible by two.
   **
-  Bool isEven()
+  Bool isEven() { (this / 2) == 0 }
 
   **
   ** Return if this integer is not evenly divisible by two.
   **
-  Bool isOdd()
+  Bool isOdd() { (this / 2) != 0 }
 
 /////////////////////////////////////////////////////////////////////////
 // Char
@@ -243,27 +238,27 @@ native const struct class Int : Num
   **
   ** Return if this Unicode char is whitespace: space \t \n \r \f
   **
-  Bool isSpace()
+  Bool isSpace() { this == ' ' || this == '\t' || this == '\n' || this == '\r' || this == '\f' }
 
   **
   ** Return if this Unicode char is an ASCII alpha char: isUpper||isLower
   **
-  Bool isAlpha()
+  Bool isAlpha() { isUpper || isLower }
 
   **
   ** Return if this Unicode char is an ASCII alpha-numeric char: isAlpha||isDigit
   **
-  Bool isAlphaNum()
+  Bool isAlphaNum() { isAlpha || isDigit }
 
   **
   ** Return if this Unicode char is an ASCII uppercase alphabetic char: A-Z
   **
-  Bool isUpper()
+  Bool isUpper() { this >= 'A' && this <= 'Z' }
 
   **
   ** Return if this Unicode char is an ASCII lowercase alphabetic char: a-z
   **
-  Bool isLower()
+  Bool isLower() { this >= 'a' && this <= 'z' }
 
   **
   ** If this Unicode char is an ASCII lowercase char, then return
@@ -273,7 +268,12 @@ native const struct class Int : Num
   **   'a'.upper => 'A'
   **   '4'.upper => '4'
   **
-  Int upper()
+  Int upper() {
+    if ('a' <= this && this <= 'z')
+      return this.and(0x20.not)
+    else
+      return this
+  }
 
   **
   ** If this Unicode char is an ASCII uppercase char, then return
@@ -283,7 +283,12 @@ native const struct class Int : Num
   **   'A'.lower => 'a'
   **   'h'.lower => 'h'
   **
-  Int lower()
+  Int lower() {
+    if ('A' <= this && this <= 'Z')
+      return this.or(0x20)
+    else
+      return this
+  }
 
   **
   ** Return if this Unicode char is an digit in the specified radix.
@@ -295,7 +300,22 @@ native const struct class Int : Num
   **   3.toDigit       => false
   **   'B'.toDigit(16) => true
   **
-  Bool isDigit(Int radix := 10)
+  Bool isDigit(Int radix := 10) {
+    if (radix == 10) {
+      return '0' <= this && this <= '9'
+    }
+    if (this < 0 || this >= 128) return false
+
+    if (radix < 10) {
+      return '0' <= this && this <= ('0'+radix)
+    }
+    else {
+      x := radix - 10
+      if ('a' <= this && this < 'a'+x) return true
+      if ('A' <= this && this < 'A'+x) return true
+      return false
+    }
+  }
 
   **
   ** Convert this number into a Unicode char '0'-'9'.  If radix is
@@ -308,7 +328,16 @@ native const struct class Int : Num
   **   15.toDigit(16) => 'f'
   **   99.toDigit     => null
   **
-  Int? toDigit(Int radix := 10)
+  Int? toDigit(Int radix := 10) {
+    self := this
+    if (radix == 10) {
+      if (0 <= self && self <= 9) return self+ '0'
+    }
+
+    if (self < 0 || self >= radix) return null
+    if (self < 10) return self + '0'
+    return self - 10 + 'a'
+  }
 
   **
   ** Convert a Unicode digit character into a number for the specified
@@ -319,13 +348,36 @@ native const struct class Int : Num
   **   'f'.fromDigit(16) => 15
   **   '%'.fromDigit     => null
   **
-  Int? fromDigit(Int radix := 10)
+  Int? fromDigit(Int radix := 10) {
+    if (radix == 10) {
+      if ('0' <= this && this <= '9') return this - '0'
+      return null
+    }
+
+    if (this < 0 || this >= 128) return null
+    val := this
+
+    ten := radix < 10 ? radix : 10;
+    if ('0' <= val && val < '0'+ten) return val - '0'
+    if (radix > 10)
+    {
+      alpha := radix-10;
+      if ('a' <= val && val < 'a'+alpha) return val + 10 - 'a'
+      if ('A' <= val && val < 'A'+alpha) return val + 10 - 'A'
+    }
+    return null;
+  }
 
   **
   ** Return if the two Unicode chars are equal without regard
   ** to ASCII case.
   **
-  Bool equalsIgnoreCase(Int ch)
+  Bool equalsIgnoreCase(Int ch) {
+    self := this
+    if ('A' <= self && self <= 'Z') self = self.or(0x20)
+    if ('A' <= ch   && ch   <= 'Z') ch   = ch.or(0x20)
+    return self == ch;
+  }
 
 /////////////////////////////////////////////////////////////////////////
 // Locale
@@ -350,7 +402,9 @@ native const struct class Int : Num
   **   100_000.toLocale("B")        =>  98KB
   **   (3*1024*1024).toLocale("B")  =>  3MB
   **
-  Str toLocale(Str? pattern := null)
+  Str toLocale(Str? pattern := null) {
+    return NumFormat.formatInt(this, pattern)
+  }
 /*
   **
   ** Return if this Unicode char is an uppercase letter in
@@ -445,6 +499,8 @@ native const struct class Int : Num
   ** Example:
   **   3.times |i| { echo(i) }  =>  0, 1, 2
   **
-  Void times(|Int i| c)
+  Void times(|Int i| f) {
+    for (i:=0; i<this; ++i) f.call(i)
+  }
 
 }

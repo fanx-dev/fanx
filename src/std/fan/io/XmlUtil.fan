@@ -126,5 +126,57 @@ class XmlUtil
 
   ** XML escape any character greater then 0x7f.  See `writeXml`.
   static const Int xmlEscUnicode := 0x04
+
+  private static const Str?[] xmlEsc
+  static
+  {
+    txmlEsc := List<Str?>.make('>'+1)
+    txmlEsc.size = '>'+1
+    txmlEsc['&']  = "&amp;";
+    txmlEsc['<']  = "&lt;";
+    txmlEsc['>']  = "&gt;";
+    txmlEsc['\''] = "&#39;";
+    txmlEsc['"']  = "&quot;";
+    xmlEsc = txmlEsc
+  }
+
+  **
+  ** Return this string as valid XML text.  The special control
+  ** characters amp, lt, apos and quot are always escaped.  The
+  ** gt char is escaped only if it is the first char or if preceeded
+  ** by the ']' char.  Also see `OutStream.writeXml` which is more
+  ** efficient if streaming.
+  **
+  static extension Str toXml(Str self) {
+    StrBuf? s := null;
+    len := self.size();
+    for (i:=0; i<len; ++i)
+    {
+      c := self.get(i);
+      if (c > '>')
+      {
+        if (s != null) s.addChar(c);
+      }
+      else
+      {
+        esc := xmlEsc[c];
+        if (esc != null && (c != '>' || i==0 || self.get(i-1) == ']'))
+        {
+          if (s == null)
+          {
+            s = StrBuf(len+12);
+            s.addStr(self, 0, i);
+          }
+          s.add(esc);
+        }
+        else if (s != null)
+        {
+          s.addChar(c);
+        }
+      }
+    }
+    if (s == null) return self;
+    return s.toStr();
+  }
 }
 

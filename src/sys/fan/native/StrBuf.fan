@@ -28,7 +28,7 @@ native final class StrBuf
   **
   ** Return if size() == 0.
   **
-  Bool isEmpty()
+  Bool isEmpty() { size == 0 }
 
   **
   ** Return the number of characters in the buffer.
@@ -75,21 +75,30 @@ native final class StrBuf
   ** Add x.toStr to the end of this buffer.  If x is null then
   ** the string "null" is inserted.  Return this.
   **
-  This add(Obj? x)
+  This add(Obj? x) {
+    s := x == null ? "null" : x.toStr
+    addStr(s)
+    return this
+  }
 
   **
   ** Optimized implementation for add(ch.toChar).  Return this.
   **
   This addChar(Int ch)
 
-  This addStr(Str str, Int off, Int len)
+  This addStr(Str str, Int off := 0, Int len := str.size)
 
   **
   ** Add x.toStr to the end of the buffer.  If the buffer is not
   ** empty, then first add the specified separator which defaults
   ** to a space if not specified.  Return this.
   **
-  This join(Obj? x, Str sep := " ")
+  This join(Obj? x, Str sep := " ") {
+    s := x == null ? "null" : x.toStr
+    if (size > 0) addStr(sep)
+    addStr(s)
+    return this
+  }
 
   **
   ** Insert x.toStr into this buffer at the specified index.
