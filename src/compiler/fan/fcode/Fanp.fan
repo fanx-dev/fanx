@@ -34,7 +34,6 @@ class Fanp
     }
   }
 
-  //TODO support transientPod
   Void executeFile(Str? target)
   {
     scriptFile := File.os(file)

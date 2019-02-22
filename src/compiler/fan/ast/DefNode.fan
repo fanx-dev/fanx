@@ -84,9 +84,9 @@ abstract class DefNode : Node
 
       // don't document test concrete subclasses
       t := (TypeDef)this
-      //TODO
-      //if (t.base != null && t.base.fits(ns.testType))
-      //  return t.isAbstract
+      
+      if (t.base != null && t.base.fits(ns.testType))
+        return t.isAbstract
     }
     else if (this is MethodDef)
     {

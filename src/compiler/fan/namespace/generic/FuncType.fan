@@ -42,8 +42,6 @@ class FuncType : ParameterizedType
     if (this.qname == t.qname) {
       if (defaultParameterized) return true
     }
-    //TODO: not sure
-    //if (t.name.size == 1 && t.pod.name == "sys") return true
 
     that := t as FuncType
     if (that == null) return false

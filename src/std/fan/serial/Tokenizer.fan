@@ -253,10 +253,7 @@ internal class Tokenizer
       // decimal literal
       if (decimalSuffix)
       {
-        throw UnsupportedErr("TODO")
-        //BigDecimal num = (s == null) ? BigDecimal(whole) : BigDecimal(s.toStr)
-        //TODO
-        Float num := (s == null) ? whole.toFloat : Float.fromStr(s.toStr)
+        num := (s == null) ? Decimal.toDecimal(whole) : Decimal.fromStr(s.toStr)
         this.val = num
         return Token.DECIMAL_LITERAL
       }

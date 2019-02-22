@@ -4,7 +4,7 @@
 ## Introduction
 - [Setup](Setup.md)
 - [Tutorial](Tour.md)
-- [Diffence from Fantom](DiffFantom.md)
+- [Differ from Fantom](DiffFantom.md)
 
 ## Others
 - [Build from Sources](Build.md)

@@ -133,8 +133,8 @@ class JsPod : JsNode
       in.close
     }
     out.w("}).call(this);").nl
-    //TODO
-    //out.w("//# sourceMappingURL=/pod/${name}/${name}.js.map").nl
+    
+    out.w("//# sourceMappingURL=/pod/${name}/${name}.js.map").nl
   }
 
   static Void writeNs(JsWriter out, Str name)

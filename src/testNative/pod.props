@@ -6,5 +6,6 @@ depends = sys 2.0, std 1.0
 srcDirs = fan/*
 resDirs = res/*
 javaDirs = java/*
+docApi = false
 
 index.testSys.mult = testNative
