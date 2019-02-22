@@ -94,17 +94,18 @@ Functions are first class objects
   ["one", "two", "three"].map { it.size }.each { echo(it) }
 ```
 
-## Immutability
-A immutable class is that all fields are deep immutable.
+## Strong Immutability
+First class support immutable class.
 ```
   //immutable class
   const class Str { ... }
 
-  const Str p
-  const StrBuf p //compile error
+  const Str p       //deep immutable
+  const StrBuf p    //compile error
+  readonly StrBuf p //shallow immutable
 ```
 
-## Concurrency
+## Thread Safe Concurrency
 The actor-model concurrency.
 The runtime make sure no shared mutable state between threads.
 ```
