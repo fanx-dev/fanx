@@ -178,6 +178,8 @@ class FileBufTest : Test
     verifyEq(m.flip.readAllStr, "alpha\nbeta")
     //verifyEq(b.readBuf(m, 100), null)
     b.close
+
+    dir.delete
   }
 
   Void verifyRegion(Buf a, Int apos, Buf b, Int bpos, Int len)

@@ -121,14 +121,16 @@ class InteropTest : JavaTest
     verifyEq(obj->sets(x, 1997), 1997)
     verifyEq(obj->setc(x, '\u8abc'), '\u8abc')
     verifyEq(obj->seti(x, 0xbabe), 0xbabe)
-    verify(obj->setf(x, 34e13f)->approx(34e13f))
+    Float f := obj->setf(x, 34e13f)
+    verify(f.approx(34e13f))
 
     // nullable sets
     verifyEq(obj->setbx(x, -99), -99)
     verifyEq(obj->setsx(x, 1997), 1997)
     verifyEq(obj->setcx(x, '\u8abc'), '\u8abc')
     verifyEq(obj->setix(x, 0xbabe), 0xbabe)
-    verify(obj->setfx(x, 34e13f)->approx(34e13f))
+    Float f2 := obj->setfx(x, 34e13f)
+    verify(f2.approx(34e13f))
   }
 
 //////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,21 @@ public class Math$ {
 	// Math
 	//////////////////////////////////////////////////////////////////////////
 
+	
+  public static boolean approx(double self, double that) { return approx(self, that, null); }
+  public static boolean approx(double self, double that, Double tolerance)
+  {
+    // need this to check +inf, -inf, and nan
+    if (fan.sys.FanFloat.compare(self, that) == 0) return true;
+
+    double t;
+    if (tolerance == null)
+      t = Math.min( Math.abs(self/1e6), Math.abs(that/1e6) );
+    else
+      t = tolerance.doubleValue();
+    return Math.abs(self - that) <= t;
+  }
+
 	public static double abs(double self) {
 		if (self >= 0)
 			return self;

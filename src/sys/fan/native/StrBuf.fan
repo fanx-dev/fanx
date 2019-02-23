@@ -39,7 +39,7 @@ native final class StrBuf
   ** The number of characters this buffer can hold without
   ** allocating more memory.
   **
-  Int capacity
+  native Int capacity
 
   **
   ** Get the character at the zero based index as a Unicode code point.

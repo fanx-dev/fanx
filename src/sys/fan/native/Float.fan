@@ -97,17 +97,6 @@ native const struct class Float : Num
   override Bool equals(Obj? obj)
 
   **
-  ** Return if this Float is approximately equal to the given Float by the
-  ** specified tolerance.  If tolerance is null, then it is computed
-  ** using the magnitude of the two Floats.  It is useful for comparing
-  ** Floats since often they lose a bit of precision during manipulation.
-  ** This method is equivalent to:
-  **   if (tolerance == null) tolerance = min(abs(this/1e6), abs(r/1e6))
-  **   (this - r).abs < tolerance
-  **
-  Bool approx(Float r, Float? tolerance := null)
-
-  **
   ** Compare based on floating point value.
   **
   ** NaN works as follows:
@@ -124,7 +113,20 @@ native const struct class Float : Num
   **   Float.nan < 2f           =>  false
   **   Float.nan <= Float.nan   =>  false
   **
-  override Int compare(Obj obj)
+  override Int compare(Obj obj) {
+    self := this
+    that := (Float)obj
+    if (self.isNaN) {
+      return that.isNaN ? 0 : -1;
+    }
+    else if (that.isNaN) {
+      return +1;
+    }
+    else
+    {
+      if (self < that) return -1; return self == that ? 0 : +1;
+    }
+  }
 
   **
   ** Return if this is Float.nan.  Also see `compare`.
@@ -244,7 +246,12 @@ native const struct class Float : Num
   **
   ** Get this Float as a Fantom code literal.
   **
-  Str toCode()
+  Str toCode() {
+    if (isNaN) return "Float.nan";
+    if (this == posInf) return "Float.posInf";
+    if (this == negInf) return "Float.negInf";
+    return toStr;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale

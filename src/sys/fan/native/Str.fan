@@ -39,7 +39,18 @@ native const final class Str
   **
   ** Return true if a Str with exact same char sequence.
   **
-  override Bool equals(Obj? obj)
+  override Bool equals(Obj? obj) {
+    that := obj as Str
+    if (that == null) return false
+    if (this.size != that.size) return false
+
+    len := size
+    for (i:=0; i<size; ++i)
+    {
+      if (get(i) != that.get(i)) return false
+    }
+    return true
+  }
 
   **
   ** Convenience for 'compareIgnoreCase(s) == 0'.
@@ -78,7 +89,18 @@ native const final class Str
   **   "hi".compare("HI")  =>  1
   **   "b".compare("a")    =>  1
   **
-  override Int compare(Obj obj)
+  override Int compare(Obj obj) {
+    that := (Str)obj
+    i := 0
+    while (i < this.size && i < that.size) {
+      if (get(i) == that.get(i)) {
+        ++i
+        continue
+      }
+      return get(i) - that.get(i)
+    }
+    return this.size - that.size
+  }
 
   **
   ** Compare two strings without regard to case and return -1, 0, or 1
@@ -120,7 +142,7 @@ native const final class Str
   **
   ** Return this.
   **
-  override Str toStr()
+  override Str toStr() { this }
 
   **
   ** Return this.  This method is used to enable 'toLocale' to
@@ -152,17 +174,30 @@ native const final class Str
   **
   ** Return if this Str starts with the specified Str.
   **
-  Bool startsWith(Str s)
+  Bool startsWith(Str s) {
+    if (s.size > this.size) return false
+    for (i:=0; i<s.size; ++i) {
+      if (s[i] != this[i]) return false
+    }
+    return true
+  }
 
   **
   ** Return if this Str ends with the specified Str.
   **
-  Bool endsWith(Str s)
+  Bool endsWith(Str s) {
+    if (s.size > this.size) return false
+    offset := size - s.size
+    for (i:=0; i<s.size; ++i) {
+      if (s[i] != this[offset+i]) return false
+    }
+    return true
+  }
 
   **
   ** Return the first occurance of the specified substring searching
   ** forward, starting at the specified offset index.  A negative offset
-  ** may be used to access from the end of string.  Return Int.invalidVal if no
+  ** may be used to access from the end of string.  Return -1 if no
   ** occurences are found.
   **
   ** Examples:
@@ -174,13 +209,16 @@ native const final class Str
   **
   Int find(Str s, Int offset := 0)
   @NoDoc
-  Int? index(Str s, Int offset := 0)
+  Int? index(Str s, Int offset := 0) {
+    i := find(s, offset)
+    return i == -1 ? null : i
+  }
 
   **
   ** Reverse index - return the first occurance of the specified
   ** substring searching backward, starting at the specified offset
   ** index.  A negative offset may be used to access from the end
-  ** of string.  Return Int.invalidVal if no occurences are found.
+  ** of string.  Return -1 if no occurences are found.
   **
   ** Examples:
   **   "abcabc".indexr("b")     => 4
@@ -189,19 +227,26 @@ native const final class Str
   **
   Int findr(Str s, Int offset := s.size-1)
   @NoDoc
-  Int? indexr(Str s, Int offset := -1)
+  Int? indexr(Str s, Int offset := -1) {
+    i := findr(s, offset)
+    return i == -1 ? null : i
+  }
 
   **
   ** Find the index just like `index`, but ignoring case for
   ** ASCII chars only.
   **
-  Int? indexIgnoreCase(Str s, Int offset := 0)
+  Int? indexIgnoreCase(Str s, Int offset := 0) {
+    this.lower.index(s.lower, offset)
+  }
 
   **
   ** Find the index just like `indexr`, but ignoring case for
   ** ASCII chars only.
   **
-  Int? indexrIgnoreCase(Str s, Int offset := -1)
+  Int? indexrIgnoreCase(Str s, Int offset := -1) {
+    this.lower.indexr(s.lower, offset)
+  }
 
   **
   ** Return if this string contains the specified string.
@@ -212,7 +257,12 @@ native const final class Str
   **
   ** Return if this string contains the specified character.
   **
-  Bool containsChar(Int ch)
+  Bool containsChar(Int ch) {
+    for (i:=0; i<size; ++i) {
+      if (ch == get(i)) return true
+    }
+    return false
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Operators
