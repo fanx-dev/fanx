@@ -33,6 +33,10 @@ abstract const class File
   **
   native static new make(Uri uri, Bool checkSlash := true)
 
+  static new fromPath(Str path, Bool checkSlash := true) {
+    File(path.toUri, checkSlash)
+  }
+
   **
   ** Make a File for the specified operating system specific path
   ** on the local file system.
