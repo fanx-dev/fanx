@@ -594,7 +594,23 @@ native const final class Str
   **   "hello".replace("hell", "t")  =>  "to"
   **   "aababa".replace("ab", "-")   =>  "a--a"
   **
-  Str replace(Str from, Str to)
+  Str replace(Str from, Str to) {
+    StrBuf? buf
+    i := 0
+    while (i < size) {
+      pos := this.find(from, i)
+      if (pos == -1) {
+        if (buf == null) return this
+        buf.addStr(this, i, this.size-i)
+        return buf.toStr
+      }
+      if (buf == null) buf = StrBuf(this.size)
+      buf.addStr(this, i, pos-i)
+      buf.add(to)
+      i = pos+from.size
+    }
+    return this
+  }
 
   **
   ** Return if every character in this Str is a US-ASCII character

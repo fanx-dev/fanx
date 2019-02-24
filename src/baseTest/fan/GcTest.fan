@@ -12,7 +12,7 @@ class GcTest
   static Void test1() {
     GcNode? root := GcNode()
     GcNode cur := root
-    for (i := 0; i<100; ++i) {
+    for (i := 0; i<10000; ++i) {
       m := GcNode()
       m.i = i
       cur.next = m
@@ -22,7 +22,7 @@ class GcTest
 
   static Void test2() {
     GcNode? cur := GcNode()
-    for (i := 0; i<100; ++i) {
+    for (i := 0; i<10000; ++i) {
       m := GcNode()
       m.i = i
       cur.next = m

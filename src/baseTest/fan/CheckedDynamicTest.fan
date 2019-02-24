@@ -8,7 +8,7 @@ class CheckedDynamicTest {
 
   Void main() {
     //foo(bar:"hi")
-    i := this~>foo("0")
+    Int i := this~>foo("0")
     echo(i+1)
   }
 }
