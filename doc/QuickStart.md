@@ -4,7 +4,7 @@
 
 ### Download
 
-(Download)[https://github.com/chunquedong/fanx/releases] the latest build
+[Download](https://github.com/chunquedong/fanx/releases) the latest build
 
 ### Hello World
 
