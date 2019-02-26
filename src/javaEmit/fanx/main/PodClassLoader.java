@@ -152,7 +152,7 @@ public class PodClassLoader
     if (typeName.equals("$Pod")) {
     	FPodEmit podEmit = FPodEmit.emit(pod);
     	Class podClz = doDefineClass(name, podEmit.classFile);
-    	FPodEmit.initFields(pod, podClz);
+    	//FPodEmit.initFields(pod, podClz);
     	return podClz;
     }
 
@@ -235,9 +235,11 @@ public class PodClassLoader
       {
         Type type = Sys.findType(pod.podName + "::" + fanTypeName, false);
         if (type != null) type.precompiled(cls);
+        /*
         else if (fanTypeName.equals("$Pod")) {
         	FPodEmit.initFields(pod, cls);
         }
+        */
       }
 
       return cls;

@@ -33,7 +33,7 @@ abstract const class File
   **
   native static new make(Uri uri, Bool checkSlash := true)
 
-  static new fromPath(Str path, Bool checkSlash := true) {
+  static File fromPath(Str path, Bool checkSlash := true) {
     File(path.toUri, checkSlash)
   }
 

@@ -101,7 +101,8 @@ public class FPodEmit
    */
   private Box emit()
   {
-    init("fan/" + pod.podName + "/$Pod", "java/lang/Object", new String[0], EmitConst.PUBLIC | EmitConst.FINAL);
+	String clzName = "fan/" + pod.podName + "/$Pod";
+    init(clzName, "java/lang/Object", new String[0], EmitConst.PUBLIC | EmitConst.FINAL);
 
     // NOTE: ints, floats, and strings use direct Java constants
 
@@ -119,7 +120,27 @@ public class FPodEmit
       if (pod.typeRef(i).isFFI())
         emitField("Type" + i, Sys.TypeClassJsig, EmitConst.PUBLIC | EmitConst.STATIC);
 
+    
+    MethodEmit me = emitMethod("<clinit>", "()V", EmitConst.PUBLIC|EmitConst.STATIC);
+    CodeEmit code = me.emitCode();
+    code.maxLocals = 0;
+    code.maxStack  = 2;
+    
+    code.op2(LDC_W, strConst(pod.podName));
+    code.op2(LDC_W, cls(clzName));
+    code.op2(INVOKESTATIC, method("fanx/emit/FPodEmit.onStaticInit(Ljava/lang/String;Ljava/lang/Class;)V"));
+    code.op(RETURN);
+    
     return pack();
+  }
+  
+  public static void onStaticInit(String podName, Class cls) {
+	FPod pod = Sys.findPod(podName);
+	try {
+		initFields(pod, cls);
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
   }
 
 //////////////////////////////////////////////////////////////////////////
