@@ -1,14 +1,16 @@
 
 
+## Build from Sources
 
-### Build from Sources ###
+### Build ###
+
 ```
   cd src
   sh build_all.sh
   sh test_all.sh
 ```
 
-### Build More Ext Librarys ###
+### Build Ext Librarys ###
 clone hg repo
 ```
   hg clone http://bitbucket.org/chunquedong/fan-1.0
@@ -23,4 +25,17 @@ build:
 generate the HTML docs
 ```
   fan compilerDoc -all
+```
+
+### Bootstrap Configs ###
+
+Config output dir:
+```
+  env/etc/build/config.props
+    devHome=xxx/env/
+```
+Config compile depends env:
+```
+  env/etc/compiler/config.props
+    devHome=xxx/env/
 ```

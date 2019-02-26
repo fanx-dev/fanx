@@ -1,10 +1,8 @@
 
-Code Conventions
-======
+## Code Conventions
 These conventions are enforced if contributing code for the core distribution.
 
-Indention
-------
+### Indention
 Do not use tab characters, use spaces only.
 Use indention styling braces:
 ```
@@ -16,8 +14,7 @@ Use indention styling braces:
   }
 ```
 
-Pod Naming
-------
+### Pod Naming
 Pod names are lower snake case.
 Prefix with an organization or domain name, for example:
 ```
@@ -26,8 +23,7 @@ Prefix with an organization or domain name, for example:
 don't include the "com" in your pod names.
 
 
-Fields before Methods
--------
+### Fields before Methods
 ```
   //Prefer:
   class Person {
@@ -42,12 +38,10 @@ Fields before Methods
   }
 ```
 
-Field Naming
--------
+### Field Naming
 - Slot names are lower camel case such as "fooBar" (this includes all fields and methods, even const fields)
 - Never use screaming caps such as "FOO_BAR"
 
-Others
------
+### More
 As same as [Fantom](http://fantom.org/doc/docLang/Conventions)
 

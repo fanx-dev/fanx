@@ -1,13 +1,13 @@
-# ChangeLog #
+## ChangeLog
 
 
-## Build 2.1 (working) ##
+### Build 2.1 (working)
 - No doc test code
 - Allow method body in native class
 - Fix growing non-nullable List
 - Move Str method to StrExt
 
-## Build 2.0 (2019-02-16) ##
+### Build 2.0 (2019-02-16)
 - Fix Service bug
 - Fix UriScheme
 - Add Int/Float toLocale
@@ -25,7 +25,7 @@
 - Add flags for MethodRef
 - Add LoadFieldLiteral/LoadMethodLiteral Opcode
 
-## Build 1.0 (2018-09-10) ##
+### Build 1.0 (2018-09-10)
 - Generics
 - Extension Method
 - Struct Type

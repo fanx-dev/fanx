@@ -1,6 +1,7 @@
 
+## Setup
 
-### Setup ###
+### Setup Exe Path ###
 
 The current implementation requires that 
 you have a "java" command available in your environment.

@@ -1,7 +1,7 @@
 
-# Tutorial #
+## Tutorial ##
 
-## Class and Methods
+### Class and Methods
 Familiar C-like syntax
 ```
   class Person
@@ -27,7 +27,7 @@ Familiar C-like syntax
 
 ```
 
-## Field Accessors
+### Field Accessors
 No more boiler plate getters and setters.
 ```
   class Person
@@ -39,7 +39,7 @@ No more boiler plate getters and setters.
   }
 ```
 
-## Hybrid Static and Dynamic Typed
+### Hybrid Static and Dynamic Typed
 the "->" operator to call a method dynamically.
 
 ```
@@ -52,7 +52,7 @@ the "->" operator to call a method dynamically.
   p->say("A")
 ```
 
-## Literals
+### Literals
 ```
   //List
   [0, 1, 2]
@@ -71,7 +71,7 @@ the "->" operator to call a method dynamically.
   100ms   //100 milliseconds
 ```
 
-## Non-Nullable Types
+### Non-Nullable Types
 A non-nullable type is guaranteed to never store the null value.
 ```
   Str? a := null //might stores null
@@ -81,7 +81,7 @@ A non-nullable type is guaranteed to never store the null value.
   Str foo(Str? arg)
 ```
 
-## Functional and Closures
+### Functional and Closures
 Functions are first class objects
 ```
   // print 0 to 9
@@ -94,7 +94,7 @@ Functions are first class objects
   ["one", "two", "three"].map { it.size }.each { echo(it) }
 ```
 
-## Strong Immutability
+### Strong Immutability
 First class support immutable class.
 ```
   //immutable class
@@ -105,7 +105,7 @@ First class support immutable class.
   readonly StrBuf p //shallow immutable
 ```
 
-## Thread Safe Concurrency
+### Thread Safe Concurrency
 The actor-model concurrency.
 The runtime make sure no shared mutable state between threads.
 ```
@@ -113,7 +113,7 @@ The runtime make sure no shared mutable state between threads.
   actor.send("Hi")
 ```
 
-## Declarative Programming
+### Declarative Programming
 Fantom serialization format just is a subset of Fantom source grammar.
 ```
   Window
@@ -136,7 +136,7 @@ Fantom serialization format just is a subset of Fantom source grammar.
   }
 ```
 
-## Modularity
+### Modularity
 Pods are the unit of versioning deployment and namespace. They are combined together using clear dependencies.
 The pod build script:
 ```
@@ -147,7 +147,7 @@ The pod build script:
   depends = sys 1.0, std 1.0, reflect 1.0
 ```
 
-## Mixins
+### Mixins
 The interface with implementations
 ```
   mixin Audio
@@ -163,7 +163,7 @@ The interface with implementations
   }
 ```
 
-## Generics
+### Generics
 ```
   class Foo<T> {
     T? t
@@ -174,7 +174,7 @@ The interface with implementations
   foo.t = "abc"
 ```
 
-## Extension method
+### Extension method
 To add methods out side the class
 ```
   class Whatever {
@@ -187,13 +187,13 @@ To add methods out side the class
   str.foo
 ```
 
-## Aspect Oriented Programming
+### Aspect Oriented Programming
 ```
   //same as bar.trap("foo", arg)
   bar~>foo(arg)
 ```
 
-## Async/Await Coroutine
+### Async/Await Coroutine
 The C#/Javascript like async/await pattern.
 ```
   async Void foo(Int id) {
