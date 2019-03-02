@@ -59,6 +59,9 @@ const class LogRec
      .addChar(' ').addChar('[').add(level).addChar(']')
      .addChar(' ').addChar('[').add(logName).addChar(']')
      .addChar(' ').add(msg);
+    if (err != null) {
+      s.addChar(':').add(err.traceToStr)
+    }
     return s.toStr
   }
 

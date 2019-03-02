@@ -184,7 +184,7 @@ const class NullErr : Err
 ** ParseErr indicates an invalid string format which cannot be parsed.
 ** It is often used with 'fromStr' and 'fromLocale' methods.
 **
-const class ParseErr : Err
+virtual const class ParseErr : Err
 {
 
   **

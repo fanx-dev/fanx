@@ -94,7 +94,7 @@ public final class FanInt
     return self;
   }
 
-  public static Type type = Sys.findType("sys::Int");
+  public final static Type type = Sys.findType("sys::Int");
   public static Type typeof(long self)
   {
     return type;

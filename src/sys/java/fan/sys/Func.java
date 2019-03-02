@@ -17,7 +17,7 @@ public abstract class Func extends FanObj {
 	//////////////////////////////////////////////////////////////////////////
 	// Methods
 	//////////////////////////////////////////////////////////////////////////
-	private static Type type = Sys.findType("sys::Func");
+	public final static Type type = Sys.findType("sys::Func");
 
 	public Type typeof() {
 		return type;

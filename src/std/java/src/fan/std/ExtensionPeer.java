@@ -6,7 +6,7 @@ import fan.sys.Err;
 import fanx.interop.Interop;
 
 public class ExtensionPeer {
-	static Err trace(Err self, OutStream out, Map options) {
+	static Err traceTo(Err self, OutStream out, Map options) {
 		self.printStackTrace(new PrintStream(Interop.toJava(out)));
 		return self;
 	}

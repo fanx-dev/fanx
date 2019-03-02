@@ -1138,10 +1138,12 @@ const final class Uri
     same := (this.scheme == base.scheme || this.scheme == null) && this.userInfo == base.userInfo
       && this.host == base.host && this.port == base.port
 
-    pos := pathStr.find(base.pathStr)
+    baseStr := base.pathStr
+    if (base.isDir) baseStr = baseStr[0..<-1]
+    pos := pathStr.find(baseStr)
     path := pathStr
     if (pos == 0) {
-      pos2 := base.pathStr.size
+      pos2 := baseStr.size
       path = pathStr[pos2..-1]
       if (path.size > 0 && path[0] == '/') {
         path = path[1..-1]

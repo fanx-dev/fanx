@@ -9,7 +9,7 @@
 **
 ** Err is the base class of all exceptions.
 **
-native const class Err
+native virtual const class Err
 {
 
 //////////////////////////////////////////////////////////////////////////

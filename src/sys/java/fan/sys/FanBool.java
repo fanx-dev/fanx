@@ -48,7 +48,7 @@ public final class FanBool
     return self ? 1231 : 1237;
   }
 
-  private static Type type = Sys.findType("sys::Bool");
+  public final static Type type = Sys.findType("sys::Bool");
   public static Type typeof(boolean self)
   {
     return type;

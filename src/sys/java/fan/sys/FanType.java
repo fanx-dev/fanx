@@ -54,7 +54,7 @@ public class FanType {
 	// Naming
 	//////////////////////////////////////////////////////////////////////////
 
-	public static Type type = Sys.findType("sys::Type");
+	public final static Type type = Sys.findType("sys::Type");
 
 	public static Type typeof(Type self) {
 		return type;
