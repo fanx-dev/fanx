@@ -41,8 +41,7 @@ class JsPod : JsNode
       // check for @js facet or explicit js output
       if (def.hasFacet("sys::Js"))
         types.add(JsType(s,def))
-      
-      if ((s.compiler.input.compileJs || jsOutput) && !def.hasFacet("sys::NoJs")) {
+      else if ((s.compiler.input.compileJs || jsOutput) && !def.hasFacet("sys::NoJs")) {
         types.add(JsType(s,def))
       }
     }

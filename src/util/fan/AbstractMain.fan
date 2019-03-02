@@ -191,13 +191,14 @@ abstract class AbstractMain
       }
 
       // if list, then parse list item and add to end of list
-      of := Obj#//field.type.params["V"]
-      val :=  parseVal(of, tok)
+      //of := field.type.params["V"]
       list := field.get(this) as Obj?[]
-      if (list == null) field.set(this, list = List.make(8, of))
+      of := list.of
+      val :=  parseVal(of, tok)
+      //if (list == null) field.set(this, list = List.make(8, of))
       list.add(val)
     }
-    catch (Err e) log.err("Cannot parse argument as $field.type.name: $tok")
+    catch (Err e) e.trace//log.err("Cannot parse argument as $field.type.name: $tok")
     return !isList // increment argi if not list
   }
 
