@@ -70,7 +70,7 @@ fan.sys.Facets.prototype.decode = function(type, s)
   try
   {
     // if no string use make/defVal
-    if (s.length == 0) return type.make();
+    if (s.length == 0) return fan.std.TypeExt.make(type);
 
     // decode using normal Fantom serialization
     return fan.std.ObjDecoder.decode(s);

@@ -41,7 +41,9 @@ public class Fan
 
     // first try as file name
     File file = new File(target);
-    if (file.exists() && target.toLowerCase().endsWith(".fan") && !file.isDirectory())
+    if (file.exists() 
+      && (target.toLowerCase().endsWith(".fan") || target.toLowerCase().endsWith(".fwt"))
+      && !file.isDirectory())
     {
       return executeFile(file, args);
     }

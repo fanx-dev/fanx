@@ -45,7 +45,7 @@ fan.sys.Func.make$ = function(self, params, ret, func)
 
   self.m_params = params;
   self.m_return = ret;
-  self.m_type   = new fan.sys.FuncType(types, ret);
+  self.m_type   = fan.sys.Sys.find("sys", "Func", true);
   self.m_func   = func;
 }
 
@@ -80,6 +80,7 @@ fan.sys.Func.prototype.checkInCtor = function(obj) {}
 
 fan.sys.Func.prototype.toStr = function() { return "sys::Func"; }
 
+/*
 fan.sys.Func.prototype.retype = function(t)
 {
   if (t instanceof fan.sys.FuncType)
@@ -93,6 +94,7 @@ fan.sys.Func.prototype.retype = function(t)
   else
     throw fan.sys.ArgErr.make(fan.sys.Str.plus("Not a Func type: ", t));
 }
+*/
 
 /*************************************************************************
  * ClosureFuncSpec

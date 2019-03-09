@@ -6,6 +6,7 @@
 - Allow method body in native class
 - Fix growing non-nullable List
 - Move Str method to StrExt
+- Fix Js reflect
 
 ### Build 2.0 (2019-02-16)
 - Fix Service bug

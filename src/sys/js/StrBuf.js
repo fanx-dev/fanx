@@ -36,6 +36,13 @@ fan.sys.StrBuf.prototype.add = function(obj)
   return this;
 }
 
+fan.sys.StrBuf.prototype.addStr = function(str, offset, len) {
+  if (offset == undefined) offset = 0;
+  if (len == undefined) len = str.length;
+  this.m_str += str.substr(offset, len);
+  return this;
+}
+
 fan.sys.StrBuf.prototype.addChar = function(ch)
 {
   this.m_str += String.fromCharCode(ch);

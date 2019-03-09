@@ -11,7 +11,7 @@ buildVersion=1.0.70
 // JVM version compiler target, by default Fantom requires a JDK 1.8 compiler
 // that targets 1.7.  If not concerned with targeting 1.7 then this property
 // can be cleared or set the env var FAN_BUILD_JAVACPARAMS to a space
-javacParams=-source 1.7 -target 1.7
+//javacParams=-source 1.7 -target 1.7
 
 // build output dir; default is Env.cur.workDir
 devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/

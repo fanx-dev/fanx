@@ -163,8 +163,8 @@ fan.std.MethodFunc.prototype.params = function()
     if ((this.m_method.m_flags & (fan.sys.FConst.Static|fan.sys.FConst.Ctor)) == 0)
     {
       var temp = [];
-      temp[0] = new fan.sys.Param("this", this.m_method.m_parent, 0);
-      fparams = fan.sys.List.make(fan.sys.Param.$type, temp.concat(mparams.toJs()));
+      temp[0] = new fan.std.Param("this", this.m_method.m_parent, 0);
+      fparams = fan.sys.List.make(fan.std.Param.$type, temp.concat(mparams.toJs()));
     }
     this.m_fparams = fparams.ro();
   }
@@ -178,11 +178,14 @@ fan.std.MethodFunc.prototype.$typeof = function()
   // lazy load type and params
   if (this.m_type == null)
   {
+    this.m_type = fan.Sys.find("sys", "Func", true);
+    /*
     var params = this.params();
     var types = [];
     for (var i=0; i<params.size(); i++)
       types.push(params.get(i).m_type);
     this.m_type = new fan.sys.FuncType(types, this.m_returns);
+    */
   }
   return this.m_type;
 }
