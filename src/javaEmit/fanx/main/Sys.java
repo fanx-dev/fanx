@@ -41,14 +41,14 @@ public class Sys {
 	public static IEnv env;
 	private static Map<String, SoftReference<FPod>> pods = new HashMap<String, SoftReference<FPod>>();
 
-	public static boolean isAndroid = false;
+//	public static boolean isAndroid = false;
 	static {
-		try {
-			Class.forName("android.app.Activity");
-			isAndroid = true;
-		} catch (Throwable e) {
-			isAndroid = false;
-		}
+//		try {
+//			Class.forName("android.app.Activity");
+//			isAndroid = true;
+//		} catch (Throwable e) {
+//			isAndroid = false;
+//		}
 
 		// check FAN_ENV environment variable
 		String var = getPropOrEnv("fan.sys.env", "FAN_SYS_ENV");

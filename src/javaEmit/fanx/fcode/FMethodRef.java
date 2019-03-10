@@ -231,12 +231,12 @@ public class FMethodRef
     if ((mask & INVOKE_VIRT_AS_STATIC) != 0)
       code.op2(INVOKESTATIC, method);
     else {
-    	if (Sys.isAndroid || this.parent.id != selfType.self) {
+    	//if (this.parent.id != selfType.self) {
           code.op2(INVOKEVIRTUAL, method);
-        }
-        else {
-          code.op2(INVOKESPECIAL, method);
-        }
+        //}
+        //else {
+        //  code.op2(INVOKESPECIAL, method);
+        //}
     }
   }
 
