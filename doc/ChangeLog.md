@@ -7,6 +7,8 @@
 - Fix growing non-nullable List
 - Move Str method to StrExt
 - Fix Js reflect
+- Fix for Android
+- Fix ScriptCompiler
 
 ### Build 2.0 (2019-02-16)
 - Fix Service bug
