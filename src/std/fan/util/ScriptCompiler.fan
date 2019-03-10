@@ -88,7 +88,7 @@ internal const class ScriptCompiler {
       res = m.call(args)
     }
     else {
-      res = m.callOn(t.make, args)
+      res = m.callOn(t.make, [args])
     }
     return (res as Int) ?: 0
   }
