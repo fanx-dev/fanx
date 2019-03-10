@@ -37,7 +37,7 @@ class JarDist : JdkTask
     verifyConfig
     log.indent
     initTempDir
-    sysClasses
+    fanxClasses
     podNames.each |name| { podClasses(name) }
     etcFiles
     main
@@ -51,7 +51,7 @@ class JarDist : JdkTask
   private Void verifyConfig()
   {
     if (podNames.isEmpty) throw fatal("Not configured: JarDist.podNames")
-    if (podNames.contains("sys")) throw fatal("sys is implied in JarDist.podNames")
+    //if (podNames.contains("sys")) throw fatal("sys is implied in JarDist.podNames")
     if (outFile == null) throw fatal("Not configured: JarDist.outFile")
     if (mainMethod == null) throw fatal("Not configured: JarDist.mainMethod")
 
@@ -81,11 +81,10 @@ class JarDist : JdkTask
     manifestFile.delete
   }
 
-  private Void sysClasses()
+  private Void fanxClasses()
   {
-    log.info("Pod [sys]")
-    extractClassfilesToTemp(script.devHomeDir + `lib/java/sys.jar`)
-    reflect("sys")
+    log.info("fanx")
+    extractClassfilesToTemp(script.devHomeDir + `lib/java/fanx.jar`)
   }
 
   private Void podClasses(Str podName)
@@ -117,14 +116,14 @@ class JarDist : JdkTask
       log.info("  Extract pre-stubbed classfiles")
       extractClassfilesToTemp(podFile)
     }
-    else
-    {
+    //else
+    //{
       log.info("  JStub to classfiles")
       // stub into Java classfiles using JStub
       Exec(script,
         [javaExe,
          "-cp", (script.devHomeDir + `lib/java/fanx.jar`).osPath,
-         "-Dfan.home=$Env.cur.workDir.osPath",
+         "-Dfan.home=$Env.cur.workDir.pathStr",
          "fanx.tools.Jstub",
          "-d", tempDir.osPath,
          podName]).run
@@ -133,7 +132,7 @@ class JarDist : JdkTask
       jar := tempDir + `${podName}.jar`
       extractClassfilesToTemp(jar)
       jar.delete
-    }
+    //}
 
     reflect(podName)
   }
@@ -191,6 +190,8 @@ class JarDist : JdkTask
   private Void copyEtcFile(Uri uri, Uri destUri := uri)
   {
     src  := script.devHomeDir + uri
+    if (!src.exists) return
+
     dest := tempDir + destUri
     src.copyTo(dest)
   }
@@ -212,18 +213,22 @@ class JarDist : JdkTask
 
     // explicitly initialize all the pod constants
     podInits := StrBuf();
+    /*
     podNames.each |podName|
     {
       podInits.add("""      Env.cur().loadPodClass(Pod.find("$podName"));\n""")
     }
+    */
 
-    mainArgs := mainMethodArg ? "Env.cur().args()" : ""
+    mainArgs := mainMethodArg ? "fan.std.Env.cur().args()" : ""
 
     // write out Main Java class
     file := tempDir + `fanjardist/Main.java`
     file.out.print(
       """package fanjardist;
+         import fanx.main.*;
          import fan.sys.*;
+         import fan.std.*;
          public class Main
          {
            public static void boot()
@@ -233,10 +238,9 @@ class JarDist : JdkTask
 
            public static void boot(String[] args)
            {
-               System.getProperties().put("fan.jardist", "true");
-               System.getProperties().put("fan.home",    ".");
-               Sys.boot();
-               Sys.bootEnv.setArgs(args);
+               System.getProperties().put("fan.sys.env", "fanx.main.JarDistEnv");
+               System.getProperties().put("fan.home",    "./");
+               BootEnv.setArgs(args);
          $podInits
            }
 

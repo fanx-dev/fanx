@@ -47,6 +47,17 @@ fan.std.TypeExt.doc = function(self)
   return self.doc();
 }
 
+fan.sys.TypeExt.emptyList = function(self)
+{
+  if (self.$emptyList == null) {
+    self.$emptyList = fan.sys.List.make(0, self);
+    //.toImmutable();
+    self.$emptyList.m_readOnly = true;
+    self.$emptyList.m_immutable = true;
+  }
+  return self.$emptyList;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Make
 //////////////////////////////////////////////////////////////////////////
@@ -282,4 +293,5 @@ fan.sys.Type.prototype.$mergeSlot = function(slot, slots, nameToSlot, nameToInde
     nameToIndex[name] = slots.length-1;
   }
 }
+
 

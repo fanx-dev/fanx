@@ -18,35 +18,39 @@ public class BootEnv implements IEnv {
 	List<String> envPaths;
 	String homeDir;
 
-	public static String[] args;
+	public static String[] args = new String[0];
 	
-	private static void checkSlash(String dir) {
-		if (dir.charAt(dir.length()-1) != '/') {
-			throw new IllegalArgumentException("Dir must ends with slash: "+ dir);
+	public static void setArgs(String[] a) {
+		args = a;
+	}
+
+	private static void checkDir(String dir) {
+		if (dir.charAt(dir.length() - 1) != '/') {
+			throw new IllegalArgumentException("Dir must ends with slash: " + dir);
 		}
+		File f = new File(dir);
+		if (!f.exists() || !f.isDirectory())
+			throw new RuntimeException("Invalid dir: " + f);
 	}
 
 	public BootEnv() {
-		homeDir = System.getProperty("fan.home");
+		homeDir = Sys.getPropOrEnv("fan.home", "FAN_HOME");
 		if (homeDir == null) {
-			homeDir = System.getenv("FAN_HOME");
-			if (homeDir == null) {
-				throw new NullPointerException("ERROR: Not set fan.home");
-			}
+			throw new NullPointerException("ERROR: Not set FAN_HOME");
 		}
-		
+
 		if (os.startsWith("win")) {
 			homeDir = homeDir.replace("\\", "/");
 		}
-		checkSlash(homeDir);
-		
+		checkDir(homeDir);
+
 		envPaths = new ArrayList<String>(4);
 
-		String workDirs = System.getenv("FAN_ENV_PATH");
+		String workDirs = Sys.getPropOrEnv("fan.env.path", "FAN_ENV_PATH");
 		if (workDirs != null && workDirs.length() > 0) {
 			String[] paths = workDirs.split(";");
 			for (String p : paths) {
-				checkSlash(p);
+				checkDir(p);
 				envPaths.add(p);
 			}
 		}
@@ -124,7 +128,7 @@ public class BootEnv implements IEnv {
 	public String homeDir() {
 		return homeDir;
 	}
-	
+
 	public String workDir() {
 		return envPaths.get(0);
 	}
@@ -141,8 +145,9 @@ public class BootEnv implements IEnv {
 			if (f.exists())
 				return f;
 		}
-		
-		if (checked) throw new RuntimeException("Pod not found:" + name);
+
+		if (checked)
+			throw new RuntimeException("Pod not found:" + name);
 		return null;
 	}
 
@@ -160,14 +165,16 @@ public class BootEnv implements IEnv {
 					return false;
 				}
 			});
-			if (fs == null) continue;
+			if (fs == null)
+				continue;
 			for (File pf : fs) {
 				String name = pf.getName();
 				int pos = name.lastIndexOf(".");
 				if (pos > 0) {
 					name = name.substring(0, pos);
 				}
-				if (map.containsKey(name)) continue;
+				if (map.containsKey(name))
+					continue;
 				map.put(name, pf.getPath());
 				pods.add(name);
 			}
@@ -179,7 +186,8 @@ public class BootEnv implements IEnv {
 	public FStore loadPod(String name, boolean checked) {
 		try {
 			File podFile = getPodFile(name, checked);
-			if (!checked && podFile == null) return null;
+			if (!checked && podFile == null)
+				return null;
 			FStore podStore = FStore.makeZip(podFile);
 			return podStore;
 		} catch (Exception e) {

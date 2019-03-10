@@ -229,10 +229,21 @@ public class Pod extends FanObj {
 				throw Err.make("Not backed by pod file: " + name());
 			List list;
 			try {
-				java.util.List<fanx.fcode.ZipEntryFile> jlist = fpod.store.podFiles(uri().toStr());
+				java.util.List<fanx.fcode.ResFile> jlist = fpod.store.podFiles(uri().toStr());
 				list = List.make(jlist.size());
-				for (fanx.fcode.ZipEntryFile j : jlist) {
-					fan.std.ZipEntryFile f = new fan.std.ZipEntryFile(j.parent, j.entry, Uri.fromStr(j.uri));
+				for (fanx.fcode.ResFile file : jlist) {
+					fan.std.File f;
+					if (file instanceof fanx.fcode.ResFile.ZipEntryFile) {
+						fanx.fcode.ResFile.ZipEntryFile j = (fanx.fcode.ResFile.ZipEntryFile)file;
+						f = new fan.std.ZipEntryFile(j.parent, j.entry, Uri.fromStr(j.uri));
+					}
+					else if (file instanceof fanx.fcode.ResFile.ClassLoaderFile) {
+						fanx.fcode.ResFile.ClassLoaderFile j = (fanx.fcode.ResFile.ClassLoaderFile)file;
+						f = new fan.std.ClassLoaderFile(j.loader, j.loaderPath, Uri.fromStr(j.uri));
+					}
+					else {
+						continue;
+					}
 					list.add(f);
 				}
 				this.filesList = (List) list.toImmutable();

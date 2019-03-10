@@ -390,5 +390,11 @@ public class Fan
   {
     System.exit(new Fan().run(args));
   }
+  
+  /** Used by fan "[java]fanx.tools::Fant.fanMain" */
+  public static void fanMain() throws Exception
+  {
+    main(BootEnv.args);
+  }
 
 }

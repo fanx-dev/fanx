@@ -195,7 +195,7 @@ fan.sys.Type.prototype.parameterize = function(params)
   throw fan.sys.UnsupportedErr.make("not generic: " + this);
 }
 */
-
+/*
 fan.sys.Type.prototype.toListOf = function()
 {
   if (this.m_listOf == null) this.m_listOf = new fan.sys.ListType(this);
@@ -212,6 +212,7 @@ fan.sys.Type.prototype.emptyList = function()
   }
   return this.$emptyList;
 }
+*/
 /*
 //////////////////////////////////////////////////////////////////////////
 // Make

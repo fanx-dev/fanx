@@ -232,6 +232,13 @@ public class TypeExt {
 		if (type.ftype() == null) return null;
 		return Pod.fromFPod(type.ftype().pod);
 	}
+	
+	public static List emptyList(Type type) {
+		if (type.emptyList == null) {
+			type.emptyList = List.make(0, type).toImmutable();
+		}
+		return (List)type.emptyList;
+	}
 
 	// public static Map params(Type type) {
 	// return null;

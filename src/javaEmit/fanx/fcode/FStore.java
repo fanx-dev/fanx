@@ -38,16 +38,16 @@ public abstract class FStore
     return new ZipStore(zipFile, new java.util.zip.ZipFile(zipFile));
   }
 
-//  /**
-//   * Construct a FStore to read from a JAR's ClassLoader resources.
-//   * If podName doesn't exist then throw UnknownPodErr.
-//   */
-//  public static FStore makeJarDist(ClassLoader loader, String podName)
-//  {
-//    JarDistStore store = new JarDistStore(loader);
-//    if (store.hasPod(podName)) return store;
-//    throw new RuntimeException("UnknownPodErr:"+podName);
-//  }
+  /**
+   * Construct a FStore to read from a JAR's ClassLoader resources.
+   * If podName doesn't exist then throw UnknownPodErr.
+   */
+  public static FStore makeJarDist(ClassLoader loader, String podName)
+  {
+    JarDistStore store = new JarDistStore(loader);
+    if (store.hasPod(podName)) return store;
+    throw new RuntimeException("UnknownPodErr:"+podName);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // File Access
@@ -61,7 +61,7 @@ public abstract class FStore
   /**
    * Return a list to use for Pod.files()
    */
-  public abstract List<ZipEntryFile> podFiles(String podUri)
+  public abstract List<ResFile> podFiles(String podUri)
       throws IOException;
 
   /**
@@ -130,9 +130,9 @@ public abstract class FStore
 
     public java.io.File loadFile() { return loadFile; }
 
-    public List<ZipEntryFile> podFiles(String podUri)
+    public List<ResFile> podFiles(String podUri)
     {
-      List<ZipEntryFile> list = new ArrayList<ZipEntryFile>();
+      List<ResFile> list = new ArrayList<ResFile>();
       Enumeration en = zipFile.entries();
       while (en.hasMoreElements())
       {
@@ -141,7 +141,7 @@ public abstract class FStore
         if (name.startsWith("fcode/")) continue;
         if (name.endsWith(".class")) continue;
         String uri = (podUri + (entry.getName()));
-        list.add(new ZipEntryFile(zipFile, entry, uri));
+        list.add(new ResFile.ZipEntryFile(zipFile, entry, uri));
       }
       return list;
     }
@@ -198,86 +198,90 @@ public abstract class FStore
 // JarDistStore
 //////////////////////////////////////////////////////////////////////////
 
-//  static class JarDistStore extends FStore
-//  {
-//    JarDistStore(ClassLoader loader) { this.loader = loader; }
-//
-//    public java.io.File loadFile() { return null; }
-//
-//    public boolean hasPod(String podName)
-//    {
-//      String path = "reflect/" + podName + "/meta.props";
-//      InputStream in = loader.getResourceAsStream(path);
-//      if (in == null) return false;
-//      try { in.close(); } catch (Exception e) {}
-//      return true;
-//    }
-//
-//    public List<ZipEntryFile> podFiles(Uri podUri)
-//      throws IOException
-//    {
-//      // JarDist build task generated "{res/pod}/res-manifiest.txt"
-//      String manifestPath = "res/" + fpod.podName + "/res-manifest.txt";
-//      BufferedReader in = new BufferedReader(new InputStreamReader(loader.getResourceAsStream(manifestPath)));
-//      String line;
-//      List<ZipEntryFile> list = new ArrayList<ZipEntryFile>();
-//      while ((line = in.readLine()) != null)
-//      {
-//        if (line.length() == 0) continue;
-//        String uri = (podUri + line);
-//        String loaderPath = "res/" + fpod.podName + line;
-//        File file = new ClassLoaderFile(loader, loaderPath, uri);
-//        list.add(file);
-//      }
-//      return list;
-//    }
-//
-//    public FStore.Input read(String path, boolean required)
-//      throws IOException
-//    {
-//      path = "reflect/" + fpod.podName + "/" + path;
-//      InputStream in = loader.getResourceAsStream(path);
-//      if (in == null)
-//      {
-//        if (required)
-//          throw new IOException("Missing required file \"" + path + "\" in pod zip");
-//        else
-//          return null;
-//      }
-//      return new FStore.Input(fpod, in);
-//    }
-//
-//    public Box readToBox(String path)
-//      throws IOException
-//    {
-//      path = "reflect/" + fpod.podName + "/" + path;
-//      InputStream in = loader.getResourceAsStream(path);
-//      if (in == null) return null;
-//
-//      byte[] temp = new byte[1024];
-//      Box box = new Box();
-//
-//      try
-//      {
-//        while (true)
-//        {
-//          int n = in.read(temp, 0, 1024);
-//          if (n < 0) break;
-//          box.append(temp, n);
-//        }
-//      }
-//      finally
-//      {
-//        try { in.close(); } catch (Exception e) {}
-//      }
-//
-//      return box;
-//    }
-//
-//    public void close() {}
-//
-//    ClassLoader loader;
-//  }
+  static class JarDistStore extends FStore
+  {
+    JarDistStore(ClassLoader loader) { this.loader = loader; }
+
+    public java.io.File loadFile() { return null; }
+
+    public boolean hasPod(String podName)
+    {
+      String path = "reflect/" + podName + "/meta.props";
+      InputStream in = loader.getResourceAsStream(path);
+      if (in == null) return false;
+      try { in.close(); } catch (Exception e) {}
+      return true;
+    }
+
+    @Override
+    public List<ResFile> podFiles(String podUri)
+      throws IOException
+    {
+      // JarDist build task generated "{res/pod}/res-manifiest.txt"
+      String manifestPath = "res/" + fpod.podName + "/res-manifest.txt";
+      BufferedReader in = new BufferedReader(new InputStreamReader(loader.getResourceAsStream(manifestPath)));
+      String line;
+      List<ResFile> list = new ArrayList<ResFile>();
+      while ((line = in.readLine()) != null)
+      {
+        if (line.length() == 0) continue;
+        String uri = (podUri + line);
+        String loaderPath = "res/" + fpod.podName + line;
+        ResFile.ClassLoaderFile file = new ResFile.ClassLoaderFile(loader, loaderPath, uri);
+        list.add(file);
+      }
+      return list;
+    }
+
+    @Override
+    public FStore.Input read(String path, boolean required)
+      throws IOException
+    {
+      path = "reflect/" + fpod.podName + "/" + path;
+      InputStream in = loader.getResourceAsStream(path);
+      if (in == null)
+      {
+        if (required)
+          throw new IOException("Missing required file \"" + path + "\" in pod zip");
+        else
+          return null;
+      }
+      return new FStore.Input(fpod, in);
+    }
+
+    @Override
+    public Box readToBox(String path)
+      throws IOException
+    {
+      path = "reflect/" + fpod.podName + "/" + path;
+      InputStream in = loader.getResourceAsStream(path);
+      if (in == null) return null;
+
+      byte[] temp = new byte[1024];
+      Box box = new Box();
+
+      try
+      {
+        while (true)
+        {
+          int n = in.read(temp, 0, 1024);
+          if (n < 0) break;
+          box.append(temp, n);
+        }
+      }
+      finally
+      {
+        try { in.close(); } catch (Exception e) {}
+      }
+
+      return box;
+    }
+
+    @Override
+    public void close() {}
+
+    ClassLoader loader;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

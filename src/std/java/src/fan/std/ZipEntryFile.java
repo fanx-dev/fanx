@@ -17,8 +17,6 @@ import fan.std.Uri;
 import fan.sys.IOErr;
 import fan.sys.List;
 import fan.sys.UnsupportedErr;
-import fanx.main.Sys;
-import fanx.main.Type;
 
 /**
  * ZipEntryFile represents a file entry inside a zip file.

@@ -10,7 +10,6 @@ import fanx.fcode.FPod;
 import fanx.fcode.FStore;
 import fanx.fcode.FType;
 import fanx.fcode.FTypeRef;
-import fanx.util.FanUtil;
 import fanx.util.Reflection;
 
 public class Sys {
@@ -52,7 +51,7 @@ public class Sys {
 		}
 
 		// check FAN_ENV environment variable
-		String var = System.getenv("FAN_SYS_ENV");
+		String var = getPropOrEnv("fan.sys.env", "FAN_SYS_ENV");
 		if (var != null) {
 			try {
 				env = (IEnv) Class.forName(var).newInstance();
@@ -67,6 +66,17 @@ public class Sys {
 		if (env == null) {
 			env = new BootEnv();
 		}
+	}
+	
+	static String getPropOrEnv(String propKey, String envKey) {
+		// lookup system property
+		String val = System.getProperty(propKey);
+		// fallback to environment variable
+		if (val == null)
+			val = System.getenv(envKey);
+		if (val == null)
+			val = System.getenv(envKey.toLowerCase());
+		return val;
 	}
 
 	public static Type findType(String signature) {
