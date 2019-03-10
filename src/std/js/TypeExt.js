@@ -47,13 +47,13 @@ fan.std.TypeExt.doc = function(self)
   return self.doc();
 }
 
-fan.sys.TypeExt.emptyList = function(self)
+fan.std.TypeExt.emptyList = function(self)
 {
   if (self.$emptyList == null) {
-    self.$emptyList = fan.sys.List.make(0, self);
+    self.$emptyList = fan.sys.List.make(0, self).toImmutable();
     //.toImmutable();
-    self.$emptyList.m_readOnly = true;
-    self.$emptyList.m_immutable = true;
+    //self.$emptyList.m_readOnly = true;
+    //self.$emptyList.m_immutable = true;
   }
   return self.$emptyList;
 }

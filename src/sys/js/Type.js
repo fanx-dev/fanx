@@ -308,7 +308,7 @@ fan.sys.Type.prototype.mixins = function()
 {
   // lazy-build mxins list for Obj and Type
   if (this.m_mixins == null)
-    this.m_mixins = fan.sys.Type.$type.emptyList();
+    this.m_mixins = fan.std.TypeExt.emptyList(fan.sys.Type.$type);
   return this.m_mixins;
 }
 
