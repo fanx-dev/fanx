@@ -79,16 +79,17 @@ internal const class ScriptCompiler {
     }
 
     //call Main
-    if (m.params.size == 0) {
-      args = List.defVal
+    Obj?[]? funcArgs := null
+    if (m.params.size > 0 && args != null && args.size > 0) {
+      funcArgs = [args]
     }
 
     Obj? res := null
     if (m.isStatic) {
-      res = m.call(args)
+      res = m.callList(funcArgs)
     }
     else {
-      res = m.callOn(t.make, [args])
+      res = m.callOn(t.make, funcArgs)
     }
     return (res as Int) ?: 0
   }
