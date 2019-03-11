@@ -201,18 +201,18 @@ fan.sys.Type.prototype.toListOf = function()
   if (this.m_listOf == null) this.m_listOf = new fan.sys.ListType(this);
   return this.m_listOf;
 }
+*/
 
 fan.sys.Type.prototype.emptyList = function()
 {
   if (this.$emptyList == null) {
-    this.$emptyList = fan.sys.List.make(0, this);
-    //.toImmutable();
-    this.$emptyList.m_readOnly = true;
-    this.$emptyList.m_immutable = true;
+    this.$emptyList = fan.sys.List.make(0, this).toImmutable();
+    //this.$emptyList.m_readOnly = true;
+    //this.$emptyList.m_immutable = true;
   }
   return this.$emptyList;
 }
-*/
+
 /*
 //////////////////////////////////////////////////////////////////////////
 // Make
@@ -308,7 +308,7 @@ fan.sys.Type.prototype.mixins = function()
 {
   // lazy-build mxins list for Obj and Type
   if (this.m_mixins == null)
-    this.m_mixins = fan.std.TypeExt.emptyList(fan.sys.Type.$type);
+    this.m_mixins = fan.sys.Type.$type.emptyList();
   return this.m_mixins;
 }
 

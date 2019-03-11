@@ -108,7 +108,7 @@ fan.std.Env.prototype.tempDir = function() { return this.m_tempDir; }
 
 fan.std.Env.prototype.index = function(key)
 {
-  return this.m_index.get(key, fan.std.TypeExt.emptyList(fan.sys.Str.$type));
+  return this.m_index.get(key, fan.sys.Str.$type.emptyList());
 }
 
 fan.std.Env.prototype.props = function(pod, uri, maxAge)

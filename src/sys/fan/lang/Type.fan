@@ -255,7 +255,7 @@ native const class Type
   ** Examples:
   **   Str#.emptyList  =>  Str[,]
   **
-  //Obj[] emptyList()
+  Obj[] emptyList()
 
 //////////////////////////////////////////////////////////////////////////
 // Flags

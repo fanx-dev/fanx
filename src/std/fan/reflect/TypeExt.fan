@@ -112,15 +112,4 @@ native const class TypeExt
   **
   static extension Str? doc(Type self)
 
-
-  **
-  ** Return an immutable empty list of this type.  Since immutable
-  ** lists can be used safely everywhere, this allows signficant memory
-  ** savings instead allocating new empty lists.
-  **
-  ** Examples:
-  **   Str#.emptyList  =>  Str[,]
-  **
-  static extension Obj[] emptyList(Type self)
-
 }

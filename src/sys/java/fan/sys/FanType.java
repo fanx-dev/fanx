@@ -289,4 +289,11 @@ public class FanType {
 		return self.getJavaActualClass();
 	}
 
+	public static List emptyList(Type type) {
+		if (type.emptyList == null) {
+			type.emptyList = List.make(0, type).toImmutable();
+		}
+		return (List)type.emptyList;
+	}
+
 }
