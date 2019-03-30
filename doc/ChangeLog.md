@@ -1,7 +1,6 @@
 ## ChangeLog
 
-
-### Build 2.1 (working)
+### Build 2.1 (2019-03-30)
 - No doc test code
 - Allow method body in native class
 - Fix growing non-nullable List
@@ -9,6 +8,9 @@
 - Fix Js reflect
 - Fix for Android
 - Fix ScriptCompiler
+- Fix JarDist
+- Add Type.emptyList
+- Update Fantom-1.0.72
 
 ### Build 2.0 (2019-02-16)
 - Fix Service bug
