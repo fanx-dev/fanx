@@ -125,21 +125,20 @@ class TypeParser
       t = t.toNullable
     }
 
-    // anything left must be []
+    // anything left must be series of [] or []?
     while (cur == '[')
     {
       consume('[')
       consume(']')
       t = t.toListOf
-    }
 
-    // nullable
-    if (cur == '?')
-    {
-      consume('?')
-      t = t.toNullable
+      if (cur == '?')
+      {
+        consume('?')
+        t = t.toNullable
+      }
     }
-
+    
     return t
   }
 

@@ -553,7 +553,12 @@ internal class ObjDecoder
     if (curt == Token.COLON)
     {
       consume
-      readType
+      //readType
+      lbracket2 := curt == Token.LBRACKET
+      if (lbracket2) consume
+      t = readType(lbracket2)
+      if (lbracket2) consumeAs(Token.RBRACKET, "Expected closing ]")
+
       t = Map#
     }
     while (curt == Token.LRBRACKET)
