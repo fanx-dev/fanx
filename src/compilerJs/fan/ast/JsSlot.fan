@@ -62,6 +62,7 @@ class JsSlotRef : JsNode
 {
   new make(JsCompilerSupport cs, CSlot s) : super(cs)
   {
+    this.cslot        = s
     this.loc         = s is Node ? ((Node)s).loc : null
     this.parent      = qnameToJs(s.parent)
     this.name        = vnameToJs(s.name)
@@ -88,6 +89,7 @@ class JsSlotRef : JsNode
     out.w(name, loc)
   }
 
+  CSlot cslot
   Str parent        // qname of slot parent
   Str name          // qname of type ref
   Int flags         // slot flags

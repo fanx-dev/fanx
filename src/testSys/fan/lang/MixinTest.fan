@@ -338,6 +338,11 @@ class MixinTest : Test
     verifyInheritance(MxGooRoo#)
   }
 
+  Void testToStr()
+  {
+    verifyEq("classToStr", ClsSubSubMxToStr().toStr)
+  }
+
   Void verifyInheritance(Type t)
   {
     a1 := t.make(["a"])
@@ -408,6 +413,12 @@ class FanxB : FanxM {
 //////////////////////////////////////////////////////////////////////////
 // Helper Types
 //////////////////////////////////////////////////////////////////////////
+
+const mixin MxToStr { override Str toStr() { "mixin" } }
+const mixin SubMxToStr : MxToStr { }
+const mixin SubSubMxToStr : SubMxToStr { }
+const class ClsSubMxToStr : SubMxToStr { override Str toStr() { "classToStr" } }
+const class ClsSubSubMxToStr : ClsSubMxToStr, SubSubMxToStr { }
 
 
 mixin MxA

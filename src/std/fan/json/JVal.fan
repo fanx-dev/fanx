@@ -43,7 +43,7 @@ class JVal {
   ** @std nonstandard will omit the quotation of object key
   ** @encode encode the unicode char
   **
-  Str writeJson(Bool std := false, Bool encode := false) {
+  Str writeJson(Bool std := true, Bool encode := false) {
     buf := StrBuf()
     jout := JsonOutStream(buf.out)
     jout.std = std

@@ -99,15 +99,16 @@ class JsType : JsNode
       if (s.parent == "fan.sys.Obj") return
       if (s.isAbstract) return
       if (s.isStatic) return
-      if (overrides(s)) return
+      //if (overrides(s)) return
+
+      // check if this mixin's slot was resolved by the compiler as the implementation
+      // for the corresponding slot on the this JsType
+      resolved := def.slots.find { it.qname == s.cslot.qname }
+      if (resolved == null) return
+
+      // use mixin implementation
       out.w("${qname}.prototype.${s.name} = ${s.parent}.prototype.${s.name};").nl
     }
-  }
-
-  Bool overrides(JsSlotRef ref)
-  {
-    v := methods.find |m| { m.name == ref.name }
-    return v != null
   }
 
   override Str toStr() { sig }
