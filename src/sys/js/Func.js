@@ -55,6 +55,11 @@ fan.sys.Func.make$ = function(self, params, ret, func)
 
 fan.sys.Func.prototype.$typeof = function() { return this.m_type; }
 
+fan.sys.Func.prototype.isImmutable = function()
+{
+  return true;
+}
+
 fan.sys.Func.prototype.toImmutable = function()
 {
   if (this.isImmutable()) return this;

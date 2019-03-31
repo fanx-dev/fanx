@@ -32,6 +32,30 @@ fan.std.AtomicInt.prototype.getAndSet = function(v) {
 	return o;
 }
 
+fan.std.AtomicInt.prototype.increment = function() {
+	++this.m_val;
+}
+
+fan.std.AtomicInt.prototype.decrement = function() {
+	--this.m_val;
+}
+
+fan.std.AtomicInt.prototype.incrementAndGet = function() {
+	return ++this.m_val;
+}
+
+fan.std.AtomicInt.prototype.decrementAndGet = function() {
+	return --this.m_val;
+}
+
+fan.std.AtomicInt.prototype.getAndIncrement = function() {
+	return this.m_val++;
+}
+
+fan.std.AtomicInt.prototype.getAndDecrement = function() {
+	return this.m_val--;
+}
+
 fan.std.AtomicInt.prototype.compareAndSet = function(expect, update) {
 	if (this.m_val == expect) {
 		this.m_val = update;

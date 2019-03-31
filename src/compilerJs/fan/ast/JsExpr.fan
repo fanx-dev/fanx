@@ -1082,7 +1082,7 @@ class JsThrowExpr : JsExpr
 class JsAwaitExpr : JsExpr {
   new make(JsCompilerSupport s, AwaitExpr te) : super(s, te)
   {
-    this.expr = JsExpr.makeFor(s, te)
+    this.expr = JsExpr.makeFor(s, te.expr)
   }
   override Void write(JsWriter out)
   {
