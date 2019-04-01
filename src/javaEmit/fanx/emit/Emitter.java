@@ -105,7 +105,7 @@ public class Emitter
     Box box = new Box();
     box.u4(0xCAFEBABE);
     box.u2(0);
-    box.u2(50);  // using ldc_w with direct cp_class indices
+    box.u2(49);  // using ldc_w with direct cp_class indices
     box.u2(cp.size());
     for (int i=1; i<cp.size(); ++i) ((CpInfo)cp.get(i)).pack(box);
     /*cpDump();*/

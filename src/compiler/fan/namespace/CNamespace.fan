@@ -238,6 +238,7 @@ abstract class CNamespace
   once CType? testType() { findType("std", "Test") }
   once CType? uriType() { findType("std", "Uri") }
   once CType? asyncType() { findType("concurrent", "Async") }
+  once CType? promiseType() { findType("concurrent", "Promise") }
 
   once CMethod? objTrap            () { sysMethod(objType,    "trap") }
   once CMethod? objWith            () { sysMethod(objType,    "with") }

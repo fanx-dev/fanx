@@ -30,7 +30,7 @@ trans to =>
     
     new make(Type param1) { this.param1 = param1 }
 
-    Bool next() {
+    protected Bool nextStep() {
       self.foo$async(this)
       return this.state != -1
     }
@@ -202,8 +202,8 @@ class GenAsync : CompilerStep {
   private Void genNext()
   {
     m := MethodDef(loc, ctxCls)
-    m.name  = "next"
-    m.flags = FConst.Public + FConst.Synthetic + FConst.Override
+    m.name  = "nextStep"
+    m.flags = FConst.Protected + FConst.Synthetic + FConst.Override
     m.ret = ns.boolType
     m.code = Block(loc)
     ctxCls.addSlot(m)

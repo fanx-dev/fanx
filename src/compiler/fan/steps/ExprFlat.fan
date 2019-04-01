@@ -75,7 +75,7 @@ class ExprFlat : CompilerStep
       if (t.id === ExprId.awaitExpr) {
         hasYield = true
       }
-      else if (t.id === ExprId.boolOr || t.id === ExprId.boolAnd || t.id === ExprId.ternary) {
+      else if (t.id === ExprId.boolOr || t.id === ExprId.boolAnd || t.id === ExprId.ternary || t.id === ExprId.elvis) {
         hasBool = true
       }
       ++count
@@ -87,13 +87,17 @@ class ExprFlat : CompilerStep
 
       stmt.walk(ExprVisitor.make|Expr e->Expr| {
         //localDef init
-        if (e.id === ExprId.assign) return e
+        //echo("$e => $e.id")
+        if (e.id === ExprId.assign || e.id === ExprId.staticTarget) return e
         return toTempVar(e)
       }, VisitDepth.expr)
 
       //already become a local var
       if (stmt.id != StmtId.expr) {
         addStmt(stmt)
+      }
+      else {
+        //discard the stmt result value
       }
     }
     else {

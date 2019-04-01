@@ -177,13 +177,13 @@ class ResolveExpr : CompilerStep
       case ExprId.awaitExpr:
         yexpr := ((AwaitExpr)expr)
         yexpr.expr = resolveExpr(yexpr.expr)
-        if (yexpr.expr.ctype.qname == ns.asyncType.qname) {
-          awaitType := ((ParameterizedType)yexpr.expr.ctype).genericArgs.first
-          if (awaitType == null) {
-              yexpr.ctype = awaitType
-            } else {
-              yexpr.ctype = ns.objType.toNullable
-            }
+        if (yexpr.expr.ctype.fits(ns.promiseType)) {
+          awaitType := ((ParameterizedType)yexpr.expr.ctype.deref).genericArgs.first
+          if (awaitType != null) {
+            yexpr.ctype = awaitType.toNullable
+          } else {
+            yexpr.ctype = ns.objType.toNullable
+          }
         }
         else {
           yexpr.ctype = yexpr.expr.ctype

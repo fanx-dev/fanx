@@ -1,5 +1,9 @@
 ## ChangeLog
 
+### Build 2.2 (working)
+- Add Promise
+- Fix ExprFlat
+
 ### Build 2.1 (2019-03-30)
 - No doc test code
 - Allow method body in native class

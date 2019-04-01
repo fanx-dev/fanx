@@ -28,6 +28,9 @@ class AsyncTest : Test {
     Actor.locals["async.runner"] = |Async<Obj> s| {
       if (s.next) {
         echo("pause :" + s.awaitObj)
+        if (s.awaitObj is Promise) {
+          s.awaitObj = (s.awaitObj as Promise).result
+        }
         s.run
       }
       echo("end")
@@ -43,5 +46,20 @@ class AsyncTest : Test {
 
     f := doTry(10)
     verify(f.result == 100)
+  }
+
+  private Promise<Str> doPromise() {
+    return Promise.make()
+  }
+
+  async Void doWaitPromise() {
+    p := await doPromise
+    echo(p?.size)
+  }
+
+  Void testPromise() {
+    init
+
+    doWaitPromise
   }
 }
