@@ -15,7 +15,7 @@ class AsyncTest : Test {
       return t
     }
     catch (Err e) {
-      echo(e)
+      echo("Err: "+e)
       return 100
     }
   }
@@ -42,11 +42,19 @@ class AsyncTest : Test {
 
     x := doValue(10)
     verify(x is Async)
+
   	doLoop(10)
+  }
+
+  Void testException() {
+    init
 
     f := doTry(10)
-    verify(f.result == 100)
+    verifyEq(f.result, 100)
   }
+
+
+  ////////////////////////////////////////////////
 
   private Promise<Str> doPromise() {
     return Promise.make()

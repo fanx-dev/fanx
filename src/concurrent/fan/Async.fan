@@ -3,10 +3,11 @@
 mixin Promise<T> {
   abstract Bool isDone()
   abstract T? result()
+  abstract Err? err()
 
-  abstract Void then(|T?| f)
+  abstract Void then(|T?, Err?| f)
   
-  @NoDoc virtual Void complete(Obj? res) { throw UnsupportedErr() }
+  @NoDoc virtual Void complete(Obj? res, Bool success) { throw UnsupportedErr() }
 
   static new make() {
     BasePromise()
@@ -16,24 +17,27 @@ mixin Promise<T> {
 @NoDoc
 virtual class BasePromise<T> : Promise<T> {
 	private Lock lock := Lock()
-  private |T?|? whenDone
+  private |T?, Err?|? whenDone
 
   override Bool isDone := false { private set }
   override T? result { private set }
+  override Err? err { private set }
   
-  override Void complete(Obj? res) {
+  override Void complete(Obj? res, Bool success) {
   	lock.sync {
-      result = res
+      if (success) result = res
+      else err = res
+
       isDone = true
-      whenDone?.call(res)
+      whenDone?.call(res, err)
       lret null
     }
   }
 
-  override Void then(|T?| f) {
+  override Void then(|T?, Err?| f) {
     lock.sync {
       if (isDone) {
-        f.call(result)
+        f.call(result, err)
       }
       else whenDone = f
       lret null
@@ -54,24 +58,31 @@ abstract class Async<T> : Promise<T>  {
 	override T? result { protected set }
 
 	** err in async task
-	Err? err
+	override Err? err
 
 	** call when task done
-	private |Async<T>|? whenDone
+	private |T?, Err?|? whenDone
 
-	override Void then(|This| f) {
+	override Void then(|T?, Err?| f) {
 		if (isDone) {
-      f.call(err ?: result)
+      f.call(result, err)
     }
     else whenDone = f
 	}
 
   Bool next() {
-    done := nextStep
-    if (done) {
-      whenDone?.call(err ?: result)
+    try {
+      nextStep
+    } catch (Err e) {
+      this.err = e
+      state = -1
     }
-    return done
+    
+    if (isDone) {
+      whenDone?.call(result, err)
+      return false
+    }
+    return true
   }
 
 	protected abstract Bool nextStep()

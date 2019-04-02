@@ -368,13 +368,14 @@ class GenAsync : CompilerStep {
               AwaitExpr c := assignExpr.rhs
               genYield(c.expr, breakLabel, table, stmts)
 
+              //if (ctx.err != null) throw Err()
+              genCheckErr(stmts, stmt.loc)
+
               //ctx.var1 = ctx.awaitObj
               resField := fieldExpr(stmt.loc, "awaitObj")
               assignExpr.rhs = TypeCheckExpr.coerce(resField, assignExpr.lhs.ctype)
               stmts.add(assignExpr.toStmt)
 
-              //if (ctx.err != null) throw Err()
-              genCheckErr(stmts, stmt.loc)
               return
           }
         }
