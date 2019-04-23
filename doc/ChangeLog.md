@@ -3,6 +3,7 @@
 ### Build 2.2 (working)
 - Add Promise
 - Fix ExprFlat
+- Move Josn to util
 
 ### Build 2.1 (2019-03-30)
 - No doc test code
