@@ -867,50 +867,50 @@ class MapTest : Test
 //////////////////////////////////////////////////////////////////////////
 // Def
 //////////////////////////////////////////////////////////////////////////
-/*
+
   Void testDef()
   {
     a := [0:"zero"]
-    verifyEq(a.def, null)
+    verifyEq(a.defV, null)
     verifyEq(a[0], "zero")
     verifyEq(a[3], null)
     verifyEq(a.get(3, "x"), "x")
 
-    a.def = ""
-    verifyEq(a.def, "")
+    a.defV = ""
+    verifyEq(a.defV, "")
     verifyEq(a[0], "zero")
     verifyEq(a[3], "")
     verifyEq(a.get(3, "x"), "x")
 
     a = a.ro
-    verifyEq(a.def, "")
+    verifyEq(a.defV, "")
     verifyEq(a[0], "zero")
     verifyEq(a[3], "")
     verifyEq(a.get(3, "x"), "x")
-    verifyErr(ReadonlyErr#) { a.def = null }
+    verifyErr(ReadonlyErr#) { a.defV = null }
 
     a = a.rw
-    verifyEq(a.def, "")
+    verifyEq(a.defV, "")
     verifyEq(a[0], "zero")
     verifyEq(a[3], "")
     verifyEq(a.get(3, "x"), "x")
-    a.def = "?"
+    a.defV = "?"
     verifyEq(a[3], "?")
 
     a = a.toImmutable
-    verifyEq(a.def, "?")
+    verifyEq(a.defV, "?")
     verifyEq(a[0], "zero")
     verifyEq(a[3], "?")
     verifyEq(a.get(3, "x"), "x")
-    verifyErr(ReadonlyErr#) { a.def = null }
-    verifyEq(a.def, "?")
+    verifyErr(ReadonlyErr#) { a.defV = null }
+    verifyEq(a.defV, "?")
 
-    b := ["x":[0, 1]] { def = Int[,].toImmutable }
+    b := ["x":[0, 1]] { defV = Int[,].toImmutable }
     verifyEq(b["x"], [0, 1])
     verifyEq(b["y"], Int[,])
-    verifyErr(NotImmutableErr#) { b.def = [3] }
+    verifyErr(NotImmutableErr#) { b.defV = [3] }
   }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Each
 //////////////////////////////////////////////////////////////////////////

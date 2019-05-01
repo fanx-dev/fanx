@@ -62,10 +62,10 @@ rtconst class CaseInsensitiveMap<K,V> : Map<K,V> {
     return this
   }
 
-  @Operator override V? get(K key, V? defV := null) {
+  @Operator override V? get(K key, V? defValue := super.defV) {
     if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
     k := CIKey(key)
-    return _map.get(k, defV)
+    return _map.get(k, defValue)
   }
 
   override Bool containsKey(K key) {

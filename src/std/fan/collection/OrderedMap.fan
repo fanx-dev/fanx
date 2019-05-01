@@ -44,9 +44,9 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
     return this
   }
 
-  @Operator override V? get(K key, V? defV := null) {
+  @Operator override V? get(K key, V? defValue := super.defV) {
     MapEntry? entry := super.get(key, null)
-    if (entry == null) return defV
+    if (entry == null) return defValue
     return entry.val
   }
 

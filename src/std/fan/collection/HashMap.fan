@@ -121,8 +121,8 @@ rtconst class HashMap<K,V> : Map<K,V>
     }
   }
 
-  @Operator override V? get(K key, V? defV := null) {
-    rawGet(key, defV)
+  @Operator override V? get(K key, V? defValue := super.defV) {
+    rawGet(key, defValue)
   }
 
   override Bool containsKey(K key) {
@@ -315,6 +315,7 @@ rtconst class HashMap<K,V> : Map<K,V>
     each |v,k| {
       nmap.set(k?.toImmutable, v?.toImmutable)
     }
+    nmap.defV = defV
     nmap.readOnly = true
     nmap.immutable = true
     return nmap

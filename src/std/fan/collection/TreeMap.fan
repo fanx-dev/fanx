@@ -294,9 +294,9 @@ class TreeMap<K,V> : Map<K,V> {
     return null
   }
 
-  override V? get(K k, V? defV := null) {
+  override V? get(K k, V? defValue := super.defV) {
     node  := searchAt(k, root)
-    if (node == null) return defV
+    if (node == null) return defValue
     return node.val
   }
 
@@ -392,6 +392,7 @@ class TreeMap<K,V> : Map<K,V> {
     each |v,k| {
       nmap.set(k?.toImmutable, v?.toImmutable)
     }
+    nmap.defV = defV
     nmap.readOnly = true
     nmap.immutable = true
     return nmap
