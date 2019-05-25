@@ -14,7 +14,7 @@ public class FilePeer {
 		java.io.File jfile = new java.io.File(path);
 		if (jfile.isDirectory() && !checkSlash && !uri.isDir())
 			uri = uri.plusSlash();
-		return LocalFilePeer.make(jfile, uri);
+		return LocalFilePeer.make(jfile, uri, true);
 	}
 
 	static File make(Uri uri) {

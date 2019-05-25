@@ -9,6 +9,8 @@ package fan.std;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import fan.sys.ArgErr;
 import fan.sys.IOErr;
@@ -21,13 +23,37 @@ public class LocalFilePeer {
 	}
 
 	public static LocalFile fromJava(java.io.File file) {
-		LocalFile f = new LocalFile();
-		f.peer = file;
-		String uri = file.getPath();
+		Uri uri = fileToUri(file, false);
+		return make(file, uri, false);
+	}
+	
+	private static Uri fileToUri(java.io.File file, boolean normalize) {
+		String path;
+		if (normalize) {
+			try {
+				path = file.getCanonicalPath();
+			} catch (IOException e) {
+				path = file.getAbsolutePath();
+			}
+		} else {
+			path = file.getPath();
+		}
+		
+		// deal with Windoze drive name
+	    if (path.length() > 2 && path.charAt(1) == ':' && path.charAt(0) != '/')
+	      path = "/"+path;
+	    
+		if (java.io.File.separatorChar == '\\') {
+			path = path.replace("\\", "/");
+		}
 		if (file.isDirectory())
-			uri = uri + "/";
-		f._uri = Uri.fromStr(uri);
-		return f;
+			path = path + "/";
+		
+		if (normalize) {
+			path = "file:" + path;
+		}
+		
+		return Uri.fromStr(path);
 	}
 	
 	public static java.io.File toJava(File self) {
@@ -35,8 +61,8 @@ public class LocalFilePeer {
 		return jfile;
 	}
 
-	static LocalFile make(java.io.File file, Uri uri) {
-		if (file.exists()) {
+	static LocalFile make(java.io.File file, Uri uri, boolean check) {
+		if (check && file.exists()) {
 			if (file.isDirectory()) {
 				if (!uri.isDir())
 					throw IOErr.make("Must use trailing slash for dir: " + uri);
@@ -106,18 +132,10 @@ public class LocalFilePeer {
 	}
 
 	static File normalize(LocalFile self) {
-		try {
-			java.io.File jfile = (java.io.File) self.peer;
-			java.io.File canonical = jfile.getCanonicalFile();
-			String path = "file:" + canonical.getCanonicalPath();
-			if (canonical.exists() && canonical.isDirectory()) {
-				path = path + "/";
-			}
-			Uri uri = Uri.fromStr(path);
-			return make(canonical, uri);
-		} catch (java.io.IOException e) {
-			throw IOErr.make(e);
-		}
+		java.io.File jfile = (java.io.File) self.peer;
+//			java.io.File canonical = jfile.getCanonicalFile();
+		Uri uri = fileToUri(jfile, true);
+		return make(jfile, uri, false);
 	}
 
 	private static void createFile(java.io.File file) {
@@ -203,8 +221,17 @@ public class LocalFilePeer {
 				deleteJFile(kids[i]);
 		}
 		
-		if (!jfile.delete())
-		   throw IOErr.make("Cannot delete: " + jfile);
+		try
+	    {
+	      // java.io.File has some issues on macOS (and Linux?) with
+	      // broken symlinks; and will report they do not exist; use
+	      // Files.deleteIfExists to cleanup properly
+	      java.nio.file.Files.deleteIfExists(jfile.toPath());
+	    }
+	    catch (java.io.IOException err)
+	    {
+	      throw IOErr.make("Cannot delete: " + jfile, err);
+	    }
 	}
 
 	static File deleteOnExit(LocalFile self) {

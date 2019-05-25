@@ -103,8 +103,12 @@ public class Fan
 		  FPod pod = Sys.findPod("std");
 	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.ScriptCompiler");
 		  Object scriptCompiler = Reflection.getStaticField(clz, "cur");
+		  String fileName = file.getPath();
+		  if (java.io.File.separatorChar == '\\') {
+			  fileName = fileName.replace("\\", "/");
+		  }
 		  Object res = Reflection.callMethodThrow(scriptCompiler, "execute"
-				  , file.getAbsolutePath(), toList(args));
+				  , fileName, toList(args));
 		  return ((Long)res).intValue();
 		} catch (Throwable e) {
 			e.printStackTrace();

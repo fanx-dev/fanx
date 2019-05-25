@@ -495,6 +495,10 @@ const final class Uri
           sb.addChar(ch)
           continue
         }
+        if (section == Uri.sectionPath && ch == ':') {
+          sb.addChar(ch)
+          continue
+        }
         if (section != Uri.sectionQuery && ch == '/') {
           sb.addChar(ch)
           continue

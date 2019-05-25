@@ -39,7 +39,7 @@ public class BootEnv implements IEnv {
 			throw new NullPointerException("ERROR: Not set FAN_HOME");
 		}
 
-		if (os.startsWith("win")) {
+		if (java.io.File.separatorChar == '\\') {
 			homeDir = homeDir.replace("\\", "/");
 		}
 		checkDir(homeDir);
