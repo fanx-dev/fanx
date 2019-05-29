@@ -179,7 +179,8 @@ class FileBufTest : Test
     //verifyEq(b.readBuf(m, 100), null)
     b.close
 
-    dir.delete
+    //the java not support close mmap buffer. so we don't delete the busy file
+    //dir.delete
   }
 
   Void verifyRegion(Buf a, Int apos, Buf b, Int bpos, Int len)

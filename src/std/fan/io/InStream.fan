@@ -502,7 +502,7 @@ abstract class InStream
       return res
     }
     finally {
-      try { close } catch (Err e) { e.trace }
+      close
     }
   }
 
@@ -522,7 +522,7 @@ abstract class InStream
       }
     }
     finally {
-      try { close } catch (Err e) { e.trace }
+      close
     }
   }
 
@@ -536,24 +536,29 @@ abstract class InStream
   ** be closed.
   **
   virtual Str readAllStr(Bool normalizeNewlines := true) {
-    buf := StrBuf()
-    last := -1
-    while (true) {
-      ch := readChar
-      if (ch < 0) break
-      if (normalizeNewlines)
-      {
-        if (last == '\r' && ch == '\n') {
-          last = -1
-          continue
+    try {
+      buf := StrBuf()
+      last := -1
+      while (true) {
+        ch := readChar
+        if (ch < 0) break
+        if (normalizeNewlines)
+        {
+          if (last == '\r' && ch == '\n') {
+            last = -1
+            continue
+          }
+          last = ch
+          if (ch == '\r') ch = '\n'
         }
-        last = ch
-        if (ch == '\r') ch = '\n'
-      }
 
-      buf.addChar(ch)
+        buf.addChar(ch)
+      }
+      return buf.toStr
     }
-    return buf.toStr
+    finally {
+      this.close
+    }
   }
 
 
