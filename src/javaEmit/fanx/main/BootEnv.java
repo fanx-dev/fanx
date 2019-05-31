@@ -8,6 +8,7 @@ import java.util.List;
 
 import fanx.fcode.FStore;
 import fanx.main.Sys.IEnv;
+import fanx.util.FileUtil;
 
 public class BootEnv implements IEnv {
 
@@ -25,9 +26,6 @@ public class BootEnv implements IEnv {
 	}
 
 	private static void checkDir(String dir) {
-		if (dir.charAt(dir.length() - 1) != '/') {
-			throw new IllegalArgumentException("Dir must ends with slash: " + dir);
-		}
 		File f = new File(dir);
 		if (!f.exists() || !f.isDirectory())
 			throw new RuntimeException("Invalid dir: " + f);
@@ -39,10 +37,8 @@ public class BootEnv implements IEnv {
 			throw new NullPointerException("ERROR: Not set FAN_HOME");
 		}
 
-		if (java.io.File.separatorChar == '\\') {
-			homeDir = homeDir.replace("\\", "/");
-		}
 		checkDir(homeDir);
+		homeDir = FileUtil.osPahtToUri(homeDir, true);
 
 		envPaths = new ArrayList<String>(4);
 
@@ -51,6 +47,7 @@ public class BootEnv implements IEnv {
 			String[] paths = workDirs.split(";");
 			for (String p : paths) {
 				checkDir(p);
+				p = FileUtil.osPahtToUri(p, true);
 				envPaths.add(p);
 			}
 		}

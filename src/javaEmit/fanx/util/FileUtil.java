@@ -16,6 +16,33 @@ import java.util.zip.*;
  */
 public class FileUtil
 {
+  public static String osPahtToUri(String path, boolean checkDir) {
+	String osPath = path;
+	// deal with Windoze drive name
+    if (path.length() > 2 && path.charAt(1) == ':' && path.charAt(0) != '/')
+      path = "/"+path;
+    
+	if (java.io.File.separatorChar == '\\') {
+		path = path.replace("\\", "/");
+	}
+	
+	if (checkDir) {
+		File file = new File(osPath);
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				if (path.charAt(path.length() - 1) != '/') {
+					path = path + "/";
+				}
+			}
+			else {
+				if (path.charAt(path.length() - 1) == '/') {
+					throw new IllegalArgumentException(osPath + " is dir");
+				}
+			}
+		}
+	}
+	return path;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // File Management

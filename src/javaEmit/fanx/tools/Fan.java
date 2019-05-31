@@ -104,9 +104,8 @@ public class Fan
 	      Class<?> clz = pod.podClassLoader.loadClass("fan.std.ScriptCompiler");
 		  Object scriptCompiler = Reflection.getStaticField(clz, "cur");
 		  String fileName = file.getPath();
-		  if (java.io.File.separatorChar == '\\') {
-			  fileName = fileName.replace("\\", "/");
-		  }
+		  fileName = FileUtil.osPahtToUri(fileName, false);
+		  
 		  Object res = Reflection.callMethodThrow(scriptCompiler, "execute"
 				  , fileName, toList(args));
 		  return ((Long)res).intValue();

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import fan.sys.ArgErr;
 import fan.sys.IOErr;
 import fan.sys.List;
+import fanx.util.FileUtil;
 
 public class LocalFilePeer {
 	static void init(LocalFile self) {
@@ -39,15 +40,7 @@ public class LocalFilePeer {
 			path = file.getPath();
 		}
 		
-		// deal with Windoze drive name
-	    if (path.length() > 2 && path.charAt(1) == ':' && path.charAt(0) != '/')
-	      path = "/"+path;
-	    
-		if (java.io.File.separatorChar == '\\') {
-			path = path.replace("\\", "/");
-		}
-		if (file.isDirectory())
-			path = path + "/";
+		path = FileUtil.osPahtToUri(path, true);
 		
 		if (normalize) {
 			path = "file:" + path;
