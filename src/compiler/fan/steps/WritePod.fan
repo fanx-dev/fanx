@@ -45,7 +45,7 @@ class WritePod : CompilerStep
     log.info("WritePod [${podFile.toStr}]")
 
     //may refer by other process
-    if (podFile.exists) podFile.delete
+    //if (podFile.exists) podFile.delete
 
     // create output directory
     dir.create

@@ -77,13 +77,6 @@ class Main
     //get outPodDir
     outPodDirStr := props.get("outPodDir", null)
     if (outPodDirStr != null) build.outPodDir = outPodDirStr.toUri
-    else {
-      devHomeDir := this.typeof.pod.config("devHome")
-      if (devHomeDir != null) build.outPodDir = devHomeDir.toUri + `lib/fan/`
-      else {
-        build.outPodDir = Env.cur.workDir.plus(`lib/fan/`).uri
-      }
-    }
 
     //get matadata
     getStartsWith("meta.", props, build.meta)

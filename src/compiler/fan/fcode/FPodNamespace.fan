@@ -25,13 +25,6 @@ class FPodNamespace : CNamespace
   **
   new make(File? dir)
   {
-    if (dir == null) {
-      devHome := Pod.find("compiler").config("devHome")
-      if (devHome != null) {
-        dir = (devHome+"lib/fan/").toUri.toFile
-      }
-      //echo("FPodNs dir: $devHome $dir")
-    }
     this.dir = dir
     init
   }
@@ -58,6 +51,7 @@ class FPodNamespace : CNamespace
        return null
     }
 
+    //get from memory for script pod
     if (file == null || !file.exists) {
       pod := Pod.find(podName, false)
       if (pod == null) return null

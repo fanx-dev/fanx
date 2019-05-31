@@ -29,13 +29,9 @@ generate the HTML docs
 
 ### Bootstrap Configs ###
 
-Config output dir:
+Config compile depends and output dir:
 ```
   env/etc/build/config.props
     devHome=xxx/env/
 ```
-Config compile depends env:
-```
-  env/etc/compiler/config.props
-    devHome=xxx/env/
-```
+

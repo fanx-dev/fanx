@@ -5,6 +5,9 @@
 - Fix ExprFlat
 - Move Josn to util
 - Support Map.defV
+- Fix path on Windows
+- Fix the devHome configure
+
 
 ### Build 2.1 (2019-03-30)
 - No doc test code

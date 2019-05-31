@@ -47,7 +47,7 @@ abstract class BuildScript
   ** value is initialized by 'devHome' config prop, otherwise
   ** `sys::Env.homeDir` is used.
   **
-  const File devHomeDir := configDir("devHome", Env.cur.workDir)
+  const File devHomeDir := compiler::Main.devHomeDir
 
   new make() {
     scriptFile = File(typeof->sourceFile.toStr.toUri).normalize

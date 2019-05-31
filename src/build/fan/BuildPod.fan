@@ -121,14 +121,14 @@ class BuildPod : BuildScript
   ** Directory to output pod file.  By default it goes into
   ** "{Env.cur.workDir}/lib/fan/"
   **
-  Uri outPodDir := Env.cur.workDir.plus(`lib/fan/`).uri
+  Uri outPodDir := devHomeDir.plus(`lib/fan/`).uri
 
   **
   ** Directory to output documentation (docs always get placed in sub-directory
   ** named by pod).  By default it goes into
   ** "{Env.cur.workDir}/doc/"
   **
-  Uri outDocDir := Env.cur.workDir.plus(`doc/`).uri
+  Uri outDocDir := devHomeDir.plus(`doc/`).uri
 
   Bool compileJs := false
 

@@ -115,17 +115,43 @@ class Main
   ** Directory to output pod file.  By default it goes into
   ** "{Env.cur.workDir}/lib/fan/"
   **
-  Uri outPodDir := Env.cur.workDir.plus(`lib/fan/`).uri
+  Uri outPodDir := devHomeDir.plus(`lib/fan/`).uri
 
   **
   ** Directory to output documentation (docs always get placed in sub-directory
   ** named by pod).  By default it goes into
   ** "{Env.cur.workDir}/doc/"
   **
-  Uri outDocDir := Env.cur.workDir.plus(`doc/`).uri
+  Uri outDocDir := devHomeDir.plus(`doc/`).uri
 
 
   private File? scriptFile
+
+  **
+  ** Home directory of development installation.  By default this
+  ** value is initialized by 'devHome' config prop, otherwise
+  ** `sys::Env.homeDir` is used.
+  **
+  static const File devHomeDir := getDevHomeDir
+
+  ** init devHomeDir
+  private static File getDevHomeDir() {
+    devHome := Pod.find("build", false)?.config("devHome")
+    if (devHome == null) {
+      devHome = Main#.pod.config("devHome")
+    }
+
+    if (devHome != null)
+    {
+      path := devHome.toUri
+      f := File(path)
+      if (!f.exists || !f.isDir) throw Err("Invalid dir URI for '$devHome'")
+      return f
+    }
+    else {
+      return Env.cur.workDir
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -135,14 +161,11 @@ class Main
     if (summary == null) throw ArgErr("Must set BuildPod.summary")
 
     // boot strap checking
-    /*
     if (["std", "sys", "build", "compiler", "compilerJava"].contains(podName))
     {
-      devHomeDir := Pod.find("compiler").config("devHome")
-      if (devHomeDir == null || Env.cur.homeDir == devHomeDir.toUri.toFile)
+      if (devHomeDir == Env.cur.homeDir)
         throw ArgErr("Must update 'devHome' for bootstrap build")
     }
-    */
   }
 
   private Uri[]? parseDirs(Str? str) {
@@ -197,13 +220,6 @@ class Main
     //get outPodDir
     outPodDirStr := props.get("outPodDir", null)
     if (outPodDirStr != null) outPodDir = outPodDirStr.toUri
-    else {
-      devHomeDir := Pod.find("compiler").config("devHome")
-      if (devHomeDir != null) outPodDir = devHomeDir.toUri + `lib/fan/`
-      else {
-        outPodDir = Env.cur.workDir.plus(`lib/fan/`).uri
-      }
-    }
 
     // add my own meta
     //meta := this.meta.dup
@@ -256,6 +272,9 @@ class Main
       f := dependsDir.toFile
       if (!f.exists) throw ArgErr("Invalid dependsDir: $f")
       ci.ns = FPodNamespace(f)
+    }
+    else {
+      ci.ns = FPodNamespace(devHomeDir)
     }
 
     // subclass hook
