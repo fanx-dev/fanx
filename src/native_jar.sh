@@ -1,4 +1,4 @@
-LIBS=../devEnv/lib/java
+LIBS=../env/lib/java
 OUT=$LIBS
 NAME=$1
 
