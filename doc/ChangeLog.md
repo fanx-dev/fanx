@@ -8,7 +8,7 @@
 - Fix path on Windows
 - Fix the devHome configure
 - Support bootstrap build
-
+- Test on Windows
 
 ### Build 2.1 (2019-03-30)
 - No doc test code
