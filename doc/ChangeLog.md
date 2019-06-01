@@ -7,6 +7,7 @@
 - Support Map.defV
 - Fix path on Windows
 - Fix the devHome configure
+- Support bootstrap build
 
 
 ### Build 2.1 (2019-03-30)
