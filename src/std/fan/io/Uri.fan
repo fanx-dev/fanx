@@ -235,8 +235,8 @@ internal class UriParser {
 **   <gen-delims> := ":" / "/" / "?" / "#" / "[" / "]" / "@"
 **
 ** Uris are expressed in the following forms:
-**   - Standard Form: any char allowed, general delimiters are "\" escaped
-**   - Encoded Form: '%HH' percent encoded
+**   - Standard Form: any char allowed, general delimiters are escape by '%HH' percent encoded
+**   - Encoded Form: non alphanumeric are '%HH' percent encoded
 **
 ** In standard form the full range of Unicode characters is allowed in all
 ** sections except the general delimiters which separate sections.  For
@@ -244,9 +244,7 @@ internal class UriParser {
 ** in the query string itself or the fragment identifier.  The scheme must
 ** be strictly defined in terms of ASCII alphanumeric, ".", "+", or "-".
 ** Any general delimiter used outside of its normal role, must be
-** escaped using the "\" backslash character.  The backslash itself is
-** escaped as "\\".  For example a filename with the "#" character is
-** represented as "file \#2".  Only the path, query, and fragment sections
+** escaped using the "%HH" percent encoded.  Only the path, query, and fragment sections
 ** can use escaped general delimiters; the scheme and authority sections
 ** cannot use escaped general delimters.
 **
@@ -344,7 +342,7 @@ const final class Uri
   **
   ** Private constructor
   **
-  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str pathStr, [Str:Str]? query, Str? frag, Str? str := null) {
+  private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str pathStr, [Str:Str]? query, Str? frag) {
     this.scheme = scheme
     this.userInfo = userInfo
     this.host = host
@@ -352,7 +350,7 @@ const final class Uri
     this.pathStr = pathStr
     this.query = query ?: Map.defVal
     this.frag = frag
-    this.str = str ?: partsToStr(scheme, userInfo, host, port, pathStr, query, frag, true)
+    this.str = partsToStr(scheme, userInfo, host, port, pathStr, query, frag, false)
   }
 
   private static Str partsToStr(Str? scheme, Str? userInfo, Str? host, Int? port, Str? path, [Str:Str]? query, Str? frag, Bool encode) {
@@ -365,11 +363,11 @@ const final class Uri
     if (userInfo != null || host != null || port != null) {
       buf.add("//")
       if (userInfo != null) {
-        if (encode) userInfo = encodeToken(userInfo, sectionPath)
+        userInfo = encode ? encodeToken(userInfo, sectionPath) : escapeToken(userInfo, sectionPath)
         buf.add(userInfo).addChar('@')
       }
       if (host != null) {
-        if (encode) host = encodeToken(host, sectionPath)
+        host = encode ? encodeToken(host, sectionPath) : escapeToken(host, sectionPath)
         buf.add(host)
       }
       if (port != null) {
@@ -378,7 +376,7 @@ const final class Uri
     }
 
     if (path != null) {
-      if (encode) path = encodeToken(path, sectionPath)
+      path = encode ? encodeToken(path, sectionPath) : escapeToken(path, sectionPath)
       buf.add(path)
     }
 
@@ -387,10 +385,10 @@ const final class Uri
       i := 0
       query.each |v, k| {
         if (i>0) buf.addChar('&')
-        if (encode) {
-          k = encodeToken(k, sectionQuery)
-          v = v == "" ? "" : encodeToken(v, sectionQuery)
-        }
+        
+        k = encode ? encodeToken(k, sectionQuery) : escapeToken(k, sectionQuery)
+        if (v.size > 0) v = encode ? encodeToken(v, sectionQuery) : escapeToken(v, sectionQuery)
+        
         if (v.size == 0)
           buf.add(k)
         else
@@ -399,7 +397,7 @@ const final class Uri
       }
     }
     if (frag != null) {
-      if (encode) frag = encodeToken(frag, sectionFrag)
+      frag = encode ? encodeToken(frag, sectionFrag) : escapeToken(frag, sectionFrag)
       buf.addChar('#').add(frag)
     }
     return buf.toStr
@@ -495,11 +493,8 @@ const final class Uri
           sb.addChar(ch)
           continue
         }
-        if (section == Uri.sectionPath && ch == ':') {
-          sb.addChar(ch)
-          continue
-        }
-        if (section != Uri.sectionQuery && ch == '/') {
+        if (section == Uri.sectionPath) {
+          if (ch == ':' || ch == ' ' || ch == '/' || ch == '\\' || ch == '@' || ch == ';')
           sb.addChar(ch)
           continue
         }
@@ -510,6 +505,33 @@ const final class Uri
       }
       percentEncodeByte(sb, ch)
     }
+    return sb.toStr
+  }
+
+  internal static Str escapeToken(Str s, Int section) {
+    sb := StrBuf()
+    for (i:=0; i<s.size; ++i) {
+      ch := s[i]
+      if (ch < 127) {
+        if (ch.isAlphaNum || ch == '-' || ch == '_' || ch == '.' || ch == '~' || ch == '$' ) {
+          sb.addChar(ch)
+          continue
+        }
+        if (section == Uri.sectionPath) {
+          if (ch == ':' || ch == ' ' || ch == '/' || ch == '\\' || ch == '@' || ch == ';')
+          sb.addChar(ch)
+          continue
+        }
+        if (section == Uri.sectionQuery && ch == ' ') {
+          sb.addChar('+')
+          continue
+        }
+        percentEncodeByte(sb, ch)
+        continue
+      }
+      sb.addChar(ch)
+    }
+    //echo("$s => ${sb.toStr}")
     return sb.toStr
   }
 
@@ -614,7 +636,7 @@ const final class Uri
   ** Spaces in the query section are encoded as '+'.
   **
   Str encode() {
-    return str
+    return partsToStr(scheme, userInfo, host, port, pathStr, query, frag, true)
   }
 
 //////////////////////////////////////////////////////////////////////////

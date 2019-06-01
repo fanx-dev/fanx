@@ -1,5 +1,8 @@
 ## ChangeLog
 
+### Build 2.3 (working)
+- Uri standard form support
+
 ### Build 2.2 (2019-06-01)
 - Add Promise
 - Fix ExprFlat
@@ -9,6 +12,7 @@
 - Fix the devHome configure
 - Support bootstrap build
 - Test on Windows
+- Jigsaw (Java9+) support
 
 ### Build 2.1 (2019-03-30)
 - No doc test code
