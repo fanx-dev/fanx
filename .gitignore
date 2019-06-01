@@ -11,3 +11,4 @@ env/lib/java/ext
 config.props
 release
 env/lib
+env/doc

@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 2.2 (working)
+### Build 2.2 (2019-06-01)
 - Add Promise
 - Fix ExprFlat
 - Move Josn to util
