@@ -125,6 +125,14 @@ public class Interop
   {
     return LocalFilePeer.fromJava(file);
   }
+  
+  /**
+   * Convert from java.nio.file.Path to sys::File.
+   */
+  public static File toFan(java.nio.file.Path path)
+  {
+    return new PathFile(path);
+  }
 
   /**
    * Convert from java.nio.ByteBuffer to sys::Buf.
@@ -238,6 +246,14 @@ public class Interop
   public static List toFan(Iterator i)
   {
     return toFan(i, FanObj.type.toNullable());
+  }
+  
+  /**
+   * Convert a java.util.stream.Stream to a sys::List of the specified type.
+   */
+  public static List toFan(java.util.stream.Stream s, Type of)
+  {
+    return toFan(s.iterator(), of);
   }
 
   /**

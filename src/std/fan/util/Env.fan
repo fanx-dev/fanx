@@ -77,6 +77,12 @@ native const class Env
   Str runtime()
 
   **
+  ** Get the Java VM Version as a single integer (8, 9, etc.).
+  ** If the `runtime` is not java, return 0.
+  **
+  Int javaVersion()
+
+  **
   ** Return the default hash code of `Obj.hash` for the
   ** specified object regardless of whether the object
   ** has overridden the 'hash' method.  If null then

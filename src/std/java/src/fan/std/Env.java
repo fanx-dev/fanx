@@ -109,6 +109,8 @@ public class Env extends FanObj {
   public final String runtime() {
     return "java";
   }
+  
+  public final long javaVersion() { return BootEnv.javaVersion; }
 
   public final long idHash(Object obj) {
     return System.identityHashCode(obj);

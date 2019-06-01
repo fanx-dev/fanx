@@ -21,6 +21,33 @@ public class BootEnv implements IEnv {
 
 	public static String[] args = new String[0];
 	
+//////////////////////////////////////////////////////////////////////////
+//Java Version
+//////////////////////////////////////////////////////////////////////////
+
+	/** Java version as single integer (e.g. 8, 9). This is the way Java9+
+	*  specifies the version now. */
+	public static int javaVersion = initJavaVersion();
+	
+	  static int initJavaVersion()
+	  {
+	    String s = null;
+	    try
+	    {
+	      s = System.getProperty("java.vm.specification.version", "1.5");
+
+	      // Java 1.8 and earlier uses 1.x for version. Get 'x'
+	      if (s.startsWith("1.")) s = s.substring(2,3);
+
+	      return Integer.parseInt(s);
+	    }
+	    catch (Throwable e)
+	    {
+	      throw new RuntimeException("javaVersion: " + s, e);
+	    }
+	  }
+
+	
 	public static void setArgs(String[] a) {
 		args = a;
 	}
