@@ -778,7 +778,7 @@ public class Parser : CompilerSupport
     param := ParamDef(cur, typeRef, consumeId)
     if (curt === Token.defAssign || curt === Token.assign)
     {
-      if (curt === Token.assign) err("Must use := for parameter default");
+      //if (curt === Token.assign) err("Must use := for parameter default");
       consume
       param.def = expr
     }
