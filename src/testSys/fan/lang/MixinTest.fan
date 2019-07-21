@@ -362,6 +362,11 @@ class MixinTest : Test
     verifyEq(y.foo, "mix")
   }
 
+  Void testPrivMethod()
+  {
+    verifyEq("private hello", ClsMxPrivMethod().hello)
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Test special .NET handling
 //////////////////////////////////////////////////////////////////////////
@@ -420,6 +425,13 @@ const mixin SubSubMxToStr : SubMxToStr { }
 const class ClsSubMxToStr : SubMxToStr { override Str toStr() { "classToStr" } }
 const class ClsSubSubMxToStr : ClsSubMxToStr, SubSubMxToStr { }
 
+@Js mixin MxPrivMethod
+{
+  Str hello() { doHello }
+  private Str doHello() { "private hello" }
+}
+
+@Js class ClsMxPrivMethod : MxPrivMethod { }
 
 mixin MxA
 {

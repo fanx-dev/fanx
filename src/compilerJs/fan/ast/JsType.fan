@@ -101,10 +101,13 @@ class JsType : JsNode
       if (s.isStatic) return
       //if (overrides(s)) return
 
-      // check if this mixin's slot was resolved by the compiler as the implementation
-      // for the corresponding slot on the this JsType
-      resolved := def.slots.find { it.qname == s.cslot.qname }
-      if (resolved == null) return
+      if (!s.isPrivate)
+      {
+        // check if this mixin's slot was resolved by the compiler as the implementation
+        // for the corresponding slot on the this JsType
+        resolved := def.slots.find { it.qname == s.cslot.qname }
+        if (resolved == null) return
+      }
 
       // use mixin implementation
       out.w("${qname}.prototype.${s.name} = ${s.parent}.prototype.${s.name};").nl
