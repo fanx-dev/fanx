@@ -6,7 +6,6 @@ env/lib/fan_backup
 src/javaEmit/bin
 devEnv
 *.pod
-src/build_lib.sh
 env/lib/java/ext
 config.props
 release

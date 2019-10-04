@@ -51,6 +51,7 @@ public class TypeExt {
 				return m.callList(args);
 			}
 			catch (ArgErr e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -62,7 +63,7 @@ public class TypeExt {
 			}
 		}
 
-		throw Err.make("Type missing 'make' or 'defVal' slots: " + self);
+		throw Err.make("Type missing 'make' or 'defVal' slots: " + self + ", method:" + m);
 	}
 
 	//
