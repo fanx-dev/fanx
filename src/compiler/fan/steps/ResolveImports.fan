@@ -180,6 +180,19 @@ class ResolveImports : CompilerStep
       }
     }
 
+    //sized primitive type
+    intType := types["Int"]
+    floatType := types["Float"]
+    if (intType != null) {
+      registerType("Int8", intType.first, "8", types)
+      registerType("Int16", intType.first, "16", types)
+      registerType("Int32", intType.first, "32", types)
+      registerType("Int64", intType.first, "64", types)
+    }
+    if (floatType != null) {
+      registerType("Float32", floatType.first, "32", types)
+      registerType("Float64", floatType.first, "64", types)
+    }
     /*
     // dump
     echo("--- types for $unit")
@@ -189,6 +202,11 @@ class ResolveImports : CompilerStep
 
     // save away on unit
     unit.importedTypes = types
+  }
+
+  private Void registerType(Str name, CType root, Str extName, Str:CType[] types) {
+    int8Type := SizedPrimitiveType(root, extName)
+    types[name] = [int8Type]
   }
 
   private Void addAll(Str:CType[] types, CType[] toAdd)
