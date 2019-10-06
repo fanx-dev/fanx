@@ -11,6 +11,9 @@
 **
 native rtconst abstract class Obj
 {
+  private Ptr vtable
+  private Int32 refCount
+  private Int32 state
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -19,7 +22,7 @@ native rtconst abstract class Obj
   **
   ** Obj constructor for subclasses.
   **
-  protected new make()
+  protected new make() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Virtuals
@@ -34,7 +37,9 @@ native rtconst abstract class Obj
   ** equals() must return the same value for hash().  This method must
   ** accept 'null' and return false.
   **
-  virtual Bool equals(Obj? that)
+  virtual Bool equals(Obj? that) {
+    this === that
+  }
 
   **
   ** Return a negative integer, zero, or a positive integer if this object
@@ -54,19 +59,23 @@ native rtconst abstract class Obj
   **   8.compare(8)  =>  0
   **   3 <=> 8       =>  -1  // shortcut for 3.compare(8)
   **
-  virtual Int compare(Obj that)
+  virtual Int compare(Obj that) {
+    this.toId - that.toId
+  }
+
+  private static native Int toId()
 
   **
   ** Return a unique hashcode for this object.  If a class overrides hash()
   ** then it must ensure if equals() returns true for any two objects then
   ** they have same hash code.
   **
-  virtual Int hash()
+  virtual Int hash() { toId }
 
   **
   ** Return a string representation of this object.
   **
-  virtual Str toStr()
+  virtual Str toStr() { "Obj" }
 
   **
   ** Trap a dynamic call for handling.  Dynamic calls are invoked
@@ -83,7 +92,9 @@ native rtconst abstract class Obj
   ** is one, set the field and return args[0].  Otherwise throw
   ** UnknownSlotErr.
   **
-  virtual Obj? trap(Str name, Obj?[]? args := null)
+  virtual Obj? trap(Str name, Obj?[]? args := null) {
+    throw Err("TODO")
+  }
 
   **
   ** This method called whenever an it-block is applied to
@@ -107,7 +118,9 @@ native rtconst abstract class Obj
   **   - a Func object may or may not be immutable - see `sys::Func`.
   **   - other instances are assumed mutable and return false
   **
-  virtual Bool isImmutable()
+  virtual Bool isImmutable() {
+    typeof.isConst
+  }
 
   **
   ** Get an immutable representation of this instance or throw
@@ -122,19 +135,24 @@ native rtconst abstract class Obj
   **   - some Funcs can be made immutable - see `sys::Func`
   **   - any other object throws NotImmutableErr
   **
-  virtual Obj toImmutable()
+  virtual Obj toImmutable() {
+    if (typeof.isConst) return this
+    throw NotImmutableErr("$typeof.qname")
+  }
 
   **
   ** Get the 'Type' instance which represents this object's class.
   ** Also see`Type.of` or `Pod.of`.
   **
-  Type typeof()
+  Type typeof() {
+    Type.of(this)
+  }
 
   **
   ** Called by the garbage collector on an object when garbage collection determines
   ** that there are no more references to the object.
   **
-  protected virtual Void finalize()
+  protected virtual Void finalize() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -145,7 +163,13 @@ native rtconst abstract class Obj
   ** null then print "null".  If no argument is provided then print
   ** an empty line.
   **
-  static Void echo(Obj? x := "")
+  static Void echo(Obj? x := "") {
+    str := x == null ? "null" : x.toStr
+    cstr := str.toCStr()
+    puts(cstr)
+  }
+
+  private static native Void puts(Ptr cstr);
 
   **
   ** throw AssertErr if a boolean condition is false
