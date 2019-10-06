@@ -152,7 +152,7 @@ class Normalize : CompilerStep
     base := parent.base
     if (parent.isSynthetic) return
     if (parent.isMixin) return
-    if (base.isObj) return
+    if (base == null || base.isObj) return
 
     // check if the base class has exactly one available
     // constructor with no parameters
