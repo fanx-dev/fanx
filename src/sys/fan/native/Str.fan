@@ -34,7 +34,7 @@ native const final class Str
     this.isStatic = isStatic
   }
 
-  Ptr toCStr() { cstr }
+  Ptr toCStr() { byte }
 
   private static native Int32 strlen(Ptr cstr)
   private static native Ptr strdup(Ptr cstr)
@@ -167,7 +167,7 @@ native const final class Str
     if (hashCode == -1) {
       hashValue := 0
       for (i:=0; i<byteLen; ++i) {
-          hashValue = getByte(cstr, i) + 31 * hashValue
+          hashValue = getByte(byte, i) + 31 * hashValue
       }
       hashCode = hashValue
     }
@@ -907,10 +907,10 @@ native const final class Str
 
   protected override Void finalize() {
     if (!isStatic) {
-      free(cstr)
+      free(byte)
     }
     free(str)
-    cstr = Ptr.nil
+    byte = Ptr.nil
     str = Ptr.nil
   }
 

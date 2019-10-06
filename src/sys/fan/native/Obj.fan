@@ -60,17 +60,17 @@ native rtconst abstract class Obj
   **   3 <=> 8       =>  -1  // shortcut for 3.compare(8)
   **
   virtual Int compare(Obj that) {
-    this.toId - that.toId
+    toId(this) - toId(that)
   }
 
-  private static native Int toId()
+  private static native Int toId(Obj self)
 
   **
   ** Return a unique hashcode for this object.  If a class overrides hash()
   ** then it must ensure if equals() returns true for any two objects then
   ** they have same hash code.
   **
-  virtual Int hash() { toId }
+  virtual Int hash() { toId(this) }
 
   **
   ** Return a string representation of this object.
