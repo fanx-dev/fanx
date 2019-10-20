@@ -164,7 +164,10 @@ class ResolveExpr : CompilerStep
       case ExprId.call:            return resolveCall(expr)
       case ExprId.construction:    return resolveConstruction(expr)
       case ExprId.shortcut:
-          expr = CompareTrans(this.compiler).trans(expr)
+          nexpr := CompareTrans(this.compiler).trans(expr)
+          if (nexpr != expr) {
+            return nexpr.walk(this)
+          }
           return resolveShortcut(expr)
       case ExprId.thisExpr:        return resolveThis(expr)
       case ExprId.superExpr:       return resolveSuper(expr)
