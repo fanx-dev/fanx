@@ -11,9 +11,6 @@
 **
 native rtconst abstract class Obj
 {
-  private Ptr vtable
-  private Int32 refCount
-  private Int32 state
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -60,17 +57,15 @@ native rtconst abstract class Obj
   **   3 <=> 8       =>  -1  // shortcut for 3.compare(8)
   **
   virtual Int compare(Obj that) {
-    toId(this) - toId(that)
+    Libc.toId(this) - Libc.toId(that)
   }
-
-  private static native Int toId(Obj self)
 
   **
   ** Return a unique hashcode for this object.  If a class overrides hash()
   ** then it must ensure if equals() returns true for any two objects then
   ** they have same hash code.
   **
-  virtual Int hash() { toId(this) }
+  virtual Int hash() { Libc.toId(this) }
 
   **
   ** Return a string representation of this object.

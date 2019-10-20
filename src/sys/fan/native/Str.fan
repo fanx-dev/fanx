@@ -26,8 +26,8 @@ native const final class Str
     if (isStatic)
       this.byte = cstr
     else
-      this.byte = strdup(cstr)
-    this.byteLen = strlen(cstr);
+      this.byte = Libc.strdup(cstr)
+    this.byteLen = Libc.strlen(cstr);
     this.strLen = -1
     this.str = Ptr.nil
     this.hashCode = -1
@@ -35,12 +35,6 @@ native const final class Str
   }
 
   Ptr toCStr() { byte }
-
-  private static native Int32 strlen(Ptr cstr)
-  private static native Ptr strdup(Ptr cstr)
-  private static native Void free(Ptr str)
-  private static native Int8 getByte(Ptr cstr, Int at)
-  private static native Int getChar(Ptr str, Int at)
 
   **
   ** Private constructor.
@@ -167,7 +161,7 @@ native const final class Str
     if (hashCode == -1) {
       hashValue := 0
       for (i:=0; i<byteLen; ++i) {
-          hashValue = getByte(byte, i) + 31 * hashValue
+          hashValue = Libc.getByte(byte, i) + 31 * hashValue
       }
       hashCode = hashValue
     }
@@ -312,7 +306,7 @@ native const final class Str
   **
   @Operator Int get(Int index) {
     if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
-    return getChar(str, index)
+    return Libc.getChar(str, index)
   }
 
   **
@@ -907,9 +901,9 @@ native const final class Str
 
   protected override Void finalize() {
     if (!isStatic) {
-      free(byte)
+      Libc.free(byte)
     }
-    free(str)
+    Libc.free(str)
     byte = Ptr.nil
     str = Ptr.nil
   }
