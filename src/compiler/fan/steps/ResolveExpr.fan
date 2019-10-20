@@ -163,7 +163,9 @@ class ResolveExpr : CompilerStep
       case ExprId.asExpr:          expr.ctype = ((TypeCheckExpr)expr).check.toNullable
       case ExprId.call:            return resolveCall(expr)
       case ExprId.construction:    return resolveConstruction(expr)
-      case ExprId.shortcut:        return resolveShortcut(expr)
+      case ExprId.shortcut:
+          expr = CompareTrans(this.compiler).trans(expr)
+          return resolveShortcut(expr)
       case ExprId.thisExpr:        return resolveThis(expr)
       case ExprId.superExpr:       return resolveSuper(expr)
       case ExprId.itExpr:          return resolveIt(expr)
