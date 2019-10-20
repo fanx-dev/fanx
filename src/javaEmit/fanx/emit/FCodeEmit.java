@@ -1046,6 +1046,12 @@ public class FCodeEmit
         else if (to.isPrimitiveChar()) code.op(I2C);
         return;
       }
+      if (from.isPrimitiveIntLike()) {
+        if (to.isPrimitiveByte()) code.op(I2B);
+        else if (to.isPrimitiveShort()) code.op(I2S);
+        else if (to.isPrimitiveChar()) code.op(I2C);
+        return;
+      }
     }
 
     // double, Double -> float

@@ -185,8 +185,13 @@ class CheckErrors : CompilerStep
     // in another check
     t.fieldDefs.each |FieldDef f|
     {
-      if (!f.isConst && !f.isStatic && f.isStorage /* && !isSys*/)
-        err("Const type '$t.name' cannot contain non-const field '$f.name'", f.loc)
+      if (!f.isConst && !f.isStatic && f.isStorage /* && !isSys*/) {
+        if (t.isNative && t.pod.name == "sys") {
+          //pass
+        }
+        else
+          err("Const type '$t.name' cannot contain non-const field '$f.name'", f.loc)
+      }
     }
 
     // check that no once methods

@@ -517,7 +517,6 @@ class ParserTest : CompilerTest
      5,  3, "Expecting method body",
      5, 20, "Abstract or native methods cannot have method body",
      6, 18, "Abstract or native methods cannot have method body",
-     7, 17, "Must use := for parameter default",
      8,  3, "Duplicate slot name 'b'",
      9,  3, "Duplicate slot name 'b'",
     10,  3, "Duplicate slot name 'd'",
