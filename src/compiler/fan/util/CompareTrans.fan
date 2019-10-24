@@ -13,7 +13,7 @@ class CompareTrans : CompilerSupport
     target := call.target
     firstArg := call.args.first
 
-    if (target.ctype == firstArg.ctype && !target.ctype.isNullable && target.ctype.isJavaVal) {
+    if (target.ctype == firstArg.ctype && !target.ctype.isNullable && target.ctype.isVal) {
       return call
     }
 
@@ -42,12 +42,12 @@ class CompareTrans : CompilerSupport
     }
 
     //compare with null
-    expr := transRealCompareNullableExpr(loc, l, opToken, r)
+    expr := nullableCompare(loc, l, opToken, r)
     //echo("debug:"+expr)
     return expr
   }
 
-  private Expr transRealCompareNullableExpr(Loc loc, Expr l, Token opToken, Expr r) {
+  private Expr nullableCompare(Loc loc, Expr l, Token opToken, Expr r) {
     Obj lt := -1 // <
     Obj eq := 0  // ==
     Obj gt := 1  // >
@@ -80,7 +80,7 @@ class CompareTrans : CompilerSupport
         gt = true
     }
 
-    real := transRealCompareExpr(loc, l, opToken, r)
+    real := realCompare(loc, l, opToken, r)
     expr := real
     if (l.ctype.isNullable && !r.ctype.isNullable) {
       expr = TernaryExpr(
@@ -119,50 +119,81 @@ class CompareTrans : CompilerSupport
     return expr
   }
 
-  private Expr transRealCompareExpr(Loc loc, Expr l, Token opToken, Expr r) {
-    if (l.ctype.toNonNullable.isJavaVal || r.ctype.toNonNullable.isJavaVal) {
+  private Expr realCompare(Loc loc, Expr l, Token opToken, Expr r) {
+    //for struct type
+    if (l.ctype.toNonNullable.isVal || r.ctype.toNonNullable.isVal) {
       if (l.ctype.isNullable) {
         l = TypeCheckExpr.coerce(l, l.ctype.toNonNullable)
       }
       if (r.ctype.isNullable) {
         r = TypeCheckExpr.coerce(r, r.ctype.toNonNullable)
       }
-      return ShortcutExpr.makeBinary(l, opToken, r)
+
+      if (l.ctype.toNonNullable.isJavaVal || r.ctype.toNonNullable.isJavaVal) {
+        return ShortcutExpr.makeBinary(l, opToken, r)
+      }
+      else {
+        base := toMethodForVal(loc, l, Token.cmp, r)
+        if (base == null) {
+          //TODO auto gen for struct type
+          base = ShortcutExpr.makeBinary(l, opToken, r)
+        }
+        return makeFromBaseCompare(loc, base, opToken)
+      }
     }
 
+    //for class type
     switch (opToken) {
       case Token.eq:
-        return transCompareMethodExpr(loc, l, Token.eq, r)
+        return toMethod(loc, l, Token.eq, r)
       case Token.notEq:
-        expr := transCompareMethodExpr(loc, l, Token.eq, r)
+        expr := toMethod(loc, l, Token.eq, r)
         return UnaryExpr(loc, ExprId.boolNot, opToken, expr)
       case Token.cmp:
-        return transCompareMethodExpr(loc, l, Token.cmp, r)
-      case Token.lt:
-        expr := transCompareMethodExpr(loc, l, Token.cmp, r)
+        return toMethod(loc, l, Token.cmp, r)
+      default:
+        base := toMethod(loc, l, Token.cmp, r)
+        return makeFromBaseCompare(loc, base, opToken)
+    }
+  }
+
+  private Expr makeFromBaseCompare(Loc loc, Expr expr, Token opToken) {
+    switch (opToken) {
+      case Token.eq:
         return TernaryExpr(
-          ShortcutExpr.makeBinary(expr, Token.eq, Expr.makeForLiteral(loc, ns, -1)),
+          ShortcutExpr.makeBinary(expr, Token.eq, Expr.makeForLiteral(loc, ns, 0)),
+          LiteralExpr.makeTrue(loc, ns),
+          LiteralExpr.makeFalse(loc, ns)
+        )
+      case Token.notEq:
+        return TernaryExpr(
+          ShortcutExpr.makeBinary(expr, Token.notEq, Expr.makeForLiteral(loc, ns, 0)),
+          LiteralExpr.makeTrue(loc, ns),
+          LiteralExpr.makeFalse(loc, ns)
+        )
+      case Token.cmp:
+        return expr
+      case Token.lt:
+        return TernaryExpr(
+          ShortcutExpr.makeBinary(expr, Token.lt, Expr.makeForLiteral(loc, ns, 0)),
           LiteralExpr.makeTrue(loc, ns),
           LiteralExpr.makeFalse(loc, ns)
         )
       case Token.ltEq:
-        expr := transCompareMethodExpr(loc, l, Token.cmp, r)
         return TernaryExpr(
-          ShortcutExpr.makeBinary(expr, Token.notEq, Expr.makeForLiteral(loc, ns, 1)),
+          ShortcutExpr.makeBinary(expr, Token.ltEq, Expr.makeForLiteral(loc, ns, 0)),
           LiteralExpr.makeTrue(loc, ns),
           LiteralExpr.makeFalse(loc, ns)
         )
       case Token.gt:
-        expr := transCompareMethodExpr(loc, l, Token.cmp, r)
         return TernaryExpr(
-          ShortcutExpr.makeBinary(expr, Token.eq, Expr.makeForLiteral(loc, ns, 1)),
+          ShortcutExpr.makeBinary(expr, Token.gt, Expr.makeForLiteral(loc, ns, 0)),
           LiteralExpr.makeTrue(loc, ns),
           LiteralExpr.makeFalse(loc, ns)
         )
       case Token.gtEq:
-        expr := transCompareMethodExpr(loc, l, Token.cmp, r)
         return TernaryExpr(
-          ShortcutExpr.makeBinary(expr, Token.notEq, Expr.makeForLiteral(loc, ns, -1)),
+          ShortcutExpr.makeBinary(expr, Token.gtEq, Expr.makeForLiteral(loc, ns, 0)),
           LiteralExpr.makeTrue(loc, ns),
           LiteralExpr.makeFalse(loc, ns)
         )
@@ -170,13 +201,29 @@ class CompareTrans : CompilerSupport
     throw Err("unreachable")
   }
 
-  private Expr transCompareMethodExpr(Loc loc, Expr l, Token opToken, Expr r) {
+  private Expr toMethod(Loc loc, Expr l, Token opToken, Expr r) {
     if (opToken == Token.eq) {
       method := l.ctype.method("equals")
       return CallExpr.makeWithMethod(loc, l, method, [r])
     }
     else if (opToken == Token.cmp) {
       method := l.ctype.method("compare")
+      return CallExpr.makeWithMethod(loc, l, method, [r])
+    }
+    else {
+      throw Err("unreachable")
+    }
+  }
+
+  private Expr? toMethodForVal(Loc loc, Expr l, Token opToken, Expr r) {
+    if (opToken == Token.eq) {
+      method := l.ctype.method("equalsVal")
+      if (method == null) return null
+      return CallExpr.makeWithMethod(loc, l, method, [r])
+    }
+    else if (opToken == Token.cmp) {
+      method := l.ctype.method("compareVal")
+      if (method == null) return null
       return CallExpr.makeWithMethod(loc, l, method, [r])
     }
     else {
