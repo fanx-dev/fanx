@@ -14,7 +14,7 @@ native const final class Str
   private Ptr byte
   private Int32 byteLen
   private Int32 strLen
-  private Ptr str
+  private Ptr charPtr
   private Int hashCode
   private Bool isStatic
 
@@ -22,24 +22,42 @@ native const final class Str
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  new fromCStr(Ptr cstr, Bool isStatic) {
+  new fromCStr(Ptr cstr, Int byteLen := -1, Bool isStatic := false) {
     if (isStatic)
       this.byte = cstr
     else
       this.byte = Libc.strdup(cstr)
-    this.byteLen = Libc.strlen(cstr);
+    if (byteLen == -1) {
+      byteLen = Libc.strlen(cstr);
+    }
+    this.byteLen = byteLen
     this.strLen = -1
-    this.str = Ptr.nil
+    this.charPtr = Libc.fromUtf8(cstr, byteLen)
     this.hashCode = -1
     this.isStatic = isStatic
   }
 
+  new fromCharPtr(Ptr charPtr, Int len) {
+    this.charPtr = Libc.malloc(len * Libc.charSize)
+    Libc.memcpy(this.charPtr, charPtr, len * Libc.charSize)
+
+    this.byte = Libc.toUtf8(charPtr, len)
+    this.strLen = Libc.strlen(this.byte)
+    this.charPtr = charPtr
+    this.hashCode = -1
+    this.isStatic = false
+  }
+
   Ptr toCStr() { byte }
+
+  internal Ptr getCharPtr() {
+    return charPtr
+  }
 
   **
   ** Private constructor.
   **
-  private new privateMake() {}
+  //private new privateMake() {}
 
   **
   ** Default value is "".
@@ -306,7 +324,7 @@ native const final class Str
   **
   @Operator Int get(Int index) {
     if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
-    return Libc.getChar(str, index)
+    return Libc.getChar(charPtr, index)
   }
 
   **
@@ -903,9 +921,9 @@ native const final class Str
     if (!isStatic) {
       Libc.free(byte)
     }
-    Libc.free(str)
+    Libc.free(charPtr)
     byte = Ptr.nil
-    str = Ptr.nil
+    charPtr = Ptr.nil
   }
 
   **
