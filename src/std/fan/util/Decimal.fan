@@ -36,7 +36,7 @@ native const struct class Decimal : Num
   **
   ** Private constructor.
   **
-  //private new privateMake()
+  private new privateMake()
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides

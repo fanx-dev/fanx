@@ -47,19 +47,20 @@ public class TypeExt {
 		
 		Method m = method(self, "make", false);
 		if (m != null && m.isPublic()) {
-			try {
-				return m.callList(args);
-			}
-			catch (ArgErr e) {
-				e.printStackTrace();
-			}
+		  int numArgs = args == null ? 0 : (int)args.size();
+	      List params = m.params();
+	      if ((numArgs == params.sz()) ||
+	          (numArgs < params.sz() && ((Param)params.get(numArgs)).hasDefault())) {
+	    	  return m.callList(args);
+	      }
 		}
 		
 		//fallback to defVal
 		if (args == null || args.size() == 0) {
-			Field f = field(self, "defVal", false);
+			Slot f = slot(self, "defVal", false);
 			if (f != null && f.isStatic()) {
-				return f.get();
+				if (f instanceof Field) return ((Field)f).get();
+				return ((Method)f).call();
 			}
 		}
 
@@ -367,10 +368,17 @@ public class TypeExt {
 		if (ftype != null) {
 			ftype.load();
 			for (FField f : ftype.fields) {
+				if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
+					continue;
+				}
 				slots.put(f.name, Field.fromFCode(f, type));
 			}
 
 			for (FMethod f : ftype.methods) {
+				if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
+					continue;
+				}
+				
 				if ((f.flags & FConst.Getter) != 0) {
 					Field field = (Field) slots.get(f.name);
 					field.getter = Method.fromFCode(f, type);
