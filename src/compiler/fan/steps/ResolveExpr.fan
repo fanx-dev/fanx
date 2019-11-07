@@ -25,7 +25,6 @@ class ResolveExpr : CompilerStep
   new make(Compiler compiler)
     : super(compiler)
   {
-    compareOp = CompareTrans(this.compiler)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,11 +65,6 @@ class ResolveExpr : CompilerStep
       case StmtId.breakStmt:    resolveBreak((BreakStmt)stmt)
       case StmtId.continueStmt: resolveContinue((ContinueStmt)stmt)
       case StmtId.localDef:     resolveLocalVarDef((LocalDefStmt)stmt)
-    }
-    if (compareOp.stmts != null) {
-      res := compareOp.stmts.add(stmt)
-      compareOp.stmts = null
-      return res
     }
     return null
   }
@@ -169,15 +163,7 @@ class ResolveExpr : CompilerStep
       case ExprId.asExpr:          expr.ctype = ((TypeCheckExpr)expr).check.toNullable
       case ExprId.call:            return resolveCall(expr)
       case ExprId.construction:    return resolveConstruction(expr)
-      case ExprId.shortcut:
-          if (expr is ShortcutExpr) {
-            nexpr := compareOp.trans(expr, curMethod)
-            if (nexpr != expr) {
-              return nexpr.walk(this)
-            }
-          }
-          return resolveShortcut(expr)
-          
+      case ExprId.shortcut:        return resolveShortcut(expr)
       case ExprId.thisExpr:        return resolveThis(expr)
       case ExprId.superExpr:       return resolveSuper(expr)
       case ExprId.itExpr:          return resolveIt(expr)
@@ -1018,6 +1004,4 @@ class ResolveExpr : CompilerStep
   Stmt[] stmtStack  := Stmt[,]    // statement stack
   Block[] blockStack := Block[,]  // block stack used for scoping
   Bool inClosure := false         // are we inside a closure's block
-  CompareTrans compareOp
-
 }
