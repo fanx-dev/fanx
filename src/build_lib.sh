@@ -10,10 +10,6 @@ echo 'build sys test'
 $fanc baseTest/pod.props
 $fanc testSys/pod.props
 
-echo 'build compiler plugin'
-$fanc compilerJs/pod.props
-#$fanc compilerJava/pod.props
-
 echo 'build compiler test'
 $fanc testCompiler/pod.props
 $fanc testNative/pod.props

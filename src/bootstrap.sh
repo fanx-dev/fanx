@@ -22,3 +22,4 @@ echo 'build compiler self'
 $fanc compiler/pod.props
 $fanc build/pod.props
 $fanc compilerJava/pod.props
+$fanc compilerJs/pod.props
