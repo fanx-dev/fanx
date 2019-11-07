@@ -140,6 +140,13 @@ enum class Token
   yieldKeyword,
   lretKeyword,
   awaitKeyword,
+  addressofKeyword,
+  sizeofKeyword,
+  offsetofKeyword,
+  uninitKeyword,
+  boxingKeyword,
+  unboxKeyword,
+  weakKeyword,
 
   // misc
   eof("eof");
