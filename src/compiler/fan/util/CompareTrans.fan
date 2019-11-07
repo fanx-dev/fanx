@@ -4,14 +4,20 @@
 **
 class CompareTrans : CompilerSupport
 {
+  Stmt[]? stmts
+
   new make(Compiler compiler)
     : super(compiler)
   {
   }
 
-  Expr trans(ShortcutExpr call) {
+  Expr trans(ShortcutExpr call, MethodDef? curMethod) {
     target := call.target
     firstArg := call.args.first
+
+    if (target.ctype == null || firstArg == null || firstArg.ctype == null) {
+      return call
+    }
 
     if (target.ctype == firstArg.ctype && !target.ctype.isNullable && target.ctype.isVal) {
       return call
@@ -19,25 +25,45 @@ class CompareTrans : CompilerSupport
 
     switch (call.opToken)
     {
-      case Token.eq:     return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.notEq:  return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.cmp:    return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.lt:     return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.ltEq:   return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.gt:     return transCompareExpr(call.loc, target, call.opToken, firstArg)
-      case Token.gtEq:   return transCompareExpr(call.loc, target, call.opToken, firstArg)
+      case Token.eq:
+      case Token.notEq:
+      case Token.cmp:
+      case Token.lt:
+      case Token.ltEq:
+      case Token.gt:
+      case Token.gtEq:
+         return transCompareExpr(call.loc, target, call.opToken, firstArg, curMethod)
     }
     return call
   }
 
-  private Expr transCompareExpr(Loc loc, Expr l, Token opToken, Expr r) {
+  private Expr toTempVar(Loc loc, Expr l, MethodDef curMethod) {
+    if (l.id == ExprId.localVar || l.id == ExprId.nullLiteral ||
+       l.id == ExprId.trueLiteral || l.id == ExprId.falseLiteral || l.id == ExprId.intLiteral ||
+       l.id == ExprId.floatLiteral || l.id == ExprId.strLiteral || l.id == ExprId.durationLiteral ||
+       l.id == ExprId.typeLiteral) return l
+    lv := curMethod.addLocalVar(l.ctype, null, null)
+    lve := LocalVarExpr.makeNoUnwrap(loc, lv)
+
+    if (stmts == null) stmts = Stmt[,]
+    s := BinaryExpr.makeAssign(lve, l).toStmt
+    stmts.add(s)
+    return lve
+  }
+
+  private Expr transCompareExpr(Loc loc, Expr l, Token opToken, Expr r, MethodDef? curMethod) {
+    l = toTempVar(loc, l, curMethod)
+    r = toTempVar(loc, r, curMethod)
+
     //type cast
     if (l.ctype.toNonNullable != r.ctype.toNonNullable) {
       if (l.ctype.fits(r.ctype)) {
-        r = TypeCheckExpr.coerce(r, l.ctype)
+        r = TypeCheckExpr.make(loc, ExprId.asExpr, r, l.ctype.toNonNullable)
+        r.ctype = l.ctype.toNullable
       }
       else {
-        l = TypeCheckExpr.coerce(l, r.ctype)
+        l = TypeCheckExpr.make(loc, ExprId.asExpr, l, r.ctype.toNonNullable)
+        l.ctype = r.ctype.toNullable
       }
     }
 
@@ -136,7 +162,7 @@ class CompareTrans : CompilerSupport
         base := toMethodForVal(loc, l, Token.cmp, r)
         if (base == null) {
           //TODO auto gen for struct type
-          base = ShortcutExpr.makeBinary(l, opToken, r)
+          base = ShortcutExpr.makeBinary(l, Token.cmp, r)
         }
         return makeFromBaseCompare(loc, base, opToken)
       }
