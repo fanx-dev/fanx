@@ -8,7 +8,7 @@
 
 @NoDoc
 native class ObjArray {
-  new make(Int size, Type? type)
+  new make(Int size)
 
   @Operator Obj? get(Int pos)
 
@@ -35,7 +35,7 @@ native class ObjArray {
   protected override Void finalize()
 
   @NoDoc
-  static ObjArray? fromJava(Type of, Obj array) { null }
+  static ObjArray? fromJava(Obj array) { null }
 
   @NoDoc
   Obj toJava(Obj clz) { clz }

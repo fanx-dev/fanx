@@ -10,7 +10,6 @@ import java.util.Iterator;
 import fan.sys.ArgErr;
 import fan.sys.Err;
 import fan.sys.FanObj;
-import fan.sys.FanType;
 import fan.sys.Func;
 import fan.sys.List;
 import fan.sys.NotImmutableErr;

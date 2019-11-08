@@ -22,13 +22,13 @@ rtconst abstract class List<V>
   **
   ** Constructor with of type and initial capacity.
   **
-  static new make(Int capacity, Type type := Obj#.toNullable) {
-    return ArrayList<V>(capacity, type)
+  static new make(Int capacity) {
+    return ArrayList<V>(capacity)
   }
 
   @NoDoc
   static Obj?[] makeObj(Int capacity := 4) {
-    return ArrayList<Obj?>(capacity, Obj#.toNullable)
+    return ArrayList<Obj?>(capacity)
   }
 
   protected new privateMake() {}
@@ -72,7 +72,7 @@ rtconst abstract class List<V>
   **   ["hi"].of    =>  Str#
   **   [[2, 3]].of  =>  Int[]#
   **
-  abstract Type? of()
+  //abstract Type? of()
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -456,7 +456,7 @@ rtconst abstract class List<V>
   **   list.findAll |Int v->Bool| { return v%2==0 } => [0, 2, 4]
   **
   V[] findAll(|V item, Int index->Bool| c) {
-    nlist := List.make(1, of)
+    nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)
       if (result) {
@@ -477,7 +477,7 @@ rtconst abstract class List<V>
   **   list.exclude |Int v->Bool| { return v%2==0 } => [1, 3]
   **
   V[] exclude(|V item, Int index->Bool| c) {
-    nlist := List.make(1, of)
+    nlist := List.make(1)
     each |obj, i| {
       result := c(obj, i)
       if (!result) {
@@ -629,29 +629,6 @@ rtconst abstract class List<V>
       }
     }
     return max
-  }
-
-  **
-  ** Return a new list containing all the items which are an instance
-  ** of the specified type such that item.type.fits(t) is true.  Any null
-  ** items are automatically excluded.  If none of the items are instance
-  ** of the specified type, then an empty list is returned.  The returned
-  ** list will be a list of t.  This method is readonly safe.
-  **
-  ** Example:
-  **   list := ["a", 3, "foo", 5sec, null]
-  **   list.findType(Str#) => Str["a", "foo"]
-  **
-  V[] findType(Type t) {
-    nlist := List<V>.make(8, of)
-    this.each |obj| {
-      if (obj == null) return
-      result := obj.typeof.fits(t)
-      if (result) {
-        nlist.add(obj)
-      }
-    }
-    return nlist
   }
 
 //////////////////////////////////////////////////////////////////////////

@@ -86,7 +86,7 @@ class CheckErrors : CompilerStep
     if (foreign != null) foreign.bridge.checkType(t)
 
     // check some knuckle head doesn't override type
-    if (t.slotDef("typeof") != null && t.qname != "sys::Obj" && t.qname != "sys::Type" /*&& !isSys*/)
+    if (t.slotDef("typeof") != null && t.qname != "sys::Obj" && t.qname != "std::Type" /*&& !isSys*/)
       err("Cannot override Obj.typeof()", t.slotDef("typeof").loc)
 
     // check inheritance

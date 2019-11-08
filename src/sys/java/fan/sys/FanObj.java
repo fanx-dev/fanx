@@ -158,18 +158,12 @@ public class FanObj extends IObj implements Comparable {
 	}
 
 	public static Object trap(Object self, String name) {
-		if (self instanceof FanObj)
-			return ((FanObj) self).trap(name, (List) null);
-		else
-			return doTrap(self, name, null, typeof(self));
+		return trap(self, name, null);
 	}
 
 	public static Object trap(Object self, String name, List args) {
 		if (self instanceof FanObj)
 			return ((FanObj) self).trap(name, args);
-		else if (self instanceof Type) {
-			return FanType.trap((Type)self, name, args);
-		}
 		else
 			return doTrap(self, name, args, typeof(self));
 	}

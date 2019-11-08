@@ -65,7 +65,7 @@ public class Field extends Slot {
 		if (f.attrs.facets != null) {
 			facets.capacity(f.attrs.facets.length);
 			for (FFacet facet : f.attrs.facets) {
-				Facet fa = TypeExt.tryDecodeFacet(facet, ftype.pod);
+				Facet fa = FanType.tryDecodeFacet(facet, ftype.pod);
 				if (fa != null) {
 					facets.add(fa);
 				}
@@ -106,7 +106,7 @@ public class Field extends Slot {
 
 	    // map Java transients to facets
 	    if (Modifier.isTransient(java.getModifiers())) {
-	      Object f = TypeExt.make(Sys.findType("sys::Transient"));
+	      Object f = FanType.make(Sys.findType("sys::Transient"));
 	      facets.add(f);
 	    }
 	    

@@ -462,7 +462,7 @@ mixin CType
   Bool isRange()   { qname == "sys::Range" }
   Bool isStr()     { qname == "sys::Str" }
   Bool isThis()    { qname == "sys::This" }
-  Bool isType()    { qname == "sys::Type" }
+  Bool isType()    { qname == "std::Type" }
   Bool isVoid()    { qname == "sys::Void" }
   Bool isBuf()     { qname == "std::Buf" }
   Bool isList()    { fits(ns.listType) }

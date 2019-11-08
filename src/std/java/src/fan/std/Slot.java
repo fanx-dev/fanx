@@ -45,7 +45,7 @@ public abstract class Slot extends FanObj {
 		if (type == null)
 			return null;
 
-		return TypeExt.slot(type, slotName, checked);
+		return FanType.slot(type, slotName, checked);
 	}
 
 	public static Func findFunc(String qname) {

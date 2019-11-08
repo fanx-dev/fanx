@@ -46,7 +46,7 @@ public class Method extends Slot {
 		if (f.attrs.facets != null) {
 			facets.capacity(f.attrs.facets.length);
 			for (FFacet facet : f.attrs.facets) {
-				Facet fa = TypeExt.tryDecodeFacet(facet, ftype.pod);
+				Facet fa = FanType.tryDecodeFacet(facet, ftype.pod);
 				if (fa != null) {
 					facets.add(fa);
 				}

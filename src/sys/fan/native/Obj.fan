@@ -128,7 +128,7 @@ native rtconst abstract class Obj
   ** Get the 'Type' instance which represents this object's class.
   ** Also see`Type.of` or `Pod.of`.
   **
-  Type typeof()
+  //Type typeof()
 
   **
   ** Called by the garbage collector on an object when garbage collection determines

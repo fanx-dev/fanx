@@ -52,7 +52,7 @@ public class Pod extends FanObj {
 	}
 
 	public static Pod of(Object obj) {
-		return TypeExt.pod(FanType.of(obj));
+		return FanType.pod(FanType.of(obj));
 	}
 
 	public static Pod find(String name) {

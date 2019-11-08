@@ -28,6 +28,12 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 
   **
+  ** Get the 'Type' instance which represents this object's class.
+  ** Also see`Type.of` or `Pod.of`.
+  **
+  static extension Type typeof(Obj obj)
+
+  **
   ** Get the class Type of the given instance.  Also
   ** see `Obj.typeof` which provides the same functionality.
   **
@@ -43,7 +49,7 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 // Naming
 //////////////////////////////////////////////////////////////////////////
-/*
+
   **
   ** Parent pod which defines this type.  For parameterized types derived
   ** from List, Map, or Func, this method always returns the sys pod.
@@ -54,7 +60,7 @@ native const class Type
   **   acme::Foo[]#.pod => sys
   **
   Pod? pod()
-*/
+
   **
   ** Simple name of the type such as "Str".  For parameterized types derived
   ** from List, Map, or Func, this method always returns "List", "Map",
@@ -316,7 +322,7 @@ native const class Type
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-/*
+
   **
   ** List of the all defined fields (including inherited fields).
   **
@@ -361,11 +367,11 @@ native const class Type
   **   3. If no public 'defVal' field, then throw Err
   **
   Obj make(Obj[]? args := null)
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Facets
 //////////////////////////////////////////////////////////////////////////
-/*
+
   **
   ** Get the list of facets defined on this type or return an empty
   ** list if no facets are defined. If looking up a facet by type, then
@@ -394,7 +400,7 @@ native const class Type
   ** Return the raw fandoc for this type or null if not available.
   **
   Str? doc()
-*/
+
 //////////////////////////////////////////////////////////////////////////
 // Conversion
 //////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 package fan.std;
 
 import fan.sys.ArgErr;
+import fan.sys.FanObj;
 import fan.sys.List;
 import fan.sys.UnknownSlotErr;
 import fan.sys.FanObj.InvokeTrapper;
@@ -9,18 +10,24 @@ import fanx.main.Type;
 public class ReflectInvoker implements InvokeTrapper {
 	@Override
 	public Object doTrap(Object self, String name, List args, Type type) {
-//		if (self != null && name.equals("typeof")) {
-//			return FanObj.typeof(self);
-//		}
-		Slot slot = TypeExt.slot(type, name, false);
+		
+		if (self instanceof Type) {
+			Object r = FanType.preTrap((Type)self, name, args);
+			if (r != null) return r;
+		}
+		
+		Slot slot = FanType.slot(type, name, false);
 		if (slot == null) {
-			if (type.qname().equals("sys::Type")) {
-				List nargs = List.make(4);
-				nargs.add(self);
-				if (args != null && args.size() > 0) {
-					nargs.addAll(args);
-				}
-				return doTrap(null, name, nargs, TypeExt.typeof());
+//			if (type.qname().equals("std::Type")) {
+//				List nargs = List.make(4);
+//				nargs.add(self);
+//				if (args != null && args.size() > 0) {
+//					nargs.addAll(args);
+//				}
+//				return doTrap(null, name, nargs, TypeExt.typeof());
+//			}
+			if (self != null && name.equals("typeof")) {
+				return FanObj.typeof(self);
 			}
 			throw UnknownSlotErr.make(type.qname()+"."+name);
 		}

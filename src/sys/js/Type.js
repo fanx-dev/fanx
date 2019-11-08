@@ -429,12 +429,12 @@ fan.sys.Type.of = function(obj)
  */
 fan.sys.Type.toFanType = function(obj)
 {
-  if (obj == null) throw fan.sys.Err.make("sys::Type.toFanType: obj is null");
+  if (obj == null) throw fan.sys.Err.make("std::Type.toFanType: obj is null");
   if (obj.$fanType != undefined) return obj.$fanType;
   if ((typeof obj) == "boolean" || obj instanceof Boolean) return fan.sys.Bool.$type;
   if ((typeof obj) == "number"  || obj instanceof Number)  return fan.sys.Int.$type;
   if ((typeof obj) == "string"  || obj instanceof String)  return fan.sys.Str.$type;
-  throw fan.sys.Err.make("sys::Type.toFanType: Not a Fantom type: " + obj);
+  throw fan.sys.Err.make("std::Type.toFanType: Not a Fantom type: " + obj);
 }
 
 fan.sys.Type.common = function(objs)

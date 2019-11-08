@@ -364,6 +364,7 @@ class CodeAsm : CompilerSupport
     v := ((ListType)t).v
 
     op(FOp.LoadInt,  fpod.ints.add(list.vals.size))
+    /*
     op(FOp.LoadType, fpod.addTypeRef(v))
 
     if (list.ctype.isNullable) {
@@ -371,7 +372,7 @@ class CodeAsm : CompilerSupport
       toNullableType := fpod.addMethodRef(ns.listToNullable)
       op(FOp.CallNonVirtual, toNullableType)
     }
-
+    */
     callNew(ns.listMake)
 
     add := fpod.addMethodRef(ns.listAdd)
@@ -877,7 +878,7 @@ class CodeAsm : CompilerSupport
     else
     {
       op(FOp.LoadInt,  fpod.ints.add(call.args.size))
-      callNew(ns.listMakeObj)
+      callNew(ns.listMake)
       add := fpod.addMethodRef(ns.listAdd)
       call.args.each |Expr arg|
       {

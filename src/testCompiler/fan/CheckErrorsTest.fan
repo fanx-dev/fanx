@@ -1066,7 +1066,7 @@ class CheckErrorsTest : CompilerTest
        25, 34, "Incomparable types 'sys::Int' and 'sys::Float'",
        26, 34, "Inconvertible types 'sys::Str' and 'sys::Num'",
        27, 34, "Inconvertible types 'sys::Str' and 'sys::Num'",
-       28, 34, "Inconvertible types 'sys::Str' and 'sys::Type'",
+       28, 34, "Inconvertible types 'sys::Str' and 'std::Type'",
        29, 35, "Inconvertible types 'sys::Str' and 'sys::Num'",
        30, 33, "Calling constructor on abstract class",
        31, 29, "Invalid args plus(sys::Obj?), not (sys::Void)",
