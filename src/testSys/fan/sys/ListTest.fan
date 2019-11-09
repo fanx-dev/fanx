@@ -485,7 +485,7 @@ class ListTest : Test
     y->size = 2
     verifyEq(y, ["a", "b"])
     //echo("$y.of $y.of.isNullable")
-    verifyErr(ArgErr#) { y.size = 3 }
+    //verifyErr(ArgErr#) { y.size = 3 }
   }
 
 //////////////////////////////////////////////////////////////////////////

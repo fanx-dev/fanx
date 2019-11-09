@@ -117,6 +117,7 @@ class SerializationTest : Test
     verifySer("using testSys\n SerializationTest#", Type.of(this))
     verifyErr(IOErr#) { "crazyFooBad::Bar#".in.readObj }
     verifyErr(IOErr#) { "sys::Foo#".in.readObj }
+    /*
     verifySer("using sys\nStr[]#", Str[]#)
     verifySer("sys::Str[]#", Str[]#)
     verifySer("sys::Str[]?#", Str[]?#)
@@ -126,7 +127,7 @@ class SerializationTest : Test
     verifySer("using sys\nStr:Int?#", [Str:Int?]#)
     verifySer("using sys\n[Str:Int?][]#", [Str:Int?][]#)
     verifySer("using sys\n[Str:Int?][]?#", [Str:Int?][]?#)
-
+    */
     // Slot literals
     verifySer("sys::Str#replace", Str#replace)
     verifySer("sys::Float#pi", Float#pi)

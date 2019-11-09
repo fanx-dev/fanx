@@ -456,9 +456,9 @@ class RegressionTest : CompilerTest
            new make(Int x) { this.x = x }
            Int x
            A? f
-           @Operator A plus(A that) { typeof.make([x + that.x]) }
-           @Operator This mult(A that) { (A)typeof.make([x * that.x]) }
-           @Operator A minus(A that) { (A)typeof.make([x - that.x]) }
+           @Operator A plus(A that) { this.typeof.make([x + that.x]) }
+           @Operator This mult(A that) { (A)this.typeof.make([x * that.x]) }
+           @Operator A minus(A that) { (A)this.typeof.make([x - that.x]) }
 
            Obj t0() { x := A(2); x += A(3); return x }
            Obj t1() { x := A(2); x += B(4); return x }

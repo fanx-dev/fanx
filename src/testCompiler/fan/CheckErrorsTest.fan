@@ -95,11 +95,14 @@ class CheckErrorsTest : CompilerTest
       class B { Type typeof() { return Str# } }
       class C { override Type typeof() { return Str# } }
       ",
+       [3, 11, "Override of unknown virtual slot 'typeof'"]
+       /*
        [
          1, 11, "Cannot override non-virtual slot 'sys::Obj.typeof'",
          2, 11, "Cannot override non-virtual slot 'sys::Obj.typeof'",
          3, 11, "Cannot override non-virtual slot 'sys::Obj.typeof'",
-       ])
+       ]*/
+       )
   }
 
   Void testConstInheritance()

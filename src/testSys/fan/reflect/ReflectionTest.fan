@@ -434,7 +434,7 @@ class ReflectionTest : Test
     verifyEq(m.params[0].type.isNullable, true)
 
     f := #nullableField
-    //verifyEq(f.type.signature, "sys::Str[]?")
+    //verifyEq(f.type.signature, "sys::List<Str>?")
     verifyEq(f.type.isNullable, true)
   }
 

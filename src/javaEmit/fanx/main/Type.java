@@ -153,4 +153,12 @@ public abstract class Type {
 		return Sys.findType(signature);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Type)) {
+			return false;
+		}
+		return qname().equals(((Type)obj).qname());
+	}
+
 }

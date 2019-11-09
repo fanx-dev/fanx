@@ -384,7 +384,7 @@ public class FCodeEmit
     loadType(ref.parent);
     code.op2(LDC_W, emit.strConst(ref.name));
     //code.op(ICONST_1);
-    int slotFind = emit.method("fan/std/TypeExt.field("+Sys.TypeClassJsig+"Ljava/lang/String;)Lfan/std/Field;");
+    int slotFind = emit.method("fan/std/FanType.field("+Sys.TypeClassJsig+"Ljava/lang/String;)Lfan/std/Field;");
     code.op2(INVOKESTATIC, slotFind);
     code.op(DUP);
     code.op2(PUTSTATIC, fieldRef);
@@ -404,7 +404,7 @@ public class FCodeEmit
     loadType(ref.parent);
     code.op2(LDC_W, emit.strConst(ref.name));
     //code.op(ICONST_1);
-    int slotFind = emit.method("fan/std/TypeExt.method("+Sys.TypeClassJsig+"Ljava/lang/String;)Lfan/std/Method;");
+    int slotFind = emit.method("fan/std/FanType.method("+Sys.TypeClassJsig+"Ljava/lang/String;)Lfan/std/Method;");
     code.op2(INVOKESTATIC, slotFind);
     code.op(DUP);
     code.op2(PUTSTATIC, fieldRef);

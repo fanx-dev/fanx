@@ -19,6 +19,8 @@ import fanx.fcode.FType;
 import fanx.fcode.FTypeRef;
 import fanx.fcode.FAttrs.FFacet;
 import fanx.main.JavaType;
+import fanx.main.NullableType;
+import fanx.main.ParameterizedType;
 import fanx.main.Sys;
 import fanx.main.Type;
 import fanx.util.FanUtil;
@@ -364,6 +366,13 @@ public class FanType {
 	}
 	
 	private static java.util.Map<Type, Object> getFacets(Type self) {
+		if (self instanceof NullableType) {
+			return getFacets(((NullableType)self).root);
+		}
+		if (self instanceof ParameterizedType) {
+			return getFacets(((ParameterizedType)self).root);
+		}
+		
 		if (self.factesMap == null) {
 			java.util.Map<Type, Object> map = new java.util.HashMap<Type, Object>();
 			
@@ -463,7 +472,7 @@ public class FanType {
 
 	public static Type typeof() {
 		if (typeof == null) {
-			typeof = Sys.findType("std::TypeExt");
+			typeof = Sys.findType("std::Type");
 		}
 		return typeof;
 	}
@@ -591,6 +600,13 @@ public class FanType {
 	}
 
 	private static java.util.Map<String, Object> getSlots(Type type) {
+		if (type instanceof NullableType) {
+			return getSlots(((NullableType)type).root);
+		}
+		if (type instanceof ParameterizedType) {
+			return getSlots(((ParameterizedType)type).root);
+		}
+		
 		if (type.slots != null)
 			return type.slots;
 		java.util.Map<String, Object> slots = new java.util.LinkedHashMap<String, Object>();

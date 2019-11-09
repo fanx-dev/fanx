@@ -70,7 +70,7 @@ class AnnotationsTest : JavaTest
 
             Void testType()
             {
-              verifyEq(typeof.facets.size, 0)
+              verifyEq(this.typeof.facets.size, 0)
               verifyErr(UnknownFacetErr#) { this.typeof.facet(TestAnnoA#) }
               verifyErr(UnknownFacetErr#) { this.typeof.facet(TestAnnoB#) }
               verifyErr(UnknownFacetErr#) { this.typeof.facet(TestAnnoC#) }

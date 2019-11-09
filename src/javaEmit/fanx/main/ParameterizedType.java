@@ -5,10 +5,12 @@ import fanx.fcode.FType;
 public class ParameterizedType extends Type {
 	public Type root;
 	private String signature;
+	private NullableType nullable;
 
 	public ParameterizedType(Type root, String signature) {
 		this.root = root;
 		this.signature = signature;
+		nullable = new NullableType(this);
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class ParameterizedType extends Type {
 
 	@Override
 	public boolean isNullable() {
-		return root.isNullable();
+		return false;
 	}
 	
 	@Override
@@ -73,12 +75,12 @@ public class ParameterizedType extends Type {
 
 	@Override
 	public Type toNullable() {
-		return this;
+		return nullable;
 	}
 	
 	@Override
 	public Type toNonNullable() {
-		return root;
+		return this;
 	}
 
 	@Override
