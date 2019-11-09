@@ -208,14 +208,23 @@ native const class Type
   ** example Map's key and value types are generic as K and V.  Fantom supports
   ** three built-in generic types: List, Map, and Func.   A parameterized
   ** type such as Str[] is not a generic type (all of its generic parameters
-  ** have been filled in).  User defined generic types are not supported in Fantom.
+  ** have been filled in).
   **
   ** Examples:
   **   Str#.isGeneric   => false
   **   List#.isGeneric  => true
   **   Str[]#.isGeneric => false
   **
-  //Bool isGeneric()
+  Bool isGeneric()
+
+  **
+  ** A parameterized type is a type which has parameterized a generic type
+  ** and replaced all the generic parameter types with generic argument
+  ** types.  The type Str[] is a parameterized type of the generic type
+  ** List (V is replaced with Str).  A parameterized type always has a
+  ** signature which is different from the qname.
+  **
+  Bool isParameterized()
 
   **
   ** If this is a parameterized type, then return the map of names to

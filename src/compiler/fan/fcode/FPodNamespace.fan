@@ -52,7 +52,7 @@ class FPodNamespace : CNamespace
       return null
     }
 
-    echo("find depends pod: $file")
+    //echo("find depends pod: $file")
 
     //get from memory for script pod
     if (file == null || !file.exists) {

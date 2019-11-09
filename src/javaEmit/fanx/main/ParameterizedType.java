@@ -2,11 +2,11 @@ package fanx.main;
 
 import fanx.fcode.FType;
 
-public class GenericType extends Type {
+public class ParameterizedType extends Type {
 	public Type root;
 	private String signature;
 
-	public GenericType(Type root, String signature) {
+	public ParameterizedType(Type root, String signature) {
 		this.root = root;
 		this.signature = signature;
 	}
@@ -97,7 +97,7 @@ public class GenericType extends Type {
 	}
 	
 	@Override
-	public boolean isGenericType() {
+	public boolean isParameterized() {
 		return false;
 	}
 }

@@ -305,7 +305,7 @@ class JsTypeLiteralExpr : JsExpr
   }
   static Void writeType(JsTypeRef t, JsWriter out)
   {
-    if (t.isList || t.isMap || t.isFunc)
+    if (t.isList || t.isParameterized || t.isFunc)
     {
       out.w("fan.sys.Type.find(\"$t.sig\")", t.loc)
     }

@@ -466,7 +466,7 @@ mixin CType
   Bool isVoid()    { qname == "sys::Void" }
   Bool isBuf()     { qname == "std::Buf" }
   Bool isList()    { fits(ns.listType) }
-  Bool isMap()     { fits(ns.mapType) }
+  //Bool isMap()     { fits(ns.mapType) }
   Bool isFunc()    { fits(ns.funcType) }
   Bool isNothing() { this === ns.nothingType }
 

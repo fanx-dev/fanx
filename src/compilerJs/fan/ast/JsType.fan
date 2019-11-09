@@ -172,7 +172,7 @@ class JsTypeRef : JsNode
     this.isSynthetic = ref.isSynthetic
     this.isNullable  = ref.isNullable
     this.isList = ref.isList
-    this.isMap  = ref.isMap
+    this.isParameterized  = ref.isParameterized
     this.isFunc = ref.isFunc
     this.loc = loc
 
@@ -209,7 +209,7 @@ class JsTypeRef : JsNode
   Bool isSynthetic   // is type synthetic
   Bool isNullable    // is type nullable
   Bool isList        // is type a sys::List
-  Bool isMap         // is type a sys::Map
+  Bool isParameterized    // is type a isParameterized
   Bool isFunc        // is type a sys::Func
 
   JsTypeRef? k       // only valid for MapType

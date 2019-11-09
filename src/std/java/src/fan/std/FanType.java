@@ -220,7 +220,11 @@ public class FanType {
 	// * User defined generic types are not supported in Fan.
 	// */
 	public static boolean isGeneric(Type self) {
-		return self.isGenericType();
+		return self.isGeneric();
+	}
+	
+	public static boolean isParameterized(Type self) {
+		return self.isParameterized();
 	}
 
 	////////////////////////////////////////////////////////////////////////////

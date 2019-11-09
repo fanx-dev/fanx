@@ -22,7 +22,7 @@ public abstract class Type {
 	public java.util.Map<Type, Object> factesMap = null;
 	public Object factesList = null;
 	
-	private Map<String, GenericType> paramType;
+	private Map<String, ParameterizedType> paramType;
 
 	public Object emptyList;
 	
@@ -79,7 +79,11 @@ public abstract class Type {
 		return (flags() & FConst.Const) != 0;
 	}
 
-	public boolean isGenericType() {
+	public boolean isGeneric() {
+		return false;
+	}
+	
+	public boolean isParameterized() {
 		return false;
 	}
 
@@ -125,14 +129,14 @@ public abstract class Type {
 		if (baseType.signature().equals(signature)) return baseType;
 		
 		if (baseType.paramType == null) {
-			baseType.paramType = new HashMap<String, GenericType>();
+			baseType.paramType = new HashMap<String, ParameterizedType>();
 		}
 		else {
 			Type t = baseType.paramType.get(signature);
 			if (t != null) return t;
 		}
 		
-		GenericType t = new GenericType(baseType, signature);
+		ParameterizedType t = new ParameterizedType(baseType, signature);
 		baseType.paramType.put(signature, t);
 		return t;
 	}
