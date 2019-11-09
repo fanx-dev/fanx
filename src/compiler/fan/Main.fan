@@ -109,7 +109,7 @@ class Main
   ** with this field - it is used by the 'build' and 'compiler'
   ** build scripts for bootstrap build.
   **
-  Uri? dependsDir := null
+  Uri? dependsDir := devHomeDir.plus(`lib/fan/`).uri
 
   **
   ** Directory to output pod file.  By default it goes into
@@ -216,7 +216,7 @@ class Main
 
     //TODO fix ?.
     Str? temp := props.get("dependsDir", null)
-    dependsDir = temp == null ? null : temp.toUri
+    if (temp != null) dependsDir = temp.toUri
 
     //get outPodDir
     outPodDirStr := props.get("outPodDir", null)
@@ -273,9 +273,6 @@ class Main
       f := dependsDir.toFile
       if (!f.exists) throw ArgErr("Invalid dependsDir: $f")
       ci.ns = FPodNamespace(f)
-    }
-    else {
-      ci.ns = FPodNamespace(devHomeDir)
     }
 
     // subclass hook

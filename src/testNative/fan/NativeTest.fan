@@ -106,7 +106,7 @@ class NativeTest : Test
 
   Void testResources()
   {
-    verifyEq(typeof.pod.file(`/res/foo.txt`).readAllStr, "wombat")
+    verifyEq(this.typeof.pod.file(`/res/foo.txt`).readAllStr, "wombat")
     verifyEq(NativeClass.make.readResource("/res/foo.txt"), "wombat")
   }
 }

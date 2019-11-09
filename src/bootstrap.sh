@@ -5,7 +5,7 @@ WORK_PATH=$(cd "$(dirname "$0")"; pwd)
 
 export FAN_ENV_PATH=""
 export FAN_DEV_HOME=$WORK_PATH/../env/
-fanc='../release/fanx-2.2/bin/fanb'
+fanc='../release/fanx-2.3.1/bin/fanb'
 
 echo "bootstrap build from $fanc to $FAN_DEV_HOME"
 mkdir -p $WORK_PATH/../env/lib/fan

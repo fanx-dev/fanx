@@ -72,7 +72,7 @@ class Main
 
     //TODO fix ?.
     Str? temp := props.get("dependsDir", null)
-    build.dependsDir = temp == null ? null : temp.toUri
+    if (temp != null) build.dependsDir = temp.toUri
 
     //get outPodDir
     outPodDirStr := props.get("outPodDir", null)

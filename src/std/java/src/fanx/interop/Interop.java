@@ -216,7 +216,7 @@ public class Interop
    */
   public static List toFan(java.util.List list, Type of)
   {
-	  List flist = List.make(list.size(), of);
+	  List flist = List.make(list.size());
 	  Iterator e = list.iterator();
 	  while (e.hasNext()) flist.add(e.next());
 	  return flist;
@@ -235,7 +235,7 @@ public class Interop
    */
   public static List toFan(Enumeration e, Type of)
   {
-    List list = List.make(4, of);
+    List list = List.make(4);
     while (e.hasMoreElements()) list.add(e.nextElement());
     return list;
   }
@@ -261,7 +261,7 @@ public class Interop
    */
   public static List toFan(Iterator i, Type of)
   {
-    List list = List.make(4, of);
+    List list = List.make(4);
     while (i.hasNext()) list.add(i.next());
     return list;
   }
@@ -337,7 +337,7 @@ public class Interop
   
   public static fan.sys.List toFanList(Type of, Object[] objs) {
 	  if (objs == null) return null;
-	  List list = List.make(objs.length, of);
+	  List list = List.make(objs.length);
 	  for (Object o : objs) {
 		  list.add(o);
 	  }

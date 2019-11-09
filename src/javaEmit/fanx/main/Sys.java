@@ -172,7 +172,7 @@ public class Sys {
 		return findFType(podName, typeName, true);
 	}
 
-	private static FType findFType(String podName, String typeName, boolean checked) {
+	public static FType findFType(String podName, String typeName, boolean checked) {
 
 		FPod pod = findPod(podName, checked);
 		if (pod == null) {

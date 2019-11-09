@@ -7,6 +7,7 @@
 //
 package fanx.main;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import fanx.fcode.FConst;
@@ -20,6 +21,8 @@ public abstract class Type {
 	public Map<String, Object> slots = null;
 	public java.util.Map<Type, Object> factesMap = null;
 	public Object factesList = null;
+	
+	private Map<String, GenericType> paramType;
 
 	public Object emptyList;
 	
@@ -116,8 +119,22 @@ public abstract class Type {
 			ClassType ct = new ClassType(ftype);
 			ftype.reflectType = ct;
 		}
-		Type res = (Type) ftype.reflectType;
-		return res;
+		Type baseType = (Type) ftype.reflectType;
+		
+		if (signature == null) return baseType;
+		if (baseType.signature().equals(signature)) return baseType;
+		
+		if (baseType.paramType == null) {
+			baseType.paramType = new HashMap<String, GenericType>();
+		}
+		else {
+			Type t = baseType.paramType.get(signature);
+			if (t != null) return t;
+		}
+		
+		GenericType t = new GenericType(baseType, signature);
+		baseType.paramType.put(signature, t);
+		return t;
 	}
 	
 //	public static Type refToType(FPod pod, int typeRefId) {

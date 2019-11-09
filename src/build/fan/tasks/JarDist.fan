@@ -203,7 +203,7 @@ class JarDist : JdkTask
     out := this.manifestFile.out
     out.printLine("Manifest-Version: 1.0")
     out.printLine("Main-Class: fanjardist.Main")
-    out.printLine("Created-By: Fantom JarDist $typeof.pod.version")
+    out.printLine("Created-By: Fantom JarDist $this.typeof.pod.version")
     out.close
   }
 

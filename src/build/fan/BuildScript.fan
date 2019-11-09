@@ -50,7 +50,7 @@ abstract class BuildScript
   const File devHomeDir := compiler::Main.devHomeDir
 
   new make() {
-    scriptFile = File(typeof->sourceFile.toStr.toUri).normalize
+    scriptFile = File(this.typeof->sourceFile.toStr.toUri).normalize
     scriptDir = scriptFile.parent
   }
 
@@ -78,7 +78,7 @@ abstract class BuildScript
   virtual once TargetMethod[] targets()
   {
     acc := TargetMethod[,]
-    typeof.methods.each |m|
+    this.typeof.methods.each |m|
     {
       if (!m.hasFacet(Target#)) return
       acc.add(TargetMethod(this, m))
@@ -206,11 +206,11 @@ abstract class BuildScript
   {
     log.printLine("---------------")
     log.printLine("  scriptFile:    $scriptFile")
-    log.printLine("  typeof:        $typeof.base")
+    log.printLine("  typeof:        $this.typeof.base")
     log.printLine("  env.homeDir:   $Env.cur.homeDir")
     log.printLine("  env.workDir:   $Env.cur.workDir")
     log.printLine("  devHomeDir:    $devHomeDir")
-    typeof.fields.each |f|
+    this.typeof.fields.each |f|
     {
       if (f.isPublic && !f.isStatic && f.parent != BuildScript#)
         log.printLine("  " + (f.name+ ":").padr(14) + " " + f.get(this))
@@ -231,7 +231,7 @@ abstract class BuildScript
   **
   override Str toStr()
   {
-    return typeof->sourceFile.toStr
+    return this.typeof->sourceFile.toStr
   }
 
 //////////////////////////////////////////////////////////////////////////

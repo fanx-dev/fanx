@@ -331,7 +331,7 @@ public class FanType {
 
 	public static List emptyList(Type type) {
 		if (type.emptyList == null) {
-			type.emptyList = List.make(0, type).toImmutable();
+			type.emptyList = List.make(0).toImmutable();
 		}
 		return (List)type.emptyList;
 	}
@@ -462,6 +462,10 @@ public class FanType {
 			typeof = Sys.findType("std::TypeExt");
 		}
 		return typeof;
+	}
+	
+	public static Type typeof(Object obj) {
+		return FanObj.typeof(obj);
 	}
 
 	public static Pod pod(Type type) {

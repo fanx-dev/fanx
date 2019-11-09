@@ -115,7 +115,7 @@ class BuildPod : BuildScript
   ** with this field - it is used by the 'build' and 'compiler'
   ** build scripts for bootstrap build.
   **
-  Uri? dependsDir := null
+  Uri? dependsDir := devHomeDir.plus(`lib/fan/`).uri
 
   **
   ** Directory to output pod file.  By default it goes into

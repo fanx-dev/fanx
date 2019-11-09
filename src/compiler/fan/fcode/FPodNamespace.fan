@@ -48,8 +48,11 @@ class FPodNamespace : CNamespace
         file = Env.cur.findPodFile(podName)
     }
     catch (Err e) {
-       return null
+      e.trace
+      return null
     }
+
+    echo("find depends pod: $file")
 
     //get from memory for script pod
     if (file == null || !file.exists) {

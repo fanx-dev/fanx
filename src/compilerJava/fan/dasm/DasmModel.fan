@@ -92,9 +92,9 @@ const class DasmFlags
   override Str toStr()
   {
     s := StrBuf()
-    typeof.methods.each |m|
+    this.typeof.methods.each |m|
     {
-      if (m.parent == typeof && m.name.startsWith("is") && m.callOn(this, [,]))
+      if (m.parent == this.typeof && m.name.startsWith("is") && m.callOn(this, [,]))
         s.add(m.name[2..-1].lower).add(" ")
     }
     if (!s.isEmpty) s.remove(-1)

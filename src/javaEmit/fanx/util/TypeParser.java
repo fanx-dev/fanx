@@ -9,6 +9,12 @@ package fanx.util;
 
 import java.util.*;
 
+import fanx.fcode.FPod;
+import fanx.fcode.FType;
+import fanx.main.JavaType;
+import fanx.main.Sys;
+import fanx.main.Type;
+
 /**
  * TypeParser is used to parser formal type signatures which are
  * used in Sys.type() and in fcode for typeRefs.def.  Signatures
@@ -29,13 +35,13 @@ public class TypeParser
 //  /**
 //   * Parse the signature into a loaded type.
 //   */
-//  public static Type load(String sig, boolean checked, Pod loadingPod)
+//  public static Type load(String sig, boolean checked)
 //  {
 //    // if last character is ?, then parse a nullable
 //    int len = sig.length();
 //    int last = len > 1 ? sig.charAt(len-1) : 0;
 //    if (last == '?')
-//      return load(sig.substring(0, len-1), checked, loadingPod).toNullable();
+//      return load(sig.substring(0, len-1), checked).toNullable();
 //
 //    // if the last character isn't ] or |, then this a non-generic
 //    // type and we don't even need to allocate a parser
@@ -51,48 +57,37 @@ public class TypeParser
 //      }
 //      catch (Exception e)
 //      {
-//        throw ArgErr.make("Invalid type signature '" + sig + "', use <pod>::<type>");
+//        throw err("Invalid type signature '" + sig + "', use <pod>::<type>");
 //      }
 //
 //      // if podName starts with [java] this is a direct Java type
 //      if (podName.charAt(0) == '[')
-//        return Env.cur().loadJavaType(loadingPod, podName, typeName);
-//
-//      // if the type is from the pod being loaded then return to the pod
-//      if (loadingPod != null && podName.equals(loadingPod.name()))
-//        return loadingPod.type(typeName, checked);
+//        return JavaType.loadJavaType(null, podName, typeName);
 //
 //      // do a straight lookup
 //      return find(podName, typeName, checked);
 //    }
 //
 //    // we got our work cut out for us - create parser
-//    try
-//    {
-//      return new TypeParser(sig, checked, loadingPod).loadTop();
-//    }
-//    catch (Err e)
-//    {
-//      throw e;
-//    }
-//    catch (Exception e)
-//    {
-//      throw err(sig);
-//    }
+//     return new TypeParser(sig, checked).loadTop();
 //  }
 //
 //  public static Type find(String podName, String typeName, boolean checked)
 //  {
-//    Pod pod = Pod.find(podName, checked);
-//    if (pod == null) return null;
-//    return pod.type(typeName, checked);
+//    FType ftype = Sys.findFType(podName, typeName, checked);
+//    if (ftype == null) {
+////		System.out.println("ERROR2:"+signature);
+//		return null;
+//	}
+//	Type res = Type.fromFType(ftype, null);
+//	return res;
 //  }
 //
 ////////////////////////////////////////////////////////////////////////////
 //// Constructor
 ////////////////////////////////////////////////////////////////////////////
 //
-//  private TypeParser(String sig, boolean checked, Pod loadingPod)
+//  private TypeParser(String sig, boolean checked)
 //  {
 //    this.sig        = sig;
 //    this.len        = sig.length();
@@ -100,7 +95,6 @@ public class TypeParser
 //    this.cur        = sig.charAt(pos);
 //    this.peek       = sig.charAt(pos+1);
 //    this.checked    = checked;
-//    this.loadingPod = loadingPod;
 //  }
 //
 ////////////////////////////////////////////////////////////////////////////
@@ -118,12 +112,8 @@ public class TypeParser
 //  {
 //    Type type;
 //
-//    // |...| is func
-//    if (cur == '|')
-//      type = loadFunc();
-//
 //    // [ is either [ffi]xxx or [K:V] map
-//    else if (cur == '[')
+//    if (cur == '[')
 //    {
 //      boolean ffi = true;
 //      for (int i=pos+1; i<len; ++i)
@@ -137,35 +127,16 @@ public class TypeParser
 //      if (ffi)
 //        type = loadFFI();
 //      else
-//        type = loadMap();
+//    	throw err();
 //    }
 //
 //    // otherwise must be basic[]
 //    else
 //      type = loadBasic();
 //
-//    // nullable
-//    if (cur == '?')
-//    {
-//      consume('?');
-//      type = type.toNullable();
-//    }
 //
 //    if (cur == '<') {
 //      type = loadGeneric(type);
-//    }
-//
-//    // anything left must be []
-//    while (cur == '[')
-//    {
-//      consume('[');
-//      consume(']');
-//      type = type.toListOf();
-//      if (cur == '?')
-//      {
-//        consume('?');
-//        type = type.toNullable();
-//      }
 //    }
 //
 //    // nullable
@@ -196,37 +167,6 @@ public class TypeParser
 //    return type;
 //  }
 //
-//  private Type loadMap()
-//  {
-//    consume('[');
-//    Type key = load();
-//    consume(':');
-//    Type val = load();
-//    consume(']');
-//    return new MapType(key, val);
-//  }
-//
-//  private Type loadFunc()
-//  {
-//    consume('|');
-//    ArrayList params = new ArrayList(8);
-//    if (cur != '-')
-//    {
-//      while (true)
-//      {
-//        params.add(load());
-//        if (cur == '-') break;
-//        consume(',');
-//      }
-//    }
-//    consume('-');
-//    consume('>');
-//    Type ret = load();
-//    consume('|');
-//
-//    return new FuncType((Type[])params.toArray(new Type[params.size()]), ret);
-//  }
-//
 //  private Type loadFFI()
 //  {
 //    // [java]foo.bar.foo
@@ -243,7 +183,7 @@ public class TypeParser
 //    while (isIdChar(cur)) consume();
 //    String typeName = sig.substring(start, pos);
 //
-//    return Env.cur().loadJavaType(loadingPod, podName, typeName);
+//    return JavaType.loadJavaType(null, podName, typeName);
 //  }
 //
 //  private Type loadBasic()
@@ -253,17 +193,7 @@ public class TypeParser
 //    consume(':');
 //    String typeName = consumeId();
 //
-//    // check for generic parameter like sys::V
-//    if (typeName.length() == 1 && podName.equals("sys"))
-//    {
-//      Type type = Sys.genericParamType(typeName);
-//      if (type != null) return type;
-//    }
-//
-//    if (loadingPod != null && podName.equals(loadingPod.name()))
-//      return loadingPod.type(typeName, checked);
-//    else
-//      return find(podName, typeName, checked);
+//    return find(podName, typeName, checked);
 //  }
 //
 ////////////////////////////////////////////////////////////////////////////
@@ -279,7 +209,7 @@ public class TypeParser
 //
 //  public static boolean isIdChar(int ch)
 //  {
-//    return FanInt.isAlphaNum(ch) || ch == '_';
+//    return Character.isLetterOrDigit(ch) || ch == '_';
 //  }
 //
 //  private void consume(int expected)
@@ -296,10 +226,10 @@ public class TypeParser
 //    peek = pos+1 < len ? sig.charAt(pos+1) : 0;
 //  }
 //
-//  private Err err() { return err(sig); }
-//  private static Err err(String sig)
+//  private RuntimeException err() { return err(sig); }
+//  private static RuntimeException err(String sig)
 //  {
-//    return ArgErr.make("Invalid type signature '" + sig + "'");
+//    return Sys.makeErr("sys::ArgErr", "Invalid type signature '" + sig + "'");
 //  }
 //
 ////////////////////////////////////////////////////////////////////////////
@@ -312,6 +242,5 @@ public class TypeParser
 //  private int cur;             // cur character; sig[pos]
 //  private int peek;            // next character; sig[pos+1]
 //  private boolean checked;     // pass thru checked flag
-//  private Pod loadingPod;      // used to map types within a loading pod
 
 }

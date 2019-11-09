@@ -53,7 +53,7 @@ abstract const class UriScheme
   **
   ** Default implementation returns type qname.
   **
-  override Str toStr() { typeof.qname }
+  override Str toStr() { this.typeof.qname }
 
   **
   ** Resolve the uri to a Fantom object.  If uri cannot

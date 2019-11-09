@@ -98,7 +98,7 @@ final class JarClassLib : ClassLib
       }
       catch (Err e)
       {
-        echo("ERROR: $typeof: $file")
+        echo("ERROR: $this.typeof: $file")
         e.trace
       }
     }

@@ -33,6 +33,10 @@ public class ObjArray extends FanObj {
 	
 	public Object raw() { return array; }
 	
+	public static ObjArray make(long size) {
+		return make(size, null);
+	}
+	
 	public static ObjArray make(long size, Type of) {
 		Object[] array;
 		if (of != null) {

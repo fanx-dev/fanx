@@ -484,7 +484,7 @@ class ListTest : Test
     y := Str["a", "b", "c"]
     y->size = 2
     verifyEq(y, ["a", "b"])
-    echo("$y.of $y.of.isNullable")
+    //echo("$y.of $y.of.isNullable")
     verifyErr(ArgErr#) { y.size = 3 }
   }
 

@@ -193,7 +193,10 @@ abstract class AbstractMain
       // if list, then parse list item and add to end of list
       //of := field.type.params["V"]
       list := field.get(this) as Obj?[]
-      of := list.of
+      //of := list.of
+      sig := field.type.signature
+      ofType := sig.extract("<", ">")
+      of := Type.find(ofType)
       val :=  parseVal(of, tok)
       //if (list == null) field.set(this, list = List.make(8, of))
       list.add(val)

@@ -63,7 +63,7 @@ abstract class BuildGroup : BuildScript
     names.each |n| { map[n] = GroupTarget(this, n) }
 
     // add my own targets, which trump children targets
-    typeof.methods.each |m|
+    this.typeof.methods.each |m|
     {
       if (!m.hasFacet(Target#)) return
       map[m.name] = TargetMethod(this, m)

@@ -67,8 +67,8 @@ class NamingTest : Test
   Void testFanPod()
   {
     verifySame(`fan://sys`.get, Str#.pod)
-    verifySame(`fan://testSys`.get, typeof.pod)
-    verifySame(`fan://testSys/res/test.txt`.get, typeof.pod.file(`/res/test.txt`))
+    verifySame(`fan://testSys`.get, this.typeof.pod)
+    verifySame(`fan://testSys/res/test.txt`.get, this.typeof.pod.file(`/res/test.txt`))
 
     verifySame(`fan://badFooBarPod`.get(null, false), null)
     verifyErr(UnresolvedErr#) { `fan://badFooBarPod`.get }

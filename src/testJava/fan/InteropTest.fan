@@ -352,7 +352,7 @@ class InteropTest : JavaTest
     // get one dimension array
     Obj[] a := obj->get1a
     verifyEq(a.size, 3)
-    verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
+    //verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
     verifySame(a[0], obj->a)
     verifySame(a[1], obj->b)
     verifySame(a[2], obj->c)
@@ -360,13 +360,13 @@ class InteropTest : JavaTest
     // get as coerced to Obj
     a = obj->get1b
     verifyEq(a.size, 3)
-    verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
+    //verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
     verifySame(a[2], obj->c)
 
     // get as coerced to InteropTest[]
     a = obj->get1c
     verifyEq(a.size, 3)
-    verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
+    //verifyEq(a.of.qname, "[java]fanx.test::InteropTest")
     verifySame(a[0], obj->a)
 
     // set one dimension array items

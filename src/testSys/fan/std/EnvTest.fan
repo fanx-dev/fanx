@@ -145,7 +145,7 @@ class EnvTest : Test
 
   Void testProps()
   {
-    pod := typeof.pod
+    pod := this.typeof.pod
     uri := `foo/bar.props`
     f := etcDir + uri
     try
@@ -270,7 +270,7 @@ class EnvTest : Test
   Void verifyLocale(Locale loc, Str key, Str? expected)
   {
     // Env.cur.locale using explicit locale
-    pod := typeof.pod
+    pod := this.typeof.pod
     verifyEq(Env.cur.locale(pod, key, null, loc), expected)
     verifyEq(Env.cur.locale(pod, key, "?!#", loc), expected ?: "?!#")
 
@@ -325,10 +325,10 @@ class EnvTest : Test
     verifyEq("$<envTest.def1=Def 1>",    "Def 1")
     verifyEq("$<envTest.def1>",          "Def 1")
     verifyEq("$<testSys::envTest.def1>", "Def 1")
-    verifyEq(typeof.pod.locale("envTest.def1"), "Def 1")
+    verifyEq(this.typeof.pod.locale("envTest.def1"), "Def 1")
 
     verifyEq("$<envTest.def2=Def 2\nLine 2 75 \u00B0 F>", "Def 2\nLine 2 75 \u00B0 F")
-    verifyEq(typeof.pod.locale("envTest.def2"),           "Def 2\nLine 2 75 \u00B0 F")
+    verifyEq(this.typeof.pod.locale("envTest.def2"),           "Def 2\nLine 2 75 \u00B0 F")
   }
 
 //////////////////////////////////////////////////////////////////////////

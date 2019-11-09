@@ -116,7 +116,7 @@ class InitInput : CompilerStep
     meta["build.user"]     = Env.cur.user
     meta["build.ts"]       = ts.toStr
     meta["build.tsKey"]    = ts.toLocale("YYMMDDhhmmss")
-    meta["build.compiler"] = typeof.pod.version.toStr
+    meta["build.compiler"] = this.typeof.pod.version.toStr
     meta["build.platform"] = Env.cur.platform
     meta.addAll(input.meta)
 
