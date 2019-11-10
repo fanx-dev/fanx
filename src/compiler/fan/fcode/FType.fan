@@ -152,7 +152,7 @@ class FType : CType
 
       // we never inherit constructors, private slots,
       // or internal slots outside of the pod
-      if (newSlot.isCtor || newSlot.isPrivate ||
+      if (newSlot.isCtor || newSlot.isPrivate || newSlot.isStatic ||
           (newSlot.isInternal && newSlot.parent.pod != t.pod))
         return
 
