@@ -6,13 +6,71 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
+internal mixin TypeConst
+{
+  const static Int Abstract   := 0x00000001
+  const static Int Const      := 0x00000002
+  const static Int Ctor       := 0x00000004
+  const static Int Enum       := 0x00000008
+  const static Int Facet      := 0x00000010
+  const static Int Final      := 0x00000020
+  const static Int Getter     := 0x00000040
+  const static Int Internal   := 0x00000080
+  const static Int Mixin      := 0x00000100
+  const static Int Native     := 0x00000200
+  const static Int Override   := 0x00000400
+  const static Int Private    := 0x00000800
+  const static Int Protected  := 0x00001000
+  const static Int Public     := 0x00002000
+  const static Int Setter     := 0x00004000
+  const static Int Static     := 0x00008000
+  const static Int Storage    := 0x00010000
+  const static Int Synthetic  := 0x00020000
+  const static Int Virtual    := 0x00040000
+  const static Int Struct     := 0x00080000
+  const static Int Extension  := 0x00100000
+  const static Int RuntimeConst:=0x00200000
+  const static Int Readonly   := 0x00400000
+  const static Int Async      := 0x00800000
+  const static Int Overload   := 0x01000000 //imples param default by Overload
+  const static Int FlagsMask  := 0x0fffffff
+}
+
 **
 ** Type defines the contract of an Obj by the slots its supports.
 ** Types model the inheritance relationships and provide a mapping
 ** for all the slots both inherited and declared.
 **
-native const class Type
+native rtconst class Type
 {
+  static const Type[][] allTypes
+  private static const Int typeTableSize := 100
+
+  protected Str _podName
+  protected Str _typeName
+  protected Str _qname
+  protected Str _signature
+  protected Type? _base
+  protected Type[] _mixins
+  protected Int flags
+
+  private Type[] _inheritance
+  private Type nullable
+  private Obj[] _emptyList
+
+  ** call in native
+  internal static Type register(Ptr pod, Ptr typeName, Ptr signature, Int flags,
+      Ptr baseStr, Ptr mixinArray, Int mixinLen) {
+    base := find(Str.fromCStr(baseStr), false)
+    mixins := Type[,]
+    for (i:=0; i<mixinLen; ++i) {
+      mix := mixinArray.get(i)
+      mixins.add(find(Str.fromCStr(mix)))
+    }
+    type := privateMake(Str.fromCStr(pod), Str.fromCStr(typeName), Str.fromCStr(signature),
+      flags, base, mixins)
+    return type
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -21,7 +79,23 @@ native const class Type
   **
   ** Private constructor.
   **
-  private new privateMake()
+  protected new privateMake(Str pod, Str name, Str signature, Int flags, Type? base, Type[] mixins) {
+    _podName = pod
+    _typeName = name
+    _qname = pod+"::"+name
+    _signature = signature
+    this.flags = flags
+    _base = base
+    _mixins = mixins
+    inher := Type[this]
+    if (base != null) {
+      inher.add(base)
+    }
+    inher.addAll(mixins)
+    _inheritance = inher
+    _emptyList = List.make(0)
+    nullable = NullableType.privateMake(this)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Management
@@ -44,7 +118,13 @@ native const class Type
   ** doesn't exist and checked is false then return null, otherwise
   ** throw UnknownTypeErr.
   **
-  static Type? find(Str qname, Bool checked := true)
+  static Type? find(Str qname, Bool checked := true) {
+    pos := (qname.hash % typeTableSize).abs
+    list := allTypes[pos]
+    res := list.find |v| { v.qname == qname }
+    if (res == null && checked) throw UnknownTypeErr(qname)
+    return res
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Naming
@@ -71,7 +151,7 @@ native const class Type
   **   acme::Foo#.name   => "Foo"
   **   acme::Foo[]#.name => "List"
   **
-  Str name()
+  Str name() { _typeName }
 
   **
   ** Qualified name formatted as "pod::name".  For parameterized
@@ -85,7 +165,7 @@ native const class Type
   **   acme::Foo#.qname   => "acme::Foo"
   **   acme::Foo[]#.qname => "sys::List"
   **
-  Str qname()
+  Str qname() { _qname }
 
   **
   ** Return the formal signature of this type.  In the case of
@@ -108,7 +188,7 @@ native const class Type
   **   |Float x->Bool|#.signature => "|sys::Float->sys::Bool|"
   **   |Float x, Int y|#.signature => |sys::Float,sys::Int->sys::Void|
   **
-  Str signature()
+  virtual Str signature() { _signature }
 
 //////////////////////////////////////////////////////////////////////////
 // Inheritance
@@ -123,7 +203,7 @@ native const class Type
   **   Int#.base        =>  sys::Num
   **   OutStream#.base  =>  sys::Obj
   **
-  Type? base()
+  Type? base() { _base }
 
   **
   ** Return the mixins directly implemented by this type.
@@ -133,7 +213,7 @@ native const class Type
   **   Buf#.mixins        =>  [sys::InStream, sys::OutStream]
   **   OutStream#.mixins  =>  [,]
   **
-  Type[] mixins()
+  Type[] mixins() { _mixins }
 
   **
   ** Return a recursive flattened list of all the types this type
@@ -147,7 +227,7 @@ native const class Type
   **   Obj#.inheritance  =>  [sys::Obj]
   **   Int#.inheritance  =>  [sys::Int, sys::Num, sys::Obj]
   **
-  Type[] inheritance()
+  Type[] inheritance() { _inheritance }
 
   **
   ** Does this type implement the specified type.  If true, then
@@ -164,7 +244,9 @@ native const class Type
   **   Float#.fits(Str#)   =>  false
   **   Obj#.fits(Float#)   =>  false
   **
-  Bool fits(Type t)
+  Bool fits(Type t) {
+    return _inheritance.contains(t)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Value Types
@@ -174,7 +256,7 @@ native const class Type
   ** Is this a value type.  Fantom supports three implicit value
   ** types: `Bool`, `Int`, and `Float`.
   **
-  Bool isVal()
+  virtual Bool isVal() { flags.and(TypeConst.Struct) != 0 }
 
 //////////////////////////////////////////////////////////////////////////
 // Nullable
@@ -185,19 +267,19 @@ native const class Type
   ** value, but non-nullables are never null.  Null types are indicated
   ** with a trailing "?".
   **
-  Bool isNullable()
+  virtual Bool isNullable() { false }
 
   **
   ** Return this type as a nullable type.  If this type is already
   ** nullable then return this.
   **
-  Type toNullable()
+  virtual Type toNullable() { nullable }
 
   **
   ** Return this type as a non-nullable type.  If this type is already
   ** non-nullable then return this.
   **
-  Type toNonNullable()
+  virtual  Type toNonNullable() { this }
 
 //////////////////////////////////////////////////////////////////////////
 // Generics
@@ -270,7 +352,7 @@ native const class Type
   ** Examples:
   **   Str#.emptyList  =>  Str[,]
   **
-  Obj[] emptyList()
+  virtual Obj[] emptyList() { _emptyList }
 
 //////////////////////////////////////////////////////////////////////////
 // Flags
@@ -280,53 +362,53 @@ native const class Type
   ** Return if this Type is abstract and cannot be instantiated.  This
   ** method will always return true if the type is a mixin.
   **
-  Bool isAbstract()
+  Bool isAbstract() { flags.and(TypeConst.Abstract) != 0 }
 
   **
   ** Return if this Type is a class (as opposed to enum or mixin)
   **
-  Bool isClass()
+  Bool isClass() { flags.and(TypeConst.Mixin) == 0 }
 
   **
   ** Return if this is a const class which means instances of this
   ** class are immutable.
   **
-  Bool isConst()
+  Bool isConst() { flags.and(TypeConst.Const) != 0 }
 
   **
   ** Return if this Type is an Enum type.
   **
-  Bool isEnum()
+  Bool isEnum() { flags.and(TypeConst.Enum) != 0 }
 
   **
   ** Return if this Type is an Facet type.
   **
-  Bool isFacet()
+  Bool isFacet() { flags.and(TypeConst.Facet) != 0 }
 
   **
   ** Return if this Type is marked final which means it may not be subclassed.
   **
-  Bool isFinal()
+  Bool isFinal() { flags.and(TypeConst.Final) != 0 }
 
   **
   ** Return if this Type has internal protection scope.
   **
-  Bool isInternal()
+  Bool isInternal() { flags.and(TypeConst.Internal) != 0 }
 
   **
   ** Return if this Type is a mixin type and cannot be instantiated.
   **
-  Bool isMixin()
+  Bool isMixin() { flags.and(TypeConst.Mixin) != 0 }
 
   **
   ** Return if this Type has public protection scope.
   **
-  Bool isPublic()
+  Bool isPublic() { flags.and(TypeConst.Public) != 0 }
 
   **
   ** Return if this Type was generated by the compiler.
   **
-  Bool isSynthetic()
+  Bool isSynthetic() { flags.and(TypeConst.Synthetic) != 0 }
 
 //////////////////////////////////////////////////////////////////////////
 // Slots
@@ -417,7 +499,7 @@ native const class Type
   **
   ** Always return signature().
   **
-  override Str toStr()
+  override Str toStr() { signature }
 
   **
   ** Return `signature`.  This method is used to enable 'toLocale' to
@@ -432,6 +514,51 @@ native const class Type
    * class imported into the Fantom type system via the Java FFI.
    */
   @NoDoc
-  Bool isJava()
+  Bool isJava() { false }
 
+}
+
+
+internal rtconst class NullableType : Type {
+  const Type root
+  const Obj[] nullableEmptyList
+
+  new privateMake(Type root) : 
+    super.privateMake(root._podName, root.name, root.signature, root.flags, root.base, root.mixins) {
+    this.root = root
+    nullableEmptyList = List.make(0)
+  }
+
+  override Obj[] emptyList() { nullableEmptyList }
+
+  override Str signature() { root.signature + "?" }
+
+  **
+  ** Is this a value type.  Fantom supports three implicit value
+  ** types: `Bool`, `Int`, and `Float`.
+  **
+  override Bool isVal() { return false }
+
+//////////////////////////////////////////////////////////////////////////
+// Nullable
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Is this a nullable type.  Nullable types can store the 'null'
+  ** value, but non-nullables are never null.  Null types are indicated
+  ** with a trailing "?".
+  **
+  override Bool isNullable() { true }
+
+  **
+  ** Return this type as a nullable type.  If this type is already
+  ** nullable then return this.
+  **
+  override Type toNullable() { this }
+
+  **
+  ** Return this type as a non-nullable type.  If this type is already
+  ** non-nullable then return this.
+  **
+  override Type toNonNullable() { root }
 }

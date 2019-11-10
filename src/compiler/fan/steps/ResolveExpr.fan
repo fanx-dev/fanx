@@ -1004,5 +1004,4 @@ class ResolveExpr : CompilerStep
   Stmt[] stmtStack  := Stmt[,]    // statement stack
   Block[] blockStack := Block[,]  // block stack used for scoping
   Bool inClosure := false         // are we inside a closure's block
-
 }

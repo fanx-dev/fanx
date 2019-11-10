@@ -69,7 +69,17 @@ enum class FOp
   FinallyEnd         (),                  //  55  ending instruction of a finally block
   CallSuper          (FOpArg.MethodRef),  //  56  call super method. it's only for JVM
   LoadFieldLiteral   (FOpArg.FieldRef),   //  57
-  LoadMethodLiteral  (FOpArg.MethodRef)   //  58
+  LoadMethodLiteral  (FOpArg.MethodRef),  //  58
+  AddressOf          (FOpArg.Register),   //  59
+  SizeOf             (FOpArg.TypeRef),    //  60
+  OffsetOf           (FOpArg.TypeField),  //  61
+  Alloc              (FOpArg.TypeRef),    //  62
+  NewArray           (FOpArg.TypeRef),    //  63
+  GetArrayElem       (FOpArg.TypeRef),    //  64
+  SetArrayElem       (FOpArg.TypeRef),    //  65
+  LoadPointer        (FOpArg.TypeRef),    //  66
+  StorePointer       (FOpArg.TypeRef),    //  67
+  MovePointer        (FOpArg.TypeRef)    //  68
 
   private new make(FOpArg arg := FOpArg.None) { this.arg = arg }
 
@@ -94,5 +104,6 @@ enum class FOpArg
   FieldRef,
   MethodRef,
   Jump,
-  TypePair
+  TypePair,
+  TypeField
 }

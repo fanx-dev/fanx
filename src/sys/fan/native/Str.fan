@@ -11,15 +11,53 @@
 **
 native const final class Str
 {
+  private Ptr byte
+  private Int32 byteLen
+  private Int32 strLen
+  private Ptr charPtr
+  private Int hashCode
+  private Bool isStatic
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
+  new fromCStr(Ptr cstr, Int byteLen := -1, Bool isStatic := false) {
+    if (isStatic)
+      this.byte = cstr
+    else
+      this.byte = Libc.strdup(cstr)
+    if (byteLen == -1) {
+      byteLen = Libc.strlen(cstr);
+    }
+    this.byteLen = byteLen
+    this.strLen = -1
+    this.charPtr = Libc.fromUtf8(cstr, byteLen)
+    this.hashCode = -1
+    this.isStatic = isStatic
+  }
+
+  new fromCharPtr(Ptr charPtr, Int len) {
+    this.charPtr = Libc.malloc(len * Libc.charSize)
+    Libc.memcpy(this.charPtr, charPtr, len * Libc.charSize)
+
+    this.byte = Libc.toUtf8(charPtr, len)
+    this.strLen = Libc.strlen(this.byte)
+    this.charPtr = charPtr
+    this.hashCode = -1
+    this.isStatic = false
+  }
+
+  Ptr toCStr() { byte }
+
+  internal Ptr getCharPtr() {
+    return charPtr
+  }
+
   **
   ** Private constructor.
   **
-  private new privateMake()
+  //private new privateMake() {}
 
   **
   ** Default value is "".
@@ -137,7 +175,16 @@ native const final class Str
   **
   ** The hash for a Str is platform dependent.
   **
-  override Int hash()
+  override Int hash() {
+    if (hashCode == -1) {
+      hashValue := 0
+      for (i:=0; i<byteLen; ++i) {
+          hashValue = Libc.getByte(byte, i) + 31 * hashValue
+      }
+      hashCode = hashValue
+    }
+    return hashCode
+  }
 
   **
   ** Return this.
@@ -162,14 +209,16 @@ native const final class Str
   **
   ** Return number of characters in this string.
   **
-  Int size()
+  Int size() { strLen }
 
   **
   ** Internalize this Str such that two strings which are equal
   ** via the '==' operator will have the same reference such that
   ** '===' will be true.
   **
-  Str intern()
+  Str intern() {
+    throw Err("TODO")
+  }
 
   **
   ** Return if this Str starts with the specified Str.
@@ -273,7 +322,10 @@ native const final class Str
   ** This method is accessed via the [] operator.  Throw IndexErr if the
   ** index is out of range.
   **
-  @Operator Int get(Int index)
+  @Operator Int get(Int index) {
+    if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
+    return Libc.getChar(charPtr, index)
+  }
 
   **
   ** Get the character at the zero based index as a Unicode code point.
@@ -865,7 +917,14 @@ native const final class Str
 
   static new fromUtf8(ByteArray ba, Int offset := 0, Int len := ba.size)
 
-  protected override Void finalize()
+  protected override Void finalize() {
+    if (!isStatic) {
+      Libc.free(byte)
+    }
+    Libc.free(charPtr)
+    byte = Ptr.nil
+    charPtr = Ptr.nil
+  }
 
   **
   ** Returns a formatted string using the specified format string and arguments.
