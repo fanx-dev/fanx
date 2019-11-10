@@ -13,6 +13,14 @@
 **
 native final const class Pod
 {
+  private const Str _name
+  private const Version _version
+  private const Depend[] _depends
+  private const Uri _uri
+  private const Str:Str _meta
+  private const Type[] _types
+  private const [Str:Type] _typeMap
+
 //////////////////////////////////////////////////////////////////////////
 // Management
 //////////////////////////////////////////////////////////////////////////
@@ -21,20 +29,22 @@ native final const class Pod
   ** Get the pod of the given instance which is convenience
   ** for 'Type.of(obj).pod'.  See `Type.pod`.
   **
-  static Pod? of(Obj obj)
+  static Pod? of(Obj obj) { Type.of(obj).pod }
 
   **
   ** Get a list of all the pods installed.  Note that currently this
   ** method will load all of the pods into memory, so it is an expensive
   ** operation.
   **
-  static Pod[] list()
+  static Pod[] list() { Reflect.listPod }
 
   **
   ** Find a pod by name.  If the pod doesn't exist and checked
   ** is false then return null, otherwise throw UnknownPodErr.
   **
-  static Pod? find(Str name, Bool checked := true)
+  static Pod? find(Str name, Bool checked := true) {
+    Reflect.findPod(name, checked)
+  }
 
   **
   ** Load a pod into memory from the specified input stream.  The
@@ -43,7 +53,7 @@ native final const class Pod
   ** closed.  The pod cannot have resources.  The pod name as defined
   ** by '/pod.def' must be uniquely named or Err is thrown.
   **
-  static Pod load(InStream in)
+  native static Pod load(InStream in)
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -52,7 +62,19 @@ native final const class Pod
   **
   ** Private constructor.
   **
-  private new make()
+  private new make(Str name, Str version, Str[] depends, Str:Str meta, Type[] types) {
+    _name = name
+    _version = Version(version)
+    _depends = depends.map { Depend(it) }
+    _uri = Uri.fromStr("fan://" + name);
+    _meta = meta
+    _types = types
+    typeMap := [Str:Type][:]
+    types.each {
+      typeMap[it.name] = it
+    }
+    _typeMap = typeMap
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -61,33 +83,33 @@ native final const class Pod
   **
   ** Simple name of the pod such as "sys".
   **
-  Str name()
+  Str name() { _name }
 
   **
   ** Version number for this pod.
   **
-  Version version()
+  Version version() { _version }
 
   **
   ** Get the declared list of dependencies for this pod.
   **
-  Depend[] depends()
+  Depend[] depends() { _depends }
 
   **
   ** Uri for this pod which is always "fan://{name}".
   **
-  Uri uri()
+  Uri uri() { _uri }
 
   **
   ** Always return name().
   **
-  override Str toStr()
+  override Str toStr() { name }
 
   **
   ** Get the meta name/value pairs for this pod.
   ** See [docLang]`docLang::Pods#meta`.
   **
-  Str:Str meta()
+  Str:Str meta() { _meta }
 
 //////////////////////////////////////////////////////////////////////////
 // Types
@@ -96,13 +118,15 @@ native final const class Pod
   **
   ** List of the all defined types.
   **
-  Type[] types()
+  Type[] types() { _types }
 
   **
   ** Find a type by name.  If the type doesn't exist and checked
   ** is false then return null, otherwise throw UnknownTypeErr.
   **
-  Type? type(Str name, Bool checked := true)
+  Type? type(Str name, Bool checked := true) {
+    _typeMap.getChecked(name, checked)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Resource Files
@@ -114,7 +138,7 @@ native final const class Pod
   ** files.  The URI of these files is rooted by `uri`.  Use `file`
   ** or `Uri.get` to lookup a resource file.
   **
-  File[] files()
+  native File[] files()
 
   **
   ** Look up a resource file in this pod.  The URI must start
@@ -127,7 +151,7 @@ native final const class Pod
   **   Pod.find("icons").file(`fan://icons/x16/cut.png`)
   **   `fan://icons/x16/cut.png`.get
   **
-  File? file(Uri uri, Bool checked := true)
+  native File? file(Uri uri, Bool checked := true)
 
 //////////////////////////////////////////////////////////////////////////
 // Doc
@@ -138,7 +162,7 @@ native final const class Pod
   ** To get the summary string for the pod use:
   **   pod.meta["pod.summary"]
   **
-  Str? doc()
+  Str? doc() { null }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -148,24 +172,30 @@ native final const class Pod
   ** Return the log for this pod's name.  This is a
   ** convenience for 'Log.get(name)'.
   **
-  Log log()
+  Log log() { Log.get(name) }
 
   **
   ** Convenience for `Env.props`.
   **
-  Str:Str props(Uri uri, Duration maxAge)
+  Str:Str props(Uri uri, Duration maxAge) {
+    Env.cur.props(this, uri, maxAge)
+  }
 
   **
   ** Convenience for `Env.config`.
   **
-  Str? config(Str name, Str? defV := null)
+  Str? config(Str name, Str? defV := null) {
+    Env.cur.config(this, name, defV)
+  }
 
   **
   ** Convenience for `Env.locale` using `Locale.cur`.
   **
-  Str? locale(Str name, Str? defV := "pod::name")
+  Str? locale(Str name, Str? defV := "pod::name") {
+    Env.cur.locale(this, name, defV)
+  }
 
 
-  @NoDoc Obj? _getCompilerCache()
-  @NoDoc Void _setCompilerCache(Obj? obj)
+  @NoDoc native Obj? _getCompilerCache()
+  @NoDoc native Void _setCompilerCache(Obj? obj)
 }

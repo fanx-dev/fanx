@@ -41,36 +41,8 @@ internal mixin TypeConst
 ** Types model the inheritance relationships and provide a mapping
 ** for all the slots both inherited and declared.
 **
-native rtconst class Type
+abstract native const class Type
 {
-  static const Type[][] allTypes
-  private static const Int typeTableSize := 100
-
-  protected Str _podName
-  protected Str _typeName
-  protected Str _qname
-  protected Str _signature
-  protected Type? _base
-  protected Type[] _mixins
-  protected Int flags
-
-  private Type[] _inheritance
-  private Type nullable
-  private Obj[] _emptyList
-
-  ** call in native
-  internal static Type register(Ptr pod, Ptr typeName, Ptr signature, Int flags,
-      Ptr baseStr, Ptr mixinArray, Int mixinLen) {
-    base := find(Str.fromCStr(baseStr), false)
-    mixins := Type[,]
-    for (i:=0; i<mixinLen; ++i) {
-      mix := mixinArray.get(i)
-      mixins.add(find(Str.fromCStr(mix)))
-    }
-    type := privateMake(Str.fromCStr(pod), Str.fromCStr(typeName), Str.fromCStr(signature),
-      flags, base, mixins)
-    return type
-  }
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -79,22 +51,7 @@ native rtconst class Type
   **
   ** Private constructor.
   **
-  protected new privateMake(Str pod, Str name, Str signature, Int flags, Type? base, Type[] mixins) {
-    _podName = pod
-    _typeName = name
-    _qname = pod+"::"+name
-    _signature = signature
-    this.flags = flags
-    _base = base
-    _mixins = mixins
-    inher := Type[this]
-    if (base != null) {
-      inher.add(base)
-    }
-    inher.addAll(mixins)
-    _inheritance = inher
-    _emptyList = List.make(0)
-    nullable = NullableType.privateMake(this)
+  protected new privateMake() {
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,13 +62,13 @@ native rtconst class Type
   ** Get the 'Type' instance which represents this object's class.
   ** Also see`Type.of` or `Pod.of`.
   **
-  static extension Type typeof(Obj obj)
+  native static extension Type typeof(Obj obj)
 
   **
   ** Get the class Type of the given instance.  Also
   ** see `Obj.typeof` which provides the same functionality.
   **
-  static Type of(Obj obj)
+  static Type of(Obj obj) { typeof(obj) }
 
   **
   ** Find a Type by it's qualified name "pod::Type".  If the type
@@ -119,11 +76,11 @@ native rtconst class Type
   ** throw UnknownTypeErr.
   **
   static Type? find(Str qname, Bool checked := true) {
-    pos := (qname.hash % typeTableSize).abs
-    list := allTypes[pos]
-    res := list.find |v| { v.qname == qname }
-    if (res == null && checked) throw UnknownTypeErr(qname)
-    return res
+    i := qname.find("::")
+    podName := qname[0..<i]
+    name := qname[i+2..-1]
+    pod := Pod.find(podName, checked)
+    return pod.type(name, checked)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,7 +96,7 @@ native rtconst class Type
   **   acme::Foo#.pod   => acme
   **   acme::Foo[]#.pod => sys
   **
-  Pod? pod()
+  abstract Pod? pod()
 
   **
   ** Simple name of the type such as "Str".  For parameterized types derived
@@ -151,7 +108,7 @@ native rtconst class Type
   **   acme::Foo#.name   => "Foo"
   **   acme::Foo[]#.name => "List"
   **
-  Str name() { _typeName }
+  abstract Str name()
 
   **
   ** Qualified name formatted as "pod::name".  For parameterized
@@ -165,7 +122,7 @@ native rtconst class Type
   **   acme::Foo#.qname   => "acme::Foo"
   **   acme::Foo[]#.qname => "sys::List"
   **
-  Str qname() { _qname }
+  abstract Str qname()
 
   **
   ** Return the formal signature of this type.  In the case of
@@ -188,7 +145,7 @@ native rtconst class Type
   **   |Float x->Bool|#.signature => "|sys::Float->sys::Bool|"
   **   |Float x, Int y|#.signature => |sys::Float,sys::Int->sys::Void|
   **
-  virtual Str signature() { _signature }
+  abstract Str signature()
 
 //////////////////////////////////////////////////////////////////////////
 // Inheritance
@@ -203,7 +160,7 @@ native rtconst class Type
   **   Int#.base        =>  sys::Num
   **   OutStream#.base  =>  sys::Obj
   **
-  Type? base() { _base }
+  abstract Type? base()
 
   **
   ** Return the mixins directly implemented by this type.
@@ -213,7 +170,7 @@ native rtconst class Type
   **   Buf#.mixins        =>  [sys::InStream, sys::OutStream]
   **   OutStream#.mixins  =>  [,]
   **
-  Type[] mixins() { _mixins }
+  abstract Type[] mixins()
 
   **
   ** Return a recursive flattened list of all the types this type
@@ -227,7 +184,7 @@ native rtconst class Type
   **   Obj#.inheritance  =>  [sys::Obj]
   **   Int#.inheritance  =>  [sys::Int, sys::Num, sys::Obj]
   **
-  Type[] inheritance() { _inheritance }
+  abstract Type[] inheritance()
 
   **
   ** Does this type implement the specified type.  If true, then
@@ -244,13 +201,15 @@ native rtconst class Type
   **   Float#.fits(Str#)   =>  false
   **   Obj#.fits(Float#)   =>  false
   **
-  Bool fits(Type t) {
-    return _inheritance.contains(t)
+  virtual Bool fits(Type t) {
+    return inheritance.contains(t)
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Value Types
 //////////////////////////////////////////////////////////////////////////
+
+  protected abstract Int flags()
 
   **
   ** Is this a value type.  Fantom supports three implicit value
@@ -273,7 +232,7 @@ native rtconst class Type
   ** Return this type as a nullable type.  If this type is already
   ** nullable then return this.
   **
-  virtual Type toNullable() { nullable }
+  abstract Type toNullable()
 
   **
   ** Return this type as a non-nullable type.  If this type is already
@@ -297,7 +256,7 @@ native rtconst class Type
   **   List#.isGeneric  => true
   **   Str[]#.isGeneric => false
   **
-  Bool isGeneric()
+  virtual Bool isGeneric() { false }
 
   **
   ** A parameterized type is a type which has parameterized a generic type
@@ -306,7 +265,7 @@ native rtconst class Type
   ** List (V is replaced with Str).  A parameterized type always has a
   ** signature which is different from the qname.
   **
-  Bool isParameterized()
+  virtual Bool isParameterized() { false }
 
   **
   ** If this is a parameterized type, then return the map of names to
@@ -352,7 +311,7 @@ native rtconst class Type
   ** Examples:
   **   Str#.emptyList  =>  Str[,]
   **
-  virtual Obj[] emptyList() { _emptyList }
+  virtual Obj[] emptyList() { List.defVal }
 
 //////////////////////////////////////////////////////////////////////////
 // Flags
@@ -417,28 +376,32 @@ native rtconst class Type
   **
   ** List of the all defined fields (including inherited fields).
   **
-  Field[] fields()
+  abstract Field[] fields()
 
   **
   ** List of the all defined methods (including inherited methods).
   **
-  Method[] methods()
+  abstract Method[] methods()
 
   **
   ** List of the all defined slots, both fields and methods (including
   ** inherited slots).
   **
-  Slot[] slots()
+  abstract Slot[] slots()
 
   **
   ** Convenience for (Field)slot(name, checked)
   **
-  Field? field(Str name, Bool checked := true)
+  Field? field(Str name, Bool checked := true) {
+    (Field)slot(name, checked)
+  }
 
   **
   ** Convenience for (Method)slot(name, checked)
   **
-  Method? method(Str name, Bool checked := true)
+  Method? method(Str name, Bool checked := true) {
+    (Method)slot(name, checked)
+  }
 
   **
   ** Lookup a slot by name.  If the slot doesn't exist and checked
@@ -447,7 +410,7 @@ native rtconst class Type
   ** those defined directly by this type and those inherited from
   ** super class or mixins.
   **
-  Slot? slot(Str name, Bool checked := true)
+  abstract Slot? slot(Str name, Bool checked := true)
 
   **
   ** Create a new instance of this Type using the following rules:
@@ -457,7 +420,27 @@ native rtconst class Type
   **      be static field or static method with zero params)
   **   3. If no public 'defVal' field, then throw Err
   **
-  Obj make(Obj[]? args := null)
+  virtual Obj make(Obj[]? args := null) {
+    m := method("make", false)
+    if (m != null && m.isPublic) {
+      numArgs := args == null ? 0 : args.size
+      params := m.params
+      if ((numArgs == params.size) ||
+          (numArgs < params.size && params.get(numArgs).hasDefault)) {
+        return m.callList(args)
+      }
+    }
+    //fallback to defVal
+    if (args == null || args.size == 0) {
+      f := slot("defVal", false)
+      if (f != null && f.isStatic) {
+        if (f is Field) return ((Field)f).get
+        return ((Method)f).call
+      }
+    }
+
+    throw Err.make("Type missing 'make' or 'defVal' slots: " + this + ", method:" + m);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Facets
@@ -469,19 +452,21 @@ native rtconst class Type
   ** use the `facet` method which will provide better performance.
   ** See [Facets Doc]`docLang::Facets` for details.
   **
-  Facet[] facets()
+  abstract Facet[] facets()
 
   **
   ** Get a facet by its type.  If not found on this type then
   ** return null or throw UnknownFacetErr based on check flag.
   ** See [Facets Doc]`docLang::Facets` for details.
   **
-  Facet? facet(Type type, Bool checked := true)
+  abstract Facet? facet(Type type, Bool checked := true)
 
   **
   ** Return if this type has the specified facet defined.
   **
-  Bool hasFacet(Type type)
+  Bool hasFacet(Type type) {
+    facet(type, false) != null
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Documentation
@@ -490,7 +475,7 @@ native rtconst class Type
   **
   ** Return the raw fandoc for this type or null if not available.
   **
-  Str? doc()
+  virtual Str? doc() { null }
 
 //////////////////////////////////////////////////////////////////////////
 // Conversion
@@ -514,22 +499,302 @@ native rtconst class Type
    * class imported into the Fantom type system via the Java FFI.
    */
   @NoDoc
-  Bool isJava() { false }
+  virtual Bool isJava() { false }
 
-}
-
-
-internal rtconst class NullableType : Type {
-  const Type root
-  const Obj[] nullableEmptyList
-
-  new privateMake(Type root) : 
-    super.privateMake(root._podName, root.name, root.signature, root.flags, root.base, root.mixins) {
-    this.root = root
-    nullableEmptyList = List.make(0)
+  /*
+  override Bool isImmutable() {
+    true
   }
 
-  override Obj[] emptyList() { nullableEmptyList }
+  override Obj toImmutable() {
+    this
+  }
+  */
+}
+
+internal const class BaseType : Type
+{
+  private const Pod _pod
+  private const Str _typeName
+  private const Str _qname
+  private const Str _signature
+  private const Type? _base
+  private const Type[] _mixins
+  private const Int _flags
+
+  private const Type[] _inheritance
+  private const Type nullable
+
+  private const Field[] _fields
+  private const Method[] _methods
+  private const Slot[] _slots
+  private const [Str:Slot] slotMap
+
+  private const Facet[] _facets
+  private const [Type:Facet] facetMap
+
+//////////////////////////////////////////////////////////////////////////
+// Constructor
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Private constructor.
+  **
+  protected new privateMake(Pod pod, Str name, Str signature, Int flags, Type? base, Type[] mixins,
+    Slot[] slots, Facet[] facets)
+    : super.privateMake() {
+    _pod = pod
+    _typeName = name
+    _qname = pod.name+"::"+name
+    _signature = signature
+    _flags = flags
+    _base = base
+    _mixins = mixins
+
+    //make inheritance
+    [Type:Obj?] inher := [:]
+    inher[this] = null
+    if (base != null) {
+      base.inheritance.each |v| {
+        inher[v] = null
+      }
+    }
+    mixins.each |v| {
+      inher[v] = null
+    }
+    _inheritance = inher.keys
+    
+    //make slots
+    fields := Field[,]
+    methods := Method[,]
+    slotMapTmp := [Str:Slot][:]
+    slots.each |s| {
+      if (s is Field) fields.add((Field)s)
+      else methods.add((Method)s)
+      slotMapTmp[s.name] = s
+    }
+    _slots = slots
+    _fields = fields
+    _methods = methods
+    slotMap = slotMapTmp
+
+    //make facet
+    facetMapTmp := [Type:Facet][:]
+    facets.each {
+      facetMapTmp[it.typeof] = it
+    }
+    _facets = facets
+    facetMap = facetMapTmp
+
+    nullable = NullableType.privateMake(this)
+  }
+
+  protected override Int flags() { _flags }
+
+//////////////////////////////////////////////////////////////////////////
+// Naming
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Parent pod which defines this type.  For parameterized types derived
+  ** from List, Map, or Func, this method always returns the sys pod.
+  **
+  ** Examples:
+  **   Str#.pod         => sys
+  **   acme::Foo#.pod   => acme
+  **   acme::Foo[]#.pod => sys
+  **
+  override Pod? pod() { null }
+
+  **
+  ** Simple name of the type such as "Str".  For parameterized types derived
+  ** from List, Map, or Func, this method always returns "List", "Map",
+  ** or "Func" respectively.
+  **
+  ** Examples:
+  **   Str#.name         => "Str"
+  **   acme::Foo#.name   => "Foo"
+  **   acme::Foo[]#.name => "List"
+  **
+  override Str name() { _typeName }
+
+  **
+  ** Qualified name formatted as "pod::name".  For parameterized
+  ** types derived from List, Map, or Func, this method always returns
+  ** "sys::List", "sys::Map", or "sys::Func" respectively.  If this
+  ** a nullable type, the qname does *not* include the "?".
+  **
+  ** Examples:
+  **   Str#.qname         => "sys::Str"
+  **   Str?#.qname        => "sys::Str"
+  **   acme::Foo#.qname   => "acme::Foo"
+  **   acme::Foo[]#.qname => "sys::List"
+  **
+  override Str qname() { _qname }
+
+  **
+  ** Return the formal signature of this type.  In the case of
+  ** non-parameterized types the signature is the same as qname.
+  ** For parameterized types derived from List, Map, or Func the
+  ** signature uses the following special syntax:
+  **   List => V[]
+  **   Map  => [K:V]
+  **   Func => |A,B...->R|
+  **
+  ** If this is a nullable type, the signature ends with "?" such
+  ** as "sys::Int?".
+  **
+  ** Examples:
+  **   Str#.signature => "sys::Str"
+  **   Str?#.signature => "sys::Str?"
+  **   Int[]#.signature => "sys::Int[]"
+  **   Int:Str#.signature => "[sys::Int:sys::Str]"
+  **   Str:Buf[]#.signature => [sys::Str:sys::Buf[]]
+  **   |Float x->Bool|#.signature => "|sys::Float->sys::Bool|"
+  **   |Float x, Int y|#.signature => |sys::Float,sys::Int->sys::Void|
+  **
+  override Str signature() { _signature }
+
+//////////////////////////////////////////////////////////////////////////
+// Inheritance
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** The direct super class of this type (null for Obj).
+  ** Return sys::Obj for all mixin types.
+  **
+  ** Examples:
+  **   Obj#.base        =>  null
+  **   Int#.base        =>  sys::Num
+  **   OutStream#.base  =>  sys::Obj
+  **
+  override Type? base() { _base }
+
+  **
+  ** Return the mixins directly implemented by this type.
+  **
+  ** Examples:
+  **   Obj#.mixins        =>  [,]
+  **   Buf#.mixins        =>  [sys::InStream, sys::OutStream]
+  **   OutStream#.mixins  =>  [,]
+  **
+  override Type[] mixins() { _mixins }
+
+  **
+  ** Return a recursive flattened list of all the types this type
+  ** inherits from.  The result list always includes this type itself.
+  ** The result of this method represents the complete list of types
+  ** implemented by this type - instances of this type are assignable
+  ** to any type in this list.  All types (including mixins) will
+  ** include sys::Obj in this list.
+  **
+  ** Examples:
+  **   Obj#.inheritance  =>  [sys::Obj]
+  **   Int#.inheritance  =>  [sys::Int, sys::Num, sys::Obj]
+  **
+  override Type[] inheritance() { _inheritance }
+
+//////////////////////////////////////////////////////////////////////////
+// Nullable
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Return this type as a nullable type.  If this type is already
+  ** nullable then return this.
+  **
+  override Type toNullable() { nullable }
+
+//////////////////////////////////////////////////////////////////////////
+// Slots
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** List of the all defined fields (including inherited fields).
+  **
+  override Field[] fields() { _fields }
+
+  **
+  ** List of the all defined methods (including inherited methods).
+  **
+  override Method[] methods() { _methods }
+
+  **
+  ** List of the all defined slots, both fields and methods (including
+  ** inherited slots).
+  **
+  override Slot[] slots() { _slots }
+
+  **
+  ** Lookup a slot by name.  If the slot doesn't exist and checked
+  ** is false then return null, otherwise throw UnknownSlotErr.
+  ** Slots are any field or method in this type's scope including
+  ** those defined directly by this type and those inherited from
+  ** super class or mixins.
+  **
+  override Slot? slot(Str name, Bool checked := true) {
+    slotMap.getChecked(name, checked)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Facets
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Get the list of facets defined on this type or return an empty
+  ** list if no facets are defined. If looking up a facet by type, then
+  ** use the `facet` method which will provide better performance.
+  ** See [Facets Doc]`docLang::Facets` for details.
+  **
+  override Facet[] facets() { _facets }
+
+  **
+  ** Get a facet by its type.  If not found on this type then
+  ** return null or throw UnknownFacetErr based on check flag.
+  ** See [Facets Doc]`docLang::Facets` for details.
+  **
+  override Facet? facet(Type type, Bool checked := true) {
+    facetMap.getChecked(type, checked)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Documentation
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Return the raw fandoc for this type or null if not available.
+  **
+  //Str? doc()
+}
+
+internal const class ProxyType : Type {
+  const Type root
+
+  new privateMake(Type root) : 
+    super.privateMake() {
+    this.root = root
+  }
+
+  override Pod? pod() { root.pod }
+  override Str name() { root.name }
+  override Str qname() { root.qname }
+  override Str signature() { root.signature }
+  override Type? base() { root.base }
+  override Type[] mixins() { root.mixins }
+  override Type[] inheritance() { root.inheritance }
+  protected override Int flags() { root.flags }
+  override Type toNullable() { root.toNullable }
+
+  override Field[] fields() { root.fields }
+  override Method[] methods() { root.methods }
+  override Slot[] slots() { root.slots }
+  override Slot? slot(Str name, Bool checked := true) { root.slot(name, checked) }
+  override Facet[] facets() { root.facets }
+  override Facet? facet(Type type, Bool checked := true) { root.facet(type, checked) }
+}
+
+internal const class NullableType : ProxyType {
+
+  new privateMake(Type root) : super.privateMake(root) {}
 
   override Str signature() { root.signature + "?" }
 
@@ -562,3 +827,20 @@ internal rtconst class NullableType : Type {
   **
   override Type toNonNullable() { root }
 }
+
+internal const class ParameterizedType : ProxyType {
+  private const Str _signature
+  private const Type nullable
+
+  new privateMake(Type root, Str signature) : super.privateMake(root) {
+    this._signature = signature
+    nullable = NullableType(this)
+  }
+
+  override Str signature() { this._signature }
+
+  override Bool isParameterized() { true }
+
+  override Type toNullable() { nullable }
+}
+
