@@ -68,3 +68,11 @@ native class ByteArray {
 
   protected override Void finalize()
 }
+
+native class Array<T> {
+  new make(Int size)
+  Int size()
+  @Operator T get(Int pos)
+  @Operator Void set(Int pos, T val)
+}
+

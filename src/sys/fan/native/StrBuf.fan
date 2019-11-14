@@ -6,12 +6,16 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
+using sys::Int32 as Char
+using sys::Int32 as NInt
+using sys::Int64 as Size_t
+
 **
 ** StrBuf is a mutable sequence of Int characters.
 **
 native final class StrBuf
 {
-  private Ptr buf
+  private Ptr<Char> buf
   private Int _size
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,7 +28,7 @@ native final class StrBuf
   new make(Int capacity := 16) {
     &capacity = capacity
     _size = 0
-    buf = Libc.malloc(capacity * Libc.charSize)
+    buf = (Ptr<Char>)Native.malloc(capacity * sizeof(Char))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,7 +52,7 @@ native final class StrBuf
   native Int capacity {
     set {
       if (it > &capacity) {
-        nbuf := Libc.realloc(buf, it)
+        nbuf := Native.realloc(buf, it)
         if (nbuf == Ptr.nil) {
           throw Err("realloc fail")
         }
@@ -64,7 +68,10 @@ native final class StrBuf
   ** This method is accessed via the [] operator.
   **
   @Operator Int get(Int index) {
-    Libc.getChar(buf, index)
+    if (index < 0 || index >= size) {
+      throw IndexErr("$index out $size")
+    }
+    return buf[index]
   }
 
   **
@@ -83,7 +90,7 @@ native final class StrBuf
   @Operator Str getRange(Range range) {
     s := range.startIndex(size)
     e := range.endIndex(size)
-    return Str.fromCStr(buf.get(s*Libc.charSize), e-s)
+    return Str.fromCStr(buf+s, e-s)
   }
 
   **
@@ -99,7 +106,7 @@ native final class StrBuf
     if (index >= size) {
       throw IndexErr("$index, $size")
     }
-    Libc.setChar(buf, index, ch)
+    buf[index] = ch
     return this
   }
 
@@ -120,7 +127,7 @@ native final class StrBuf
     if (_size == capacity) {
       capacity = 8 + (capacity * 1.5).toInt
     }
-    Libc.setChar(buf, _size, ch)
+    buf[_size] = ch
     ++_size
     return this
   }
@@ -134,8 +141,8 @@ native final class StrBuf
   This addStr(Str str, Int off := 0, Int len := str.size) {
     grow(len)
 
-    src := str.getCharPtr.get(off*Libc.charSize())
-    Libc.memcpy(buf, src, len*Libc.charSize)
+    src := str.getCharPtr+off
+    Native.memcpy(buf, src, len*sizeof(Char))
     _size += len
     return this
   }
@@ -171,9 +178,9 @@ native final class StrBuf
     grow(strLen)
 
     left := size - index - 1
-    Libc.memmove(buf.get((index+strLen) * Libc.charSize), buf.get((index) * Libc.charSize), left * Libc.charSize)
+    Native.memmove(buf+index+strLen, buf+index, left * sizeof(Char))
 
-    Libc.memcpy(buf.get((index) * Libc.charSize), str.getCharPtr, strLen * Libc.charSize)
+    Native.memcpy(buf+index, str.getCharPtr, strLen * sizeof(Char))
     _size += strLen
     return this
   }
@@ -191,7 +198,7 @@ native final class StrBuf
       throw IndexErr("$index, $size")
     }
     left := size - index - 1
-    Libc.memmove(buf.get(index * Libc.charSize), buf.get((index+1) * Libc.charSize), left * Libc.charSize)
+    Native.memmove(buf+index, buf+index+1, left * sizeof(Char))
     --_size
     return this
   }
@@ -204,7 +211,7 @@ native final class StrBuf
   This removeRange(Range r) {
     s := r.startIndex(size)
     e := r.endIndex(size)
-    Libc.memmove(buf.get((s) * Libc.charSize), buf.get((e) * Libc.charSize), (e-s) * Libc.charSize)
+    Native.memmove(buf+s, buf+e, (e-s) * sizeof(Char))
     return this
   }
 
@@ -221,9 +228,9 @@ native final class StrBuf
     grow(strLen)
 
     left := size - strLen - 1
-    Libc.memmove(buf.get((s+strLen) * Libc.charSize), buf.get(e * Libc.charSize), left * Libc.charSize)
+    Native.memmove(buf+s+strLen, buf+e, left * sizeof(Char))
 
-    Libc.memmove(buf.get((s) * Libc.charSize), str.getCharPtr, str.size * Libc.charSize)
+    Native.memmove(buf+s, str.getCharPtr, str.size * sizeof(Char))
 
     _size += strLen
     return this
@@ -253,7 +260,7 @@ native final class StrBuf
   **
   //OutStream out()
   protected override Void finalize() {
-    Libc.free(buf)
+    Native.free(buf)
     buf = Ptr.nil
     _size = 0
     &capacity = 0

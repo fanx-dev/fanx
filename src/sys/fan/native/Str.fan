@@ -6,15 +6,19 @@
 //   4 Dec 05  Brian Frank  Creation
 //
 
+using sys::Int32 as Char
+using sys::Int32 as NInt
+using sys::Int64 as Size_t
+
 **
 ** Str represents a sequence of Unicode characters.
 **
 native const final class Str
 {
-  private Ptr byte
-  private Int32 byteLen
-  private Int32 strLen
-  private Ptr charPtr
+  private Ptr<Int8> byte
+  private Size_t byteLen
+  private Size_t strLen
+  private Ptr<Char> charPtr
   private Int hashCode
   private Bool isStatic
 
@@ -26,31 +30,31 @@ native const final class Str
     if (isStatic)
       this.byte = cstr
     else
-      this.byte = Libc.strdup(cstr)
+      this.byte = Native.strdup(cstr)
     if (byteLen == -1) {
-      byteLen = Libc.strlen(cstr);
+      byteLen = Native.strlen(cstr);
     }
     this.byteLen = byteLen
     this.strLen = -1
-    this.charPtr = Libc.fromUtf8(cstr, byteLen)
+    this.charPtr = Native.fromUtf8(cstr, byteLen, addressof(this.strLen))
     this.hashCode = -1
     this.isStatic = isStatic
   }
 
   new fromCharPtr(Ptr charPtr, Int len) {
-    this.charPtr = Libc.malloc(len * Libc.charSize)
-    Libc.memcpy(this.charPtr, charPtr, len * Libc.charSize)
+    this.charPtr = Native.malloc(len * sizeof(Char))
+    Native.memcpy(this.charPtr, charPtr, len * sizeof(Char))
 
-    this.byte = Libc.toUtf8(charPtr, len)
-    this.strLen = Libc.strlen(this.byte)
+    this.byte = Native.toUtf8(charPtr, len, addressof(this.byteLen))
+    this.strLen = len
     this.charPtr = charPtr
     this.hashCode = -1
     this.isStatic = false
   }
 
-  Ptr toCStr() { byte }
+  Ptr<Int8> toCStr() { byte }
 
-  internal Ptr getCharPtr() {
+  internal Ptr<Int32> getCharPtr() {
     return charPtr
   }
 
@@ -179,7 +183,7 @@ native const final class Str
     if (hashCode == -1) {
       hashValue := 0
       for (i:=0; i<byteLen; ++i) {
-          hashValue = Libc.getByte(byte, i) + 31 * hashValue
+          hashValue = byte[i] + 31 * hashValue
       }
       hashCode = hashValue
     }
@@ -324,7 +328,7 @@ native const final class Str
   **
   @Operator Int get(Int index) {
     if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
-    return Libc.getChar(charPtr, index)
+    return charPtr[index]
   }
 
   **
@@ -919,9 +923,9 @@ native const final class Str
 
   protected override Void finalize() {
     if (!isStatic) {
-      Libc.free(byte)
+      Native.free(byte)
     }
-    Libc.free(charPtr)
+    Native.free(charPtr)
     byte = Ptr.nil
     charPtr = Ptr.nil
   }

@@ -57,7 +57,7 @@ native rtconst abstract class Obj
   **   3 <=> 8       =>  -1  // shortcut for 3.compare(8)
   **
   virtual Int compare(Obj that) {
-    Libc.toId(this) - Libc.toId(that)
+    Native.toId(this) - Native.toId(that)
   }
 
   **
@@ -65,7 +65,7 @@ native rtconst abstract class Obj
   ** then it must ensure if equals() returns true for any two objects then
   ** they have same hash code.
   **
-  virtual Int hash() { Libc.toId(this) }
+  virtual Int hash() { Native.toId(this) }
 
   **
   ** Return a string representation of this object.
@@ -159,10 +159,8 @@ native rtconst abstract class Obj
   static Void echo(Obj? x := "") {
     str := x == null ? "null" : x.toStr
     cstr := str.toCStr()
-    puts(cstr)
+    Native.puts(cstr)
   }
-
-  private static native Void puts(Ptr cstr);
 
   **
   ** throw AssertErr if a boolean condition is false
