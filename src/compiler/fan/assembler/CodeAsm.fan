@@ -274,7 +274,35 @@ class CodeAsm : CompilerSupport
       case ExprId.ternary:         ternary(expr)
       case ExprId.staticTarget:    return
       case ExprId.throwExpr:       throwOp(((ThrowExpr)expr).exception)
+      case ExprId.sizeOfExpr:      sizeOf(expr)
+      case ExprId.addressOfExpr:   addressOf(expr)
       default:                     throw Err(expr.id.toStr)
+    }
+  }
+
+  private Void sizeOf(SizeOfExpr expr) {
+    opType(FOp.SizeOf, expr.type)
+  }
+
+  private Void addressOf(AddressOfExpr expr) {
+    switch (expr.var.id)
+    {
+      case ExprId.localVar:
+        r := ((LocalVarExpr)expr.var).register
+        op(FOp.AddressOfVar, r)
+      case ExprId.field:
+        FieldExpr fieldExpr := expr.var
+        field := fieldExpr.field
+        if (field.isStatic) {
+          index := fpod.addFieldRef(field)
+          op(FOp.AddressOfStatic, index)
+        }
+        else {
+          this.expr(fieldExpr.target)
+          index := fpod.addFieldRef(field)
+          op(FOp.AddressOfInstance, index)
+        }
+      default: throw err("Internal compiler error", expr.loc)
     }
   }
 

@@ -1619,6 +1619,18 @@ public class Parser : CompilerSupport
       case Token.trueKeyword:     consume; return LiteralExpr.makeTrue(loc, ns)
       case Token.pound:           consume; return SlotLiteralExpr(loc, curType, consumeId)
       case Token.awaitKeyword:    consume; return AwaitExpr(loc, this.expr)
+      case Token.sizeofKeyword:   
+        consume;
+        consume(Token.lparen)
+        expr := SizeOfExpr(loc, this.ctype)
+        consume(Token.rparen)
+        return expr
+      case Token.addressofKeyword:
+        consume;
+        consume(Token.lparen)
+        expr := AddressOfExpr(loc, this.expr)
+        consume(Token.rparen)
+        return expr
     }
 
     if (curt == Token.pipe)

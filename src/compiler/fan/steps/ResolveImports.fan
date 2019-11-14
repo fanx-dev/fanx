@@ -102,6 +102,7 @@ class ResolveImports : CompilerStep
       // check for duplicate imports
       key := podName
       if (u.typeName != null) key += "::$u.typeName"
+      if (u.asName != null) key += " as $u.asName"
       if (dups.containsKey(key))
       {
         err("Duplicate using '$key'", u.loc)
@@ -131,7 +132,10 @@ class ResolveImports : CompilerStep
       if (u.typeName != null)
       {
         u.resolvedType = u.resolvedPod.resolveType(u.typeName, false)
-        if (u.resolvedType== null)
+        if (u.resolvedType == null) {
+          u.resolvedType = sizedPrimitive[u.typeName]
+        }
+        if (u.resolvedType == null)
         {
           err("Type not found in pod '$podName::$u.typeName'", u.loc)
           return
@@ -180,19 +184,8 @@ class ResolveImports : CompilerStep
       }
     }
 
-    //sized primitive type
-    intType := types["Int"]
-    floatType := types["Float"]
-    if (intType != null) {
-      registerType("Int8", intType.first, "8", types)
-      registerType("Int16", intType.first, "16", types)
-      registerType("Int32", intType.first, "32", types)
-      registerType("Int64", intType.first, "64", types)
-    }
-    if (floatType != null) {
-      registerType("Float32", floatType.first, "32", types)
-      registerType("Float64", floatType.first, "64", types)
-    }
+    addAll(types, sizedPrimitive.vals)
+
     /*
     // dump
     echo("--- types for $unit")
@@ -204,9 +197,18 @@ class ResolveImports : CompilerStep
     unit.importedTypes = types
   }
 
-  private Void registerType(Str name, CType root, Str extName, Str:CType[] types) {
-    int8Type := SizedPrimitiveType(root, extName)
-    types[name] = [int8Type]
+  private once Str:CType sizedPrimitive() {
+    intType := ns.intType
+    floatType := ns.floatType
+
+    return [
+     "Int8"  : SizedPrimitiveType(intType, "8"),
+     "Int16" : SizedPrimitiveType(intType, "16"),
+     "Int32" : SizedPrimitiveType(intType, "32"),
+     "Int64" : SizedPrimitiveType(intType, "64"),
+     "Float32" : SizedPrimitiveType(floatType, "32"),
+     "Float64" : SizedPrimitiveType(floatType, "64")
+    ]
   }
 
   private Void addAll(Str:CType[] types, CType[] toAdd)
@@ -221,7 +223,7 @@ class ResolveImports : CompilerStep
 
   private Void remove(Str:CType[] types, CType t)
   {
-    list := types[t.name]
+    list := types[t.name+t.extName]
     if (list != null)
     {
       for (i:=0; i<list.size; ++i)

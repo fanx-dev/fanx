@@ -174,22 +174,34 @@ class ResolveExpr : CompilerStep
       case ExprId.closure:         resolveClosure(expr)
       case ExprId.dsl:             return resolveDsl(expr)
       case ExprId.throwExpr:       expr.ctype = ns.nothingType
-      case ExprId.awaitExpr:
-        yexpr := ((AwaitExpr)expr)
-        yexpr.expr = resolveExpr(yexpr.expr)
-        if (yexpr.expr.ctype.fits(ns.promiseType)) {
-          awaitType := ((ParameterizedType)yexpr.expr.ctype.deref).genericArgs.first
-          if (awaitType != null) {
-            yexpr.ctype = awaitType.toNullable
-          } else {
-            yexpr.ctype = ns.objType.toNullable
-          }
-        }
-        else {
-          yexpr.ctype = yexpr.expr.ctype
-        }
+      case ExprId.awaitExpr:       return resolveAwait(expr)
+      case ExprId.sizeOfExpr:
+        expr.ctype = ns.intType
+      case ExprId.addressOfExpr:   return resolveAddressOf(expr)
     }
 
+    return expr
+  }
+
+  private Expr resolveAwait(AwaitExpr yexpr) {
+    //yexpr.expr = resolveExpr(yexpr.expr)
+    if (yexpr.expr.ctype.fits(ns.promiseType)) {
+      awaitType := ((ParameterizedType)yexpr.expr.ctype.deref).genericArgs.first
+      if (awaitType != null) {
+        yexpr.ctype = awaitType.toNullable
+      } else {
+        yexpr.ctype = ns.objType.toNullable
+      }
+    }
+    else {
+      yexpr.ctype = yexpr.expr.ctype
+    }
+    return yexpr
+  }
+
+  private Expr resolveAddressOf(AddressOfExpr expr) {
+    //expr.var = resolveExpr(expr.var)
+    expr.ctype = ns.ptrType
     return expr
   }
 

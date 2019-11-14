@@ -221,7 +221,7 @@ abstract class CNamespace
   once CType? funcType             () { findType("sys", "Func") }
   once CType? errType              () { findType("sys", "Err") }
   once CType? typeType             () { findType("std", "Type") }
-  //once CType? typeExtType           () { findType("std", "TypeExt") }
+  once CType? ptrType              () { findType("sys", "Ptr") }
   once CType? rangeType            () { findType("sys", "Range") }
   once CType? voidType             () { findType("sys", "Void") }
   once CType? fieldNotSetErrType   () { findType("sys", "FieldNotSetErr") }

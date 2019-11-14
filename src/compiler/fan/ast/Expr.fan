@@ -1742,7 +1742,9 @@ enum class ExprId
   closure,          // ClosureExpr
   dsl,              // DslExpr
   throwExpr,        // ThrowExpr
-  awaitExpr
+  awaitExpr,
+  sizeOfExpr,
+  addressOfExpr
 }
 
 **************************************************************************
@@ -1798,3 +1800,43 @@ enum class ShortcutOp
   const Bool isOperator
   const Str symbol
 }
+
+class SizeOfExpr : Expr
+{
+  new make(Loc loc, CType type)
+    : super(loc, ExprId.sizeOfExpr)
+  {
+    this.type = type
+    //this.ctype  = ns.intType
+  }
+
+  override Str toStr()
+  {
+    return "sizeof($type)"
+  }
+
+  CType type
+}
+
+class AddressOfExpr : Expr
+{
+  new make(Loc loc, Expr var)
+    : super(loc, ExprId.addressOfExpr)
+  {
+    this.var = var
+    //this.ctype  = ns.ptrType
+  }
+
+  override Void walkChildren(Visitor v)
+  {
+    var = var.walk(v)
+  }
+
+  override Str toStr()
+  {
+    return "addressof($var)"
+  }
+
+  Expr var
+}
+

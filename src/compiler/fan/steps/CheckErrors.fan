@@ -899,8 +899,14 @@ class CheckErrors : CompilerStep
       case ExprId.coerce:         checkTypeCheck(expr)
       case ExprId.ternary:        checkTernary(expr)
       case ExprId.throwExpr:      checkThrowExpr(expr)
+      case ExprId.addressOfExpr:  checkAddressOf(expr)
     }
     return expr
+  }
+
+  private Void checkAddressOf(AddressOfExpr expr) {
+    if (!expr.var.isAssignable)
+      err("addressof is not lvalue", expr.var.loc)
   }
 
   private Void checkTypeLiteral(LiteralExpr expr)
