@@ -30,22 +30,22 @@ native const final class Str
     if (isStatic)
       this.byte = cstr
     else
-      this.byte = Native.strdup(cstr)
+      this.byte = NativeC.strdup(cstr)
     if (byteLen == -1) {
-      byteLen = Native.strlen(cstr);
+      byteLen = NativeC.strlen(cstr);
     }
     this.byteLen = byteLen
     this.strLen = -1
-    this.charPtr = Native.fromUtf8(cstr, byteLen, addressof(this.strLen))
+    this.charPtr = NativeC.fromUtf8(cstr, byteLen, addressof(this.strLen))
     this.hashCode = -1
     this.isStatic = isStatic
   }
 
   new fromCharPtr(Ptr charPtr, Int len) {
-    this.charPtr = Native.malloc(len * sizeof(Char))
-    Native.memcpy(this.charPtr, charPtr, len * sizeof(Char))
+    this.charPtr = NativeC.malloc(len * sizeof(Char))
+    NativeC.memcpy(this.charPtr, charPtr, len * sizeof(Char))
 
-    this.byte = Native.toUtf8(charPtr, len, addressof(this.byteLen))
+    this.byte = NativeC.toUtf8(charPtr, len, addressof(this.byteLen))
     this.strLen = len
     this.charPtr = charPtr
     this.hashCode = -1
@@ -923,9 +923,9 @@ native const final class Str
 
   protected override Void finalize() {
     if (!isStatic) {
-      Native.free(byte)
+      NativeC.free(byte)
     }
-    Native.free(charPtr)
+    NativeC.free(charPtr)
     byte = Ptr.nil
     charPtr = Ptr.nil
   }

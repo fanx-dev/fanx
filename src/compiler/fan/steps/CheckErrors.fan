@@ -1422,7 +1422,8 @@ class CheckErrors : CompilerStep
       // field storage (only defining class gets it); allow closures
       // same scope priviledges as enclosing class
       enclosing := curType.isClosure ? curType.closure.enclosingType : curType
-      if (!field.isConst && !field.isReadonly && field.parent != curType && field.parent != enclosing)
+      if (!field.isConst && !field.isReadonly && field.parent.qname != curType.qname &&
+         field.parent.qname != enclosing.qname)
       {
         err("Field storage for '$field.qname' not accessible", f.loc)
         return

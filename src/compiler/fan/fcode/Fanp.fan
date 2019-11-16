@@ -114,7 +114,7 @@ class Fanp
   {
     if (file == null)
     {
-      ns := FPodNamespace(null)
+      ns := FPodNamespace(namespace == null ? null : namespace.toUri.toFile)
       FPod fpod := ns.resolvePod(podName, null)
       fpod.readFully
       return fpod
@@ -184,6 +184,11 @@ class Fanp
         i += 1
         file = args[i]
       }
+      else if (a == "-n")
+      {
+        i += 1
+        namespace = args[i]
+      }
       else if (a[0] == '-')
       {
         echo("WARNING: Unknown option $a")
@@ -213,6 +218,7 @@ class Fanp
     echo("  -l             print line number table");
     echo("  -i             print table indexes in code");
     echo("  -f <file>      disassemble from script file");
+    echo("  -n <namespace> namespace dir");
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -234,5 +240,6 @@ class Fanp
   Bool showLines  := false
   Bool showIndex  := false
   Str? file
+  Str? namespace
 
 }

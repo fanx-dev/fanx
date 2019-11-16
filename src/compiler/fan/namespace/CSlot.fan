@@ -89,7 +89,7 @@ mixin CSlot
   **
   Bool genericTypeErasure() {
     if (isParameterized && parent.qname != "sys::Array" && 
-      parent.qname != "sys::Ptr" && parent.qname != "sys::Func") return true
+      parent.qname != "sys::Ptr") return true
     return false
   }
 

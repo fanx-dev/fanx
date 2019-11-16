@@ -73,15 +73,7 @@ enum class FOp
   AddressOfVar       (FOpArg.Register),   //  59
   AddressOfInstance  (FOpArg.FieldRef),   //  60
   AddressOfStatic    (FOpArg.FieldRef),   //  61
-  SizeOf             (FOpArg.TypeRef),    //  62
-  OffsetOf           (FOpArg.FieldRef),   //  63
-  Alloc              (FOpArg.TypeRef),    //  64
-  NewArray           (FOpArg.TypeRef),    //  65
-  GetArrayElem       (FOpArg.TypeRef),    //  66
-  SetArrayElem       (FOpArg.TypeRef),    //  67
-  LoadPointer        (FOpArg.TypeRef),    //  68
-  StorePointer       (FOpArg.TypeRef),    //  69
-  MovePointer        (FOpArg.TypeRef)     //  70
+  SizeOf             (FOpArg.TypeRef)     //  62
 
   private new make(FOpArg arg := FOpArg.None) { this.arg = arg }
 

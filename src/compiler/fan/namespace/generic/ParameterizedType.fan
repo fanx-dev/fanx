@@ -144,19 +144,23 @@ class ParameterizedType : ProxyType {
     return false
   }
 
+  private Bool isTypeErasure() {
+    return qname != "sys::Array" && qname != "sys::Ptr"
+  }
+
   private CSlot parameterizeSlot(CSlot slot)
   {
     if (slot is CMethod)
     {
       CMethod m := slot
-      if (!m.isGeneric) return slot
+      if (!m.isGeneric && isTypeErasure) return slot
       p := ParameterizedMethod(this, m)
       return p
     }
     else
     {
       f := (CField)slot
-      if (!f.isGeneric) return slot
+      if (!f.isGeneric && isTypeErasure) return slot
       p := ParameterizedField(this, f)
       return p
     }

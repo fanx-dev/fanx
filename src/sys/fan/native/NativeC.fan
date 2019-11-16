@@ -6,7 +6,7 @@ using sys::Int64 as Size_t
 ** C runtime library
 **
 @NoDoc
-native class Native {
+native class NativeC {
 
   static native Int toId(Obj self)
 

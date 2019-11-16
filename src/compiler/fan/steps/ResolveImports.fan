@@ -184,7 +184,7 @@ class ResolveImports : CompilerStep
       }
     }
 
-    addAll(types, sizedPrimitive.vals)
+    if (pod.name == "sys") addAll(types, sizedPrimitive.vals)
 
     /*
     // dump

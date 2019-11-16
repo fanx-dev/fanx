@@ -72,7 +72,10 @@ class ParameterizedMethod : CMethod
 
   override Bool isParameterized()  { true }
 
-  override CType inheritedReturnType()  { generic.inheritedReturnType }
+  override CType inheritedReturnType()  {
+    if (generic.inheritedReturnType.hasGenericParameter) return returnType
+    return generic.inheritedReturnType
+  }
 
   override CType parent     { private set }
   override Str signature    { private set }

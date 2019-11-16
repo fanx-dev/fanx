@@ -6,7 +6,7 @@
 **
 @NoDoc
 const native struct class Ptr<T> {
-  static const Ptr nil
+  static const Ptr<T> nil
   private new make()
 
   static Ptr<Int8> stackAlloc(Int size)
@@ -14,7 +14,7 @@ const native struct class Ptr<T> {
   T load()
   Void store(T v)
 
-  @Operator This plus(Int b)
+  @Operator Ptr<T> plus(Int b)
 
   @Operator Void set(Int index, T item)
   @Operator T get(Int index)
