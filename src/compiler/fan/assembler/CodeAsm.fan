@@ -722,7 +722,7 @@ class CodeAsm : CompilerSupport
       }
 
       // if parameterized or covariant, then coerce
-      if (field.isParameterized)
+      if (field.genericTypeErasure)
         coerceOp(ns.objType.toNullable, field.fieldType)
       else if (field.isCovariant)
         coerceOp(field.inheritedReturnType, field.fieldType)
@@ -746,7 +746,7 @@ class CodeAsm : CompilerSupport
           op(FOp.LoadInstance, index)
       }
 
-      if (field.isParameterized)
+      if (field.genericTypeErasure)
         coerceOp(ns.objType.toNullable, field.fieldType)
     }
 
@@ -786,7 +786,7 @@ class CodeAsm : CompilerSupport
   {
     field := fexpr.field
 
-    if (field.isParameterized)
+    if (field.genericTypeErasure)
         coerceOp(field.fieldType, ns.objType.toNullable)
 
     if (fexpr.useAccessor)
@@ -991,7 +991,7 @@ class CodeAsm : CompilerSupport
     //   covariant    => actual call is against inheritedReturnType
     if (leave)
     {
-      if (m.isParameterized)
+      if (m.genericTypeErasure)
       {
         ret := m.generic.returnType
         if (ret.hasGenericParameter)
@@ -1009,7 +1009,7 @@ class CodeAsm : CompilerSupport
     if (!leave)
     {
       // note we need to use the actual method signature (not parameterized)
-      x := m.isParameterized ? m.generic : m
+      x := m.genericTypeErasure ? m.generic : m
       if (!x.returnType.isVoid || x.isInstanceCtor)
         opType(FOp.Pop, x.returnType.raw)
     }
@@ -1161,7 +1161,7 @@ class CodeAsm : CompilerSupport
         storeField((FieldExpr)var)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
-        setParam := (set.isParameterized ? set.generic : set).params[1].paramType.raw
+        setParam := (set.genericTypeErasure ? set.generic : set).params[1].paramType.raw
         //setParam := (set).params[1].paramType
         // if calling setter check if we need to boxed
         if (c.ctype.isVal && !setParam.isVal && coerce == null) coerceOp(c.ctype, setParam)

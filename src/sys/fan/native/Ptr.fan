@@ -11,7 +11,8 @@ const native struct class Ptr<T> {
 
   static Ptr<Int8> stackAlloc(Int size)
 
-  T val
+  T load()
+  Void store(T v)
 
   @Operator This plus(Int b)
 

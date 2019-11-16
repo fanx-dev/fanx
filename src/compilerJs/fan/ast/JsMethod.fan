@@ -24,7 +24,7 @@ class JsMethod : JsSlot
     this.ret        = JsTypeRef(s, m.ret, m.loc)
     this.hasClosure = ClosureFinder(m).exists
     if (m.ctorChain != null) this.ctorChain = JsExpr.makeFor(s, m.ctorChain)
-    if (m.code != null) this.code = JsBlock(s, m.code)
+    if (!m.isNative && !m.parent.isNative && m.code != null) this.code = JsBlock(s, m.code)
   }
 
   override MethodDef? node() { super.node }

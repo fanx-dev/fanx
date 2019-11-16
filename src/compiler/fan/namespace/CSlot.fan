@@ -78,6 +78,21 @@ mixin CSlot
   **
   abstract CBridge? usesBridge()
 
+  **
+  ** Is this field the parameterization of a generic field,
+  ** with the generic type replaced with a real type.
+  **
+  virtual Bool isParameterized() { false }
+
+  **
+  ** generic type erasure
+  **
+  Bool genericTypeErasure() {
+    if (isParameterized && parent.qname != "sys::Array" && 
+      parent.qname != "sys::Ptr" && parent.qname != "sys::Func") return true
+    return false
+  }
+
 }
 
 **************************************************************************
@@ -116,7 +131,7 @@ mixin CField : CSlot
   ** Is this field the parameterization of a generic field,
   ** with the generic type replaced with a real type.
   **
-  virtual Bool isParameterized() { false }
+  override Bool isParameterized() { false }
 
   **
   ** Return the bridge if this slot is foreign or uses any foreign
@@ -181,7 +196,7 @@ mixin CMethod : CSlot
   ** Is this method the parameterization of a generic method,
   ** with all the generic parameters filled in with real types.
   **
-  virtual Bool isParameterized() { false }
+  override Bool isParameterized() { false }
 
   **
   ** If isParameterized is true, then return the generic

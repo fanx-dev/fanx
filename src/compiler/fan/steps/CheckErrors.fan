@@ -1553,7 +1553,7 @@ class CheckErrors : CompilerStep
     newArgs := args.dup
     isErr := false
     params := method.params
-    genericParams := method.isParameterized ? method.generic.params : null
+    genericParams := method.genericTypeErasure ? method.generic.params : null
 
     // if we are calling call(A, B...) on a FuncType, then
     // use the first class Func signature rather than the

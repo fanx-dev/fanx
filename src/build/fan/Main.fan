@@ -92,11 +92,11 @@ class Main
   virtual Int main(Str[] args)
   {
     build = BuildPod()
-    scriptFile = args.first.toUri.toFile.normalize
+    scriptFile = args.last.toUri.toFile.normalize
     props := scriptFile.in.readProps
     parse(props)
     nargs := args.dup
-    nargs.removeAt(0)
+    nargs.pop
     return build.main(nargs)
   }
 
