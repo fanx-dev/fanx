@@ -70,9 +70,9 @@ native class ByteArray {
 }
 
 native class Array<T> {
-  new make(Int size)
-  Int size()
-  @Operator T get(Int pos)
-  @Operator Void set(Int pos, T val)
+  new make(Int32 size)
+  Int32 size()
+  @Operator T get(Int32 pos)
+  @Operator Void set(Int32 pos, T val)
 }
 

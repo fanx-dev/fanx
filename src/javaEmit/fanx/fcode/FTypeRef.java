@@ -65,6 +65,20 @@ public final class FTypeRef
     {
       switch (typeName.charAt(0))
       {
+      	case 'A':
+          if (typeName.equals("Array")) {
+        	  if (extName.equals("<sys::Bool>"))         { mask |= ARRAY_BOOL; }
+              else if (extName.equals("<sys::Int8>"))    { mask |= ARRAY_BYTE; }
+              else if (extName.equals("<sys::Int16>"))   { mask |= ARRAY_SHORT; }
+              //else if (typeName.equals("<Int16>"))   { mask |= ARRAY_CHAR; }
+              else if (extName.equals("<sys::Int32>"))   { mask |= ARRAY_INT; }
+              else if (extName.equals("<sys::Int64>"))   { mask |= ARRAY_LONG; }
+              else if (extName.equals("<sys::Int>"))     { mask |= ARRAY_LONG; }
+              else if (extName.equals("<sys::Float32>")) { mask |= ARRAY_FLOAT; }
+              else if (extName.equals("<sys::Float64>")) { mask |= ARRAY_DOUBLE; }
+              else if (extName.equals("<sys::Float>"))   { mask |= ARRAY_DOUBLE; }
+              else { mask |= ARRAY_OBJ; }
+          }
         case 'B':
           if (typeName.equals("Bool"))
           {
@@ -290,7 +304,7 @@ public final class FTypeRef
    * Return if type is represented directly as a Java primitive array
    * such as "[java]fanx.interop::IntArray".
    */
-  public boolean isPrimitiveArray()  { return (mask & PRIMITIVE_ARRAY) != 0; }
+  public boolean isArray()  { return (mask & ARRAY) != 0; }
 
   /**
    * If this type is represented as a Java primitive array, get the
@@ -298,7 +312,7 @@ public final class FTypeRef
    */
   public int arrayOfStackType()
   {
-    switch (mask & PRIMITIVE_ARRAY)
+    switch (mask & ARRAY)
     {
       case ARRAY_BOOL:   return BOOL;
       case ARRAY_BYTE:   return BYTE;
@@ -308,6 +322,7 @@ public final class FTypeRef
       case ARRAY_LONG:   return LONG;
       case ARRAY_FLOAT:  return FLOAT;
       case ARRAY_DOUBLE: return DOUBLE;
+      case ARRAY_OBJ:    return OBJ;
       default: throw new IllegalStateException(toString());
     }
   }
@@ -351,15 +366,16 @@ public final class FTypeRef
   public static final int PRIMITIVE_DOUBLE = 0x8000;
 
   // mask primitive array constants
-  public static final int PRIMITIVE_ARRAY  = 0xff0000;
-  public static final int ARRAY_BOOL       = 0x010000;
-  public static final int ARRAY_BYTE       = 0x020000;
-  public static final int ARRAY_SHORT      = 0x040000;
-  public static final int ARRAY_CHAR       = 0x080000;
-  public static final int ARRAY_INT        = 0x100000;
-  public static final int ARRAY_LONG       = 0x200000;
-  public static final int ARRAY_FLOAT      = 0x400000;
-  public static final int ARRAY_DOUBLE     = 0x800000;
+  public static final int ARRAY  = 0xfff0000;
+  public static final int ARRAY_BOOL       = 0x0010000;
+  public static final int ARRAY_BYTE       = 0x0020000;
+  public static final int ARRAY_SHORT      = 0x0040000;
+  public static final int ARRAY_CHAR       = 0x0080000;
+  public static final int ARRAY_INT        = 0x0100000;
+  public static final int ARRAY_LONG       = 0x0200000;
+  public static final int ARRAY_FLOAT      = 0x0400000;
+  public static final int ARRAY_DOUBLE     = 0x0800000;
+  public static final int ARRAY_OBJ        = 0x1000000;
 
   // stack type constants
   public static final int VOID   = 'V';

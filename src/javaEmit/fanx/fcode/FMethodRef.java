@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import fanx.emit.*;
 import fanx.main.Sys;
+import fanx.util.FanUtil;
 
 /**
  * FMethodRef is used to reference methods for a call operation.
@@ -317,7 +318,7 @@ public class FMethodRef
     if (parent.isBool())  return (Special)boolSpecials.get(name);
     if (parent.isInt())   return (Special)intSpecials.get(name);
     if (parent.isFloat()) return (Special)floatSpecials.get(name);
-    if (parent.isPrimitiveArray()) return (Special)arraySpecials.get(name);
+    if (parent.isArray()) return (Special)arraySpecials.get(name);
     return null;
   }
 
@@ -497,6 +498,15 @@ public class FMethodRef
         case FTypeRef.SHORT:  code.op1(NEWARRAY, 9); break;
         case FTypeRef.INT:    code.op1(NEWARRAY, 10); break;
         case FTypeRef.LONG:   code.op1(NEWARRAY, 11); break;
+        case FTypeRef.OBJ:
+        	String type = m.parent.extName;
+        	type = type.substring(1, type.length()-1);
+        	String typeSig = FanUtil.toJavaTypeSig(type);
+        	int cls = code.emit().cls(typeSig);
+        	
+        	//System.out.println("DEBUG:type:"+type + ",typeSig:"+typeSig + ",cls:"+cls);
+        	code.op2(ANEWARRAY, cls);
+        	break;
         default: throw new IllegalStateException(""+m.parent);
       }
     }
@@ -516,6 +526,7 @@ public class FMethodRef
         case FTypeRef.LONG:   code.op(LALOAD); break;
         case FTypeRef.FLOAT:  code.op(FALOAD); break;
         case FTypeRef.DOUBLE: code.op(DALOAD); break;
+        case FTypeRef.OBJ:    code.op(AALOAD); break;
         default: throw new IllegalStateException(""+m.parent);
       }
     }
@@ -535,6 +546,7 @@ public class FMethodRef
         case FTypeRef.LONG:   code.op(LASTORE); break;
         case FTypeRef.FLOAT:  code.op(FASTORE); break;
         case FTypeRef.DOUBLE: code.op(DASTORE); break;
+        case FTypeRef.OBJ:    code.op(AASTORE); break;
         default: throw new IllegalStateException(""+m.parent);
       }
     }

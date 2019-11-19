@@ -34,6 +34,14 @@ public class FanUtil {
     ClassType t = (ClassType) javaToFanTypes.get(name);
     if (t != null)
       return t;
+    
+    if (cls.isArray()) {
+    	Type type = Sys.findType("sys::Array");
+    	if (type == null)
+            return null;
+        javaToFanTypes.put(name, type);
+        return type;
+    }
 
     // if class name starts with "fan."
     if (name.startsWith("fan.")) {
@@ -164,6 +172,9 @@ public class FanUtil {
 //      case 'T':
 //        if (typeName.equals("Type"))
 //          return Sys.TypeClassDotName;
+      case 'A':
+    	  String r = arrayToJava(podName, typeName, "", false);
+    	  if (r != null) return r;
         break;
       }
     }
@@ -221,6 +232,9 @@ public class FanUtil {
 //      case 'T':
 //        if (typeName.equals("Type"))
 //          return "fan.sys.FanType";
+      case 'A':
+    	if (typeName.equals("Array"))
+    	  return "fan.sys.FanArray";
         break;
       }
     }
@@ -292,6 +306,9 @@ public class FanUtil {
 //      case 'T':
 //        if (typeName.equals("Type"))
 //          return Sys.TypeClassPathName;
+      case 'A':
+    	  String r = arrayToJava(podName, typeName, extName, true);
+    	  if (r != null) return r;
         break;
       }
 
@@ -313,6 +330,28 @@ public class FanUtil {
       return ffiToJavaClass(podName, typeName, true);
 
     return "fan/" + podName + "/" + typeName;
+  }
+  
+  private static String arrayToJava(String podName, String typeName, String extName, boolean sig) {
+	  if (typeName.equals("Array")) {
+    	  if (extName.equals("<Bool>"))         { return "[Z"; }
+          else if (extName.equals("<Int8>"))    { return "[B"; }
+          else if (extName.equals("<Int16>"))   { return "[S"; }
+//          else if (extName.equals("<Int16>"))   { return "[B"; }
+          else if (extName.equals("<Int32>"))   { return "[I"; }
+          else if (extName.equals("<Int64>"))   { return "[J"; }
+          else if (extName.equals("<Int>"))     { return "[J"; }
+          else if (extName.equals("<Float32>")) { return "[F"; }
+          else if (extName.equals("<Float64>")) { return "[D"; }
+          else if (extName.equals("<Float>"))   { return "[D"; }
+          else {
+        	  if (sig) {
+        		  return "[Ljava/lang/Object;";
+        	  }
+        	  return "[Ljava.lang.Object;";
+          }
+      }
+	  return null;
   }
 
   /**
@@ -387,6 +426,21 @@ public class FanUtil {
     if (isArray)
       s.append(';');
     return s.toString();
+  }
+  
+  public static String toJavaTypeSig(String name) {
+	  int start = name.indexOf(':');
+	  String pod = name.substring(0, start);
+	  int end = name.indexOf('<');
+	  if (end == -1) {
+		  end = name.indexOf('?');
+	  }
+	  if (end == -1) {
+		  end = name.length();
+	  }
+	  String type = name.substring(start+2, end);
+	  boolean nullable = name.endsWith("?");
+	  return toJavaTypeSig(pod, type, nullable, "");
   }
 
   /**
