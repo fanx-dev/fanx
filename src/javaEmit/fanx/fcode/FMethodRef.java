@@ -482,12 +482,21 @@ public class FMethodRef
 // Array Specials
 //////////////////////////////////////////////////////////////////////////
 
-  static Special arraySize = new SpecialOp(ARRAYLENGTH);
+  static Special arraySize = new Special()
+  {
+	    public void emit(FMethodRef m, CodeEmit code)
+	    {
+	      code.op(ARRAYLENGTH);
+	      if (m.parent.typeName.equals("Array")) code.op(I2L);
+	    }
+  };
 
   static Special arrayMake = new Special()
   {
     public void emit(FMethodRef m, CodeEmit code)
     {
+      if (m.parent.typeName.equals("Array")) code.op(L2I);
+    	
       switch (m.parent.arrayOfStackType())
       {
         case FTypeRef.BOOL:   code.op1(NEWARRAY, 4); break;
@@ -516,6 +525,8 @@ public class FMethodRef
   {
     public void emit(FMethodRef m, CodeEmit code)
     {
+      if (m.parent.typeName.equals("Array")) code.op(L2I);
+    	
       switch (m.parent.arrayOfStackType())
       {
         case FTypeRef.BOOL:   code.op(BALOAD); break;
@@ -536,6 +547,32 @@ public class FMethodRef
   {
     public void emit(FMethodRef m, CodeEmit code)
     {
+    	/*
+    	arrayref, index64, value
+    	arrayref, value, index64, value
+    	arrayref, value, index64
+    	arrayref, value, index32
+    	arrayref, index32, value, index32
+    	arrayref, index32, value
+		*/
+      if (m.parent.typeName.equals("Array")) {
+    	int stackType = m.parent.arrayOfStackType();
+    	if (stackType == FTypeRef.LONG || stackType == FTypeRef.DOUBLE) {
+	    	code.op(DUP2_X2);
+	    	code.op(POP2);
+	    	code.op(L2I);
+	    	code.op(DUP_X2);
+	    	code.op(POP);
+    	}
+    	else {
+    		code.op(DUP_X2);
+	    	code.op(POP);
+	    	code.op(L2I);
+	    	code.op(DUP_X1);
+	    	code.op(POP);
+    	}
+      }
+      
       switch (m.parent.arrayOfStackType())
       {
         case FTypeRef.BOOL:   code.op(BASTORE); break;

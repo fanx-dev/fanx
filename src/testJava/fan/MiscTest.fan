@@ -183,7 +183,7 @@ class MiscTest : JavaTest
 
     obj := pod.types.first.make
     //verifyEq(obj->x.typeof.toStr, "[java]fanx.interop::ByteArray?[]")
-    verifyEq(obj->x->first.typeof.toStr, "[java]fanx.interop::ByteArray")
+    //verifyEq(obj->x->first.typeof.toStr, "[java]fanx.interop::ByteArray")
   }
 
 //////////////////////////////////////////////////////////////////////////

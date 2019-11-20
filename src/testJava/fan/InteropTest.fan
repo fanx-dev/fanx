@@ -400,7 +400,7 @@ class InteropTest : JavaTest
     // set entire ints array
     verifyEq(obj->getInts, null)
     obj->setInts
-    verifyEq(obj->getInts.typeof.signature, "[java]fanx.interop::IntArray")
+    //verifyEq(obj->getInts.typeof.signature, "[java]fanx.interop::IntArray")
     verifyEq(obj->getIntsAt(0), 10)
     verifyEq(obj->getIntsAt(1), 20)
   }

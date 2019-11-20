@@ -12,7 +12,7 @@ mkdir -p $WORK_PATH/../env/lib/fan
 
 
 echo 'build fanx java'
-sh build_jar.sh
+sh build_java.sh
 
 echo 'build sys and std'
 $fanc sys/pod.props

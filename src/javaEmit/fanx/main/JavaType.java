@@ -232,7 +232,7 @@ public class JavaType extends Type {
 		}
 	}
 
-	private static Class nameToClass(ClassLoader loader, String name) throws ClassNotFoundException {
+	static Class nameToClass(ClassLoader loader, String name) throws ClassNotFoundException {
 		// first try primitives because Class.forName doesn't work for them
 		Class cls = (Class) primitiveClasses.get(name);
 		if (cls != null)

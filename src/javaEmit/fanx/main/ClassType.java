@@ -65,7 +65,7 @@ public class ClassType extends Type
 		if (jActualClass == null) {
 			try {
 				String javaImp = FanUtil.toJavaClassName(podName(), name());
-				jActualClass = ftype.pod.podClassLoader.loadClass(javaImp);
+				jActualClass = JavaType.nameToClass(ftype.pod.podClassLoader, javaImp);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -78,7 +78,7 @@ public class ClassType extends Type
 		if (jImplClass == null) {
 			try {
 				String javaImp = FanUtil.toJavaImplClassName(podName(), name());
-				jImplClass = ftype.pod.podClassLoader.loadClass(javaImp);
+				jImplClass = JavaType.nameToClass(ftype.pod.podClassLoader, javaImp);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
