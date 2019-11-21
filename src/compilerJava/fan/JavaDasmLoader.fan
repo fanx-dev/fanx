@@ -282,7 +282,11 @@ internal class JavaDasmLoader
         case "Ljava/lang/Object;":     return ns.objType.toNullable
         case "Ljava/lang/String;":     return ns.strType.toNullable
         case "Ljava/math/BigDecimal;": return ns.decimalType.toNullable
-        case "Lfanx/main/Type;": return ns.typeType.toNullable
+        case "Lfanx/main/Type;":       return ns.typeType.toNullable
+        case "Ljava/lang/Long;":       return ns.intType.toNullable
+        case "Ljava/lang/Double;":     return ns.floatType.toNullable
+        case "Ljava/lang/Boolean;":    return ns.boolType.toNullable
+        case "Ljava/lang/Number;":     return ns.resolveType("sys::Num").toNullable
       }
     }
 

@@ -337,4 +337,19 @@ class MiscTest : JavaTest
     obj->main
   }
 
+  Void test2766()
+  {
+    compile(
+     """using [java] fanx.test
+        class Foo
+        {
+          Void main() {
+            InteropTest x := InteropTest()
+            x.setAmount(2)
+          }
+        }""")
+
+    obj := pod.types.first.make
+    obj->main
+  }
 }
