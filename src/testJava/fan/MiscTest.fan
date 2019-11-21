@@ -316,4 +316,25 @@ class MiscTest : JavaTest
     verifyEq(obj->foo, 3)
   }
 
+  Void testArray()
+  {
+    compile(
+     """using [java] fanx.test
+        using [java] fanx.interop::ShortArray as JShortArray
+        class Foo
+        {
+          Void main() {
+            InteropTest x := InteropTest()
+            //a := Array<Int16>(2)
+            //x.setShortArray(a)
+
+            ja := JShortArray(2)
+            x.setShortArray(ja)
+          }
+        }""")
+
+    obj := pod.types.first.make
+    obj->main
+  }
+
 }

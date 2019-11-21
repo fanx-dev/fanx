@@ -122,6 +122,9 @@ public long[] longArray(long a, long b) { return new long[] { a, b }; }
 public float[] floatArray(float a, float b) { return new float[] { a, b }; }
 public double[] doubleArray(double a, double b) { return new double[] { a, b }; }
 
+public void setShortArray(short[] a) {}
+public void setAmount(Long amount) {}
+
 //////////////////////////////////////////////////////////////////////////
 //Multi-dimensional Arrays
 //////////////////////////////////////////////////////////////////////////
