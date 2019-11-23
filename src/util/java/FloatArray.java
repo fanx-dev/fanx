@@ -1,4 +1,4 @@
-package fan.std;
+package fan.util;
 
 import fanx.main.Sys;
 import fanx.main.Type;
@@ -31,7 +31,7 @@ public abstract class FloatArray extends FanObj {
 
 	public final Type typeof() {
 		if (type == null)
-			type = Sys.findType("std::FloatArray");
+			type = Sys.findType("util::FloatArray");
 		return type;
 	}
 

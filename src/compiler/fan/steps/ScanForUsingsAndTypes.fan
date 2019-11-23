@@ -73,13 +73,6 @@ class UsingAndTypeScanner : CompilerSupport
     // sys is imported implicitly (unless this is sys itself)
     if (!isSys) {
       unit.usings.add(Using(unit.loc) { podName="sys" })
-
-      //std and reflect is imported implicitly
-      if (pod.name != "std") {
-        if (pod.depends.any { it.name == "std" }) {
-          unit.usings.add(Using(unit.loc) { podName="std" })
-        }
-      }
     }
 
     // scan tokens quickly looking for keywords
@@ -101,6 +94,23 @@ class UsingAndTypeScanner : CompilerSupport
             inClassHeader = true;
             parseType(tok);
           }
+      }
+    }
+
+    if (!isSys) {
+      //std and reflect is imported implicitly
+      if (pod.name != "std") {
+        dependsStd := pod.depends.any { it.name == "std" }
+        usingStd := unit.usings.find |u| {
+          if (u.podName == "std" && u.typeName == null) {
+            return true
+          }
+          return false
+        }
+        if (dependsStd && usingStd == null) {
+          //echo("auto using std")
+          unit.usings.insert(1, Using(unit.loc) { podName="std" })
+        }
       }
     }
   }

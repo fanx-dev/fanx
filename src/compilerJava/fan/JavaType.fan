@@ -137,6 +137,16 @@ class JavaType : CType
     // arrays => List
     if (isArray && t is ListType) return arrayOf.fits(((ListType)t).v)
 
+    if (t.isFloat) {
+      if (this.qname == "[java]java.lang::Double") return true
+    }
+    else if (t.isInt) {
+      if (this.qname == "[java]java.lang::Long") return true
+    }
+    else if (t.isBool) {
+      if (this.qname == "[java]java.lang::Boolean") return true
+    }
+
     // doesn't fit
     return false
   }
