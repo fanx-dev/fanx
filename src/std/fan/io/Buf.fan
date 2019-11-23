@@ -165,8 +165,8 @@ rtconst abstract class Buf
   protected abstract Int getByte(Int pos)
   protected abstract Void setByte(Int pos, Int v)
 
-  protected abstract Int getBytes(Int pos, ByteArray dst, Int off, Int len)
-  protected abstract Void setBytes(Int pos, ByteArray src, Int off, Int len)
+  protected abstract Int getBytes(Int pos, Array<Int8> dst, Int off, Int len)
+  protected abstract Void setBytes(Int pos, Array<Int8> src, Int off, Int len)
 
   **
   ** Return a new buffer containing the bytes in the specified absolute
@@ -191,7 +191,7 @@ rtconst abstract class Buf
     n := (e - s + 1);
     if (n < 0) throw IndexErr.make("$range");
 
-    a := ByteArray(n)
+    a := Array<Int8>(n)
     getBytes(s, a, 0, n)
     //a.copyFrom(buf, s, 0, n)
     buf := MemBuf.makeBuf(a)
@@ -204,7 +204,7 @@ rtconst abstract class Buf
   **
   virtual Buf dup() {
     size := this.size
-    a := ByteArray(size)
+    a := Array<Int8>(size)
     getBytes(0, a, 0, size)
     //a.copyFrom(buf, 0, 0, size)
     return MemBuf.makeBuf(a)
@@ -567,9 +567,9 @@ rtconst abstract class Buf
 // Conversions
 //////////////////////////////////////////////////////////////////////////
 
-  protected virtual ByteArray? unsafeArray() { null }
-  protected virtual ByteArray safeArray() {
-    ba := ByteArray(size)
+  protected virtual Array<Int8>? unsafeArray() { null }
+  protected virtual Array<Int8> safeArray() {
+    ba := Array<Int8>(size)
     getBytes(0, ba, 0, size)
     return ba
   }
@@ -592,7 +592,7 @@ rtconst abstract class Buf
     }
 
     oldPos := pos
-    temp := ByteArray(1024)
+    temp := Array<Int8>(1024)
     total := 0
     in := this.in
     size := size
@@ -611,7 +611,7 @@ rtconst abstract class Buf
   }
   internal static const Str hexChars := "0123456789abcdef"
 
-  private Void memToHex(ByteArray temp, Int n, StrBuf sb) {
+  private Void memToHex(Array<Int8> temp, Int n, StrBuf sb) {
     for (i:=0; i<n; ++i) {
       b := temp[i].and(0xFF)
       h := b.shiftr(4)
@@ -641,7 +641,7 @@ rtconst abstract class Buf
   **
   static Buf fromHex(Str s) {
     slen := s.size
-    buf := ByteArray(slen/2)
+    buf := Array<Int8>(slen/2)
     size := 0
 
     for (i:=0; i<slen; ++i) {
@@ -664,7 +664,7 @@ rtconst abstract class Buf
 
 
   protected virtual Void pipeTo(OutStream out, Int len) {
-    temp := ByteArray(1024)
+    temp := Array<Int8>(1024)
     total := 0
     in := this.in
     while (total < len) {
@@ -679,7 +679,7 @@ rtconst abstract class Buf
 
   protected virtual Int pipeFrom(InStream in, Int len) {
     total := 0
-    ba := ByteArray(1024)
+    ba := Array<Int8>(1024)
     while (total < len) {
       n := in.readBytes(ba, 0, ba.size.min(len - total))
       if (n < 0)

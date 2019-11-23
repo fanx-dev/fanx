@@ -60,7 +60,7 @@ class CharsetTest : Test
 
   Void testEncode() {
     charset := Charset.utf8
-    ba := ByteArray(8)
+    ba := Array<Int8>(8)
     ch := '你'
     n := charset.encodeArray(ch, ba, 0)
     verifyEq(n, 3)

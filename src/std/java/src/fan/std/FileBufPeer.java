@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import fan.sys.ByteArray;
 import fan.sys.IOErr;
 
 public class FileBufPeer {
@@ -81,11 +80,11 @@ public class FileBufPeer {
 		}
 	}
 
-	long getBytes(FileBuf self, long pos, ByteArray dst, long off, long len) {
+	long getBytes(FileBuf self, long pos, byte[] dst, long off, long len) {
 		try {
 			long oldPos = fp.getFilePointer();
 			fp.seek(pos);
-			int r = fp.read(dst.array(), (int)off, (int)len);
+			int r = fp.read(dst, (int)off, (int)len);
 			fp.seek(oldPos);
 			return r;
 		} catch (IOException e) {
@@ -93,11 +92,11 @@ public class FileBufPeer {
 		}
 	}
 	
-	void setBytes(FileBuf self, long pos, ByteArray src, long off, long len) {
+	void setBytes(FileBuf self, long pos, byte[] src, long off, long len) {
 		try {
 			long oldPos = fp.getFilePointer();
 			fp.seek(pos);
-			fp.write(src.array(), (int)off, (int)len);
+			fp.write(src, (int)off, (int)len);
 			fp.seek(oldPos);
 		} catch (IOException e) {
 			throw IOErr.make(e);

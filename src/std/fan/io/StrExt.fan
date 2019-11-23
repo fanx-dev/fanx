@@ -396,7 +396,7 @@ internal class StrInStream : InStream {
   override Int avail() { size - pos }
   override Int read() { throw UnsupportedErr("Binary read on Str.in") }
   override Int skip(Int n) { pos += n }
-  override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) { throw UnsupportedErr("Binary read on Str.in") }
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) { throw UnsupportedErr("Binary read on Str.in") }
   override This unread(Int n) { throw UnsupportedErr("Binary read on Str.in") }
   override Bool close() { true }
 
@@ -427,7 +427,7 @@ internal class StrOutStream : OutStream {
   }
 
   override This write(Int byte) { throw UnsupportedErr("Binary write on StrBuf.out") }
-  override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) { throw UnsupportedErr("Binary write on StrBuf.out") }
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) { throw UnsupportedErr("Binary write on StrBuf.out") }
   override This sync() { this }
   override This flush() { this }
   override Bool close() { true }

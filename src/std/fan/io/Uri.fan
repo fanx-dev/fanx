@@ -437,7 +437,7 @@ const final class Uri
   **
   static Str decodeToken(Str s, Int section) {
     sb := StrBuf()
-    ba := ByteArray(s.size)
+    ba := Array<Int8>(s.size)
     bp := 0
     for (i:=0; i<s.size; ++i) {
       ch := s[i]

@@ -175,7 +175,7 @@ internal class NilOutStream : OutStream
   override This flush()  { this }
   override This sync() { this }
   override Bool close() { true }
-  override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) { this }
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) { this }
   override Endian endian := Endian.big
   override Charset charset := Charset.utf8
 }

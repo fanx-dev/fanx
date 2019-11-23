@@ -53,7 +53,7 @@ public class SeededRandomPeer
   {
     byte[] b = new byte[(int)size];
     rand.nextBytes(b);
-    return MemBuf.makeBuf(new ByteArray(b));
+    return MemBuf.makeBuf(b);
   }
 
   java.util.Random rand;

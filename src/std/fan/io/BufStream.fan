@@ -26,7 +26,7 @@ internal class BufOutStream : OutStream {
     if (buf.pos > buf.size) buf.size = buf.pos
     return this
   }
-  override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     if (buf.capacity < buf.pos+len) {
       buf.capacity = buf.capacity * 2  + len
     }
@@ -38,7 +38,7 @@ internal class BufOutStream : OutStream {
 
   //Buf stream is not buffered
   override This writeChars(Str str, Int off := 0, Int len := str.size-off) {
-    ba := ByteArray(str.size*3)
+    ba := Array<Int8>(str.size*3)
     pos := 0
     for (i:=0; i<len; ++i) {
       ch := str[i+off]
@@ -86,7 +86,7 @@ internal class BufInStream : InStream {
     buf.pos = pos
     return n
   }
-  override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     m := avail
     if (m <= 0) return -1
     len = len.min(m)
@@ -110,7 +110,7 @@ internal class BufInStream : InStream {
         buf.capacity = buf.capacity + 1
       }
       ba := (buf as MemBuf).buf
-      ba.copyFrom(ba, pos, pos+1, buf.size-pos)
+      Array.arraycopy(ba, pos, ba, pos+1, buf.size-pos)
       buf.setByte(pos, n)
       buf.size++
     }

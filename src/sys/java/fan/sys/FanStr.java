@@ -1016,27 +1016,27 @@ public class FanStr
 //    return buf.flip();
 //  }
   
-  public static ByteArray toUtf8(String self) {
+  public static byte[] toUtf8(String self) {
 	  byte[] bs;
 	try {
 		bs = self.getBytes("UTF-8");
-		return new ByteArray(bs);
+		return bs;
 	} catch (UnsupportedEncodingException e) {
 		throw UnsupportedErr.make(e);
 	}
   }
   
-  public static String fromUtf8(ByteArray ba, long offset) {
-	  return fromUtf8(ba, offset, ba.size());
+  public static String fromUtf8(byte[] ba, long offset) {
+	  return fromUtf8(ba, offset, ba.length);
   }
   
-  public static String fromUtf8(ByteArray ba) {
-	  return fromUtf8(ba, 0, ba.size());
+  public static String fromUtf8(byte[] ba) {
+	  return fromUtf8(ba, 0, ba.length);
   }
   
-  public static String fromUtf8(ByteArray ba, long offset, long len) {
+  public static String fromUtf8(byte[] ba, long offset, long len) {
 	try {
-		String s = new String(ba.array(), (int)offset, (int)len, "UTF-8");
+		String s = new String(ba, (int)offset, (int)len, "UTF-8");
 		return s;
 	} catch (UnsupportedEncodingException e) {
 		throw UnsupportedErr.make(e);

@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import fan.std.SysInStreamPeer.JInputStream;
-import fan.sys.ByteArray;
 import fan.sys.IOErr;
 
 public class SysOutStreamPeer {
@@ -41,7 +40,7 @@ public class SysOutStreamPeer {
 		
 		@Override
 		public void write(byte b[], int off, int len) {
-			ByteArray ba = new ByteArray(b);
+			byte[] ba = b;
 			out.writeBytes(ba, off, len);
 		}
 		
@@ -101,9 +100,9 @@ public class SysOutStreamPeer {
 		}
 	}
 
-	public OutStream writeBytes(SysOutStream self, ByteArray buf, long off, long len) {
+	public OutStream writeBytes(SysOutStream self, byte[] buf, long off, long len) {
 		try {
-			this.outStream.write(buf.array(), (int) off, (int) len);
+			this.outStream.write(buf, (int) off, (int) len);
 			return self;
 		} catch (IOException e) {
 			throw IOErr.make(e);

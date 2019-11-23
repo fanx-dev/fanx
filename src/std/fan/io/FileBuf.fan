@@ -21,8 +21,8 @@ internal class FileBuf : Buf
   native override Int getByte(Int index)
   native override Void setByte(Int index, Int byte)
 
-  native override Int getBytes(Int pos, ByteArray dst, Int off, Int len)
-  native override Void setBytes(Int pos, ByteArray src, Int off, Int len)
+  native override Int getBytes(Int pos, Array<Int8> dst, Int off, Int len)
+  native override Void setBytes(Int pos, Array<Int8> src, Int off, Int len)
 
   native override Bool close()
   native override This sync()
@@ -55,8 +55,8 @@ internal class NioBuf : Buf
   native override Int getByte(Int index)
   native override Void setByte(Int index, Int byte)
 
-  native override Int getBytes(Int pos, ByteArray dst, Int off, Int len)
-  native override Void setBytes(Int pos, ByteArray src, Int off, Int len)
+  native override Int getBytes(Int pos, Array<Int8> dst, Int off, Int len)
+  native override Void setBytes(Int pos, Array<Int8> src, Int off, Int len)
 
   native override Bool close()
   native override This sync()

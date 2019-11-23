@@ -6,7 +6,6 @@ import javax.crypto.spec.*;
 import java.util.zip.*;
 
 import fan.sys.ArgErr;
-import fan.sys.ByteArray;
 import fan.sys.Err;
 import fan.sys.UnsupportedErr;
 
@@ -26,12 +25,12 @@ public class BufCryptoPeer {
   }
 
   private static long crc(Buf self, Checksum checksum) {
-    checksum.update(self.unsafeArray().array(), 0, (int) self.size());
+    checksum.update(self.unsafeArray(), 0, (int) self.size());
     return checksum.getValue() & 0xffffffff;
   }
 
   private static long crc16(Buf self) {
-    byte[] array = self.unsafeArray().array();
+    byte[] array = self.unsafeArray();
     int size = (int) self.size();
     int seed = 0xffff;
     for (int i = 0; i < size; ++i)
@@ -59,18 +58,18 @@ public class BufCryptoPeer {
   //////////////////////////////////////////////////////////////////////////
 
   public static Buf toDigest(Buf self, String algorithm) {
-    ByteArray ba = self.unsafeArray();
+    byte[] ba = self.unsafeArray();
     if (ba != null) {
       return memToDigest(ba, (int)self.size(), algorithm);
     }
     return fileToDigest(self, algorithm);
   }
 
-  public static Buf memToDigest(ByteArray ba, int size, String algorithm) {
+  public static Buf memToDigest(byte[] ba, int size, String algorithm) {
     try {
       MessageDigest md = MessageDigest.getInstance(algorithm);
-      md.update(ba.array(), 0, size);
-      return MemBuf.makeBuf(new ByteArray(md.digest()));
+      md.update(ba, 0, size);
+      return MemBuf.makeBuf(md.digest());
     } catch (NoSuchAlgorithmException e) {
       throw ArgErr.make("Unknown digest algorthm: " + algorithm);
     }
@@ -80,7 +79,7 @@ public class BufCryptoPeer {
     try {
       long oldPos = self.pos();
       long size = self.size();
-      ByteArray temp = ByteArray.make(1024);
+      byte[] temp = new byte[1024];
       MessageDigest md = MessageDigest.getInstance(algorithm);
 
       InStream in = self.in();
@@ -88,16 +87,16 @@ public class BufCryptoPeer {
       self.pos(0);
       long total = 0;
       while (total < size) {
-        long n = in.readBytes(temp, 0, (int) java.lang.Math.min(temp.size(), (int) size - total));
+        long n = in.readBytes(temp, 0, (int) java.lang.Math.min(temp.length, (int) size - total));
         if (n < 0) {
           break;
         }
-        md.update(temp.array(), 0, (int) n);
+        md.update(temp, 0, (int) n);
         total += n;
       }
 
       self.pos(oldPos);
-      return MemBuf.makeBuf(new ByteArray(md.digest()));
+      return MemBuf.makeBuf(md.digest());
     } catch (NoSuchAlgorithmException e) {
       throw ArgErr.make("Unknown digest algorthm: " + algorithm);
     }
@@ -122,7 +121,7 @@ public class BufCryptoPeer {
     int keySize = 0;
     try {
       // get key bytes
-      keyBytes = keyBuf.safeArray().array();
+      keyBytes = keyBuf.safeArray();
       keySize = keyBytes.length;
 
       // key is greater than block size we hash it first
@@ -148,7 +147,7 @@ public class BufCryptoPeer {
       else
         md.update((byte) 0x36);
     }
-    md.update(self.unsafeArray().array(), 0, (int) self.size());
+    md.update(self.unsafeArray(), 0, (int) self.size());
     byte[] innerDigest = md.digest();
 
     // outer digest: H(K XOR opad, innerDigest)
@@ -162,7 +161,7 @@ public class BufCryptoPeer {
     md.update(innerDigest);
 
     // return result
-    return MemBuf.makeBuf(new ByteArray(md.digest()));
+    return MemBuf.makeBuf(md.digest());
   }
 
   //////////////////////////////////////////////////////////////////////////
@@ -172,18 +171,18 @@ public class BufCryptoPeer {
   public static Buf pbk(String algorithm, String pass, Buf _salt, long _iterations, long _keyLen) {
     try {
       // get low-level representation of args
-      byte[] salt = _salt.safeArray().array();
+      byte[] salt = _salt.safeArray();
       int iterations = (int) _iterations;
       int keyLen = (int) _keyLen;
 
       // this is not supported until Java8, so use custom implementation
       if (algorithm.equals("PBKDF2WithHmacSHA256"))
-        return MemBuf.makeBuf(new ByteArray(PBKDF2WithHmacSHA256.gen(pass, salt, iterations, keyLen)));
+        return MemBuf.makeBuf(PBKDF2WithHmacSHA256.gen(pass, salt, iterations, keyLen));
 
       // use built-in Java APIs
       PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt, iterations, keyLen * 8);
       SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
-      return MemBuf.makeBuf(new ByteArray(skf.generateSecret(spec).getEncoded()));
+      return MemBuf.makeBuf(skf.generateSecret(spec).getEncoded());
     } catch (NoSuchAlgorithmException e) {
       throw ArgErr.make("Unsupported algorithm: " + algorithm, e);
     } catch (Exception e) {

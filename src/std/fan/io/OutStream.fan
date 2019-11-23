@@ -53,7 +53,7 @@ abstract class OutStream
   **
   ** Writes len bytes from the specified byte array starting at offset off to this output stream.
   **
-  virtual This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+  virtual This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     for (i:=0; i<len; ++i) {
       write(ba[off+i])
     }
@@ -269,7 +269,7 @@ class ProxyOutStream : OutStream
   }
 
   override This write(Int byte) { out.write(byte); return this }
-  override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size) { out.writeBytes(ba, off, len); return this }
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) { out.writeBytes(ba, off, len); return this }
   override This sync() { out.sync; return this }
   override This flush() { out.flush; return this }
   override Bool close() { out.close }
@@ -297,7 +297,7 @@ internal class SysOutStream : OutStream {
   }
 
   native override This write(Int byte)
-  native override This writeBytes(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size)
   native override This sync()
   native override This flush()
   native override Bool close()

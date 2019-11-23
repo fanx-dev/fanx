@@ -917,9 +917,9 @@ native const final class Str
   **
   //Buf toBuf(Charset charset := Charset.utf8)
 
-  ByteArray toUtf8()
+  Array<Int8> toUtf8()
 
-  static new fromUtf8(ByteArray ba, Int offset := 0, Int len := ba.size)
+  static new fromUtf8(Array<Int8> ba, Int offset := 0, Int len := ba.size)
 
   protected override Void finalize() {
     if (!isStatic) {

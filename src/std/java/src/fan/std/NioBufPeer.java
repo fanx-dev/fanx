@@ -8,7 +8,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 import fan.sys.ArgErr;
-import fan.sys.ByteArray;
 import fan.sys.IOErr;
 import fan.sys.UnsupportedErr;
 
@@ -97,18 +96,18 @@ public class NioBufPeer {
 		buf.put((int) pos, (byte) b);
 	}
 
-	long getBytes(NioBuf self, long pos, ByteArray dst, long off, long len) {
+	long getBytes(NioBuf self, long pos, byte[] dst, long off, long len) {
 		int oldPos = buf.position();
 		buf.position((int) pos);
-		buf.get(dst.array(), (int) off, (int) len);
+		buf.get(dst, (int) off, (int) len);
 		buf.position(oldPos);
 		return len;
 	}
 
-	void setBytes(NioBuf self, long pos, ByteArray src, long off, long len) {
+	void setBytes(NioBuf self, long pos, byte[] src, long off, long len) {
 		int oldPos = buf.position();
 		buf.position((int) pos);
-		buf.put(src.array(), (int) off, (int) len);
+		buf.put(src, (int) off, (int) len);
 		buf.position(oldPos);
 	}
 

@@ -61,7 +61,7 @@ abstract class InStream
   **
   ** Reads up to len bytes of data from the input stream into an array of bytes.
   **
-  virtual Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+  virtual Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     i := 0
     for (; i<len; ++i) {
       c := read
@@ -312,7 +312,7 @@ abstract class InStream
   **
   virtual Str readUtf() {
     sz := readS2
-    ba := ByteArray(sz)
+    ba := Array<Int8>(sz)
     readBytes(ba)
     return Str.fromUtf8(ba)
   }
@@ -341,7 +341,7 @@ abstract class InStream
   ** character encoding.  Return this.
   **
   virtual This unreadChar(Int b) {
-    ba := ByteArray(8)
+    ba := Array<Int8>(8)
     n := charset.encodeArray(b, ba, 0)
     for (i:=n-1; i>=0; --i) {
       unread(ba[i])
@@ -664,7 +664,7 @@ class ProxyInStream : InStream
   override Int avail() { in.avail }
   override Int read() { in.read }
   override Int skip(Int n) { in.skip(n) }
-  override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) { in.readBytes(ba, off, len) }
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) { in.readBytes(ba, off, len) }
   override This unread(Int n) { in.unread(n) }
   override Bool close() { in.close }
 
@@ -694,7 +694,7 @@ internal class SysInStream : InStream
   native override Int avail()
   native override Int read()
   native override Int skip(Int n)
-  native override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size)
+  native override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size)
   native override This unread(Int n)
   native override Bool close()
 

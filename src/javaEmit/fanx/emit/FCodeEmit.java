@@ -748,8 +748,73 @@ public class FCodeEmit
     // compute the right method call signature
     StringBuilder s = new StringBuilder();
     s.append("fanx/util/OpUtil.compare").append(suffix).append('(');
-    if (lhs.isRef()) s.append("Ljava/lang/Object;"); else lhs.jsig(s);
-    if (rhs.isRef()) s.append("Ljava/lang/Object;"); else rhs.jsig(s);
+    if (lhs.isRef()) s.append("Ljava/lang/Object;"); 
+    else {
+    	if (lhs.isPrimitiveIntLike()) {
+    		//same as FMethodRef.arraySet
+    		if (rhs.isWide()) {
+    			//lhs, (rhs-part1, rhs-part2)
+    			//(rhs-part1, rhs-part2), lhs, (rhs-part1, rhs-part2)
+    			//(rhs-part1, rhs-part2), lhs
+    			//(rhs-part1, rhs-part2), (lhs-part1, lhs-part2)
+    			//(lhs-part1, lhs-part2), (rhs-part1, rhs-part2), (lhs-part1, lhs-part2)
+    			//(lhs-part1, lhs-part2), (rhs-part1, rhs-part2)
+    	    	code.op(DUP2_X1);
+    	    	code.op(POP2);
+    	    	code.op(I2L);
+    	    	code.op(DUP2_X2);
+    	    	code.op(POP2);
+        	}
+        	else {
+        		//lhs, rhs
+    			//rhs, lhs, rhs
+    			//rhs, lhs
+    			//rhs, (lhs-part1, lhs-part2)
+    			//(lhs-part1, lhs-part2), rhs, (lhs-part1, lhs-part2)
+    			//(lhs-part1, lhs-part2), rhs
+        		code.op(DUP_X1);
+    	    	code.op(POP);
+    	    	code.op(I2L);
+    	    	code.op(DUP2_X1);
+    	    	code.op(POP2);
+        	}
+    		s.append("J");
+    	}
+    	else if (lhs.isPrimitiveFloat()) {
+    		if (rhs.isWide()) {
+    	    	code.op(DUP2_X1);
+    	    	code.op(POP2);
+    	    	code.op(F2D);
+    	    	code.op(DUP2_X2);
+    	    	code.op(POP2);
+        	}
+        	else {
+        		code.op(DUP_X1);
+    	    	code.op(POP);
+    	    	code.op(F2D);
+    	    	code.op(DUP2_X1);
+    	    	code.op(POP2);
+        	}
+    		s.append("D");
+    	}
+    	else {
+    		lhs.jsig(s);
+    	}
+    }
+    if (rhs.isRef()) s.append("Ljava/lang/Object;"); 
+    else {
+    	if (rhs.isPrimitiveIntLike()) {
+    		code.op(I2L);
+    		s.append("J");
+    	}
+    	else if (rhs.isPrimitiveFloat()) {
+    		code.op(F2D);
+    		s.append("D");
+    	}
+    	else {
+    		rhs.jsig(s);
+    	}
+    }
     s.append(')');
     if (suffix == "") s.append('J'); else s.append('Z');
 

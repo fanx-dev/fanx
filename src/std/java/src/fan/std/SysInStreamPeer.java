@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 
-import fan.sys.ByteArray;
 import fan.sys.IOErr;
 
 public class SysInStreamPeer {
@@ -36,7 +35,7 @@ public class SysInStreamPeer {
 
     @Override
     public int read(byte b[], int off, int len) {
-      ByteArray ba = new ByteArray(b);
+      byte[] ba = b;
       int res = (int)in.readBytes(ba, off, len);
       return res;
     }
@@ -130,9 +129,9 @@ public class SysInStreamPeer {
       }
   }
 
-  public long readBytes(SysInStream self, ByteArray ba, long off, long len) {
+  public long readBytes(SysInStream self, byte[] ba, long off, long len) {
     try {
-      return this.inputStream.read(ba.array(), (int)off, (int)len);
+      return this.inputStream.read(ba, (int)off, (int)len);
     } catch (IOException e) {
       throw IOErr.make(e);
     }

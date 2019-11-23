@@ -12,21 +12,21 @@
 @NoDoc
 class MemBuf : Buf
 {
-  protected ByteArray buf
+  protected Array<Int8> buf
 
   new make(Int cap) : super.privateMake() {
-    buf = ByteArray(cap)
+    buf = Array<Int8>(cap)
     &size = 0
     &pos = 0
   }
 
-  new makeBuf(ByteArray buf, Int size := buf.size, Int pos := 0) : super.privateMake() {
+  new makeBuf(Array<Int8> buf, Int size := buf.size, Int pos := 0) : super.privateMake() {
     this.buf = buf
     this.&size = size
     this.pos = pos
   }
 
-  protected override ByteArray? unsafeArray() { buf }
+  protected override Array<Int8>? unsafeArray() { buf }
 
   override Int size {
     set {
@@ -39,7 +39,7 @@ class MemBuf : Buf
   override Int capacity { get{ return buf.size }
     set {
       if (it < size) throw ArgErr("capacity < size")
-      buf = buf.realloc(it)
+      buf = Array.realloc(buf, it)
     }
   }
   override Int pos {
@@ -51,15 +51,19 @@ class MemBuf : Buf
     }
   }
 
-  override Int getBytes(Int pos, ByteArray dst, Int off, Int len) {
-    dst.copyFrom(buf, pos, off, len)
+  override Int getBytes(Int pos, Array<Int8> dst, Int off, Int len) {
+    Array.arraycopy(buf, pos, dst, off, len)
     return len
   }
-  override Void setBytes(Int pos, ByteArray src, Int off, Int len) {
-    buf.copyFrom(src, off, pos, len)
+  override Void setBytes(Int pos, Array<Int8> src, Int off, Int len) {
+    Array.arraycopy(src, off, buf, pos, len)
   }
 
-  override Int getByte(Int index) { buf.get(index) }
+  override Int getByte(Int index) {
+    Int8 b = buf.get(index)
+    //signed to unsigned
+    return b.and(0xFF)
+  }
 
   override Void setByte(Int index, Int byte) {
     buf.set(index, byte)
@@ -104,7 +108,7 @@ class MemBuf : Buf
     old := buf
     osize := size
     //opos := pos
-    this.buf = ByteArray(0)
+    this.buf = Array<Int8>(0)
     this.size = 0
     this.pos = 0
     return ConstBuf.makeBuf(old, osize, endian, charset)

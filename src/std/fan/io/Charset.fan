@@ -104,16 +104,16 @@ const class Charset
   protected const Encoder encoder
 
   Int encode(Int ch, OutStream out) { encoder.encode(ch, out) }
-  Int encodeArray(Int ch, ByteArray out, Int offset) { encoder.encodeArray(ch, out, offset) }
+  Int encodeArray(Int ch, Array<Int8> out, Int offset) { encoder.encodeArray(ch, out, offset) }
   Int decode(InStream in) { encoder.decode(in) }
 }
 
 @NoDoc
 const abstract class Encoder {
   abstract Int encode(Int ch, OutStream out)
-  abstract Int encodeArray(Int ch, ByteArray out, Int offset)
+  abstract Int encodeArray(Int ch, Array<Int8> out, Int offset)
   abstract Int decode(InStream in)
-  //abstract Int decodeArray(ByteArray in, Int offset)
+  //abstract Int decodeArray(Array<Int8> in, Int offset)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ internal const class NativeCharset : Encoder {
   native static Charset? fromStr(Str name)
 
   native override Int encode(Int ch, OutStream out)
-  native override Int encodeArray(Int ch, ByteArray out, Int offset)
+  native override Int encodeArray(Int ch, Array<Int8> out, Int offset)
   native override Int decode(InStream in)
 }
 
@@ -163,7 +163,7 @@ internal const class Utf8 : Encoder {
     }
   }
 
-  override Int encodeArray(Int c, ByteArray out, Int offset) {
+  override Int encodeArray(Int c, Array<Int8> out, Int offset) {
     i := offset
     //echo("encode1 $c")
     if (c <= 0x007F) {
@@ -271,7 +271,7 @@ internal const class Utf16 : Encoder {
     }
   }
 
-  protected virtual Void setBE16(Int c, ByteArray out, Int i) {
+  protected virtual Void setBE16(Int c, Array<Int8> out, Int i) {
     if (bigEndian) {
       out.set(i, c.shiftr(8).and(0xFF))
       out.set(i+1, c.and(0xFF))
@@ -281,7 +281,7 @@ internal const class Utf16 : Encoder {
     }
   }
 
-  override Int encodeArray(Int c, ByteArray out, Int offset) {
+  override Int encodeArray(Int c, Array<Int8> out, Int offset) {
     i := offset
     if (c <= 0xD7FF || (0xE000 <= c && c <= 0xFFFF)) {
       setBE16(c, out, i)

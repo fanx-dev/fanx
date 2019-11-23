@@ -94,7 +94,7 @@ class BufCrypto {
     slen := s.size
     si := 0
     max := slen * 6 / 8
-    buf := ByteArray(max)
+    buf := Array<Int8>(max)
     size := 0
 
     while (si < slen) {

@@ -164,7 +164,7 @@ public class Interop
   public static java.nio.ByteBuffer toJava(Buf buf)
   {
 	  if (buf instanceof MemBuf) {
-		  byte[] b = ((MemBuf)buf).buf.array();
+		  byte[] b = ((MemBuf)buf).buf;
 		  return java.nio.ByteBuffer.wrap(b, (int)buf.pos(), (int)(buf.size()-buf.pos()));
 	  }
 	  else if (buf instanceof NioBuf) {
@@ -319,20 +319,20 @@ public class Interop
 ////Array
 ////////////////////////////////////////////////////////////////////////////
   
-  public static byte[] toJava(fan.sys.ByteArray a) {
-	  return a.array();
-  }
-  
-  public static fan.sys.ByteArray toFan(byte[] a) {
-	  return new fan.sys.ByteArray(a);
-  }
+//  public static byte[] toJava(byte[] a) {
+//	  return a;
+//  }
+//  
+//  public static byte[] toFan(byte[] a) {
+//	  return a;
+//  }
   
   public static byte[] toJavaByteArray(fan.std.MemBuf a) {
-	  return a.buf.array();
+	  return a.buf;
   }
   
   public static fan.std.MemBuf toFanBuf(byte[] a) {
-	  return fan.std.MemBuf.makeBuf(new fan.sys.ByteArray(a));
+	  return fan.std.MemBuf.makeBuf(a);
   }
   
   public static fan.sys.List toFanList(Type of, Object[] objs) {
@@ -347,12 +347,13 @@ public class Interop
   public static Object[] toJavaArray(fan.sys.List list, Class clz) {
 	  if (list == null) return null;
 	  
-	  if (list instanceof fan.sys.ArrayList) {
-		  fan.sys.ArrayList al = (fan.sys.ArrayList)list;
-		  ObjArray oa = (ObjArray) Reflection.getField(al, "array");
-		  JavaType jt = JavaType.loadJavaType(clz);
-		  return (Object[])(oa.toJava(clz, (int)list.size()));
-	  }
+//	  if (list instanceof fan.sys.ArrayList) {
+//		  fan.sys.ArrayList al = (fan.sys.ArrayList)list;
+//		  Object[] oa = (Object[]) Reflection.getField(al, "array");
+////		  JavaType jt = JavaType.loadJavaType(clz);
+//		  //return (Object[])(oa.toJava(clz, (int)list.size()));
+//		  return oa;
+//	  }
 	  
 	  Object[] objs = (Object[]) Array.newInstance(clz, (int)list.size());
 	  for (int i=0; i<list.size(); ++i) {
@@ -360,20 +361,20 @@ public class Interop
 	  }
 	  return objs;
   }
-  
-  public static fan.sys.ObjArray toFan(Object[] objs) {
-	  ObjArray list = ObjArray.make(objs.length, FanObj.type);
-	  for (int i=0; i<objs.length; ++i) {
-		  list.set(i, objs[i]);
-	  }
-	  return list;
-  }
-  
-  public static Object[] toJava(fan.sys.ObjArray list) {
-	  Object[] objs = new Object[(int)list.size()];
-	  for (int i=0; i<list.size(); ++i) {
-		  objs[i] = list.get(i);
-	  }
-	  return objs;
-  }
+//  
+//  public static fan.sys.ObjArray toFan(Object[] objs) {
+//	  ObjArray list = ObjArray.make(objs.length, FanObj.type);
+//	  for (int i=0; i<objs.length; ++i) {
+//		  list.set(i, objs[i]);
+//	  }
+//	  return list;
+//  }
+//  
+//  public static Object[] toJava(fan.sys.ObjArray list) {
+//	  Object[] objs = new Object[(int)list.size()];
+//	  for (int i=0; i<list.size(); ++i) {
+//		  objs[i] = list.get(i);
+//	  }
+//	  return objs;
+//  }
 }

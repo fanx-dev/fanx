@@ -6,7 +6,6 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 
-import fan.sys.ByteArray;
 import fan.sys.IOErr;
 
 public class NativeCharsetPeer {
@@ -66,11 +65,11 @@ public class NativeCharsetPeer {
 		return s;
 	}
 
-	long encodeArray(NativeCharset self, long ch, ByteArray out, long offset) {
+	long encodeArray(NativeCharset self, long ch, byte[] out, long offset) {
 		CharsetEncoder encoder = jcharset.newEncoder();
 		CharBuffer cbuf = CharBuffer.allocate(1);
 //		ByteBuffer bbuf = ByteBuffer.allocate(16);
-		ByteBuffer bbuf = ByteBuffer.wrap(out.array(), (int)offset, (int)(out.size()-offset));
+		ByteBuffer bbuf = ByteBuffer.wrap(out, (int)offset, (int)(out.length-offset));
 
 		// ready input char buffer
 		cbuf.clear();

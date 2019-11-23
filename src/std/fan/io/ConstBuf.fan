@@ -12,28 +12,28 @@
 **************************************************************************
 internal rtconst class ConstBuf : Buf
 {
-  protected ByteArray buf
+  protected Array<Int8> buf
 
   protected Err err() { ReadonlyErr() }
 
-  new makeBuf(ByteArray buf, Int size, Endian e, Charset c) : super.privateMake() {
+  new makeBuf(Array<Int8> buf, Int size, Endian e, Charset c) : super.privateMake() {
     this.buf = buf
     this.&size = size
     this.&endian = e
     this.&charset = c
   }
 
-  protected override ByteArray? unsafeArray() { buf }
+  protected override Array<Int8>? unsafeArray() { buf }
 
   override Int size { private set { throw err } }
   override Int capacity { get{ throw err } set{ throw err } }
   override Int pos { set { throw err } get { 0 } }
 
-  override Int getBytes(Int pos, ByteArray dst, Int off, Int len) {
-    dst.copyFrom(buf, pos, off, len)
+  override Int getBytes(Int pos, Array<Int8> dst, Int off, Int len) {
+    Array.arraycopy(buf, pos, dst, off, len)
     return len
   }
-  override Void setBytes(Int pos, ByteArray src, Int off, Int len) {
+  override Void setBytes(Int pos, Array<Int8> src, Int off, Int len) {
    throw err
   }
 
@@ -101,7 +101,7 @@ internal class ConstBufInStream : InStream {
     this.pos = pos
     return n
   }
-  override Int readBytes(ByteArray ba, Int off := 0, Int len := ba.size) {
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     m := avail
     if (m <= 0) return -1
     len = len.min(m)
