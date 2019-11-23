@@ -74,5 +74,10 @@ native class Array<T> {
   Int size()
   @Operator T get(Int pos)
   @Operator Void set(Int pos, T val)
+
+  static Obj realloc(Obj array, Int newSize)
+  static Void arraycopy(Obj src, Int srcOffset, Obj dest, Int destOffset, Int length)
+  static Void fill(Obj array, Obj? val, Int times)
+  protected override Void finalize()
 }
 

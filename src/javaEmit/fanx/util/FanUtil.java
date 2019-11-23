@@ -334,17 +334,21 @@ public class FanUtil {
   
   private static String arrayToJava(String podName, String typeName, String extName, boolean sig) {
 	  if (typeName.equals("Array")) {
-    	  if (extName.equals("<Bool>"))         { return "[Z"; }
-          else if (extName.equals("<Int8>"))    { return "[B"; }
-          else if (extName.equals("<Int16>"))   { return "[S"; }
-//          else if (extName.equals("<Int16>"))   { return "[B"; }
-          else if (extName.equals("<Int32>"))   { return "[I"; }
-          else if (extName.equals("<Int64>"))   { return "[J"; }
-          else if (extName.equals("<Int>"))     { return "[J"; }
-          else if (extName.equals("<Float32>")) { return "[F"; }
-          else if (extName.equals("<Float64>")) { return "[D"; }
-          else if (extName.equals("<Float>"))   { return "[D"; }
+		  if (extName.charAt(extName.length()-1) == '?') {
+			  extName = extName.substring(0, extName.length()-1);
+		  }
+    	  if (extName.equals("<sys::Bool>"))         { return "[Z"; }
+          else if (extName.equals("<sys::Int8>"))    { return "[B"; }
+          else if (extName.equals("<sys::Int16>"))   { return "[S"; }
+          //else if (extName.equals("<sys::Char>"))   { return "[B"; }
+          else if (extName.equals("<sys::Int32>"))   { return "[I"; }
+          else if (extName.equals("<sys::Int64>"))   { return "[J"; }
+          else if (extName.equals("<sys::Int>"))     { return "[J"; }
+          else if (extName.equals("<sys::Float32>")) { return "[F"; }
+          else if (extName.equals("<sys::Float64>")) { return "[D"; }
+          else if (extName.equals("<sys::Float>"))   { return "[D"; }
           else {
+        	  //System.out.println("extName:"+extName);
         	  if (sig) {
         		  return "[Ljava/lang/Object;";
         	  }
@@ -547,6 +551,10 @@ public class FanUtil {
       default:
         throw new IllegalStateException(jsig);
       }
+    }
+    
+    if (jsig.charAt(0) == '[') {
+    	return "fan/sys/FanArray";
     }
 
     if (jsig.charAt(0) == 'j') {

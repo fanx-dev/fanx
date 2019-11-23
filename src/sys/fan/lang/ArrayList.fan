@@ -9,7 +9,7 @@
 @NoDoc
 rtconst class ArrayList<V> : List<V>
 {
-  private ObjArray array
+  private Array<Obj?> array
   //private Type type
   private Bool readOnly
   private Bool immutable
@@ -21,7 +21,7 @@ rtconst class ArrayList<V> : List<V>
   }
 
   new make(Int capacity) : super.privateMake() {
-    array = ObjArray(capacity)
+    array = Array<Obj>(capacity)
     //this.type = type
   }
 
@@ -82,7 +82,7 @@ rtconst class ArrayList<V> : List<V>
         return
       }
 
-      array = array.realloc(it)
+      array = Array.realloc(array, it)
       //&capacity = it
     }
     get {
@@ -112,7 +112,7 @@ rtconst class ArrayList<V> : List<V>
     if (len < 0) throw IndexErr("range illegal")
 
     nlist := ArrayList<V>(len)
-    nlist.array.copyFrom(array, start, 0, len)
+    Array.arraycopy(array, start, nlist.array, 0, len)
     nlist.&size = len
     return nlist
   }
@@ -149,7 +149,7 @@ rtconst class ArrayList<V> : List<V>
 
   override This dup() {
     nlist := ArrayList<V>(size)
-    nlist.array.copyFrom(array, 0, 0, size)
+    Array.arraycopy(array, 0, nlist.array, 0, size)
     nlist.&size = size
     return nlist
   }
@@ -193,7 +193,7 @@ rtconst class ArrayList<V> : List<V>
     grow(size + alist.size)
     //TODO
     ArrayList<V> list := alist
-    array.copyFrom(list.array, 0, size, list.size)
+    Array.arraycopy(list.array, 0, array, size, list.size)
     &size = size + list.size
     return this
   }
@@ -204,7 +204,7 @@ rtconst class ArrayList<V> : List<V>
     if (index > size) throw IndexErr("index is out of range $index")
 
     grow(size + 1)
-    array.copyFrom(array, index, index+1, size-index)
+    Array.arraycopy(array, index, array, index+1, size-index)
     array[index] = item
     &size += 1
     return this
@@ -218,8 +218,8 @@ rtconst class ArrayList<V> : List<V>
     grow(size + alist.size)
     //TODO
     ArrayList<V> list := alist
-    array.copyFrom(array, index, index+list.size, size-index)
-    array.copyFrom(list.array, 0, index, list.size)
+    Array.arraycopy(array, index, array, index+list.size, size-index)
+    Array.arraycopy(list.array, 0, array, index, list.size)
     &size = size + list.size
     return this
   }
@@ -244,7 +244,7 @@ rtconst class ArrayList<V> : List<V>
     if (index >= size) throw IndexErr("index is out of range $index")
 
     obj := array[index]
-    array.copyFrom(array, index+1, index, size-index-1)
+    Array.arraycopy(array, index+1, array, index, size-index-1)
     array[size-1] = null
     &size = size-1
     return obj
@@ -260,7 +260,7 @@ rtconst class ArrayList<V> : List<V>
     if (len < 0) throw IndexErr("range illegal")
     if (len == 0) return this
 
-    array.copyFrom(array, end, start, size-end)
+    Array.arraycopy(array, end, array, start, size-end)
     &size = size - len
     return this
   }

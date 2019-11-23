@@ -79,6 +79,7 @@ public final class FTypeRef
               else if (extName.equals("<sys::Float>"))   { mask |= ARRAY_DOUBLE; }
               else { mask |= ARRAY_OBJ; }
           }
+          break;
         case 'B':
           if (typeName.equals("Bool"))
           {
