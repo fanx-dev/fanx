@@ -51,7 +51,19 @@ rtconst abstract class List<V>
   **   Str[,] == [,]        =>  false
   **   Str[,] == Str?[,]    =>  false
   **
-  override abstract Bool equals(Obj? other)
+  override Bool equals(Obj? other) {
+    if (other == null) return false
+    if (other isnot List) return false
+    that := other as V[]
+
+    //if (this.of != that.of) return false
+    if (this.size != that.size) return false
+
+    for (Int i:=0; i<size; ++i) {
+      if (this[i] != that[i]) return false
+    }
+    return true
+  }
 
   **
   ** Return platform dependent hashcode based a hash of the items
@@ -156,6 +168,15 @@ rtconst abstract class List<V>
   @Operator abstract V[] getRange(Range r)
 
   **
+  ** Return a sub-list based on the specified range
+  **
+  virtual List<V> slice(Range r) {
+    s := r.startIndex(size)
+    e := r.endIndex(size)
+    return ListView<V>(this, s, e+1-s)
+  }
+
+  **
   ** Return if this list contains the specified item.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
@@ -175,13 +196,29 @@ rtconst abstract class List<V>
   ** Return if this list contains every item in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  abstract Bool containsAll(V[] list)
+  virtual Bool containsAll(V[] list) {
+    for (i:=0; i<list.size; ++i) {
+      obj := list[i]
+      if (!contains(obj)) {
+        return false
+      }
+    }
+    return true
+  }
 
   **
   ** Return if this list contains any one of the items in the specified list.
   ** Equality is determined by `Obj.equals`.  This method is readonly safe.
   **
-  abstract Bool containsAny(V[] list)
+  virtual Bool containsAny(V[] list) {
+    for (i:=0; i<list.size; ++i) {
+      obj := list[i]
+      if (contains(obj)) {
+        return true
+      }
+    }
+    return false
+  }
 
   **
   ** Return the integer index of the specified item using
@@ -217,19 +254,25 @@ rtconst abstract class List<V>
   ** Return the item at index 0, or if empty return null.
   ** This method is readonly safe.
   **
-  abstract V? first()
+  virtual V? first() {
+    if (size == 0) return null
+    return this[0]
+  }
 
   **
   ** Return the item at index-1, or if empty return null.
   ** This method is readonly safe.
   **
-  abstract V? last()
+  virtual V? last() {
+    if (size == 0) return null
+    return this[size-1]
+  }
 
   **
   ** Create a shallow duplicate copy of this List.  The items
   ** themselves are not duplicated.  This method is readonly safe.
   **
-  abstract This dup()
+  abstract List<V> dup()
 
 //////////////////////////////////////////////////////////////////////////
 // Modification
@@ -283,13 +326,21 @@ rtconst abstract class List<V>
   ** decrement size by 1.  If the value is not found, then return null.
   ** Throw ReadonlyErr if readonly.
   **
-  abstract V? remove(V item)
+  virtual V? remove(V item) {
+    index := index(item)
+    if (index == -1) return null
+    return removeAt(index)
+  }
 
   **
   ** Remove the item just like `remove` except use
   ** the === operator instead of the == equals operator.
   **
-  abstract V? removeSame(V item)
+  virtual V? removeSame(V item) {
+    index := indexSame(item)
+    if (index == -1) return null
+    return removeAt(index)
+  }
 
   **
   ** Remove the object at the specified index.  A negative index may be
@@ -315,7 +366,8 @@ rtconst abstract class List<V>
   **
   virtual This removeAll(V[] list) {
     //modify
-    each |obj| {
+    for (i:=0; i<list.size; ++i) {
+      obj := list[i]
       remove(obj)
     }
     return this
@@ -331,7 +383,9 @@ rtconst abstract class List<V>
   ** Trim the capacity such that the underlying storage is optimized
   ** for the current size.  Return this.  Throw ReadonlyErr if readonly.
   **
-  abstract This trim()
+  virtual This trim() {
+    capacity = size; return this
+  }
 
   **
   ** Append a value to the end of the list the given number of times.
@@ -340,7 +394,15 @@ rtconst abstract class List<V>
   ** Example:
   **   Int[,].fill(0, 3)  =>  [0, 0, 0]
   **
-  abstract This fill(V val, Int times)
+  virtual This fill(V val, Int times) {
+    esize := size + times
+    if (esize > capacity) capacity = esize
+
+    for (i:=0; i<times; ++i) {
+      add(val)
+    }
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Stack
@@ -359,7 +421,12 @@ rtconst abstract class List<V>
   ** the exception of has an empty list is handled.  Throw ReadonlyErr
   ** if readonly.
   **
-  abstract V? pop()
+  virtual V? pop() {
+    if (size == 0) return null
+    obj := last
+    removeAt(size-1)
+    return obj
+  }
 
   **
   ** Add the specified item to the end of the list.  Return this.
@@ -380,7 +447,11 @@ rtconst abstract class List<V>
   ** Example:
   **   ["a", "b", "c"].each |Str s| { echo(s) }
   **
-  abstract Void each(|V item, Int index| c)
+  virtual Void each(|V item, Int index| c) {
+    for (i:=0; i<size; ++i) {
+      c(get(i), i)
+    }
+  }
 
   **
   ** Reverse each - call the specified function for every item in
@@ -390,14 +461,24 @@ rtconst abstract class List<V>
   ** Example:
   **   ["a", "b", "c"].eachr |Str s| { echo(s) }
   **
-  abstract Void eachr(|V item, Int index| c)
+  virtual Void eachr(|V item, Int index| c) {
+    for (i:=size-1; i>=0; --i) {
+      c(get(i), i)
+    }
+  }
 
   **
   ** Iterate the list usnig the specified range.   Negative indexes
   ** may be used to access from the end of the list.  This method is
   ** readonly safe.  Throw IndexErr if range is invalid.
   **
-  abstract Void eachRange(Range r, |V item, Int index| c)
+  virtual Void eachRange(Range r, |V item, Int index| c) {
+    s := r.startIndex(size)
+    e := r.endIndex(size)
+    for (i:=s; i<=e; ++i) {
+      c(get(i), i)
+    }
+  }
 
   **
   ** Iterate every item in the list starting with index 0 up to
@@ -406,7 +487,14 @@ rtconst abstract class List<V>
   ** resulting object.  Return null if the function returns
   ** null for every item.  This method is readonly safe.
   **
-  abstract Obj? eachWhile(|V item, Int index->Obj?| c, Int offset := 0)
+  virtual Obj? eachWhile(|V item, Int index->Obj?| c, Int offset := 0) {
+    if (offset < 0) offset += size
+    for (i:=offset; i<size; ++i) {
+      res := c(get(i), i)
+      if (res != null) return res
+    }
+    return null
+  }
 
   **
   ** Reverse `eachWhile`.  Iterate every item in the list starting
@@ -415,7 +503,14 @@ rtconst abstract class List<V>
   ** null if the function returns null for every item.  This method
   ** is readonly safe.
   **
-  abstract Obj? eachrWhile(|V item, Int index->Obj?| c, Int offset := -1)
+  virtual Obj? eachrWhile(|V item, Int index->Obj?| c, Int offset := -1) {
+    if (offset < 0) offset += size
+    for (i:=offset; i>=0; --i) {
+      res := c(get(i), i)
+      if (res != null) return res
+    }
+    return null
+  }
 
   **
   ** Return the first item in the list for which c returns true.
@@ -442,8 +537,29 @@ rtconst abstract class List<V>
   **   list.findIndex |Int v->Bool| { return v.toStr == "7" } => 2
   **   list.findIndex |Int v->Bool| { return v.toStr == "9" } => -1
   **
-  abstract Int findIndex(|V item, Int index->Bool| c, Int offset := 0)
-  abstract Int findrIndex(|V item, Int index->Bool| c, Int offset := -1)
+  virtual Int findIndex(|V item, Int index->Bool| c, Int offset := 0) {
+    if (offset < 0) offset += size
+    for (i:=offset; i<size; ++i) {
+      obj := this[i]
+      result := c(obj, i)
+      if (result) {
+        return i
+      }
+    }
+    return -1
+  }
+
+  virtual Int findrIndex(|V item, Int index->Bool| c, Int offset := -1) {
+    if (offset < 0) offset += size
+    for (i:=offset; i>=0; --i) {
+      obj := this[i]
+      result := c(obj, i)
+      if (result) {
+        return i
+      }
+    }
+    return -1
+  }
 
   **
   ** Return a new list containing the items for which c returns
@@ -635,6 +751,74 @@ rtconst abstract class List<V>
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
+  private Void insertSort(Int left, Int right, |V a, V b->Int| cmopFunc) {
+    self := this
+    for (i:=left;i < right; i++) {
+      curVal := self[i+1]
+      j := i
+      //shift right
+      while (j>=left && (cmopFunc(curVal, self[j]) < 0)) {
+        self[j+1] = self[j]
+        --j
+      }
+      self[j+1] = curVal
+    }
+  }
+
+  private Void quickSort(Int low, Int high, |V a, V b->Int| cmopFunc) {
+    if (low == high) return
+    if(!(low < high)) throw Err("$low >= $high")
+
+    //if too small using insert sort
+    if (high - low < 5) {
+      insertSort(low, high, cmopFunc)
+      return
+    }
+
+    self := this
+    i := low; j := high
+
+    //select pivot
+    pivot := (j+i)/2
+    min := i
+    max := j
+    if (self[i] > self[j]) {
+      min = j
+      max = i
+    }
+    if (self[pivot] < self[min]) {
+      pivot = min
+    }
+    else if (self[pivot] > self[max]) {
+      pivot = max
+    }
+    pivotVal := self[pivot]
+    self[pivot] = self[i]
+
+    while (i < j) {
+      while (i<j && cmopFunc(pivotVal, self[j]) <= 0 ) --j
+      //self[i] is empty
+      if (i < j) {
+        self[i] = self[j]
+        ++i
+      }
+
+      while (i<j && cmopFunc(self[i], pivotVal) < 0) ++i
+      //self[j] is empty
+      if (i < j) {
+        self[j] = self[i]
+        --j
+      }
+    }
+    self[i] = pivotVal
+    if (low < i-1) {
+      quickSort(low, i-1, cmopFunc)
+    }
+    if (i+1 < high) {
+      quickSort(j+1, high, cmopFunc)
+    }
+  }
+
   **
   ** Perform an in-place sort on this list.  If a method is provided
   ** it implements the comparator returning -1, 0, or 1.  If the
@@ -651,7 +835,13 @@ rtconst abstract class List<V>
   **   s.sort |Str a, Str b->Int| { return a.size <=> b.size }
   **   // s now evaluates to ["he", "ate", "candy"]
   **
-  abstract This sort(|V a, V b->Int|? c := null)
+  virtual This sort(|V a, V b->Int|? c := null) {
+    //modify
+    if (size <= 1) return this
+    if (c == null) c = |a, b->Int| { a <=> b }
+    quickSort(0, size-1, c)
+    return this
+  }
 
   **
   ** Reverse sort - perform an in-place reverse sort on this list.  If
@@ -670,6 +860,28 @@ rtconst abstract class List<V>
     }
   }
 
+  //return -(insertation point) - 1
+  private Int bsearch(|V b, Int i->Int| cmopFunc) {
+    self := this
+    n := size
+    if (n == 0) return -1
+    low := 0
+    high := n - 1
+
+    while (low <= high) {
+      mid := (low+high) / 2
+      cond := cmopFunc(self[mid], mid)
+      if (cond < 0) {
+        high = mid - 1
+      } else if (cond > 0) {
+        low = mid + 1
+      } else {
+        return mid
+      }
+    }
+    return -(low+1)
+  }
+
   **
   ** Search the list for the index of the specified key using a binary
   ** search algorithm.  The list must be sorted in ascending order according
@@ -679,7 +891,12 @@ rtconst abstract class List<V>
   ** operator (shortcut for the 'compare' method).  If the key is not found,
   ** then return a negative value which is '-(insertation point) - 1'.
   **
-  abstract Int binarySearch(V key, |V a, V b->Int|? c := null)
+  virtual Int binarySearch(V key, |V a, V b->Int|? c := null) {
+    return bsearch |b, i| {
+      if (c == null) return key <=> b
+      return c(key, b)
+    }
+  }
 
   **
   ** Find an element in the list using a binary search algorithm. The specified
@@ -689,7 +906,9 @@ rtconst abstract class List<V>
   ** comparator function. If the key is not found, then return a negative value
   ** which is '-(insertation point) - 1'.
   **
-  abstract Int binaryFind(|V item, Int index->Int| c)
+  virtual Int binaryFind(|V item, Int index->Int| c) {
+    return bsearch(c)
+  }
 
   **
   ** Reverse the order of the items of this list in-place.  Return this.
@@ -698,14 +917,35 @@ rtconst abstract class List<V>
   ** Example:
   **   [1, 2, 3, 4].reverse  =>  [4, 3, 2, 1]
   **
-  abstract This reverse()
+  virtual This reverse() {
+    if (size <= 1) return this
+    n := size
+    for (i:=0; i<n; ++i) {
+      j := n-i-1
+      if (i >= j) break
+      a := this[i]
+      b := this[j]
+      this[j] = a
+      this[i] = b
+    }
+    return this
+  }
 
   **
   ** Swap the items at the two specified indexes.  Negative indexes may
   ** used to access an index from the end of the list.  Return this.
   ** Throw ReadonlyErr if readonly.
   **
-  abstract This swap(Int indexA, Int indexB)
+  virtual This swap(Int indexA, Int indexB) {
+    if (indexA < 0) indexA += size
+    if (indexB < 0) indexB += size
+
+    a := this[indexA]
+    b := this[indexB]
+    this[indexB] = a
+    this[indexA] = b
+    return this
+  }
 
   **
   ** Find the given item, and move it to the given index.  All the
@@ -718,7 +958,18 @@ rtconst abstract class List<V>
   **   [10, 11, 12].moveTo(11, 0)  =>  [11, 10, 12]
   **   [10, 11, 12].moveTo(11, -1) =>  [10, 12, 11]
   **
-  abstract This moveTo(V? item, Int toIndex)
+  virtual This moveTo(V? item, Int toIndex) {
+    if (item == null) return this
+    i := index(item)
+    if (i == -1) return this
+
+    //must deal with before removeAt
+    if (toIndex < 0) toIndex += size
+
+    removeAt(i)
+    insert(toIndex, item)
+    return this
+  }
 
   **
   ** Return a new list which recursively flattens any list items into
@@ -857,17 +1108,34 @@ rtconst abstract class List<V>
   ** safe.  See `Obj.isImmutable` and `Obj.toImmutable` for deep
   ** immutability.
   **
-  abstract This ro()
+  virtual This ro() {
+    if (isRO) return this
+    ArrayList<V> nlist := dup
+    nlist.readOnly = true
+    return nlist
+  }
 
   **
   ** Get a read-write, mutable List instance with the same contents
   ** as this List.  If this List is already read-write, then return this.
   ** This method is readonly safe.
   **
-  abstract This rw()
+  virtual This rw() {
+    if (isRW) return this
+    ArrayList<V> nlist := dup
+    nlist.readOnly = false
+    return nlist
+  }
 
   override abstract Bool isImmutable()
 
-  override abstract V[] toImmutable()
+  override V[] toImmutable() {
+    if (isImmutable) return this
+    nlist := ArrayList<V>(size)
+    each |v| { nlist.add(v.toImmutable) }
+    nlist.readOnly = true
+    nlist.immutable = true
+    return nlist
+  }
 
 }

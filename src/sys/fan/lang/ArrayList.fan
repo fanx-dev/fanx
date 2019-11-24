@@ -9,10 +9,10 @@
 @NoDoc
 rtconst class ArrayList<V> : List<V>
 {
-  private Array<Obj?> array
+  protected Array<Obj?> array
   //private Type type
-  private Bool readOnly
-  private Bool immutable
+  protected Bool readOnly
+  protected Bool immutable
 
   private Void modify() {
     if (readOnly) {
@@ -24,26 +24,6 @@ rtconst class ArrayList<V> : List<V>
     array = Array<Obj>(capacity)
     //this.type = type
   }
-
-//////////////////////////////////////////////////////////////////////////
-// Identity
-//////////////////////////////////////////////////////////////////////////
-
-  override Bool equals(Obj? other) {
-    if (other == null) return false
-    if (other isnot List) return false
-    that := other as V[]
-
-    //if (this.of != that.of) return false
-    if (this.size != that.size) return false
-
-    for (Int i:=0; i<size; ++i) {
-      if (this[i] != that[i]) return false
-    }
-    return true
-  }
-
-  //override Type? of() { type }
 
 //////////////////////////////////////////////////////////////////////////
 // Access
@@ -117,37 +97,7 @@ rtconst class ArrayList<V> : List<V>
     return nlist
   }
 
-  override Bool containsAll(V[] list) {
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
-      if (!contains(obj)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  override Bool containsAny(V[] list) {
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
-      if (contains(obj)) {
-        return true
-      }
-    }
-    return false
-  }
-
-  override V? first() {
-    if (size == 0) return null
-    return this[0]
-  }
-
-  override V? last() {
-    if (size == 0) return null
-    return this[size-1]
-  }
-
-  override This dup() {
+  override List<V> dup() {
     nlist := ArrayList<V>(size)
     Array.arraycopy(array, 0, nlist.array, 0, size)
     nlist.&size = size
@@ -224,20 +174,6 @@ rtconst class ArrayList<V> : List<V>
     return this
   }
 
-  override V? remove(V? item) {
-    modify
-    index := index(item)
-    if (index == -1) return null
-    return removeAt(index)
-  }
-
-  override V? removeSame(V? item) {
-    modify
-    index := indexSame(item)
-    if (index == -1) return null
-    return removeAt(index)
-  }
-
   override V? removeAt(Int index) {
     modify
     if (index < 0) index += size
@@ -265,132 +201,20 @@ rtconst class ArrayList<V> : List<V>
     return this
   }
 
-  override This removeAll(V[] list) {
-    modify
-    for (i:=0; i<list.size; ++i) {
-      obj := list[i]
-      remove(obj)
-    }
-    return this
-  }
-
-  override This clear() { modify; size = 0; return this }
-
-  override This trim() { modify; capacity = size; return this }
-
-  override This fill(V? val, Int times) {
-    modify
-    grow(size + times)
-    for (i:=0; i<times; ++i) {
-      add(val)
-    }
-    return this
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Stack
-//////////////////////////////////////////////////////////////////////////
-
-  override V? pop() {
-    modify
-    if (size == 0) return null
-    obj := last
-    removeAt(size-1)
-    return obj
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Iterators
-//////////////////////////////////////////////////////////////////////////
-
-  override Void each(|V item, Int index| c) {
+  override This clear() {
+    modify;
     for (i:=0; i<size; ++i) {
-      obj := this[i]
-      c(obj, i)
+      array.set(0, null)
     }
-  }
-
-  override Void eachr(|V item, Int index| c){
-    for (i:=size-1; i>=0; --i) {
-      obj := this[i]
-      c(obj, i)
-    }
-  }
-
-  override Void eachRange(Range r, |V item, Int index| c) {
-    start := r.start
-    if (start < 0) start += size
-    if (start >= size) throw IndexErr("range illegal")
-    end := r.end
-    if (end < 0) end += size
-    if (r.inclusive) {
-      ++end
-    }
-    if (end > size) throw IndexErr("range illegal")
-    len := end - start
-    if (len < 0) throw IndexErr("range illegal")
-
-    if (len == 0) return
-
-    for (i:=start; i<end; ++i) {
-      obj := this[i]
-      c(obj, i)
-    }
-  }
-
-  override Obj? eachWhile(|V item, Int index->Obj?| c, Int offset := 0) {
-    if (offset < 0) offset += size
-    for (i:=offset; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result != null) {
-        return result
-      }
-    }
-    return null
-  }
-
-  override Obj? eachrWhile(|V? item, Int index->Obj?| c, Int offset := -1) {
-    if (offset < 0) offset += size
-    for (i:=offset; i>=0; --i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result != null) {
-        return result
-      }
-    }
-    return null
-  }
-
-  override Int findIndex(|V item, Int index->Bool| c, Int offset := 0) {
-    if (offset < 0) offset += size
-    for (i:=offset; i<size; ++i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result) {
-        return i
-      }
-    }
-    return -1
-  }
-
-  override Int findrIndex(|V item, Int index->Bool| c, Int offset := -1) {
-    if (offset < 0) offset += size
-    for (i:=offset; i>=0; --i) {
-      obj := this[i]
-      result := c(obj, i)
-      if (result) {
-        return i
-      }
-    }
-    return -1
+    size = 0;
+    return this
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
-  private Void insertSort(Int left, Int right, |V a, V b->Int| cmopFunc) {
+  private Void insertSortA(Int left, Int right, |V a, V b->Int| cmopFunc) {
     self := array
     for (i:=left;i < right; i++) {
       curVal := self[i+1]
@@ -404,13 +228,13 @@ rtconst class ArrayList<V> : List<V>
     }
   }
 
-  private Void quickSort(Int low, Int high, |V a, V b->Int| cmopFunc) {
+  private Void quickSortA(Int low, Int high, |V a, V b->Int| cmopFunc) {
     if (low == high) return
     if(!(low < high)) throw Err("$low >= $high")
 
     //if too small using insert sort
     if (high - low < 5) {
-      insertSort(low, high, cmopFunc)
+      insertSortA(low, high, cmopFunc)
       return
     }
 
@@ -451,10 +275,10 @@ rtconst class ArrayList<V> : List<V>
     }
     self[i] = pivotVal
     if (low < i-1) {
-      quickSort(low, i-1, cmopFunc)
+      quickSortA(low, i-1, cmopFunc)
     }
     if (i+1 < high) {
-      quickSort(j+1, high, cmopFunc)
+      quickSortA(j+1, high, cmopFunc)
     }
   }
 
@@ -462,12 +286,13 @@ rtconst class ArrayList<V> : List<V>
     modify
     if (size <= 1) return this
     if (c == null) c = |a, b->Int| { a <=> b }
-    quickSort(0, size-1, c)
+    quickSortA(0, size-1, c)
     return this
   }
 
+
   //return -(insertation point) - 1
-  private Int bsearch(|V b, Int i->Int| cmopFunc) {
+  private Int bsearchA(|V b, Int i->Int| cmopFunc) {
     self := array
     n := size
     if (n == 0) return -1
@@ -489,14 +314,14 @@ rtconst class ArrayList<V> : List<V>
   }
 
   override Int binarySearch(V key, |V a, V b->Int|? c := null) {
-    return bsearch |b, i| {
+    return bsearchA |b, i| {
       if (c == null) return key <=> b
       return c(key, b)
     }
   }
 
   override Int binaryFind(|V item, Int index->Int| c) {
-    return bsearch(c)
+    return bsearchA(c)
   }
 
   override This reverse() {
@@ -526,53 +351,12 @@ rtconst class ArrayList<V> : List<V>
     return this
   }
 
-  override This moveTo(V? item, Int toIndex) {
-    modify
-    if (item == null) return this
-    i := index(item)
-    if (i == -1) return this
-
-    //must deal with before removeAt
-    if (toIndex < 0) toIndex += size
-
-    removeAt(i)
-    insert(toIndex, item)
-    return this
-  }
-
-//////////////////////////////////////////////////////////////////////////
-// Conversion
-//////////////////////////////////////////////////////////////////////////
-
-
 //////////////////////////////////////////////////////////////////////////
 // Readonly
 //////////////////////////////////////////////////////////////////////////
 
   override Bool isRO() { readOnly }
 
-  override This ro() {
-    if (isRO) return this
-    nlist := dup
-    nlist.readOnly = true
-    return nlist
-  }
-
-  override This rw() {
-    if (isRW) return this
-    nlist := dup
-    nlist.readOnly = false
-    return nlist
-  }
-
   override Bool isImmutable() { immutable }
 
-  override V[] toImmutable() {
-    if (isImmutable) return this
-    nlist := ArrayList<V>(size)
-    each |v| { nlist.add(v.toImmutable) }
-    nlist.readOnly = true
-    nlist.immutable = true
-    return nlist
-  }
 }

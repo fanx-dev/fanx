@@ -75,7 +75,7 @@ native const final class Str
   static Str fromChars(Array<Char> charPtr, Int offset := 0, Int len := charPtr.size) {
     if (len == 0) return ""
     
-    Array<Int8> out := Array<Int8>.make(len * 4)
+    Array<Int8> out := Array<Int8>(len * 4)
     i := 0
     for (k := offset; k<len; ++k) {
       c := charPtr[k]
@@ -900,7 +900,7 @@ native const final class Str
     if (separator == null) return splitws(self);
     Int sep := separator;
     Bool trim = trimmed;
-    toks := List<Str>.make(16);
+    toks := List<Str>(16);
     len := self.byteLen
     x := 0;
     for (i:=0; i<len; ++i)
@@ -925,7 +925,7 @@ native const final class Str
 
   private static Str[] splitws(Str val)
   {
-    toks := List<Str>.make(16);
+    toks := List<Str>(16);
     len := val.byteLen;
     while (len > 0 && val.getByte(len-1) <= ' ') --len;
     x := 0;
