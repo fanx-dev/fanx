@@ -7,72 +7,126 @@
 //
 
 using sys::Int32 as Char
-using sys::Int32 as NInt
-using sys::Int64 as Size_t
 
 **
 ** Str represents a sequence of Unicode characters.
 **
 native const final class Str
 {
-  private Ptr<Int8> byte
-  private Size_t byteLen
-  private Size_t strLen
-  private Ptr<Char> charPtr
-  private Int hashCode
-  private Bool isStatic
-
-//////////////////////////////////////////////////////////////////////////
-// Construction
-//////////////////////////////////////////////////////////////////////////
-
-  new fromCStr(Ptr cstr, Int byteLen := -1, Bool isStatic := false) {
-    if (isStatic)
-      this.byte = cstr
-    else
-      this.byte = NativeC.strdup(cstr)
-    if (byteLen == -1) {
-      byteLen = NativeC.strlen(cstr);
-    }
-    this.byteLen = byteLen
-    this.strLen = -1
-    this.charPtr = NativeC.fromUtf8(cstr, byteLen, addressof(this.strLen))
-    this.hashCode = -1
-    this.isStatic = isStatic
-  }
-
-  new fromCharPtr(Ptr charPtr, Int len) {
-    this.charPtr = NativeC.malloc(len * sizeof(Char))
-    NativeC.memcpy(this.charPtr, charPtr, len * sizeof(Char))
-
-    this.byte = NativeC.toUtf8(charPtr, len, addressof(this.byteLen))
-    this.strLen = len
-    this.charPtr = charPtr
-    this.hashCode = -1
-    this.isStatic = false
-  }
-
-  Ptr<Int8> toCStr() { byte }
-
-  internal Ptr<Int32> getCharPtr() {
-    return charPtr
-  }
-
-  **
-  ** Private constructor.
-  **
-  //private new privateMake() {}
+  private readonly Array<Int8> utf8
+  private const Int charLen
+  private const Int hashCode
 
   **
   ** Default value is "".
   **
   const static Str defVal := ""
 
+//////////////////////////////////////////////////////////////////////////
+// Construction
+//////////////////////////////////////////////////////////////////////////
+
+  private new make(Array<Int8> utf8) {
+    this.utf8 = utf8
+    hashValue := 0
+    charCount := 0
+    for (i:=0; i<utf8.size; ++i) {
+      ch := utf8[i]
+      if (ch.and(0xC0) != 0x80) {
+        ++charCount
+      }
+      hashValue = ch + 31 * hashValue
+    }
+    this.charLen = charCount
+    this.hashCode = hashValue
+  }
+
+  private new makeWithSize(Array<Int8> utf8, Int charLen) {
+    this.utf8 = utf8
+    //this.byteLen = i
+    this.charLen = charLen
+
+    hashValue := 0
+    for (j:=0; j<byteLen; ++j) {
+        hashValue = utf8[j] + 31 * hashValue
+    }
+    this.hashCode = hashValue
+  }
+
+  **
+  ** allocType: 0:copy, 1:static, 2:move
+  **
+  static Str fromCStr(Ptr<Int8> utf8, Int byteLen := -1) {
+    if (byteLen == -1) {
+      byteLen = NativeC.strlen(utf8)
+    }
+
+    array := Array<Int8>(byteLen)
+    for (i:=0; i<byteLen; ++i) {
+      array[i] = utf8[i]
+    }
+    return make(array)
+  }
+
   **
   ** Construct a string from a list of unicode code points.
   ** Also see `chars`.
   **
-  static Str fromChars(Int[] chars, Int offset := 0, Int len := chars.size)
+  static Str fromChars(Array<Char> charPtr, Int offset := 0, Int len := charPtr.size) {
+    if (len == 0) return ""
+    
+    Array<Int8> out := Array<Int8>.make(len * 4)
+    i := 0
+    for (k := offset; k<len; ++k) {
+      c := charPtr[k]
+      //echo("encode1 $c")
+      if (c <= 0x007F) {
+        out[i] = c
+        ++i
+      }
+      else if (c <= 0x07FF) {
+        out[i] = c.shiftr(6).and(0x1F).or(0xC0)
+        ++i
+        out[i] = c.shiftr(0).and(0x3F).or(0x80)
+        ++i
+      }
+      else if (c <= 0xFFFF) {
+        out[i] = c.shiftr(12).and(0x0F).or(0xE0)
+        ++i
+        out[i] = c.shiftr(6).and(0x3F).or(0x80)
+        ++i
+        out[i] = c.shiftr(0).and(0x3F).or(0x80)
+        ++i
+        //echo("encode ${out[i-3]}, ${out[i-2]}, ${out[i-1]}")
+      }
+      else if (c <= 0x10FFFF) {
+        out[i] = c.shiftr(18).and(0x07).or(0xF0)
+        ++i
+        out[i] = c.shiftr(12).and(0x3F).or(0x80)
+        ++i
+        out[i] = c.shiftr(6).and(0x3F).or(0x80)
+        ++i
+        out[i] = c.shiftr(0).and(0x3F).or(0x80)
+        ++i
+      }
+      else {
+        throw IOErr("Invalid UTF-8 encoding")
+      } 
+    }
+
+    utf8 := Array.realloc(out, i)
+    return makeWithSize(utf8, len)
+  }
+
+  **
+  ** Get the byte at postion
+  **
+  Int8 getByte(Int i) { utf8[i] }
+
+  **
+  ** size of utf8
+  **
+  Int byteLen() { utf8.size }
 
 //////////////////////////////////////////////////////////////////////////
 // Obj Overrides
@@ -86,10 +140,9 @@ native const final class Str
     if (that == null) return false
     if (this.size != that.size) return false
 
-    len := size
-    for (i:=0; i<size; ++i)
+    for (i:=0; i<byteLen; ++i)
     {
-      if (get(i) != that.get(i)) return false
+      if (getByte(i) != that.getByte(i)) return false
     }
     return true
   }
@@ -105,14 +158,14 @@ native const final class Str
     b := s
     if (a == b) return true;
 
-    an := a.size
-    bn := b.size
+    an := a.byteLen
+    bn := b.byteLen
     if (an != bn) return false;
 
     for (i:=0; i<an; ++i)
     {
-      ac := a.get(i);
-      bc := b.get(i);
+      ac := a.getByte(i);
+      bc := b.getByte(i);
       if ('A' <= ac && ac <= 'Z') ac = ac.or(0x20)
       if ('A' <= bc && bc <= 'Z') bc = bc.or(0x20)
       if (ac != bc) return false;
@@ -134,12 +187,12 @@ native const final class Str
   override Int compare(Obj obj) {
     that := (Str)obj
     i := 0
-    while (i < this.size && i < that.size) {
-      if (get(i) == that.get(i)) {
+    while (i < this.byteLen && i < that.byteLen) {
+      if (getByte(i) == that.getByte(i)) {
         ++i
         continue
       }
-      return get(i) - that.get(i)
+      return getByte(i) - that.getByte(i)
     }
     return this.size - that.size
   }
@@ -160,13 +213,13 @@ native const final class Str
     b := s
     if (a == b) return 0;
 
-    an := a.size();
-    bn := b.size();
+    an := a.byteLen
+    bn := b.byteLen
 
     for (i:=0; i<an && i<bn; ++i)
     {
-      ac := a.get(i);
-      bc := b.get(i);
+      ac := a.getByte(i);
+      bc := b.getByte(i);
       if ('A' <= ac && ac <= 'Z') ac = ac.or(0x20)
       if ('A' <= bc && bc <= 'Z') bc = bc.or(0x20)
       if (ac != bc) return ac < bc ? -1 : +1;
@@ -179,16 +232,7 @@ native const final class Str
   **
   ** The hash for a Str is platform dependent.
   **
-  override Int hash() {
-    if (hashCode == -1) {
-      hashValue := 0
-      for (i:=0; i<byteLen; ++i) {
-          hashValue = byte[i] + 31 * hashValue
-      }
-      hashCode = hashValue
-    }
-    return hashCode
-  }
+  override Int hash() { hashCode }
 
   **
   ** Return this.
@@ -213,7 +257,7 @@ native const final class Str
   **
   ** Return number of characters in this string.
   **
-  Int size() { strLen }
+  Int size() { charLen }
 
   **
   ** Internalize this Str such that two strings which are equal
@@ -228,9 +272,9 @@ native const final class Str
   ** Return if this Str starts with the specified Str.
   **
   Bool startsWith(Str s) {
-    if (s.size > this.size) return false
-    for (i:=0; i<s.size; ++i) {
-      if (s[i] != this[i]) return false
+    if (s.byteLen > this.byteLen) return false
+    for (i:=0; i<s.byteLen; ++i) {
+      if (s.getByte(i) != this.getByte(i)) return false
     }
     return true
   }
@@ -239,28 +283,112 @@ native const final class Str
   ** Return if this Str ends with the specified Str.
   **
   Bool endsWith(Str s) {
-    if (s.size > this.size) return false
-    offset := size - s.size
-    for (i:=0; i<s.size; ++i) {
-      if (s[i] != this[offset+i]) return false
+    if (s.byteLen > this.byteLen) return false
+    offset := byteLen - s.byteLen
+    for (i:=0; i<s.byteLen; ++i) {
+      if (s.getByte(i) != this.getByte(offset+i)) return false
     }
     return true
   }
 
   **
   ** Return the first occurance of the specified substring searching
-  ** forward, starting at the specified offset index.  A negative offset
-  ** may be used to access from the end of string.  Return -1 if no
+  ** forward, starting at the specified offset index. Return -1 if no
   ** occurences are found.
   **
   ** Examples:
   **   "abcabc".index("b")     => 1
   **   "abcabc".index("b", 1)  => 1
   **   "abcabc".index("b", 3)  => 4
-  **   "abcabc".index("b", -3) => 4
   **   "abcabc".index("x")     => -1
   **
-  Int find(Str s, Int offset := 0)
+  Int find(Str s, Int offset := 0) {
+    if (s.size == 0) return 0
+    if (s.size > this.size) return -1
+
+    if (s.size > 10 && this.size > 20) {
+      return kmpFindIndex(this, s, offset)
+    }
+
+    byteOffset := toByteIndex(offset)
+    len := s.byteLen
+    end := this.byteLen-s.byteLen
+    charCount := offset
+    for (i:=byteOffset; i<=end; ++i) {
+      ch := getByte(i)
+      if (ch.and(0xC0) == 0x80) {
+        continue
+      }
+      else {
+        ++charCount
+      }
+      match := true
+      for (j:=0; j<len; ++j) {
+        if (getByte(i+j) != s.getByte(j)) {
+          match = false
+          break
+        }
+      }
+      if (match) return charCount
+    }
+    return -1
+  }
+
+  private static Array<Int8> kmpNext(Str t) {
+    next := Array<Int8>(t.byteLen)
+    i := 0
+    next[0] = -1
+    j := -1
+    while(i < t.byteLen-1) {
+      if(j == -1 || t.getByte(i) == t.getByte(j)) {
+        ++i;
+        ++j;
+        if (t.getByte(i) != t.getByte(j)) next[i] = j;
+        else next[i] = next[j];
+      }
+      else
+        j = next[j];
+    }
+    return next
+  }
+
+  **
+  ** D.E.Knuth V.R.Pratt J.H.Morris Algorithm
+  **
+  private static Int kmpFindIndex(Str self, Str t, Int offset) {
+    charCount := offset
+    byteOffset := self.toByteIndex(offset)
+
+    next := kmpNext(t)
+    j := 0
+    i := byteOffset
+    while (i < self.byteLen) {
+      ch := self.getByte(i)
+      if (ch.and(0xC0) == 0x80) {
+        continue
+      }
+      else {
+        ++charCount
+      }
+
+      if (self.getByte(i) == t.getByte(j)) {
+        ++i
+        ++j
+        if (j == t.byteLen) return charCount
+      }
+      else {
+        if (j == 0) {
+          ++i
+          if ((self.byteLen-i) < t.byteLen) return -1
+        }
+        else {
+          j = next[j]
+        }
+      }
+    }
+    return -1
+  }
+
   @NoDoc
   Int? index(Str s, Int offset := 0) {
     i := find(s, offset)
@@ -278,7 +406,32 @@ native const final class Str
   **   "abcabc".indexr("b", -3) => 1
   **   "abcabc".indexr("b", 0)  => -1
   **
-  Int findr(Str s, Int offset := s.size-1)
+  Int findr(Str s, Int offset := s.size-1) {
+    if (s.isEmpty) return 0
+    if (offset < 0) offset += size
+    start := toByteIndex(offset)
+    charCount := offset
+    len := s.byteLen
+    for (i:=start; i>=0; --i) {
+      ch := getByte(i)
+      if (ch.and(0xC0) == 0x80) {
+        continue
+      }
+      else {
+        --charCount
+      }
+      match := true
+      for (j:=0; j<len; ++j) {
+        if (getByte(i+j) != s.getByte(j)) {
+          match = false
+          break
+        }
+      }
+      if (match) return charCount
+    }
+    return -1
+  }
+
   @NoDoc
   Int? indexr(Str s, Int offset := -1) {
     i := findr(s, offset)
@@ -311,6 +464,13 @@ native const final class Str
   ** Return if this string contains the specified character.
   **
   Bool containsChar(Int ch) {
+    if (isAscii) {
+      for (i:=0; i<byteLen; ++i) {
+        if (ch == getByte(i)) return true
+      }
+      return false
+    }
+
     for (i:=0; i<size; ++i) {
       if (ch == get(i)) return true
     }
@@ -327,8 +487,76 @@ native const final class Str
   ** index is out of range.
   **
   @Operator Int get(Int index) {
-    if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
-    return charPtr[index]
+    //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
+    if (isAscii) {
+      return utf8[index]
+    }
+
+    bytePos := toByteIndex(index)
+    return decodeCharAt(bytePos)
+  }
+
+  private Int toByteIndex(Int index) {
+    if (index == 0) return 0
+    //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
+    charCount := 0
+    for (i:=0; i<utf8.size; ++i) {
+      if (charCount == index) {
+        return i
+      }
+      ch := utf8[i]
+      if (ch.and(0xC0) != 0x80) {
+        ++charCount
+      }
+    }
+    throw IndexErr("$index not in [0..$size]") 
+  }
+
+  private Int decodeCharAt(Int i, Array<Int>? readSize := null) {
+    c1 := getByte(i); ++i
+    if (c1 < 0) return -1
+    size := 0
+    ch := 0
+    //echo("decod1 $c1")
+
+    if (c1 < 0x80) {
+      ch = c1
+      size = 1
+    }
+    else if (c1 < 0xE0) {
+      c2 := getByte(i); ++i
+      ch = c1.and(0x1F).shiftl(6).
+             or(c2.and(0x3F))
+      size = 2
+    }
+    else if (c1 < 0xF0) {
+      c2 := getByte(i); ++i
+      c3 := getByte(i); ++i
+      //echo("decode $c1, $c2, $c3")
+      if ((c2.and(0xC0) != 0x80) || (c3.and(0xC0) != 0x80))
+            throw IOErr("Invalid UTF-8 encoding")
+      ch = c1.and(0x0F).shiftl(12)
+             .or(c2.and(0x3F).shiftl(6))
+             .or(c3.and(0x3F))
+      size = 3
+    }
+    else if (c1 < 0xF8) {
+      c2 := getByte(i); ++i
+      c3 := getByte(i); ++i
+      c4 := getByte(i); ++i
+      ch = c1.and(0x07).shiftl(18)
+             .or(c2.and(0x3F).shiftl(12))
+             .or(c3.and(0x3F).shiftl(6))
+             .or(c4.and(0x3F))
+      size = 4
+    }
+    else {
+      throw IOErr("Invalid UTF-8 encoding")
+    }
+    if (readSize != null) {
+      readSize[0] = size
+    }
+    return ch
   }
 
   **
@@ -356,12 +584,36 @@ native const final class Str
   **   "abcd"[1..-2]  => "bc"
   **   "abcd"[4..-1]  => ""
   **
-  @Operator Str getRange(Range range)
+  @Operator Str getRange(Range range) {
+    s := range.startIndex(size)
+    e := range.endIndex(size)
+    bs := toByteIndex(s)
+    es := toByteIndex(e)
+    return substring(bs, es+1)
+  }
+
+  **
+  ** [byteStart..<byteEnd]
+  **
+  private Str substring(Int byteStart, Int byteEnd) {
+    len := byteStart - byteEnd
+    bytes := Array<Int8>(len)
+    Array.arraycopy(utf8, byteStart, bytes, 0, len)
+    return make(bytes)
+  }
 
   **
   ** Concat the value of obj.toStr
   **
-  @Operator Str plus(Obj? obj)
+  @Operator Str plus(Obj? obj) {
+    if (obj == null) return this
+    Str str := obj.toStr
+    len := byteLen + str.byteLen
+    bytes := Array<Int8>(len)
+    Array.arraycopy(utf8, 0, bytes, 0, byteLen)
+    Array.arraycopy(str.utf8, 0, bytes, byteLen, str.byteLen)
+    return make(bytes)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Iterators
@@ -371,7 +623,17 @@ native const final class Str
   ** Get the characters in this string as a list of integer code points.
   ** Also see `fromChars`.
   **
-  Int[] chars()
+  Array<Char> chars() {
+    wstr := Array<Char>(size)
+    bytePos := 0
+    readSize := Array<Int>(1)
+    for (i:=0; i<size; ++i) {
+      c := decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      wstr[i] = c
+    }
+    return wstr
+  }
 
   **
   ** Call the specified function for every char in the starting
@@ -380,9 +642,13 @@ native const final class Str
   ** Example:
   **   "abc".each |Int c| { echo(c.toChar) }
   **
-  Void each(|Int ch, Int index| c) {
+  Void each(|Int ch, Int index| f) {
+    bytePos := 0
+    readSize := Array<Int>(1)
     for (i:=0; i<size; ++i) {
-      c(get(i), i)
+      c := decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      f(c, i)
     }
   }
 
@@ -394,9 +660,15 @@ native const final class Str
   ** Example:
   **   "abc".eachr |Int c| { echo(c.toChar) }
   **
-  Void eachr(|Int ch, Int index| c) {
-    for (i:=size-1; i>=0; ++i) {
-      c(get(i), i)
+  Void eachr(|Int ch, Int index| f) {
+    charIndex := size
+    for (i:=byteLen-1; i>=0; ++i) {
+      ch := getByte(i)
+      if (ch.and(0xC0) != 0x80) {
+        --charIndex
+        uc := decodeCharAt(i)
+        f(uc, charIndex)
+      }
     }
   }
 
@@ -408,9 +680,13 @@ native const final class Str
   **   "Foo".any |c| { c.isUpper } => true
   **   "foo".any |c| { c.isUpper } => false
   **
-  Bool any(|Int ch, Int index->Bool| c) {
+  Bool any(|Int ch, Int index->Bool| f) {
+    bytePos := 0
+    readSize := Array<Int>(1)
     for (i:=0; i<size; ++i) {
-      if (c(get(i), i)) return true
+      c := decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      if (f(c, i)) return true
     }
     return false
   }
@@ -423,11 +699,15 @@ native const final class Str
   **   "Bar".all |c| { c.isUpper } => false
   **   "BAR".all |c| { c.isUpper } => true
   **
-  Bool all(|Int ch, Int index->Bool| c) {
+  Bool all(|Int ch, Int index->Bool| f) {
+    bytePos := 0
+    readSize := Array<Int>(1)
     for (i:=0; i<size; ++i) {
-      if (!c(get(i), i)) return false
+      c := decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      if (!f(c, i)) return true
     }
-    return true
+    return false
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -458,13 +738,18 @@ native const final class Str
   **   "Apple".lower => "apple"
   **
   Str lower() {
-    sb := StrBuf()
-    for (i:=0; i<size; ++i) {
-      ch := this.get(i)
-      if ('A' <= ch && ch <= 'Z') ch = ch.or(0x20)
-      sb.addChar(ch)
+    found := false
+    sb := Array<Int8>(byteLen)
+    for (i:=0; i<byteLen; ++i) {
+      ch := this.getByte(i)
+      if ('A' <= ch && ch <= 'Z') {
+        ch = ch.or(0x20)
+        found = true
+      }
+      sb[i] = ch
     }
-    return sb.toStr
+    if (!found) return this
+    return make(sb)
   }
 
   **
@@ -476,14 +761,18 @@ native const final class Str
   **   "Foo Bar".upper => "FOO BAR"
   **
   Str upper() {
-    sb := StrBuf()
-    n := size
-    for (i:=0; i<n; ++i) {
-      ch := this.get(i)
-      if ('A' <= ch && ch <= 'Z') ch = ch.and(0x20.not)
-      sb.addChar(ch)
+    found := false
+    sb := Array<Int8>(byteLen)
+    for (i:=0; i<byteLen; ++i) {
+      ch := this.getByte(i)
+      if ('A' <= ch && ch <= 'Z') {
+        ch = ch.and(0x20.not)
+        found = true
+      }
+      sb[i] = ch
     }
-    return sb.toStr
+    if (!found) return this
+    return make(sb)
   }
 
   **
@@ -500,10 +789,17 @@ native const final class Str
   **
   Str trim() {
     self := this
-    len := self.size();
+    len := self.byteLen
     if (len == 0) return self;
-    if (self.get(0) > ' ' && self.get(len-1) > ' ') return self;
-    return self.trimStart.trimEnd
+    if (self.getByte(0) > ' ' && self.getByte(len-1) > ' ') return self;
+    
+    start := 0;
+    while (start < len && self.getByte(start) <= ' ') start++;
+
+    end := len-1;
+    while (end >= 0 && self.getByte(end) <= ' ') end--;
+
+    return substring(start, end+1)
   }
 
   **
@@ -535,12 +831,14 @@ native const final class Str
   **
   Str trimStart() {
     self := this
-    len := self.size();
+    len := self.byteLen
     if (len == 0) return self;
-    if (self.get(0) > ' ') return self;
-    pos := 1;
-    while (pos < len && self.get(pos) <= ' ') pos++;
-    return self[pos..size-1];
+    if (self.getByte(0) > ' ') return self;
+    
+    start := 0;
+    while (start < len && self.getByte(start) <= ' ') start++;
+
+    return substring(start, len)
   }
 
   **
@@ -553,12 +851,14 @@ native const final class Str
   **
   Str trimEnd() {
     self := this
-    len := self.size();
+    len := self.byteLen
     if (len == 0) return self;
-    pos := len-1;
-    if (self.get(pos) > ' ') return self;
-    while (pos >= 0 && self.get(pos) <= ' ') pos--;
-    return self[0..<pos+1]
+    if (self.getByte(len-1) > ' ') return self;
+    
+    end := len-1;
+    while (end >= 0 && self.getByte(end) <= ' ') end--;
+
+    return substring(0, end+1)
   }
 
   **
@@ -601,11 +901,11 @@ native const final class Str
     Int sep := separator;
     Bool trim = trimmed;
     toks := List<Str>.make(16);
-    len := self.size();
+    len := self.byteLen
     x := 0;
     for (i:=0; i<len; ++i)
     {
-      if (self.get(i) != sep) continue;
+      if (self.getByte(i) != sep) continue;
       if (x <= i) toks.add(splitStr(self, x, i, trim));
       x = i+1;
     }
@@ -617,28 +917,28 @@ native const final class Str
   {
     if (trim)
     {
-      while (s < e && val.get(s) <= ' ') ++s;
-      while (e > s && val.get(e-1) <= ' ') --e;
+      while (s < e && val.getByte(s) <= ' ') ++s;
+      while (e > s && val.getByte(e-1) <= ' ') --e;
     }
-    return val[s..<e]
+    return val.substring(s, e)
   }
 
-  public static Str[] splitws(Str val)
+  private static Str[] splitws(Str val)
   {
     toks := List<Str>.make(16);
-    len := val.size();
-    while (len > 0 && val.get(len-1) <= ' ') --len;
+    len := val.byteLen;
+    while (len > 0 && val.getByte(len-1) <= ' ') --len;
     x := 0;
-    while (x < len && val.get(x) <= ' ') ++x;
+    while (x < len && val.getByte(x) <= ' ') ++x;
     for (i:=x; i<len; ++i)
     {
-      if (val.get(i) > ' ') continue;
-      toks.add(val[x..<i]);
+      if (val.getByte(i) > ' ') continue;
+      toks.add(val.substring(x, i));
       x = i + 1;
-      while (x < len && val.get(x) <= ' ') ++x;
+      while (x < len && val.getByte(x) <= ' ') ++x;
       i = x;
     }
-    if (x <= len) toks.add(val[x..<len]);
+    if (x <= len) toks.add(val.substring(x, len));
     if (toks.size == 0) toks.add("");
     return toks;
   }
@@ -672,23 +972,17 @@ native const final class Str
   ** Return if every character in this Str is a US-ASCII character
   ** less than 128.
   **
-  Bool isAscii() {
-    self := this
-    len := self.size();
-    for (i:=0; i<len; ++i)
-      if (self.get(i) >= 128) return false;
-    return true;
-  }
+  Bool isAscii() { byteLen == charLen }
 
   **
   ** Return if every character in this Str is whitespace: space \t \n \r \f
   **
   Bool isSpace() {
     self := this
-    len := self.size();
+    len := self.byteLen
     for (i:=0; i<len; ++i)
     {
-      ch := self.get(i);
+      ch := self.getByte(i);
       if (!ch.isSpace)
         return false;
     }
@@ -700,10 +994,10 @@ native const final class Str
   **
   Bool isUpper() {
     self := this
-    len := self.size();
+    len := self.byteLen;
     for (i:=0; i<len; ++i)
     {
-      ch := self.get(i);
+      ch := self.getByte(i);
       if (!ch.isUpper)
         return false;
     }
@@ -715,10 +1009,10 @@ native const final class Str
   **
   Bool isLower() {
     self := this
-    len := self.size();
+    len := self.byteLen;
     for (i:=0; i<len; ++i)
     {
-      ch := self.get(i);
+      ch := self.getByte(i);
       if (!ch.isLower)
         return false;
     }
@@ -729,11 +1023,12 @@ native const final class Str
   ** Return if every char is an ASCII [letter]`Int.isAlpha`.
   **
   Bool isAlpha() {
+    if (!isAscii) return false
     self := this
-    len := self.size();
+    len := self.byteLen
     for (i:=0; i<len; ++i)
     {
-      ch := self.get(i);
+      ch := self.getByte(i);
       if (!ch.isAlpha)
         return false;
     }
@@ -744,11 +1039,12 @@ native const final class Str
   ** Return if every char is an ASCII [alpha-numeric]`Int.isAlphaNum`.
   **
   Bool isAlphaNum() {
+    if (!isAscii) return false
     self := this
-    len := self.size();
+    len := self.byteLen
     for (i:=0; i<len; ++i)
     {
-      ch := self.get(i);
+      ch := self.getByte(i);
       if (!ch.isAlphaNum)
         return false;
     }
@@ -848,9 +1144,11 @@ native const final class Str
 
     // NOTE: these escape sequences are duplicated in ObjEncoder
     len := self.size();
-    for (i:=0; i<len; ++i)
+    readSize := Array<Int>(1)
+    for (i:=0; i<len; )
     {
-      c := self.get(i);
+      c := self.decodeCharAt(i, readSize);
+      i += readSize[0]
       switch (c)
       {
         case '\n': s.addChar('\\').addChar('n'); break;
@@ -884,7 +1182,7 @@ native const final class Str
     return s.toStr();
   }
 
-  private static Int hex(Int nib) { return "0123456789abcdef".get(nib); }
+  private static Int hex(Int nib) { return "0123456789abcdef".getByte(nib); }
 
   **
   ** Return this string as valid XML text.  The special control
@@ -917,21 +1215,19 @@ native const final class Str
   **
   //Buf toBuf(Charset charset := Charset.utf8)
 
-  Array<Int8> toUtf8()
+  Array<Int8> toUtf8() { utf8 }
 
-  static new fromUtf8(Array<Int8> ba, Int offset := 0, Int len := ba.size)
+  static new fromUtf8(Array<Int8> ba, Int offset := 0, Int len := ba.size) {
+    bytes := Array<Int8>(len)
+    Array.arraycopy(ba, offset, bytes, 0, len)
+    return make(bytes)
+  }
 
   protected override Void finalize() {
-    if (!isStatic) {
-      NativeC.free(byte)
-    }
-    NativeC.free(charPtr)
-    byte = Ptr.nil
-    charPtr = Ptr.nil
   }
 
   **
   ** Returns a formatted string using the specified format string and arguments.
   **
-  static Str format(Str format, Obj[] args)
+  native static Str format(Str format, Obj[] args)
 }

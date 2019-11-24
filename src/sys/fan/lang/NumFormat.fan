@@ -16,8 +16,9 @@ internal class NumDigits {
   //}
 
   new make(Str s) {
-    digits = Int[,]
-    digits.capacity = s.size + 16
+    digits = Array<Int32>(s.size+16)
+    //digits.capacity = s.size + 16
+    digitsSize := 0
 
     Int expPos := -1
     decimal := -99
@@ -35,9 +36,10 @@ internal class NumDigits {
         expPos = i
         break
       }
-      digits.add(c)
+      digits[digitsSize] = c
+      ++digitsSize
     }
-    size = digits.size
+    size = digitsSize
 
     // add decimal to end if not in orig string,
     // otherwise removing any trailing fractional zeros
@@ -58,14 +60,14 @@ internal class NumDigits {
         while (size <= decimal)
           digits[size++] = '0'
       } else if (decimal < 0) {
-        /*
-        System.arraycopy(digits, 0, digits, -decimal, size)
+        
+        Array.arraycopy(digits, 0, digits, -decimal, size)
         for (Int i := 0; i < -decimal; ++i)
           digits[i] = '0'
-        */
-        zs := Int[,]
-        zs.fill('0', -decimal)
-        digits.insertAll(0, zs)
+        
+        // zs := Int[,]
+        // zs.fill('0', -decimal)
+        // digits.insertAll(0, zs)
 
         size += -decimal
         decimal = 0
@@ -128,9 +130,9 @@ internal class NumDigits {
         }
         digits[i--] = '0'
         if (i < 0) {
-          digits.insert(0, '1')
-          //System.arraycopy(digits, 0, digits, 1, size)
-          //digits[0] = '1'
+          //digits.insert(0, '1')
+          Array.arraycopy(digits, 0, digits, 1, size)
+          digits[0] = '1'
           size++
           decimal++
           break
@@ -148,7 +150,7 @@ internal class NumDigits {
     return Str.fromChars(digits, 0, size) + " neg=" + negative + " decimal=" + decimal
   }
 
-  Int[] digits // char digits
+  Array<Int32> digits // char digits
   Int decimal // index where decimal fits into digits
   Int size // size of digits used
   Bool negative // is this a negative number

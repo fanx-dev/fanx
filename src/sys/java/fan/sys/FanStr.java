@@ -20,20 +20,20 @@ import fanx.util.StrUtil;
  */
 public class FanStr
 {
-	public static String fromChars(List chars) {
-		return fromChars(chars, 0, chars.size());
-	}
+  public static String fromChars(int[] chars) {
+    return fromChars(chars, 0, chars.length);
+  }
 	
-	public static String fromChars(List chars, long offset) {
-		return fromChars(chars, offset, chars.size());
-	}
+  public static String fromChars(int[] chars, long offset) {
+    return fromChars(chars, offset, chars.length);
+  }
 
-  public static String fromChars(List chars, long offset, long len)
+  public static String fromChars(int[] chars, long offset, long len)
   {
-    if (chars.size() == 0) return "";
-    StringBuilder s = new StringBuilder((int)chars.size());
+    if (chars.length == 0) return "";
+    StringBuilder s = new StringBuilder((int)chars.length);
     for (int i=(int)offset; i<len; ++i) {
-      int codepoint = ((Long)chars.get(i)).intValue();
+      int codepoint = chars[i];//.intValue();
       s.appendCodePoint(codepoint);
     }
     return s.toString();
@@ -348,15 +348,18 @@ public class FanStr
 // Iterators
 //////////////////////////////////////////////////////////////////////////
 
-  public static List chars(String self)
+  public static int[] chars(String self)
   {
     int len = self.length();
-    if (len == 0) return List.defVal;
+    if (len == 0) return new int[0];
     int size = self.codePointCount(0, len);
-    List list = List.make(size);
+    int[] list = new int[size];
+    int pos = 0;
     for (int i=0; i<len;) {
     	int codepoint = self.codePointAt(i);
-    	list.add((long)codepoint);
+    	//list.add((long)codepoint);
+    	list[pos] = codepoint;
+    	++pos;
     	i += Character.charCount(codepoint);
     }
     return list;

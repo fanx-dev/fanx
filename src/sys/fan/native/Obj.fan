@@ -158,8 +158,8 @@ native rtconst abstract class Obj
   **
   static Void echo(Obj? x := "") {
     str := x == null ? "null" : x.toStr
-    cstr := str.toCStr()
-    NativeC.puts(cstr)
+    cstr := str.toUtf8()
+    NativeC.print(cstr)
   }
 
   **

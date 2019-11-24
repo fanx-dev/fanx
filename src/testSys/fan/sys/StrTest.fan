@@ -576,8 +576,16 @@ class StrTest : Test
 
   Void verifyChars(Str s, Int[] chars)
   {
-    verifyEq(s.chars, chars)
-    verifyEq(Str.fromChars(chars), s)
+    nchars := Array<Int32>(chars.size)
+    schars := s.chars
+    for (i:=0; i<chars.size; ++i) {
+      if (schars[i] != chars[i]) {
+        verify(false, "$s != $chars, at $i")
+      }
+      nchars[i] = chars[i]
+    }
+    //verifyEq(s.chars, chars)
+    verifyEq(Str.fromChars(nchars), s)
   }
 
 //////////////////////////////////////////////////////////////////////////

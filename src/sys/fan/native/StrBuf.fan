@@ -15,7 +15,7 @@ using sys::Int64 as Size_t
 **
 native final class StrBuf
 {
-  private Ptr<Char> buf
+  private Array<Char> buf
   private Int _size
 
 //////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ native final class StrBuf
   new make(Int capacity := 16) {
     &capacity = capacity
     _size = 0
-    buf = (Ptr<Char>)NativeC.malloc(capacity * sizeof(Char))
+    buf = Array<Char>(capacity)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,10 +52,10 @@ native final class StrBuf
   native Int capacity {
     set {
       if (it > &capacity) {
-        nbuf := NativeC.realloc(buf, it)
-        if (nbuf == Ptr.nil) {
-          throw Err("realloc fail")
-        }
+        nbuf := Array.realloc(buf, it)
+        //if (nbuf == Ptr.nil) {
+        //  throw Err("realloc fail")
+        //}
         buf = nbuf
         &capacity = it
       }
@@ -90,7 +90,7 @@ native final class StrBuf
   @Operator Str getRange(Range range) {
     s := range.startIndex(size)
     e := range.endIndex(size)
-    return Str.fromCStr(buf+s, e-s)
+    return Str.fromChars(buf, s, e+1-s)
   }
 
   **
@@ -140,9 +140,7 @@ native final class StrBuf
 
   This addStr(Str str, Int off := 0, Int len := str.size) {
     grow(len)
-
-    src := str.getCharPtr+off
-    NativeC.memcpy(buf, src, len*sizeof(Char))
+    Array.arraycopy(str, off, buf, _size, len)
     _size += len
     return this
   }
@@ -178,9 +176,11 @@ native final class StrBuf
     grow(strLen)
 
     left := size - index - 1
-    NativeC.memmove(buf+index+strLen, buf+index, left * sizeof(Char))
+    Array.arraycopy(buf, index, buf, index+strLen, left)
+    //NativeC.memmove(buf+index+strLen, buf+index, left * sizeof(Char))
 
-    NativeC.memcpy(buf+index, str.getCharPtr, strLen * sizeof(Char))
+    Array.arraycopy(str.chars, 0, buf, index, strLen)
+    //NativeC.memcpy(buf+index, str.getCharPtr, strLen * sizeof(Char))
     _size += strLen
     return this
   }
@@ -198,7 +198,8 @@ native final class StrBuf
       throw IndexErr("$index, $size")
     }
     left := size - index - 1
-    NativeC.memmove(buf+index, buf+index+1, left * sizeof(Char))
+    Array.arraycopy(buf, index+1, buf, index, left)
+    //NativeC.memmove(buf+index, buf+index+1, left * sizeof(Char))
     --_size
     return this
   }
@@ -211,7 +212,8 @@ native final class StrBuf
   This removeRange(Range r) {
     s := r.startIndex(size)
     e := r.endIndex(size)
-    NativeC.memmove(buf+s, buf+e, (e-s) * sizeof(Char))
+    Array.arraycopy(buf, e+1, buf, s, (e+1-s))
+    //NativeC.memmove(buf+s, buf+e, (e-s) * sizeof(Char))
     return this
   }
 
@@ -224,14 +226,15 @@ native final class StrBuf
     s := r.startIndex(size)
     e := r.endIndex(size)
 
-    strLen := str.size-(e-s)
+    strLen := str.size-(e+1-s)
     grow(strLen)
 
     left := size - strLen - 1
-    NativeC.memmove(buf+s+strLen, buf+e, left * sizeof(Char))
+    //NativeC.memmove(buf+s+strLen, buf+e, left * sizeof(Char))
+    Array.arraycopy(buf, e+1, buf, s+strLen, left)
 
-    NativeC.memmove(buf+s, str.getCharPtr, str.size * sizeof(Char))
-
+    //NativeC.memmove(buf+s, str.getCharPtr, str.size * sizeof(Char))
+    Array.arraycopy(str.chars, 0, buf, s, strLen)
     _size += strLen
     return this
   }
@@ -250,7 +253,7 @@ native final class StrBuf
   ** Return the current buffer contents as a Str.
   **
   override Str toStr() {
-    Str.fromCharPtr(buf, size)
+    Str.fromChars(buf)
   }
 
   **
@@ -260,9 +263,5 @@ native final class StrBuf
   **
   //OutStream out()
   protected override Void finalize() {
-    NativeC.free(buf)
-    buf = Ptr.nil
-    _size = 0
-    &capacity = 0
   }
 }

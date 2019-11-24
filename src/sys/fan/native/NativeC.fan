@@ -25,4 +25,5 @@ native class NativeC {
   static native Size_t utf8Size(Ptr<Int8> cstr, Size_t len)
 
   static native Void puts(Ptr<Int8> cstr)
+  static native Void print(Array<Int8> utf8)
 }
