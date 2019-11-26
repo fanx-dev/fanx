@@ -21,6 +21,12 @@ class BufTest : AbstractBufTest
     verifyEquality(makeMem,  makeFile)
     verifyEquality(makeFile, makeMem)
     verifyEquality(makeFile, makeFile)
+
+    verifyBufEq(Buf(), Buf())
+    verifyBufEq(Buf().print("abc"), Buf().print("abc"))
+    verifyBufNotEq(Buf().print("abc"), Buf().print("ab"))
+    verifyBufNotEq(Buf().print("ab"), Buf().print("abc"))
+    verifyBufNotEq(Buf().print("abcx"), Buf().print("abcy"))
   }
 
   Void verifyEquality(Buf a, Buf b)

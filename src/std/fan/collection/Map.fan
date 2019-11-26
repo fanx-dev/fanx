@@ -168,6 +168,14 @@ rtconst abstract class Map<K,V>
   abstract This add(K key, V val)
 
   **
+  ** Call `add` if val is non-null otherwise do nothing.  Return this.
+  **
+  This addIfNotNull(K key, V? val) {
+    if (val == null) return this
+    return add(key, val)
+  }
+
+  **
   ** Get the value for the specified key, or if it doesn't exist
   ** then automatically add it.  The value function is called to
   ** get the value to add, it is only called if the key is not

@@ -73,6 +73,19 @@ rtconst abstract class Buf
   override Bool equals(Obj? that) { this === that }
 
   **
+  ** Return if the buffer contents are the same size and same bytes.
+  ** Note this could be an extremely expensive call for non-memory buffers.
+  **
+  Bool bytesEqual(Buf that) {
+    if (this == that) return true
+    if (this.size != that.size) return false
+    for (i:=0; i<size; ++i)
+      if (this.getByte(i) != that.getByte(i))
+        return false
+    return true
+  }
+
+  **
   ** Return string summary of the buffer.
   **
   override Str toStr() { super.toStr + "(pos=$pos size=$size)" }

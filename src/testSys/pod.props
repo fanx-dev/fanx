@@ -7,4 +7,5 @@ depends = sys 2.0, std 1.0
 resDirs = res/, locale/, concurrent/locale/
 docApi = false
 index.testSys.single = works!
+index.testSys.mult = testSys-1,testSys-2
 meta.testSys.foo = got it

@@ -199,6 +199,15 @@ class JsonTest : Test
     JsonOutStream(buf.out).writeJson(obj)
     obj = JsonInStream(buf.flip.in).readJson
     f()
+
+    // write out escaping unicode
+    buf = Buf()
+    JsonOutStream(buf.out) { escapeUnicode=true }.writeJson(obj)
+    str := buf.flip.readAllStr
+    verifyEq(str.contains("÷"), false)
+    verifyEq(str.contains("\\u00f7"), true)
+    obj = JsonInStream(str.in).readJson
+    f()
   }
 
   Void testParse() {

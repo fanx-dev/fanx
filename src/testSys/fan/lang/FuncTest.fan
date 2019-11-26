@@ -341,8 +341,8 @@ class FuncTest : Test
     verifyEq(func.arity, 2)
 
     //echo("params -> ${func.params}")
-    echo("typeof -> ${func.typeof}")
-    echo("toStr  -> ${func}")
+    //echo("typeof -> ${func.typeof}")
+    //echo("toStr  -> ${func}")
   }
 
   Str judge(Str who) { who }

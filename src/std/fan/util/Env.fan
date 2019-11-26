@@ -268,6 +268,12 @@ native const class Env
   virtual Str[] indexKeys()
 
   **
+  ** Return list of all pod names that define the given key.
+  ** NOTE: Java runtime only
+  **
+  virtual Str[] indexPodNames(Str key)
+
+  **
   ** Return a merged key/value map of all the prop files found
   ** using the following resolution rules:
   **   1. `Env.findAllFiles`: "etc/{pod}/{uri}"

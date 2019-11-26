@@ -34,11 +34,11 @@ class ConcurrentMapTest : Test
     verifyEq(count, 2)
 
     verifyErr(Err#) { m.add("c", 50) }
-    verifyConcurrentMap(m, Str:Int["a":10, "b":30, "c":50])
+    verifyConcurrentMap(m, Str:Int["a":10, "b":30, "c":40])
 
     verifyEq(m.remove("notThere"), null)
     verifyEq(m.remove("b"), 30)
-    verifyConcurrentMap(m, Str:Int["a":10, "c":50])
+    verifyConcurrentMap(m, Str:Int["a":10, "c":40])
 
     m.clear
     verifyEq(m.size, 0)

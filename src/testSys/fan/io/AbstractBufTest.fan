@@ -50,11 +50,13 @@ abstract class AbstractBufTest : Test
   Void verifyBufEq(Buf a, Buf b)
   {
     verify(eq(a, b))
+    verify(a.bytesEqual(b))
   }
 
   Void verifyBufNotEq(Buf a, Buf b)
   {
     verify(!eq(a, b))
+    verify(!a.bytesEqual(b))
   }
 
   Bool eq(Buf a, Buf b)

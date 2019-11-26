@@ -296,6 +296,14 @@ rtconst abstract class List<V>
   @Operator abstract This add(V item)
 
   **
+  ** Call `add` if item is non-null otherwise do nothing.  Return this.
+  **
+  This addIfNotNull(V? item) {
+    if (item == null) return this
+    return add(item)
+  }
+
+  **
   ** Add all the items in the specified list to the end of this list.
   ** Size is incremented by list.size.  Return this.  Throw ReadonlyErr
   ** if readonly.

@@ -51,7 +51,7 @@ native final class Zip
   **   }
   **   zip.close
   **
-  static Zip read(InStream out)
+  static Zip read(InStream in)
 
   **
   ** Create a Zip used to write a zip file to the specified output stream.

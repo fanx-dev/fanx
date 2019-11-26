@@ -428,15 +428,15 @@ public class Env extends FanObj {
 
   private Map index;
   private List keys;
+  private Map keyToPodNames;
 
   synchronized void onPodReload() {
     index = null;
     keys = null;
   }
-
-  private void loadIndex() {
-    java.util.Map<String, java.util.List<String>> jmap = EnvIndex.load();
-    Map map = Map.make();
+  
+  private Map toImuMap(java.util.Map<String, java.util.List<String>> jmap) {
+	Map map = Map.make();
     for (java.util.Map.Entry<String, java.util.List<String>> e : jmap.entrySet()) {
       java.util.List<String> jlst = e.getValue();
       List v = List.make(jlst.size());
@@ -446,8 +446,16 @@ public class Env extends FanObj {
       v = (List) v.toImmutable();
       map.set(e.getKey(), v);
     }
-    index = map;
-    keys = (List) map.keys().toImmutable();
+    map = (Map)map.toImmutable();
+//    keys = (List) map.keys().toImmutable();
+    return map;
+  }
+
+  private synchronized void loadIndex() {
+	EnvIndex eindex = new EnvIndex();
+    index = toImuMap(eindex.map);
+    keys = (List) index.keys().toImmutable();
+    keyToPodNames = toImuMap(eindex.keyToPodNames);
   }
 
   public synchronized List index(String key) {
@@ -465,6 +473,16 @@ public class Env extends FanObj {
     if (keys == null)
       loadIndex();
     return keys;
+  }
+  
+  public synchronized List indexPodNames(String key)
+  {
+    if (keyToPodNames == null)
+    	loadIndex();
+    List list = (List)keyToPodNames.get(key);
+    if (list == null)
+        list = List.defVal;
+    return list;
   }
 
   //////////////////////////////////////////////////////////////////////////

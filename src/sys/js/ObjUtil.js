@@ -217,6 +217,7 @@ if (obj.$fanType === fan.sys.Float.$type) return fan.sys.Float.toStr(obj);
 
 fan.sys.ObjUtil.echo = function(obj)
 {
+  if (obj === undefined) obj = "";
   var s = fan.sys.ObjUtil.toStr(obj);
   try { console.log(s); }
   catch (e1)

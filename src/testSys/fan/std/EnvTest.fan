@@ -383,16 +383,35 @@ class EnvTest : Test
     verifyIndex("testSys.bad", Str[,])
     verifyIndex("testSys.single", ["works!"])
 
+    mult := ["testSys-1", "testSys-2"]
+    if (Pod.find("testNative", false) != null) mult.add("testNative")
+    verifyIndex("testSys.mult", mult)
+
+    verifyIndexPodNames("testSys.mult", ["testNative", "testSys"])
+    verifyIndexPodNames("testSys.bad", Str[,])
   }
 
   Void verifyIndex(Str key, Str[] expected)
   {
     actual := Env.cur.index(key)
     // echo("==> $key  $actual  ?=  $expected")
+    verifyIndexList(actual, expected)
+    verifySame(actual, Env.cur.index(key))
+  }
+
+  Void verifyIndexPodNames(Str key, Str[] expected)
+  {
+    actual := Env.cur.indexPodNames(key)
+    // echo("P=> $key  $actual  ?=  $expected")
+    verifyIndexList(actual, expected)
+    verifySame(actual, Env.cur.indexPodNames(key))
+  }
+
+  Void verifyIndexList(Str[] actual, Str[] expected)
+  {
     verifyEq(actual.dup.sort, expected.sort)
     verifyEq(actual.isImmutable, true)
-    verifyIsType(actual, Str[]#)
-    verifySame(actual, Env.cur.index(key))
+    //verifyEq(actual.typeof, Str[]#)
   }
 
 //////////////////////////////////////////////////////////////////////////

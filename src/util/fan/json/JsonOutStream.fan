@@ -16,7 +16,11 @@
 class JsonOutStream : ProxyOutStream
 {
   Bool std := true
-  Bool encode := false
+  
+  **
+  ** Flag to escape characters over 0x7f using '\uXXXX'
+  **
+  Bool escapeUnicode := false
 
   **
   ** Convenience for `writeJson` to an in-memory string.
@@ -147,7 +151,7 @@ class JsonOutStream : ProxyOutStream
       }
       else
       {
-        if (encode)
+        if (escapeUnicode)
            writeChar('\\').writeChar('u').print(char.toHex(4))
         else
            writeChar(char)

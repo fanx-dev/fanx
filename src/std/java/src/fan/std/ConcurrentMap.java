@@ -36,7 +36,10 @@ public final class ConcurrentMap extends FanObj
 
   public void set(Object key, Object val) { map.put(key, checkImmutable(val)); }
 
-  public void add(Object key, Object val) { if (map.put(key, checkImmutable(val)) != null) throw Err.make("Duplicate key:  " + key); }
+  public void add(Object key, Object val) {
+    if (map.putIfAbsent(key, checkImmutable(val)) != null)
+      throw Err.make("Duplicate key:  " + key);
+  }
 
   public Object getOrAdd(Object key, Object defVal)
   {

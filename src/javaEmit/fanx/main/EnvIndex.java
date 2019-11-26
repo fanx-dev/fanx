@@ -16,12 +16,19 @@ import fanx.fcode.FStore;
 import fanx.fcode.FStore.Input;
 
 public class EnvIndex {
+	public HashMap<String, List<String>> map;
+	public HashMap<String, List<String>> keyToPodNames;
+	
+	public EnvIndex() {
+		map = new HashMap<String, List<String>>();
+		keyToPodNames = new HashMap<String, List<String>>();
+		load();
+	}
 
-	public static synchronized Map<String, List<String>> load() {
+	private synchronized void load() {
 		// long t1 = System.currentTimeMillis();
 
 		// load all the props
-		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 		List<String> podNames = Sys.env.listPodNames();
 		for (int i = 0; i < podNames.size(); ++i) {
 			String n = podNames.get(i);
@@ -30,29 +37,28 @@ public class EnvIndex {
 //				loadPod(map, n, new File(n));
 				Input in = store.read("index.props");
 				if (in != null) {
-					addProps(map, in);
+					addProps(in, n);
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
 				System.out.println("ERROR: Env.index load: " + n + "\n  " + e);
 			}
 		}
-		return map;
 	}
 
-	private static void loadPod(HashMap<String, List<String>> index, String n, File f) throws Exception {
-		ZipFile zip = new ZipFile(f);
-		try {
-			ZipEntry entry = zip.getEntry("index.props");
-			if (entry != null) {
-				addProps(index, zip.getInputStream(entry));
-			}
-		} finally {
-			zip.close();
-		}
-	}
+//	private static void loadPod(HashMap<String, List<String>> index, String n, File f) throws Exception {
+//		ZipFile zip = new ZipFile(f);
+//		try {
+//			ZipEntry entry = zip.getEntry("index.props");
+//			if (entry != null) {
+//				addProps(index, zip.getInputStream(entry));
+//			}
+//		} finally {
+//			zip.close();
+//		}
+//	}
 
-	private static void addProps(HashMap<String, List<String>> map, InputStream in) throws IOException {
+	private void addProps(InputStream in, String podName) throws IOException {
 		BufferedReader r = new BufferedReader(new InputStreamReader(in));
 		String line;
 		while (true) {
@@ -68,13 +74,25 @@ public class EnvIndex {
 			}
 			String key = fs[0].trim();
 			String val = fs[1].trim();
+			String[] vals = val.split(",");
 
 			List<String> res = map.get(key);
 			if (res == null) {
 				res = new ArrayList<String>();
 				map.put(key, res);
 			}
-			res.add(val);
+			for (String v : vals) {
+				v = v.trim();
+				if (v.length() == 0) continue;
+				res.add(v);
+			}
+			
+			List<String> pods = keyToPodNames.get(key);
+			if (pods == null) {
+				pods = new ArrayList<String>();
+				keyToPodNames.put(key, pods);
+			}
+			pods.add(podName);
 			
 //			System.out.println(key + "=>" + res);
 		}
