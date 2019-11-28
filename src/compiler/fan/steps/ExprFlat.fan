@@ -59,8 +59,8 @@ class ExprFlat : CompilerStep
   private Expr toTempVar(Expr expr) {
     if (expr.id === ExprId.localVar) return expr
 
-    var := curMethod.addLocalVar(expr.ctype, null, null)
-    lvar := LocalVarExpr(expr.loc, var)
+    var_v := curMethod.addLocalVar(expr.ctype, null, null)
+    lvar := LocalVarExpr(expr.loc, var_v)
     assign := BinaryExpr.makeAssign(lvar, expr)
     addStmt(assign.toStmt)
     return lvar

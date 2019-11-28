@@ -115,33 +115,33 @@ class ClosureVars : CompilerStep
   private Bool wrapNonFinalVars(MethodDef m)
   {
     wrapped := false
-    m.vars.each |var, i|
+    m.vars.each |var_v, i|
     {
       // we only care about variables used in closures
-      if (!var.usedInClosure) return
+      if (!var_v.usedInClosure) return
 
       // if the variable is never reassigned, then we
       // can use it directly since it is final
-      if (!var.isReassigned) return
+      if (!var_v.isReassigned) return
 
       // generate or reuse Wrapper class for this type
-      wrapField := genWrapper(this, var.ctype)
+      wrapField := genWrapper(this, var_v.ctype)
 
-      if (var.isParam)
+      if (var_v.isParam)
       {
         // we can't change signature of parameters since they
         // are passed in externally, so we have to create a new
         // local to use for the wrapper version of the param
-        w := m.addLocalVar(wrapField.parent, var.name + "\$Wrapper", m.code)
+        w := m.addLocalVar(wrapField.parent, var_v.name + "\$Wrapper", m.code)
         w.wrapField = wrapField
-        var.paramWrapper = w
+        var_v.paramWrapper = w
       }
       else
       {
         // generate wrapper type and update variable type
-        if (var.wrapField != null) throw Err()
-        var.wrapField = wrapField
-        var.ctype = wrapField.parent
+        if (var_v.wrapField != null) throw Err()
+        var_v.wrapField = wrapField
+        var_v.ctype = wrapField.parent
       }
 
       // keep track that we've wrapped something
@@ -167,7 +167,7 @@ class ClosureVars : CompilerStep
 
   override Stmt[]? visitStmt(Stmt stmt)
   {
-    if (stmt.id === StmtId.localDef && ((LocalDefStmt)stmt).var.isWrapped)
+    if (stmt.id === StmtId.localDef && ((LocalDefStmt)stmt).var_v.isWrapped)
       return fixLocalDef(stmt)
     return null
   }
@@ -205,17 +205,17 @@ class ClosureVars : CompilerStep
       init = ((BinaryExpr)stmt.init).rhs
 
     // replace original initialization with wrapper construction
-    stmt.init = initWrapper(stmt.loc, stmt.var, init)
+    stmt.init = initWrapper(stmt.loc, stmt.var_v, init)
     return null
   }
 
   **
-  ** Generate the expression: var := Wrapper(init)
+  ** Generate the expression: var_v := Wrapper(init)
   **
-  private Expr initWrapper(Loc loc, MethodVar var, Expr init)
+  private Expr initWrapper(Loc loc, MethodVar var_v, Expr init)
   {
-    wrapCtor := var.wrapField.parent.method("make")
-    lhs := LocalVarExpr.makeNoUnwrap(loc, var)
+    wrapCtor := var_v.wrapField.parent.method("make")
+    lhs := LocalVarExpr.makeNoUnwrap(loc, var_v)
     rhs := CallExpr.makeWithMethod(loc, null, wrapCtor, [init])
     return BinaryExpr.makeAssign(lhs, rhs)
   }
@@ -233,20 +233,20 @@ class ClosureVars : CompilerStep
     // if this variable access is a wrapped parameter, then
     // we never use the parameter itself, but rather the wrapper
     // local variable
-    var := local.var
-    if (var.paramWrapper != null)
+    var_v := local.var_v
+    if (var_v.paramWrapper != null)
     {
       // use param wrapper variable
-      var = var.paramWrapper
+      var_v = var_v.paramWrapper
     }
 
     // if not a wrapped variable or we have explictly marked
     // it to stay wrapped, then don't do anything
-    if (!var.isWrapped || !local.unwrap) return local
+    if (!var_v.isWrapped || !local.unwrap) return local
 
     // unwrap from the Wrapper.val field
     loc := local.loc
-    return fieldExpr(loc, LocalVarExpr.makeNoUnwrap(loc, var), var.wrapField)
+    return fieldExpr(loc, LocalVarExpr.makeNoUnwrap(loc, var_v), var_v.wrapField)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -264,11 +264,11 @@ class ClosureVars : CompilerStep
   **
   private Void fixWrappedParams(MethodDef method)
   {
-    method.vars.each |var|
+    method.vars.each |var_v|
     {
-      if (var.paramWrapper == null) return
+      if (var_v.paramWrapper == null) return
       loc := method.loc
-      initWrap := initWrapper(loc, var.paramWrapper, LocalVarExpr.makeNoUnwrap(loc, var))
+      initWrap := initWrapper(loc, var_v.paramWrapper, LocalVarExpr.makeNoUnwrap(loc, var_v))
       method.code.stmts.insert(0, initWrap.toStmt)
     }
   }
@@ -286,14 +286,14 @@ class ClosureVars : CompilerStep
   private Void processClosure(ClosureExpr closure)
   {
     // get the variables shadowed from enclosing scope
-    shadowed := closure.doCall.vars.findAll |var| { var.shadows != null }
+    shadowed := closure.doCall.vars.findAll |var_v| { var_v.shadows != null }
 
     // process each shadowed variable
-    shadowed.each |var, i| { addVarToClosure(closure, var, var.name+"\$"+i) }
+    shadowed.each |var_v, i| { addVarToClosure(closure, var_v, var_v.name+"\$"+i) }
 
     // if any of the shadowed variables are wrapped we need
     // to walk the expression tree
-    walkExprTree := shadowed.any |var| { var.isWrapped }
+    walkExprTree := shadowed.any |var_v| { var_v.isWrapped }
     if (walkExprTree) closure.doCall.code.walkExpr |expr|
     {
       expr.id === ExprId.localVar ? fixWrappedVar(expr) : expr
@@ -308,24 +308,24 @@ class ClosureVars : CompilerStep
   **  4. Assign param to field in constructor
   **  5. Initialize variable in doCall from field
   **
-  private Void addVarToClosure(ClosureExpr closure, MethodVar var, Str name)
+  private Void addVarToClosure(ClosureExpr closure, MethodVar var_v, Str name)
   {
     // check if what we are shadowing is a wrapped param
-    if (var.shadows.paramWrapper != null)
-      var.shadows = var.shadows.paramWrapper
+    if (var_v.shadows.paramWrapper != null)
+      var_v.shadows = var_v.shadows.paramWrapper
 
-    // check if shadowed var has been wrapped
-    if (var.shadows.isWrapped)
+    // check if shadowed var_v has been wrapped
+    if (var_v.shadows.isWrapped)
     {
-      var.ctype = var.shadows.ctype
-      var.wrapField = var.shadows.wrapField
+      var_v.ctype = var_v.shadows.ctype
+      var_v.wrapField = var_v.shadows.wrapField
     }
 
     loc := closure.loc
-    field := addToClosure(closure, name, LocalVarExpr.makeNoUnwrap(loc, var.shadows), "wrapper for $var.name.toCode")
+    field := addToClosure(closure, name, LocalVarExpr.makeNoUnwrap(loc, var_v.shadows), "wrapper for $var_v.name.toCode")
 
     // load from field to local in beginning of doCall
-    loadLocal := BinaryExpr.makeAssign(LocalVarExpr.makeNoUnwrap(loc, var), fieldExpr(loc, ThisExpr(loc), field))
+    loadLocal := BinaryExpr.makeAssign(LocalVarExpr.makeNoUnwrap(loc, var_v), fieldExpr(loc, ThisExpr(loc), field))
     closure.doCall.code.stmts.insert(0, loadLocal.toStmt)
   }
 

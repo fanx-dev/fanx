@@ -133,8 +133,6 @@ enum class Token
   extensionKeyword,
   rtconstKeyword,
   inlineKeyword,
-  variKeyword,
-  defiKeyword,
   referKeyword,
   asyncKeyword,
   yieldKeyword,
@@ -144,9 +142,10 @@ enum class Token
   sizeofKeyword,
   offsetofKeyword,
   uninitKeyword,
-  boxingKeyword,
-  unboxKeyword,
   weakKeyword,
+  varKeyword,
+  letKeyword,
+  funKeyword,
 
   // misc
   eof("eof");

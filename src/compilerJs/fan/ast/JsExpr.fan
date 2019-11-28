@@ -128,7 +128,7 @@ class JsLocalVarExpr : JsExpr
 {
   new make(JsCompilerSupport s, LocalVarExpr le) : super(s, le)
   {
-    name = vnameToJs(le.var.name)
+    name = vnameToJs(le.var_v.name)
   }
   override Void write(JsWriter out)
   {
@@ -484,13 +484,13 @@ class JsBinaryExpr : JsExpr
       fe := (JsFieldExpr)lhs
       if (leave)
       {
-        var := support.unique
+        var_v := support.unique
         old := support.thisName
         support.thisName = "\$this"
         out.w("(function(\$this) {", loc)
-        out.w(" var $var = ", loc); rhs.write(out); out.w("; ")
-        fe.writeSetter(out, JsVarExpr(support, var)); out.w(";")
-        out.w(" return $var;", loc)
+        out.w(" var $var_v = ", loc); rhs.write(out); out.w("; ")
+        fe.writeSetter(out, JsVarExpr(support, var_v)); out.w(";")
+        out.w(" return $var_v;", loc)
         out.w(" })($old)", loc)
         support.thisName = old
       }
@@ -532,7 +532,7 @@ class JsTernaryExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    var := support.unique
+    var_v := support.unique
     old := support.thisName
     support.thisName = "\$this"
     out.w("(function(\$this) { ", loc)
@@ -562,12 +562,12 @@ class JsElvisExpr : JsExpr
   }
   override Void write(JsWriter out)
   {
-    var := support.unique
+    var_v := support.unique
     old := support.thisName
     support.thisName = "\$this"
-    out.w("(function(\$this) { var $var = ", loc)
+    out.w("(function(\$this) { var $var_v = ", loc)
     lhs.write(out)
-    out.w("; if ($var != null) return $var; ", loc)
+    out.w("; if ($var_v != null) return $var_v; ", loc)
     if (rhs isnot JsThrowExpr) out.w("return ", loc)
     rhs.write(out)
     out.w("; })($old)", loc)
@@ -854,14 +854,14 @@ class JsShortcutExpr : JsCallExpr
     }
     if (isPostfixLeave)
     {
-      var := support.unique
+      var_v := support.unique
       old := support.thisName
       support.thisName = "\$this"
-      out.w("(function(\$this) { var $var = ", loc)
+      out.w("(function(\$this) { var $var_v = ", loc)
       assignTarget.write(out)
       out.w("; ")
       doWrite(out)
-      out.w("; return $var; })($old)", loc)
+      out.w("; return $var_v; })($old)", loc)
       support.thisName = old
     }
     else doWrite(out)

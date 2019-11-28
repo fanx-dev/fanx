@@ -260,9 +260,9 @@ class GenAsync : CompilerStep {
 
     if (doCall.paramDefs.size > 0) {
       doCall.paramDefs.each |param| {
-        var := MethodVar.makeForParam(doCall, doCall.vars.size+1, param, param.paramType)
-        doCall.vars.add(var)
-        lvar := LocalVarExpr(loc, var)
+        var_v := MethodVar.makeForParam(doCall, doCall.vars.size+1, param, param.paramType)
+        doCall.vars.add(var_v)
+        lvar := LocalVarExpr(loc, var_v)
         args.add(lvar)
       }
     }
@@ -280,9 +280,9 @@ class GenAsync : CompilerStep {
     if (curMethod.paramDefs.size > 0) {
       args = Expr[,]
       curMethod.paramDefs.each |param| {
-        var := MethodVar.makeForParam(curMethod, curMethod.vars.size+1, param, param.paramType)
-        curMethod.vars.add(var)
-        lvar := LocalVarExpr(loc, var)
+        var_v := MethodVar.makeForParam(curMethod, curMethod.vars.size+1, param, param.paramType)
+        curMethod.vars.add(var_v)
+        lvar := LocalVarExpr(loc, var_v)
         args.add(lvar)
       }
     }
@@ -315,7 +315,7 @@ class GenAsync : CompilerStep {
   {
     if (stmt.init == null) {
       if (stmt.isCatchVar) {
-        stmt.var = implMethod.addLocalVar(stmt.ctype, stmt.name, null)
+        stmt.var_v = implMethod.addLocalVar(stmt.ctype, stmt.name, null)
         return stmt
       }
       return NopStmt(stmt.loc)
@@ -332,8 +332,8 @@ class GenAsync : CompilerStep {
 
   private Expr replaceLocalVar(LocalVarExpr local)
   {
-    var := local.var
-    return fieldExpr(local.loc, "var_"+var.name)
+    var_v := local.var_v
+    return fieldExpr(local.loc, "var_"+var_v.name)
   }
 
 
@@ -414,7 +414,7 @@ class GenAsync : CompilerStep {
         LocalDefStmt defStmt := stmt
         if (!defStmt.isCatchVar) throw Err("Must catch var")
         stmts.add(stmt)
-        lvar := LocalVarExpr(stmt.loc, defStmt.var)
+        lvar := LocalVarExpr(stmt.loc, defStmt.var_v)
         store := BinaryExpr.makeAssign(fieldExpr(stmt.loc, "var_"+defStmt.name), lvar)
         stmts.add(store.toStmt)
         return

@@ -193,19 +193,19 @@ class CodeAsm : CompilerSupport
     {
       // "declaration" of a catch variable is used store the
       // variable back to its local register
-      var := stmt.var
+      var_v := stmt.var_v
       op(FOp.CatchErrStart, fpod.addTypeRef(stmt.ctype))
 
       // if the catch variable has been hoisted onto the heap
       // with a wrapper, call the wrapper constructor
-      if (var.isWrapped)
+      if (var_v.isWrapped)
       {
-        //wrapCtor := fpod.addMethodRef(var.wrapField.parent.method("make"), 1)
-        callNew(var.wrapField.parent.method("make"), 1)
+        //wrapCtor := fpod.addMethodRef(var_v.wrapField.parent.method("make"), 1)
+        callNew(var_v.wrapField.parent.method("make"), 1)
       }
 
       // store back to local register
-      op(FOp.StoreVar, var.register)
+      op(FOp.StoreVar, var_v.register)
     }
     else if (stmt.init != null)
     {
@@ -285,13 +285,13 @@ class CodeAsm : CompilerSupport
   }
 
   private Void addressOf(AddressOfExpr expr) {
-    switch (expr.var.id)
+    switch (expr.var_v.id)
     {
       case ExprId.localVar:
-        r := ((LocalVarExpr)expr.var).register
+        r := ((LocalVarExpr)expr.var_v).register
         op(FOp.AddressOfVar, r)
       case ExprId.field:
-        FieldExpr fieldExpr := expr.var
+        FieldExpr fieldExpr := expr.var_v
         field := fieldExpr.field
         if (field.isStatic) {
           index := fpod.addFieldRef(field)
@@ -655,14 +655,14 @@ class CodeAsm : CompilerSupport
 // Local Var
 //////////////////////////////////////////////////////////////////////////
 
-  private Void loadLocalVar(LocalVarExpr var)
+  private Void loadLocalVar(LocalVarExpr var_v)
   {
-    op(FOp.LoadVar, var.register)
+    op(FOp.LoadVar, var_v.register)
   }
 
-  private Void storeLocalVar(LocalVarExpr var)
+  private Void storeLocalVar(LocalVarExpr var_v)
   {
-    op(FOp.StoreVar, var.register);
+    op(FOp.StoreVar, var_v.register);
   }
 
   private Void assignLocalVar(BinaryExpr assign)
@@ -1079,24 +1079,24 @@ class CodeAsm : CompilerSupport
   **
   private Void shortcutAssign(ShortcutExpr c)
   {
-    var := c.target
+    var_v := c.target
     leaveUsingTemp := false
 
-    // if var is a coercion set that aside and get real variable
+    // if var_v is a coercion set that aside and get real variable
     TypeCheckExpr? coerce := null
-    if (var.id == ExprId.coerce)
+    if (var_v.id == ExprId.coerce)
     {
-      coerce = (TypeCheckExpr)var
-      var = coerce.target
+      coerce = (TypeCheckExpr)var_v
+      var_v = coerce.target
     }
 
     // load the variable
-    switch (var.id)
+    switch (var_v.id)
     {
       case ExprId.localVar:
-        loadLocalVar((LocalVarExpr)var)
+        loadLocalVar((LocalVarExpr)var_v)
       case ExprId.field:
-        fexpr := (FieldExpr)var
+        fexpr := (FieldExpr)var_v
         loadField(fexpr, true) // dup target on stack for upcoming set
         leaveUsingTemp = !fexpr.field.isStatic  // used to determine how to duplicate
       case ExprId.shortcut:
@@ -1108,7 +1108,7 @@ class CodeAsm : CompilerSupport
         //   index  \  used for set
         //   target /
         index := (IndexedAssignExpr)c
-        get := (ShortcutExpr)var
+        get := (ShortcutExpr)var_v
         expr(get.target)  // target
         opType(FOp.Dup, get.target.ctype)
         op(FOp.StoreVar, index.scratchA.register)
@@ -1120,11 +1120,11 @@ class CodeAsm : CompilerSupport
         invokeCall(get, true)
         leaveUsingTemp = true
       default:
-        throw err("Internal error", var.loc)
+        throw err("Internal error", var_v.loc)
     }
 
     // if we have a coercion do it
-    if (coerce != null) coerceOp(var.ctype, coerce.check)
+    if (coerce != null) coerceOp(var_v.ctype, coerce.check)
 
     // if postfix leave, duplicate value before we preform computation
     if (c.leave && c.isPostfixLeave)
@@ -1149,16 +1149,16 @@ class CodeAsm : CompilerSupport
     // if we have a coercion then uncoerce,
     // otherwise perform coerce to ensure we
     // have right type to store back to variable
-    if (coerce != null) coerceOp(coerce.check, var.ctype)
-    else coerceOp(c.ctype, var.ctype)
+    if (coerce != null) coerceOp(coerce.check, var_v.ctype)
+    else coerceOp(c.ctype, var_v.ctype)
 
     // save the variable back
-    switch (var.id)
+    switch (var_v.id)
     {
       case ExprId.localVar:
-        storeLocalVar((LocalVarExpr)var)
+        storeLocalVar((LocalVarExpr)var_v)
       case ExprId.field:
-        storeField((FieldExpr)var)
+        storeField((FieldExpr)var_v)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
         setParam := (set.genericTypeErasure ? set.generic : set).params[1].paramType.raw
@@ -1168,7 +1168,7 @@ class CodeAsm : CompilerSupport
         op(FOp.CallVirtual, fpod.addMethodRef(set, 2))
         if (!set.returnType.isVoid) opType(FOp.Pop, set.returnType)
       default:
-        throw err("Internal error", var.loc)
+        throw err("Internal error", var_v.loc)
     }
 
     // if field leave, then load back from temp local

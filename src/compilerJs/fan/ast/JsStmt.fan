@@ -280,14 +280,14 @@ class JsTryStmt : JsStmt
 
   private Void writeCatches(JsWriter out)
   {
-    var := support.unique
+    var_v := support.unique
     hasTyped    := catches.any |c| { c.qname != null }
     hasCatchAll := catches.any |c| { c.qname == null }
 
-    out.w("catch ($var)").nl
+    out.w("catch ($var_v)").nl
     out.w("{").nl
     out.indent
-    if (hasTyped) out.w("$var = fan.sys.Err.make($var);").nl
+    if (hasTyped) out.w("$var_v = fan.sys.Err.make($var_v);").nl
 
     doElse := false
     catches.each |c|
@@ -297,10 +297,10 @@ class JsTryStmt : JsStmt
         if (doElse) out.w("else ")
         else doElse = true
 
-        out.w("if ($var instanceof $c.qname)").nl
+        out.w("if ($var_v instanceof $c.qname)").nl
         out.w("{").nl
         out.indent
-        out.w("var $c.var = $var;").nl
+        out.w("var $c.var_v = $var_v;").nl
         c.write(out)
         out.unindent
         out.w("}").nl
@@ -328,7 +328,7 @@ class JsTryStmt : JsStmt
       out.w("else").nl
       out.w("{").nl
       out.indent
-      out.w("throw $var;").nl
+      out.w("throw $var_v;").nl
       out.unindent
       out.w("}").nl
     }
@@ -349,7 +349,7 @@ class JsCatch : JsNode
 {
   new make(JsCompilerSupport s, Catch c) : super(s)
   {
-    this.var   = c.errVariable ?: support.unique
+    this.var_v   = c.errVariable ?: support.unique
     this.qname = (c.errType != null) ? qnameToJs(c.errType) : null
     this.block = (c.block != null) ? JsBlock(s, c.block) : null
   }
@@ -357,7 +357,7 @@ class JsCatch : JsNode
   {
     block?.write(out)
   }
-  Str var          // name of expection variable
+  Str var_v          // name of expection variable
   Str? qname       // qname of err type
   JsBlock? block   // catch block
 }
@@ -377,8 +377,8 @@ class JsSwitchStmt : JsStmt
 
   override Void write(JsWriter out)
   {
-    var := support.unique
-    out.w("var $var = "); cond.write(out); out.w(";").nl
+    var_v := support.unique
+    out.w("var $var_v = "); cond.write(out); out.w(";").nl
     cases.each |c, i|
     {
       if (i > 0) out.w("else ")
@@ -386,7 +386,7 @@ class JsSwitchStmt : JsStmt
       c.cases.each |e, j|
       {
         if (j > 0) out.w(" || ")
-        out.w("fan.sys.ObjUtil.equals($var,"); e.write(out); out.w(")")
+        out.w("fan.sys.ObjUtil.equals($var_v,"); e.write(out); out.w(")")
       }
       out.w(")").nl
       out.w("{").nl

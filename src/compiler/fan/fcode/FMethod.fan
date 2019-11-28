@@ -65,7 +65,7 @@ class FMethod : FSlot, CMethod
     out.write(maxStack)
     out.write(paramCount)
     out.write(localCount)
-    vars.each |FMethodVar var| { var.write(out) }
+    vars.each |FMethodVar var_v| { var_v.write(out) }
     FUtil.writeBuf(out, code)
     FUtil.writeAttrs(out, fattrs)
     //genericParams

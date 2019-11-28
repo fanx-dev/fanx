@@ -104,7 +104,7 @@ class SubclassTest : JavaTest
 
         Int test1() { return add(4, 5) }
         Obj test2() { return arraySelf[0] }
-        Obj test3(Obj[] var, Int i) { return arrayGet(var, i) }
+        Obj test3(Obj[] var_v, Int i) { return arrayGet(var_v, i) }
         Int test4(Float a, Str b) { return addfs(a, b) }
         Str[] test5(Str[] a) { return swap(a) }
         Decimal[] test6(Decimal[] a, Decimal b) { return addDecimal(a, b) }

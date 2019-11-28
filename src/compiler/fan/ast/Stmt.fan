@@ -171,7 +171,7 @@ class LocalDefStmt : Stmt
     isCatchVar = true
   }
 
-  override Str toStr() { "$ctype $name ($var)" }
+  override Str toStr() { "$ctype $name ($var_v)" }
 
   override Void print(AstWriter out) { printOpt(out) }
 
@@ -186,8 +186,8 @@ class LocalDefStmt : Stmt
   CType? ctype      // type of the variable (or null if inferred)
   Str name          // variable name
   Expr? init        // rhs of init; in ResolveExpr it becomes full assign expr
-  Bool isCatchVar   // is this auto-generated var for "catch (Err x)"
-  MethodVar? var    // variable binding
+  Bool isCatchVar   // is this auto-generated var_v for "catch (Err x)"
+  MethodVar? var_v    // variable binding
 }
 
 **************************************************************************

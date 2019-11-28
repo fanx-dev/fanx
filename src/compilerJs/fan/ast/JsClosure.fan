@@ -68,14 +68,14 @@ class JsPodClosures : JsNode
   ** Write the unique closure specification fields for this pod (JsPod)
   override Void write(JsWriter out)
   {
-    varToFunc.each |JsMethod func, Str var|
+    varToFunc.each |JsMethod func, Str var_v|
     {
       loc := func.loc
-      t := var["fan".size+1..-1]
+      t := var_v["fan".size+1..-1]
       pos2 := t.find(".")
       podName := t[0..<pos2]
       typeName := t[pos2+1..-1]
-      out.w("${var} = new fan.sys.ClosureFuncSpec\$(\"$podName::$typeName\",", loc)
+      out.w("${var_v} = new fan.sys.ClosureFuncSpec\$(\"$podName::$typeName\",", loc)
 
       // return type
       JsTypeLiteralExpr.writeType(func.ret, out)
@@ -99,12 +99,12 @@ class JsPodClosures : JsNode
   private Str mapFuncSpec(ClosureExpr ce)
   {
     func := JsMethod(support, ce.doCall)
-    var  := specKeyToVar.getOrAdd(specKey(func)) |->Str|
+    var_v  := specKeyToVar.getOrAdd(specKey(func)) |->Str|
     {
       "${pod(ce)}.\$clos${support.unique}"
     }
-    varToFunc[var] = func
-    return var
+    varToFunc[var_v] = func
+    return var_v
   }
 
   ** Get the pod variable prefix for all the closure func specs

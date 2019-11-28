@@ -50,13 +50,13 @@ class CheckParamDefs : CompilerStep
         }
 
         param := params[i]
-        var   := m.vars[i]
+        var_v   := m.vars[i]
         loc   := param.loc
 
-        if (!param.name.equals(var.name)) throw err("invalid state", loc)
+        if (!param.name.equals(var_v.name)) throw err("invalid state", loc)
 
         //TODO: verify JS
-        //param.def = BinaryExpr.makeAssign(LocalVarExpr(loc, var), param.def, true)
+        //param.def = BinaryExpr.makeAssign(LocalVarExpr(loc, var_v), param.def, true)
       }
     }
   }
@@ -78,7 +78,7 @@ class CheckParamDefs : CompilerStep
     if (expr.id === ExprId.localVar)
     {
       local := (LocalVarExpr)expr
-      if (name == local.var.name) used = true
+      if (name == local.var_v.name) used = true
     }
     return expr
   }

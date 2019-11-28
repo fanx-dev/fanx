@@ -1137,44 +1137,44 @@ class FieldExpr : NameExpr
 **
 class LocalVarExpr : Expr
 {
-  new make(Loc loc, MethodVar? var, ExprId id := ExprId.localVar)
+  new make(Loc loc, MethodVar? var_v, ExprId id := ExprId.localVar)
     : super(loc, id)
   {
-    if (var != null)
+    if (var_v != null)
     {
-      this.var = var
-      this.ctype = var.ctype
+      this.var_v = var_v
+      this.ctype = var_v.ctype
     }
   }
 
-  static LocalVarExpr makeNoUnwrap(Loc loc, MethodVar var)
+  static LocalVarExpr makeNoUnwrap(Loc loc, MethodVar var_v)
   {
-    self := make(loc, var, ExprId.localVar)
+    self := make(loc, var_v, ExprId.localVar)
     self.unwrap = false
     return self
   }
 
   override Bool isAssignable() { true }
 
-  override Bool assignRequiresTempVar() { var.usedInClosure }
+  override Bool assignRequiresTempVar() { var_v.usedInClosure }
 
   override Bool sameVarAs(Expr that)
   {
     x := that as LocalVarExpr
     if (x == null) return false
-    if (var?.usedInClosure != x?.var?.usedInClosure) return false
+    if (var_v?.usedInClosure != x?.var_v?.usedInClosure) return false
     return register == x.register
   }
 
-  virtual Int register() { var.register }
+  virtual Int register() { var_v.register }
 
   override Str toStr()
   {
-    if (var == null) return "???"
-    return var.name
+    if (var_v == null) return "???"
+    return var_v.name
   }
 
-  MethodVar? var        // bound variable
+  MethodVar? var_v        // bound variable
   Bool unwrap := true   // if hoisted onto heap with wrapper
 }
 
@@ -1820,23 +1820,23 @@ class SizeOfExpr : Expr
 
 class AddressOfExpr : Expr
 {
-  new make(Loc loc, Expr var)
+  new make(Loc loc, Expr var_v)
     : super(loc, ExprId.addressOfExpr)
   {
-    this.var = var
+    this.var_v = var_v
     //this.ctype  = ns.ptrType
   }
 
   override Void walkChildren(Visitor v)
   {
-    var = var.walk(v)
+    var_v = var_v.walk(v)
   }
 
   override Str toStr()
   {
-    return "addressof($var)"
+    return "addressof($var_v)"
   }
 
-  Expr var
+  Expr var_v
 }
 

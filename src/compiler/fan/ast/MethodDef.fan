@@ -94,9 +94,9 @@ class MethodDef : SlotDef, CMethod
   **
   MethodVar addLocalVarForDef(LocalDefStmt def, Block? scope)
   {
-    var := addLocalVar(def.ctype, def.name, scope)
-    var.isCatchVar = def.isCatchVar
-    return var
+    var_v := addLocalVar(def.ctype, def.name, scope)
+    var_v.isCatchVar = def.isCatchVar
+    return var_v
   }
 
   **
@@ -113,9 +113,9 @@ class MethodDef : SlotDef, CMethod
     if (name == null) name = "\$temp" + reg
 
     // create variable and add it variable list
-    var := MethodVar(this, reg, ctype, name, 0, scope)
-    vars.add(var)
-    return var
+    var_v := MethodVar(this, reg, ctype, name, 0, scope)
+    vars.add(var_v)
+    return var_v
   }
 
   **
@@ -131,9 +131,9 @@ class MethodDef : SlotDef, CMethod
 
     reg := params.size-1
     if (!isStatic) reg++
-    var := MethodVar.makeForParam(this, reg, param, ctype)
-    vars.add(var)
-    return var
+    var_v := MethodVar.makeForParam(this, reg, param, ctype)
+    vars.add(var_v)
+    return var_v
   }
 
   **

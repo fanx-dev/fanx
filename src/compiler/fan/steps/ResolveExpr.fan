@@ -92,7 +92,7 @@ class ResolveExpr : CompilerStep
 
     // turn init into full assignment
     if (def.init != null)
-      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.loc, def.var), def.init)
+      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.loc, def.var_v), def.init)
   }
 
   private Void resolveFor(ForStmt stmt)
@@ -135,8 +135,8 @@ class ResolveExpr : CompilerStep
     // variable, then note the reassignment so that we know it
     // is not a final variable (final being like Java semanatics)
     assignTarget := expr.assignTarget as LocalVarExpr
-    if (assignTarget != null && assignTarget.var != null)
-      assignTarget.var.reassigned
+    if (assignTarget != null && assignTarget.var_v != null)
+      assignTarget.var_v.reassigned
 
     return expr
   }
@@ -200,7 +200,7 @@ class ResolveExpr : CompilerStep
   }
 
   private Expr resolveAddressOf(AddressOfExpr expr) {
-    //expr.var = resolveExpr(expr.var)
+    //expr.var_v = resolveExpr(expr.var_v)
     expr.ctype = ns.ptrType
     return expr
   }
@@ -412,44 +412,44 @@ class ResolveExpr : CompilerStep
   **
   ** Resolve an UnknownVar to its replacement node.
   **
-  private Expr resolveVar(UnknownVarExpr var)
+  private Expr resolveVar(UnknownVarExpr var_v)
   {
     // if there is no target, attempt to bind to local variable
-    if (var.target == null)
+    if (var_v.target == null)
     {
       // attempt to a name in the current scope
-      binding := resolveLocal(var.name, var.loc)
+      binding := resolveLocal(var_v.name, var_v.loc)
       if (binding != null)
-        return LocalVarExpr(var.loc, binding)
+        return LocalVarExpr(var_v.loc, binding)
     }
 
     // at this point it can't be a local variable, so it must be
     // a slot on either myself or the variable's target
-    return CallResolver(compiler, curType, curMethod, var).resolve
+    return CallResolver(compiler, curType, curMethod, var_v).resolve
   }
 
   **
   ** Resolve storage operator
   **
-  private Expr resolveStorage(UnknownVarExpr var)
+  private Expr resolveStorage(UnknownVarExpr var_v)
   {
     // resolve as normal unknown variable
-    resolved := resolveVar(var)
+    resolved := resolveVar(var_v)
 
     // handle case where we have a local variable hiding a
     // field since the *x is assumed to be this.*x
     if (resolved.id === ExprId.localVar)
     {
-      field := curType.field(var.name)
+      field := curType.field(var_v.name)
       if (field != null)
-        resolved = FieldExpr(var.loc, ThisExpr(var.loc), field)
+        resolved = FieldExpr(var_v.loc, ThisExpr(var_v.loc), field)
     }
 
     // is we can't resolve as field, then this is an error
     if (resolved.id !== ExprId.field)
     {
       if (resolved.ctype !== ns.error)
-        err("Invalid use of field storage operator '&'", var.loc)
+        err("Invalid use of field storage operator '&'", var_v.loc)
       return resolved
     }
 
@@ -858,8 +858,8 @@ class ResolveExpr : CompilerStep
 
     m.paramDefs.each |ParamDef p|
     {
-      var := MethodVar.makeForParam(m, reg++, p, p.paramType.parameterizeThis(curType))
-      m.vars.add(var)
+      var_v := MethodVar.makeForParam(m, reg++, p, p.paramType.parameterizeThis(curType))
+      m.vars.add(var_v)
     }
   }
 
@@ -874,7 +874,7 @@ class ResolveExpr : CompilerStep
       err("Variable '$def.name' is already defined in current block", def.loc)
 
     // create and add it
-    def.var = curMethod.addLocalVarForDef(def, currentBlock)
+    def.var_v = curMethod.addLocalVarForDef(def, currentBlock)
   }
 
   **
@@ -887,9 +887,9 @@ class ResolveExpr : CompilerStep
     if (curMethod == null) return null
 
     // attempt to bind a name in the current scope
-    binding := curMethod.vars.find |MethodVar var->Bool|
+    binding := curMethod.vars.find |MethodVar var_v->Bool|
     {
-      return var.name == name && isBlockInScope(var.scope)
+      return var_v.name == name && isBlockInScope(var_v.scope)
     }
     if (binding != null) return binding
 
@@ -946,10 +946,10 @@ class ResolveExpr : CompilerStep
 
     if (curMethod == null) return acc
 
-    curMethod.vars.each |MethodVar var|
+    curMethod.vars.each |MethodVar var_v|
     {
-      if (isBlockInScope(var.scope))
-        acc[var.name] = var
+      if (isBlockInScope(var_v.scope))
+        acc[var_v.name] = var_v
     }
 
     return acc

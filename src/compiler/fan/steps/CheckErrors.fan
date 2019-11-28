@@ -905,8 +905,8 @@ class CheckErrors : CompilerStep
   }
 
   private Void checkAddressOf(AddressOfExpr expr) {
-    if (!expr.var.isAssignable)
-      err("addressof is not lvalue", expr.var.loc)
+    if (!expr.var_v.isAssignable)
+      err("addressof is not lvalue", expr.var_v.loc)
   }
 
   private Void checkTypeLiteral(LiteralExpr expr)
