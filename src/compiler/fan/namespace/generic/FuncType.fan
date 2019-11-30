@@ -48,14 +48,14 @@ class FuncType : ParameterizedType
     if (that.defaultParameterized) return true
 
     // match return type (if void is needed, anything matches)
-    if (!that.ret.isVoid && !this.ret.fits(that.ret)) return false
+    if (this.ret != (that.ret)) return false
 
     // match params - it is ok for me to have less than
     // the type params (if I want to ignore them), but I
     // must have no more
     if (this.params.size > that.params.size) return false
     for (i:=0; i<this.params.size; ++i)
-      if (!that.params[i].fits(this.params[i])) return false
+      if (that.params[i] != (this.params[i])) return false
 
     // this method works for the specified method type
     return true;
@@ -67,14 +67,20 @@ class FuncType : ParameterizedType
   {
     if (num == params.size) return this
     if (num > params.size) throw Err("Cannot increase arity $this")
-    return make(params[0..<num], names[0..<num], ret)
+    //return make(params[0..<num], names[0..<num], ret)
+    return this
   }
 
   FuncType mostSpecific(FuncType b)
   {
     a := this
-    if (a.arity != b.arity) throw Err("Different arities: $a / $b")
+    if (a.arity > b.arity) throw Err("Different arities: $a / $b")
     params := a.params.map |p, i| { toMostSpecific(p, b.params[i]) }
+    if (a.arity < b.arity) {
+      for (i:= a.arity; i<b.arity; ++i) {
+        params.add(b.params[i])
+      }
+    }
     ret := toMostSpecific(a.ret, b.ret)
     return make(params, b.names, ret)
   }

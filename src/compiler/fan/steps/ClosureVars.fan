@@ -277,6 +277,28 @@ class ClosureVars : CompilerStep
 // Process Closure
 //////////////////////////////////////////////////////////////////////////
 
+  private Void optimizeNoCaptureVar(ClosureExpr closure) {
+    implType := closure.cls
+    if (implType.instanceFieldDefs.size != 0) return
+
+    loc := implType.loc
+    field := FieldDef(loc, implType)
+    field.name  = "instance"
+    field.flags = syntheticFieldFlags + FConst.Static + FConst.Const
+    field.fieldType = implType
+    implType.addSlot(field)
+
+    staticInit := MethodDef.makeStaticInit(loc, implType, Block(loc))
+    implType.addSlot(staticInit)
+    ctor := implType.methodDef("make")
+    nins := CallExpr.makeWithMethod(loc, null, ctor)
+    assign := BinaryExpr.makeAssign(FieldExpr(loc, StaticTargetExpr(loc, implType), field, false), nins)
+    staticInit.code.add(assign.toStmt)
+
+    target := StaticTargetExpr(loc, implType)
+    closure.substitute = FieldExpr(loc, target, field, false)
+  }
+
   **
   ** Walk each closure:
   **   1.  Find all the shadowed variables
@@ -298,6 +320,8 @@ class ClosureVars : CompilerStep
     {
       expr.id === ExprId.localVar ? fixWrappedVar(expr) : expr
     }
+
+    optimizeNoCaptureVar(closure)
   }
 
   **
@@ -379,7 +403,7 @@ class ClosureVars : CompilerStep
     implType.addSlot(field)
 
     // pass variable to subtitute closure constructor in outer scope
-    closure.substitute.args.add(subtituteArg)
+    ((CallExpr)closure.substitute).args.add(subtituteArg)
 
     // add parameter to constructor
     ctor := implType.methodDef("make")

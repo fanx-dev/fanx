@@ -57,7 +57,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   **
   ** Convenience for 'params.size'
   **
-  Int arity()
+  //Int arity()
 
   **
   ** Get the formal parameters of the function.
@@ -113,7 +113,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** The resulting function is immutable if this function is
   ** immutable and all the args are immutable.
   **
-  Func bind(Obj?[] args)
+  //Func bind(Obj?[] args)
 
   **
   ** Return a new function which wraps this function but with
@@ -129,7 +129,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   **
   //Func retype(Type t)
 
-  internal native Void enterCtor(Obj obj)
-  internal native Void exitCtor()
-  internal native Void checkInCtor(Obj obj)
+  //internal native Void enterCtor(Obj obj)
+  //internal native Void exitCtor()
+  //internal native Void checkInCtor(Obj obj)
 }

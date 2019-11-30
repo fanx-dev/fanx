@@ -843,6 +843,11 @@ class CodeAsm : CompilerSupport
     // evaluate target
     method := call.method
 
+    isFuncCall := false
+    if (method.name == "call" && method.parent.isParameterized && method.parent.qname == "sys::Func") {
+      isFuncCall = true
+    }
+
     // push call target onto the stack
     target := call.target
     if (target != null) expr(target)
@@ -863,6 +868,11 @@ class CodeAsm : CompilerSupport
       // now if we are calling a value-type method we might need to coerce
       if (target.ctype.isVal || method.parent.isVal)
         coerceOp(target.ctype, call.method.parent)
+    }
+
+    if (isFuncCall) {
+      index := fpod.addMethodRef(method, call.args.size)
+      op(FOp.LoadFuncHandle, index)
     }
 
     // invoke call

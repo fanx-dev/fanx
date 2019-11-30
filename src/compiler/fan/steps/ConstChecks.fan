@@ -54,7 +54,7 @@ class ConstChecks : CompilerStep
     log.debug("ConstChecks")
 
     // walk all the closures
-    compiler.closures.each |ClosureExpr c| { processClosure(c) }
+    //compiler.closures.each |ClosureExpr c| { processClosure(c) }
 
     // walk all the types
     types.each |TypeDef t|
@@ -74,7 +74,7 @@ class ConstChecks : CompilerStep
 //////////////////////////////////////////////////////////////////////////
 // Process Closure
 //////////////////////////////////////////////////////////////////////////
-
+/*
   private Void processClosure(ClosureExpr c)
   {
     // don't process anything but it-blocks which use const fields
@@ -86,7 +86,7 @@ class ConstChecks : CompilerStep
     check.noLeave
     c.doCall.code.stmts.insert(0, check.toStmt)
   }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Process Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -100,14 +100,14 @@ class ConstChecks : CompilerStep
     this.curCtor = ctor
 
     // add func?.enterCtor(this)
-    if (ctor.isItBlockCtor)
-    {
-      loc := ctor.loc
-      enter := CallExpr.makeWithMethod(loc, LocalVarExpr(loc, itBlockVar), ns.funcEnterCtor, [ThisExpr(loc)])
-      enter.isSafe = true
-      enter.noLeave
-      ctor.code.stmts.insert(0, enter.toStmt)
-    }
+    // if (ctor.isItBlockCtor)
+    // {
+    //   loc := ctor.loc
+    //   enter := CallExpr.makeWithMethod(loc, LocalVarExpr(loc, itBlockVar), ns.funcEnterCtor, [ThisExpr(loc)])
+    //   enter.isSafe = true
+    //   enter.noLeave
+    //   ctor.code.stmts.insert(0, enter.toStmt)
+    // }
 
     // walk all the statements and insert exitCtor before each return
     if (ctor.isItBlockCtor || fieldCheck != null)
@@ -121,13 +121,13 @@ class ConstChecks : CompilerStep
     result := Stmt[,]
 
     // insert call to func?.exitCtor()
-    if (curCtor.isItBlockCtor)
-    {
-      exit1 := CallExpr.makeWithMethod(loc, LocalVarExpr(loc, itBlockVar), ns.funcExitCtor)
-      exit1.isSafe = true
-      exit1.noLeave
-      result.add(exit1.toStmt)
-    }
+    // if (curCtor.isItBlockCtor)
+    // {
+    //   exit1 := CallExpr.makeWithMethod(loc, LocalVarExpr(loc, itBlockVar), ns.funcExitCtor)
+    //   exit1.isSafe = true
+    //   exit1.noLeave
+    //   result.add(exit1.toStmt)
+    // }
 
     // if needed insert call to this.fieldCheck()
     if (fieldCheck != null)
@@ -140,7 +140,7 @@ class ConstChecks : CompilerStep
     return result.add(stmt)
   }
 
-  private MethodVar itBlockVar() { curCtor.vars[curCtor.params.size-1] }
+  //private MethodVar itBlockVar() { curCtor.vars[curCtor.params.size-1] }
 
   private MethodDef? genFieldCheck(TypeDef t)
   {

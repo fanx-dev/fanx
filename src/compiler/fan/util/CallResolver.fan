@@ -477,6 +477,8 @@ class CallResolver : CompilerSupport
       }
     }
 
+    if (lastC != null && lastC.isItBlock && call.method.isInstanceCtor) lastC.followCtorType = base
+
     // otherwise if the closure is an it-block, we infer
     // its type to be the result of the target expression
     if (!lastOk && lastC != null && lastC.isItBlock)

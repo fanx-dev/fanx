@@ -276,7 +276,7 @@ abstract class CNamespace
   once CMethod decimalMakeMethod   () { sysMethod(decimalType,  "fromStr") }
   once CMethod uriMakeMethod       () { sysMethod(uriType,  "fromStr") }
   once CMethod durationMakeMethod  () { sysMethod(durationType,  "fromTicks") }
-
+/*
   once CMethod? funcEnterCtor() {
     mockFlags := FConst.Public + FConst.Virtual
     return MockMethod(funcType, "enterCtor",   mockFlags, voidType, [objType])
@@ -289,5 +289,5 @@ abstract class CNamespace
     mockFlags := FConst.Public + FConst.Virtual
     return MockMethod(funcType, "checkInCtor", mockFlags, voidType, [objType])
   }
-
+*/
 }

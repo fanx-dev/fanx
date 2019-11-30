@@ -1518,12 +1518,27 @@ class ClosureExpr : Expr
   {
     // bail if we didn't expect an inferred the signature
     // or haven't gotten to InitClosures yet
-    if (!signature.inferredSignature || cls == null) return
+    if (cls == null) return
+
+    delArity := ((FuncType)cls.base).arity
+    if (!signature.inferredSignature && delArity == t.arity) {
+      return
+    }
 
     // between the explicit signature and the inferred
     // signature, take the most specific types; this is where
     // we take care of functions with generic parameters like V
-    if (((FuncType)cls.base).arity <= t.arity) {
+    if (delArity <= t.arity) {
+      if (delArity < t.arity) {
+        addParams := CType[,]
+        for (i:=((FuncType)cls.base).arity; i<t.arity; ++i) {
+          ptype := t.params[i]
+          addParams.add(ptype)
+          //echo(doCall.params)
+          doCall.paramDefs.add(ParamDef(loc, ptype, "ignoreparam\$$i"))
+        }
+        collapseExprAndParams(call, addParams)
+      }
       t = t.toArity(((FuncType)cls.base).arity)
       t = signature.mostSpecific(t)
     }
@@ -1574,6 +1589,23 @@ class ClosureExpr : Expr
 
     // update base type of Func subclass
     cls.base = t
+    ctype = t
+  }
+
+  Void collapseExprAndParams(MethodDef m, CType[] addParams)
+  {
+    addParams.each |ptype, i| {
+      m.paramDefs.add(ParamDef(loc, ptype.ns.objType.toNullable, "ignoreparam\$$i"))
+    }
+
+    stmts := m.code.stmts
+    CallExpr call := ((ExprStmt)stmts[0]).expr
+
+    addParams.each |ptype, i| {
+      arg := UnknownVarExpr(m.loc, null, "ignoreparam\$$i")
+      carg := TypeCheckExpr.coerce(arg, signature.params[i])
+      call.args.add(carg)
+    }
   }
 
   Void collapseExprAndReturn(MethodDef m)
@@ -1598,15 +1630,16 @@ class ClosureExpr : Expr
   Bool isItBlock                // does closure have implicit it scope
 
   // InitClosures
-  CallExpr? substitute          // expression to substitute during assembly
+  Expr? substitute          // expression to substitute during assembly
   TypeDef? cls                  // anonymous class which implements the closure
   MethodDef? call               // anonymous class's call() with code
   MethodDef? doCall             // anonymous class's doCall() with code
 
   // ResolveExpr
   [Str:MethodVar]? enclosingVars // my parent methods vars in scope
-  Bool setsConst                 // sets one or more const fields (CheckErrors)
+  //Bool setsConst                 // sets one or more const fields (CheckErrors)
   CType? itType                  // type of implicit it
+  CType? followCtorType          // follow make a new Type
 }
 
 **************************************************************************

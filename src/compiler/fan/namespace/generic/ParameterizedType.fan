@@ -145,7 +145,7 @@ class ParameterizedType : ProxyType {
   }
 
   private Bool isTypeErasure() {
-    return qname != "sys::Array" && qname != "sys::Ptr"
+    return qname != "sys::Array" && qname != "sys::Ptr" && qname != "sys::Func"
   }
 
   private CSlot parameterizeSlot(CSlot slot)
@@ -181,6 +181,10 @@ class ParameterizedType : ProxyType {
     else {
       t = doParameterize(((GenericParameter)nn).paramName)
     }
+
+    //special with func to nonullable
+    if (qname == "sys::Func") return t
+
     t = nullable ? t.toNullable : t
     return t
   }

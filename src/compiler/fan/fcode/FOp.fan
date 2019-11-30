@@ -73,7 +73,8 @@ enum class FOp
   AddressOfVar       (FOpArg.Register),   //  59
   AddressOfInstance  (FOpArg.FieldRef),   //  60
   AddressOfStatic    (FOpArg.FieldRef),   //  61
-  SizeOf             (FOpArg.TypeRef)     //  62
+  SizeOf             (FOpArg.TypeRef),    //  62
+  LoadFuncHandle     (FOpArg.MethodRef)   //  63  load func handle and put func obj on stack
 
   private new make(FOpArg arg := FOpArg.None) { this.arg = arg }
 

@@ -1148,7 +1148,7 @@ class CheckErrors : CompilerStep
     inMethod := curMethod
     if (inType.isClosure)
     {
-      curType.closure.setsConst = true
+      //curType.closure.setsConst = true
       inType = inType.closure.enclosingType
       inMethod = (curType.closure.enclosingSlot as MethodDef) ?: curMethod
     }
@@ -1162,7 +1162,13 @@ class CheckErrors : CompilerStep
 
     // we allow setting an instance ctor field in an
     // it-block, otherwise dive in for further checking
-    if (!(curType.isClosure && curType.closure.isItBlock) || field.parent.isVal)
+    if (curType.isClosure && curType.closure.isItBlock && 
+      lhs.target is ItExpr &&
+      curType.closure.followCtorType == curType.closure.itType &&
+      curType.closure.followCtorType == field.parent) {
+      //pass
+    }
+    else
     {
       // check attempt to set field outside of owning class or subclass
       if (inType != field.parent)
@@ -1566,22 +1572,23 @@ class CheckErrors : CompilerStep
       if (sig.params.size != args.size)
       {
         //ignore on sig.defaultParameterized
-        if (sig.defaultParameterized) {
-          objType := ns.objType.toNullable
-          args.size.times |i| {
-            newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
-          }
-        }
-        else isErr = true
+        // if (sig.defaultParameterized) {
+        //   objType := ns.objType.toNullable
+        //   args.size.times |i| {
+        //     newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
+        //   }
+        // }
+        //else 
+        isErr = true
       }
-      else
-      {
-        sig.params.each |CType p, Int i|
-        {
-          // check each argument and ensure boxed
-          newArgs[i] = coerceBoxed(args[i], p) |->| { isErr = true }
-        }
-      }
+      // else
+      // {
+      //   sig.params.each |CType p, Int i|
+      //   {
+      //     // check each argument and ensure boxed
+      //     newArgs[i] = coerceBoxed(args[i], p) |->| { isErr = true }
+      //   }
+      // }
     }
 
     // if more args than params, always an err
@@ -1889,22 +1896,22 @@ class CheckErrors : CompilerStep
 
     // if we can auto-cast to make the expr fit then do it - we
     // have to treat function auto-casting a little specially here
-    if (actual.isFunc && expected.isFunc)
-    {
-      if (isFuncAutoCoerce(actual, expected))
-        return TypeCheckExpr.coerce(expr, expected)
-    }
-    else
-    {
+    // if (actual.isFunc && expected.isFunc)
+    // {
+    //   if (isFuncAutoCoerce(actual, expected))
+    //     return TypeCheckExpr.coerce(expr, expected)
+    // }
+    // else
+    // {
       if (expected.fits(actual))
         return TypeCheckExpr.coerce(expr, expected)
-    }
+    // }
 
     // we have an error condition
     onErr()
     return expr
   }
-
+/*
   static Bool isFuncAutoCoerce(CType actualType, CType expectedType)
   {
     // check if both are function types
@@ -1940,9 +1947,12 @@ class CheckErrors : CompilerStep
     if (isFuncAutoCoerce(actual, expected)) return true
     return false
   }
-
+*/
   static Bool needCoerce(CType from, CType to)
   {
+    //always cast for generic
+    if (from.isParameterized || to.isParameterized) return true
+
     // if either side is a value type and we got past
     // the equals check then we definitely need a coercion
     if (from.isVal || to.isVal) return true

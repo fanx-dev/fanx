@@ -55,7 +55,7 @@ class InitClosures : CompilerStep
     genDoCall     // generate doCall(...)
     genCall       // generate call(...) { doCall(...) }
     //genReturns
-    genArity
+    //genArity
     substitute    // substitute closure code with anonymous class ctor
   }
 
@@ -133,7 +133,7 @@ class InitClosures : CompilerStep
   ** args onto the stack, then redirect to the specified CallExpr c.
   ** We share this code for both closures and curries.
   **
-  static MethodDef genMethodCall(Compiler compiler, Loc loc, TypeDef parent,
+  MethodDef genMethodCall(Compiler compiler, Loc loc, TypeDef parent,
                                  FuncType signature, CallExpr c, Bool firstAsTarget)
   {
     ns := compiler.ns
@@ -152,19 +152,20 @@ class InitClosures : CompilerStep
     useListArgs := paramCount > MaxIndirectParams
     if (useListArgs)
     {
-      m.name  = "callList"
-      p := ParamDef(loc, ns.objType.toListOf, "list")
-      m.params.add(p)
+      // m.name  = "callList"
+      // p := ParamDef(loc, ns.objType.toListOf, "list")
+      // m.params.add(p)
+      err("tow many params")
     }
-    else
-    {
+    // else
+    // {
       m.name = "call"
       paramCount.times |Int i|
       {
         p := ParamDef(loc, ns.objType.toNullable, "p$i")
         m.paramDefs.add(p)
       }
-    }
+    // }
 
     // init the doCall() expr with arguments
     paramCount.times |Int i|
@@ -172,18 +173,18 @@ class InitClosures : CompilerStep
       Expr? arg
 
       // list.get(<i>)
-      if (useListArgs)
-      {
-        listGet := CallExpr.makeWithMethod(loc, UnknownVarExpr(loc, null, "list"), ns.objType.toListOf.method("get"))
-        listGet.args.add(LiteralExpr(loc, ExprId.intLiteral, ns.intType, i))
-        arg = listGet
-      }
+      // if (useListArgs)
+      // {
+      //   listGet := CallExpr.makeWithMethod(loc, UnknownVarExpr(loc, null, "list"), ns.objType.toListOf.method("get"))
+      //   listGet.args.add(LiteralExpr(loc, ExprId.intLiteral, ns.intType, i))
+      //   arg = listGet
+      // }
 
       // p<i>
-      else
-      {
+      // else
+      // {
         arg = UnknownVarExpr(loc, null, "p$i")
-      }
+      // }
 
       // cast to closure param type
       arg = TypeCheckExpr.coerce(arg, signature.params[i])
