@@ -163,10 +163,10 @@ public class FacetEncoder implements FConst {
 		map.each(new Func() {
 			int n = 0;
 
-			@Override
-			public long arity() {
-				return 2;
-			}
+//			@Override
+//			public long arity() {
+//				return 2;
+//			}
 
 			public Object call(Object v, Object k) {
 				String name = (String) k;

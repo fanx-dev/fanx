@@ -15,10 +15,10 @@ public class LogPeer {
 	    try
 	    {
 	    	Func handler = new Func() {
-				@Override
-				public long arity() {
-					return 1;
-				}
+//				@Override
+//				public long arity() {
+//					return 1;
+//				}
 				
 				@Override
 				public Object call(Object a) {

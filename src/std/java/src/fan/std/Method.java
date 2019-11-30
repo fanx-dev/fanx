@@ -24,6 +24,7 @@ public class Method extends Slot {
 		this.inheritedReturns = inheritedReturns;
 		this.mask = mask;
 		this.func = new MethodFunc(returns);
+		this.returns = returns;
 	}
 	
 	public static Method fromFCode(FMethod f, Type parent) {
@@ -95,7 +96,7 @@ public class Method extends Slot {
 	}
 
 	public Type returns() {
-		return func.returns();
+		return returns;
 	}
 
 	public Type inheritedReturns() {
@@ -105,8 +106,12 @@ public class Method extends Slot {
 	public List params() {
 		return params.ro();
 	}
-
+	
 	public Func func() {
+		return func;
+	}
+
+	public Func func(long arity) {
 		return func;
 	}
 
@@ -188,16 +193,17 @@ public class Method extends Slot {
 			this.returns = returns;
 		}
 
-		public Type returns() {
-			return returns;
-		}
+//		public Type returns() {
+//			return returns;
+//		}
 
 		private final Type returns;
 
-		public long arity() {
-			if (isInstance()) return params.size()+1;
-			return params.size();
-		}
+//		@Override
+//		public long arity() {
+//			if (isInstance()) return params.size()+1;
+//			return params.size();
+//		}
 
 		public Method method() {
 			return Method.this;
@@ -502,6 +508,8 @@ public class Method extends Slot {
 	static final Object[] noArgs = new Object[0];
 
 	private MethodFunc func;
+	private Type returns;
+	
 	private List params; // might be different from func.params is instance method
 	private Type inheritedReturns; // for covariance
 	private int mask;

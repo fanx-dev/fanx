@@ -30,6 +30,7 @@ native const class Field : Slot
   **   f := Field.makeSetFunc([Foo#x: 7])
   **   Foo foo := Foo#.make([f])
   **
+  @NoDoc
   static |Obj| makeSetFunc(Field:Obj? vals)
 
   **
@@ -65,6 +66,6 @@ native const class Field : Slot
   virtual Void set(Obj? instance, Obj? value)
 
   @NoDoc
-  virtual Void _set(Obj? instance, Obj? value, Bool checkConst)
+  virtual Void _unsafeSet(Obj? instance, Obj? value, Bool checkConst)
 
 }

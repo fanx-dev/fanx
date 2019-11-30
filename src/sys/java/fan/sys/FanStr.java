@@ -368,65 +368,31 @@ public class FanStr
   public static void each(String self, Func f)
   {
     int len = self.length();
-    if (f.arity() == 1)
-    {
-      for (int i=0; i<len ; ++i)
-        f.call(Long.valueOf(self.charAt(i)));
-    }
-    else
-    {
-      for (int i=0; i<len ; ++i)
+    for (int i=0; i<len ; ++i)
         f.call(Long.valueOf(self.charAt(i)), Long.valueOf(i));
-    }
   }
 
   public static void eachr(String self, Func f)
   {
-    if (f.arity() == 1)
-    {
-      for (int i=self.length()-1; i>=0; --i)
-        f.call(Long.valueOf(self.charAt(i)));
-    }
-    else
-    {
-      for (int i=self.length()-1; i>=0; --i)
-        f.call(Long.valueOf(self.charAt(i)), Long.valueOf(i));
-    }
+	for (int i=self.length()-1; i>=0; --i)
+	   f.call(Long.valueOf(self.charAt(i)), Long.valueOf(i));
   }
 
   public static boolean any(String self, Func f)
   {
     int len = self.length();
-    if (f.arity() == 1)
-    {
-      for (int i=0; i<len ; ++i)
-        if (f.callBool(Long.valueOf(self.charAt(i))))
-          return true;
-    }
-    else
-    {
-      for (int i=0; i<len ; ++i)
+    for (int i=0; i<len ; ++i)
         if (f.callBool(Long.valueOf(self.charAt(i)), Long.valueOf(i)))
           return true;
-    }
     return false;
   }
 
   public static boolean all(String self, Func f)
   {
     int len = self.length();
-    if (f.arity() == 1)
-    {
-      for (int i=0; i<len ; ++i)
-        if (!f.callBool(Long.valueOf(self.charAt(i))))
-          return false;
-    }
-    else
-    {
-      for (int i=0; i<len ; ++i)
+    for (int i=0; i<len ; ++i)
         if (!f.callBool(Long.valueOf(self.charAt(i)), Long.valueOf(i)))
           return false;
-    }
     return true;
   }
 

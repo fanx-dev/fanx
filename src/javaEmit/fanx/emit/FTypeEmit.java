@@ -142,9 +142,9 @@ public abstract class FTypeEmit
     else
       peerField = null;
     
-    if (isFuncType) {
-    	staticMethodHandleField = emitField("staticMethodHandle", "Ljava/lang/invoke/MethodHandle;", EmitConst.PUBLIC|EmitConst.STATIC|EmitConst.FINAL);
-    }
+//    if (isFuncType) {
+//    	staticMethodHandleField = emitField("staticMethodHandle", "Ljava/lang/invoke/MethodHandle;", EmitConst.PUBLIC|EmitConst.STATIC|EmitConst.FINAL);
+//    }
   }
 
   /**
@@ -243,9 +243,14 @@ public abstract class FTypeEmit
 //      
       code.op2(INVOKESPECIAL, method(superClassName +".<init>()V"));
       
+//      code.op(ALOAD_0);
+//      code.op2(GETSTATIC, staticMethodHandleField.ref());
+//      code.op2(PUTFIELD, field("fan/sys/Func.methodHandle:Ljava/lang/invoke/MethodHandle;"));
+      
       code.op(ALOAD_0);
-      code.op2(GETSTATIC, staticMethodHandleField.ref());
-      code.op2(PUTFIELD, field("fan/sys/Func.methodHandle:Ljava/lang/invoke/MethodHandle;"));
+      FTypeRef tref = pod.typeRef(type.base);
+      code.op2(LDC_W, strConst(tref.signature));
+      code.op2(PUTFIELD, field("fan/sys/Func.signature:Ljava/lang/String;"));
     }
     else
     {
@@ -280,11 +285,11 @@ public abstract class FTypeEmit
     code.maxLocals = 0;
     code.maxStack  = 1;
     
-    if (isFuncType) {
-    	code.op2(LDC_W, cls(className));
-    	code.op2(INVOKESTATIC, method("fanx/main/Sys.findMethodHandle(Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;"));
-        code.op2(PUTSTATIC, staticMethodHandleField.ref());
-    }
+//    if (isFuncType) {
+//    	code.op2(LDC_W, cls(className));
+//    	code.op2(INVOKESTATIC, method("fanx/main/Sys.findMethodHandle(Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;"));
+//        code.op2(PUTSTATIC, staticMethodHandleField.ref());
+//    }
 
     // set $Type field with type (if we this is a function,
     // then the FuncType will be the type exposed)

@@ -844,7 +844,7 @@ class CodeAsm : CompilerSupport
     method := call.method
 
     isFuncCall := false
-    if (method.name == "call" && method.parent.isParameterized && method.parent.qname == "sys::Func") {
+    if (method.name == "call" && method.parent.isParameterized && !method.genericTypeErasure && method.parent.qname == "sys::Func") {
       isFuncCall = true
     }
 
@@ -946,7 +946,7 @@ class CodeAsm : CompilerSupport
     // note that if a constructor call has a target (this or super), then it
     // is a CallCtor instance call because we don't want to allocate
     // a new instance
-    if (m.name == "call" && m.parent.isParameterized && m.parent.qname == "sys::Func") {
+    if (m.name == "call" && m.parent.isParameterized && !m.genericTypeErasure && m.parent.qname == "sys::Func") {
       op(FOp.CallFunc, index)
     }
     else if (m.parent.isMixin)

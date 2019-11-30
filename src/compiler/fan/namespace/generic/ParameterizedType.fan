@@ -145,7 +145,8 @@ class ParameterizedType : ProxyType {
   }
 
   private Bool isTypeErasure() {
-    return qname != "sys::Array" && qname != "sys::Ptr" && qname != "sys::Func"
+    return qname != "sys::Array" && qname != "sys::Ptr"
+    // && qname != "sys::Func"
   }
 
   private CSlot parameterizeSlot(CSlot slot)

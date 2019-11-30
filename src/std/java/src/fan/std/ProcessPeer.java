@@ -43,10 +43,10 @@ public class ProcessPeer {
 			// environment
 			if (env != null) {
 				env.each(new Func() {
-					@Override
-					public long arity() {
-						return 2;
-					}
+//					@Override
+//					public long arity() {
+//						return 2;
+//					}
 
 					@Override
 					public Object call(Object v, Object k) {

@@ -1598,12 +1598,18 @@ class ClosureExpr : Expr
       m.paramDefs.add(ParamDef(loc, ptype.ns.objType.toNullable, "ignoreparam\$$i"))
     }
 
-    stmts := m.code.stmts
-    CallExpr call := ((ExprStmt)stmts[0]).expr
+    stmt := m.code.stmts.first
+    CallExpr? call
+    if (stmt is ReturnStmt) {
+      call = ((ReturnStmt)stmt).expr
+    }
+    else {
+      call = ((ExprStmt)stmt).expr
+    }
 
     addParams.each |ptype, i| {
       arg := UnknownVarExpr(m.loc, null, "ignoreparam\$$i")
-      carg := TypeCheckExpr.coerce(arg, signature.params[i])
+      carg := TypeCheckExpr.coerce(arg, ptype)
       call.args.add(carg)
     }
   }

@@ -58,7 +58,7 @@ class TypeErasure : CompilerStep
 
     type := method.parent
     if (type.qname == "sys::Array" || 
-        type.qname == "sys::Func" ||
+        //type.qname == "sys::Func" ||
         type.qname == "sys::Ptr") {
       return call
     }

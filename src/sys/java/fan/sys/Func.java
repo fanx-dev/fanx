@@ -7,7 +7,7 @@
 //
 package fan.sys;
 
-import java.lang.invoke.MethodHandle;
+//import java.lang.invoke.MethodHandle;
 
 import fanx.main.*;
 
@@ -16,7 +16,8 @@ import fanx.main.*;
  */
 public abstract class Func extends FanObj {
 	
-	public MethodHandle methodHandle;
+//	public MethodHandle methodHandle;
+	public String signature;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Methods
@@ -29,9 +30,10 @@ public abstract class Func extends FanObj {
 
 	// public abstract Type returns();
 
-	public long arity() {
-		return methodHandle.type().	parameterCount()-1;
-	}
+//	public long arity() {
+//		return methodHandle.type().	parameterCount()-1;
+//		return -1;
+//	}
 
 	// public abstract List params();
 
@@ -44,9 +46,9 @@ public abstract class Func extends FanObj {
 	}
 
 	// public abstract Method method();
-	private Err tooFewArgs(int given) {
-		return ArgErr.make("Too few arguments: " + given + " < " + arity());
-	}
+//	private Err tooFewArgs(int given) {
+//		return ArgErr.make("Too few arguments: " + given + " for " + signature);
+//	}
 
 	public Object callList(List args) {
 		int size = (args == null) ? 0 : (int) args.size();
@@ -125,198 +127,207 @@ public abstract class Func extends FanObj {
 	}
 
 	public Object call() {
-		int size = (int) arity();
-		if (size == 0)
-			call();
-		throw tooFewArgs(0);
+//		int size = (int) arity();
+//		if (size == 0)
+//			call();
+//		throw tooFewArgs(0);
+		return ArgErr.make("Too few arguments for " + signature);
 	}
 
 	public Object call(Object a) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		}
-		throw tooFewArgs(1);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		}
+		return call();
+//		throw tooFewArgs(1);
 	}
 
 	public Object call(Object a, Object b) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		}
-		throw tooFewArgs(2);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		}
+		return call(a);
+//		throw tooFewArgs(2);
 	}
 
 	public Object call(Object a, Object b, Object c) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		}
-		throw tooFewArgs(3);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		}
+		return call(a, b);
+//		throw tooFewArgs(3);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		case 4: {
-			return call(a, b, c, d);
-		}
-		}
-		throw tooFewArgs(4);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		case 4: {
+//			return call(a, b, c, d);
+//		}
+//		}
+		return call(a, b, c);
+//		throw tooFewArgs(4);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		case 4: {
-			return call(a, b, c, d);
-		}
-		case 5: {
-			return call(a, b, c, d, e);
-		}
-		}
-		throw tooFewArgs(5);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		case 4: {
+//			return call(a, b, c, d);
+//		}
+//		case 5: {
+//			return call(a, b, c, d, e);
+//		}
+//		}
+		return call(a, b, c, d);
+//		throw tooFewArgs(5);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		case 4: {
-			return call(a, b, c, d);
-		}
-		case 5: {
-			return call(a, b, c, d, e);
-		}
-		case 6: {
-			return call(a, b, c, d, e, f);
-		}
-		}
-		throw tooFewArgs(6);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		case 4: {
+//			return call(a, b, c, d);
+//		}
+//		case 5: {
+//			return call(a, b, c, d, e);
+//		}
+//		case 6: {
+//			return call(a, b, c, d, e, f);
+//		}
+//		}
+		return call(a, b, c, d, e);
+//		throw tooFewArgs(6);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		case 4: {
-			return call(a, b, c, d);
-		}
-		case 5: {
-			return call(a, b, c, d, e);
-		}
-		case 6: {
-			return call(a, b, c, d, e, f);
-		}
-		case 7: {
-			return call(a, b, c, d, e, f, g);
-		}
-		}
-		throw tooFewArgs(7);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		case 4: {
+//			return call(a, b, c, d);
+//		}
+//		case 5: {
+//			return call(a, b, c, d, e);
+//		}
+//		case 6: {
+//			return call(a, b, c, d, e, f);
+//		}
+//		case 7: {
+//			return call(a, b, c, d, e, f, g);
+//		}
+//		}
+		return call(a, b, c, d, e, f);
+//		throw tooFewArgs(7);
 	}
 
 	public Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
-		int size = (int) arity();
-		switch (size) {
-		case 0: {
-			return call();
-		}
-		case 1: {
-			return call(a);
-		}
-		case 2: {
-			return call(a, b);
-		}
-		case 3: {
-			return call(a, b, c);
-		}
-		case 4: {
-			return call(a, b, c, d);
-		}
-		case 5: {
-			return call(a, b, c, d, e);
-		}
-		case 6: {
-			return call(a, b, c, d, e, f);
-		}
-		case 7: {
-			return call(a, b, c, d, e, f, g);
-		}
-		case 8: {
-			return call(a, b, c, d, e, f, g, h);
-		}
-		}
-		throw tooFewArgs(8);
+//		int size = (int) arity();
+//		switch (size) {
+//		case 0: {
+//			return call();
+//		}
+//		case 1: {
+//			return call(a);
+//		}
+//		case 2: {
+//			return call(a, b);
+//		}
+//		case 3: {
+//			return call(a, b, c);
+//		}
+//		case 4: {
+//			return call(a, b, c, d);
+//		}
+//		case 5: {
+//			return call(a, b, c, d, e);
+//		}
+//		case 6: {
+//			return call(a, b, c, d, e, f);
+//		}
+//		case 7: {
+//			return call(a, b, c, d, e, f, g);
+//		}
+//		case 8: {
+//			return call(a, b, c, d, e, f, g, h);
+//		}
+//		}
+		return call(a, b, c, d, e, f, g);
+//		throw tooFewArgs(8);
 	}
 
 	public final boolean callBool(Object a) {
@@ -329,31 +340,22 @@ public abstract class Func extends FanObj {
 
 	// Hooks used by compiler to generate runtime const field checks for
 	// it-blocks
-	// public void enterCtor(Object o) {
-	// }
-	//
-	// public void exitCtor() {
-	// }
-	//
-	// public void checkInCtor(Object o) {
-	// }
-
-	public void enterCtor(Object o) {
-		this.inCtor = o;
-	}
-
-	public void exitCtor() {
-		this.inCtor = null;
-	}
-
-	public void checkInCtor(Object it) {
-		if (it == inCtor)
-			return;
-		String msg = it == null ? "null" : FanObj.typeof(it).qname();
-		throw ConstErr.make(msg);
-	}
-
-	protected Object inCtor;
+//	public void enterCtor(Object o) {
+//		this.inCtor = o;
+//	}
+//
+//	public void exitCtor() {
+//		this.inCtor = null;
+//	}
+//
+//	public void checkInCtor(Object it) {
+//		if (it == inCtor)
+//			return;
+//		String msg = it == null ? "null" : FanObj.typeof(it).qname();
+//		throw ConstErr.make(msg);
+//	}
+//
+//	protected Object inCtor;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Indirect
@@ -364,12 +366,11 @@ public abstract class Func extends FanObj {
 	////////////////////////////////////////////////////////////////////////////
 	//// Bind
 	////////////////////////////////////////////////////////////////////////////
-/*
 	public final Func bind(List args) {
 		if (args.size() == 0)
 			return this;
-		if (args.size() > arity())
-			throw ArgErr.make("args.size >params.size");
+//		if (args.size() > arity())
+//			throw ArgErr.make("args.size >params.size");
 		return new BindFunc(this, args);
 	}
 
@@ -408,20 +409,20 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			return callList(args);
 		}
 
 		public final Object call(Object a, Object b) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			return callList(args);
 		}
 
 		public final Object call(Object a, Object b, Object c) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -429,7 +430,7 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a, Object b, Object c, Object d) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -438,7 +439,7 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a, Object b, Object c, Object d, Object e) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -448,7 +449,7 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a, Object b, Object c, Object d, Object e, Object f) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -459,7 +460,7 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -471,7 +472,7 @@ public abstract class Func extends FanObj {
 		}
 
 		public final Object call(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
-			List args = List.make(1);
+			List args = List.make(8);
 			args.add(a);
 			args.add(b);
 			args.add(c);
@@ -485,14 +486,14 @@ public abstract class Func extends FanObj {
 
 		public Object callList(List args) {
 			if (args == null) {
-				args = List.make(1);
+				args = List.defVal;
 			}
-			int origReq = (int) orig.arity();
-			int haveSize = (int) (bound.size() + args.size());
-			if (origReq <= bound.size())
-				return orig.callList(bound);
+//			int origReq = (int) orig.arity();
+//			int haveSize = (int) (bound.size() + args.size());
+//			if (origReq <= bound.size())
+//				return orig.callList(bound);
 
-			List temp = List.make(haveSize);
+			List temp = List.make(10);
 			for (int i=0; i < bound.size(); ++i) {
 				temp.add(bound.get(i));
 			}
@@ -505,14 +506,14 @@ public abstract class Func extends FanObj {
 
 		public final Object callOn(Object obj, List args) {
 			if (args == null) {
-				args = List.make(1);
+				args = List.defVal;
 			}
-			int origReq = (int) orig.arity();
-			int haveSize = (int) (bound.size() + args.size()) + 1;
-			if (origReq <= bound.size())
-				return orig.callList(bound);
+//			int origReq = (int) orig.arity();
+//			int haveSize = (int) (bound.size() + args.size()) + 1;
+//			if (origReq <= bound.size())
+//				return orig.callList(bound);
 
-			List temp = List.make(haveSize);
+			List temp = List.make(10);
 			for (int i=0; i < bound.size(); ++i) {
 				temp.add(bound.get(i));
 			}
@@ -523,10 +524,9 @@ public abstract class Func extends FanObj {
 			return orig.callList(temp);
 		}
 
-		@Override
-		public long arity() {
-			return orig.arity() - bound.size();
-		}
+//		@Override
+//		public long arity() {
+//			return orig.arity() - bound.size();
+//		}
 	}
-*/
 }

@@ -1581,14 +1581,14 @@ class CheckErrors : CompilerStep
         //else 
         isErr = true
       }
-      // else
-      // {
-      //   sig.params.each |CType p, Int i|
-      //   {
-      //     // check each argument and ensure boxed
-      //     newArgs[i] = coerceBoxed(args[i], p) |->| { isErr = true }
-      //   }
-      // }
+      else
+      {
+        sig.params.each |CType p, Int i|
+        {
+          // check each argument and ensure boxed
+          newArgs[i] = coerceBoxed(args[i], p) |->| { isErr = true }
+        }
+      }
     }
 
     // if more args than params, always an err
@@ -1614,6 +1614,7 @@ class CheckErrors : CompilerStep
           newArgs[i] = coerce(args[i], pt) |->|
           {
             isErr = name != "compare" // TODO let anything slide for Obj.compare
+            //echo("args coerce err: $args[i], $pt")
           }
 
           // if this a parameterized generic, then we need to box

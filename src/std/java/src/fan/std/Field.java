@@ -25,7 +25,7 @@ public class Field extends Slot {
 				for (int i = 0; i < keys.size(); ++i) {
 					Field field = (Field) keys.get(i);
 					Object val = map.get(field);
-					field._set(obj, val, obj != inCtor);
+					field._unsafeSet(obj, val, false);
 				}
 				return null;
 			}
@@ -40,10 +40,10 @@ public class Field extends Slot {
 //				return null;
 //			}
 
-			@Override
-			public long arity() {
-				return 1;
-			}
+//			@Override
+//			public long arity() {
+//				return 1;
+//			}
 		};
 	}
 
@@ -177,10 +177,10 @@ public class Field extends Slot {
 	}
 
 	public void set(Object instance, Object value) {
-		_set(instance, value, true);
+		_unsafeSet(instance, value, true);
 	}
 
-	public void _set(Object instance, Object value, boolean checkConst) {
+	public void _unsafeSet(Object instance, Object value, boolean checkConst) {
 		// parent.finish();
 		// check const
 		if ((flags & FConst.Const) != 0) {

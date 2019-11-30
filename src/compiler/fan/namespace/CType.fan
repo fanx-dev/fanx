@@ -266,6 +266,8 @@ mixin CType
     //if (t.name.size == 1 && t.pod.name == "sys")
     //  return true
 
+    //echo("$this not fits $ty")
+
     // no fit
     return false
   }

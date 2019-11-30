@@ -155,7 +155,7 @@ class InitClosures : CompilerStep
       // m.name  = "callList"
       // p := ParamDef(loc, ns.objType.toListOf, "list")
       // m.params.add(p)
-      err("tow many params")
+      err("tow many params", loc)
     }
     // else
     // {

@@ -48,15 +48,20 @@ class FuncType : ParameterizedType
     if (that.defaultParameterized) return true
 
     // match return type (if void is needed, anything matches)
-    if (this.ret != (that.ret)) return false
-
+    if (!this.ret.fits(that.ret)) {
+      //echo("ret: $this.ret not fits $that.ret")
+      return false
+    }
     // match params - it is ok for me to have less than
     // the type params (if I want to ignore them), but I
     // must have no more
     if (this.params.size > that.params.size) return false
     for (i:=0; i<this.params.size; ++i)
-      if (that.params[i] != (this.params[i])) return false
-
+      if (!that.params[i].fits(this.params[i])) {
+        //echo("${that.params[i]} not fits ${this.params[i]}")
+        if (that.params[i].hasGenericParameter) continue
+        return false
+      }
     // this method works for the specified method type
     return true;
   }

@@ -332,7 +332,7 @@ internal class ObjDecoder
     try
     {
       if (field.isConst)
-        field._set(obj, val?.toImmutable, false)
+        field._unsafeSet(obj, val?.toImmutable, false)
       else
         field.set(obj, val)
     }

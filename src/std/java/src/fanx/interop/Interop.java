@@ -302,10 +302,10 @@ public class Interop
   {
 	  final java.util.HashMap jmap = new java.util.HashMap();
 	  map.each(new Func(){
-		@Override
-		public long arity() {
-			return 2;
-		}
+//		@Override
+//		public long arity() {
+//			return 2;
+//		}
 		@Override
 		public Object call(Object v, Object k) {
 			jmap.put(k, v);

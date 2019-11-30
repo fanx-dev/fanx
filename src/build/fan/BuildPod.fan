@@ -313,7 +313,7 @@ class BuildPod : BuildScript
       javac.cp.add(sysJar)
       javac.cpAddJars((devHomeDir + `lib/java/`))
       javac.cpAddJars((devHomeDir + `lib/java/stub/`))
-      depends.each |Depend d| { javac.cp.add(Env.cur.findPodFile(d.name)) }
+      depends.each |Depend d| { javac.cp.add(devHomeDir + `lib/fan/${d.name}.fan`) }
       javac.src = javaDirs
       javac.run
     }

@@ -469,14 +469,7 @@ public final class FanInt
 
   public static void times(long self, Func f)
   {
-    if (f.arity() == 0)
-    {
-      for (long i=0; i<self; ++i) f.call();
-    }
-    else
-    {
-      for (long i=0; i<self; ++i) f.call(Long.valueOf(i));
-    }
+	  for (long i=0; i<self; ++i) f.call(Long.valueOf(i));
   }
 
 //////////////////////////////////////////////////////////////////////////

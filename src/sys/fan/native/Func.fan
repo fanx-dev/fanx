@@ -113,7 +113,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** The resulting function is immutable if this function is
   ** immutable and all the args are immutable.
   **
-  //Func bind(Obj?[] args)
+  Func bind(Obj?[] args)
 
   **
   ** Return a new function which wraps this function but with
