@@ -294,6 +294,7 @@ class ClosureVars : CompilerStep
     nins := CallExpr.makeWithMethod(loc, null, ctor)
     assign := BinaryExpr.makeAssign(FieldExpr(loc, StaticTargetExpr(loc, implType), field, false), nins)
     staticInit.code.add(assign.toStmt)
+    staticInit.code.add(ReturnStmt.makeSynthetic(loc))
 
     target := StaticTargetExpr(loc, implType)
     closure.substitute = FieldExpr(loc, target, field, false)

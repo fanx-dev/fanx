@@ -1,7 +1,12 @@
 package fanx.main;
 
 import java.io.File;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,5 +265,24 @@ public class Sys {
 		}
 		
 		return null;
+	}
+	
+	public static MethodHandle findMethodHandle(Class cls) throws Exception {
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		Method[] mths = cls.getDeclaredMethods();
+		Method mth = null;
+		for (Method f : mths) {
+			if (f.getName().equals("doCall")) {
+				mth = f;
+				break;
+			}
+		}
+		
+		if (mth == null) {
+			System.out.println("method not found:" + cls.getName() + ", " + Arrays.toString(mths));
+		}
+		
+		MethodHandle mh = lookup.unreflect(mth);
+		return mh;
 	}
 }

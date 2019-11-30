@@ -41,7 +41,7 @@ native const class Method : Slot
   **
   ** Get the function body of this method.
   **
-  Func func()
+  Func func(Int arity := -1)
 
   **
   ** Evaluate the parameter default using reflection.  If this method is

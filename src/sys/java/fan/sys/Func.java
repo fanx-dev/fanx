@@ -7,12 +7,16 @@
 //
 package fan.sys;
 
+import java.lang.invoke.MethodHandle;
+
 import fanx.main.*;
 
 /**
  * Func models an executable subroutine.
  */
 public abstract class Func extends FanObj {
+	
+	public MethodHandle methodHandle;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Methods
@@ -25,7 +29,9 @@ public abstract class Func extends FanObj {
 
 	// public abstract Type returns();
 
-	public abstract long arity();
+	public long arity() {
+		return methodHandle.type().	parameterCount()-1;
+	}
 
 	// public abstract List params();
 
@@ -358,7 +364,7 @@ public abstract class Func extends FanObj {
 	////////////////////////////////////////////////////////////////////////////
 	//// Bind
 	////////////////////////////////////////////////////////////////////////////
-
+/*
 	public final Func bind(List args) {
 		if (args.size() == 0)
 			return this;
@@ -522,5 +528,5 @@ public abstract class Func extends FanObj {
 			return orig.arity() - bound.size();
 		}
 	}
-
+*/
 }

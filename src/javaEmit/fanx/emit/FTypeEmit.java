@@ -141,6 +141,10 @@ public abstract class FTypeEmit
       peerField = emitField("peer", "L" + className + "Peer;", EmitConst.PUBLIC);
     else
       peerField = null;
+    
+    if (isFuncType) {
+    	staticMethodHandleField = emitField("staticMethodHandle", "Ljava/lang/invoke/MethodHandle;", EmitConst.PUBLIC|EmitConst.STATIC|EmitConst.FINAL);
+    }
   }
 
   /**
@@ -238,6 +242,10 @@ public abstract class FTypeEmit
 //      code.op2(INVOKESPECIAL, method(superClassName +".<init>(Lfan/sys/FuncType;)V"));
 //      
       code.op2(INVOKESPECIAL, method(superClassName +".<init>()V"));
+      
+      code.op(ALOAD_0);
+      code.op2(GETSTATIC, staticMethodHandleField.ref());
+      code.op2(PUTFIELD, field("fan/sys/Func.methodHandle:Ljava/lang/invoke/MethodHandle;"));
     }
     else
     {
@@ -271,6 +279,12 @@ public abstract class FTypeEmit
     CodeEmit code = me.emitCode();
     code.maxLocals = 0;
     code.maxStack  = 1;
+    
+    if (isFuncType) {
+    	code.op2(LDC_W, cls(className));
+    	code.op2(INVOKESTATIC, method("fanx/main/Sys.findMethodHandle(Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;"));
+        code.op2(PUTSTATIC, staticMethodHandleField.ref());
+    }
 
     // set $Type field with type (if we this is a function,
     // then the FuncType will be the type exposed)
@@ -589,6 +603,7 @@ public abstract class FTypeEmit
   String selfName;               // class name to use as self (for mixin body - this is interface)
   FieldEmit typeField;           // private static final Type $Type
   FieldEmit peerField;           // public static final TypePeer peer
+  FieldEmit staticMethodHandleField;
   boolean hasInstanceInit;       // true if we already emitted <init>
   boolean hasStaticInit;         // true if we already emitted <clinit>
 //  FuncType funcType;             // if type is a function

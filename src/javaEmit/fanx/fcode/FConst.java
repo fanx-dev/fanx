@@ -132,6 +132,12 @@ public interface FConst
   public static final int CallSuper       =  56; // (method)  call super method. it's only for JVM
   public static final int LoadFieldLiteral =  57;
   public static final int LoadMethodLiteral=  58;
+  public static final int AddressOfVar      = 59;
+  public static final int AddressOfInstance = 60;
+  public static final int AddressOfStatic   = 61;
+  public static final int SizeOf            = 62;
+  public static final int LoadFuncHandle    = 63;//  load func handle and put func obj on stack
+  public static final int CallFunc          = 64;
   
   public static final String[] OpNames =
   {
@@ -194,6 +200,12 @@ public interface FConst
     "CallSuper",          //  56
     "LoadFieldLiteral",   //  57
     "LoadMethodLiteral",  //  58
+    "AddressOfVar",       //  59
+    "AddressOfInstance",  //  60
+    "AddressOfStatic",    //  61
+    "SizeOf",             //  62
+    "LoadFuncHandle",     //  63  load func handle and put func obj on stack
+    "CallFunc"            //  64
   };
 
   public static final int[] OpSkips =
@@ -257,6 +269,12 @@ public interface FConst
     2,  //  56 CallSuper
     2,  //  57 LoadField
     2,  //  58 LoadMethod
+    2,  //  59 AddressOfVar
+    2,  //  60 AddressOfInstance
+    2,  //  61 AddressOfStatic
+    2,  //  62 SizeOf
+    2,  //  63 LoadFuncHandle
+    2,  //  64 CallFunc
   };
 
   public static final String[] OpSigs =
@@ -320,6 +338,12 @@ public interface FConst
     "(method)",   //  56 CallSuper
     "(field)",    //  57 LoadField
     "(method)",   //  58 LoadMethod
+    "(reg)",   //  59 AddressOfVar
+    "(field)",   //  60 AddressOfInstance
+    "(field)",   //  61 AddressOfStatic
+    "(type)",    //  62 SizeOf
+    "(method)",  //  63  LoadFuncHandle
+    "(method)" // 64 CallFunc
   };
 
 }

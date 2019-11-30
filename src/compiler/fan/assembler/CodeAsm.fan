@@ -946,7 +946,10 @@ class CodeAsm : CompilerSupport
     // note that if a constructor call has a target (this or super), then it
     // is a CallCtor instance call because we don't want to allocate
     // a new instance
-    if (m.parent.isMixin)
+    if (m.name == "call" && m.parent.isParameterized && m.parent.qname == "sys::Func") {
+      op(FOp.CallFunc, index)
+    }
+    else if (m.parent.isMixin)
     {
       if (m.isStatic)
         op(FOp.CallMixinStatic, index)

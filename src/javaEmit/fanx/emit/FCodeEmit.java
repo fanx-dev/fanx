@@ -142,6 +142,19 @@ public class FCodeEmit
         case _CatchEnd:           break;
         case FinallyStart:        finallyStart(); break;
         case FinallyEnd:          finallyEnd(); break;
+        
+        case AddressOfVar:
+        case AddressOfInstance:
+        case AddressOfStatic:
+        case SizeOf:
+        	throw new IllegalStateException(opcode < OpNames.length ? OpNames[opcode] : "bad opcode=" + opcode);
+        	
+        case LoadFuncHandle:
+        	loadFuncHandle();
+        	break;
+        case CallFunc:
+        	callFunc();
+        	break;
 
         default: throw new IllegalStateException(opcode < OpNames.length ? OpNames[opcode] : "bad opcode=" + opcode);
       }
@@ -164,6 +177,25 @@ public class FCodeEmit
         code.info.u4(j.javaMark+CodeEmit.Header, javaLoc-j.javaFrom);
       j = j.next;
     }
+  }
+  
+  private void loadFuncHandle() {
+	  u2();//consume method ref
+	  code.op(DUP);
+	  int field = emit.field("fan/sys/Func.methodHandle:Ljava/lang/invoke/MethodHandle;");
+	  code.op2(GETFIELD, field);
+	  code.op(SWAP);
+  }
+  
+  private void callFunc() {
+	  FMethodRef ref = pod.methodRef(u2());
+	  StringBuilder s = new StringBuilder();
+      s.append("java/lang/invoke/MethodHandle.invoke(Lfan/sys/Func;");
+      for (int i=0; i<ref.params.length; ++i) ref.params[i].jsig(s);
+      s.append(')');
+      ref.ret.jsig(s);
+      String jsig = s.toString();
+	  code.op2(INVOKEVIRTUAL, emit.method(jsig));
   }
 
 //////////////////////////////////////////////////////////////////////////
