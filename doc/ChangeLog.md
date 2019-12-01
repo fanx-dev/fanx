@@ -1,6 +1,11 @@
 ## ChangeLog
 
-### Build 2.3 (working)
+### Build 3.0 (working)
+- Move Type to std pod
+- Support raw Array and Pointer
+- More keyword
+- Rework Func for MethodHandle
+- Fix static inherit bug
 - Uri standard form support
 
 ### Build 2.2 (2019-06-01)

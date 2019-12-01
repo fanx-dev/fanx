@@ -3,12 +3,11 @@
 ## Build from Sources
 
 ### Bootstrap Build ###
-clone fanx repo
+1. Clone fanx repo
 ```
   git clone https://github.com/fanx-dev/fanx.git
 ```
-download [last release](https://github.com/fanx-dev/fanx/releases).
-Unzip to git repo dir and rename to release. the directory tree like this:
+2. Download [last release](https://github.com/fanx-dev/fanx/releases). And unzip to git repo dir and rename to release. The directory tree like this:
 ```
   fanx/
      env/
@@ -17,12 +16,19 @@ Unzip to git repo dir and rename to release. the directory tree like this:
      src/
        ...
      release/
-       bin/
-       etc/
-       lib/
-       ...
+       fanx-*.*/
+         bin/
+         etc/
+         lib/
+         ...
 ```
-run build:
+3. Config jdkHome
+Edit the file in:
+```
+env/etc/build/config.props
+release/fanx-*.*/etc/build/config.pros
+```
+4. Run build:
 ```
   cd src
   sh build_all.sh

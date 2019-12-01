@@ -136,7 +136,7 @@ class Main
 
   ** init devHomeDir
   private static File getDevHomeDir() {
-    devHome := Env.cur.vars["FAN_DEV_HOME"]
+    devHome := Env.cur.vars["FANX_DEV_HOME"]
     if (devHome == null)
       devHome = Pod.find("build", false)?.config("devHome")
     if (devHome == null)

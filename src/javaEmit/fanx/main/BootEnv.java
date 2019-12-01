@@ -59,9 +59,9 @@ public class BootEnv implements IEnv {
 	}
 
 	public BootEnv() {
-		homeDir = Sys.getPropOrEnv("fan.home", "FAN_HOME");
+		homeDir = Sys.getPropOrEnv("fan.home", "FANX_HOME");
 		if (homeDir == null) {
-			throw new NullPointerException("ERROR: Not set FAN_HOME");
+			throw new NullPointerException("ERROR: Not set fan.home");
 		}
 
 		checkDir(homeDir);
@@ -69,7 +69,7 @@ public class BootEnv implements IEnv {
 
 		envPaths = new ArrayList<String>(4);
 
-		String workDirs = Sys.getPropOrEnv("fan.env.path", "FAN_ENV_PATH");
+		String workDirs = Sys.getPropOrEnv("fanx.env.path", "FANX_ENV_PATH");
 		if (workDirs != null && workDirs.length() > 0) {
 			String[] paths = workDirs.split(";");
 			for (String p : paths) {

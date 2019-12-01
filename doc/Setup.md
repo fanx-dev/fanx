@@ -45,5 +45,5 @@ Run test:
 The Env define pods search path and resources search path.
 The search path is specified with the FAN_ENV_PATH envirnomenal variable:
 ```
-export FAN_ENV_PATH=/apps/devEnv/
+export FANX_ENV_PATH=/apps/devEnv/
 ```
