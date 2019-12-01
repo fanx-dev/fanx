@@ -153,7 +153,7 @@ class MimeTypeTest : Test
     verifyErr(ParseErr#) { MimeType.parseParams("x=f;y=") }
   }
 
-  Void verifyParseParams(Str s, Str:Str params)
+  Void verifyParseParams(Str s, [Str:Str] params)
   {
     p := MimeType.parseParams(s)
     verifyEq(p, params)

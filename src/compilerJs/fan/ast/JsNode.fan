@@ -85,7 +85,7 @@ abstract class JsNode
   }
 
   // must keep in sync with fan.sys.Slot.prototype.$$name
-  private const Str:Bool vnames :=
+  private const [Str:Bool] vnames :=
   [
     "char":   true,
     "delete": true,
@@ -112,7 +112,7 @@ abstract class JsNode
   **  - Str
   **
   Bool isPrimitive(CType ctype) { return pmap.get(ctype.qname, false) }
-  const Str:Bool pmap :=
+  const [Str:Bool] pmap :=
   [
     "sys::Bool":    true,
     "sys::Decimal": true,

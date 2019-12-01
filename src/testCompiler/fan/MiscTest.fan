@@ -234,7 +234,7 @@ class MiscTest : CompilerTest
     compile(
      "class Foo : Test
       {
-        static Str x(Int[] a, Int:Str b, |Int x| c) { return a.toStr }
+        static Str x(Int[] a, [Int:Str] b, |Int x| c) { return a.toStr }
         Obj testIt() { Type.of(this).method(\"x\").call([1, 2, 3], [4:4.toStr], |Int x| {}) }
       }")
 
@@ -707,8 +707,8 @@ class MiscTest : CompilerTest
 
         const [Int:Str]? h := null
         const [Int:Str]? i := map(null)
-        const Int:Str j := map(c)
-        const Int:Str k := map(c)
+        const [Int:Str] j := map(c)
+        const [Int:Str] k := map(c)
 
         const Type? l := null
         const Type m := Str#

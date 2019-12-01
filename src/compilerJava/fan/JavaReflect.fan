@@ -30,7 +30,7 @@ internal class JavaReflect
   ** Map class meta-data and Java members to Fantom slots
   ** for the specified JavaType
   **
-  static Void loadType(JavaType self, Str:CSlot slots)
+  static Void loadType(JavaType self, [Str:CSlot] slots)
   {
     // map to Java class
     cls := toJavaClass(self)
@@ -149,7 +149,7 @@ internal class JavaReflect
 // Java Member -> Fantom CSlot
 //////////////////////////////////////////////////////////////////////////
 
-  static Void mapField(JavaType self, Str:CSlot slots, JField java)
+  static Void mapField(JavaType self, [Str:CSlot] slots, JField java)
   {
     mods := java.getModifiers
     if (!JModifier.isPublic(mods) && !JModifier.isProtected(mods)) return
@@ -165,7 +165,7 @@ internal class JavaReflect
     catch (UnknownTypeErr e) errUnknownType(e)
   }
 
-  static Void mapMethod(JavaType self, Str:CSlot slots, JMethod java)
+  static Void mapMethod(JavaType self, [Str:CSlot] slots, JMethod java)
   {
     mods := java.getModifiers
     if (!JModifier.isPublic(mods) && !JModifier.isProtected(mods)) return
@@ -182,7 +182,7 @@ internal class JavaReflect
     catch (UnknownTypeErr  e) errUnknownType(e)
   }
 
-  static Void mapCtor(JavaType self, Str:CSlot slots, JCtor java)
+  static Void mapCtor(JavaType self, [Str:CSlot] slots, JCtor java)
   {
     mods := java.getModifiers
     if (!JModifier.isPublic(mods) && !JModifier.isProtected(mods)) return
@@ -199,7 +199,7 @@ internal class JavaReflect
     catch (UnknownTypeErr  e) errUnknownType(e)
   }
 
-  static Void addSlot(Str:CSlot slots, Str name, JavaMethod m)
+  static Void addSlot([Str:CSlot] slots, Str name, JavaMethod m)
   {
     // put the first one into the slot, and add
     // the overloads as linked list on that
@@ -222,7 +222,7 @@ internal class JavaReflect
 // Annotations
 //////////////////////////////////////////////////////////////////////////
 
-  static Void mapAnnotationFields(Class cls, JavaType self, Str:CSlot slots)
+  static Void mapAnnotationFields(Class cls, JavaType self, [Str:CSlot] slots)
   {
     // Java annotations declare their "elements" as abstract public
     // methods, but in Fantom facets are declared with const fields;

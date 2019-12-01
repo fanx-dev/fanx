@@ -137,7 +137,7 @@ abstract class BuildScript
   ** key is undefined then raise an exception.  The `configs`
   ** method is used for default macro key/value map.
   **
-  Str applyMacros(Str pattern, Str:Str macros := this.configs)
+  Str applyMacros(Str pattern, [Str:Str] macros := this.configs)
   {
     // short circuit if we don't have @
     at := pattern.index("@")

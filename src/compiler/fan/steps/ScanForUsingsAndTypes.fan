@@ -58,7 +58,7 @@ class ScanForUsingsAndTypes : CompilerStep
 
 class UsingAndTypeScanner : CompilerSupport
 {
-  new make(Compiler compiler, CompilationUnit unit, Str:TypeDef allTypes)
+  new make(Compiler compiler, CompilationUnit unit, [Str:TypeDef] allTypes)
     : super(compiler)
   {
     this.unit     = unit

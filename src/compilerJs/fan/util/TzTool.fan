@@ -104,7 +104,7 @@ class TzTool
     return buf
   }
 
-  private Void encodeRule(Str:Obj r, OutStream out)
+  private Void encodeRule([Str:Obj] r, OutStream out)
   {
     dstOffset := r["dstOffset"]
     out.writeI2(r["startYear"])
@@ -119,7 +119,7 @@ class TzTool
     }
   }
 
-  private Void encodeDst(Str:Obj dst, OutStream out)
+  private Void encodeDst([Str:Obj] dst, OutStream out)
   {
     out.write(dst["mon"])
        .write(dst["onMode"])

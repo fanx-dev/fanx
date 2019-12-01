@@ -1,6 +1,6 @@
 
 
-class Main {
+class SizedNumTest {
   Int32 size := 1
   Int8 flag := 2
   

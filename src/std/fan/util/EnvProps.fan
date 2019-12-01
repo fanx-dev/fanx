@@ -46,7 +46,7 @@ internal class EnvProps {
 }
 
 internal class FileProps {
-  Str:Str props := [:]
+  [Str:Str] props := [:]
   TimePoint readTime
   TimePoint[]? modified
 
@@ -56,7 +56,7 @@ internal class FileProps {
 
   Void loadAll(File[] files) {
     modified = TimePoint[,]
-    Str:Str props := [:]
+    [Str:Str] props := [:]
     files.each |f| {
       load(props, f)
       modified.add(f.modified)
@@ -73,7 +73,7 @@ internal class FileProps {
     return false
   }
 
-  internal static Void load(Str:Str props, File f) {
+  internal static Void load([Str:Str] props, File f) {
     try {
       Str:Str t := Props.readProps(f.in)
       //echo(t)

@@ -697,7 +697,7 @@ class ParserTest : CompilerTest
     expr = verifyExpr("$podName::Foo#", ExprId.typeLiteral);  verifyEq(expr->val->qname, "$podName::Foo")
     expr = verifyExpr("Str[]#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "sys::List<sys::Str>")
     expr = verifyExpr("sys::Int[][]#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "sys::List<sys::List<sys::Int>>")
-    expr = verifyExpr("Str:Foo#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "std::Map<sys::Str,$podName::Foo>")
+    expr = verifyExpr("[Str:Foo]#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "std::Map<sys::Str,$podName::Foo>")
     expr = verifyExpr("[Str:$podName::Foo]#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "std::Map<sys::Str,$podName::Foo>")
     expr = verifyExpr("|->|#", ExprId.typeLiteral);  verifyEq(expr->val->signature, "sys::Func<sys::Void>")
 
@@ -909,7 +909,7 @@ class ParserTest : CompilerTest
       verifyEq(expr->keys->size, 0)
       verifyEq(expr->vals->size, 0)
 
-    expr = verifyExpr("Int:Str[:]", ExprId.mapLiteral)
+    expr = verifyExpr("[Int:Str][:]", ExprId.mapLiteral)
       verifyEq(expr->explicitType->signature, "std::Map<sys::Int,sys::Str>")
       verifyEq(expr->keys->size, 0)
       verifyEq(expr->vals->size, 0)
@@ -945,7 +945,7 @@ class ParserTest : CompilerTest
       verifyEq(expr->vals->get(0)->val, 10)
       verifyEq(expr->vals->get(1)->val, 20)
 
-    expr = verifyExpr("Int:Int[1:10]", ExprId.mapLiteral)
+    expr = verifyExpr("[Int:Int][1:10]", ExprId.mapLiteral)
       verifyEq(expr->explicitType->signature, "std::Map<sys::Int,sys::Int>")
       verifyEq(expr->keys->size, 1)
       verifyEq(expr->keys->first->val, 1)
@@ -1161,7 +1161,7 @@ class ParserTest : CompilerTest
       //verifyEq(t.base.qname,  "sys::List")
       verifyEq(t.mixins.size, 0)
 
-    t = parseType("Int:Str")
+    t = parseType("[Int:Str]")
       verifyEq(t.pod.name,    "std")
       verifyEq(t.name,        "Map")
       verifyEq(t.qname,       "std::Map")
@@ -1170,7 +1170,7 @@ class ParserTest : CompilerTest
       verifyEq(t.mixins.size, 0)
       verifyEq(t.isNullable,  false)
 
-    t = parseType("Int:Str?")
+    t = parseType("[Int:Str?]")
       verifyEq(t.pod.name,    "std")
       verifyEq(t.name,        "Map")
       verifyEq(t.qname,       "std::Map")
@@ -1244,7 +1244,7 @@ class ParserTest : CompilerTest
       verifyEq(t.qname,       "sys::Func")
       verifyEq(t.signature,   "sys::Func<sys::Str?>")
 
-    t = parseType("Str:Obj[]")
+    t = parseType("[Str:Obj[]]")
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Str,sys::List<sys::Obj>>")
 
@@ -1252,7 +1252,7 @@ class ParserTest : CompilerTest
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::List<sys::Str>,sys::Obj>")
 
-    t = parseType("Int:[Str:Obj[]][]")
+    t = parseType("[Int:[Str:Obj[]][]]")
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Int,sys::List<std::Map<sys::Str,sys::List<sys::Obj>>>>")
 
@@ -1276,11 +1276,11 @@ class ParserTest : CompilerTest
       verifyEq(t.qname,       "sys::Func")
       verifyEq(t.signature,   "sys::Func<std::Map<sys::Int,sys::Obj>,sys::Func<sys::Void>>")
 
-    t = parseType("Str:|->|")
+    t = parseType("[Str:|->|]")
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Str,sys::Func<sys::Void>>")
 
-    t = parseType("Str:| Int:Int[] a -> |->| |[]")
+    t = parseType("[Str:| Int:Int[] a -> |->| |[]]")
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Str,sys::List<sys::Func<sys::Func<sys::Void>,std::Map<sys::Int,sys::List<sys::Int>>>>>")
       verifyEq(t.isNullable,  false)

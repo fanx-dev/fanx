@@ -272,7 +272,7 @@ class NodeRunner
     this.dependencies = ordered.findAll { isJsPod(it) }
   }
 
-  private [Pod:Pod[]] buildGraph(Pod p, Pod:Pod[] graph := [:])
+  private [Pod:Pod[]] buildGraph(Pod p, [Pod:Pod[]] graph := [:])
   {
     graph[p] = p.depends.map { Pod.find(it.name) }
     p.depends.each |d| { buildGraph(Pod.find(d.name), graph) }

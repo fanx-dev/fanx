@@ -189,7 +189,7 @@ const final class MimeType
   **
   ** Private constructor - must use fromStr
   **
-  private new make(Str mediaType, Str subType, Str:Str params) {
+  private new make(Str mediaType, Str subType, [Str:Str] params) {
     this.mediaType = mediaType.lower
     this.subType = subType.lower
     this.params = params
@@ -262,7 +262,7 @@ const final class MimeType
   **   text/html; charset=utf-8    =>  [charset:utf-8]
   **   text/html; charset="utf-8"  =>  [charset:utf-8]
   **
-  const Str:Str params
+  const [Str:Str] params
 
   **
   ** If a charset parameter is specified, then map it to

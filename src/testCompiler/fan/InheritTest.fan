@@ -903,7 +903,7 @@ class InheritTest : CompilerTest
 
      setaCode := !doSeta ? "" :
      "
-        static Void seta(A a, Str:Int m)
+        static Void seta(A a, [Str:Int] m)
         {
           a.p0 = m[\"p0\"]
           a.p1 = m[\"p1\"]
@@ -932,7 +932,7 @@ class InheritTest : CompilerTest
 
         $setaCode
 
-        static Void setb(B b, Str:Int m)
+        static Void setb(B b, [Str:Int] m)
         {
           b.&p0 = m[\"p0\"]
           b.&p1 = m[\"p1\"]

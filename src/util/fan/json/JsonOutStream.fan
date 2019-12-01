@@ -98,7 +98,7 @@ class JsonOutStream : ProxyOutStream
     writeChar(JsonToken.objectEnd)
   }
 
-  private Void writeJsonMap(Str:Obj? map)
+  private Void writeJsonMap([Str:Obj?] map)
   {
     writeChar(JsonToken.objectStart)
     notFirst := false

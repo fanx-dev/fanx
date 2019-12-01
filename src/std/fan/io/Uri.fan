@@ -555,7 +555,7 @@ const final class Uri
   ** according to the "application/x-www-form-urlencoded" MIME type.
   ** See `decodeQuery`.
   **
-  static Str encodeQuery(Str:Str q) {
+  static Str encodeQuery([Str:Str] q) {
     buf := StrBuf()
     first := true
     q.each |v, k| {

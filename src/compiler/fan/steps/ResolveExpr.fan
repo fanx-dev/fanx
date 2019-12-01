@@ -611,7 +611,7 @@ class ResolveExpr : CompilerStep
   ** Walk all the slots in 'base' and match any constructor
   ** that could be called using the given arguments.
   **
-  private Void findCtorMatches(Str:CMethod matches, CType base, Expr[] args)
+  private Void findCtorMatches([Str:CMethod] matches, CType base, Expr[] args)
   {
     base.slots.each |slot|
     {

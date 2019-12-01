@@ -27,6 +27,29 @@ Familiar C-like syntax
 
 ```
 
+### Modern Style
+Both support modern style (type after name) and traditional style
+```
+  class Person {
+    var age: Int
+    let name: Str
+
+    new make(n: Str) {
+      name = n
+    }
+
+    fun foo() : Str {
+      return name
+    }
+
+    static fun main() {
+      p : Person = Person("pick")
+      s := p.foo
+      echo(s)
+    }
+  }
+```
+
 ### Field Accessors
 No more boiler plate getters and setters.
 ```

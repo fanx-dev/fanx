@@ -59,7 +59,7 @@ class ConcurrentMapTest : Test
     verifyErr(NotImmutableErr#) { mut.add("foo", Str[,]) }
   }
 
-  Void verifyConcurrentMap(ConcurrentMap m, Str:Obj expected)
+  Void verifyConcurrentMap(ConcurrentMap m, [Str:Obj] expected)
   {
     verifyEq(m.isEmpty, expected.isEmpty)
     verifyEq(m.size, expected.size)

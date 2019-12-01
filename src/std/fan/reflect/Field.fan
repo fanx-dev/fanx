@@ -31,7 +31,7 @@ native const class Field : Slot
   **   Foo foo := Foo#.make([f])
   **
   @NoDoc
-  static |Obj| makeSetFunc(Field:Obj? vals)
+  static |Obj| makeSetFunc([Field:Obj?] vals)
 
   **
   ** Private constructor.

@@ -185,7 +185,7 @@ const class DasmType
     return s
   }
 
-  private static const Str:Str sigToPrimitive :=
+  private static const [Str:Str] sigToPrimitive :=
   [
     "B": "byte",
     "C": "char",

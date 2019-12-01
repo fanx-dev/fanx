@@ -293,7 +293,7 @@ class ConstFieldCtor
   const List listA
   const Obj?[] listB
   const Map mapA
-  const Obj:Obj mapB
+  const [Obj:Obj] mapB
   const Func funcA
   const |->| funcB
 }

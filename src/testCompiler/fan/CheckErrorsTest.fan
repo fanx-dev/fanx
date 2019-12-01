@@ -44,7 +44,7 @@ class CheckErrorsTest : CompilerTest
 
     // check errors stage
     verifyErrors(
-     "new class A {}
+     "
       private class B {}
       protected class C {}
       virtual static class D {}
@@ -53,7 +53,7 @@ class CheckErrorsTest : CompilerTest
       abstract final class I {}
       ",
        [
-         1,  5, "Cannot use 'new' modifier on type",
+         //1,  5, "Cannot use 'new' modifier on type",
          2,  9, "Cannot use 'private' modifier on type",
          3, 11, "Cannot use 'protected' modifier on type",
          4, 16, "Cannot use 'static' modifier on type",
@@ -360,8 +360,8 @@ class CheckErrorsTest : CompilerTest
         Void m09(Foo p) {}
         Void m10(Foo? p) {}
         Void m11(Foo?[] p) {}
-        Void m12(Str:Foo? p) {}
-        Void m13(Foo:Str p) {}
+        Void m12([Str:Foo?] p) {}
+        Void m13([Foo:Str] p) {}
         Void m14(|->Foo[]| p) {}
 
         Foo? f00
@@ -403,7 +403,7 @@ class CheckErrorsTest : CompilerTest
      "class Bar : Foo, Goo
       {
         Foo? a() { return null }
-        protected Void b(Str:Foo x) {}
+        protected Void b([Str:Foo] x) {}
         Foo? f
         protected Foo[]? g
         |Foo|? h
@@ -803,8 +803,8 @@ class CheckErrorsTest : CompilerTest
         protected internal Void m14() {}
         internal private Void m15() {}
 
-        new override m22() {}
-        new virtual m23() {}
+        override new m22() {}
+        virtual new m23() {}
         abstract native Void m24()
         static abstract Void m25()
         static override Void m26() {}
@@ -815,10 +815,10 @@ class CheckErrorsTest : CompilerTest
 
       abstract class Bar
       {
-        new abstract m20 ()
-        new native m21()
+        abstract new m20 ()
+        native new m21()
 
-        new once m30() {}
+        once new m30() {}
         once static Int m31() { return 3 }
         abstract once Int m32()
       }

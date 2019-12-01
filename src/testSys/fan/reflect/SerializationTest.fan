@@ -853,7 +853,7 @@ class SerializationTest : Test
 // Utils
 //////////////////////////////////////////////////////////////////////////
 
-  Obj? verifySer(Str data, Obj? expected, Str:Obj opts := ["indent":2])
+  Obj? verifySer(Str data, Obj? expected, [Str:Obj] opts := ["indent":2])
   {
 //echo("===================")
 //echo(data)

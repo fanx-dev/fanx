@@ -1,6 +1,6 @@
 
 
-class Main {
+class FuncTest {
 
   const Str id
 
@@ -13,22 +13,22 @@ class Main {
   }
 
   Void fooR(Func f) {
-    |Main,Int| ff := f
+    |FuncTest,Int| ff := f
     ff(this, 2)
   }
 
-  Void fooV(|Main t, Int i| f) {
+  Void fooV(|FuncTest t, Int i| f) {
     f(this, 2)
   }
 
-  Void foo(|Main t, Int i->Str| f) {
+  Void foo(|FuncTest t, Int i->Str| f) {
     x := f(this, 2)
     echo(x)
   }
 
   static Void testCallMake() {
-    ins1 := Main.makeFunc { id = "hi" }
-    //ins2 := Main.makeFunc { ins1.id = "hi" }
+    ins1 := FuncTest.makeFunc { id = "hi" }
+    //ins2 := FuncTest.makeFunc { ins1.id = "hi" }
   }
 
   Void testArgsReduce() {

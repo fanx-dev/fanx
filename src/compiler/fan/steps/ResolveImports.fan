@@ -211,7 +211,7 @@ class ResolveImports : CompilerStep
     ]
   }
 
-  private Void addAll(Str:CType[] types, CType[] toAdd)
+  private Void addAll([Str:CType[]] types, CType[] toAdd)
   {
     toAdd.each |CType t|
     {
@@ -221,7 +221,7 @@ class ResolveImports : CompilerStep
     }
   }
 
-  private Void remove(Str:CType[] types, CType t)
+  private Void remove([Str:CType[]] types, CType t)
   {
     list := types[t.name+t.extName]
     if (list != null)

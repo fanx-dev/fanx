@@ -66,7 +66,7 @@ class JsonInStream : ProxyInStream
     return pairs
   }
 
-  private Void parsePair(Str:Obj? obj)
+  private Void parsePair([Str:Obj?] obj)
   {
     skipWhitespace
     key := parseKey

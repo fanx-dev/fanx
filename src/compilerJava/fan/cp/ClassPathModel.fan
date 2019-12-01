@@ -39,7 +39,7 @@ abstract class ClassLib
 
   ** Common utility to determine if a given '.class' file should be accepted or not.
   ** If it is accepted it will be added to the given accumulator.
-  protected Void accept(Str:ClassPathPackage acc, Uri uri, File f, Bool isBoot := false)
+  protected Void accept([Str:ClassPathPackage] acc, Uri uri, File f, Bool isBoot := false)
   {
     // don't care about anything but .class files
     if (uri.ext != "class") return
@@ -153,7 +153,7 @@ final class JarClassLib : ClassLib
 
   // ignore the common big jars that ship with
   // HotSpot which don't contain public java packages
-  private static const Str:Str javaIgnore := [:].addList(
+  private static const [Str:Str] javaIgnore := [:].addList(
   [
     "deploy.jar",
     "charsets.jar",

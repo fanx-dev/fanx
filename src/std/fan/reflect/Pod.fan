@@ -17,7 +17,7 @@ native final const class Pod
   private const Version _version
   private const Depend[] _depends
   private const Uri _uri
-  private const Str:Str _meta
+  private const [Str:Str] _meta
   private const Type[] _types
   private const [Str:Type] _typeMap
 
@@ -62,7 +62,7 @@ native final const class Pod
   **
   ** Private constructor.
   **
-  private new make(Str name, Str version, Str[] depends, Str:Str meta, Type[] types) {
+  private new make(Str name, Str version, Str[] depends, [Str:Str] meta, Type[] types) {
     _name = name
     _version = Version(version)
     _depends = depends.map { Depend(it) }

@@ -182,7 +182,7 @@ class UriTest : Test
     verifyEq(Uri.decode("foo?key=a+b+c"), `foo?key=a b c`)
   }
 
-  Void verifyQueryEncoding(Str encoded, Str:Str q, Bool exact := true)
+  Void verifyQueryEncoding(Str encoded, [Str:Str] q, Bool exact := true)
   {
     a := Uri.decodeQuery(encoded)
     verifyEq(a, q)
@@ -457,7 +457,7 @@ class UriTest : Test
     //verifyQuery(`?x=1&x=2&y=9&x=3`, "x=1&x=2&y=9&x=3", Str:Str["x":"1,2,3", "y":"9"])
   }
 
-  Void verifyQuery(Uri uri, Str? queryStr, Str:Str query)
+  Void verifyQuery(Uri uri, Str? queryStr, [Str:Str] query)
   {
     verifyEq(uri.queryStr, queryStr)
     verifyEq(uri.query, query)
@@ -907,7 +907,7 @@ class UriTest : Test
     //verifyPlusQuery(`?a=x \&\\`, ["b":"#"], "?")
   }
 
-  Void verifyPlusQuery(Uri u, Str:Str q, Str expectedBase)
+  Void verifyPlusQuery(Uri u, [Str:Str] q, Str expectedBase)
   {
     a := u.plusQuery(q)
 

@@ -31,7 +31,7 @@ class JsProps : JsNode
     if (!props.isEmpty) doWrite(pod.name, uri, props, JsWriter(out))
   }
 
-  private static Void doWrite(Str pod, Uri uri, Str:Str props, JsWriter out)
+  private static Void doWrite(Str pod, Uri uri, [Str:Str] props, JsWriter out)
   {
     key := "$pod:$uri"
     out.w("with (fan.sys.Env.cur().\$props($key.toCode))").nl

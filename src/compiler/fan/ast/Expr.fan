@@ -1819,7 +1819,7 @@ enum class ShortcutOp
   }
 
   static ShortcutOp? fromPrefix(Str prefix) { prefixes[prefix] }
-  private static const Str:ShortcutOp prefixes
+  private static const [Str:ShortcutOp] prefixes
   static
   {
     m := Str:ShortcutOp[:]

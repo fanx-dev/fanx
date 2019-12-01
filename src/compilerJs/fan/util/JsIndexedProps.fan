@@ -46,7 +46,7 @@ class JsIndexedProps
        }).call(this);")
   }
 
-  private Void addToIndex(Pod pod,  Str:Str[] index)
+  private Void addToIndex(Pod pod,  [Str:Str[]] index)
   {
     f := pod.file(`/index.props`, false)
     if (f == null) return

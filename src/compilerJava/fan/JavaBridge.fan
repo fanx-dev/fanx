@@ -41,7 +41,7 @@ class JavaBridge : CBridge
     return ClassPath.forRuntime(acc.vals)
   }
 
-  private Void flattenDepends(Str:File acc, CDepend d)
+  private Void flattenDepends([Str:File] acc, CDepend d)
   {
     if (acc.containsKey(d.name)) return
     pod  := ns.resolvePod(d.name, compiler.input.inputLoc)

@@ -19,7 +19,7 @@ internal class JavaDasmLoader
 // Constructor
 //////////////////////////////////////////////////////////////////////////
 
-  new make(JavaType self, Str:CSlot slots)
+  new make(JavaType self, [Str:CSlot] slots)
   {
     this.self  = self
     this.slots = slots
