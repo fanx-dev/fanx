@@ -2,7 +2,7 @@
 podName = testCompiler
 summary = Test suite for compiler
 version = 1.0
-depends = sys 2.0, std 1.0, compiler 1.1, concurrent 1.0
+depends = sys 2.0, std 1.0, compiler 1.1
 srcDirs = fan/*
 
 docApi = false
