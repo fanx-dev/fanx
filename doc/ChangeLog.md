@@ -7,6 +7,7 @@
 - Rework Func for MethodHandle
 - Fix static inherit bug
 - Uri standard form support
+- Postfix type annotations
 
 ### Build 2.2 (2019-06-01)
 - Add Promise

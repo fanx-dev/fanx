@@ -325,7 +325,6 @@ public class Parser : CompilerSupport
         case Token.finalKeyword:     flags = flags.or(FConst.Final)
         case Token.internalKeyword:  flags = flags.or(FConst.Internal);  protection = true
         case Token.nativeKeyword:    flags = flags.or(FConst.Native)
-        case Token.newKeyword:       flags = flags.or(FConst.Ctor)
         case Token.onceKeyword:      flags = flags.or(Once) // Parser only flag
         case Token.extensionKeyword: flags = flags.or(FConst.Extension)
         case Token.overrideKeyword:  flags = flags.or(FConst.Override)
@@ -476,8 +475,10 @@ public class Parser : CompilerSupport
     }
 
     // check for constructor
-    if (flags.and(FConst.Ctor) != 0)
+    if (curt === Token.newKeyword)
     {
+      consume
+      flags = flags.or(FConst.Ctor)
       name := consumeId
       /*
       returns := flags.and(FConst.Static) == 0 ?
@@ -495,6 +496,38 @@ public class Parser : CompilerSupport
       }
       returnsRef := TypeRef(loc, returns)
       return methodDef(loc, parent, doc, facets, flags, returnsRef, name)
+    }
+
+    //modern field
+    if (curt === Token.varKeyword || curt === Token.letKeyword || tokens[pos-1].kind === Token.constKeyword) {
+      modernStyle := false
+      if (curt === Token.varKeyword) {
+        consume
+        modernStyle = true
+      }
+      if (curt === Token.letKeyword) {
+        consume
+        flags = flags.or(FConst.Readonly)
+        modernStyle = true
+      }
+
+      if (curt === Token.identifier && peekt === Token.colon) {
+        name := consumeId
+        consume(Token.colon)
+        type := typeRef
+        return fieldDef(loc, parent, doc, facets, flags, type, name)
+      }
+      if (modernStyle) {
+        err("expected colon for field def", loc)
+      }
+    }
+
+    //modern function
+    if (curt === Token.funKeyword) {
+      consume
+      CType? type := null
+      name := consumeId
+      return methodDef(loc, parent, doc, facets, flags, type, name)
     }
 
     // otherwise must be field or method
@@ -708,18 +741,14 @@ public class Parser : CompilerSupport
   **   <param>          :=  <type> <id> [":=" <expr>]
   **   <methodBody>     :=  <eos> | ( "{" <stmts> "}" )
   **
-  private MethodDef methodDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, TypeRef ret, Str name)
+  private MethodDef methodDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, TypeRef? ret, Str name)
   {
     method := MethodDef(loc, parent)
     method.doc    = doc
     method.facets = facets
     method.flags  = flags
-    method.ret    = ret
+    if (ret != null) method.ret    = ret
     method.name   = name
-
-    // if This is returned, then we configure inheritedRet
-    // right off the bat (this is actual signature we will use)
-    if (ret.isThis) method.inheritedRet = parent
 
     // enter scope
     curSlot = method
@@ -739,6 +768,23 @@ public class Parser : CompilerSupport
       }
     }
     consume(Token.rparen)
+
+    //retType decl
+    if (ret == null) {
+      if((flags.and(FConst.Ctor) == 0) && (curt === Token.colon)) {
+        consume
+        ret = typeRef
+        method.ret = ret
+      }
+      else {
+        ret = TypeRef(loc, ns.voidType)
+        method.ret = ret
+      }
+    }
+
+    // if This is returned, then we configure inheritedRet
+    // right off the bat (this is actual signature we will use)
+    if (ret.isThis) method.inheritedRet = parent
 
     // if no body expected
     //if (parent.isNative) flags = flags.or(FConst.Native)
@@ -775,9 +821,20 @@ public class Parser : CompilerSupport
 
   private ParamDef paramDef()
   {
-    param := ParamDef(cur, typeRef, consumeId)
+    ParamDef? param
+    hasColon := false
+    if (peekt === Token.colon) {
+      name := consumeId
+      consume(Token.colon)
+      type := typeRef
+      param = ParamDef(cur, type, name)
+      hasColon = true
+    }
+    else
+      param = ParamDef(cur, typeRef, consumeId)
     if (curt === Token.defAssign || curt === Token.assign)
     {
+      if (hasColon && curt === Token.defAssign) err("Must use = for parameter default");
       //if (curt === Token.assign) err("Must use := for parameter default");
       consume
       param.def = expr
@@ -941,6 +998,11 @@ public class Parser : CompilerSupport
     }
     reset(mark)
 
+    //type back local variable declaration
+    if (curt === Token.identifier && peekt === Token.colon) {
+      return localDefStmt(loc, null, isEndOfStmt)
+    }
+
     // identifier followed by def assign is inferred typed local var declaration
     if (curt === Token.identifier && peekt === Token.defAssign)
     {
@@ -1000,10 +1062,18 @@ public class Parser : CompilerSupport
     if (conflict != null && conflict.size > 0)
       err("Variable name conflicts with imported type '$conflict.first'", loc)
 
+    hasColon := false
+    if (localType == null && curt === Token.colon) {
+      consume
+      localType = typeRef
+      hasColon = true
+    }
+
     stmt := LocalDefStmt(loc, localType, name)
 
     if (curt === Token.defAssign || curt === Token.assign)
     {
+      if (hasColon && curt === Token.defAssign) err("Must use = for assignments")
       //if (curt === Token.assign) err("Must use := for declaration assignments")
       consume
       stmt.init = expr
