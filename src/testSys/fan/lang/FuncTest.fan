@@ -116,26 +116,26 @@ class FuncTest : Test
   Void testBindCalls()
   {
     // verify binding/calling
-    verifyBind |->Str| { return "" }
-    verifyBind |Str a->Str| { return a }
-    verifyBind |Str a, Str b->Str| { return a + b  }
-    verifyBind |Str a, Str b, Str c->Str| { return a + b + c }
-    verifyBind |Str a, Str b, Str c, Str d->Str| { return a + b + c + d }
-    verifyBind |Str a, Str b, Str c, Str d, Str e->Str| { return a + b + c + d + e }
-    verifyBind |Str a, Str b, Str c, Str d, Str e, Str f->Str| { return a + b + c + d + e + f }
-    verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g->Str| { return a + b + c + d + e + f + g }
-    verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h->Str| { return a + b + c + d + e + f + g + h }
-    verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h, Str i->Str| { return a + b + c + d + e + f + g + h + i }
-    verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h, Str i, Str j->Str| { return a + b + c + d + e + f + g + h + i + j }
+    verifyBind(0) |->Str| { return "" }
+    verifyBind(1) |Str a->Str| { return a }
+    verifyBind(2) |Str a, Str b->Str| { return a + b  }
+    verifyBind(3) |Str a, Str b, Str c->Str| { return a + b + c }
+    verifyBind(4) |Str a, Str b, Str c, Str d->Str| { return a + b + c + d }
+    verifyBind(5) |Str a, Str b, Str c, Str d, Str e->Str| { return a + b + c + d + e }
+    verifyBind(6) |Str a, Str b, Str c, Str d, Str e, Str f->Str| { return a + b + c + d + e + f }
+    verifyBind(7) |Str a, Str b, Str c, Str d, Str e, Str f, Str g->Str| { return a + b + c + d + e + f + g }
+    verifyBind(8) |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h->Str| { return a + b + c + d + e + f + g + h }
+    //verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h, Str i->Str| { return a + b + c + d + e + f + g + h + i }
+    //verifyBind |Str a, Str b, Str c, Str d, Str e, Str f, Str g, Str h, Str i, Str j->Str| { return a + b + c + d + e + f + g + h + i + j }
   }
 
-  Void verifyBind(Func f)
+  Void verifyBind(Int arity, Func f)
   {
     args := Str[,]
     expected := ""
 
     //verifyEq(f.params.size, f.arity)
-    f.arity.times |Int i|
+    arity.times |Int i|
     {
       ch := ('a' + i).toChar
       args.add(ch)
@@ -332,13 +332,13 @@ class FuncTest : Test
     verifyEq(func.call("Dredd"), "Dredd")
     verifyEq(func.callOn(null, ["Hershey"]), "Hershey")
     verifyEq(func.callList(["Anderson"]), "Anderson")
-    verifyEq(func.arity, 1)
+    //verifyEq(func.arity, 1)
 
     func = #judge.func
     verifyEq(func.call(this, "Dredd"), "Dredd")
     verifyEq(func.callOn(this, ["Hershey"]), "Hershey")
     verifyEq(func.callList([this, "Anderson"]), "Anderson")
-    verifyEq(func.arity, 2)
+    //verifyEq(func.arity, 2)
 
     //echo("params -> ${func.params}")
     //echo("typeof -> ${func.typeof}")

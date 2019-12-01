@@ -1572,14 +1572,14 @@ class CheckErrors : CompilerStep
       if (sig.params.size != args.size)
       {
         //ignore on sig.defaultParameterized
-        // if (sig.defaultParameterized) {
-        //   objType := ns.objType.toNullable
-        //   args.size.times |i| {
-        //     newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
-        //   }
-        // }
-        //else 
-        isErr = true
+        if (sig.defaultParameterized) {
+          objType := ns.objType.toNullable
+          args.size.times |i| {
+            newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
+          }
+        }
+        else
+          isErr = true
       }
       else
       {
