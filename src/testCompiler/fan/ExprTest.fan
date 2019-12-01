@@ -670,8 +670,8 @@ class ExprTest : CompilerTest
         static Void c() { x := 44; x() }
         static Void d()
         {
-          m := |Int a, Int b, Int c, Int d, Int e, Int f, Int g, Int h, Int j| {}
-          m(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+          //m := |Int a, Int b, Int c, Int d, Int e, Int f, Int g, Int h, Int j| {}
+          //m(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         }
 
         static Void m9(Int a, Int b, Int c, Int d, Int e, Int f, Int g, Int h, Int j) {}
@@ -680,7 +680,7 @@ class ExprTest : CompilerTest
         3, 26, "Cannot use () call operator on non-func type 'sys::Str'",
         4, 28, "Cannot use () call operator on non-func type 'sys::Str'",
         5, 30, "Cannot use () call operator on non-func type 'sys::Int'",
-        9,  5, "Tough luck - cannot use () operator with more than 8 arguments, use call(List)",
+        //9,  5, "Tough luck - cannot use () operator with more than 8 arguments, use call(List)",
       ])
 
     // CheckErrors step

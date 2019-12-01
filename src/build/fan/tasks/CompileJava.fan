@@ -70,11 +70,11 @@ class CompileJava : JdkTask
   override Void run()
   {
     log.info("CompileJava")
-
+    cmd := Str[,]
     try
     {
       // build command
-      cmd := [javacExe]
+      cmd.add(javacExe)
 
       // always assume UTF-8
       cmd.add("-encoding").add("utf-8")
@@ -115,7 +115,8 @@ class CompileJava : JdkTask
     catch (Err e)
     {
       //e.trace
-      throw fatal("CompileJava failed", e)
+      cmds := cmd.join(" ")
+      throw fatal("CompileJava failed: $cmds", e)
     }
   }
 

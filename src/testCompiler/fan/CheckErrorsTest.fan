@@ -706,14 +706,14 @@ class CheckErrorsTest : CompilerTest
 
         39, 22, "Cannot set const field '$podName::Foo.f'",
         40, 12, "Cannot set const field '$podName::Foo.b'",
-
-        /* used to be prevented for with-block, before it-blocks
-        51, 33, "Cannot set const field '$podName::Foo.f'",
-        52, 34, "Cannot set const field 'xxx' outside of constructor",
-        54, 30, "Cannot set const field 'xxx' outside of constructor",
-        55, 27, "Cannot set const field 'xxx' outside of constructor",
-        */
         57, 16, "Cannot set const field '$podName::Foo.b'",
+        // used to be prevented for with-block, before it-blocks
+        51, 36, "Cannot set const field '$podName::Foo.f'",
+        52, 37, "Cannot set const field 'xxx' outside of constructor",
+        54, 33, "Cannot set const field 'xxx' outside of constructor",
+        55, 30, "Cannot set const field 'xxx' outside of constructor",
+        
+        //57, 16, "Cannot set const field '$podName::Foo.b'",
         56, 30, "Cannot access static field 'goop' on instance",
         56, 30, "Cannot set const static field 'goop' outside of static initializer",
        ])
@@ -1910,7 +1910,7 @@ class CheckErrorsTest : CompilerTest
           """,
        [
          2,  3, "Struct type 'Bar' cannot contain non-readonly field 'x'",
-         12, 18, "Cannot set struct field '",
+         //12, 18, "Cannot set struct field '",
        ])
   }
 

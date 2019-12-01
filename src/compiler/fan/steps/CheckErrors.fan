@@ -1897,16 +1897,16 @@ class CheckErrors : CompilerStep
 
     // if we can auto-cast to make the expr fit then do it - we
     // have to treat function auto-casting a little specially here
-    // if (actual.isFunc && expected.isFunc)
-    // {
-    //   if (isFuncAutoCoerce(actual, expected))
-    //     return TypeCheckExpr.coerce(expr, expected)
-    // }
-    // else
-    // {
+    if (actual.isFunc && expected.isFunc)
+    {
+      // if (isFuncAutoCoerce(actual, expected))
+      //   return TypeCheckExpr.coerce(expr, expected)
+    }
+    else
+    {
       if (expected.fits(actual))
         return TypeCheckExpr.coerce(expr, expected)
-    // }
+    }
 
     // we have an error condition
     onErr()

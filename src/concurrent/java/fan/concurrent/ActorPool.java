@@ -44,9 +44,9 @@ public class ActorPool
   {
     if (itBlock != null)
     {
-      itBlock.enterCtor(self);
+//      itBlock.enterCtor(self);
       itBlock.call(self);
-      itBlock.exitCtor();
+//      itBlock.exitCtor();
     }
     if (self.maxThreads < 1) throw ArgErr.make("ActorPool.maxThreads must be >= 1, not " + self.maxThreads);
 

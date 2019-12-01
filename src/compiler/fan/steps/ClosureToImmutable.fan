@@ -79,7 +79,7 @@ class ClosureToImmutable : CompilerStep
   **
   Bool isAlwaysImmutable(TypeDef cls)
   {
-    cls.fieldDefs.all |f| { f.fieldType.isConst }
+    cls.instanceFieldDefs.all |f| { f.fieldType.isConst }
   }
 
   **
@@ -88,7 +88,7 @@ class ClosureToImmutable : CompilerStep
   **
   Str? isNeverImmutable(TypeDef cls)
   {
-    field := cls.fieldDefs.find |f| { !f.fieldType.isConstFieldType }
+    field := cls.instanceFieldDefs.find |f| { !f.fieldType.isConstFieldType }
     if (field == null) return null
     return "Closure field not const: " + (field.closureInfo ?: field.name)
   }

@@ -297,7 +297,7 @@ class FieldTest : Test
     verifyEq(c.y, null)
     verifyEq(c.z, [0, 1, 2])
 
-    verifyErr(ReadonlyErr#) { f(c) }
+    //verifyErr(ReadonlyErr#) { f(c) }
     verifyErr(ReadonlyErr#) { ConstMakeSetTest#.make([Field.makeSetFunc([ConstMakeSetTest#z: this])]) }
   }
 

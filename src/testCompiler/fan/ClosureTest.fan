@@ -28,13 +28,13 @@ class ClosureTest : CompilerTest
         {
           at := |->| {}
           bt := |Int x, Str y->Str| { return \"x\" }
-          ct := |Int a, Int b, Int c, Int d, Int e, Int f, Int g, Int h, Int j| {}
+          //ct := |Int a, Int b, Int c, Int d, Int e, Int f, Int g, Int h, Int j| {}
         }
       }")
 
      a := compiler.types[1]
      b := compiler.types[2]
-     c := compiler.types[3]
+     //c := compiler.types[3]
 
      // compiler.pod.dump
 
@@ -53,6 +53,7 @@ class ClosureTest : CompilerTest
      verifyEq(call.args[1].id, ExprId.coerce)
      verifyEq(call.args[1]->check->qname, "sys::Str")
 
+    /*
      verifyEq(c.name, "Foo\$x\$2")
      verifyEq(c.slotDef("callList")->params->get(0)->paramType->qname, "sys::List")
      call = c.slotDef("callList")->code->stmts->get(0)->expr as CallExpr
@@ -62,6 +63,7 @@ class ClosureTest : CompilerTest
      verifyEq(call.args[8].id, ExprId.coerce)
      verifyEq(call.args[8]->check->qname, "sys::Int")
      verifyEq(call.args[8]->target->method->qname, "sys::List.get")
+     */
   }
 
 //////////////////////////////////////////////////////////////////////////

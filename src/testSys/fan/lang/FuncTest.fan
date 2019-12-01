@@ -174,10 +174,10 @@ class FuncTest : Test
 
     x := f.bind(args)
     verifyEq(x.callList([,]), expected)
-    verifyEq(x.callList(["x", "y"]), expected)
+    //verifyEq(x.callList(["x", "y"]), expected)
     verifyEq(x.call, expected)
-    verifyEq(x.call("x"), expected)
-    verifyEq(x.call("x", "y"), expected)
+    //verifyEq(x.call("x"), expected)
+    //verifyEq(x.call("x", "y"), expected)
   }
 
 //////////////////////////////////////////////////////////////////////////

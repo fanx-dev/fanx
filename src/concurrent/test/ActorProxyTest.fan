@@ -13,7 +13,7 @@ class Act {
 
 class ActorProxyTest : Test
 {
-  static const ActorLocal<Str> local := ActorLocal<Str>(|->Obj|{ "Hi" })
+  static const ActorLocal<Str> local := ActorLocal<Str>(|->Str|{ "Hi" })
 
   Void testProxy() {
     a := ActorProxy(|->Obj|{ Act() })

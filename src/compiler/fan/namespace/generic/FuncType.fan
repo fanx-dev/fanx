@@ -48,7 +48,7 @@ class FuncType : ParameterizedType
     if (that.defaultParameterized) return true
 
     // match return type (if void is needed, anything matches)
-    if (!that.ret.isVoid && !this.ret.fits(that.ret)) {
+    if (!that.ret.isVoid && !this.ret.fits(that.ret) && !that.ret.fits(this.ret)) {
       //echo("ret: $this.ret not fits $that.ret")
       return false
     }
@@ -57,7 +57,7 @@ class FuncType : ParameterizedType
     // must have no more
     if (this.params.size > that.params.size) return false
     for (i:=0; i<this.params.size; ++i)
-      if (!that.params[i].fits(this.params[i])) {
+      if (!that.params[i].fits(this.params[i]) && !this.params[i].fits(that.params[i])) {
         //echo("${that.params[i]} not fits ${this.params[i]}")
         if (that.params[i].hasGenericParameter) continue
         return false

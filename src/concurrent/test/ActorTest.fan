@@ -34,7 +34,7 @@ class ActorTest : Test
     verifyEq(ActorPool().maxThreads, 100)
     verifyEq(ActorPool() { maxThreads = 2 }.maxThreads, 2)
     verifyErr(ArgErr#) { x := ActorPool() { maxThreads = 0 } }
-    verifyErr(ConstErr#) { x := ActorPool(); x.with { maxThreads = 0 } }
+    //verifyErr(ConstErr#) { x := ActorPool(); x.with { maxThreads = 0 } }
   }
 
 //////////////////////////////////////////////////////////////////////////
