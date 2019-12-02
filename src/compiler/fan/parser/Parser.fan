@@ -504,6 +504,9 @@ public class Parser : CompilerSupport
       if (curt === Token.varKeyword) {
         consume
         modernStyle = true
+        if (flags.and(FConst.Const) != 0) {
+          err("var must not const", loc)
+        }
       }
       if (curt === Token.letKeyword) {
         consume

@@ -3,8 +3,12 @@
 ### Build 3.0 (working)
 - Move Type to std pod
 - Support raw Array and Pointer
+- Add List.slice
+- Enhance type alias
 - More keyword
 - Rework Func for MethodHandle
+- Check set const on compile time
+- Remove Func.arity
 - Fix static inherit bug
 - Uri standard form support
 - Postfix type annotations

@@ -28,7 +28,7 @@ Familiar C-like syntax
 ```
 
 ### Modern Style
-Both support modern style (type after name) and traditional style
+Support both modern style (type after name) and traditional style
 ```
   class Person {
     var age: Int
