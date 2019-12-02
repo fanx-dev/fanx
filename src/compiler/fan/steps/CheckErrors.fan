@@ -1165,7 +1165,7 @@ class CheckErrors : CompilerStep
     if (curType.isClosure && curType.closure.isItBlock && 
       lhs.target is ItExpr &&
       curType.closure.followCtorType == curType.closure.itType &&
-      curType.closure.followCtorType == field.parent) {
+      curType.closure.followCtorType.fits(field.parent)) {
       //pass
     }
     else

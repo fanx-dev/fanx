@@ -85,7 +85,7 @@ abstract class DefNode : Node
       // don't document test concrete subclasses
       t := (TypeDef)this
       
-      if (t.podName == "sys") return false
+      if (t.podName == "sys") return true
       
       if (t.base != null && t.base.fits(ns.testType))
         return t.isAbstract
