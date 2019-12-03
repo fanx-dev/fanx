@@ -76,7 +76,7 @@ class FuncType : ParameterizedType
     return this
   }
 
-  FuncType mostSpecific(FuncType b)
+  FuncType mostSpecific(FuncType b, Bool inferredSignature)
   {
     a := this
     if (a.arity > b.arity) throw Err("Different arities: $a / $b")
@@ -86,7 +86,7 @@ class FuncType : ParameterizedType
         params.add(b.params[i])
       }
     }
-    ret := toMostSpecific(a.ret, b.ret)
+    ret := inferredSignature ? toMostSpecific(a.ret, b.ret) : a.ret
     return make(params, b.names, ret)
   }
 

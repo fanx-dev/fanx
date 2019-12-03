@@ -1280,12 +1280,12 @@ class ParserTest : CompilerTest
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Str,sys::Func<sys::Void>>")
 
-    t = parseType("[Str:| Int:Int[] a -> |->| |[]]")
+    t = parseType("[Str:| [Int:Int[]] a -> |->| |[]]")
       verifyEq(t.qname,       "std::Map")
       verifyEq(t.signature,   "std::Map<sys::Str,sys::List<sys::Func<sys::Func<sys::Void>,std::Map<sys::Int,sys::List<sys::Int>>>>>")
       verifyEq(t.isNullable,  false)
 
-    t = parseType("[Str:| Int:Int[] a -> |->| |[]]?")
+    t = parseType("[Str:| [Int:Int[]] a -> |->| |[]]?")
       verifyEq(t.qname,       "std::Map")
       //verifyEq(t.signature,   "[sys::Str:|[sys::Int:sys::Int[]]->|->sys::Void||[]]?")
       verifyEq(t.isNullable,  true)

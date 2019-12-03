@@ -1540,7 +1540,7 @@ class ClosureExpr : Expr
         collapseExprAndParams(call, addParams)
       }
       t = t.toArity(((FuncType)cls.base).arity)
-      t = signature.mostSpecific(t)
+      t = signature.mostSpecific(t, signature.inferredSignature)
     }
     else if (isItBlock && t.arity == 0) {
       call.paramDefs.clear

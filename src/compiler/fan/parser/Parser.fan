@@ -512,6 +512,9 @@ public class Parser : CompilerSupport
         consume
         flags = flags.or(FConst.Readonly)
         modernStyle = true
+        if (flags.and(FConst.Const) != 0) {
+          err("var must not const", loc)
+        }
       }
 
       if (curt === Token.identifier && peekt === Token.colon) {
@@ -2502,6 +2505,13 @@ public class Parser : CompilerSupport
 
   private Bool funcTypeFormal(Bool isTypeRef, CType[] params, Str[] names, Bool[] unnamed)
   {
+    if (peekt === Token.colon) {
+      names.add(consumeId)
+      consume
+      params.add(ctype(isTypeRef))
+      return true
+    }
+
     t := isTypeRef ? ctype(true) : tryType
     if (t != null)
     {
