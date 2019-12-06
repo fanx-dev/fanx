@@ -23,7 +23,7 @@ fan.std.RegexPeer.prototype.split = function(self, s, limit)
   if (limit === undefined) limit = 0;
 
   if (limit === 1)
-    return fan.sys.List.makeFromJs(fan.sys.Str.$type, [s]);
+    return fan.sys.List.make(fan.sys.Str.$type, [s]);
 
   var array = [];
   var re = self.m_regexp;
@@ -43,6 +43,6 @@ fan.std.RegexPeer.prototype.split = function(self, s, limit)
   {
     while (array[array.length-1] == "") { array.pop(); }
   }
-  return fan.sys.List.makeFromJs(fan.sys.Str.$type, array);
+  return fan.sys.List.make(fan.sys.Str.$type, array);
 }
 

@@ -311,6 +311,7 @@ abstract native const class Type
   ** Examples:
   **   Str#.emptyList  =>  Str[,]
   **
+  @NoDoc
   virtual Obj[] emptyList() { List.defVal }
 
 //////////////////////////////////////////////////////////////////////////
@@ -512,7 +513,7 @@ abstract native const class Type
   */
 }
 
-internal const class BaseType : Type
+native internal const class BaseType : Type
 {
   private const Pod _pod
   private const Str _typeName
@@ -766,7 +767,7 @@ internal const class BaseType : Type
   //Str? doc()
 }
 
-internal const class ProxyType : Type {
+native internal const class ProxyType : Type {
   const Type root
 
   new privateMake(Type root) : 
@@ -792,7 +793,7 @@ internal const class ProxyType : Type {
   override Facet? facet(Type type, Bool checked := true) { root.facet(type, checked) }
 }
 
-internal const class NullableType : ProxyType {
+native internal const class NullableType : ProxyType {
 
   new privateMake(Type root) : super.privateMake(root) {}
 
@@ -828,7 +829,7 @@ internal const class NullableType : ProxyType {
   override Type toNonNullable() { root }
 }
 
-internal const class ParameterizedType : ProxyType {
+native internal const class ParameterizedType : ProxyType {
   private const Str _signature
   private const Type nullable
 

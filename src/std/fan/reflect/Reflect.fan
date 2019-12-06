@@ -1,6 +1,6 @@
 
 
-internal rtconst class Reflect {
+native internal rtconst class Reflect {
   private Pod[] podList := [,]
   private [Str:Pod] podMap := [:]
 

@@ -73,7 +73,7 @@ fan.std.Slot.find = function(qname, checked)
   {
     throw fan.sys.Err.make("Invalid slot qname \"" + qname + "\", use <pod>::<type>.<slot>");
   }
-  var type = fan.sys.Type.find(typeName, checked);
+  var type = fan.std.Type.find(typeName, checked);
   if (type == null) return null;
   return type.slot(slotName, checked);
 }
@@ -152,3 +152,122 @@ fan.std.Slot.prototype.$$name = function(n)
   return n;
 }
 
+//
+// Copyright (c) 2011, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   31 May 2011  Andy Frank  Creation
+//
+
+/**
+ * Facets manages facet meta-data as a Str:Obj map.
+ */
+fan.std.Facets = fan.sys.Obj.$extend(fan.sys.Obj);
+fan.std.Facets.prototype.$ctor = function(map)
+{
+  this.m_map = map;
+  this.m_list = null;
+}
+
+fan.std.Facets.empty = function()
+{
+  var x = fan.std.Facets.m_emptyVal;
+  if (x == null) x = fan.std.Facets.m_emptyVal = new fan.std.Facets({});
+  return x;
+}
+
+fan.std.Facets.makeTransient = function()
+{
+  var x = fan.std.Facets.m_transientVal;
+  if (x == null)
+  {
+    var m = {};
+    m[fan.sys.Transient.$type.qname()] = "";
+    x = fan.std.Facets.m_transientVal = new fan.std.Facets(m);
+  }
+  return x;
+}
+
+fan.std.Facets.prototype.list = function()
+{
+  if (this.m_list == null)
+  {
+    this.m_list = fan.sys.List.make(8, fan.sys.Facet.$type);
+    for (var key in this.m_map)
+    {
+      var type = fan.std.Type.find(key);
+      this.m_list.add(this.get(type, true));
+    }
+    this.m_list = this.m_list.toImmutable();
+  }
+  return this.m_list;
+}
+
+fan.std.Facets.prototype.get = function(type, checked)
+{
+  var val = this.m_map[type.qname()];
+  if (typeof val == "string")
+  {
+    var f = this.decode(type, val);
+    this.m_map[type.qname()] = f;
+    return f;
+  }
+  //if (val instanceof fan.sys.Facet)
+  if (val != null) return val;
+  if (checked) throw fan.sys.UnknownFacetErr.make(type.qname());
+  return null;
+}
+
+fan.std.Facets.prototype.decode = function(type, s)
+{
+  try
+  {
+    // if no string use make/defVal
+    if (s.length == 0) return fan.std.Type.make(type);
+
+    // decode using normal Fantom serialization
+    return fan.std.ObjDecoder.decode(s);
+  }
+  catch (e)
+  {
+    var msg = "ERROR: Cannot decode facet " + type + ": " + s;
+    fan.sys.ObjUtil.echo(msg);
+    delete this.m_map[type.qname()];
+    throw fan.sys.IOErr.make(msg);
+  }
+}
+
+fan.std.Facets.prototype.dup = function()
+{
+  var dup = {};
+  for (key in this.m_map) dup[key] = this.m_map[key];
+  return new fan.std.Facets(dup);
+}
+
+fan.std.Facets.prototype.inherit = function(facets)
+{
+  var keys = [];
+  for (key in facets.m_map) keys.push(key);
+  if (keys.length == 0) return;
+
+  this.m_list = null;
+  for (var i=0; i<keys.length; i++)
+  {
+    var key = keys[i];
+
+    // if already mapped skipped
+    if (this.m_map[key] != null) continue;
+
+    // if not an inherited facet skip it
+    var type = fan.std.Type.find(key);
+    var meta = type.facet(fan.sys.FacetMeta.$type, false);
+    if (meta == null || !meta.m_inherited) continue;
+
+    // inherit
+    this.m_map[key] = facets.m_map[key];
+  }
+}
+
+fan.std.Facets.m_emptyVal = null;
+fan.std.Facets.m_transientVal = null;

@@ -29,7 +29,7 @@ fan.std.Method.prototype.$ctor = function(parent, name, flags, returns, params, 
   this.m_func    = new fan.std.MethodFunc(this, returns);
   this.m_$name   = this.$$name(name);
   this.m_$qname  = this.m_parent.m_$qname + '.' + this.m_$name;
-  this.m_facets  = new fan.sys.Facets(facets);
+  this.m_facets  = new fan.std.Facets(facets);
   this.m_mask    = 0;//(generic != null) ? 0 : fan.std.Method.toMask(parent, returns, params);
   this.m_generic = generic;
 }
@@ -110,7 +110,7 @@ fan.std.Method.prototype.call = function()
     args = Array.prototype.slice.call(args).slice(1);
   }
 
-  return this.invoke(instance, fan.sys.List.makeFromJs(fan.sys.Obj.$type, args));
+  return this.invoke(instance, fan.sys.List.make(fan.sys.Obj.$type, args));
 }
 
 fan.std.Method.prototype.callList = function(args)

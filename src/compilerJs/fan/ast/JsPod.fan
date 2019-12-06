@@ -170,6 +170,7 @@ class JsPod : JsNode
     if (file == null)
     {
       support.warn("Missing native impl for $t.sig", Loc("${t.name}.fan"))
+      if (t.isNative) missNatives[t.qname] = null
     }
     else
     {
@@ -187,7 +188,7 @@ class JsPod : JsNode
     out.w("{").nl
 
     // filter out synthetic types from reflection
-    reflect := types.findAll |t| { !t.isSynthetic }
+    reflect := types.findAll |t| { !t.isSynthetic && !missNatives.containsKey(t.qname) }
 
     // write all types first
     reflect.each |t|
@@ -204,19 +205,24 @@ class JsPod : JsNode
     reflect.each |t|
     {
       if (t.fields.isEmpty && t.methods.isEmpty) return
+      if (missNatives.containsKey(t.qname)) return
       //out.w("  \$$i")
       out.w("  fan.${t.pod}.${t.name}.\$type")
       t.fields.each |f|
       {
+        if (t.isNative && f.isPrivate) return
+        if (missNatives.containsKey(t.qname)) return
         facets := f.facets.join(",") |x| { "'$x.type.sig':$x.val.toCode" }
         out.w(".\$af('$f.origName',$f.flags,'$f.ftype.sig',{$facets})")
       }
       t.methods.each |m|
       {
+        if (t.isNative && m.isPrivate) return
+        if (missNatives.containsKey(t.qname)) return
         if (m.isFieldAccessor) return
         params := m.params.join(",") |p| { "new fan.std.Param('$p.reflectName','$p.paramType.sig',$p.hasDef)" }
         facets := m.facets.join(",") |f| { "'$f.type.sig':$f.val.toCode" }
-        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.makeFromJs(fan.std.Param.\$type,[$params]),{$facets})")
+        out.w(".\$am('$m.origName',$m.flags,'$m.ret.sig',fan.sys.List.makeFromJs([$params], fan.std.Param.\$type),{$facets})")
       }
       out.w(";").nl
     }
@@ -247,4 +253,5 @@ class JsPod : JsNode
   JsType[] types     // types in this pod
   Str:File natives   // natives
   JsProps[] props    // prop files in this pod
+  Str:Obj? missNatives := [:]
 }

@@ -93,7 +93,7 @@ fan.sys.Func.prototype.retype = function(t)
     var params = [];
     for (var i=0; i < t.pars.length; ++i)
       params.push(new fan.std.Param(String.fromCharCode(i+65), t.pars[i], 0));
-    var paramList = fan.sys.List.makeFromJs(fan.std.Param.$type, params);
+    var paramList = fan.sys.List.make(fan.std.Param.$type, params);
     return fan.sys.Func.make(paramList, t.ret, this.m_func);
   }
   else
@@ -121,9 +121,9 @@ fan.sys.ClosureFuncSpec$ = function(name, ret, params)
     types.push(param.m_type);
   }
 
-  this.m_params = (fan.sys.List.makeFromJs(fan.std.Param.$type, paramDefs));
+  this.m_params = (fan.sys.List.make(fan.std.Param.$type, paramDefs));
   this.m_params.m_readOnly = true;
   this.m_params.m_immutable = true;
-  var type = new fan.sys.Type(name, "sys::Func", [], "", 0);
+  var type = new fan.std.Type(name, "sys::Func", [], "", 0);
   this.m_type = type;//fan.sys.ObjUtil.toImmutable(new fan.sys.FuncType(types, ret));
 }

@@ -41,14 +41,14 @@ fan.std.Env.prototype.$ctor = function()
 
 fan.std.Env.prototype.$setIndex = function(index)
 {
-  if (!fan.sys.ObjUtil.is(index, fan.sys.Type.find("std::Map"))) throw fan.sys.ArgErr.make("Invalid type");
+  if (!fan.sys.ObjUtil.is(index, fan.std.Type.find("std::Map"))) throw fan.sys.ArgErr.make("Invalid type");
   this.m_index = index.toImmutable();
 }
 
 fan.std.Env.prototype.$setVars = function(vars)
 {
   //if (vars.$typeof().qname() != "std::Map") throw fan.sys.ArgErr.make("Invalid type");
-  if (!fan.sys.ObjUtil.is(vars, fan.sys.Type.find("std::CaseInsensitiveMap"))) throw fan.sys.ArgErr.make("Map must be caseInsensitive");
+  if (!fan.sys.ObjUtil.is(vars, fan.std.Type.find("std::CaseInsensitiveMap"))) throw fan.sys.ArgErr.make("Map must be caseInsensitive");
   this.m_vars = vars.toImmutable();
 }
 

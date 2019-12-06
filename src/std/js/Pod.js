@@ -18,7 +18,7 @@ fan.std.Pod = fan.sys.Obj.$extend(fan.sys.Obj);
 
 fan.std.Pod.of = function(obj)
 {
-  return fan.sys.Type.of(obj).pod();
+  return fan.std.Type.of(obj).pod();
 }
 
 fan.std.Pod.list = function()
@@ -87,7 +87,7 @@ fan.std.Pod.prototype.types = function()
   {
     var arr = [];
     for (p in this.m_types) arr.push(this.m_types[p]);
-    this.$typesArray = fan.sys.List.make(fan.sys.Type.$type, arr);
+    this.$typesArray = fan.sys.List.make(fan.std.Type.$type, arr);
   }
   return this.$typesArray;
 }
@@ -116,7 +116,7 @@ fan.std.Pod.prototype.$at = function(name, baseQname, mixins, facets, flags)
   var qname = this.m_name + "::" + name;
   if (this.m_types[name] != null)
     throw fan.sys.Err.make("Type already exists " + qname);
-  var t = new fan.sys.Type(qname, baseQname, mixins, facets, flags);
+  var t = new fan.std.Type(qname, baseQname, mixins, facets, flags);
   this.m_types[name] = t;
   return t;
 }

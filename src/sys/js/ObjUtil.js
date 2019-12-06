@@ -115,13 +115,13 @@ fan.sys.ObjUtil.coerce = function(obj, type)
 fan.sys.ObjUtil.$typeof = function(obj)
 {
   if (obj instanceof fan.sys.Obj) return obj.$typeof();
-  else return fan.sys.Type.toFanType(obj);
+  else return fan.std.Type.toFanType(obj);
 }
 
 fan.sys.ObjUtil.trap = function(obj, name, args)
 {
   if (obj instanceof fan.sys.Obj) return obj.trap(name, args);
-  else return fan.sys.ObjUtil.doTrap(obj, name, args, fan.sys.Type.toFanType(obj));
+  else return fan.sys.ObjUtil.doTrap(obj, name, args, fan.std.Type.toFanType(obj));
 }
 
 fan.sys.ObjUtil.doTrap = function(obj, name, args, type)

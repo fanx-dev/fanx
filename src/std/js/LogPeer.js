@@ -77,7 +77,7 @@ fan.std.LogPeer.printLogRec = function(rec, out) {
 
 fan.std.LogPeer.handlers = function()
 {
-  return fan.sys.List.makeFromJs(fan.sys.Func.$type, fan.std.LogPeer.m_handlers).ro();
+  return fan.sys.List.make(fan.sys.Func.$type, fan.std.LogPeer.m_handlers).ro();
 }
 
 fan.std.LogPeer.addHandler = function(func)

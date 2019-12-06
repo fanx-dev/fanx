@@ -307,7 +307,7 @@ class JsTypeLiteralExpr : JsExpr
   {
     if (t.isList || t.isParameterized || t.isFunc)
     {
-      out.w("fan.sys.Type.find(\"$t.sig\")", t.loc)
+      out.w("fan.std.Type.find(\"$t.sig\")", t.loc)
     }
     else
     {
@@ -423,8 +423,8 @@ class JsMapLiteralExpr : JsExpr
     vals.each |v,i| { if (i > 0) out.w(","); v.write(out) }
     out.w("]")
     t := explicitType ?: inferredType
-    out.w(",fan.sys.Type.find(\"", loc).w(t.k.sig, loc).w("\")")
-    out.w(",fan.sys.Type.find(\"", loc).w(t.v.sig, loc).w("\")")
+    out.w(",fan.std.Type.find(\"", loc).w(t.k.sig, loc).w("\")")
+    out.w(",fan.std.Type.find(\"", loc).w(t.v.sig, loc).w("\")")
     out.w(")")
   }
   JsTypeRef inferredType
@@ -657,6 +657,8 @@ class JsCallExpr : JsExpr
       this.isObj  = ce.method.parent.qname == "sys::Obj"
       this.isPrim = isPrimitive(ce.method.parent)
       this.isStatic = ce.method.isStatic
+      this.isArray = ce.method.parent.qname == "sys::Array"
+      this.parentExtName = ce.method.parent.extName
     }
 
     if (ce.target != null)
@@ -704,6 +706,7 @@ class JsCallExpr : JsExpr
     else if (isPrim) writePrimitive(out)
     else if (isCtorChain) writeCtorChain(out)
     else if (target is JsSuperExpr) writeSuper(out)
+    else if (isArray && isCtor) writeArrayCotr(out)
     else
     {
       writeTarget(out)
@@ -711,6 +714,17 @@ class JsCallExpr : JsExpr
       writeArgs(out)
       out.w(")")
     }
+  }
+
+  Void writeArrayCotr(JsWriter out) {
+    out.w("${targetType.qname}.${name}(", loc)
+    writeArgs(out)
+    if (parentExtName != null) {
+      out.w(",\"")
+      out.w(parentExtName[1..<-1])
+      out.w("\"")
+    }
+    out.w(")")
   }
 
   Void writeObj(JsWriter out)
@@ -795,6 +809,8 @@ class JsCallExpr : JsExpr
   Bool isStatic          // is this a static method
   Bool isDynamic         // is this a -> call
   Str? dynamicName       // name of -> call
+  Bool isArray
+  Str? parentExtName
 }
 
 **************************************************************************

@@ -48,7 +48,7 @@ fan.std.Field.prototype.$ctor = function(parent, name, flags, type, facets)
   this.m_$qname = this.m_parent.m_$qname + '.m_' + this.m_$name;
   this.m_getter = null;
   this.m_setter = null;
-  this.m_facets = new fan.sys.Facets(facets);
+  this.m_facets = new fan.std.Facets(facets);
 }
 
 //////////////////////////////////////////////////////////////////////////

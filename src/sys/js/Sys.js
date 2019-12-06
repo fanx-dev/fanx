@@ -48,6 +48,15 @@ fan.sys.Sys.find = function(podName, typeName, checked)
   if (typeName.indexOf('^') != -1) {
     return fan.sys.Sys.find("sys", "Obj", checked);
   }
+  if (podName == "sys") {
+    if (typeName == "Int8" || typeName == "Int16" ||
+        typeName == "Int32"  || typeName == "Int64" ) {
+      return fan.sys.Sys.find("sys", "Int", checked);
+    }
+    else if (typeName == "Float32"  || typeName == "Float64" ) {
+      return fan.sys.Sys.find("sys", "Float", checked);
+    }
+  }
   var pod = fan.std.Pod.find(podName, checked);
   if (pod == null) return null;
   return pod.type(typeName, checked);
