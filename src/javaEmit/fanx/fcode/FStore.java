@@ -46,7 +46,8 @@ public abstract class FStore
   {
     JarDistStore store = new JarDistStore(loader);
     if (store.hasPod(podName)) return store;
-    throw new RuntimeException("UnknownPodErr:"+podName);
+    return null;
+//    throw new RuntimeException("UnknownPodErr:"+podName);
   }
 
 //////////////////////////////////////////////////////////////////////////
