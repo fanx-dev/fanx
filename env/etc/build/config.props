@@ -6,7 +6,7 @@
 //
 
 // default version used by build scripts
-buildVersion=1.0.70
+buildVersion=1.0.73
 
 // JVM version compiler target, by default Fantom requires a JDK 1.8 compiler
 // that targets 1.7.  If not concerned with targeting 1.7 then this property

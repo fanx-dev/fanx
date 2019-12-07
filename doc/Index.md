@@ -9,7 +9,7 @@
 ### Application Framework
 - [Slan - Web Server](https://github.com/fanx-dev/slan)
 - [Domkit - HTML5](https://fantom.org/doc/docDomkit/index)
-- [Fanvas - Mobile/Desktop](https://github.com/fanx-dev/fanvas)
+- [Vase - Mobile/Desktop](https://github.com/fanx-dev/vase)
 
 ### Others
 - [Setup](Setup.md)
