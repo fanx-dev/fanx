@@ -224,7 +224,7 @@ fan.std.Facets.prototype.decode = function(type, s)
   try
   {
     // if no string use make/defVal
-    if (s.length == 0) return fan.std.Type.make(type);
+    if (s.length == 0) return type.make();
 
     // decode using normal Fantom serialization
     return fan.std.ObjDecoder.decode(s);

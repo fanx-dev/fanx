@@ -43,7 +43,8 @@ public class BootEnv implements IEnv {
 	    }
 	    catch (Throwable e)
 	    {
-	      throw new RuntimeException("javaVersion: " + s, e);
+	      //throw new RuntimeException("javaVersion: " + s, e);
+	      return 0;
 	    }
 	  }
 

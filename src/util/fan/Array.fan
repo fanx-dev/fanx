@@ -1,4 +1,4 @@
-
+@Js
 native class FloatArray {
 
   ** Create a 32-bit float array.
@@ -24,7 +24,7 @@ native class FloatArray {
 
   protected override Void finalize()
 }
-
+@Js
 native class IntArray {
   ** Create a signed 8-bit, 1-byte integer array (-128 to 127).
   static IntArray makeS1(Int size)
@@ -64,7 +64,7 @@ native class IntArray {
 
   protected override Void finalize()
 }
-
+@Js
 class BoolArray {
   private Int _size
   private IntArray words

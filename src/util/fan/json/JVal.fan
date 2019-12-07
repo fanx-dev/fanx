@@ -9,6 +9,7 @@
 **
 ** JSON Object
 **
+@Js
 class JVal {
   Obj? obj
 

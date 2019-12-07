@@ -12,6 +12,7 @@
 **
 ** See [pod doc]`pod-doc#json` for details.
 **
+@Js
 @NoDoc
 class JsonOutStream : ProxyOutStream
 {
