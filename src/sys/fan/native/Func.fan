@@ -33,6 +33,7 @@
 **
 ** See `docLang::Functions` for details.
 **
+@Extern
 final rtconst native class Func<R,A,B,C,D,E,F,G,H>
 {
 

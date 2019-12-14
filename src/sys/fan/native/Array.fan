@@ -6,6 +6,7 @@
 //   2011-4-2  Jed Young  Creation
 //
 
+@Extern
 native class Array<T> {
   new make(Int size)
   Int size()

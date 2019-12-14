@@ -244,6 +244,13 @@ public final class FanFloat
     if (frac < 0.001d)      return "0.000##";
     return "0.0##";
   }
+  
+  public static double toFloat(double self) {
+	return self;
+  }
+  public static long toInt(double self) {
+	return (long)self;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

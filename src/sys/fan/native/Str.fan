@@ -58,7 +58,7 @@ native const final class Str
   **
   static Str fromCStr(Ptr<Int8> utf8, Int byteLen := -1) {
     if (byteLen == -1) {
-      byteLen = NativeC.strlen(utf8)
+      byteLen = Libc.strlen(utf8)
     }
 
     array := Array<Int8>(byteLen)

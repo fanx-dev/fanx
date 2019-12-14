@@ -149,3 +149,9 @@ facet class FacetMeta
 **
 facet class NoPeer {}
 
+**
+** to indicate local native class
+**
+facet class Extern {
+  const Bool simple := false
+}

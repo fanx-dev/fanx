@@ -162,6 +162,16 @@ native const struct class Decimal : Num
   **
   Str toCode()
 
+  **
+  ** Convert this number to an Int.
+  **
+  override Int toInt()
+
+  **
+  ** Convert this number to a Float.
+  **
+  override Float toFloat()
+
 //////////////////////////////////////////////////////////////////////////
 // Locale
 //////////////////////////////////////////////////////////////////////////

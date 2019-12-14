@@ -6,9 +6,19 @@ using sys::Int64 as Size_t
 ** C runtime library
 **
 @NoDoc
-native class NativeC {
+class NativeC {
 
   static native Int toId(Obj self)
+  static native Str typeName(Obj self)
+  
+  static native Void print(Array<Int8> utf8)
+  static native Void printErr(Array<Int8> utf8)
+  static native Str stackTrace()
+
+}
+
+@NoDoc
+class Libc {
 
   static native Size_t strlen(Ptr<Int8> cstr)
   static native Ptr<Int8> strdup(Ptr<Int8> cstr)
@@ -20,10 +30,6 @@ native class NativeC {
   static native Void memcpy(Ptr<Int8> dst, Ptr<Int8> src, Size_t len)
   static native Void memmove(Ptr<Int8> dst, Ptr<Int8> src, Size_t len)
 
-  static native Ptr<Int8> toUtf8(Ptr<WChar> charPtr, Size_t len, Ptr<Size_t> utf8Size)
-  static native Ptr<WChar> fromUtf8(Ptr<Int8> cstr, Size_t len, Ptr<Size_t> charBufSize)
-  static native Size_t utf8Size(Ptr<Int8> cstr, Size_t len)
-
   static native Void puts(Ptr<Int8> cstr)
-  static native Void print(Array<Int8> utf8)
+
 }

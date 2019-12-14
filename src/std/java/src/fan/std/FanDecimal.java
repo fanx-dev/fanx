@@ -178,6 +178,15 @@ public final class FanDecimal
 
     return NumFormat.formatDigits(self.toString(), pattern);
   }
+  
+
+  public static long toInt(BigDecimal self) {
+    return self.longValue();
+  }
+
+  public static double toFloat(BigDecimal self) {
+    return self.doubleValue();
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

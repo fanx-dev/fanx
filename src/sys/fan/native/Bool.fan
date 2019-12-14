@@ -10,6 +10,7 @@
 ** Bool represents a boolean condition of true or false.
 **
 @Serializable { simple = true }
+@Extern
 native const struct class Bool
 {
 
@@ -32,7 +33,7 @@ native const struct class Bool
   **
   ** Private constructor.
   **
-  private new privateMake()
+  private new privateMake() {}
 
   **
   ** Default value is false.

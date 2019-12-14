@@ -11,6 +11,7 @@
 ** Float is used to represent a 64-bit floating point number.
 **
 @Serializable { simple = true }
+@Extern
 native const struct class Float : Num
 {
 
@@ -56,7 +57,7 @@ native const struct class Float : Num
   ** Private constructor.
   **
   //TODO static new
-  private new privateMake()
+  private new privateMake() {}
 
   **
   ** Float value for positive infinity.
@@ -252,6 +253,16 @@ native const struct class Float : Num
     if (this == negInf) return "Float.negInf";
     return toStr;
   }
+
+  **
+  ** Convert this number to an Int.
+  **
+  override Int toInt()
+
+  **
+  ** Convert this number to a Float.
+  **
+  override Float toFloat() { this }
 
 //////////////////////////////////////////////////////////////////////////
 // Locale

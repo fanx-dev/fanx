@@ -9,6 +9,7 @@
 **
 ** Obj is the root class of all classes.
 **
+@Extern
 native rtconst abstract class Obj
 {
 
@@ -70,7 +71,9 @@ native rtconst abstract class Obj
   **
   ** Return a string representation of this object.
   **
-  virtual Str toStr() { "Obj" }
+  virtual Str toStr() {
+    NativeC.typeName(this)
+  }
 
   **
   ** Trap a dynamic call for handling.  Dynamic calls are invoked
@@ -87,9 +90,7 @@ native rtconst abstract class Obj
   ** is one, set the field and return args[0].  Otherwise throw
   ** UnknownSlotErr.
   **
-  virtual Obj? trap(Str name, Obj?[]? args := null) {
-    throw Err("TODO")
-  }
+  virtual Obj? trap(Str name, Obj?[]? args := null)
 
   **
   ** This method called whenever an it-block is applied to

@@ -15,6 +15,6 @@ const final native class Void
   **
   ** Private constructor.
   **
-  private new make()
+  private new make() {}
 
 }

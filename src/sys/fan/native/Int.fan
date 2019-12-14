@@ -10,6 +10,7 @@
 ** Int is used to represent a signed 64-bit integer.
 **
 @Serializable { simple = true }
+@Extern
 native const struct class Int : Num
 {
 
@@ -487,6 +488,16 @@ native const struct class Int : Num
   ** Convenience for `DateTime.makeTicks`.
   **
   //DateTime toDateTime(TimeZone tz := TimeZone.cur)
+
+  **
+  ** Convert this number to an Int.
+  **
+  override Int toInt() { return this }
+
+  **
+  ** Convert this number to a Float.
+  **
+  override Float toFloat()
 
 /////////////////////////////////////////////////////////////////////////
 // Closures

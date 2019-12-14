@@ -11,7 +11,8 @@
 **
 native virtual const class Err
 {
-
+  private Str _msg
+  private Err? _cause
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,10 @@ native virtual const class Err
   **
   ** Construct with specified error message and optional root cause.
   **
-  new make(Str msg := "", Err? cause := null)
+  new make(Str msg := "", Err? cause := null) {
+    _msg = msg
+    _cause = cause
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -29,12 +33,12 @@ native virtual const class Err
   ** Get the string message passed to the contructor or empty
   ** string if a message is not available.
   **
-  Str msg()
+  Str msg() { _msg }
 
   **
   ** Get the underyling cause exception or null.
   **
-  Err? cause()
+  Err? cause() { _cause }
 
   **
   ** Dump the stack trace of this exception to the specified
@@ -47,16 +51,24 @@ native virtual const class Err
   **        in etc/sys/config.props.
   **
   //This trace(OutStream out := Env.cur.out, [Str:Obj]? options := null)
-  This trace()
+  This trace() {
+    traceStr := traceToStr
+    NativeC.printErr(traceStr.toUtf8)
+    return this
+  }
 
   **
   ** Dump the stack trace of this exception to a Str.
   **
-  Str traceToStr()
+  Str traceToStr() {
+    return NativeC.stackTrace
+  }
 
   **
   ** Return the qualified type name and optional message.
   **
-  override Str toStr()
+  override Str toStr() {
+    NativeC.typeName(this) + ":" + _msg
+  }
 
 }

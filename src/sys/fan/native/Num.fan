@@ -19,7 +19,7 @@ native const abstract class Num
   **
   ** internal constructor.
   **
-  internal new make()
+  internal new make() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Virtuals
@@ -28,12 +28,12 @@ native const abstract class Num
   **
   ** Convert this number to an Int.
   **
-  virtual Int toInt()
+  abstract Int toInt()
 
   **
   ** Convert this number to a Float.
   **
-  virtual Float toFloat()
+  abstract Float toFloat()
 
   **
   ** Convert this number to a Decimal.

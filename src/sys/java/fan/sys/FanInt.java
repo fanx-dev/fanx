@@ -457,6 +457,14 @@ public final class FanInt
     if (base == 16) return "0x" + Long.toHexString(self);
     throw ArgErr.make("Invalid base " + base);
   }
+  
+  public static double toFloat(long self) {
+	  return (double)self;
+  }
+  public static long toInt(long self) {
+		return self;
+  }
+  
 //
 //  public static Duration toDuration(long self) { return Duration.make(self); }
 //

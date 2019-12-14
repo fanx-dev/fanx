@@ -60,6 +60,7 @@ native final class StrBuf
         &capacity = it
       }
     }
+    get { buf.size }
   }
 
   **
@@ -262,6 +263,5 @@ native final class StrBuf
   ** attempts to do binary writes will throw UnsupportedErr.
   **
   //OutStream out()
-  protected override Void finalize() {
-  }
+  protected override Void finalize() {}
 }
