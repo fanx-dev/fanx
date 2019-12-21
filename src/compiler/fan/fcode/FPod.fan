@@ -148,7 +148,9 @@ final class FPod : CPod, FConst
 
     flags := 0
     if (method.flags.and(FConst.Setter) != 0) flags = FConst.RefSetter
-    if (method.flags.and(FConst.Overload) != 0) flags = flags.or(FConst.RefOverload)
+    if (method.flags.and(FConst.Overload) != 0 || ( argCount != null && method.params.size != argCount)) {
+      flags = flags.or(FConst.RefOverload)
+    }
     return methodRefs.add(FMethodRef(p, n, r, params, flags))
   }
 
