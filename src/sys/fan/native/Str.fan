@@ -496,7 +496,7 @@ native const final class Str
     return decodeCharAt(bytePos)
   }
 
-  private Int toByteIndex(Int index) {
+  internal Int toByteIndex(Int index) {
     if (index == 0) return 0
     //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
     charCount := 0

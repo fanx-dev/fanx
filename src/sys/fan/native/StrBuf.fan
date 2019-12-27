@@ -140,8 +140,14 @@ native final class StrBuf
   }
 
   This addStr(Str str, Int off := 0, Int len := str.size) {
-    grow(len)
-    Array.arraycopy(str, off, buf, _size, len)
+    if (len > str.size) throw IndexErr("len:$len > str.size:$str.size")
+    blen := 0
+    strbuf := str.toUtf8
+    if (len == str.size) blen = strbuf.size
+    else blen = str.toByteIndex(len)
+
+    grow(blen)
+    Array.arraycopy(strbuf, off, buf, _size, blen)
     _size += len
     return this
   }
@@ -173,14 +179,15 @@ native final class StrBuf
       throw IndexErr("$index, $size")
     }
     str := x == null ? "null" : x.toStr
-    strLen := str.size
+    strbuf := str.toUtf8
+    strLen := strbuf.size
     grow(strLen)
 
     left := size - index - 1
     Array.arraycopy(buf, index, buf, index+strLen, left)
     //NativeC.memmove(buf+index+strLen, buf+index, left * sizeof(Char))
 
-    Array.arraycopy(str.chars, 0, buf, index, strLen)
+    Array.arraycopy(strbuf, 0, buf, index, strLen)
     //NativeC.memcpy(buf+index, str.getCharPtr, strLen * sizeof(Char))
     _size += strLen
     return this
@@ -227,7 +234,8 @@ native final class StrBuf
     s := r.startIndex(size)
     e := r.endIndex(size)
 
-    strLen := str.size-(e+1-s)
+    strbuf := str.toUtf8
+    strLen := strbuf.size-(e+1-s)
     grow(strLen)
 
     left := size - strLen - 1
@@ -235,7 +243,7 @@ native final class StrBuf
     Array.arraycopy(buf, e+1, buf, s+strLen, left)
 
     //NativeC.memmove(buf+s, str.getCharPtr, str.size * sizeof(Char))
-    Array.arraycopy(str.chars, 0, buf, s, strLen)
+    Array.arraycopy(strbuf, 0, buf, s, strLen)
     _size += strLen
     return this
   }
