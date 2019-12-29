@@ -24,7 +24,7 @@ native virtual const class Err
   new make(Str msg := "", Err? cause := null) {
     _msg = msg
     _cause = cause
-    traceStr = NativeC.stackTrace
+    traceStr = NativeC.typeName(this) + ":\n" +NativeC.stackTrace
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ native virtual const class Err
   **
   //This trace(OutStream out := Env.cur.out, [Str:Obj]? options := null)
   This trace() {
-    NativeC.printErr(traceStr.toUtf8)
+    NativeC.printErr(traceToStr.toUtf8)
     return this
   }
 
@@ -62,7 +62,8 @@ native virtual const class Err
   ** Dump the stack trace of this exception to a Str.
   **
   Str traceToStr() {
-    return traceStr
+    if (cause == null) return traceStr
+    return cause.traceToStr + "\n" + traceStr
   }
 
   **

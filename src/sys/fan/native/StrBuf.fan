@@ -141,14 +141,16 @@ native final class StrBuf
 
   This addStr(Str str, Int off := 0, Int len := str.size) {
     if (len > str.size) throw IndexErr("len:$len > str.size:$str.size")
-    blen := 0
-    strbuf := str.toUtf8
-    if (len == str.size) blen = strbuf.size
-    else blen = str.toByteIndex(len)
+    grow(len)
 
-    grow(blen)
-    Array.arraycopy(strbuf, off, buf, _size, blen)
-    _size += len
+    bytePos := str.toByteIndex(off)
+    readSize := Array<Int>(1)
+    for (i:=0; i<len; ++i) {
+      c := str.decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      buf[_size] = c
+      ++_size
+    }
     return this
   }
 
@@ -179,15 +181,22 @@ native final class StrBuf
       throw IndexErr("$index, $size")
     }
     str := x == null ? "null" : x.toStr
-    strbuf := str.toUtf8
-    strLen := strbuf.size
+    strLen := str.size
     grow(strLen)
 
     left := size - index - 1
     Array.arraycopy(buf, index, buf, index+strLen, left)
     //NativeC.memmove(buf+index+strLen, buf+index, left * sizeof(Char))
 
-    Array.arraycopy(strbuf, 0, buf, index, strLen)
+    bytePos := 0
+    readSize := Array<Int>(1)
+    destPos := index
+    for (i:=0; i<strLen; ++i) {
+      c := str.decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      buf[destPos] = c
+      ++destPos
+    }
     //NativeC.memcpy(buf+index, str.getCharPtr, strLen * sizeof(Char))
     _size += strLen
     return this
@@ -234,8 +243,7 @@ native final class StrBuf
     s := r.startIndex(size)
     e := r.endIndex(size)
 
-    strbuf := str.toUtf8
-    strLen := strbuf.size-(e+1-s)
+    strLen := str.size-(e+1-s)
     grow(strLen)
 
     left := size - strLen - 1
@@ -243,7 +251,16 @@ native final class StrBuf
     Array.arraycopy(buf, e+1, buf, s+strLen, left)
 
     //NativeC.memmove(buf+s, str.getCharPtr, str.size * sizeof(Char))
-    Array.arraycopy(strbuf, 0, buf, s, strLen)
+    bytePos := 0
+    readSize := Array<Int>(1)
+    destPos := s
+    for (i:=0; i<strLen; ++i) {
+      c := str.decodeCharAt(bytePos, readSize)
+      bytePos += readSize[0]
+      buf[destPos] = c
+      ++destPos
+    }
+
     _size += strLen
     return this
   }

@@ -512,7 +512,7 @@ native const final class Str
     throw IndexErr("$index not in [0..$size]") 
   }
 
-  private Int decodeCharAt(Int i, Array<Int>? readSize := null) {
+  internal Int decodeCharAt(Int i, Array<Int>? readSize := null) {
     c1 := getByte(i); ++i
     if (c1 < 0) return -1
     size := 0
