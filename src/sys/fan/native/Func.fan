@@ -34,7 +34,7 @@
 ** See `docLang::Functions` for details.
 **
 @Extern
-final rtconst native class Func<R,A,B,C,D,E,F,G,H>
+rtconst native class Func<R,A,B,C,D,E,F,G,H>
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   **
   ** Private constructor.
   **
-  private new make()
+  internal new make() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Signature
@@ -89,7 +89,31 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** parameters - the additional arguments are ignored.  If no arguments are
   ** required, you may pass null for args.
   **
-  virtual R callList(Obj?[]? args)
+  virtual R callList(Obj?[]? args) {
+    size := (args == null) ? 0 : args.size
+    switch (size) {
+    case 0:
+      return call();
+    case 1:
+      return call(args.get(0));
+    case 2:
+      return call(args.get(0), args.get(1));
+    case 3:
+      return call(args.get(0), args.get(1), args.get(2));
+    case 4:
+      return call(args.get(0), args.get(1), args.get(2), args.get(3));
+    case 5:
+      return call(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4));
+    case 6:
+      return call(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5));
+    case 7:
+      return call(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6));
+    case 8:
+      return call(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6),
+          args.get(7));
+    }
+    throw ArgErr.make("too many args:" + size);
+  }
 
   **
   ** Convenience for dynamically invoking an instance method with
@@ -98,7 +122,32 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** 'callList([target, args[0], args[1] ...])'.  Throw UnsupportedErr
   ** if called on a function which is not an instance method.
   **
-  virtual R callOn(Obj? target, Obj?[]? args)
+  virtual R callOn(Obj? target, Obj?[]? args) {
+    size := (args == null) ? 1 : args.size + 1;
+    switch (size) {
+    case 0:
+      return call();
+    case 1:
+      return call(target);
+    case 2:
+      return call(target, args.get(0));
+    case 3:
+      return call(target, args.get(0), args.get(1));
+    case 4:
+      return call(target, args.get(0), args.get(1), args.get(2));
+    case 5:
+      return call(target, args.get(0), args.get(1), args.get(2), args.get(3));
+    case 6:
+      return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4));
+    case 7:
+      return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5));
+    case 8:
+      return call(target, args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5),
+          args.get(6));
+    }
+    
+    throw ArgErr.make("too many args:" + size);
+  }
 
   **
   ** Optimized convenience for `callList` for zero to eight parameters.
@@ -114,7 +163,11 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** The resulting function is immutable if this function is
   ** immutable and all the args are immutable.
   **
-  Func bind(Obj?[] args)
+  Func bind(Obj?[] args) {
+    if (args.size == 0)
+      return this;
+    return BindFunc(this, args);
+  }
 
   **
   ** Return a new function which wraps this function but with
@@ -134,3 +187,67 @@ final rtconst native class Func<R,A,B,C,D,E,F,G,H>
   //internal native Void exitCtor()
   //internal native Void checkInCtor(Obj obj)
 }
+
+internal rtconst class BindFunc<R,A,B,C,D,E,F,G,H> : Func<R,A,B,C,D,E,F,G,H> {
+    const Func orig
+    const Obj?[] bound
+    private Bool? _isImmutable
+
+    new make(Func orig, Obj?[] bound) {
+      this.orig = orig
+      this.bound = bound.ro
+    }
+
+    override Bool isImmutable() {
+      if (this._isImmutable == null) {
+        isImu := false;
+        if (orig.isImmutable()) {
+          isImu = true;
+          for (i := 0; i < bound.size; ++i) {
+            obj := bound.get(i);
+            if (obj != null && !obj.isImmutable) {
+              isImu = false;
+              break;
+            }
+          }
+        }
+        this._isImmutable = isImu
+      }
+      return this._isImmutable
+    }
+
+    native override R call(A? a := null, B? b := null, C? c := null, D? d := null,
+                 E? e := null, F? f := null, G? g := null, H? h := null)
+
+    override Obj? callList(Obj?[]? args) {
+      if (args == null) {
+        args = List.defVal;
+      }
+
+      Obj?[] temp = List.make(10);
+      for (i := 0; i < bound.size; ++i) {
+        temp.add(bound.get(i));
+      }
+      for (j := 0; j < args.size; ++j) {
+        temp.add(args.get(j));
+      }
+
+      return orig.callList(temp);
+    }
+
+    override Obj? callOn(Obj? obj, Obj?[]? args) {
+      if (args == null) {
+        args = List.defVal;
+      }
+
+      Obj?[] temp = List.make(10);
+      for (i := 0; i < bound.size; ++i) {
+        temp.add(bound.get(i));
+      }
+      temp.add(obj);
+      for (j := 0; j < args.size; ++j) {
+        temp.add(args.get(j));
+      }
+      return orig.callList(temp);
+    }
+  }
