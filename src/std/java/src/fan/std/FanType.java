@@ -407,6 +407,8 @@ public class FanType {
 	}
 
 	private static void mergeFacets(Type self, java.util.Map<Type, Object> map) {
+		if (self.isObj()) return;
+		
 		java.util.Map<Type, Object> ps = getFacets(self);
 		for (java.util.Map.Entry<Type, Object> e : ps.entrySet()) {
 			Type k = e.getKey();
