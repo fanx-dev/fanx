@@ -1325,7 +1325,7 @@ class DeepParser : Parser {
   **
   ** Parse body of closure expression and return ClosureExpr.
   **
-  private ClosureExpr closure(Loc loc, FuncType funcType)
+  private ClosureExpr closure(Loc loc, FuncTypeDef funcType)
   {
     if (curType == null || curSlot == null) throw err("Unexpected closure")
 

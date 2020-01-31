@@ -10,7 +10,7 @@
 **
 ** MethodDef models a method definition - it's signature and body.
 **
-class MethodDef : SlotDef
+class MethodDef : SlotDef, CMethod
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -155,11 +155,11 @@ class MethodDef : SlotDef
 // CMethod
 //////////////////////////////////////////////////////////////////////////
 
-  Str signature() { qname + "(" + params.join(",") + ")" }
+  override Str signature() { qname + "(" + params.join(",") + ")" }
 
-  TypeRef returnType() { ret }
+  override CType returnType() { ret }
 
-  TypeRef inheritedReturnType()
+  override CType inheritedReturnType()
   {
     if (inheritedRet != null)
       return inheritedRet
@@ -167,7 +167,7 @@ class MethodDef : SlotDef
       return ret
   }
 
-  ParamDef[] params() { paramDefs }
+  override CParam[] params() { paramDefs }
 
 //////////////////////////////////////////////////////////////////////////
 // Tree

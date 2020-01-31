@@ -226,14 +226,15 @@ public class Parser
     //GenericType Param
     if (curt === Token.lt) {
       consume
-      gparams := GenericParameter[,]
+      gparams := GenericParamDef[,]
       while (true) {
+        gLoc := cur
         paramName := consumeId
 //        conflict := unit.importedTypes[paramName]
 //        if (conflict != null) {
 //          throw err("generic type conflict: $conflict", cur)
 //        }
-        param := GenericParameter(paramName, def, gparams.size)
+        param := GenericParamDef(gLoc, paramName, def, gparams.size)
         gparams.add(param)
         if (curt === Token.comma) {
           consume
@@ -1033,7 +1034,7 @@ public class Parser
     }
     else if (curt === Token.pipe)
     {
-      t = funcType(isTypeRef)
+      t = funcType(isTypeRef).typeRef
     }
     else
     {
@@ -1073,7 +1074,8 @@ public class Parser
     // check for ":" for map type
     if (curt === Token.colon)
     {
-      if (t.isNullable && (t isnot GenericParameter)) throw err("Map type cannot have nullable key type")
+      //TODO check
+//      if (t.isNullable && (t isnot GenericParameter)) throw err("Map type cannot have nullable key type")
       consume(Token.colon)
       key := t
       val := ctype
@@ -1154,7 +1156,7 @@ public class Parser
   ** If isTypeRef is true (slot signatures), then we requrie explicit
   ** parameter types.
   **
-  protected FuncType funcType(Bool isTypeRef)
+  protected FuncTypeDef funcType(Bool isTypeRef)
   {
     params := TypeRef[,]
     names  := Str[,]
@@ -1198,7 +1200,7 @@ public class Parser
     // closing pipe
     consume(Token.pipe)
 
-    ft := FuncType(loc, params, names, ret)
+    ft := FuncTypeDef(loc, params, names, ret)
     ft.inferredSignature = inferred
     ft.unnamed = unnamed.first
     return ft

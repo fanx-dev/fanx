@@ -11,9 +11,9 @@
 ** method parameter.  Really it is just an AST node wrapper for a
 ** CType that let's us keep track of the source code Loc.
 **
-class TypeRef : Node
+class TypeRef : Node, CType
 {
-
+  CTypeImp imp
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@ class TypeRef : Node
   new make(Loc loc, Str? pod, Str name)
     : super(loc)
   {
-    this.podName = pod
-    this.type = name
+    podName := pod ?: ""
+    imp = CTypeImp(podName, name)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,38 +45,32 @@ class TypeRef : Node
   static TypeRef? thisType(Loc loc) { TypeRef(loc, "sys", "This") }
   
   override Str toStr() {
-    s := StrBuf()
-    if (podName != null) {
-      s.add(podName).add("::")
-    }
-    
-    s.add(type)
-    
-    if (extName != null) {
-      s.add(extName)
-    }
-    if (genericArgs != null) {
-      s.add("<").add(genericArgs.join(",")).add(">")
-    }
-    if (isNullable) {
-      s.add("?")
-    }
-    return s.toStr
+    imp.toStr
   }
   
-  This toNullable() {
-    isNullable = true
-    return this
+  override CType toNullable() {
+    imp.toNullable
   }
+  
+  override CTypeDef typeDef() {
+    imp.typeDef
+  }
+  
+  override Void resolveTo(CTypeDef typeDef) {
+    imp.resolveTo(typeDef)
+  }
+  
+  override Str extName() { imp.extName }
   
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  Str type
-  Str? podName
-  TypeRef[]? genericArgs
-  Str? extName
-  Bool isFuncType
-  Bool isNullable := false
+  override Str name() { imp.name }
+  override Str podName() { imp.name }
+  
+  override TypeRef[]? genericArgs { get {imp.genericArgs} set{imp.genericArgs = it} }
+  override Bool isNullable() { imp.isNullable }
+  
+  override GenericParamDef? attachedGenericParam { get {imp.attachedGenericParam} set{imp.attachedGenericParam = it} }
 }

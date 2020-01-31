@@ -115,7 +115,7 @@ abstract class DefNode : Node
 
   DocDef? doc         // lines of fandoc comment or null
   Int flags := 0      // type/slot flags
-  FacetDef[]? facets  // facet declarations or null
+  CFacet[]? facets  // facet declarations or null
 
 }
 

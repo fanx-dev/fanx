@@ -1146,7 +1146,7 @@ class ClosureExpr : Expr
 {
   new make(Loc loc, TypeDef enclosingType,
            SlotDef enclosingSlot, ClosureExpr? enclosingClosure,
-           FuncType signature, Str name)
+           FuncTypeDef signature, Str name)
     : super(loc, ExprId.closure)
   {
 //    this.ctype            = signature
@@ -1318,7 +1318,7 @@ class ClosureExpr : Expr
   TypeDef enclosingType         // enclosing class
   SlotDef enclosingSlot         // enclosing method or field initializer
   ClosureExpr? enclosingClosure // if nested closure
-  FuncType signature            // function signature
+  FuncTypeDef signature            // function signature
   Block? code                   // moved into a MethodDef in InitClosures
   Str name                      // anonymous class name
   Bool isItBlock                // does closure have implicit it scope

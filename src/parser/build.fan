@@ -24,6 +24,8 @@ class Build : BuildPod
                   `fan/parser/`,
                   `fan/util/`,
                   `fan/semantic/`,
+                  `fan/namespace/`,
+                  `fan/fcode/`,
                   `test/`]
     docSrc     = true
   }

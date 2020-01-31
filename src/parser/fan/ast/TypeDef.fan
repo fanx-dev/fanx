@@ -8,37 +8,10 @@
 //
 
 
-**************************************************************************
-** GenericParameterType
-**************************************************************************
-
-**
-** GenericParameterType models the generic parameter types
-** sys::V, sys::K, etc.
-**
-
-class GenericParameter : TypeRef {
-  TypeRef? bound
-  TypeDef parent
-  Str paramName
-  Int index
-
-  new make(Str name, TypeDef parent, Int index, TypeRef? bound := null)
-    : super(parent.loc, parent.pod.name, parent.name+"^"+name)
-  {
-    this.parent = parent
-    this.paramName = name
-    this.index = index
-    isNullable = true
-  }
-
-  Bool hasGenericParameter() { true }
-}
-
 **
 ** TypeDef models a type definition for a class, mixin or enum
 **
-class TypeDef : DefNode
+class TypeDef : DefNode, CTypeDef
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,69 +36,14 @@ class TypeDef : DefNode
     this.closures    = ClosureExpr[,]
   }
 
-  **
-  ** Return if this Type is a class (as opposed to enum or mixin)
-  **
-  Bool isClass() { !isMixin && !isEnum }
-
-  **
-  ** Return if this Type is a mixin type and cannot be instantiated.
-  **
-  Bool isMixin() { flags.and(FConst.Mixin) != 0 }
-
-  **
-  ** Return if this Type is an sys::Enum
-  **
-  Bool isEnum() { flags.and(FConst.Enum) != 0 }
-
-  **
-  ** Return if this Type is an sys::Facet
-  **
-  Bool isFacet() { flags.and(FConst.Facet) != 0 }
-
-  **
-  ** Return if this Type is abstract and cannot be instantiated.  This
-  ** method will always return true if the type is a mixin.
-  **
-  Bool isAbstract() { flags.and(FConst.Abstract) != 0 }
-
-  **
-  ** Return if this Type is const and immutable.
-  **
-  Bool isConst() { flags.and(FConst.Const) != 0 }
-
-  **
-  ** Return if this Type is final and cannot be subclassed.
-  **
-  Bool isFinal() { flags.and(FConst.Final) != 0 ||
-       (flags.and(FConst.Virtual) == 0  && flags.and(FConst.Abstract) == 0) }
-
-  **
-  ** Is this a public scoped class
-  **
-  Bool isPublic() { flags.and(FConst.Public) != 0 }
-
-  **
-  ** Is this an internally scoped class
-  **
-  Bool isInternal() { flags.and(FConst.Internal) != 0 }
-
-  **
-  ** Is this a compiler generated synthetic class
-  **
-  Bool isSynthetic() { flags.and(FConst.Synthetic) != 0 }
-
-  **
-  ** Is the entire class implemented in native code?
-  **
-  Bool isNative() { flags.and(FConst.Native) != 0 }
-
 //////////////////////////////////////////////////////////////////////////
 // CType
 //////////////////////////////////////////////////////////////////////////
 
+  override Str podName() { pod.name }
+  
   //override Str signature() { qname }
-//  override Str extName()   { "" }
+  override Str extName()   { "" }
 //
 //  override Bool isNullable() { false }
 //  override once CType toNullable() { NullableType(this) }
@@ -333,7 +251,7 @@ class TypeDef : DefNode
   **
   ** Get the SlotDefs declared within this TypeDef.
   **
-  SlotDef[] slotDefs()
+  override SlotDef[] slotDefs()
   {
     return slotDefList
   }
@@ -438,19 +356,13 @@ class TypeDef : DefNode
     out.unindent
     out.w("}").nl
   }
-
-  GenericParameter? getGenericParameter(Str name) {
-    param := genericParameters.find { it.paramName == name }
-    if (param != null) {
-      return param
-    }
-    return null
+  
+  override TypeRef asRef(Loc? loc := null) {
+    tr := TypeRef(loc, pod.name, name)
+    tr.resolveTo(this)
+    return tr
   }
   
-  TypeRef asRef(Loc loc) {
-    return TypeRef(loc, pod.name, name)
-  }
-
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
@@ -458,23 +370,24 @@ class TypeDef : DefNode
 //  override CNamespace ns           // compiler's namespace
   CompilationUnit unit             // parent unit
   PodDef pod                // parent pod
-  const Str name          // simple class name
-  const Str qname         // podName::name
+  override const Str name          // simple class name
+  override const Str qname         // podName::name
   //override const Bool isVal        // is this a value type (Bool, Int, etc)
   Bool baseSpecified := true       // was base assigned from source code
 //  TypeRef? base             // extends class
 //  TypeRef[] mixins          // mixin types
   
-  TypeRef[] inheritances
+  override TypeRef[] inheritances
   
   EnumDef[] enumDefs               // declared enumerated pairs (only if enum)
   ClosureExpr[] closures           // closures where I am enclosing type (Parse)
   ClosureExpr? closure             // if I am a closure anonymous class
-//  private Str:CSlot slotMap        // all slots
+  protected override [Str:CSlot] slotsCache := [:]        // all slots
   private Str:SlotDef slotDefMap   // declared slot definitions
   private SlotDef[] slotDefList    // declared slot definitions
   FacetDef[]? indexedFacets        // used by WritePod
 
   //genericParameter
-  GenericParameter[] genericParameters := [,]
+  override GenericParamDef[]? genericParameters
+  override once Str:TypeDef parameterizedTypeCache() { [:] }
 }

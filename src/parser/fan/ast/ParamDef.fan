@@ -9,7 +9,7 @@
 **
 ** ParamDef models the definition of a method parameter.
 **
-class ParamDef : Node
+class ParamDef : Node, CParam
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ class ParamDef : Node
 // CParam
 //////////////////////////////////////////////////////////////////////////
 
-  Bool hasDefault() { def != null }
+  override Bool hasDefault() { def != null }
 
 //////////////////////////////////////////////////////////////////////////
 // Debug
@@ -49,8 +49,8 @@ class ParamDef : Node
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  TypeRef paramType   // type of parameter
-  Str name          // local variable name
+  override CType paramType   // type of parameter
+  override Str name          // local variable name
   Expr? def                  // default expression
 
 }

@@ -365,7 +365,7 @@ abstract class Expr : Node
 //////////////////////////////////////////////////////////////////////////
 
   const ExprId id         // expression type identifier
-//  CType? ctype            // type expression resolves to
+  CType? ctype            // type expression resolves to
   Bool leave := true { protected set } // leave this expression on the stack
 }
 

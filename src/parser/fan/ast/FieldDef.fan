@@ -10,7 +10,7 @@
 **
 ** FieldDef models a field definition
 **
-public class FieldDef : SlotDef
+public class FieldDef : SlotDef, CField
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ public class FieldDef : SlotDef
 //    return FieldExpr(loc, target, this, useAccessor)
 //  }
   
-  Int enumOrdinal() {
+  override Int enumOrdinal() {
     enumDef := parentDef.enumDef(name)
     if (enumDef != null) return enumDef.ordinal
     return -1
@@ -53,11 +53,11 @@ public class FieldDef : SlotDef
 // CField
 //////////////////////////////////////////////////////////////////////////
 
-  Str signature() { qname }
-  MethodDef? getter() { get }
-  MethodDef? setter() { set }
+  override Str signature() { qname }
+  override CMethod? getter() { get }
+  override CMethod? setter() { set }
 
-  TypeRef inheritedReturnType()
+  override CType inheritedReturnType()
   {
     if (inheritedRet != null)
       return inheritedRet
@@ -102,7 +102,7 @@ public class FieldDef : SlotDef
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  TypeRef fieldType  // field type
+  override CType fieldType  // field type
 //  Field? field              // resolved finalized field
   Expr? init                // init expression or null
   Bool walkInit := true     // tree walk init expression

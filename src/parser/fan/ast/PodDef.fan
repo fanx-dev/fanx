@@ -9,7 +9,7 @@
 **
 ** PodDef models the pod being compiled.
 **
-class PodDef : Node
+class PodDef : Node, CPod
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,21 +27,21 @@ class PodDef : Node
 // CPod
 //////////////////////////////////////////////////////////////////////////
 
-  Version version() { throw UnsupportedErr("PodDef.version") }
+  override Version version() { throw UnsupportedErr("PodDef.version") }
 
-  Depend[] depends := [,]
+  override Depend[] depends := [,]
 
-  File file() { throw UnsupportedErr() }
+  override File file() { throw UnsupportedErr() }
 
-//  override CType? resolveType(Str name, Bool checked)
-//  {
-//    t := typeDefs[name]
-//    if (t != null) return t
-//    if (checked) throw UnknownTypeErr("${this.name}::${name}")
-//    return null
-//  }
+  override CTypeDef? resolveType(Str name, Bool checked)
+  {
+    t := typeDefs[name]
+    if (t != null) return t
+    if (checked) throw UnknownTypeErr("${this.name}::${name}")
+    return null
+  }
 
-  TypeDef[] types()
+  override CTypeDef[] types()
   {
     return typeDefs.vals
   }
@@ -65,7 +65,7 @@ class PodDef : Node
 //////////////////////////////////////////////////////////////////////////
 
 //  override CNamespace? ns            // compiler's namespace
-  const Str name           // simple pod name
+  override const Str name           // simple pod name
   Str:Str meta := Str:Str[:]        // pod meta-data props
   Str:Obj index := Str:Obj[:]       // pod index props (vals are Str or Str[])
   CompilationUnit[] units           // Tokenize

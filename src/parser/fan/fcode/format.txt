@@ -1,0 +1,288 @@
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   1 Jan 06  Brian Frank  Creation
+//   1 Jan 07  Brian Frank  Rework pod meta-data structure
+//   5 Feb 10  Brian Frank  New facet design with meta.props
+//
+
+//////////////////////////////////////////////////////////////////////////
+// Pod Meta
+//////////////////////////////////////////////////////////////////////////
+
+  meta.props
+
+  pod.name:      string name
+  pod.version:   version string formatted as sys::Version
+  pod.depends:   depends formatted as sys::Depend separated by semicolon
+  fcode.version: 1.1.3
+
+//////////////////////////////////////////////////////////////////////////
+// Name Pool
+//////////////////////////////////////////////////////////////////////////
+
+  names.def
+  {
+    u2 size
+    utf[size] values
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Constants
+////////////////////////////////////////////////////////////////////////////
+
+  ints.def
+  {
+    u2 size
+    s8[size] values
+  }
+
+  reals.def
+  {
+    u2 size
+    f8[size] values
+  }
+
+  strings.def
+  {
+    u2 size
+    utf[size] values
+  }
+
+  durations.def
+  {
+    u2 size
+    (s8 sec; s4 nanos)[size] values
+  }
+
+  uris.def
+  {
+    u2 size
+    utf[size] values
+  }
+
+  decimals.def
+  {
+    u2 size
+    utf[size] values
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// TypeRefs
+////////////////////////////////////////////////////////////////////////////
+
+  typeRefs.def
+  {
+    u2 size
+    typeRef[size] values
+  }
+
+  typeRef
+  {
+    u2 podName (names.def)
+    u2 typeName (names.def)
+    utf extName ("" if not parameterized, "?" if nullable)
+  }
+
+  Examples:
+
+    acme::Foo    -> { "acme", "Foo",   "" }
+    acme::Foo?   -> { "acme", "Foo",   "?" }
+    Foo[]?       -> { "sys", "List",   "<acme::Foo>?" } }
+    Foo[]        -> { "sys", "List",   "<acme::Foo>" } }
+    Int:Str      -> { "sys", "Map",    "<sys::Int,sys::Str>" }
+    |Real->Void| -> { "sys", "Method", "<sys::Void,sys::Real>" }
+    Int16        -> { "sys", "Int",    "16" }
+
+//////////////////////////////////////////////////////////////////////////
+// SlotRefs
+//////////////////////////////////////////////////////////////////////////
+
+  fieldRefs.def
+  {
+    u2 size
+    fieldRef[size] values
+  }
+
+  fieldRef
+  {
+    u2 parent (typeRefs.def)
+    u2 name   (names.def)
+    u2 type   (typeRefs.def)
+  }
+
+  methodRefs.def
+  {
+    u2 size
+    methodRef[size] values
+  }
+
+  methodRef
+  {
+    u2 parent  (typeRefs.def)
+    u2 name    (names.def)
+    u2 retType (typeRefs.def)
+    u1 paramCount
+    u2[paramCount] params (typeRefs.def)
+    u1 flags
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Type Meta
+//////////////////////////////////////////////////////////////////////////
+
+  types.def
+  {
+    u2 size
+    typeMeta[size] types
+  }
+
+  typeMeta
+  {
+    u2 self  (typeRefs.def)
+    u2 base  (typeRefs.def or 0xFFFF)
+    u2 mixinCount
+    u2 mixin[mixinCount] (typeRefs.def)
+    u4 flags
+    
+    u1 genericCount
+    u2[genericCount] genericParams (names.def)
+    u2[genericCount] genericParamBounds (typeRefs.def)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Type Body
+//////////////////////////////////////////////////////////////////////////
+
+  x.fcode
+  {
+    u2 fieldCount
+    field[fieldCount] fields
+    u2 methodCount
+    method[methodCount] methods
+    u2 attrCount
+    attr[attrCount] attrs
+  }
+
+  field
+  {
+    u2 name  (names.def)
+    u4 flags
+    u2 type  (typeRefs.def)
+    u2 attrCount
+    attr[attrCount] attrs
+  }
+
+  method
+  {
+    u2 name  (names.def)
+    u4 flags
+    u2 returnType (typeRefs.def)
+    u2 inheritReturnType (typeRefs.def) // for covariance
+    u1 maxStack
+    u1 paramCount
+    u1 localCount
+    methodVar[paramCount+localCount] vars
+    buf code
+    u2 attrCount
+    attr[attrCount] attrs
+
+    //generic method it not support now
+    u1 genericCount
+    u2[genericCount] genericParams (names.def)
+    u2[genericCount] genericParamBounds (typeRefs.def)
+  }
+
+  methodVar
+  {
+    u2 name (names.def)
+    u2 type (typeRefs.def)
+    u1 flags
+    u2 attrCount
+    attr[attrCount] attrs
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Attributes
+//////////////////////////////////////////////////////////////////////////
+
+  attr
+  {
+    u2 name (names.def)
+    buf value
+  }
+
+  Facets // pod|type|slot attribute
+  {
+    u2 name  = "Facets"
+    u2 count
+    {
+      u2 type     // typeRefs index
+      utf value   // serialized value
+    } facets[count]
+  }
+
+  SourceFile // type attribute
+  {
+    u2 name  = "SourceFile"
+    u2 size
+    utf source
+  }
+
+  LineNumber // type|slot attribute
+  {
+    u2 name  = "LineNumber"
+    u2 size
+    u2 line
+  }
+
+  LineNumbers // method attribute
+  {
+    u2 name  = "LineNumbers"
+    u2 size
+    u2 count
+    {
+      u2 pc
+      u2 line
+    } lines[lineCount]
+  }
+
+  ErrTable // method attribute
+  {
+    u2 name  = "ErrTable"
+    u2 size
+    u2 count
+    {
+      u2 start    // pc inclusive
+      u2 end      // pc exlcusive
+      u2 handler  // pc to call on trap
+      u2 type     // Err type to catch (typeRefs.def)
+    } traps[count]
+  }
+
+  ParamDefault  // method parameter attribute
+  {
+    u2 name = "ParamDefault"
+    u2 size
+    u1[size]  opcodes
+  }
+
+  EnumOrdinal // field attribute
+  {
+    u2 name  = "EnumOrdinal"
+    u2 size
+    u2 ordinal
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Buf
+//////////////////////////////////////////////////////////////////////////
+
+  buf
+  {
+    u2 len
+    u1[len] data
+  }
+

@@ -9,7 +9,7 @@
 **
 ** FacetDef models a facet declaration.
 **
-class FacetDef : Node
+class FacetDef : Node, CFacet
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,9 +26,9 @@ class FacetDef : Node
 // Facet
 //////////////////////////////////////////////////////////////////////////
 
-//  override Str qname() { type.qname }
+  override Str qname() { type.qname }
 
-  Obj? get(Str name)
+  override Obj? get(Str name)
   {
     i := names.index(name)
     if (i == -1) return null
