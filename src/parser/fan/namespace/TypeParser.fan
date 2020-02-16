@@ -53,7 +53,7 @@ class TypeParser
 //        return CTypeRef.makeByDef(gptype)
 //      }
       
-      return CTypeImp.make(podName, typeName)
+      return CType.make(podName, typeName)
 //      return ns.resolvePod(podName, null).resolveType(typeName, true)
     }
 
@@ -133,7 +133,7 @@ class TypeParser
       consume('[')
       consume(']')
 //      t = t.toListOf
-      lt := CTypeImp("sys", "List")
+      lt := CType("sys", "List")
       lt.genericArgs = [t]
       t = lt
 
@@ -161,7 +161,7 @@ class TypeParser
       }
       params.add(loadAny)
     }
-    c := CTypeImp(base.podName, base.name)
+    c := CType(base.podName, base.name)
     c.genericArgs = params
     return c
     //return ParameterizedType.create(base, params)
@@ -175,7 +175,7 @@ class TypeParser
     val := loadAny
     consume(']')
 //    return MapType(key, val)
-    c := CTypeImp("std", "Map")
+    c := CType("std", "Map")
     c.genericArgs = [key, val]
     return c
   }
@@ -200,7 +200,7 @@ class TypeParser
     ret := loadAny
     consume('|')
 
-    c := CTypeImp("sys", "Func")
+    c := CType("sys", "Func")
     c.genericArgs = params
     return c
 //    return FuncType(Loc.makeUninit params, names, ret)
@@ -223,7 +223,7 @@ class TypeParser
     //typeName := sig[start..<pos]
     qname := sig[start..<pos]
 
-    return CTypeImp.makeQname(qname);
+    return CType.makeQname(qname);
   }
 
   private CType loadBasic()
@@ -248,7 +248,7 @@ class TypeParser
 //        }
 //        return CTypeRef.makeByDef(gptype)
 //    }
-    return CTypeImp.makeQname(qname)
+    return CType.makeQname(qname)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ class TypeParser
 
   private static Bool isIdChar(Int ch)
   {
-    ch.isAlphaNum || ch == '_'
+    ch.isAlphaNum || ch == '_' || ch == '^'
   }
 
   private ArgErr err()

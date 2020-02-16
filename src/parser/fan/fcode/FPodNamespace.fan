@@ -56,19 +56,19 @@ class FPodNamespace : CNamespace
 
     //get from memory for script pod
     //TODO Fix fanx
-//    if (file == null || !file.exists) {
-//      pod := Pod.find(podName, false)
-//      if (pod == null) return null
-//      Buf? buf := pod._getCompilerCache
-//      if (buf == null) return null
-//      buf.seek(0)
-//      fpod := FPod(this, podName, Zip.read(buf.in))
-//      fpod.readStream
-//      return fpod
-//    }
+    if (file == null || !file.exists) {
+      pod := Pod.find(podName, false)
+      if (pod == null) return null
+      Buf? buf := pod->_getCompilerCache
+      if (buf == null) return null
+      buf.seek(0)
+      fpod := FPod(this, podName, Zip.read(buf.in))
+      fpod.readStream
+      return fpod
+    }
 
     // load it
-    fpod := FPod(podName, Zip.open(file))
+    fpod := FPod(this, podName, Zip.open(file))
     fpod.read
     return fpod
   }

@@ -23,27 +23,27 @@ public class Parser
   **
   ** Construct the parser for the specified compilation unit.
   **
-  new make(ParserSupport parserSupport, Loc loc, Str code, PodDef pod)
+  new make(CompilerLog log, Str code, CompilationUnit unit)
   {
-    unit := CompilationUnit(loc, pod)
-    tokenizer := Tokenizer(parserSupport, loc, code, true)
+//    unit := CompilationUnit(loc, pod)
+    tokenizer := Tokenizer(log, unit.loc, code, true)
     unit.tokens = tokenizer.tokenize
     
-    this.parserSupport = parserSupport
+    this.log = log
     this.unit      = unit
     this.tokens    = unit.tokens
     this.numTokens = unit.tokens.size
-    this.closures  = [,]
+//    this.closures  = [,]
     reset(0)
   }
   
   static Parser makeSimple(Str code, Str name, Bool deep := true) {
     loc := Loc.makeUninit
-    parserSupport := ParserSupport()
+    log := CompilerLog()
     pod := PodDef(loc, name)
-    
-    if (deep) return DeepParser(parserSupport, loc, code, pod)
-    return Parser(parserSupport, loc, code, pod)
+    unit := CompilationUnit(loc, pod, name)
+    if (deep) return DeepParser(log, code, unit)
+    return Parser(log, code, unit)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,45 @@ public class Parser
   Void parse()
   {
     usings
-    while (curt !== Token.eof) typeDef
+    while (curt !== Token.eof) {
+      try typeDef
+      catch (CompilerErr e) {
+        if (!recoverToTypeDef) break
+      }
+    }
+  }
+  
+  private Bool recoverToTypeDef() {
+    oldPos := pos
+    while (curt != Token.eof) {
+      if (curt == Token.classKeyword && curt == Token.mixinKeyword) {
+        curPos := this.pos
+        while (isModifierFlags(tokens[curPos-1], true) && curPos > 0) --curPos
+        
+        if (curPos <= oldPos) return false
+        reset(curPos)
+        return true
+      }
+      consume
+    }
+    return false
+  }
+  
+  private Bool recoverToSlotDef() {
+    while (curt != Token.eof) {
+      found := false
+      if (isModifierFlags(tokens[pos-1], false)) {
+        found = true
+      }
+      if (curt == Token.classKeyword && curt == Token.mixinKeyword) {
+        found = true
+      }
+      if (found) {
+        return true
+      }
+      consume
+    }
+    return false
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,36 +117,84 @@ public class Parser
   private Void usings()
   {
     while (curt == Token.usingKeyword)
-      skipUsing
-  }
-
-  private Void skipUsing()
-  {
-    consume(Token.usingKeyword)
-
-    // <str> | <id> | "[" <id> "]" <id> ("." <id>)*
-    if (curt === Token.strLiteral) consume
-    else
-    {
-      if (curt === Token.lbracket) { consume; consumeId; consume(Token.rbracket) }
-      consumeId
-      while (curt === Token.dot) { consume; consumeId }
-    }
-
-    if (curt === Token.doubleColon)
-    {
-      consume; consumeId
-      while (curt === Token.dollar) { consume; if (curt === Token.identifier) consumeId }
-      if (curt === Token.asKeyword) { consume; consumeId }
-    }
-    endOfStmt
+      parseUsing
   }
   
+  private Void parseUsing()
+  {
+    consume(Token.usingKeyword)
+    u := Using(cur.loc)
+
+    // using "some pod name"
+    if (curt === Token.strLiteral)
+    {
+      u.podName = consume(Token.strLiteral).val
+    }
+    else
+    {
+      // using [ffi]
+      u.podName = ""
+      if (curt === Token.lbracket)
+      {
+        consume
+        u.podName = "[" + consumeId + "]"
+        consume(Token.rbracket)
+      }
+
+      // using [ffi] pod
+      u.podName += consumeId
+      while (curt === Token.dot) // allow dots in pod name
+      {
+        consume
+        u.podName += "." + consumeId
+      }
+    }
+
+    // using [ffi] pod::type
+    if (curt === Token.doubleColon)
+    {
+      consume
+      u.typeName = consumeId
+      while (curt === Token.dollar) // allow $ in type name
+      {
+        consume
+        u.typeName += "\$"
+        if (curt == Token.identifier) u.typeName += consumeId
+      }
+
+      // using [ffi] pod::type as rename
+      if (curt === Token.asKeyword)
+      {
+        consume
+        u.asName = consumeId
+      }
+    }
+
+    unit.usings.add(u)
+  }
   
   virtual CallExpr? ctorChain(MethodDef method)
   {
     consume(Token.colon)
-    expr
+    
+    while (curt != Token.eof) {
+      if (isExprValue(curt)) {
+        consume
+        skipBracket(false)
+        if (isExprValue(curt)) break
+        continue
+      }
+      
+      if (isJoinToken(curt)) {
+        consume
+        if (skipBracket(false)) {
+          if (isExprValue(curt)) break
+        }
+        continue
+      }
+      //skipBracket
+      break
+    }
     return null
   }
 
@@ -151,13 +237,13 @@ public class Parser
     facets := facets()
 
     // <flags>
-    flags := flags(false)
+    flags := flags()
     if (flags.and(FConst.ProtectionMask.not) == 0) flags = flags.or(FConst.Public)
     //if (compiler.isSys) flags = flags.or(FConst.Native)
-    if (flags.and(FConst.Readonly) != 0) err("Cannot use 'readonly' modifier on type", cur)
+    if (flags.and(FConst.Readonly) != 0) err("Cannot use 'readonly' modifier on type", cur.loc)
 
     // local working variables
-    loc     := cur
+    loc     := cur.loc
     isMixin := false
     isEnum  := false
 
@@ -213,7 +299,7 @@ public class Parser
     name := consumeId
     // lookup TypeDef
     def := TypeDef(loc, unit, name)
-    unit.types.add(def)
+    unit.addTypeDef(def)
 //    def := unit.types.find |TypeDef def->Bool| { def.name == name }
 //    if (def == null) throw err("Invalid class definition", cur)
 
@@ -228,7 +314,7 @@ public class Parser
       consume
       gparams := GenericParamDef[,]
       while (true) {
-        gLoc := cur
+        gLoc := cur.loc
         paramName := consumeId
 //        conflict := unit.importedTypes[paramName]
 //        if (conflict != null) {
@@ -253,7 +339,7 @@ public class Parser
 
     // open current type
     curType = def
-    closureCount = 0
+//    closureCount = 0
 
     // inheritance
     if (curt === Token.colon)
@@ -275,16 +361,6 @@ public class Parser
       }
     }
 
-    // if no inheritance specified then apply default base class
-    if (def.inheritances.isEmpty)
-    {
-      def.baseSpecified = false
-      if (isEnum)
-        def.inheritances.add(TypeRef.enumType(loc))
-      else if (def.qname != "sys::Obj")
-        def.inheritances.add(TypeRef.objType(loc))
-    }
-
     // start class body
     consume(Token.lbrace)
 
@@ -296,21 +372,29 @@ public class Parser
     {
       doc = this.doc
       if (curt === Token.rbrace) break
-      slot := slotDef(def, doc)
-
-      // do duplicate name error checking here
-      if (def.hasSlotDef(slot.name))
-      {
-        err("Duplicate slot name '$slot.name'", slot.loc)
-      }
-      else
-      {
+      
+      try {
+        slot := slotDef(def, doc)
+  
+        //TODO check
+        // do duplicate name error checking here
+//        if ((slot is MethodDef && !((MethodDef)slot).isStaticInit) && def.hasSlotDef(slot.name))
+//        {
+//          err("Duplicate slot name '$slot.name'", slot.loc)
+//        }
+//        else
+//        {
+//          def.addSlot(slot)
+//        }
         def.addSlot(slot)
+      }
+      catch (CompilerErr e) {
+        if (!recoverToSlotDef()) break
       }
     }
 
     // close cur type
-    closureCount = null
+//    closureCount = null
     curType = null
 
     // end of class body
@@ -331,14 +415,53 @@ public class Parser
 //////////////////////////////////////////////////////////////////////////
 // Flags
 //////////////////////////////////////////////////////////////////////////
+  
+  private Bool isModifierFlags(TokenVal t, Bool isType) {
+    switch (t.kind)
+    {
+      case Token.publicKeyword:
+      case Token.internalKeyword:
+      case Token.privateKeyword:
+      case Token.protectedKeyword:
+      
+      case Token.abstractKeyword:
+      case Token.constKeyword:
+      case Token.finalKeyword:
+      case Token.virtualKeyword:
+      case Token.nativeKeyword:
+        return true
+      
+      case Token.readonlyKeyword:
+      case Token.onceKeyword:
+      case Token.extensionKeyword:
+      case Token.overrideKeyword:
+      case Token.staticKeyword:
+      case Token.asyncKeyword:
+      case Token.funKeyword:
+      case Token.varKeyword:
+      case Token.letKeyword:
+        if (!isType) return true
+      
+      case Token.rtconstKeyword:
+        if (isType) return true
+      
+      case Token.identifier:
+        if (isType) {
+          if (t.val == "facet" || t.val == "enum" || t.val == "struct") {
+            return true
+          }
+        }
+    }
+    return false
+  }
 
   **
   ** Parse any list of flags in any order, we will check invalid
   ** combinations in the CheckErrors step.
   **
-  private Int flags(Bool normalize := true)
+  private Int flags()
   {
-    loc := cur
+    loc := cur.loc
     flags := 0
     protection := false
     for (done := false; !done; )
@@ -368,28 +491,6 @@ public class Parser
       if (oldFlags == flags) err("Repeated modifier")
       oldFlags = flags
       consume
-    }
-
-    if (flags.and(FConst.Abstract) != 0 && flags.and(FConst.Virtual) != 0)
-      err("Abstract implies virtual", loc)
-    if (flags.and(FConst.Override) != 0 && flags.and(FConst.Virtual) != 0)
-      err("Override implies virtual", loc)
-
-    if (flags.and(FConst.Extension) != 0 && flags.and(FConst.Static) == 0) {
-      err("Extension must static", loc)
-    }
-
-    if (normalize)
-    {
-      if (!protection) flags = flags.or(FConst.Public)
-      if (flags.and(FConst.Abstract) != 0) flags = flags.or(FConst.Virtual)
-      if (flags.and(FConst.Override) != 0)
-      {
-        if (flags.and(FConst.Final) != 0)
-          flags = flags.and(FConst.Final.not)
-        else
-          flags = flags.or(FConst.Virtual)
-      }
     }
 
     return flags
@@ -438,7 +539,7 @@ public class Parser
     doc := doc()
     facets := facets()
 
-    def := EnumDef(cur, doc, facets, consumeId, ordinal)
+    def := EnumDef(cur.loc, doc, facets, consumeId, ordinal)
 
     // optional ctor args
     if (curt === Token.lparen)
@@ -448,7 +549,11 @@ public class Parser
       {
         while (true)
         {
-          def.ctorArgs.add( expr )
+          texpr := expr
+          //not support parse expr
+          if (texpr != null) {
+            def.ctorArgs.add( texpr )
+          }
           if (curt === Token.rparen) break
           consume(Token.comma);
         }
@@ -471,7 +576,7 @@ public class Parser
 //    verify(Token.lbrace)
     consume(Token.lbrace)
     deep := 1
-    while (deep > 0) {
+    while (deep > 0 && curt != Token.eof) {
       if (curt == Token.rbrace) --deep
       else if (curt == Token.lbrace) ++deep
       consume
@@ -479,34 +584,114 @@ public class Parser
     return null
   }
   
-  private Void skipBracket() {
+  private Bool skipBracket(Bool brace := true) {
+    success := false
     if (curt == Token.lparen) {
         consume
         deep := 1
-        while (deep > 0) {
+        while (deep > 0 && curt != Token.eof) {
           if (curt == Token.rparen) --deep
           else if (curt == Token.lparen) ++deep
           consume
         }
+        success = true
     }
-    if (curt == Token.lbrace) {
+    if (brace && curt == Token.lbrace) {
         consume
         deep := 1
-        while (deep > 0) {
+        while (deep > 0 && curt != Token.eof) {
           if (curt == Token.rbrace) --deep
           else if (curt == Token.lbrace) ++deep
           consume
         }
+        success = true
     }
+    return success
+  }
+  
+  private static Bool isExprValue(Token t) {
+    switch (t) {
+      case Token.identifier:
+      case Token.intLiteral:
+      case Token.strLiteral:
+      case Token.durationLiteral:
+      case Token.floatLiteral:
+      case Token.trueKeyword:
+      case Token.falseKeyword:
+      case Token.thisKeyword:
+      case Token.superKeyword:
+      case Token.itKeyword:
+      case Token.dsl:
+      case Token.uriLiteral:
+      case Token.decimalLiteral:
+      case Token.nullKeyword:
+        return true
+    }
+    return false
+  }
+  
+  private static Bool isJoinToken(Token t) {
+    switch (t) {
+      case Token.dot://        ("."),
+      case Token.colon://         (":"),
+      case Token.doubleColon://   ("::"),
+      case Token.plus://          ("+"),
+      case Token.minus://         ("-"),
+      case Token.star://          ("*"),
+      case Token.slash://         ("/"),
+      case Token.percent://       ("%"),
+      case Token.pound://         ("#"),
+      case Token.increment://     ("++"),
+      case Token.decrement://     ("--"),
+      case Token.isKeyword://,
+      case Token.isnotKeyword://,
+      case Token.asKeyword://,
+      case Token.tilde://         ("~"),
+      case Token.pipe://          ("|"),
+      case Token.amp://           ("&"),
+      case Token.caret://         ("^"),
+      case Token.at://            ("@"),
+      case Token.doublePipe://    ("||"),
+      case Token.doubleAmp://     ("&&"),
+      case Token.same://          ("==="),
+      case Token.notSame://       ("!=="),
+      case Token.eq://            ("=="),
+      case Token.notEq://         ("!="),
+      case Token.cmp://           ("<=>"),
+      case Token.lt://            ("<"),
+      case Token.ltEq://          ("<="),
+      case Token.gt://            (">"),
+      case Token.gtEq://          (">="),
+      case Token.dotDot://        (".."),
+      case Token.dotDotLt://      ("..<"),
+      case Token.arrow://         ("->"),
+      case Token.tildeArrow://    ("~>"),
+      case Token.elvis://         ("?:"),
+      case Token.safeDot://       ("?."),
+      case Token.safeArrow://     ("?->"),
+      case Token.safeTildeArrow://("?~>"),
+        return true
+    }
+    return false
   }
   
   virtual Expr? expr() {
-    skipBracket
-    
-    while (curt != Token.comma && curt != Token.semicolon &&
-          curt != Token.eof && curt != Token.rparen) {
-      skipBracket
-      consume
+    while (curt != Token.eof) {
+      if (isExprValue(curt)) {
+        consume
+        skipBracket
+        if (isExprValue(curt)) break
+        continue
+      }
+      
+      if (isJoinToken(curt)) {
+        consume
+        if (skipBracket) {
+          if (isExprValue(curt)) break
+        }
+        continue
+      }
+      break
     }
     return null
   }
@@ -524,7 +709,7 @@ public class Parser
     // check for static {} class initialization
     if (curt === Token.staticKeyword && peekt === Token.lbrace)
     {
-      loc := cur
+      loc := cur.loc
       consume
       sInit := MethodDef.makeStaticInit(loc, parent, null)
       curSlot = sInit
@@ -534,7 +719,7 @@ public class Parser
     }
 
     // all members start with facets, flags
-    loc := cur
+    loc := cur.loc
     facets := facets()
     flags := flags()
 
@@ -571,7 +756,7 @@ public class Parser
 //          params := gp.genericParameters
 //          returns = ParameterizedType.create(parent, params)
 //        }
-        returns = parent.asRef(loc)
+        returns = parent.asRef()
       }
       return methodDef(loc, parent, doc, facets, flags, returns, name)
     }
@@ -673,9 +858,6 @@ public class Parser
     if (type == null)
       err("Type inference not supported for fields", loc)
 
-    // if not const, define getter/setter methods
-    if (!field.isConst && !field.isReadonly) defGetAndSet(field)
-
     // explicit getter or setter
     if (curt === Token.lbrace)
     {
@@ -685,32 +867,11 @@ public class Parser
       consume(Token.rbrace)
     }
 
-    //TODO gen getter/setter
-    // generate synthetic getter or setter code if necessary
-//    if (!field.isConst && !field.isReadonly)
-//    {
-//      if (field.get.code == null) genSyntheticGet(field)
-//      if (field.set.code == null) genSyntheticSet(field)
-//    }
-
-    // const override has getter only
-//    if ((field.isConst || field.isReadonly) && field.isOverride)
-//    {
-//      defGet(field)
-//      genSyntheticGet(field)
-//    }
-
     endOfStmt
     return field
   }
 
-  private Void defGetAndSet(FieldDef f)
-  {
-    defGet(f)
-    defSet(f)
-  }
-
-  private Void defGet(FieldDef f)
+  static Void defGet(FieldDef f)
   {
     // getter MethodDef
     loc := f.loc
@@ -722,7 +883,7 @@ public class Parser
     f.get = get
   }
 
-  private Void defSet(FieldDef f)
+  static Void defSet(FieldDef f)
   {
     // setter MethodDef
     loc := f.loc
@@ -735,48 +896,24 @@ public class Parser
     f.set = set
   }
 
-//  private Void genSyntheticGet(FieldDef f)
-//  {
-//    loc := f.loc
-//    f.get.flags = f.get.flags.or(FConst.Synthetic)
-//    if (!f.isAbstract && !f.isNative)
-//    {
-//      f.flags = f.flags.or(FConst.Storage)
-//      f.get.code = Block(loc)
-//      f.get.code.add(ReturnStmt(loc, f.makeAccessorExpr(loc, false)))
-//    }
-//  }
-//
-//  private Void genSyntheticSet(FieldDef f)
-//  {
-//    loc := f.loc
-//    f.set.flags = f.set.flags.or(FConst.Synthetic)
-//    if (!f.isAbstract && !f.isNative)
-//    {
-//      f.flags = f.flags.or(FConst.Storage)
-//      lhs := f.makeAccessorExpr(loc, false)
-//      rhs := UnknownVarExpr(loc, null, "it")
-//      f.set.code = Block(loc)
-//      f.set.code.add(BinaryExpr.makeAssign(lhs, rhs).toStmt)
-//      f.set.code.add(ReturnStmt(loc))
-//    }
-//  }
-
   private Void getOrSet(FieldDef f)
   {
-    loc := cur
-    accessorFlags := flags(false)
+    loc := cur.loc
+    accessorFlags := flags()
     if (curt === Token.identifier)
     {
       // get or set
-      idLoc := cur
+      idLoc := cur.loc
       id := consumeId
 
-      if (id == "get")
+      if (id == "get") {
+        defGet(f)
         curSlot = f.get
-      else
+      }
+      else {
+        defSet(f)
         curSlot = f.set
-
+      }
       // { ...block... }
       Block? block := null
       if (curt === Token.lbrace)
@@ -788,7 +925,7 @@ public class Parser
       if (f.isConst || f.isReadonly)
       {
         err("Const field '$f.name' cannot have ${id}ter", idLoc)
-        return
+        //return
       }
 
       // map to get or set on FieldDef
@@ -913,11 +1050,11 @@ public class Parser
       name := consumeId
       consume(Token.colon)
       type := typeRef
-      param = ParamDef(cur, type, name)
+      param = ParamDef(cur.loc, type, name)
       hasColon = true
     }
     else
-      param = ParamDef(cur, typeRef, consumeId)
+      param = ParamDef(cur.loc, typeRef, consumeId)
     if (curt === Token.defAssign || curt === Token.assign)
     {
       if (hasColon && curt === Token.defAssign) err("Must use = for parameter default");
@@ -945,7 +1082,7 @@ public class Parser
     facets := FacetDef[,]
     while (curt === Token.at)
     {
-      loc := cur
+      loc := cur.loc
       consume
       if (curt !== Token.identifier) throw err("Expecting identifier")
       type := ctype
@@ -957,7 +1094,9 @@ public class Parser
         {
           f.names.add(consumeId)
           consume(Token.assign)
-          f.vals.add(expr)
+          texpr := expr
+          if (texpr != null)
+            f.vals.add(texpr)
           endOfStmt
         }
         consume(Token.rbrace)
@@ -987,22 +1126,56 @@ public class Parser
   ** valid type production return it.  Otherwise leave
   ** the parser positioned on the current token.
   **
-  protected TypeRef? tryType()
+  protected TypeRef? tryType(Bool maybeCast := false)
   {
     // types can only begin with identifier, | or [
     if (curt !== Token.identifier && curt !== Token.pipe && curt !== Token.lbracket)
       return null
-      
-    if (curt === Token.identifier) {
-      if (peekt == Token.lbracket && peekpeek.kind == Token.rbracket) {
-        //Int[]
+
+    oldSuppress := suppressErr
+    suppressErr = true
+    mark := pos
+    CType? type := null
+    try
+    {
+      atype := ctype()
+      if (curt === Token.identifier && !cur.newline) {
+        //Int a
+        type = atype
       }
-      else if (peekt != Token.identifier) {
-        return null
+      else if (curt === Token.pound) {
+        //Int#
+        type = atype
+      }
+      else if (curt === Token.dot && peekt === Token.superKeyword) {
+        //Int.super
+        type = atype
+      }
+      else if (curt === Token.dsl) {
+        //Int<|..|>
+        type = atype
+      }
+      else if (curt === Token.lbracket && !cur.newline
+        //distinguish from slot[a]
+        && atype.name[0].isUpper) {
+        //Int[a, b]
+        type = atype
+      }
+      else if (curt === Token.rparen && maybeCast &&
+        (isExprValue(peekt) || peekt === Token.lparen) ) {
+        //(Int)a
+        type = atype
+      }
+      else if (this.tokens[pos>1?pos-1:0].kind == Token.gt) {
+        //Int<X>
+        type = atype
       }
     }
-      
-    type := ctype()
+    catch (CompilerErr e)
+    {
+    }
+    suppressErr = oldSuppress
+    if (type == null) reset(mark)
     return type
   }
 
@@ -1015,7 +1188,7 @@ public class Parser
   protected TypeRef ctype(Bool isTypeRef := false)
   {
     TypeRef? t := null
-    loc := cur
+    loc := cur.loc
 
     // Types can begin with:
     //   - id
@@ -1027,7 +1200,7 @@ public class Parser
     }
     else if (curt === Token.lbracket)
     {
-      loc = consume(Token.lbracket)
+      loc = consume(Token.lbracket).loc
       t = ctype
       consume(Token.rbracket)
       //if (!(t is MapType)) err("Invalid map type", loc)
@@ -1035,10 +1208,14 @@ public class Parser
     else if (curt === Token.pipe)
     {
       t = funcType(isTypeRef).typeRef
+      if (curt === Token.lbrace) err("Expecting func type, not closure", loc)
     }
     else
     {
-      throw err("Expecting type name")
+      e := err("Expecting type name not $cur", loc)
+      if (curt == Token.eof) throw e
+      consume
+      t = TypeRef.objType(loc)
     }
 
     // check for ? nullable
@@ -1068,7 +1245,7 @@ public class Parser
     // check for type?:type map (illegal)
     if (curt === Token.elvis && !cur.whitespace)
     {
-      throw err("Map type cannot have nullable key type")
+      err("Map type cannot have nullable key type")
     }
 
     // check for ":" for map type
@@ -1081,8 +1258,7 @@ public class Parser
       val := ctype
       //throw err("temp test")
 //      t = MapType(key, val)
-      t = TypeRef(loc, "sys", "Map")
-      t.genericArgs = [t, val]
+      t = TypeRef.mapType(loc, key, val)
     }
 
     // check for ? nullable
@@ -1101,7 +1277,7 @@ public class Parser
   **
   private TypeRef simpleType(Bool allowDefaultParameterized := true)
   {
-    loc := cur
+    loc := cur.loc
     id := consumeId
 
     TypeRef? type
@@ -1160,7 +1336,7 @@ public class Parser
   {
     params := TypeRef[,]
     names  := Str[,]
-    loc := cur
+    loc := cur.loc
     ret := TypeRef.voidType(loc)
 
     // opening pipe
@@ -1232,7 +1408,7 @@ public class Parser
     }
     else
     {
-      params.add(TypeRef.objType(cur).toNullable)
+      params.add(TypeRef.objType(cur.loc).toNullable)
       names.add(consumeId)
       return true
     }
@@ -1250,7 +1426,7 @@ public class Parser
     DocDef? doc := null
     while (curt === Token.docComment)
     {
-      loc := cur
+      loc := cur.loc
       lines := (Str[])consume(Token.docComment).val
       doc = DocDef(loc, lines)
     }
@@ -1263,8 +1439,9 @@ public class Parser
 
   CompilerErr err(Str msg, Loc? loc := null)
   {
-    if (loc == null) loc = cur
-    return parserSupport.err(msg, loc)
+    if (loc == null) loc = cur.loc
+    if (suppressErr) throw CompilerErr("SuppressedErr", loc)
+    return log.err(msg, loc)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1276,8 +1453,11 @@ public class Parser
   **
   protected Str consumeId()
   {
-    if (curt !== Token.identifier)
-      throw err("Expected identifier, not '$cur'")
+    if (curt !== Token.identifier) {
+      e := err("Expected identifier, not '$cur'", cur.loc)
+      if (curt == Token.eof) throw e
+      return "error"
+    }
     return consume.val
   }
 
@@ -1340,7 +1520,8 @@ public class Parser
     if (curt === Token.rbrace) return true
     if (curt === Token.eof) return true
     if (errMsg == null) return false
-    throw err(errMsg)
+    err(errMsg, cur.loc)
+    return false
   }
 
   **
@@ -1363,7 +1544,7 @@ public class Parser
 //////////////////////////////////////////////////////////////////////////
 
   CompilationUnit unit    // compilation unit to generate
-  protected TokenVal[] tokens       // tokens all read in
+  TokenVal[] tokens       // tokens all read in
   protected Int numTokens           // number of tokens
   protected Int pos                 // offset into tokens for cur
   protected TokenVal? cur           // current token
@@ -1374,9 +1555,10 @@ public class Parser
   protected TypeDef? curType        // current TypeDef scope
   protected SlotDef? curSlot        // current SlotDef scope
   protected ClosureExpr? curClosure // current ClosureExpr if inside closure
-  protected Int? closureCount       // number of closures parsed inside curSlot
-  protected ClosureExpr[] closures  // list of all closures parsed
+//  protected Int? closureCount       // number of closures parsed inside curSlot
+//  protected ClosureExpr[] closures  // list of all closures parsed
+  protected Bool suppressErr := false    // throw SuppressedErr instead of CompilerErr
   
-  ParserSupport parserSupport
+  CompilerLog log
 
 }

@@ -17,12 +17,13 @@ class CompilationUnit : Node
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  new make(Loc loc, PodDef pod)
+  new make(Loc loc, PodDef pod, Str file)
     : super(loc)
   {
     this.pod    = pod
     this.usings = Using[,]
     this.types  = TypeDef[,]
+    this.file = file
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,31 +42,36 @@ class CompilationUnit : Node
     return loc.toStr
   }
 
-//  // get all imported extendsion methods
-//  once Str:CMethod[] extensionMethods() {
-//    meths := Str:CMethod[][:]
-//    importedTypes.each |types|{
-//      types.each |type| {
-//        type.methods.each |m| {
-//          if (m.isStatic && (m.flags.and(FConst.Extension) != 0)) {
-//             ms := meths[m.name]
-//             if (ms == null) { ms = CMethod[,]; meths[m.name] = ms }
-//             ms.add(m)
-//          }
-//        }
-//      }
-//    }
-//    return meths
-//  }
+  // get all imported extendsion methods
+  once Str:CMethod[] extensionMethods() {
+    meths := Str:CMethod[][:]
+    importedTypes.each |types|{
+      types.each |type| {
+        type.methods.each |m| {
+          if (m.isStatic && (m.flags.and(FConst.Extension) != 0)) {
+             ms := meths[m.name]
+             if (ms == null) { ms = CMethod[,]; meths[m.name] = ms }
+             ms.add(m)
+          }
+        }
+      }
+    }
+    return meths
+  }
+  
+  Void addTypeDef(TypeDef t) {
+    types.add(t)
+//    pod.typeDefs[t.name] = t
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  PodDef pod                      // ctor
+  PodDef pod                    // ctor
   TokenVal[]? tokens            // Tokenize
   Using[] usings                // ScanForUsingsAndTypes
   TypeDef[] types               // ScanForUsingsAndTypes + CompilerSupport.addTypeDef
-//  [Str:CType[]]? importedTypes  // ResolveImports (includes my pod)
-
+  [Str:CType[]]? importedTypes  // ResolveImports (includes my pod)
+  Str file
 }

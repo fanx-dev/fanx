@@ -69,11 +69,20 @@ class FTable
   static FTable makeDurations(FPod pod)
   {
     //TODO Fix fanx
+    nsPerSec := 1000000000
 //    return make(pod,
-//      |OutStream out, Obj obj| { out.writeI8(((Duration)obj).toSec).writeI4(((Duration)obj).toNanos % Duration.nsPerSec) },
-//      |InStream in->Obj| { Duration.fromNanos(in.readS8 * Duration.nsPerSec + in.readS4) })
-    //TODO
-    throw Err("TODO")
+//      |OutStream out, Obj obj| {
+//        out.writeI8(((Duration)obj).toSec)
+//        .writeI4(((Int)((Duration)obj).toNanos) % nsPerSec)
+//      },
+//      |InStream in->Obj| { Duration.fromNanos(in.readS8 * nsPerSec + in.readS4) })
+//    
+    return make(pod,
+      |OutStream out, Obj obj| {
+        out.writeI8(((Duration)obj).toSec)
+        .writeI4(((Int)((Duration)obj).ticks) % nsPerSec)
+      },
+      |InStream in->Obj| { Duration(in.readS8 * nsPerSec + in.readS4) })
   }
 
 //////////////////////////////////////////////////////////////////////////

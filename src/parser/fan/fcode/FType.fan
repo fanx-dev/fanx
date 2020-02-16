@@ -27,9 +27,20 @@ class FType : CTypeDef
 // CType
 //////////////////////////////////////////////////////////////////////////
 
+  override once Loc loc() {
+    attr := this.attr(FConst.SourceFileAttr)
+    line := this.attr(FConst.LineNumberAttr)
+    if (attr == null || line == null) return Loc.makeFile(fpod.file)
+    return Loc.make(attr.utf, line.u2)
+  }
+  
+  override DocDef? doc() { 
+    //TODO support doc
+    null
+  }
+  
 //  override CNamespace ns() { fpod.ns }
-  FPod pod() { fpod }
-  override Str podName() { pod.name }
+  override FPod pod() { fpod }
   override once Str name() { fpod.n(fpod.typeRef(self).typeName) }
   override once Str qname() { "${fpod.name}::${name}" }
   override once Str extName()   { fpod.typeRef(self).sig }
@@ -48,45 +59,12 @@ class FType : CTypeDef
     return res
   }
 
-  /*override once Bool isVal()
-  {
-    return isValType(qname)
-  }*/
-
   override CFacet[]? facets()
   {
     if (ffacets == null) reflect
     return ffacets
   }
 
-//  override once COperators operators() { COperators(this) }
-
-//  override Bool isNullable() { false }
-
-//  override once CType toNullable() { NullableType(this) }
-
-//  override Bool isGeneric()
-//  {
-//    return genericParams.size > 0
-//  }
-
-//  override Bool isParameterized() { false }
-
-//  override Bool hasGenericParameter() { false }
-  
-  override Str:TypeDef parameterizedTypeCache := [:]
-
-  protected override once GenericParamDef[]? genericParameters() { 
-    res := GenericParamDef[,]
-    genericParams.size.times |i| {
-      n := fpod.n(genericParams[i])
-      t := fpod.toType(genericParamBounds[i])
-      gt := GenericParamDef(Loc.makeUninit, n, this, i, t)
-      res.add(gt)
-    }
-    return res
-  }
-  
 //  override once CType toListOf() { ListType(this) }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,8 +108,6 @@ class FType : CTypeDef
     if (slotsCached == null) reflect
     return slotsCached
   }
-  
-  protected override once Str:CSlot slotsCache() { [:] }
 
 //////////////////////////////////////////////////////////////////////////
 // Meta IO
@@ -144,9 +120,9 @@ class FType : CTypeDef
     out.writeI2(fmixins.size)
     fmixins.each |Int m| { out.writeI2(m) }
     out.writeI4(flags.and(FConst.FlagsMask))
-    out.write(genericParams.size)
-    genericParams.each |param| { out.writeI2(param) }
-    genericParamBounds.each |t| { out.writeI2(t) }
+    out.write(genericParameters.size)
+    genericParameters.each |param| { out.writeI2(fpod.addName(param.paramName)) }
+    genericParameters.each |param| { out.writeI2(fpod.addTypeRef(param.bound)) }
   }
 
   This readMeta(InStream in)
@@ -157,14 +133,30 @@ class FType : CTypeDef
     in.readU2.times { fmixins.add(in.readU2) }
     flags   = in.readU4
 
+    
+    
     genericParamCount := in.readU1
     genericParamCount.times {
-      genericParams.add(in.readU2)
+      genericParamNames.add(in.readU2)
     }
     genericParamCount.times {
       genericParamBounds.add(in.readU2)
     }
     return this
+  }
+  
+  
+  private Int[] genericParamNames := [,]
+  private Int[] genericParamBounds := [,]
+  override once GenericParamDef[]? genericParameters() {
+    res := GenericParamDef[,]
+    genericParamNames.size.times |i| {
+      n := fpod.n(genericParamNames[i])
+      t := fpod.toType(genericParamBounds[i])
+      gt := GenericParamDef(Loc.makeUninit, n, this, i, t)
+      res.add(gt)
+    }
+    return res
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,6 +219,4 @@ class FType : CTypeDef
   FMethod[]? fmethods   // methods
   FAttr[]? fattrs       // type attributes
   FFacet[]? ffacets     // decoded facet attributes
-  Int[] genericParams := [,]
-  Int[] genericParamBounds := [,]
 }

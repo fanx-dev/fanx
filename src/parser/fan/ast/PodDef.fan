@@ -20,7 +20,7 @@ class PodDef : Node, CPod
     : super(loc)
   {
     this.name = name
-    this.units = CompilationUnit[,]
+    this.typeDefs = [:]
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,8 @@ class PodDef : Node, CPod
   override const Str name           // simple pod name
   Str:Str meta := Str:Str[:]        // pod meta-data props
   Str:Obj index := Str:Obj[:]       // pod index props (vals are Str or Str[])
-  CompilationUnit[] units           // Tokenize
-  [Str:TypeDef]? typeDefs           // ScanForUsingsAndTypes
-
+  [Str:CompilationUnit] units := [:]           // Tokenize
+  [Str:TypeDef] typeDefs           // ScanForUsingsAndTypes
+  ClosureExpr[]? closures           // Parse
+//  TypeDef[]? orderedTypeDefs
 }

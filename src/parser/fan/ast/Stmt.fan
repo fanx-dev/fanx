@@ -146,8 +146,7 @@ class LocalDefStmt : Stmt
   new make(Loc loc, TypeRef? ctype := null, Str name := "")
     : super(loc, StmtId.localDef)
   {
-    this.ctype = ctype
-    this.name = name
+    var_v = MethodVar(loc, ctype, name)
   }
 
   override Bool isExit() { false }
@@ -166,27 +165,25 @@ class LocalDefStmt : Stmt
   new makeCatchVar(Catch c)
     : super.make(c.loc, StmtId.localDef)
   {
-    ctype = c.errType
-    name  = c.errVariable
-    isCatchVar = true
+    var_v = MethodVar(loc, c.errType, c.errVariable)
+    var_v.ctype = c.errType
+    var_v.name  = c.errVariable
+    var_v.isCatchVar = true
   }
 
   override Str toStr() { "$ctype $name ($var_v)" }
 
-  override Void print(AstWriter out) { printOpt(out) }
-
-  Void printOpt(AstWriter out, Bool nl := true)
-  {
-    if (ctype != null) out.w("$ctype ")
-    out.w(name)
-    if (init != null) out.w(" init: $init")
-    if (nl) out.nl
+  override Void print(AstWriter out) {
+    var_v.print(out)
+    if (init != null) out.w(" = $init")
   }
 
-  TypeRef? ctype      // type of the variable (or null if inferred)
-  Str name          // variable name
+  
+
+  CType? ctype() { var_v.ctype }      // type of the variable (or null if inferred)
+  Str name() { var_v.name }          // variable name
   Expr? init        // rhs of init; in ResolveExpr it becomes full assign expr
-  Bool isCatchVar   // is this auto-generated var_v for "catch (Err x)"
+  Bool isCatchVar() { var_v.isCatchVar }   // is this auto-generated var_v for "catch (Err x)"
   MethodVar? var_v    // variable binding
 }
 
@@ -292,6 +289,7 @@ class ReturnStmt : LowerLevelStmt
   MethodVar? leaveVar  // to stash result for leave from protected region
   Bool isSynthetic     // was return inserted by compiler
   Bool isLocal := false
+  Bool inClosure := false
 }
 
 **************************************************************************
@@ -358,7 +356,7 @@ class ForStmt : Stmt
   override Void print(AstWriter out)
   {
     out.w("for (")
-    if (init != null) init->printOpt(out, false)
+    if (init != null) init.print(out)
     out.w("; ")
     if (condition != null) condition.print(out)
     out.w("; ")

@@ -1,0 +1,1 @@
+class Foo { Void f() { switch (3) { default: return; default: return; } } }

@@ -11,7 +11,7 @@
 **
 ** TypeDef models a type definition for a class, mixin or enum
 **
-class TypeDef : DefNode, CTypeDef
+class TypeDef : CTypeDef
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,8 +19,8 @@ class TypeDef : DefNode, CTypeDef
 //////////////////////////////////////////////////////////////////////////
 
   new make(Loc loc, CompilationUnit unit, Str name, Int flags := 0)
-    : super(loc)
   {
+    this.loc = loc
 //    this.ns          = ns
     this.pod         = unit.pod
     this.unit        = unit
@@ -31,56 +31,45 @@ class TypeDef : DefNode, CTypeDef
     this.inheritances  = TypeRef[,]
     this.enumDefs    = EnumDef[,]
 //    this.slotMap     = Str:CSlot[:]
-    this.slotDefMap  = Str:SlotDef[:]
+//    this.slotDefMap  = Str:SlotDef[:]
     this.slotDefList = SlotDef[,]
     this.closures    = ClosureExpr[,]
   }
 
-//////////////////////////////////////////////////////////////////////////
-// CType
-//////////////////////////////////////////////////////////////////////////
-
-  override Str podName() { pod.name }
   
-  //override Str signature() { qname }
-  override Str extName()   { "" }
-//
-//  override Bool isNullable() { false }
-//  override once CType toNullable() { NullableType(this) }
-//
-//  //init in ScanForUsingsAndTypes
-//  override Bool isGeneric := false
-//
-//  override Bool isParameterized() { false }
-//  override Bool hasGenericParameter() { false }
-//
-//  override once CType toListOf() { ListType(this) }
-
+  override Loc loc
+  override Int flags
+  override DocDef? doc
+  override CFacet[]? facets
+  
+  Void addFacet(TypeRef type, [Str:Obj]? vals := null)
+  {
+    if (facets == null) facets = FacetDef[,]
+    loc := this.loc
+    f := FacetDef(loc, type)
+    vals?.each |v, n|
+    {
+      f.names.add(n)
+      f.vals.add(Expr.makeForLiteral(loc, v))
+    }
+    facets.add(f)
+  }
+  
 //////////////////////////////////////////////////////////////////////////
 // Access
 //////////////////////////////////////////////////////////////////////////
 
-  **
-  ** Return if this type is the anonymous class of a closure
-  **
-  Bool isClosure()
-  {
-    return closure != null
-  }
+//  **
+//  ** Return if this type is the anonymous class of a closure
+//  **
+//  Bool isClosure()
+//  {
+//    return closure != null
+//  }
 
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-
-  **
-  ** Return all the all slots (inherited and defined)
-  **
-//  override Str:CSlot slots() { slotMap }
-
-  **
-  ** Cached COperators map
-  **
-//  override once COperators operators() { COperators(this) }
 
   **
   ** Add a slot to the type definition.  The method is used to add
@@ -119,8 +108,9 @@ class TypeDef : DefNode, CTypeDef
 
     // sanity check
     name := s.name
-    if (slotDefMap.containsKey(name))
-      throw Err("Internal error: duplicate slot $name [$loc.toLocStr]")
+    //TODO check
+//    if (slotDefMap.containsKey(name))
+//      throw Err("Internal error: duplicate slot $name [$loc.toLocStr]")
 
     // add to all slots table
 //    slotDefMap[name] = s
@@ -130,7 +120,7 @@ class TypeDef : DefNode, CTypeDef
     if (def != null && def.parent === this)
     {
       // add to my slot definitions
-      slotDefMap[name] = def
+//      slotDefMap[name] = def
       if (slotDefIndex == null)
         slotDefList.add(def)
       else
@@ -183,7 +173,7 @@ class TypeDef : DefNode, CTypeDef
   **
   MethodDef? staticInit()
   {
-    return slotDefMap["static\$init"]
+    return slots["static\$init"]
   }
 
   **
@@ -208,7 +198,8 @@ class TypeDef : DefNode, CTypeDef
 
     // now we add into all slot tables
 //    slotMap[m.name] = m
-    slotDefMap[m.name] = m
+//    slotDefMap[m.name] = m
+    //TODO what about slotCache
     slotDefList.add(m)
   }
 
@@ -217,83 +208,11 @@ class TypeDef : DefNode, CTypeDef
 //////////////////////////////////////////////////////////////////////////
 
   **
-  ** Return if this class has a slot definition for specified name.
-  **
-  Bool hasSlotDef(Str name)
-  {
-    return slotDefMap.containsKey(name)
-  }
-
-  **
-  ** Return SlotDef for specified name or null.
-  **
-  SlotDef? slotDef(Str name)
-  {
-    return slotDefMap[name]
-  }
-
-  **
-  ** Return FieldDef for specified name or null.
-  **
-  FieldDef? fieldDef (Str name)
-  {
-    return (FieldDef)slotDefMap[name]
-  }
-
-  **
-  ** Return MethodDef for specified name or null.
-  **
-  MethodDef? methodDef(Str name)
-  {
-    return (MethodDef)slotDefMap[name]
-  }
-
-  **
   ** Get the SlotDefs declared within this TypeDef.
   **
   override SlotDef[] slotDefs()
   {
     return slotDefList
-  }
-
-  **
-  ** Get the FieldDefs declared within this TypeDef.
-  **
-  FieldDef[] fieldDefs()
-  {
-    return (FieldDef[])slotDefList.findType(FieldDef#)
-  }
-
-  **
-  ** Get the static FieldDefs declared within this TypeDef.
-  **
-  FieldDef[] staticFieldDefs()
-  {
-    return fieldDefs.findAll |FieldDef f->Bool| { f.isStatic }
-  }
-
-  **
-  ** Get the instance FieldDefs declared within this TypeDef.
-  **
-  FieldDef[] instanceFieldDefs()
-  {
-    return fieldDefs.findAll |FieldDef f->Bool| { !f.isStatic }
-  }
-
-  **
-  ** Get the MethodDefs declared within this TypeDef.
-  **
-  MethodDef[] methodDefs()
-  {
-    return (MethodDef[])slotDefList.findType(MethodDef#)
-  }
-
-  **
-  ** Get the constructor MethodDefs declared within this TypeDef.
-  **
-  MethodDef[] ctorDefs()
-  {
-    return methodDefs.findAll |MethodDef m->Bool| { m.isCtor }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -335,11 +254,11 @@ class TypeDef : DefNode, CTypeDef
     super.print(out)
     
     if (isMixin)
-      out.w("mixin $qname").nl
+      out.w("mixin $name")
     else if (isEnum)
-      out.w("enum $qname").nl
+      out.w("enum $name")
     else
-      out.w("class $qname").nl
+      out.w("class $name")
 
 //    if (base != null || !mixins.isEmpty)
 //    {
@@ -348,6 +267,7 @@ class TypeDef : DefNode, CTypeDef
 //      if (!mixins.isEmpty) out.w(", ").w(mixins.join(", ")).nl
 //    }
     if (!inheritances.isEmpty) out.w(" : ").w(inheritances.join(", ")).nl
+    else out.nl
 
     out.w("{").nl
     out.indent
@@ -357,11 +277,7 @@ class TypeDef : DefNode, CTypeDef
     out.w("}").nl
   }
   
-  override TypeRef asRef(Loc? loc := null) {
-    tr := TypeRef(loc, pod.name, name)
-    tr.resolveTo(this)
-    return tr
-  }
+  override GenericParamDef[]? genericParameters
   
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -369,7 +285,7 @@ class TypeDef : DefNode, CTypeDef
 
 //  override CNamespace ns           // compiler's namespace
   CompilationUnit unit             // parent unit
-  PodDef pod                // parent pod
+  override PodDef pod                // parent pod
   override const Str name          // simple class name
   override const Str qname         // podName::name
   //override const Bool isVal        // is this a value type (Bool, Int, etc)
@@ -381,13 +297,7 @@ class TypeDef : DefNode, CTypeDef
   
   EnumDef[] enumDefs               // declared enumerated pairs (only if enum)
   ClosureExpr[] closures           // closures where I am enclosing type (Parse)
-  ClosureExpr? closure             // if I am a closure anonymous class
-  protected override [Str:CSlot] slotsCache := [:]        // all slots
-  private Str:SlotDef slotDefMap   // declared slot definitions
+//  ClosureExpr? closure             // if I am a closure anonymous class
   private SlotDef[] slotDefList    // declared slot definitions
   FacetDef[]? indexedFacets        // used by WritePod
-
-  //genericParameter
-  override GenericParamDef[]? genericParameters
-  override once Str:TypeDef parameterizedTypeCache() { [:] }
 }

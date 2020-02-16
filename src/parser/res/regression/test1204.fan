@@ -1,0 +1,1 @@
+class Foo { Void m(|Str->| x) {} }

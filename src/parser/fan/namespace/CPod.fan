@@ -58,7 +58,7 @@ mixin CPod
   **
   ** If this a foreign function interface return the bridge.
   **
-//  virtual CBridge? bridge() { null }
+  virtual CBridge? bridge() { null }
 
   **
   ** Hash on name.

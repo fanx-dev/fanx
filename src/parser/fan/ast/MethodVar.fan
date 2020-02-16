@@ -10,25 +10,31 @@
 **
 ** MethodVar is a variable used in a method - either param or local.
 **
-class MethodVar
+class MethodVar : Node
 {
 
-  new make(MethodDef method, Int register, TypeRef ctype, Str name, Int flags := 0, Block? scope := null)
+  new make(Loc loc, CType? ctype, Str name) : super(loc)
   {
-    this.method   = method
-    this.register = register
+//    this.method   = method
+    this.register = -1
     this.ctype    = ctype
     this.name     = name
-    this.flags    = flags
-    this.scope    = scope
+//    this.flags    = flags
+//    this.scope    = scope
+  }
+  
+  override Void print(AstWriter out) {
+    out.w(name)
+    if (ctype != null) out.w(" : $ctype ")
+    else out.w(" :")
   }
 
-  new makeForParam(MethodDef method, Int register, ParamDef p, TypeRef paramType)
-    : this.make(method, register, paramType, p.name, FConst.Param)
-  {
-    this.paramDef = p
-    if (p.def != null) this.flags = this.flags.or(FConst.ParamDefault)
-  }
+//  new makeForParam(MethodDef method, Int register, ParamDef p, TypeRef paramType)
+//    : this.make(method, register, paramType, p.name, FConst.Param)
+//  {
+//    this.paramDef = p
+//    if (p.def != null) this.flags = this.flags.or(FConst.ParamDefault)
+//  }
 
   Bool isParam() { flags.and(FConst.Param) != 0 }
 
@@ -42,9 +48,9 @@ class MethodVar
     if (shadows != null) shadows.reassigned
   }
 
-  MethodDef method    // declared method (doCall if declared in closure)
+  MethodDef? method    // declared method (doCall if declared in closure)
   Int register        // register number
-  TypeRef ctype         // variable type
+  CType? ctype         // variable type
   Str name            // variable name
   Int flags           // Param
   Bool isCatchVar     // is this auto-generated var for "catch (Err x)"

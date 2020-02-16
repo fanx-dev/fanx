@@ -1,0 +1,1 @@
+facet class A { new make() {} }

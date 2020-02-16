@@ -32,12 +32,13 @@ abstract class CNamespace
     return sysPod.resolveType(name, true)
   }
 
-  private CTypeDef findType(Str podName, Str name) {
-    pod := resolvePod(podName, null)
-    return pod.resolveType(name, true)
+  private CType makeTypeRef(Str podName, Str name) {
+    t := CType(podName, name)
+    resolveTypeRef(t, Loc.makeUninit)
+    return t
   }
 
-  private CMethod sysMethod(CTypeDef t, Str name)
+  private CMethod sysMethod(CType t, Str name)
   {
     m := t.slots[name] as CMethod
     if (m == null) throw Err("Cannot resolve '${t.qname}.$name' method in namespace")
@@ -157,12 +158,18 @@ abstract class CNamespace
     // parse it into a CType
     t = TypeParser.parse(sig)
     resolveTypeRef(t, null)
-    typeCache[sig] = t
+    
+    if (!t.hasGenericParameter)
+      typeCache[sig] = t
     return t
   }
   internal Str:CType typeCache := Str:CType[:]   // keyed by signature
   
-  Void resolveTypeRef(CType typeRef, Loc? loc) {
+  Void resolveTypeRef(CType typeRef, Loc? loc, Bool recursive := true) {
+    if (typeRef.resolvedType != null) return
+    if (typeRef.podName.isEmpty)
+      throw Err("Invalid typeRef: $typeRef, ${loc?.toLocStr}")
+    
     pod := this.resolvePod(typeRef.podName, loc)
     //GenericParameterType
     typeName := typeRef.name
@@ -174,12 +181,13 @@ abstract class CNamespace
       gptype := parent.getGenericParameter(name)
       return typeRef.resolveTo(gptype)
     }
-    typeRef.resolveTo(pod.resolveType(typeName, true))
-    if (typeRef.genericArgs != null) {
+    
+    if (recursive && typeRef.genericArgs != null) {
       typeRef.genericArgs.each {
         resolveTypeRef(it, loc)
       }
     }
+    typeRef.resolveTo(pod.resolveType(typeName, true))
   }
 
   **
@@ -209,7 +217,7 @@ abstract class CNamespace
   **
   ** Map of dependencies keyed by pod name set in ResolveDepends.
   **
-  [Str:Depend]? depends
+  [Str:CPod]? depends
 
 //////////////////////////////////////////////////////////////////////////
 // Predefined
@@ -218,10 +226,10 @@ abstract class CNamespace
   once CPod? sysPod() { resolvePod("sys", null) }
 
   // place holder type used for resolve errors
-  once CTypeDef? error() { PlaceHolderTypeDef("Error") }
+  once CType? error() { PlaceHolderTypeDef("Error").asRef }
 
   // place holder type used to indicate nothing (like throw expr)
-  once CTypeDef? nothingType() { PlaceHolderTypeDef("Nothing") }
+  once CType? nothingType() { PlaceHolderTypeDef("Nothing").asRef }
 
   // generic type for it block until we can infer type
 //  once FuncType? itBlockType() {
@@ -230,36 +238,36 @@ abstract class CNamespace
 //    return t
 //  }
 
-  once CTypeDef? objType              () { findType("sys", "Obj") }
-  once CTypeDef? boolType             () { findType("sys", "Bool") }
-  once CTypeDef? enumType             () { findType("sys", "Enum") }
-  once CTypeDef? facetType            () { findType("sys", "Facet") }
-  once CTypeDef? intType              () { findType("sys", "Int") }
-  once CTypeDef? floatType            () { findType("sys", "Float") }
-  once CTypeDef? strType              () { findType("sys", "Str") }
-  once CTypeDef? strBufType           () { findType("sys", "StrBuf") }
-  once CTypeDef? listType             () { findType("sys", "List") }
-  once CTypeDef? funcType             () { findType("sys", "Func") }
-  once CTypeDef? errType              () { findType("sys", "Err") }
-  once CTypeDef? typeType             () { findType("std", "Type") }
-  once CTypeDef? ptrType              () { findType("sys", "Ptr") }
-  once CTypeDef? rangeType            () { findType("sys", "Range") }
-  once CTypeDef? voidType             () { findType("sys", "Void") }
-  once CTypeDef? fieldNotSetErrType   () { findType("sys", "FieldNotSetErr") }
-  once CTypeDef? notImmutableErrType  () { findType("sys", "NotImmutableErr") }
-  once CTypeDef? thisType             () { findType("sys", "This") }
+  once CType? objType              () { makeTypeRef("sys", "Obj") }
+  once CType? boolType             () { makeTypeRef("sys", "Bool") }
+  once CType? enumType             () { makeTypeRef("sys", "Enum") }
+  once CType? facetType            () { makeTypeRef("sys", "Facet") }
+  once CType? intType              () { makeTypeRef("sys", "Int") }
+  once CType? floatType            () { makeTypeRef("sys", "Float") }
+  once CType? strType              () { makeTypeRef("sys", "Str") }
+  once CType? strBufType           () { makeTypeRef("sys", "StrBuf") }
+  once CType? listType             () { makeTypeRef("sys", "List") }
+  once CType? funcType             () { makeTypeRef("sys", "Func") }
+  once CType? errType              () { makeTypeRef("sys", "Err") }
+  once CType? typeType             () { makeTypeRef("std", "Type") }
+  once CType? ptrType              () { makeTypeRef("sys", "Ptr") }
+  once CType? rangeType            () { makeTypeRef("sys", "Range") }
+  once CType? voidType             () { makeTypeRef("sys", "Void") }
+  once CType? fieldNotSetErrType   () { makeTypeRef("sys", "FieldNotSetErr") }
+  once CType? notImmutableErrType  () { makeTypeRef("sys", "NotImmutableErr") }
+  once CType? thisType             () { makeTypeRef("sys", "This") }
 
-  once CTypeDef? decimalType() { findType("std", "Decimal") }
-  once CTypeDef? durationType() { findType("std", "Duration") }
-  once CTypeDef? mapType() { findType("std", "Map") }
-  once CTypeDef? podType() { findType("std", "Pod") }
-  once CTypeDef? slotType() { findType("std", "Slot") }
-  once CTypeDef? fieldType() { findType("std", "Field") }
-  once CTypeDef? methodType() { findType("std", "Method") }
-  once CTypeDef? testType() { findType("std", "Test") }
-  once CTypeDef? uriType() { findType("std", "Uri") }
-  once CTypeDef? asyncType() { findType("concurrent", "Async") }
-  once CTypeDef? promiseType() { findType("concurrent", "Promise") }
+  once CType? decimalType() { makeTypeRef("std", "Decimal") }
+  once CType? durationType() { makeTypeRef("std", "Duration") }
+  once CType? mapType() { makeTypeRef("std", "Map") }
+  once CType? podType() { makeTypeRef("std", "Pod") }
+  once CType? slotType() { makeTypeRef("std", "Slot") }
+  once CType? fieldType() { makeTypeRef("std", "Field") }
+  once CType? methodType() { makeTypeRef("std", "Method") }
+  once CType? testType() { makeTypeRef("std", "Test") }
+  once CType? uriType() { makeTypeRef("std", "Uri") }
+  once CType? asyncType() { makeTypeRef("concurrent", "Async") }
+  once CType? promiseType() { makeTypeRef("concurrent", "Promise") }
 
   once CMethod? objTrap            () { sysMethod(objType,    "trap") }
   once CMethod? objWith            () { sysMethod(objType,    "with") }

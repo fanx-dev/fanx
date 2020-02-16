@@ -19,19 +19,26 @@ class ParameterizedType : CTypeDef {
 //  Bool hasGenericParameter
   CType[] genericArgs
   Bool defaultParameterized { private set } //generic param is absent
-  override once Str:TypeDef parameterizedTypeCache() { [:] }
+  
+  override Loc loc() { root.loc }
+  override DocDef? doc() { root.doc }
 
   static new create(CTypeDef baseType, CType[]? params) {
+    if (!baseType.isGeneric) throw Err("base must generic type")
+    
     defaultParameterized := params == null
     
     if (defaultParameterized) {
-       params.size.times { params.add(CTypeImp.make("sys", "Obj").toNullable) }
+      params = CType[,]
+      baseType.genericParameters.each |p| {
+        params.add(p.bound)
+      }
     }
     
     return ParameterizedType.make(baseType, params, defaultParameterized)
   }
 
-  protected new make(CTypeDef baseType, CType[] params, Bool defaultParameterized)
+  private new make(CTypeDef baseType, CType[] params, Bool defaultParameterized)
   {
     this.root = baseType
     this.genericArgs = params
@@ -40,12 +47,9 @@ class ParameterizedType : CTypeDef {
   }
   
   override CFacet[]? facets() { root.facets }
-  
-  protected override GenericParamDef[]? genericParameters() { null }
-  
-  override Str podName() { root.podName }
-  
   override Str name() { root.name }
+  override CPod pod() { root.pod }
+  
 
 //////////////////////////////////////////////////////////////////////////
 // CType
@@ -73,8 +77,6 @@ class ParameterizedType : CTypeDef {
     return parameterizeSlotDefs
   }
   
-  protected override Str:CSlot slotsCache := [:]
-
 //  override Bool isValid() { root.isValid && genericArgs.all { it.isValid }}
 
   override Int flags()
@@ -114,9 +116,13 @@ class ParameterizedType : CTypeDef {
     
     if (nn is GenericParamDef) {
       gp := (GenericParamDef)nn
-      real := doParameterize(gp.paramName).typeDef
-      t.resolveTo(real)
-      t.attachedGenericParam = gp
+      real := doParameterize(gp.paramName)
+      //clone a new CType
+      nt := CType.makeResolvedType(real.typeDef)
+      nt.attachedGenericParam = gp
+      //generic param's nullable is very special
+      nt._isNullable = real.isNullable || t._isNullable
+      t = nt
     }
     else {
       t.genericArgs = t.genericArgs.map |p|{ parameterize(p) }

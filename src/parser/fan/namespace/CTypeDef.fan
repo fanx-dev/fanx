@@ -1,11 +1,20 @@
 
-mixin CTypeDef : TypeMixin{
+abstract class CTypeDef : CDefNode, TypeMixin {
+  
+  **
+  ** Get the flags bitmask.
+  **
+  override abstract Int flags()
+  
   **
   ** Parent pod which defines this type.
   **
-//  abstract CPod pod()
+  abstract CPod pod()
 
-  abstract Str podName()
+  **
+  ** name of parent pod
+  ** 
+  Str podName() { pod.name }
 
   **
   ** Simple name of the type such as "Str".
@@ -18,7 +27,7 @@ mixin CTypeDef : TypeMixin{
   override Str qname() { "${podName}::${name}" }
 
 
-  abstract Str extName()
+  virtual Str extName() { "" }
 
   **
   ** This is the full signature of the type.
@@ -30,10 +39,20 @@ mixin CTypeDef : TypeMixin{
   **
   override Str toStr() { signature }
   
-  virtual CType asRef(Loc? loc := null) {
-    tr := CTypeImp(podName, name)
+  once CType asRef() {
+    tr := TypeRef(loc, pod.name, name)
+    if (this.isGeneric) {
+      tr.genericArgs = [,]
+      this.genericParameters.each |p| {
+        tr.genericArgs.add(p.asRef)
+      }
+    }
     tr.resolveTo(this)
     return tr
+  }
+  
+  virtual Bool isVal() {
+    return flags.and(FConst.Struct) != 0
   }
   
 //////////////////////////////////////////////////////////////////////////
@@ -44,6 +63,21 @@ mixin CTypeDef : TypeMixin{
   ** If this a foreign function interface type.
   **
   virtual Bool isForeign() { false }
+  
+  **
+  ** If this is a foreign function return the bridge.
+  **
+  CBridge? bridge() { pod.bridge }
+  
+  
+  **
+  ** Return if type is supported by the Fantom type system.  For example
+  ** the Java FFI will correctly model a Java multi-dimensional array
+  ** during compilation, however there is no Fantom representation.  We
+  ** check for supported types during CheckErrors when accessing
+  ** fields and methods.
+  **
+  virtual Bool isSupported() { true }
 
 //////////////////////////////////////////////////////////////////////////
 // Generics
@@ -56,7 +90,7 @@ mixin CTypeDef : TypeMixin{
   ** is NOT a generic type (all of its generic parameters have been filled in).
   ** User defined generic types are not supported in Fan.
   **
-  virtual Bool isGeneric() { genericParameters != null }
+  virtual Bool isGeneric() { genericParameters != null && genericParameters.size > 0 }
   
   **
   ** find GenericParameter by name
@@ -66,8 +100,9 @@ mixin CTypeDef : TypeMixin{
     return ps.find { it.paramName == name }
   }
   
-  protected abstract GenericParamDef[]? genericParameters()
+  protected virtual GenericParamDef[]? genericParameters() { null }
   
+  internal once Str:CTypeDef parameterizedTypeCache() { [Str:CTypeDef][:] }
   
 //////////////////////////////////////////////////////////////////////////
 // Data
@@ -75,30 +110,136 @@ mixin CTypeDef : TypeMixin{
   
   abstract CType[] inheritances()
   
-  
-  abstract CFacet[]? facets()
+  **
+  ** The direct super class of this type (null for Obj).
+  **
+  virtual CType? base() {
+    ihs := inheritances
+    if (ihs.size > 0 && ihs.first.isClass) return ihs.first
+    return null
+  }
 
   **
-  ** Get the flags bitmask.
+  ** Return the mixins directly implemented by this type.
   **
-//  abstract Int flags()
+  virtual CType[] mixins() {
+    ihs := inheritances
+    if (ihs.size > 0 && ihs.first.isClass) {
+      return ihs[1..-1]
+    }
+    return ihs
+  }
+  
+  override abstract CFacet[]? facets()
   
   **
-  ** decleard slots
-  ** 
+  ** Get operators lookup structure
+  **
+  once COperators operators() { COperators(this) }
+  
+//////////////////////////////////////////////////////////////////////////
+// Slots
+//////////////////////////////////////////////////////////////////////////
+  **
+  ** Get the CSlots declared within this CTypeDef.
+  **
   abstract CSlot[] slotDefs()
+  
+  protected once [Str:CSlot] slotDefMap() {
+    map := [Str:CSlot][:]
+    slotDefs.each |s|{
+      if (s.isGetter || s.isSetter || s.isOverload) return
+      map[s.name] = s
+    }
+    return map
+  }
+  
+  **
+  ** Return if this class has a slot definition for specified name.
+  **
+  Bool hasSlotDef(Str name)
+  {
+    return slotDefMap.containsKey(name)
+  }
+
+  **
+  ** Return SlotDef for specified name or null.
+  **
+  SlotDef? slotDef(Str name)
+  {
+    return slotDefMap[name]
+  }
+
+  **
+  ** Return FieldDef for specified name or null.
+  **
+  FieldDef? fieldDef (Str name)
+  {
+    return (FieldDef)slotDefMap[name]
+  }
+
+  **
+  ** Return MethodDef for specified name or null.
+  **
+  MethodDef? methodDef(Str name)
+  {
+    return (MethodDef)slotDefMap[name]
+  }
+
+  **
+  ** Get the FieldDefs declared within this TypeDef.
+  **
+  FieldDef[] fieldDefs()
+  {
+    return (FieldDef[])slotDefs.findType(FieldDef#)
+  }
+
+  **
+  ** Get the static FieldDefs declared within this TypeDef.
+  **
+  FieldDef[] staticFieldDefs()
+  {
+    return fieldDefs.findAll |FieldDef f->Bool| { f.isStatic }
+  }
+
+  **
+  ** Get the instance FieldDefs declared within this TypeDef.
+  **
+  FieldDef[] instanceFieldDefs()
+  {
+    return fieldDefs.findAll |FieldDef f->Bool| { !f.isStatic }
+  }
+
+  **
+  ** Get the MethodDefs declared within this TypeDef.
+  **
+  MethodDef[] methodDefs()
+  {
+    return (MethodDef[])slotDefs.findType(MethodDef#)
+  }
+
+  **
+  ** Get the constructor MethodDefs declared within this TypeDef.
+  **
+  MethodDef[] ctorDefs()
+  {
+    return methodDefs.findAll |MethodDef m->Bool| { m.isCtor }
+  }
   
   **
   ** Map of the all defined slots, both fields and
   ** methods (including inherited slots).
   **
-  protected abstract Str:CSlot slotsCache()
+  private [Str:CSlot]? slotsCache
   
   virtual Str:CSlot slots() {
-    if (slotsCache.size > 0) return slotsCache
+    if (slotsCache != null) return slotsCache
     
-    slotDefs.each {
-      slotsCache[it.name] = it
+    slotsCache = [Str:CSlot][:]
+    
+    slotDefs.each |s| {
+      if (s.isGetter || s.isSetter || s.isOverload) return
+      slotsCache[s.name] = s
     }
     
     this.inheritances.each |t| {
@@ -112,7 +253,7 @@ mixin CTypeDef : TypeMixin{
   **
   virtual CSlot? slot(Str name) { slots[name] }
   
-  static Void inherit([Str:CSlot] slotsCached, CType t)
+  private static Void inherit([Str:CSlot] slotsCached, CType t)
   {
     t.slots.each |CSlot newSlot|
     {
@@ -133,28 +274,24 @@ mixin CTypeDef : TypeMixin{
       slotsCached[newSlot.name] = newSlot
     }
   }
-  
-  abstract Str:TypeDef parameterizedTypeCache()
+
 }
 
 class PlaceHolderTypeDef : CTypeDef {
   override Str name
+  override Loc loc
+  override DocDef? doc() { null }
   
   new make(Str name)
   {
     this.name = name
+    this.loc = Loc.makeUninit
   }
-
-  override Str podName() { "sys" }
-  override Str extName() { "" }
   
+  override once CPod pod() { PodDef(Loc.makeUninit, "sys") }
+
+  override Int flags() { FConst.Public }
   override CType[] inheritances() { CType#.emptyList }
   override CFacet[]? facets() { null }
-  override Int flags() { FConst.Public }
-  
   override CSlot[] slotDefs() { CType#.emptyList }
-  protected override once Str:CSlot slotsCache() { [:] }
-  
-  override once Str:TypeDef parameterizedTypeCache() { [:] }
-  protected override GenericParamDef[]? genericParameters() { null }
 }

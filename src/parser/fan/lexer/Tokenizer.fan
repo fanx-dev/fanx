@@ -12,7 +12,7 @@
 **
 class Tokenizer
 {
-  ParserSupport parserSupport
+  CompilerLog log
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -24,9 +24,9 @@ class Tokenizer
   ** File.readAllStr).  If isDoc is false, we skip all star-star
   ** Fandoc comments.
   **
-  new make(ParserSupport parserSupport, Loc loc, Str buf, Bool isDoc)
+  new make(CompilerLog log, Loc loc, Str buf, Bool isDoc)
   {
-    this.parserSupport = parserSupport
+    this.log = log
     this.buf      = buf
     this.filename = loc.file
     this.isDoc    = isDoc
@@ -82,6 +82,7 @@ class Tokenizer
       // save current line
       curLine = this.line
       col := this.col
+      offset := pos
 
       // find next token
       TokenVal? tok
@@ -94,9 +95,11 @@ class Tokenizer
       }
       
       // fill in token's location
-      tok.file = filename
-      tok.line = curLine
-      tok.col  = col
+      tok.loc.file = filename
+      tok.loc.line = curLine
+      tok.loc.col  = col
+      tok.loc.offset = offset
+      tok.loc.len = pos - offset
       tok.newline = lastLine < line
       tok.whitespace = whitespace
 
@@ -317,6 +320,7 @@ class Tokenizer
       // opening quote
       line := this.line
       col := this.col
+      offset := this.pos
       consume
       if (q.isTriple) { consume; consume }
 
@@ -350,23 +354,24 @@ class Tokenizer
           if (!interpolated)
           {
             interpolated = true
-            tokens.add(makeVirtualToken(line, col, Token.lparenSynthetic, null))
+            tokens.add(makeVirtualToken(line, col, offset, Token.lparenSynthetic, null))
           }
 
           // process interpolated string, it returns null
           // if at end of string literal
-          if (!interpolation(line, col, s.toStr, q))
+          if (!interpolation(line, col, offset, s.toStr, q))
           {
             line = this.line; col = this.col - 1;  // before quote
-            tokens.add(makeVirtualToken(line, col, Token.rparen, null))
+            offset = this.pos -1
+            tokens.add(makeVirtualToken(line, col, offset, Token.rparen, null))
             if (q.isUri)
             {
-              tokens.add(makeVirtualToken(line, col, Token.dot))
-              tokens.add(makeVirtualToken(line, col, Token.identifier, "toUri"))
+              tokens.add(makeVirtualToken(line, col, offset, Token.dot))
+              tokens.add(makeVirtualToken(line, col, offset, Token.identifier, "toUri"))
             }
             return null
           }
-          line = this.line; col = this.col
+          line = this.line; col = this.col; offset = this.pos
 
           s.clear
         }
@@ -402,13 +407,13 @@ class Tokenizer
       // and if URI, then add call to Uri
       if (interpolated)
       {
-        tokens.add(makeVirtualToken(line, col, Token.strLiteral, s.toStr))
+        tokens.add(makeVirtualToken(line, col, offset, Token.strLiteral, s.toStr))
         line = this.line; col = this.col - 1;  // before quote
-        tokens.add(makeVirtualToken(line, col, Token.rparen, null))
+        tokens.add(makeVirtualToken(line, col, offset, Token.rparen, null))
         if (q.isUri)
         {
-          tokens.add(makeVirtualToken(line, col, Token.dot, null))
-          tokens.add(makeVirtualToken(line, col, Token.identifier, "toUri"))
+          tokens.add(makeVirtualToken(line, col, offset, Token.dot, null))
+          tokens.add(makeVirtualToken(line, col, offset, Token.identifier, "toUri"))
         }
         return null
       }
@@ -462,37 +467,37 @@ class Tokenizer
   **   "a $<b> c" -> "a " + LocaleExpr("b") + " c"
   ** Return true if more in the string literal.
   **
-  private Bool interpolation(Int line, Int col, Str s, Quoted q)
+  private Bool interpolation(Int line, Int col, Int offset, Str s, Quoted q)
   {
     consume // $
-    tokens.add(makeVirtualToken(line, col, Token.strLiteral, s))
-    line = this.line; col = this.col
-    tokens.add(makeVirtualToken(line, col, Token.plus))
+    tokens.add(makeVirtualToken(line, col, offset, Token.strLiteral, s))
+    line = this.line; col = this.col; offset = this.pos
+    tokens.add(makeVirtualToken(line, col, offset, Token.plus))
 
     // if { we allow an expression b/w {...}
     if (cur == '{')
     {
-      line = this.line; col = this.col
-      tokens.add(makeVirtualToken(line, col, Token.lparenSynthetic))
+      line = this.line; col = this.col; offset = this.pos
+      tokens.add(makeVirtualToken(line, col, offset, Token.lparenSynthetic))
       consume
       while (true)
       {
         if (endOfQuoted(q) || cur == 0) throw err("Unexpected end of $q, missing }")
         tok := next
-        if (tok.kind === Token.strLiteral) throw err("Cannot nest Str literal within interpolation", tok)
-        if (tok.kind === Token.uriLiteral) throw err("Cannot nest Uri literal within interpolation", tok)
+        if (tok.kind === Token.strLiteral) throw err("Cannot nest Str literal within interpolation", tok.loc)
+        if (tok.kind === Token.uriLiteral) throw err("Cannot nest Uri literal within interpolation", tok.loc)
         if (tok.kind === Token.rbrace) break
         tokens.add(tok)
       }
-      line = this.line; col = this.col
-      tokens.add(makeVirtualToken(line, col, Token.rparen))
+      line = this.line; col = this.col; offset = this.pos
+      tokens.add(makeVirtualToken(line, col, offset, Token.rparen))
     }
 
     // if < this is a localized literal <xxxx>
     else if (cur == '<')
     {
-      line = this.line; col = this.col
-      tokens.add(makeVirtualToken(line, col, Token.lparenSynthetic))
+      line = this.line; col = this.col; offset = this.pos
+      tokens.add(makeVirtualToken(line, col, offset, Token.lparenSynthetic))
       consume
       buf := StrBuf()
       while (true)
@@ -506,13 +511,15 @@ class Tokenizer
       consume
 
       tok := TokenVal(Token.localeLiteral, buf.toStr)
-      tok.file = filename
-      tok.line = line
-      tok.col  = col
+      tok.loc.file = filename
+      tok.loc.line = line
+      tok.loc.col  = col
+      tok.loc.offset = offset
+      tok.loc.len = this.pos - offset
       tokens.add(tok)
 
-      line = this.line; col = this.col
-      tokens.add(makeVirtualToken(line, col, Token.rparen))
+      line = this.line; col = this.col; offset = this.pos
+      tokens.add(makeVirtualToken(line, col, offset, Token.rparen))
     }
 
     // else also allow a single identifier with
@@ -540,8 +547,8 @@ class Tokenizer
     if (endOfQuoted(q)) return false
 
     // add plus and return true to keep chugging
-    line = this.line; col = this.col
-    tokens.add(makeVirtualToken(line, col, Token.plus))
+    line = this.line; col = this.col; offset = this.pos
+    tokens.add(makeVirtualToken(line, col, offset, Token.plus))
     return true
   }
 
@@ -573,12 +580,14 @@ class Tokenizer
   **
   ** Create a virtual token for string interpolation.
   **
-  private TokenVal makeVirtualToken(Int line, Int col, Token kind, Obj? value := null)
+  private TokenVal makeVirtualToken(Int line, Int col, Int offset, Token kind, Obj? value := null)
   {
     tok := TokenVal(kind, value)
-    tok.file  = filename
-    tok.line  = line
-    tok.col   = col
+    tok.loc.file  = filename
+    tok.loc.line  = line
+    tok.loc.col   = col
+    tok.loc.offset = offset
+    tok.loc.len = offset - this.pos
     return tok
   }
 
@@ -905,7 +914,7 @@ class Tokenizer
   CompilerErr err(Str msg, Loc? loc := null)
   {
     if (loc == null) loc = Loc(filename, line, col)
-    return parserSupport.err(msg, loc);
+    return log.err(msg, loc);
   }
 
 ////////////////////////////////////////////////////////////////

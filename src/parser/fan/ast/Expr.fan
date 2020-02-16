@@ -1,4 +1,4 @@
-  //
+//
 // Copyright (c) 2006, Brian Frank and Andy Frank
 // Licensed under the Academic Free License version 3.0
 //
@@ -91,11 +91,11 @@ abstract class Expr : Node
   **
   ** Get this expression's type as a string for error reporting.
   **
-//  Str toTypeStr()
-//  {
-//    if (id == ExprId.nullLiteral) return "null"
-//    return ctype.toStr
-//  }
+  Str toTypeStr()
+  {
+    if (id == ExprId.nullLiteral) return "null"
+    return ctype.toStr
+  }
 
   **
   ** If this expression performs assignment, then return
@@ -252,67 +252,67 @@ abstract class Expr : Node
   ** This string must not contain a newline or it will break the
   ** DocApiParser.
   **
-//  Str? toDocStr()
-//  {
-//    // not perfect, but better than what we had previously which
-//    // was nothing; we might want to grab the actual text from the
-//    // actual source file - but with the current design we've freed
-//    // the buffer by the time the tokens are passed to the parser
-//    try
-//    {
-//      // literals
-//      if (this is LiteralExpr)
-//      {
-//        s := serialize
-//        if (s.size > 40) s = "..."
-//        return s
-//      }
-//
-//      // if this is cast, return base
-//      if (this is TypeCheckExpr)
-//        return ((TypeCheckExpr)this).target.toDocStr
-//
-//      // if we access an internal slot then don't expose in public docs
-//      CSlot? slot := null
-//      if (this is CallExpr) slot = ((CallExpr)this).method
-//      else if (this is FieldExpr) slot = ((FieldExpr)this).field
-//      if (slot != null && (slot.isPrivate || slot.isInternal)) return null
-//
-//      // remove extra parens with binary ops
-//      s := toStr
-//      if (s[0] == '(' && s[s.size-1] == ')') s = s[1..-2]
-//
-//      // hide implicit assignments
-//      if (s.contains("=")) s = s[s.index("=")+1..-1].trim
-//
-//      // remove extra parens with binary ops
-//      if (s[0] == '(' && s[s.size-1] == ')' && !s.endsWith("()")) s = s[1..-2]
-//
-//      // hide storage operator
-//      s = s.replace(".@", ".")
-//
-//      // hide safe nav construction
-//      s = s.replace(".?(", "(")
-//
-//      // use unqualified names
-//      while (true)
-//      {
-//        qcolon := s.index("::")
-//        if (qcolon == null) break
-//        i := qcolon-1
-//        for (; i>=0; --i) if (!s[i].isAlphaNum && s[i] != '_') break
-//        s = (i < 0) ? s[qcolon+2..-1] : s[0..i] + s[qcolon+2..-1]
-//      }
-//
-//      if (s.size > 40) s = "..."
-//      return s
-//    }
-//    catch (Err e)
-//    {
-//      e.trace
-//      return toStr
-//    }
-//  }
+  Str? toDocStr()
+  {
+    // not perfect, but better than what we had previously which
+    // was nothing; we might want to grab the actual text from the
+    // actual source file - but with the current design we've freed
+    // the buffer by the time the tokens are passed to the parser
+    try
+    {
+      // literals
+      if (this is LiteralExpr)
+      {
+        s := toStr
+        if (s.size > 40) s = "..."
+        return s
+      }
+
+      // if this is cast, return base
+      if (this is TypeCheckExpr)
+        return ((TypeCheckExpr)this).target.toDocStr
+
+      // if we access an internal slot then don't expose in public docs
+      CSlot? slot := null
+      if (this is CallExpr) slot = ((CallExpr)this).method
+      else if (this is FieldExpr) slot = ((FieldExpr)this).field
+      if (slot != null && (slot.isPrivate || slot.isInternal)) return null
+
+      // remove extra parens with binary ops
+      s := toStr
+      if (s[0] == '(' && s[s.size-1] == ')') s = s[1..-2]
+
+      // hide implicit assignments
+      if (s.contains("=")) s = s[s.index("=")+1..-1].trim
+
+      // remove extra parens with binary ops
+      if (s[0] == '(' && s[s.size-1] == ')' && !s.endsWith("()")) s = s[1..-2]
+
+      // hide storage operator
+      s = s.replace(".@", ".")
+
+      // hide safe nav construction
+      s = s.replace(".?(", "(")
+
+      // use unqualified names
+      while (true)
+      {
+        qcolon := s.index("::")
+        if (qcolon == null) break
+        i := qcolon-1
+        for (; i>=0; --i) if (!s[i].isAlphaNum && s[i] != '_') break
+        s = (i < 0) ? s[qcolon+2..-1] : s[0..i] + s[qcolon+2..-1]
+      }
+
+      if (s.size > 40) s = "..."
+      return s
+    }
+    catch (Err e)
+    {
+      e.trace
+      return toStr
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Tree

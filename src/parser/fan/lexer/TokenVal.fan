@@ -9,14 +9,14 @@
 **
 ** TokenVal stores an instance of a Token at a specific location.
 **
-class TokenVal : Loc
+class TokenVal
 {
 
   new make(Token kind, Obj? val := null)
-    : super.makeUninit()
   {
     this.kind = kind
     this.val  = val
+    this.loc = Loc.makeUninit()
   }
 
   override Int hash()
@@ -92,6 +92,7 @@ class TokenVal : Loc
   Obj? val        // Str, Int, Float, Duration, or Str[]
   Bool newline    // have we processed one or more newlines since the last token
   Bool whitespace // was this token preceeded by whitespace
+  Loc loc         //position of token
 }
 
 **

@@ -26,9 +26,11 @@ mixin Visitor
   ** Peform a walk of the abstract syntax tree down
   ** to the specified depth.
   **
-  Void walk(CompilationUnit cunit, VisitDepth depth)
+  Void walk(PodDef pod, VisitDepth depth)
   {
-    cunit.types.each |TypeDef def| { def.walk(this, depth) }
+    pod.units.each |u| {
+      u.types.each |t| { t.walk(this, depth) }
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -171,7 +173,7 @@ mixin Visitor
 **
 ** VisitDepth enumerates how deep to traverse the AST
 **
-enum class VisitDepth { typeDef, slotDef, stmt, expr }
+enum class VisitDepth { typeDef, slotDef, block, stmt, expr }
 
 **************************************************************************
 ** ExprVisitor
@@ -194,6 +196,21 @@ internal class ExprVisitor : Visitor
   }
 
   |Expr expr->Expr| func
+}
+
+class BlockVisitor : Visitor
+{
+  new make(|Block expr| func)
+  {
+    this.func = func
+  }
+
+  override Void visitBlock(Block b)
+  {
+    func.call(b)
+  }
+
+  |Block expr| func
 }
 
 **************************************************************************

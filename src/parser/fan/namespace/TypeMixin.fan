@@ -92,6 +92,7 @@ mixin TypeMixin {
 //Bool isMap()     { fits(ns.mapType) }
 //  virtual Bool isFunc()    { this.base.qname == "sys::Func" }
   Bool isNothing() { qname == "sys::Nothing" }
+  Bool isError() { qname == "sys::Error" }
 
   ** Is this a valid type usable anywhere (such as local var)
   virtual Bool isValid() { !isVoid && !isThis }

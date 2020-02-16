@@ -9,7 +9,7 @@
 **
 ** ParamDef models the definition of a method parameter.
 **
-class ParamDef : Node, CParam
+class ParamDef : MethodVar, CParam
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,12 @@ class ParamDef : Node, CParam
 //////////////////////////////////////////////////////////////////////////
 
   new make(Loc loc, TypeRef paramType, Str name, Expr? def := null)
-    : super(loc)
+    : super(loc, paramType, name)
   {
-    this.paramType = paramType
-    this.name = name
+//    this.paramType = paramType
+//    this.name = name
     this.def  = def
+    flags = FConst.Param
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,16 +42,16 @@ class ParamDef : Node, CParam
 
   override Void print(AstWriter out)
   {
-    out.w(paramType).w(" ").w(name)
-    if (def != null) { out.w(" := "); def.print(out) }
+    out.w(name).w(" : ").w(paramType)
+    if (def != null) { out.w(" = "); def.print(out) }
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  override CType paramType   // type of parameter
-  override Str name          // local variable name
+  override TypeRef paramType() { super.ctype }   // type of parameter
+//  override Str name          // local variable name
   Expr? def                  // default expression
 
 }

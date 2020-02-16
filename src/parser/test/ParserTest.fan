@@ -1,42 +1,20 @@
 
-
 class ParserTest : Test {
-  
-  Void test() {
-    code := Str<|//
-                  using compiler
-                  
-                  **
-                  ** Abstract base with useful utilities common to compiler tests.
-                  **
-                  abstract class CompilerTest : Test
-                  {
-                  
-                  //////////////////////////////////////////////////////////////////////////
-                  // Methods
-                  //////////////////////////////////////////////////////////////////////////
-                  
-                  
-                    Void compile(Str[] src, |CompilerInput in|? f := null)
-                    {
-                    }
-                   }
-       |>
-    
-    doParse(code)
+  Void testFine() {
+    srcFiles := File[,]
+    `../std/`.toFile.walk |f|{
+      if (f.isDir || f.ext != "fan") return
+      echo("test:"+f.normalize)
+      
+      code := f.readAllStr
+      runParse(code, f.parent.basename +"/"+ f.basename)
+    }
   }
   
-  private CompilationUnit doParse(Str code, Bool err := false) {
-    parser := Parser.makeSimple(code, "test")
+  Void runParse(Str code, Str name) {
+    parser := Parser.makeSimple(code, "testPod")
     parser.parse
     
-    echo(parser.unit.types)
-    echo(parser.parserSupport.errs)
-    verifyEq(parser.parserSupport.errs.size > 0, err)
-    
-    parser.unit.dump
-    
-    return parser.unit
+    verify(parser.log.errs.size == 0)
   }
 }
-

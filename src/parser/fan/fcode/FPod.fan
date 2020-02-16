@@ -19,9 +19,9 @@ final class FPod : CPod, FConst
 // Constructor
 //////////////////////////////////////////////////////////////////////////
 
-  new make(Str podName, Zip? zip)
+  new make(CNamespace ns, Str podName, Zip? zip)
   {
-//    this.ns         = ns
+    this.ns         = ns
     this.version    = Version.defVal
     this.depends    = Depend[,]
     this.name       = podName
@@ -75,7 +75,8 @@ final class FPod : CPod, FConst
     sig := podName + "::" + typeName + r.sig
 
     //echo("toType: $podName $typeName => $sig, $r.sig")
-    return TypeParser.parse(sig)
+    
+    return ns.resolveType(sig)
   }
 
   CType[] resolveTypes(Int[] indexes)
@@ -379,7 +380,7 @@ final class FPod : CPod, FConst
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-//  override CNamespace? ns    // compiler's namespace
+  CNamespace? ns    // compiler's namespace
   override Str name         // pod's unique name
   override Version version  // pod version
   override Depend[] depends // pod dependencies

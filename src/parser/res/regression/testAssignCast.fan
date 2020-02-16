@@ -1,0 +1,1 @@
+class Foo { Void foo() { x := 3; x += 10f } }

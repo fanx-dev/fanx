@@ -22,7 +22,7 @@ public class FieldDef : SlotDef, CField
   {
     this.name = name
     this.flags = flags
-    this.fieldType = TypeRef.errorType(loc)
+    this.fieldType = TypeRef.error(loc)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,16 +32,16 @@ public class FieldDef : SlotDef, CField
   Bool hasGet() { get != null && !get.isSynthetic }
   Bool hasSet() { set != null && !set.isSynthetic }
 
-//  FieldExpr makeAccessorExpr(Loc loc, Bool useAccessor)
-//  {
-//    Expr? target
-//    if (isStatic)
-//      target = StaticTargetExpr(loc, parent)
-//    else
-//      target = ThisExpr(loc)
-//
-//    return FieldExpr(loc, target, this, useAccessor)
-//  }
+  FieldExpr makeAccessorExpr(Loc loc, Bool useAccessor)
+  {
+    Expr? target
+    if (isStatic)
+      target = StaticTargetExpr(loc, parent.asRef())
+    else
+      target = ThisExpr(loc)
+
+    return FieldExpr(loc, target, this.name, useAccessor)
+  }
   
   override Int enumOrdinal() {
     enumDef := parentDef.enumDef(name)
@@ -102,13 +102,13 @@ public class FieldDef : SlotDef, CField
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  override CType fieldType  // field type
+  override TypeRef fieldType  // field type
 //  Field? field              // resolved finalized field
   Expr? init                // init expression or null
   Bool walkInit := true     // tree walk init expression
   MethodDef? get            // getter MethodDef
   MethodDef? set            // setter MethodDef
-//  CField? concreteBase      // if I override a concrete virtual field
+  CField? concreteBase      // if I override a concrete virtual field
   TypeRef? inheritedRet       // if covariant override of method
   Bool requiresNullCheck    // flags that ctor needs runtime check to ensure it-block set it
   EnumDef? enumDef          // if an enum name/ordinal pair

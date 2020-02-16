@@ -82,7 +82,14 @@ class Loc
 
   override Str toStr()
   {
-    return toLocStr
+    StrBuf s := StrBuf()
+    if (line != null)
+    {
+      s.add("(").add(line)
+      if (col != null) s.add(",").add(col)
+      s.add(")")
+    }
+    return s.toStr
   }
 
   Str toLocStr()
@@ -101,5 +108,6 @@ class Loc
   Str file := "Unknown"
   Int? line
   Int? col
-
+  Int? offset
+  Int? len
 }

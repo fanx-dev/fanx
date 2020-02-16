@@ -40,6 +40,7 @@ mixin CSlot
   Bool isStorage()   { flags.and(FConst.Storage)   != 0 }
   Bool isSynthetic() { flags.and(FConst.Synthetic) != 0 }
   Bool isVirtual()   { flags.and(FConst.Virtual)   != 0 }
+  Bool isOverload()  { flags.and(FConst.Overload)  != 0 }
 
   Bool isInstanceCtor() { isCtor && !isStatic }
   Bool isStaticCtor() { isCtor && isStatic }
@@ -76,7 +77,7 @@ mixin CSlot
   ** If this a foreign function return the bridge.  See `usesForeign` to
   ** check if the slot uses any FFI types in its signature.
   **
-//  virtual CBridge? bridge() { parent.pod.bridge }
+  virtual CBridge? bridge() { parent.pod.bridge }
 
   **
   ** Return the bridge if this slot is foreign or uses any foreign
@@ -237,6 +238,7 @@ mixin CMethod : CSlot
     if (ai.isNullable != bi.isNullable) return false
 
     if (ai.qname == bi.qname) return true
+    
     /*
     if (ai is GenericParameter && bi is GenericParameter) {
       ag := (GenericParameter)ai

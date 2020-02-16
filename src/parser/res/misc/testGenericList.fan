@@ -1,0 +1,1 @@
+class Foo { Bool foo(List x) { return x[0] == 7 } }

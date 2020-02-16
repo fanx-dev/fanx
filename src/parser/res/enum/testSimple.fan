@@ -1,0 +1,1 @@
+enum class Foo { a, b, c }

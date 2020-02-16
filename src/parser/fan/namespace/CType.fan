@@ -12,28 +12,102 @@
 ** the compilation units themsevles as TypeDef and TypeRef or to
 ** precompiled types in imported pods via ReflectType or FType.
 **
-mixin CType : TypeMixin
+class CType : CNode, TypeMixin
 {
+  Str name
+  Str podName
+  
+  CType[]? genericArgs {
+    set { &genericArgs = it; if (it != null && it.any|a|{ a ===  this}) throw Err("self ref") }
+  }
+  
+  //TODO check
+  ** for sized primitive type. the Int32's extName is 32
+  Str? sized
+  
+  **
+  ** Is this is a nullable type (marked with trailing ?)
+  **
+  protected Bool _isNullable := false
+  
+  CTypeDef? resolvedType
+  
+  **
+  ** Is this is a nullable type (marked with trailing ?)
+  **
+  Bool isNullable() { _isNullable || (resolvedType != null && resolvedType is GenericParamDef) }
+  
+  override Loc loc() { typeDef.loc }
+  
+  new make(Str pod, Str name) {
+    this.podName = pod
+    
+    if (pod == "sys" || pod.isEmpty) {
+      if (name.size > 3 && name.startsWith("Int")) {
+        sized = name[3..-1]
+        this.name = name[0..<3]
+      }
+      else if (name.size > 5 && name.startsWith("Float")) {
+        sized = name[5..-1]
+        this.name = name[0..<5]
+      }
+      else {
+        this.name = name
+      }
+    }
+    else {
+      this.name = name
+    }
+  }
+  
+  static CType makeQname(Str sig) {
+    colon    := sig.index("::")
+    podName := sig[0..<colon]
+    name := sig[colon+2..-1]
+    
+    return CType(podName, name)
+  }
+  
+  new makeResolvedType(CTypeDef resolvedType) {
+    this.resolvedType = resolvedType
+    this.name = resolvedType.name
+    podName = resolvedType.podName
+  }
+  
+  override Void print(AstWriter out)
+  {
+    out.w(toStr)
+  }
+  
 
-  abstract CTypeDef typeDef()
+  CTypeDef typeDef() {
+    if (resolvedType == null) {
+      throw Err("try access unresolved type: $this")
+      //resolvedType = PlaceHolderTypeDef("Error")
+    }
+    return resolvedType
+  }
   
   
   virtual Bool isResolved() {
-    if (typeDef is PlaceHolderTypeDef) {
-      t := typeDef as PlaceHolderTypeDef
-      if (t.name == "Error") return false
-    }
+    if (resolvedType == null) return false
+//    if (typeDef.isError()) return false
     return true
   }
   
-  abstract Void resolveTo(CTypeDef typeDef)
-  
-  virtual Str podName() { typeDef.podName }
-
-  **
-  ** Simple name of the type such as "Str".
-  **
-  virtual Str name() { typeDef.name }
+  Void resolveTo(CTypeDef typeDef) {
+    if (typeDef.isGeneric) {
+      c := typeDef.parameterizedTypeCache[extName]
+      if (c == null) {
+        c = ParameterizedType.create(typeDef, genericArgs)
+        typeDef.parameterizedTypeCache[extName] = c
+      }
+      resolvedType = c
+    }
+    else {
+      resolvedType = typeDef
+    }
+  }
 
   **
   ** Qualified name such as "sys:Str".
@@ -43,10 +117,27 @@ mixin CType : TypeMixin
   **
   ** This is the full signature of the type.
   **
-  virtual Str signature() { "${qname}${extName}" }
+  Str signature() {
+    s := StrBuf()
+    if (!podName.isEmpty) {
+      s.add(podName).add("::")
+    }
+    s.add(name)
+    s.add(extName)
+    return s.toStr
+  }
   
-  
-  abstract Str extName()
+  Str extName() {
+    s := StrBuf()
+    if (sized != null) s.add(sized)
+    if (genericArgs != null) {
+      s.add("<").add(genericArgs.join(",")).add(">")
+    }
+    if (_isNullable) {
+      s.add("?")
+    }
+    return s.toStr
+  }
 
   **
   ** Return signature
@@ -57,7 +148,14 @@ mixin CType : TypeMixin
   override Int flags() { typeDef.flags }
   
   
-  virtual Bool isFunc() { base.qname == "sys::Func" }
+  virtual Bool isFunc() { qname == "sys::Func" || (base != null && base.qname == "sys::Func") }
+  
+  
+//  private CType dup() {
+//    d := CType(qname, name)
+//    d.resolvedType = typeDef
+//    return d
+//  }
 
 //////////////////////////////////////////////////////////////////////////
 // Nullable
@@ -78,19 +176,28 @@ mixin CType : TypeMixin
   }
 
   **
-  ** Is this is a nullable type (marked with trailing ?)
-  **
-  abstract Bool isNullable()
-
-  **
   ** Get this type as a nullable type (marked with trailing ?)
   **
-  abstract CType toNullable()
+  virtual CType toNullable() {
+    if (isNullable) return this
+    d := CType(podName, name)
+    d.resolvedType = resolvedType
+    d._isNullable = true
+    d.genericArgs = genericArgs
+    return d
+  }
 
   **
   ** Get this type as a non-nullable (if nullable)
   **
-  virtual CType toNonNullable() { this }
+  virtual CType toNonNullable() {
+    if (!isNullable) return this
+    d := CType(podName, name)
+    d.resolvedType = resolvedType
+    d._isNullable = false
+    d.genericArgs = genericArgs
+    return d
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Generics
@@ -103,17 +210,36 @@ mixin CType : TypeMixin
   ** List (V is replaced with Str).  A parameterized type always has a
   ** signature which is different from the qname.
   **
-//  Bool isParameterized() { this.typeDef is ParameterizedType }
+  Bool isParameterized() {
+    if (this.typeDef is ParameterizedType) return true
+    return false
+  }
   
   **
   ** A single generic parameter replaced by generic argument
   ** 
-  abstract GenericParamDef? attachedGenericParam
+  GenericParamDef? attachedGenericParam
   
   virtual CType physicalType() {
     if (attachedGenericParam == null) return this
     if (isTypeErasure) return this
     return attachedGenericParam.bound
+  }
+  
+  CType realType() {
+    CType t := this
+    if (t.attachedGenericParam != null)
+      t = t.typeDef.asRef
+    
+    if (t.typeDef is ParameterizedType)
+      t = t.typeDef.asRef
+    
+    if (t.typeDef is GenericParamDef)
+      t = (t.typeDef as GenericParamDef).bound
+    
+    if (t.isThis)
+      t = t.typeDef.asRef
+    return t
   }
 
   **
@@ -131,18 +257,47 @@ mixin CType : TypeMixin
     return false
   }
 
-//  **
-//  ** If this is a parameterized type which uses 'This',
-//  ** then replace 'This' with the specified type.
-//  **
-//  virtual CType parameterizeThis(CType thisType) {
-//    if (!usesThis) return this
-//    f := |CType t->CType| { t.isThis ? thisType : t }
-//    return FuncType(params.map(f), names, f(ret), defaultParameterized)
-//  }
+  **
+  ** If this is a parameterized type which uses 'This',
+  ** then replace 'This' with the specified type.
+  **
+  virtual CType parameterizeThis(CType thisType) {
+    //if (!usesThis) return this
+    //f := |CType t->CType| { t.isThis ? thisType : t }
+    //return FuncType(params.map(f), names, f(ret), defaultParameterized)
+    
+    if (this.isThis) return thisType
+    
+    if (this.genericArgs != null) {
+      hasThis := this.genericArgs.any { it.isThis }
+      if (!hasThis) return this
+      
+      nt := CType.makeResolvedType(this.resolvedType)
+      nt._isNullable = this._isNullable
+      nt.genericArgs = this.genericArgs.map |a|{ a.parameterizeThis(thisType) }
+      return nt
+    }
+    return this
+  }
   
+  CType funcRet() {
+    if (genericArgs == null) return CType.make("sys", "Obj").toNullable
+    return this.genericArgs.first
+  }
   
-  abstract TypeRef[]? genericArgs
+  CType[] funcParams() {
+    if (genericArgs == null) {
+      t := CType.make("sys", "Obj").toNullable
+      return [t, t, t, t, t, t, t, t]
+    }
+    return this.genericArgs[1..-1]
+  }
+  
+  Int funcArity() {
+    if (genericArgs == null) return 8
+    return this.genericArgs.size - 1
+  }
+  
   
 //////////////////////////////////////////////////////////////////////////
 // Inheritance
@@ -199,8 +354,8 @@ mixin CType : TypeMixin
   {
     //unparameterized generic parameters
     // don't take nullable in consideration
-    t := ty
-    m := this
+    t := ty.realType
+    m := this.realType
 
     // everything fits Obj
     if (t.isObj) return true

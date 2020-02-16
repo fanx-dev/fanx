@@ -1,0 +1,1 @@
+class Foo { Void foo(Int x) { echo "foo$x" } }

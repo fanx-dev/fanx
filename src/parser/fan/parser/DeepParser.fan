@@ -4,15 +4,15 @@
 ** 
 class DeepParser : Parser {
   
-  new make(ParserSupport parserSupport, Loc loc, Str code, PodDef pod)
-    : super(parserSupport, loc, code, pod)
+  new make(CompilerLog log, Str code, CompilationUnit unit)
+    : super(log, code, unit)
   {
   }
   
   override CallExpr? ctorChain(MethodDef method)
   {
     consume(Token.colon)
-    loc := cur
+    loc := cur.loc
 
     call := CallExpr(loc)
     call.isCtorChain = true
@@ -58,7 +58,7 @@ class DeepParser : Parser {
   **
   private Block stmtOrBlock()
   {
-    block := Block(cur)
+    block := Block(cur.loc)
 
     if (curt !== Token.lbrace)
     {
@@ -114,7 +114,7 @@ class DeepParser : Parser {
   private Stmt exprOrLocalDefStmt(Bool isEndOfStmt)
   {
     // see if this statement begins with a type literal
-    loc := cur
+    loc := cur.loc
     mark := pos
     localType := tryType
 
@@ -167,12 +167,12 @@ class DeepParser : Parser {
   **
   private Expr itAdd(Expr e)
   {
-    e = CallExpr(e.loc, ItExpr(cur), "add") { args.add(e); isItAdd = true }
+    e = CallExpr(e.loc, ItExpr(cur.loc), "add") { args.add(e); isItAdd = true }
     while (true)
     {
       consume(Token.comma)
       if (curt === Token.rbrace || curt === Token.semicolon) break
-      e = CallExpr(cur, e, "add") { args.add(expr()) }
+      e = CallExpr(cur.loc, e, "add") { args.add(expr()) }
       if (curt === Token.rbrace || curt === Token.semicolon) break
     }
     return e
@@ -218,7 +218,7 @@ class DeepParser : Parser {
   **
   private IfStmt ifStmt()
   {
-    loc := cur
+    loc := cur.loc
     consume(Token.ifKeyword)
     consume(Token.lparen)
     cond := expr
@@ -239,7 +239,7 @@ class DeepParser : Parser {
   **
   private ReturnStmt returnStmt()
   {
-    stmt := ReturnStmt(cur)
+    stmt := ReturnStmt(cur.loc)
     if (curt === Token.lretKeyword) {
       if (curClosure == null) {
         throw err("Can't use the 'lret' in non-closure")
@@ -265,7 +265,7 @@ class DeepParser : Parser {
   **
   private ThrowStmt throwStmt()
   {
-    loc := cur
+    loc := cur.loc
     consume(Token.throwKeyword)
     stmt := ThrowStmt(loc, expr)
     endOfStmt
@@ -278,7 +278,7 @@ class DeepParser : Parser {
   **
   private WhileStmt whileStmt()
   {
-    loc := cur
+    loc := cur.loc
     consume(Token.whileKeyword)
     consume(Token.lparen)
     cond := expr
@@ -293,7 +293,7 @@ class DeepParser : Parser {
   **
   private ForStmt forStmt()
   {
-    stmt := ForStmt(cur)
+    stmt := ForStmt(cur.loc)
     consume(Token.forKeyword)
     consume(Token.lparen)
 
@@ -317,7 +317,7 @@ class DeepParser : Parser {
   **
   private BreakStmt breakStmt()
   {
-    stmt := BreakStmt(cur)
+    stmt := BreakStmt(cur.loc)
     consume(Token.breakKeyword)
     endOfStmt
     return stmt
@@ -329,7 +329,7 @@ class DeepParser : Parser {
   **
   private ContinueStmt continueStmt()
   {
-    stmt := ContinueStmt(cur)
+    stmt := ContinueStmt(cur.loc)
     consume(Token.continueKeyword)
     endOfStmt
     return stmt
@@ -344,7 +344,7 @@ class DeepParser : Parser {
   **
   private TryStmt tryStmt()
   {
-    stmt := TryStmt(cur)
+    stmt := TryStmt(cur.loc)
     consume(Token.tryKeyword)
     stmt.block = stmtOrBlock
     if (curt !== Token.catchKeyword && curt !== Token.finallyKeyword)
@@ -363,7 +363,7 @@ class DeepParser : Parser {
 
   private Catch tryCatch()
   {
-    c := Catch(cur)
+    c := Catch(cur.loc)
     consume(Token.catchKeyword)
 
     if (curt === Token.lparen)
@@ -391,7 +391,7 @@ class DeepParser : Parser {
   **
   private SwitchStmt switchStmt()
   {
-    loc := cur
+    loc := cur.loc
     consume(Token.switchKeyword)
     consume(Token.lparen)
     stmt := SwitchStmt(loc, expr)
@@ -401,7 +401,7 @@ class DeepParser : Parser {
     {
       if (curt === Token.caseKeyword)
       {
-        c := Case(cur)
+        c := Case(cur.loc)
         while (curt === Token.caseKeyword)
         {
           consume
@@ -433,7 +433,7 @@ class DeepParser : Parser {
 
   private Block switchBlock()
   {
-    block := Block(cur)
+    block := Block(cur.loc)
     while (curt !== Token.caseKeyword && curt != Token.defaultKeyword && curt !== Token.rbrace)
       block.stmts.add(stmt)
     return block
@@ -511,7 +511,7 @@ class DeepParser : Parser {
   {
     if (curt === Token.throwKeyword)
     {
-      loc := cur
+      loc := cur.loc
       consume(Token.throwKeyword)
       return ThrowExpr(loc, expr)
     }
@@ -679,13 +679,13 @@ class DeepParser : Parser {
       return unaryExpr
 
     // consume opening paren (or synthetic paren)
-    loc := cur
+    loc := cur.loc
     consume()
 
     // In Fantom just like C# and Java, a paren could mean
     // either a cast or a parenthesized expression
     mark := pos
-    castType := tryType
+    castType := tryType(true)
     if (curt === Token.rparen)
     {
       consume
@@ -714,7 +714,7 @@ class DeepParser : Parser {
   **
   private Expr unaryExpr()
   {
-    loc := cur
+    loc := cur.loc
     tok := cur
     tokt := curt
 
@@ -793,7 +793,7 @@ class DeepParser : Parser {
   **
   private Expr termBaseExpr()
   {
-    loc := cur
+    loc := cur.loc
 
     ctype := tryType
     if (ctype != null) return typeBaseExpr(loc, ctype)
@@ -816,7 +816,7 @@ class DeepParser : Parser {
       case Token.thisKeyword:     consume; return ThisExpr(loc)
       case Token.itKeyword:       consume; return ItExpr(loc)
       case Token.trueKeyword:     consume; return LiteralExpr.makeTrue(loc)
-      case Token.pound:           consume; return SlotLiteralExpr(loc, curType.asRef(loc), consumeId)
+      case Token.pound:           consume; return SlotLiteralExpr(loc, curType.asRef(), consumeId)
       case Token.awaitKeyword:    consume; return AwaitExpr(loc, this.expr)
       case Token.sizeofKeyword:   
         consume;
@@ -830,6 +830,9 @@ class DeepParser : Parser {
         expr := AddressOfExpr(loc, this.expr)
         consume(Token.rparen)
         return expr
+      case Token.pipe:
+        c := tryClosure
+        if (c != null) return c
     }
 
     if (curt == Token.pipe)
@@ -874,7 +877,7 @@ class DeepParser : Parser {
     // dsl
     if (curt == Token.dsl)
     {
-      srcLoc := Loc(cur.file, cur.line, cur.col+2)
+      srcLoc := Loc(cur.loc.file, cur.loc.line, cur.loc.col+2)
       dslVal := cur as TokenValDsl
       return DslExpr(loc, ctype, srcLoc, consume.val)
       {
@@ -932,7 +935,7 @@ class DeepParser : Parser {
   **
   private Expr? termChainExpr(Expr target)
   {
-    loc := cur
+    loc := cur.loc
 
     // handle various call operators: . -> ?. ?->
     switch (curt)
@@ -991,7 +994,7 @@ class DeepParser : Parser {
   **
   private Expr idExpr(Expr? target, Bool dynamicCall, Bool safeCall, Bool checkedCall := true)
   {
-    loc := cur
+    loc := cur.loc
 
     if (curt == Token.amp)
     {
@@ -1052,7 +1055,7 @@ class DeepParser : Parser {
   **
   private CallExpr callExpr(Expr? target)
   {
-    call := CallExpr(cur)
+    call := CallExpr(cur.loc)
     call.target  = target
     call.name    = consumeId
     callArgs(call)
@@ -1102,7 +1105,7 @@ class DeepParser : Parser {
   **
   private Expr callOp(Expr target)
   {
-    loc := cur
+    loc := cur.loc
     call := CallExpr(loc)
     call.isCallOp = true
     call.target = target
@@ -1117,7 +1120,7 @@ class DeepParser : Parser {
   **
   private Expr indexExpr(Expr target)
   {
-    loc := cur
+    loc := cur.loc
     consume(Token.lbracket)
 
     // nice error for BadType[,]
@@ -1275,7 +1278,7 @@ class DeepParser : Parser {
   **
   private ClosureExpr? tryClosure()
   {
-    loc := cur
+    loc := cur.loc
 
     // if curly brace, then this is it-block closure
     if (curt === Token.lbrace) return tryItBlock
@@ -1316,7 +1319,7 @@ class DeepParser : Parser {
       }
     }
 
-    ib := closure(cur, funcType(false))
+    ib := closure(cur.loc, FuncTypeDef.makeItBlock(cur.loc, TypeRef.objType(cur.loc).toNullable))
     ib.isItBlock = true
     //ib.itType = ns.error
     return ib
@@ -1330,7 +1333,7 @@ class DeepParser : Parser {
     if (curType == null || curSlot == null) throw err("Unexpected closure")
 
     // closure anonymous class name: class$slot$count
-    name := "${curType.name}\$${curSlot.name}\$${closureCount++}"
+    name := "${curType.name}\$${curSlot.name}\$${curType.closures.size}"
 
     // verify func types has named parameters
     if (funcType.unnamed) err("Closure parameters must be named", loc)
@@ -1339,7 +1342,7 @@ class DeepParser : Parser {
     closure := ClosureExpr(loc, curType, curSlot, curClosure, funcType, name)
 
     // save all closures in global list and list per type
-    closures.add(closure)
+//    closures.add(closure)
     curType.closures.add(closure)
 
     // parse block; temporarily change curClosure

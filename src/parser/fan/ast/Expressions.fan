@@ -1,293 +1,10 @@
-
-
-**************************************************************************
-** LiteralExpr
-**************************************************************************
-
-**
-** LiteralExpr puts an Bool, Int, Float, Str, Duration, Uri,
-** or null constant onto the stack.
-**
-class LiteralExpr : Expr
-{
-  new make(Loc loc, ExprId id, Obj? val)
-    : super(loc, id)
-  {
-    this.val   = val
-//    if (val == null && !ctype.isNullable)
-//      throw Err("null literal must typed as nullable!")
-  }
-
-  new makeNull(Loc loc)
-    : this.make(loc, ExprId.nullLiteral, null) {}
-
-  new makeTrue(Loc loc)
-    : this.make(loc, ExprId.trueLiteral, true) {}
-
-  new makeFalse(Loc loc)
-    : this.make(loc, ExprId.falseLiteral, false) {}
-
-  new makeStr(Loc loc, Str val)
-    : this.make(loc, ExprId.strLiteral, val) {}
-
-//  static LiteralExpr makeDefaultLiteral(Loc loc, TypeRef ctype)
-//  {
-//    if (!ctype.isNullable())
-//    {
-//      if (ctype.isBool())  return make(loc, ExprId.falseLiteral, false)
-//      if (ctype.isInt())   return make(loc, ExprId.intLiteral, 0)
-//      if (ctype.isFloat()) return make(loc, ExprId.floatLiteral, 0f)
-//    }
-//    return makeNull(loc, ns)
-//  }
-
-  override Bool isAlwaysNullable() { id === ExprId.nullLiteral }
-
-  override Int? asTableSwitchCase()
-  {
-    return val as Int
-  }
-
-//  override Str serialize()
-//  {
-//    switch (id)
-//    {
-//      case ExprId.nullLiteral:     return "null"
-//      case ExprId.falseLiteral:    return "false"
-//      case ExprId.trueLiteral:     return "true"
-//      case ExprId.intLiteral:      return val.toStr
-//      case ExprId.floatLiteral:    return val.toStr + "f"
-//      case ExprId.decimalLiteral:  return val.toStr + "d"
-//      case ExprId.strLiteral:      return val.toStr.toCode
-//      case ExprId.uriLiteral:      return val.toStr.toCode('`')
-//      case ExprId.typeLiteral:     return "${val->signature}#"
-//      case ExprId.durationLiteral: return val.toStr
-//      default:                     return super.serialize
-//    }
-//  }
-
-  override Str toStr()
-  {
-    switch (id)
-    {
-      case ExprId.nullLiteral: return "null"
-      case ExprId.strLiteral:  return "\"" + val.toStr.replace("\n", "\\n") + "\""
-      case ExprId.typeLiteral: return "${val}#"
-      case ExprId.uriLiteral:  return "`$val`"
-      default: return val.toStr
-    }
-  }
-
-  Obj? val // Bool, Int, Float, Str (for Str/Uri), Duration, CType, or null
-}
-
-**************************************************************************
-** LocaleLiteralExpr
-**************************************************************************
-
-**
-** LocaleLiteralExpr: podName::key=defVal
-**
-class LocaleLiteralExpr: Expr
-{
-  new make(Loc loc, Str pattern)
-    : super(loc, ExprId.localeLiteral)
-  {
-    this.pattern = pattern
-    this.key = pattern
-    eq := pattern.index("=")
-    if (eq != null)
-    {
-      this.key = pattern[0..<eq]
-      this.def = pattern[eq+1..-1]
-    }
-
-    colons := key.index("::")
-    if (colons != null)
-    {
-      this.podName = key[0..<colons]
-      this.key     = key[colons+2..-1]
-    }
-  }
-
-  override Str toStr() { "<${pattern}>" }
-
-  Str pattern
-  Str key
-  Str? podName
-  Str? def
-}
-
-**************************************************************************
-** SlotLiteralExpr
-**************************************************************************
-
-**
-** SlotLiteralExpr
-**
-class SlotLiteralExpr : Expr
-{
-  new make(Loc loc, TypeRef parent, Str name)
-    : super(loc, ExprId.slotLiteral)
-  {
-    this.parent = parent
-    this.name = name
-  }
-
-//  override Str serialize() { "$parent.signature#${name}" }
-
-  override Str toStr() { "$parent#${name}" }
-
-  TypeRef parent
-  Str name
-}
-
-**************************************************************************
-** RangeLiteralExpr
-**************************************************************************
-
-**
-** RangeLiteralExpr creates a Range instance
-**
-class RangeLiteralExpr : Expr
-{
-  new make(Loc loc, Expr start, Expr end, Bool exclusive)
-    : super(loc, ExprId.rangeLiteral)
-  {
-//    this.ctype = ctype
-    this.start = start
-    this.end   = end
-    this.exclusive = exclusive
-  }
-
-  override Void walkChildren(Visitor v)
-  {
-    start = start.walk(v)
-    end   = end.walk(v)
-  }
-
-  override Str toStr()
-  {
-    if (exclusive)
-      return "${start}...${end}"
-    else
-      return "${start}..${end}"
-  }
-
-  Expr start
-  Expr end
-  Bool exclusive
-}
-
-**************************************************************************
-** ListLiteralExpr
-**************************************************************************
-
-**
-** ListLiteralExpr creates a List instance
-**
-class ListLiteralExpr : Expr
-{
-  new make(Loc loc, TypeRef? explicitType := null)
-    : super(loc, ExprId.listLiteral)
-  {
-    this.explicitType = explicitType
-  }
-
-  new makeFor(Loc loc, TypeRef explicitType, Expr[] vals)
-    : super.make(loc, ExprId.listLiteral)
-  {
-    this.explicitType = explicitType
-    this.vals  = vals
-  }
-
-  override Void walkChildren(Visitor v)
-  {
-    vals = walkExprs(v, vals)
-  }
-
-//  override Str serialize()
-//  {
-//    return format |Expr e->Str| { e.serialize }
-//  }
-
-  override Str toStr()
-  {
-    return format |Expr e->Str| { e.toStr }
-  }
-
-  Str format(|Expr e->Str| f)
-  {
-    s := StrBuf.make
-    if (explicitType != null) s.add(explicitType)
-    s.add("[")
-    if (vals.isEmpty) s.add(",")
-    else vals.each |Expr v, Int i|
-    {
-      if (i > 0) s.add(",")
-      s.add(f(v))
-    }
-    s.add("]")
-    return s.toStr
-  }
-
-  TypeRef? explicitType
-  Expr[] vals := Expr[,]
-}
-
-**************************************************************************
-** MapLiteralExpr
-**************************************************************************
-
-**
-** MapLiteralExpr creates a List instance
-**
-class MapLiteralExpr : Expr
-{
-  new make(Loc loc, TypeRef? explicitType := null)
-    : super(loc, ExprId.mapLiteral)
-  {
-    this.explicitType = explicitType
-  }
-
-  override Void walkChildren(Visitor v)
-  {
-    keys = walkExprs(v, keys)
-    vals = walkExprs(v, vals)
-  }
-
-//  override Str serialize()
-//  {
-//    return format |Expr e->Str| { e.serialize }
-//  }
-
-  override Str toStr()
-  {
-    return format |Expr e->Str| { e.toStr }
-  }
-
-  Str format(|Expr e->Str| f)
-  {
-    s := StrBuf.make
-    if (explicitType != null) s.add(explicitType)
-    s.add("[")
-    if (vals.isEmpty) s.add(":")
-    else
-    {
-      keys.size.times |Int i|
-      {
-        if (i > 0) s.add(",")
-        s.add(f(keys[i])).add(":").add(f(vals[i]))
-      }
-    }
-    s.add("]")
-    return s.toStr
-  }
-
-  TypeRef? explicitType
-  Expr[] keys := Expr[,]
-  Expr[] vals := Expr[,]
-}
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   19 Jul 06  Brian Frank  Creation
+//
 
 **************************************************************************
 ** UnaryExpr
@@ -349,7 +66,7 @@ class BinaryExpr : Expr
   new makeAssign(Expr lhs, Expr rhs, Bool leave := false)
     : this.make(lhs, Token.assign, rhs)
   {
-//    this.ctype = lhs.ctype
+    this.ctype = lhs.ctype
     this.leave = leave
   }
 
@@ -386,7 +103,6 @@ class BinaryExpr : Expr
   Expr lhs           // left hand side
   Expr rhs           // right hand side
   MethodVar? tempVar // temp local var to store field assignment leaves
-
 }
 
 **************************************************************************
@@ -497,13 +213,13 @@ class CallExpr : NameExpr
     isCtorChain = false
   }
 
-//  new makeWithMethod(Loc loc, Expr? target, CMethod method, Expr[]? args := null)
-//    : this.make(loc, target, method.name, ExprId.call)
-//  {
-//    this.method = method
-//    this.ctype = method.isCtor ? method.parent : method.returnType
-//    if (args != null) this.args = args
-//  }
+  new makeWithMethod(Loc loc, Expr? target, CMethod method, Expr[]? args := null)
+    : this.make(loc, target, method.name, ExprId.call)
+  {
+    this.method = method
+    this.ctype = method.isCtor ? method.parent : method.returnType
+    if (args != null) this.args = args
+  }
 
   override Str toStr()
   {
@@ -516,18 +232,18 @@ class CallExpr : NameExpr
     return args.any |Expr arg->Bool| { arg.isDefiniteAssign(f) }
   }
 
-//  override Bool isStmt()
-//  {
-//    // stand alone constructor is not a valid stmt
-//    if (method.isCtor) return false
-//
-//    // with block applied to stand alone constructor is not valid stmt
-//    if (method.name == "with" && target is CallExpr && ((CallExpr)target).method.isCtor)
-//      return false
-//
-//    // consider any other call a stand alone stmt
-//    return true
-//  }
+  override Bool isStmt()
+  {
+    // stand alone constructor is not a valid stmt
+    if (method.isCtor) return false
+
+    // with block applied to stand alone constructor is not valid stmt
+    if (method.name == "with" && target is CallExpr && ((CallExpr)target).method.isCtor)
+      return false
+
+    // consider any other call a stand alone stmt
+    return true
+  }
 
   virtual Bool isCompare() { false }
 
@@ -586,7 +302,7 @@ class CallExpr : NameExpr
   Bool noParens       // was this call accessed without parens
   Bool isCallOp       // was this 'target()' (instead of 'target.name()')
   Bool isItAdd        // if using comma operator
-//  CMethod? method     // resolved method
+  CMethod? method     // resolved method
   override Bool synthetic := false
 }
 
@@ -669,7 +385,7 @@ class ShortcutExpr : CallExpr
 
   Bool isAssign() { opToken.isAssign || opToken.isIncrementOrDecrement }
 
-//  Bool isStrConcat() { opToken == Token.plus && args.size == 1 && target.ctype.isStr }
+  Bool isStrConcat() { opToken == Token.plus && args.size == 1 && target.ctype.isStr }
 
   override Str toStr()
   {
@@ -714,7 +430,7 @@ class IndexedAssignExpr : ShortcutExpr
 
   MethodVar? scratchA
   MethodVar? scratchB
-//  CMethod? setMethod
+  CMethod? setMethod
 }
 
 **************************************************************************
@@ -736,46 +452,29 @@ class FieldExpr : NameExpr
 
   override Bool isAssignable() { true }
 
-//  override Bool assignRequiresTempVar() { !field.isStatic }
+  override Bool assignRequiresTempVar() { !field.isStatic }
 
-//  override Bool sameVarAs(Expr that)
-//  {
-//    x := that as FieldExpr
-//    if (x == null) return false
-//    return field == x.field &&
-//           target != null &&
-//           x.target != null &&
-//           target.sameVarAs(x.target)
-//  }
+  override Bool sameVarAs(Expr that)
+  {
+    x := that as FieldExpr
+    if (x == null) return false
+    return field == x.field &&
+           target != null &&
+           x.target != null &&
+           target.sameVarAs(x.target)
+  }
 
-//  override Int? asTableSwitchCase()
-//  {
-//    // TODO - this should probably be tightened up if we switch to const
-//    if (field.isStatic && field.parent.isEnum && ctype.isEnum)
-//    {
-//      ordinal := field.enumOrdinal
-//      if (ordinal == -1) throw Err("Invalid field for tableswitch: $field.typeof $loc.toLocStr")
-//      return ordinal
-////      
-////      switch (field.typeof)
-////      {
-////        //case ReflectField#:
-////        //  ifield := field as ReflectField
-////        //  return ((Enum)ifield.f.get).ordinal
-////        case FieldDef#:
-////          fieldDef := field as FieldDef
-////          enumDef := fieldDef.parentDef.enumDef(field.name)
-////          if (enumDef != null) return enumDef.ordinal
-////        case FField#:
-////          ffield := field as FField
-////          attr := ffield.attr(FConst.EnumOrdinalAttr)
-////          if (attr != null) return attr.u2
-////        default:
-////          throw Err("Invalid field for tableswitch: $field.typeof $loc.toLocStr")
-////      }
-//    }
-//    return null
-//  }
+  override Int? asTableSwitchCase()
+  {
+    // TODO - this should probably be tightened up if we switch to const
+    if (field.isStatic && field.parent.isEnum && ctype.isEnum)
+    {
+      ordinal := field.enumOrdinal
+      if (ordinal == -1) throw Err("Invalid field for tableswitch: $field.typeof $loc.toLocStr")
+      return ordinal
+    }
+    return null
+  }
 //
 //  override Str serialize()
 //  {
@@ -807,8 +506,7 @@ class FieldExpr : NameExpr
     return s.toStr
   }
 
-//  CField? field       // resolved field
-//  Str name
+  CField? field       // resolved field
   Bool useAccessor    // false if access using '*' storage operator
 }
 
@@ -827,7 +525,7 @@ class LocalVarExpr : Expr
     if (var_v != null)
     {
       this.var_v = var_v
-//      this.ctype = var_v.ctype
+      this.ctype = var_v.ctype
     }
   }
 
@@ -847,7 +545,10 @@ class LocalVarExpr : Expr
     x := that as LocalVarExpr
     if (x == null) return false
     if (var_v?.usedInClosure != x?.var_v?.usedInClosure) return false
-    return register == x.register
+    
+    if (register == x.register && register != -1) return true
+    if (var_v == null || x.var_v == null) return false
+    return var_v.name == x.var_v.name
   }
 
   virtual Int register() { var_v.register }
@@ -937,6 +638,8 @@ class ItExpr : LocalVarExpr
   override Int register() { 1 }  // Void doCall(Type it)
 
   override Str toStr() { "it" }
+  
+  ClosureExpr? enclosingClosure //for check setting an const field in ctor + it-block
 }
 
 **************************************************************************
@@ -955,12 +658,13 @@ class StaticTargetExpr : Expr
     : super(loc, ExprId.staticTarget)
   {
     this.target = target
+    this.ctype = target
   }
 
-//  override Bool sameVarAs(Expr that)
-//  {
-//    that.id === ExprId.staticTarget && ctype == that.ctype
-//  }
+  override Bool sameVarAs(Expr that)
+  {
+    that.id === ExprId.staticTarget && target == ((StaticTargetExpr)that).target
+  }
 
   override Str toStr()
   {
@@ -978,22 +682,22 @@ class StaticTargetExpr : Expr
 **
 class TypeCheckExpr : Expr
 {
-  new make(Loc loc, ExprId id, Expr target, TypeRef check)
+  new make(Loc loc, ExprId id, Expr target, CType check)
     : super(loc, id)
   {
     this.target = target
     this.check  = check
-//    this.ctype  = check
+    this.ctype  = check
   }
 
-  new coerce(Expr target, TypeRef to)
+  new coerce(Expr target, CType to)
     : super.make(target.loc, ExprId.coerce)
   {
 //    if (to.hasGenericParameter) to = to.raw
     this.target = target
-//    this.from   = target.ctype
+    this.from   = target.ctype
     this.check  = to
-//    this.ctype  = to
+    this.ctype  = to
     this.synthetic = true
   }
 
@@ -1043,10 +747,10 @@ class TypeCheckExpr : Expr
   }
 
   ** From type if coerce
-//  CType? from { get { &from ?: target.ctype } }
+  CType? from { get { &from ?: target.ctype } }
 
   Expr target
-  TypeRef check    // to type if coerce
+  CType check    // to type if coerce
   override Bool synthetic := false
 }
 
@@ -1127,217 +831,7 @@ class ComplexLiteral : Expr
 }
 
 **************************************************************************
-** ClosureExpr
-**************************************************************************
-
-**
-** ClosureExpr is an "inlined anonymous method" which closes over it's
-** lexical scope.  ClosureExpr is placed into the AST by the parser
-** with the code field containing the method implementation.  In
-** InitClosures we remap a ClosureExpr to an anonymous class TypeDef
-** which extends Func.  The function implementation is moved to the
-** anonymous class's doCall() method.  However we leave ClosureExpr
-** in the AST in it's original location with a substitute expression.
-** The substitute expr just creates an instance of the anonymous class.
-** But by leaving the ClosureExpr in the tree, we can keep track of
-** the original lexical scope of the closure.
-**
-class ClosureExpr : Expr
-{
-  new make(Loc loc, TypeDef enclosingType,
-           SlotDef enclosingSlot, ClosureExpr? enclosingClosure,
-           FuncTypeDef signature, Str name)
-    : super(loc, ExprId.closure)
-  {
-//    this.ctype            = signature
-    this.enclosingType    = enclosingType
-    this.enclosingSlot    = enclosingSlot
-    this.enclosingClosure = enclosingClosure
-    this.signature        = signature
-    this.name             = name
-  }
-
-//  once CField outerThisField()
-//  {
-//    if (enclosingSlot.isStatic) throw Err("Internal error: $loc.toLocStr")
-//    //TODO
-//    throw Err("TODO")
-//    //return ClosureVars.makeOuterThisField(this)
-//  }
-
-  override Str toStr()
-  {
-    return "$signature { ... }"
-  }
-
-  override Void print(AstWriter out)
-  {
-    out.w(signature.toStr)
-    if (substitute != null)
-    {
-      out.w(" { substitute: ")
-      substitute.print(out)
-      out.w(" }").nl
-    }
-    else
-    {
-      out.nl
-      code.print(out)
-    }
-  }
-
-  override Bool isDefiniteAssign(|Expr lhs->Bool| f)
-  {
-    // at this point, we have moved code into doCall method
-    if (doCall == null) return false
-    return doCall.code.isDefiniteAssign(f)
-  }
-
-//  Expr toWith(Expr target)
-//  {
-//    if (target.ctype != null) setInferredSignature(FuncType.makeItBlock(target.ctype))
-//    x := CallExpr.makeWithMethod(loc, target, Expr[this])
-//    // TODO: this coercion should be added automatically later in the pipeline
-//    if (target.ctype == null) return x
-//    return TypeCheckExpr.coerce(x, target.ctype)
-//  }
-//
-//  Void setInferredSignature(FuncType t)
-//  {
-//    // bail if we didn't expect an inferred the signature
-//    // or haven't gotten to InitClosures yet
-//    if (cls == null) return
-//
-//    delArity := ((FuncType)cls.base).arity
-//    if (!signature.inferredSignature && delArity == t.arity) {
-//      return
-//    }
-//
-//    // between the explicit signature and the inferred
-//    // signature, take the most specific types; this is where
-//    // we take care of functions with generic parameters like V
-//    if (delArity <= t.arity) {
-//      if (delArity < t.arity) {
-//        addParams := CType[,]
-//        for (i:=((FuncType)cls.base).arity; i<t.arity; ++i) {
-//          ptype := t.params[i]
-//          addParams.add(ptype)
-//          //echo(doCall.params)
-//          doCall.paramDefs.add(ParamDef(loc, ptype, "ignoreparam\$$i"))
-//        }
-//        collapseExprAndParams(call, addParams)
-//      }
-//      t = t.toArity(((FuncType)cls.base).arity)
-//      t = signature.mostSpecific(t, signature.inferredSignature)
-//    }
-//    else if (isItBlock && t.arity == 0) {
-//      call.paramDefs.clear
-//      c := CallExpr.makeWithMethod(loc, ThisExpr(loc), doCall, [LiteralExpr.makeNull(loc)])
-//      call.code.stmts.clear
-//      if (t.ret.isVoid) {
-//         call.code.add(c.toStmt)
-//         call.code.add(ReturnStmt.makeSynthetic(loc, LiteralExpr.makeNull(loc)))
-//      }
-//      else {
-//         call.code.add(ReturnStmt.makeSynthetic(loc, c))
-//      }
-//    }
-//    else {
-//      return
-//    }
-//
-//    // sanity check
-//    if (t.usesThis)
-//      throw Err("Inferring signature with un-parameterized this type: $t")
-//
-//    // update my signature and the doCall signature
-//    signature = t
-//    ctype = t
-//    if (doCall != null)
-//    {
-//      // update parameter types
-//      doCall.paramDefs.each |ParamDef p, Int i|
-//      {
-//        if (i < signature.params.size)
-//          p.paramType = signature.params[i]
-//      }
-//
-//      // update return, we might have to translate an single
-//      // expression statement into a return statement
-//      if (doCall.ret.isVoid && !t.ret.isVoid)
-//      {
-//        doCall.ret = t.ret
-//        collapseExprAndReturn(doCall)
-//        collapseExprAndReturn(call)
-//      }
-//    }
-//
-//    // if an itBlock, set type of it
-//    if (isItBlock) itType = t.params.first
-//
-//    // update base type of Func subclass
-//    cls.base = t
-//    ctype = t
-//  }
-
-  Void collapseExprAndParams(MethodDef m, TypeRef[] addParams)
-  {
-    addParams.each |ptype, i| {
-      m.paramDefs.add(ParamDef(loc, TypeRef.objType(loc).toNullable, "ignoreparam\$$i"))
-    }
-
-    stmt := m.code.stmts.first
-    CallExpr? call
-    if (stmt is ReturnStmt) {
-      call = ((ReturnStmt)stmt).expr
-    }
-    else {
-      call = ((ExprStmt)stmt).expr
-    }
-
-    addParams.each |ptype, i| {
-      arg := UnknownVarExpr(m.loc, null, "ignoreparam\$$i")
-      carg := TypeCheckExpr.coerce(arg, ptype)
-      call.args.add(carg)
-    }
-  }
-
-  Void collapseExprAndReturn(MethodDef m)
-  {
-    code := m.code.stmts
-    if (code.size != 2) return
-    if (code[0].id !== StmtId.expr) return
-    if (code[1].id !== StmtId.returnStmt) return
-    if (!((ReturnStmt)code.last).isSynthetic) return
-    expr := ((ExprStmt)code.first).expr
-    code.set(0, ReturnStmt.makeSynthetic(expr.loc, expr))
-    code.removeAt(1)
-  }
-
-  // Parse
-  TypeDef enclosingType         // enclosing class
-  SlotDef enclosingSlot         // enclosing method or field initializer
-  ClosureExpr? enclosingClosure // if nested closure
-  FuncTypeDef signature            // function signature
-  Block? code                   // moved into a MethodDef in InitClosures
-  Str name                      // anonymous class name
-  Bool isItBlock                // does closure have implicit it scope
-
-  // InitClosures
-  Expr? substitute          // expression to substitute during assembly
-  TypeDef? cls                  // anonymous class which implements the closure
-  MethodDef? call               // anonymous class's call() with code
-  MethodDef? doCall             // anonymous class's doCall() with code
-
-  // ResolveExpr
-  [Str:MethodVar]? enclosingVars // my parent methods vars in scope
-  //Bool setsConst                 // sets one or more const fields (CheckErrors)
-//  CType? itType                  // type of implicit it
-  TypeRef? followCtorType          // follow make a new Type
-}
-
-**************************************************************************
-** ClosureExpr
+** DslExpr
 **************************************************************************
 
 **
@@ -1404,7 +898,7 @@ class AwaitExpr : Expr {
     : super(loc, ExprId.awaitExpr)
   {
     this.expr = expr
-//    this.ctype = expr.ctype
+    this.ctype = expr.ctype
   }
 
   override Void walkChildren(Visitor v)
@@ -1458,7 +952,7 @@ enum class ShortcutOp
     prefixes = m
   }
 
-  Str formatErr(TypeRef lhs, TypeRef rhs)
+  Str formatErr(CType lhs, CType rhs)
   {
     if (this === get) return "$lhs [ $rhs ]"
     if (this === set) return "$lhs [ $rhs ]="

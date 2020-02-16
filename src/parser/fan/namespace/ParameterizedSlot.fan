@@ -52,7 +52,7 @@ class ParameterizedMethod : CMethod
   {
     this.parent = parent
     this.generic = generic
-
+    
     this.returnType = parent.parameterize(generic.returnType)
     this.params = generic.params.map |CParam p->CParam|
     {

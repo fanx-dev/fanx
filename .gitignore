@@ -11,3 +11,4 @@ config.props
 release
 env/lib
 env/doc
+src/parser/goldenFile

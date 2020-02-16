@@ -1,63 +1,27 @@
 
-class LexerTest : Test {
+class LexerTest : GoldenTest {
   
-  Void test() {
-    code := Str<|//
-                  using compiler
-                  
-                  **
-                  ** Abstract base with useful utilities common to compiler tests.
-                  **
-                  abstract class CompilerTest : Test
-                  {
-                  
-                  //////////////////////////////////////////////////////////////////////////
-                  // Methods
-                  //////////////////////////////////////////////////////////////////////////
-                  
-                    Str podName()
-                    {
-                      curTestMethod.toStr.replace("::", "_").replace(".", "_") + "_" + podNameSuffix
-                    }
-                  
-                    Void compile(Str src, |CompilerInput in|? f := null)
-                    {
-       |>
-    
-    doLexer(code)
+  Void testLexer() {
+    srcFiles := File[,]
+    `res/parser/`.toFile.walk |f|{
+      if (f.isDir || f.ext != "fan") return
+      echo("test:"+f.normalize)
+      
+      code := f.readAllStr
+      runLexer(code, f.parent.basename +"/"+ f.basename)
+    }
   }
   
-  Void testUnicode() {
-    code := Str<|// 中文
-                  ** 中文
-                  abstract class 测试类 : Test
-                  {
-                  
-                  //////////////////////////////////////////////////////////////////////////
-                  // Methods
-                  //////////////////////////////////////////////////////////////////////////
-                  
-                    Str 你好()
-                    {
-                      curTestMethod.toStr.replace("::", "_").replace(".", "_") + "_" + podNameSuffix
-                    }
-                  
-                    Void compile(Str src, |CompilerInput in|? f := null)
-                    {
-       |>
-    
-    doLexer(code, true)
-  }
-                  
-  private TokenVal[] doLexer(Str code, Bool err := false) {
-    support := ParserSupport()
+  Void runLexer(Str code, Str name) {
+    support := CompilerLog()
     tokenizer := Tokenizer(support, Loc.makeUninit, code, true)
     result := tokenizer.tokenize
-    echo(result)
-    echo(support.errs)
     
-    verifyEq(support.errs.size > 0, err)
+    s := StrBuf()
+    s.add(result.join("\n")|t|{ t.loc.toStr + "\t\t" + t.toStr })
+    s.add(ParserGoldenTest.separator)
+    s.add(support.toStr)
     
-    return result
+    verifyGolden(s.toStr, name)
   }
 }
