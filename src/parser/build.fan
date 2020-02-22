@@ -32,4 +32,14 @@ class Build : BuildPod
                   `test/`]
     docSrc     = true
   }
+
+  @Target { help = "build my app as a single JAR dist" }
+  Void dist()
+  {
+    dist := JarDist(this)
+    dist.outFile = (scriptDir+`./parser.jar`).normalize
+    dist.podNames = Str["sys", "std", "parser"]
+    dist.mainMethod = "parser::IncCompiler.main"
+    dist.run
+  }
 }

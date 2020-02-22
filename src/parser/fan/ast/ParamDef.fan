@@ -16,7 +16,7 @@ class ParamDef : MethodVar, CParam
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  new make(Loc loc, TypeRef paramType, Str name, Expr? def := null)
+  new make(Loc loc, CType paramType, Str name, Expr? def := null)
     : super(loc, paramType, name)
   {
 //    this.paramType = paramType
@@ -50,7 +50,7 @@ class ParamDef : MethodVar, CParam
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  override TypeRef paramType() { super.ctype }   // type of parameter
+  override CType paramType() { super.ctype }   // type of parameter
 //  override Str name          // local variable name
   Expr? def                  // default expression
 

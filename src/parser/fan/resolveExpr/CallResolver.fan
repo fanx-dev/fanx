@@ -66,7 +66,7 @@ class CallResolver
       resolveToExpr
       inferClosureType
       resolveForeign
-      //TODO
+      //TODO ConstantFolder
 //      constantFolding
       castForThisType
       safeToNullable
@@ -424,7 +424,7 @@ class CallResolver
 
     //rewrite for async method
     if (method.flags.and(FConst.Async) != 0 && method.parent.podName == compiler.pod.name) {
-      call.ctype = TypeRef.asyncType(loc) { genericArgs = [call.ctype] }
+      call.ctype = CType.asyncType(loc) { genericArgs = [call.ctype] }
     }
 
     return call

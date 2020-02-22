@@ -24,12 +24,15 @@ class Tokenizer
   ** File.readAllStr).  If isDoc is false, we skip all star-star
   ** Fandoc comments.
   **
-  new make(CompilerLog log, Loc loc, Str buf, Bool isDoc)
+  new make(CompilerLog log, Loc loc, Str buf, Bool isDoc, Bool isComment, Bool paseStrInterpolation := true)
   {
     this.log = log
     this.buf      = buf
     this.filename = loc.file
     this.isDoc    = isDoc
+    this.isComment= isComment
+    this.paseStrInterpolation = paseStrInterpolation
+    
     this.tokens   = TokenVal[,]
     this.inStrLiteral = false
     this.posOfLine = 0
@@ -135,8 +138,8 @@ class Tokenizer
 
     // comments
     if (cur == '*' && peek == '*') return docComment
-    if (cur == '/' && peek == '/') return skipCommentSL
-    if (cur == '/' && peek == '*') return skipCommentML
+    if (cur == '/' && peek == '/') return readCommentSL
+    if (cur == '/' && peek == '*') return readCommentML
 
     // DSL
     if (cur == '<' && peek == '|') return dsl
@@ -254,7 +257,7 @@ class Tokenizer
       {
         num := Float.fromStr(str)
         if (dur != null) {
-          return TokenVal(Token.durationLiteral, Duration((num*dur.toFloat).toInt))
+          return TokenVal(Token.durationLiteral, Duration.fromNanos((num*dur.toFloat).toInt))
         }
         else {
           return TokenVal(Token.floatLiteral, num)
@@ -264,7 +267,7 @@ class Tokenizer
       // int literal
       num := Int.fromStr(str)
       if (dur != null)
-        return TokenVal(Token.durationLiteral, Duration(num*dur))
+        return TokenVal(Token.durationLiteral, Duration.fromNanos(num*dur))
       else
         return TokenVal(Token.intLiteral, num)
     }
@@ -347,7 +350,7 @@ class Tokenizer
           continue
         }
 
-        if (cur == '$')
+        if (cur == '$' && paseStrInterpolation)
         {
           // if we have detected an interpolated string, then
           // insert opening paren to treat whole string atomically
@@ -699,18 +702,28 @@ class Tokenizer
 // Comments
 //////////////////////////////////////////////////////////////////////////
 
+  //code from F4 IDE
+  
   **
   ** Skip a single line // comment
   **
-  private TokenVal? skipCommentSL()
+  private TokenVal? readCommentSL()
   {
+    start := pos
+    end := start
+    line := this.line
     consume  // first slash
     consume  // next slash
+    s := StrBuf()
     while (true)
     {
-      if (cur == '\n') { consume; break }
-      if (cur == 0) break
+      if (cur == '\n') { end = pos - 1; consume; break }
+      if (cur == 0) { end = pos; break }
+      s.addChar(cur)
       consume
+    }
+    if (isComment) {
+      return TokenVal(Token.slComment, s.toStr)
     }
     return null
   }
@@ -719,17 +732,33 @@ class Tokenizer
   ** Skip a multi line /* comment.  Note unlike C/Java,
   ** slash/star comments can be nested.
   **
-  private TokenVal? skipCommentML()
+  private TokenVal? readCommentML()
   {
+    start := pos
+    end := start
+    line := this.line
     consume   // first slash
     consume   // next slash
     depth := 1
+    s := StrBuf()
     while (true)
     {
-      if (cur == '*' && peek == '/') { consume; consume; depth--; if (depth <= 0) break }
+      if (cur == '*' && peek == '/') {
+        consume;
+        consume;
+        depth--;
+        if (depth <= 0) {
+          end = pos - 1
+          break
+        }
+      }
       if (cur == '/' && peek == '*') { consume; consume; depth++; continue }
       if (cur == 0) break
+      s.addChar(cur)
       consume
+    }
+    if (isComment) {
+      return TokenVal(Token.mlComment, s.toStr)
     }
     return null
   }
@@ -740,7 +769,7 @@ class Tokenizer
   private TokenVal? docComment()
   {
     // if doc is off, then just skip the line and be done
-    if (!isDoc) { skipCommentSL; return null }
+    if (!isDoc) { readCommentSL; return null }
 
     while (cur == '*') consume
     if (cur == ' ') consume
@@ -988,6 +1017,7 @@ class Tokenizer
   private Str buf           // buffer
   private Int pos           // index into buf for cur
   private Bool isDoc        // return documentation comments or if false ignore them
+  private Bool isComment
   private Str filename      // source file name
   private Int line := 1     // pos line number
   private Int col := 1      // pos column number
@@ -999,6 +1029,7 @@ class Tokenizer
   private TokenVal[] tokens // token accumulator
   private Bool inStrLiteral // return if inside a string literal token
   private Bool whitespace   // was there whitespace before current token
+  private Bool paseStrInterpolation
 }
 
 **************************************************************************

@@ -59,7 +59,7 @@ class InitFacet : CompilerStep
   {
     // there cannot be any user defined constructors
     if (!ctors.isEmpty)
-      throw err("Facet cannot declare constructors", ctors.first.loc)
+      err("Facet cannot declare constructors", ctors.first.loc)
   }
 
   private Void initSingleton()
@@ -70,7 +70,7 @@ class InitFacet : CompilerStep
     m := MethodDef(loc, curType)
     m.name = "make"
     m.flags = FConst.Ctor + FConst.Private + FConst.Synthetic
-    m.ret = TypeRef.voidType(loc)
+    m.ret = CType.voidType(loc)
     m.code = Block(loc)
     m.code.stmts.add(ReturnStmt.makeSynthetic(loc))
     curType.addSlot(m)
@@ -98,8 +98,8 @@ class InitFacet : CompilerStep
     m := MethodDef(loc, curType)
     m.name = "make"
     m.flags = FConst.Ctor + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.voidType(loc)
-    itType := TypeRef.funcType(loc, [curType.asRef()], TypeRef.voidType(loc))
+    m.ret = CType.voidType(loc)
+    itType := CType.funcType(loc, [curType.asRef()], CType.voidType(loc))
     m.params.add(ParamDef(loc, itType.toNullable, "f", LiteralExpr.makeNull(loc)))
     m.code = Block(loc)
     m.code.stmts.add(call.toStmt)
@@ -107,7 +107,7 @@ class InitFacet : CompilerStep
     curType.addSlot(m)
 
     // make Serializable
-    curType.addFacet(TypeRef(loc, "sys", "Serializable"))
+    curType.addFacet(CType.makeRef(loc, "sys", "Serializable"))
   }
 
 //////////////////////////////////////////////////////////////////////////

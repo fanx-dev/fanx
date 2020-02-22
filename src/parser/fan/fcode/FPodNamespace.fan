@@ -55,7 +55,6 @@ class FPodNamespace : CNamespace
     //echo("find depends pod: $file")
 
     //get from memory for script pod
-    //TODO Fix fanx
     if (file == null || !file.exists) {
       pod := Pod.find(podName, false)
       if (pod == null) return null

@@ -17,10 +17,13 @@ class BasicInit : CompilerStep {
     if (def.inheritances.isEmpty) {
       def.baseSpecified = false
       if (def.isEnum)
-        def.inheritances.add(TypeRef.enumType(def.loc))
+        def.inheritances.add(CType.enumType(def.loc))
       else if (def.qname != "sys::Obj")
-        def.inheritances.add(TypeRef.objType(def.loc))
+        def.inheritances.add(CType.objType(def.loc))
     }
+    
+    if (def.isFacet)
+        def.inheritances.add(CType.facetType(def.loc))
     
 //    genericParams := def.genericParameters
 //    if (genericParams != null) {
@@ -63,7 +66,7 @@ class BasicInit : CompilerStep {
   override Void visitMethodDef(MethodDef m) {
     m.flags = normalizeFlags(m.flags, m.loc)
     if (m.ret == null) {
-      m.ret = TypeRef.voidType(m.loc)
+      m.ret = CType.voidType(m.loc)
     }
   }
   

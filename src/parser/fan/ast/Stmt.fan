@@ -143,7 +143,7 @@ class ExprStmt : LowerLevelStmt
 **
 class LocalDefStmt : Stmt
 {
-  new make(Loc loc, TypeRef? ctype := null, Str name := "")
+  new make(Loc loc, CType? ctype := null, Str name := "")
     : super(loc, StmtId.localDef)
   {
     var_v = MethodVar(loc, ctype, name)
@@ -539,7 +539,7 @@ class Catch : Node
     block.print(out)
   }
 
-  TypeRef? errType     // Err type to catch or null for catch-all
+  CType? errType     // Err type to catch or null for catch-all
   Str? errVariable     // name of err local variable
   Block? block         // body of catch block
   Int start            // start offset generated in CodeAsm
@@ -754,7 +754,7 @@ class ExceptionHandler : LowerLevelStmt {
   static const Int typeFinallyEnd := 5
   
   Int type
-  TypeRef? errType
+  CType? errType
   Exception parent
   Int pos := -1
 

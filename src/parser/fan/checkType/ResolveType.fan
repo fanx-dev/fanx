@@ -24,6 +24,11 @@ class ResolveType : CompilerStep {
       resolveType(it)
     }
     
+    if (!t.isObj && !t.inheritances.first.isClass) {
+      t.baseSpecified = false
+      t.inheritances.insert(0, ns.objType)
+    }
+    
     genericParams := t.genericParameters
     if (genericParams != null) {
       genericParams.each |p| {
@@ -158,6 +163,12 @@ class ResolveType : CompilerStep {
       }
       else if (type.podName.isEmpty && type.typeDef.name == type.name) {
         type.podName = type.typeDef.podName
+      }
+      
+      if (type.genericArgs != null) {
+        if (type.typeDef is ParameterizedType || type.typeDef.isGeneric) {}
+        else
+          step.err("$type is not Generic", type.loc)
       }
     }
   }

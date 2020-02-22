@@ -1,19 +1,42 @@
 
-class SemanticTest : Test {
+class SemanticTest : GoldenTest {
   
+  const static Str separator := "\n\n///!!!!!!!!!!!!!!!!!!!!!!!\n\n"
   
-  Void testFine() {
-    file := `../std/pod.props`
-    compiler := IncCompiler.fromProps(file.toFile)
+//  override Void setup() {
+//    super.goldenDir.delete
+//  }
+  
+  Void testParser() {
+    srcFiles := File[,]
+    `res/`.toFile.walk |f|{
+      if (f.isDir || f.ext != "fan") return
+      echo("test:"+f.normalize)
+      
+      code := f.readAllStr
+      runParse(code, f.parent.basename +"/"+ f.basename)
+    }
+  }
+  
+  Void runParse(Str code, Str name) {
     
-    echo("podName: ${compiler.compiler.pod.name}")
-//    compiler.compiler.pod.units.each |u| {
-//      echo("file: $u.file")
-//    }
+    pod := PodDef(Loc.makeUninit, "testPod")
+    m := IncCompiler(pod)
     
-    compiler.resolveAll
-    //compiler.compiler.pod.dump
+    file := name
+    m.updateSource(file, code)
     
-    verify(compiler.compiler.log.errs.size == 0)
+    m.resolveAll
+    
+    s := StrBuf()
+//    s.add(code)
+//    s.add(separator)
+    s.add(m.compiler.log.toStr)
+    
+    s.add(separator)
+    m.compiler.pod.units.vals[0].print(AstWriter(s.out))
+    
+    
+    verifyGolden(s.toStr, name)
   }
 }

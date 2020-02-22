@@ -43,7 +43,7 @@ class InitEnum : CompilerStep
     {
       addCtor
       addFromStr
-      t.addFacet(TypeRef(t.loc, "sys", "Serializable"), ["simple":true])
+      t.addFacet(CType.makeRef(t.loc, "sys", "Serializable"), ["simple":true])
 
       fields := FieldDef[,]
       t.enumDefs.each |EnumDef e| { fields.add(makeField(e)) }
@@ -77,7 +77,7 @@ class InitEnum : CompilerStep
       if (ctor.name == "make")
         m = ctor
       else
-        throw err("Enum constructor must be named 'make'", ctor.loc)
+        err("Enum constructor must be named 'make'", ctor.loc)
     }
 
     // if we found an existing constructor, then error check it
@@ -97,7 +97,7 @@ class InitEnum : CompilerStep
       m = MethodDef(curType.loc, curType)
       m.name = "make"
       m.flags = FConst.Ctor + FConst.Private + FConst.Synthetic
-      m.ret = TypeRef.voidType(curType.loc)
+      m.ret = CType.voidType(curType.loc)
       m.code = Block(curType.loc)
       m.code.stmts.add(ReturnStmt.makeSynthetic(curType.loc))
       curType.addSlot(m)
@@ -111,8 +111,8 @@ class InitEnum : CompilerStep
     m.ctorChain.args.add(UnknownVarExpr(loc, null, "\$name"))
 
     // insert ordinal, name params
-    m.params.insert(0, ParamDef(loc, TypeRef.intType(loc), "\$ordinal"))
-    m.params.insert(1, ParamDef(loc, TypeRef.strType(loc), "\$name"))
+    m.params.insert(0, ParamDef(loc, CType.intType(loc), "\$ordinal"))
+    m.params.insert(1, ParamDef(loc, CType.strType(loc), "\$name"))
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -129,9 +129,9 @@ class InitEnum : CompilerStep
     m := MethodDef(loc, curType)
     m.name = "fromStr"
     m.flags = FConst.Public + FConst.Static + FConst.Ctor
-    m.params.add(ParamDef(loc, TypeRef.strType(loc), "name"))
-    m.params.add(ParamDef(loc, TypeRef.boolType(loc), "checked", LiteralExpr(loc, ExprId.trueLiteral, true)))
-    m.ret = TypeRef.make(loc, curType.podName, curType.name).toNullable
+    m.params.add(ParamDef(loc, CType.strType(loc), "name"))
+    m.params.add(ParamDef(loc, CType.boolType(loc), "checked", LiteralExpr(loc, ExprId.trueLiteral, true)))
+    m.ret = CType.makeRef(loc, curType.podName, curType.name).toNullable
     m.code = Block(loc)
     m.doc  = DocDef(loc,
               ["Return the $curType.name instance for the specified name.  If not a",
@@ -143,7 +143,7 @@ class InitEnum : CompilerStep
     doFromStr.args.add(LiteralExpr(loc, ExprId.strLiteral, curType.qname))
     doFromStr.args.add(UnknownVarExpr(loc, null, "name"))
     doFromStr.args.add(UnknownVarExpr(loc, null, "checked"))
-    cast := TypeCheckExpr(loc, ExprId.coerce, doFromStr, TypeRef.make(loc, curType.podName, curType.name).toNullable)
+    cast := TypeCheckExpr(loc, ExprId.coerce, doFromStr, CType.makeRef(loc, curType.podName, curType.name).toNullable)
     m.code.stmts.add(ReturnStmt.makeSynthetic(loc, cast))
   }
 
@@ -161,9 +161,9 @@ class InitEnum : CompilerStep
     if (dup != null)
     {
       if (dup.parent === curType)
-        throw err("Enum '$def.name' conflicts with slot", (Loc)dup->loc)
+        err("Enum '$def.name' conflicts with slot", (Loc)dup->loc)
       else
-        throw err("Enum '$def.name' conflicts with inherited slot '$dup.qname'", def.loc)
+        err("Enum '$def.name' conflicts with inherited slot '$dup.qname'", def.loc)
     }
 
     loc := def.loc
@@ -196,15 +196,15 @@ class InitEnum : CompilerStep
     if (dup != null)
     {
       if (dup.parent == curType)
-        throw err("Enum 'vals' conflicts with slot", (Loc)dup->loc)
+        err("Enum 'vals' conflicts with slot", (Loc)dup->loc)
       else
-        throw err("Enum 'vals' conflicts with inherited slot '$dup.qname'", curType.loc)
+        err("Enum 'vals' conflicts with inherited slot '$dup.qname'", curType.loc)
     }
 
     loc := curType.loc
 
     // initializer
-    listType := TypeRef.listType(loc, curType.asRef())
+    listType := CType.listType(loc, curType.asRef())
     init := ListLiteralExpr(loc, listType)
     curType.enumDefs.each |EnumDef e|
     {

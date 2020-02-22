@@ -28,7 +28,7 @@ class TypeDef : CTypeDef
     this.qname       = pod.name + "::" + name
     this.flags       = flags
     //this.isVal       = CType.isValType(qname)
-    this.inheritances  = TypeRef[,]
+    this.inheritances  = CType[,]
     this.enumDefs    = EnumDef[,]
 //    this.slotMap     = Str:CSlot[:]
 //    this.slotDefMap  = Str:SlotDef[:]
@@ -42,7 +42,7 @@ class TypeDef : CTypeDef
   override DocDef? doc
   override CFacet[]? facets
   
-  Void addFacet(TypeRef type, [Str:Obj]? vals := null)
+  Void addFacet(CType type, [Str:Obj]? vals := null)
   {
     if (facets == null) facets = FacetDef[,]
     loc := this.loc
@@ -100,7 +100,7 @@ class TypeDef : CTypeDef
         return
       }
 
-      if (m.flags.and(FConst.Overload) != 0) {
+      if (m.isOverload) {
         slotDefList.add(m)
         return
       }
@@ -108,19 +108,17 @@ class TypeDef : CTypeDef
 
     // sanity check
     name := s.name
-    //TODO check
 //    if (slotDefMap.containsKey(name))
 //      throw Err("Internal error: duplicate slot $name [$loc.toLocStr]")
-
-    // add to all slots table
-//    slotDefMap[name] = s
 
     // if my own SlotDef
     def := s as SlotDef
     if (def != null && def.parent === this)
     {
       // add to my slot definitions
-//      slotDefMap[name] = def
+      if (slotDefMapCache != null)
+        slotDefMapCache[name] = def
+      
       if (slotDefIndex == null)
         slotDefList.add(def)
       else
@@ -199,7 +197,6 @@ class TypeDef : CTypeDef
     // now we add into all slot tables
 //    slotMap[m.name] = m
 //    slotDefMap[m.name] = m
-    //TODO what about slotCache
     slotDefList.add(m)
   }
 
@@ -293,7 +290,7 @@ class TypeDef : CTypeDef
 //  TypeRef? base             // extends class
 //  TypeRef[] mixins          // mixin types
   
-  override TypeRef[] inheritances
+  override CType[] inheritances
   
   EnumDef[] enumDefs               // declared enumerated pairs (only if enum)
   ClosureExpr[] closures           // closures where I am enclosing type (Parse)

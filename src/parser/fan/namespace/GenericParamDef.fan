@@ -24,7 +24,7 @@ class GenericParamDef : CTypeDef {
     this.paramName = name
     this.index = index
     this.name = parent.name+"^"+name
-    if (bound == null) bound = TypeRef.objType(loc).toNullable
+    if (bound == null) bound = CType.objType(loc).toNullable
     this.bound = bound
   }
   

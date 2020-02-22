@@ -9,23 +9,22 @@
 
 class FuncTypeDef : Node {
   
-  TypeRef typeRef
+  CType typeRef
   
-  new make(Loc loc, TypeRef[] params, Str[] names, TypeRef ret, Bool defaultParameterized := false)
+  new make(Loc loc, CType[] params, Str[] names, CType ret, Bool defaultParameterized := false)
    : super(loc)
   {
-    typeRef = TypeRef.funcType(loc, params, ret)
+    typeRef = CType.funcType(loc, params, ret)
     this.params = params
     this.names  = names
     this.ret    = ret
   }
   
   new makeItBlock(Loc loc, CType itType)
-    : this.make(loc, [itType], ["it"], TypeRef.voidType(loc))
+    : this.make(loc, [itType], ["it"], CType.voidType(loc))
   {
-    //TODO check
     // sanity check
-    //if (itType.isThis) throw Err("Invalid it-block func signature: $this")
+    if (itType.isThis) throw Err("Invalid it-block func signature: $this")
   }
   
   override Void print(AstWriter out)
@@ -57,7 +56,7 @@ class FuncTypeDef : Node {
   
   CType[] params // a, b, c ...
   Str[] names    { private set } // parameter names
-  TypeRef ret // return type
+  CType ret // return type
   Bool unnamed                   // were any names auto-generated
   Bool inferredSignature   // were one or more parameters inferred
 }
@@ -223,10 +222,10 @@ class ClosureExpr : Expr
 //    ctype = t
   }
 
-  Void collapseExprAndParams(MethodDef m, TypeRef[] addParams)
+  Void collapseExprAndParams(MethodDef m, CType[] addParams)
   {
     addParams.each |ptype, i| {
-      m.paramDefs.add(ParamDef(loc, TypeRef.objType(loc).toNullable, "ignoreparam\$$i"))
+      m.paramDefs.add(ParamDef(loc, CType.objType(loc).toNullable, "ignoreparam\$$i"))
     }
 
     stmt := m.code.stmts.first
@@ -279,5 +278,5 @@ class ClosureExpr : Expr
 //  CType? itType                  // type of implicit it
   */
   
-  TypeRef? followCtorType          // follow make a new Type
+  CType? followCtorType          // follow make a new Type
 }

@@ -172,6 +172,7 @@ public final class FPod
 		  String[] fs = line.split("=", 2);
 		  if (fs.length != 2) {
 			  System.out.println("ERROR read:"+line);
+        continue;
 		  }
 		  String key = fs[0].trim();
 		  String val = fs[1].trim();

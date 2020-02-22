@@ -124,9 +124,9 @@ abstract class DslPlugin : CompilerStep
         // char which is to the left of the opening "<|" token
         loc := Loc(dsl.srcLoc.file, dsl.srcLoc.line+i, j+1)
         if (dsl.leadingTabs == 0)
-          throw err("Leading space in $dsl.anchorType.name DSL must be $dsl.leadingSpaces spaces", loc)
+          err("Leading space in $dsl.anchorType.name DSL must be $dsl.leadingSpaces spaces", loc)
         else
-          throw err("Leading space in $dsl.anchorType.name DSL must be $dsl.leadingTabs tabs and $dsl.leadingSpaces spaces", loc)
+          err("Leading space in $dsl.anchorType.name DSL must be $dsl.leadingTabs tabs and $dsl.leadingSpaces spaces", loc)
       }
       if (j < line.size) s.add(line[j+1..-1])
     }

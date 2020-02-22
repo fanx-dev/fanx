@@ -34,6 +34,11 @@ class CheckInheritance : CompilerStep
 
   override Void visitTypeDef(TypeDef t)
   {
+    if (t.baseSpecified && t.base != null) {
+      if (t.base.qname == "sys::Facet") err("Cannot inherit 'Facet' explicitly", t.loc)
+      if (t.base.qname == "sys::Enum")  err("Cannot inherit 'Enum' explicitly", t.loc)
+    }
+    
     // check out of order base vs mixins first
     if (!checkOutOfOrder(t)) return
 
@@ -121,6 +126,8 @@ class CheckInheritance : CompilerStep
     getInheritances(allInheritances, t.asRef())
     if (allInheritances.containsKey(t.qname)) {
       err("Cyclic inheritance for '$t.name'", t.loc)
+      t.inheritances.clear
+      t.inheritances.add(ns.objType)
     }
   }
   
@@ -128,8 +135,8 @@ class CheckInheritance : CompilerStep
     t.inheritances.each |p| {
       pt := acc[p.qname]
       if (pt == null) {
-        getInheritances(acc, p)
         acc[p.qname] = p
+        getInheritances(acc, p)
       }
     }
   }

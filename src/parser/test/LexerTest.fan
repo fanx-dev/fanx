@@ -12,9 +12,13 @@ class LexerTest : GoldenTest {
     }
   }
   
+  Void testSeg() {
+    runLexer(Str<|"ABC${str}"|>, "seg")
+  }
+  
   Void runLexer(Str code, Str name) {
     support := CompilerLog()
-    tokenizer := Tokenizer(support, Loc.makeUninit, code, true)
+    tokenizer := Tokenizer(support, Loc.makeUninit, code, true, false)
     result := tokenizer.tokenize
     
     s := StrBuf()

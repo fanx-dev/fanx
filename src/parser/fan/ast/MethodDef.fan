@@ -22,7 +22,7 @@ class MethodDef : SlotDef, CMethod
     def := make(loc, parent)
     def.name   = "static\$init"
     def.flags  = FConst.Private + FConst.Static + FConst.Synthetic
-    def.ret    = TypeRef.voidType(loc)
+    def.ret    = CType.voidType(loc)
     def.code   = block
     return def;
   }
@@ -32,7 +32,7 @@ class MethodDef : SlotDef, CMethod
     def := make(loc, parent)
     def.name   = "instance\$init\$$parent.pod.name\$$parent.name";
     def.flags  = FConst.Private + FConst.Synthetic
-    def.ret    = TypeRef.voidType(loc)
+    def.ret    = CType.voidType(loc)
     def.code   = block
     return def;
   }
@@ -42,7 +42,7 @@ class MethodDef : SlotDef, CMethod
   {
     this.name = name
     this.flags = flags
-    this.ret = TypeRef.error(loc)
+    this.ret = CType.error(loc)
     paramDefs = ParamDef[,]
 //    vars = MethodVar[,]
   }

@@ -136,7 +136,7 @@ class SlotNormalize : CompilerStep
     f := FieldDef(loc, curType)
     f.flags     = FConst.Private + FConst.Storage + FConst.Synthetic
     f.name      = m.name + "\$Store"
-    f.fieldType = TypeRef.objType(loc)
+    f.fieldType = CType.objType(loc)
     f.init      = Expr.makeForLiteral(loc, "_once_")
     curType.addSlot(f)
      iInit.add(fieldInitStmt(f))

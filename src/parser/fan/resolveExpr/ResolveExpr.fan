@@ -79,6 +79,10 @@ class ResolveExpr : CompilerStep
     // check for type inference
     if (def.ctype == null)
       def.var_v.ctype = def.init.ctype//.inferredAs
+    
+    conflict := curUnit.importedTypes[def.name]
+    if (conflict != null && conflict.size > 0)
+      err("Variable name conflicts with imported type '$conflict.first'", def.loc)
 
     // bind to scope as a method variable
     bindToMethodVar(def)
@@ -268,7 +272,12 @@ class ResolveExpr : CompilerStep
   
   private Expr resolveField(FieldExpr expr) {
     expr.field = expr.target.ctype.field(expr.name)
-    expr.ctype = expr.field.fieldType
+    if (expr.field == null) {
+      expr.ctype = ns.error
+    }
+    else {
+      expr.ctype = expr.field.fieldType
+    }
     return expr
   }
   
@@ -285,7 +294,7 @@ class ResolveExpr : CompilerStep
 
       // if more then, one first try to exclude those internal to other pods
       if (stypes != null && stypes.size > 1)
-        stypes.exclude |t| { t.isInternal && t.podName != compiler.pod.name }
+        stypes = stypes.exclude |t| { t.isInternal && t.podName != compiler.pod.name }
 
       if (stypes != null && !stypes.isEmpty)
       {
@@ -367,6 +376,7 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveSlotLiteral(SlotLiteralExpr expr)
   {
+    ResolveType.doResolveType(this, expr.parent)
     slot := expr.parent.slot(expr.name)
     if (slot == null)
     {
@@ -392,7 +402,7 @@ class ResolveExpr : CompilerStep
     {
       // infer from list item expressions
       v := CommonType.commonType(ns, expr.vals)
-      expr.ctype = TypeRef.listType(expr.loc, v)
+      expr.ctype = CType.listType(expr.loc, v)
     }
     return expr
   }
@@ -411,7 +421,7 @@ class ResolveExpr : CompilerStep
       // infer from key/val expressions
       k := CommonType.commonType(ns, expr.keys).toNonNullable
       v := CommonType.commonType(ns, expr.vals)
-      expr.ctype = TypeRef.mapType(expr.loc, k, v)
+      expr.ctype = CType.mapType(expr.loc, k, v)
     }
     return expr
   }
@@ -421,7 +431,6 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveThis(ThisExpr expr)
   {
-    //TODO check
 //    if (inClosure)
 //    {
 //      loc := expr.loc
@@ -575,8 +584,12 @@ class ResolveExpr : CompilerStep
     if (resolved.id === ExprId.localVar)
     {
       field := curType.slots.get(var_v.name) as CField
-      if (field != null)
-        resolved = FieldExpr(var_v.loc, ThisExpr(var_v.loc), field.name)
+      if (field != null) {
+        fieldExpr := FieldExpr(var_v.loc, ThisExpr(var_v.loc), field.name)
+        fieldExpr.field = field
+        fieldExpr.ctype = field.fieldType
+        resolved = fieldExpr
+      }
     }
 
     // is we can't resolve as field, then this is an error
@@ -670,8 +683,11 @@ class ResolveExpr : CompilerStep
     if (call.noParens && call.args.size == 1)
     {
       closure:= call.args.last as ClosureExpr
-      if (closure != null && closure.isItBlock)
-        return closure.toWith(binding, ns.objWith)
+      if (closure != null && closure.isItBlock) {
+        expr := closure.toWith(binding, ns.objWith)
+        ns.resolveTypeRef(closure.ctype, closure.loc)
+        return expr
+      }
     }
 
     // can only handle zero to eight arguments; I could wrap up the
@@ -779,7 +795,7 @@ class ResolveExpr : CompilerStep
 
       // check that each parameter fits
       for (i:=0; i<args.size; ++i)
-        if (!CheckErrors.canCoerce(args[i], params[i].paramType))
+        if (!Coerce.canCoerce(args[i], params[i].paramType))
           return
 
       // its a match!
@@ -811,7 +827,7 @@ class ResolveExpr : CompilerStep
     {
       expr.ctype  = ns.strType
       expr.method = ns.strPlus
-      //TODO
+      //TODO ConstantFolder
       //return expr
 //      return ConstantFolder(compiler).fold(expr)
     }
@@ -870,7 +886,7 @@ class ResolveExpr : CompilerStep
       {
         if (m.params.size != 1) return false
         paramType := m.params.first.paramType
-        return CheckErrors.canCoerce(rhs, paramType)
+        return Coerce.canCoerce(rhs, paramType)
       }
     }
 
@@ -953,7 +969,6 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveClosure(ClosureExpr expr)
   {
-    //TODO closure
 //    // save away current locals in scope
 //    expr.enclosingVars = localsInScope
 //
@@ -966,7 +981,6 @@ class ResolveExpr : CompilerStep
 //    }
     
     closureStack.push(expr)
-    //TODO
     
     resoveBlock(expr.code)
     closureStack.pop

@@ -100,6 +100,10 @@ class DocDef : Node
   }
 
   Str[] lines
+
+  override Str toStr() {
+    return lines.join("\n")
+  }
 }
 
 **
@@ -129,7 +133,7 @@ abstract class DefNode : Node, CDefNode
 //    return facets.find |f| { f.type.qname == qname }
 //  }
 
-  Void addFacet(TypeRef type, [Str:Obj]? vals := null)
+  Void addFacet(CType type, [Str:Obj]? vals := null)
   {
     if (facets == null) facets = FacetDef[,]
     loc := this.loc

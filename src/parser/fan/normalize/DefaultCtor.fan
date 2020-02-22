@@ -56,7 +56,7 @@ class DefaultCtor : CompilerStep
     m := MethodDef(loc, parent)
     m.flags = flags.or(FConst.Ctor + FConst.Synthetic)
     m.name  = "make"
-    m.ret   = TypeRef.voidType(loc)
+    m.ret   = CType.voidType(loc)
     m.code  = block
 
     parent.addSlot(m)

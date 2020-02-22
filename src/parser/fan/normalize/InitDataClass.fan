@@ -58,7 +58,7 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "make"
     m.flags = FConst.Ctor + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.voidType(curType.loc)
+    m.ret = CType.voidType(curType.loc)
     loc := curType.loc
 
     if (!curType.inheritances.first.isObj) {
@@ -67,7 +67,7 @@ class InitDataClass : CompilerStep
     }
 
     //make(|This|? func)
-    funcType := TypeRef.funcType(loc, [curType.asRef()], TypeRef.voidType(loc))
+    funcType := CType.funcType(loc, [curType.asRef()], CType.voidType(loc))
     param := ParamDef(loc, funcType.toNullable, "func\$")
     m.params.add(param)
     pvar := UnknownVarExpr(loc, null, "func\$")
@@ -91,7 +91,7 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "makeFrom"
     m.flags = FConst.Ctor + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.voidType(curType.loc)
+    m.ret = CType.voidType(curType.loc)
     loc := curType.loc
 
     if (!curType.inheritances.first.isObj) {
@@ -129,14 +129,14 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "toStr"
     m.flags = FConst.Virtual + FConst.Override + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.strType(curType.loc)
+    m.ret = CType.strType(curType.loc)
     m.code = Block(curType.loc)
     loc := curType.loc
 
     // buf$ := Buf()
-    locStmt := LocalDefStmt(loc, TypeRef(loc, "sys", "StrBuf"), "buf\$")
+    locStmt := LocalDefStmt(loc, CType.makeRef(loc, "sys", "StrBuf"), "buf\$")
     lvar := UnknownVarExpr(loc, null, "buf\$")
-    locStmt.init = CallExpr(loc, StaticTargetExpr(loc, TypeRef(loc, "sys", "StrBuf")), "make", ExprId.construction)
+    locStmt.init = CallExpr(loc, StaticTargetExpr(loc, CType.makeRef(loc, "sys", "StrBuf")), "make", ExprId.construction)
     m.code.stmts.add(locStmt)
 
     fields := curType.fieldDefs.exclude |field| {
@@ -146,7 +146,7 @@ class InitDataClass : CompilerStep
       addName := CallExpr(loc, lvar, "add") { args = [LiteralExpr.makeStr(loc, field.name+":")] }
       addField := CallExpr(
           loc, addName, "add") { args = [TypeCheckExpr.coerce(
-                 FieldExpr(loc, ThisExpr(loc), field.name), TypeRef.objType(loc)
+                 FieldExpr(loc, ThisExpr(loc), field.name), CType.objType(loc)
              )]
           }
 
@@ -179,12 +179,12 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "hash"
     m.flags = FConst.Virtual + FConst.Override + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.intType(curType.loc)
+    m.ret = CType.intType(curType.loc)
     m.code = Block(curType.loc)
     loc := curType.loc
 
     //h$ := 1
-    locStmt := LocalDefStmt(loc, TypeRef.intType(curType.loc), "h\$")
+    locStmt := LocalDefStmt(loc, CType.intType(curType.loc), "h\$")
     lvar := UnknownVarExpr(loc, null, "h\$")
     locStmt.init = LiteralExpr(loc, ExprId.intLiteral, 1)
     m.code.stmts.add(locStmt)
@@ -220,13 +220,13 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "equals"
     m.flags = FConst.Virtual + FConst.Override + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.boolType(curType.loc)
+    m.ret = CType.boolType(curType.loc)
     m.code = Block(curType.loc)
     loc := curType.loc
 
     //param := m.addParamVar(ns.objType.toNullable, "obj\$")
     //pvar := LocalVarExpr(loc, param)
-    param := ParamDef(loc, TypeRef.objType(loc).toNullable, "obj\$")
+    param := ParamDef(loc, CType.objType(loc).toNullable, "obj\$")
     m.params.add(param)
     pvar := UnknownVarExpr(loc, null, "obj\$")
 
@@ -281,13 +281,13 @@ class InitDataClass : CompilerStep
     m := MethodDef(curType.loc, curType)
     m.name = "compare"
     m.flags = FConst.Virtual + FConst.Override + FConst.Public + FConst.Synthetic
-    m.ret = TypeRef.intType(curType.loc)
+    m.ret = CType.intType(curType.loc)
     m.code = Block(curType.loc)
     loc := curType.loc
 
     // param := m.addParamVar(ns.objType, "obj\$")
     // pvar := UnknownVarExpr(loc, null, "obj\$")
-    param := ParamDef(loc, TypeRef.objType(loc), "obj\$")
+    param := ParamDef(loc, CType.objType(loc), "obj\$")
     m.params.add(param)
     pvar := UnknownVarExpr(loc, null, "obj\$")
 

@@ -35,10 +35,13 @@ class LiteralExpr : Expr
     if (!ctype.isNullable)
     {
       if (ctype.isBool())  literal = make(loc, ExprId.falseLiteral, false)
-      if (ctype.isInt())   literal = make(loc, ExprId.intLiteral, 0)
-      if (ctype.isFloat()) literal = make(loc, ExprId.floatLiteral, 0f)
-      literal.ctype = ctype
-      return literal
+      else if (ctype.isInt())   literal = make(loc, ExprId.intLiteral, 0)
+      else if (ctype.isFloat()) literal = make(loc, ExprId.floatLiteral, 0f)
+      
+      if (literal != null) {
+        literal.ctype = ctype
+        return literal
+      }
     }
     literal = makeNull(loc)
     literal.ctype = ctype
@@ -131,7 +134,7 @@ class LocaleLiteralExpr: Expr
 **
 class SlotLiteralExpr : Expr
 {
-  new make(Loc loc, TypeRef parent, Str name)
+  new make(Loc loc, CType parent, Str name)
     : super(loc, ExprId.slotLiteral)
   {
     this.parent = parent
@@ -142,7 +145,7 @@ class SlotLiteralExpr : Expr
 
   override Str toStr() { "$parent#${name}" }
 
-  TypeRef parent
+  CType parent
   Str name
   CSlot? slot
 }
@@ -193,13 +196,13 @@ class RangeLiteralExpr : Expr
 **
 class ListLiteralExpr : Expr
 {
-  new make(Loc loc, TypeRef? explicitType := null)
+  new make(Loc loc, CType? explicitType := null)
     : super(loc, ExprId.listLiteral)
   {
     this.explicitType = explicitType
   }
 
-  new makeFor(Loc loc, TypeRef explicitType, Expr[] vals)
+  new makeFor(Loc loc, CType explicitType, Expr[] vals)
     : super.make(loc, ExprId.listLiteral)
   {
     this.explicitType = explicitType
@@ -236,7 +239,7 @@ class ListLiteralExpr : Expr
     return s.toStr
   }
 
-  TypeRef? explicitType
+  CType? explicitType
   Expr[] vals := Expr[,]
 }
 
@@ -249,7 +252,7 @@ class ListLiteralExpr : Expr
 **
 class MapLiteralExpr : Expr
 {
-  new make(Loc loc, TypeRef? explicitType := null)
+  new make(Loc loc, CType? explicitType := null)
     : super(loc, ExprId.mapLiteral)
   {
     this.explicitType = explicitType
@@ -289,7 +292,7 @@ class MapLiteralExpr : Expr
     return s.toStr
   }
 
-  TypeRef? explicitType
+  CType? explicitType
   Expr[] keys := Expr[,]
   Expr[] vals := Expr[,]
 }

@@ -34,6 +34,6 @@ class ParserGoldenTest : GoldenTest {
     
     verifyGolden(s.toStr, name)
     
-    return parser.unit
+    //parser.unit
   }
 }

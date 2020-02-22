@@ -70,19 +70,20 @@ class FTable
   {
     //TODO Fix fanx
     nsPerSec := 1000000000
-//    return make(pod,
-//      |OutStream out, Obj obj| {
-//        out.writeI8(((Duration)obj).toSec)
-//        .writeI4(((Int)((Duration)obj).toNanos) % nsPerSec)
-//      },
-//      |InStream in->Obj| { Duration.fromNanos(in.readS8 * nsPerSec + in.readS4) })
-//    
     return make(pod,
       |OutStream out, Obj obj| {
         out.writeI8(((Duration)obj).toSec)
-        .writeI4(((Int)((Duration)obj).ticks) % nsPerSec)
+        .writeI4(((Int)((Duration)obj).toNanos) % nsPerSec)
       },
-      |InStream in->Obj| { Duration(in.readS8 * nsPerSec + in.readS4) })
+      |InStream in->Obj| { Duration.fromNanos(in.readS8 * nsPerSec + in.readS4) })
+
+    
+//    return make(pod,
+//      |OutStream out, Obj obj| {
+//        out.writeI8(((Duration)obj).toSec)
+//        .writeI4(((Int)((Duration)obj).ticks) % nsPerSec)
+//      },
+//      |InStream in->Obj| { Duration(in.readS8 * nsPerSec + in.readS4) })
   }
 
 //////////////////////////////////////////////////////////////////////////

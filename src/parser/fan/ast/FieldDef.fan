@@ -22,7 +22,7 @@ public class FieldDef : SlotDef, CField
   {
     this.name = name
     this.flags = flags
-    this.fieldType = TypeRef.error(loc)
+    this.fieldType = CType.error(loc)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,14 +102,14 @@ public class FieldDef : SlotDef, CField
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  override TypeRef fieldType  // field type
+  override CType fieldType  // field type
 //  Field? field              // resolved finalized field
   Expr? init                // init expression or null
   Bool walkInit := true     // tree walk init expression
   MethodDef? get            // getter MethodDef
   MethodDef? set            // setter MethodDef
   CField? concreteBase      // if I override a concrete virtual field
-  TypeRef? inheritedRet       // if covariant override of method
+  CType? inheritedRet       // if covariant override of method
   Bool requiresNullCheck    // flags that ctor needs runtime check to ensure it-block set it
   EnumDef? enumDef          // if an enum name/ordinal pair
   Str? closureInfo          // if this is a closure wrapper field

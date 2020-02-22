@@ -12,3 +12,4 @@ release
 env/lib
 env/doc
 src/parser/goldenFile
+parser.jar

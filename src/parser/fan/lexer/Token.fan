@@ -81,6 +81,8 @@ enum class Token
   safeArrow     ("?->"),
   safeTildeArrow("?~>"),
   docComment    ("**"),
+  slComment     ("//"),
+  mlComment     ("/*"),
   dollar        ("\$"),
   lparenSynthetic ("("),  // synthetic () grouping of interpolated string exprs
 

@@ -235,7 +235,8 @@ mixin CMethod : CSlot
   ** more loose for ParameterizedType type
   static Bool sameType(CType ai, CType bi) {
     if (ai == bi) return true
-    if (ai.isNullable != bi.isNullable) return false
+    if (ai.isNullable != bi.isNullable)
+      return false
 
     if (ai.qname == bi.qname) return true
     
@@ -258,9 +259,11 @@ mixin CMethod : CSlot
     a := params
     b := that.params
 
-    if (a.size != b.size) return false
+    if (a.size != b.size)
+      return false
     for (i:=0; i<a.size; ++i) {
-      if (!sameType(a[i].paramType, b[i].paramType)) return false
+      if (!sameType(a[i].paramType, b[i].paramType))
+        return false
     }
     return true
   }

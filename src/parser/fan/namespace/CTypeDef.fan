@@ -40,11 +40,13 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   override Str toStr() { signature }
   
   once CType asRef() {
-    tr := TypeRef(loc, pod.name, name)
+    tr := CType.makeRef(loc, pod.name, name)
     if (this.isGeneric) {
-      tr.genericArgs = [,]
-      this.genericParameters.each |p| {
-        tr.genericArgs.add(p.asRef)
+      if (this.qname != "sys::Func") {
+        tr.genericArgs = [,]
+        this.genericParameters.each |p| {
+          tr.genericArgs.add(p.asRef)
+        }
       }
     }
     tr.resolveTo(this)
@@ -145,13 +147,16 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   **
   abstract CSlot[] slotDefs()
   
-  protected once [Str:CSlot] slotDefMap() {
+  protected [Str:CSlot]? slotDefMapCache
+  protected [Str:CSlot] slotDefMap() {
+    if (slotDefMapCache != null) return slotDefMapCache
     map := [Str:CSlot][:]
     slotDefs.each |s|{
       if (s.isGetter || s.isSetter || s.isOverload) return
       map[s.name] = s
     }
-    return map
+    slotDefMapCache = map
+    return slotDefMapCache
   }
   
   **
@@ -257,22 +262,38 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   {
     t.slots.each |CSlot newSlot|
     {
-      // if slot already mapped, skip it
-      if (slotsCached[newSlot.name] != null) {
-        if (slotsCached[newSlot.name].parent.qname != "sys::Obj") {
-          return
-        }
-      }
-
       // we never inherit constructors, private slots,
       // or internal slots outside of the pod
       if (newSlot.isCtor || newSlot.isPrivate || newSlot.isStatic ||
           (newSlot.isInternal && newSlot.parent.podName != t.typeDef.podName))
         return
+      
+      oldSlot := slotsCached[newSlot.name]
+      if (oldSlot != null) {
+        kp := keep(oldSlot, newSlot)
+        if (kp != newSlot) return
+      }
 
       // inherit it
       slotsCached[newSlot.name] = newSlot
     }
+  }
+  
+  **
+  ** Return if there is a clear keeper between a and b - if so
+  ** return the one to keep otherwise return null.
+  **
+  static CSlot? keep(CSlot a, CSlot b)
+  {
+    // if one is abstract and one concrete we keep the concrete one
+    if (a.isAbstract && !b.isAbstract) return b
+    if (!a.isAbstract && b.isAbstract) return a
+
+    // keep one if it is a clear override from the other
+    if (a.parent.asRef.fits(b.parent.asRef)) return a
+    if (b.parent.asRef.fits(a.parent.asRef)) return b
+
+    return null
   }
 
 }

@@ -32,15 +32,20 @@ class CType : CNode, TypeMixin
   
   CTypeDef? resolvedType
   
-  **
-  ** Is this is a nullable type (marked with trailing ?)
-  **
-  Bool isNullable() { _isNullable || (resolvedType != null && resolvedType is GenericParamDef) }
+  override Loc loc { private set }
   
-  override Loc loc() { typeDef.loc }
+//////////////////////////////////////////////////////////////////////////
+// Ctors
+//////////////////////////////////////////////////////////////////////////
   
-  new make(Str pod, Str name) {
+  static CType makeRef(Loc loc, Str? pod, Str name) {
+    t := CType(pod ?: "", name, loc)
+    return t
+  }
+  
+  new make(Str pod, Str name, Loc loc := Loc.makeUninit) {
     this.podName = pod
+    this.loc = loc
     
     if (pod == "sys" || pod.isEmpty) {
       if (name.size > 3 && name.startsWith("Int")) {
@@ -71,8 +76,46 @@ class CType : CNode, TypeMixin
   new makeResolvedType(CTypeDef resolvedType) {
     this.resolvedType = resolvedType
     this.name = resolvedType.name
-    podName = resolvedType.podName
+    this.podName = resolvedType.podName
+    this.loc = this.resolvedType.loc
   }
+  
+//////////////////////////////////////////////////////////////////////////
+// Builder
+//////////////////////////////////////////////////////////////////////////
+  
+  static CType? objType(Loc loc) { makeRef(loc, "sys", "Obj") }
+  static CType? voidType(Loc loc) { makeRef(loc, "sys", "Void") }
+  static CType? errType(Loc loc) { makeRef(loc, "sys", "Err") }
+  static CType? error(Loc loc) { makeRef(loc, "sys", "Error") }
+  static CType? nothingType(Loc loc) { makeRef(loc, "sys", "Nothing") }
+  static CType? boolType(Loc loc) { makeRef(loc, "sys", "Bool") }
+  static CType? enumType(Loc loc) { makeRef(loc, "sys", "Enum") }
+  static CType? facetType(Loc loc) { makeRef(loc, "sys", "Facet") }
+  static CType? intType(Loc loc) { makeRef(loc, "sys", "Int") }
+  static CType? strType(Loc loc) { makeRef(loc, "sys", "Str") }
+  static CType? thisType(Loc loc) { makeRef(loc, "sys", "This") }
+  static CType? listType(Loc loc, CType elemType) {
+    t := makeRef(loc, "sys", "List")
+    t.genericArgs = [elemType]
+    return t
+  }
+  static CType? funcType(Loc loc, CType[] params, CType ret) {
+    t := makeRef(loc, "sys", "Func")
+    t.genericArgs = [ret].addAll(params)
+    return t
+  }
+  static CType? asyncType(Loc loc) { makeRef(loc, "concurrent", "Async") }
+//  static TypeRef? promiseType(Loc loc) { TypeRef(loc, "concurrent", "Promise") }
+  static CType? mapType(Loc loc, CType k, CType v) {
+    t := makeRef(loc, "std", "Map")
+    t.genericArgs = [k, v]
+    return t
+  }
+  
+//////////////////////////////////////////////////////////////////////////
+// methods
+//////////////////////////////////////////////////////////////////////////
   
   override Void print(AstWriter out)
   {
@@ -150,7 +193,6 @@ class CType : CNode, TypeMixin
   
   virtual Bool isFunc() { qname == "sys::Func" || (base != null && base.qname == "sys::Func") }
   
-  
 //  private CType dup() {
 //    d := CType(qname, name)
 //    d.resolvedType = typeDef
@@ -198,6 +240,12 @@ class CType : CNode, TypeMixin
     d.genericArgs = genericArgs
     return d
   }
+  
+  **
+  ** Is this is a nullable type (marked with trailing ?)
+  **
+  Bool isNullable() { _isNullable || (resolvedType != null && resolvedType is GenericParamDef) }
+  
 
 //////////////////////////////////////////////////////////////////////////
 // Generics
@@ -237,7 +285,7 @@ class CType : CNode, TypeMixin
     if (t.typeDef is GenericParamDef)
       t = (t.typeDef as GenericParamDef).bound
     
-    if (t.isThis)
+    if (t.isThis || t.podName.isEmpty)
       t = t.typeDef.asRef
     return t
   }
@@ -250,9 +298,11 @@ class CType : CNode, TypeMixin
   ** defined in the sys pod with a one character name.
   **
   Bool hasGenericParameter() {
-    if (this.typeDef is ParameterizedType) return false
     if (this.typeDef.isGeneric) return true
     if (this.typeDef is GenericParamDef) return true
+    if (this.genericArgs != null) {
+      if (this.genericArgs.any { it.hasGenericParameter }) return true
+    }
     
     return false
   }

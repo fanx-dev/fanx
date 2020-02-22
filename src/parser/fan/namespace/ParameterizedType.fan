@@ -125,9 +125,15 @@ class ParameterizedType : CTypeDef {
       t = nt
     }
     else {
-      t.genericArgs = t.genericArgs.map |p|{ parameterize(p) }
+      nt := CType.makeResolvedType(nn)
+      nt.genericArgs = t.genericArgs.map |p|{ parameterize(p) }
+      nt._isNullable = t._isNullable
       //redo parameterized
-      t.resolveTo(nn)
+      if (nn is ParameterizedType) {
+        nt.resolveTo((nn as ParameterizedType).root)
+      }
+      else nt.resolveTo(nn)
+      t = nt
     }
 
     //special with func to nonullable

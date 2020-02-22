@@ -88,8 +88,8 @@ mixin TypeMixin {
   Bool isType()    { qname == "std::Type" }
   Bool isVoid()    { qname == "sys::Void" }
   Bool isBuf()     { qname == "std::Buf" }
-//  Bool isList()    { fits(ns.listType) }
-//Bool isMap()     { fits(ns.mapType) }
+  Bool isList()    { qname == "sys::List" }
+  Bool isMap()     { qname == "std::Map" }
 //  virtual Bool isFunc()    { this.base.qname == "sys::Func" }
   Bool isNothing() { qname == "sys::Nothing" }
   Bool isError() { qname == "sys::Error" }

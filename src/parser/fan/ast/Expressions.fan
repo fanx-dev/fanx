@@ -234,6 +234,8 @@ class CallExpr : NameExpr
 
   override Bool isStmt()
   {
+    if (method == null) return true
+    
     // stand alone constructor is not a valid stmt
     if (method.isCtor) return false
 
@@ -501,7 +503,7 @@ class FieldExpr : NameExpr
   {
     s := StrBuf.make
     if (target != null) s.add(target).add(".");
-    if (!useAccessor) s.add("@")
+    if (!useAccessor) s.add("&")
     s.add(name)
     return s.toStr
   }
@@ -597,7 +599,7 @@ class ThisExpr : LocalVarExpr
 **
 class SuperExpr : LocalVarExpr
 {
-  new make(Loc loc, TypeRef? explicitType := null)
+  new make(Loc loc, CType? explicitType := null)
     : super(loc, null, ExprId.superExpr)
   {
     this.explicitType = explicitType
@@ -615,7 +617,7 @@ class SuperExpr : LocalVarExpr
       return "super"
   }
 
-  TypeRef? explicitType   // if "named super"
+  CType? explicitType   // if "named super"
 }
 
 **************************************************************************
@@ -652,9 +654,9 @@ class ItExpr : LocalVarExpr
 **
 class StaticTargetExpr : Expr
 {
-  TypeRef target
+  CType target
   
-  new make(Loc loc, TypeRef target)
+  new make(Loc loc, CType target)
     : super(loc, ExprId.staticTarget)
   {
     this.target = target
@@ -799,7 +801,7 @@ class TernaryExpr : Expr
 **
 class ComplexLiteral : Expr
 {
-  new make(Loc loc, TypeRef target)
+  new make(Loc loc, CType target)
     : super(loc, ExprId.complexLiteral)
   {
     this.target = target
@@ -825,7 +827,7 @@ class ComplexLiteral : Expr
     return s.toStr
   }
 
-  TypeRef target
+  CType target
   Str[] names
   Expr[] vals
 }
@@ -840,7 +842,7 @@ class ComplexLiteral : Expr
 **
 class DslExpr : Expr
 {
-  new make(Loc loc, TypeRef anchorType, Loc srcLoc, Str src)
+  new make(Loc loc, CType anchorType, Loc srcLoc, Str src)
     : super(loc, ExprId.dsl)
   {
     this.anchorType = anchorType
@@ -858,7 +860,7 @@ class DslExpr : Expr
     out.w(toStr)
   }
 
-  TypeRef anchorType  // anchorType <|src|>
+  CType anchorType  // anchorType <|src|>
   Str src           // anchorType <|src|>
   Loc srcLoc        // location of first char of src
   Int leadingTabs   // number of leading tabs on original Fantom line
@@ -967,7 +969,7 @@ enum class ShortcutOp
 
 class SizeOfExpr : Expr
 {
-  new make(Loc loc, TypeRef type)
+  new make(Loc loc, CType type)
     : super(loc, ExprId.sizeOfExpr)
   {
     this.type = type
@@ -979,7 +981,7 @@ class SizeOfExpr : Expr
     return "sizeof($type)"
   }
 
-  TypeRef type
+  CType type
 }
 
 class AddressOfExpr : Expr

@@ -2,19 +2,14 @@
 class DebugTest : Test {
   Void test() {
     code := 
-    """ using std
-    
-        virtual class Base<V> {
-          virtual This pos() { this }
-        }
-    
-        internal class Main<X> : Base<X>
+    """ 
+        class Foo
         {
-          override This pos() { this }
-          Void bar() {
-            x := pos
-            echo(x)
-          }
+          Obj a() { return [] }
+          Obj b() { Int x = 4 }
+          Obj c() { return Str[:] }
+          Obj d() { return a as GooGoo }
+          Obj e() { return a is Kaggle }
         }
         """
     

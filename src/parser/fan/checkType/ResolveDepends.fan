@@ -54,7 +54,7 @@ class ResolveDepends : CompilerStep
     resolvePodDepend(pod)
 
     // check that everything has a dependency on sys
-    if (!ns.depends.containsKey("sys"))
+    if (!isSys && !ns.depends.containsKey("sys"))
       err("All pods must have a dependency on 'sys'", loc)
 
     // depends self

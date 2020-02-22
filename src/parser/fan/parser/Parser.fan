@@ -26,7 +26,7 @@ public class Parser
   new make(CompilerLog log, Str code, CompilationUnit unit)
   {
 //    unit := CompilationUnit(loc, pod)
-    tokenizer := Tokenizer(log, unit.loc, code, true)
+    tokenizer := Tokenizer(log, unit.loc, code, true, false)
     unit.tokens = tokenizer.tokenize
     
     this.log = log
@@ -307,7 +307,7 @@ public class Parser
     def.doc    = doc
     def.facets = facets
     def.flags  = flags
-    if (def.isFacet) def.inheritances.add(TypeRef.facetType(loc))
+    //if (def.isFacet) def.inheritances.add(TypeRef.facetType(loc))
 
     //GenericType Param
     if (curt === Token.lt) {
@@ -375,17 +375,6 @@ public class Parser
       
       try {
         slot := slotDef(def, doc)
-  
-        //TODO check
-        // do duplicate name error checking here
-//        if ((slot is MethodDef && !((MethodDef)slot).isStaticInit) && def.hasSlotDef(slot.name))
-//        {
-//          err("Duplicate slot name '$slot.name'", slot.loc)
-//        }
-//        else
-//        {
-//          def.addSlot(slot)
-//        }
         def.addSlot(slot)
       }
       catch (CompilerErr e) {
@@ -401,15 +390,10 @@ public class Parser
     consume(Token.rbrace)
   }
 
-  private TypeRef inheritType()
+  private CType inheritType()
   {
-//    Loc loc := cur
-//    t := TypeRef(loc, simpleType(false))
-    return simpleType(false)
-    //TODO
-    //if (t == ns.facetType) err("Cannot inherit 'Facet' explicitly", t.loc)
-    //if (t == ns.enumType)  err("Cannot inherit 'Enum' explicitly", t.loc)
-//    return t
+    t := simpleType(false)
+    return t
   }
   
 //////////////////////////////////////////////////////////////////////////
@@ -727,7 +711,7 @@ public class Parser
     if (curt === Token.identifier && cur.val == parent.name && peekt == Token.lparen)
     {
       err("Invalid constructor syntax - use new keyword")
-      return methodDef(loc, parent, doc, facets, flags.or(FConst.Ctor), TypeRef.voidType(loc), consumeId)
+      return methodDef(loc, parent, doc, facets, flags.or(FConst.Ctor), CType.voidType(loc), consumeId)
     }
 
     // check for inferred typed field
@@ -749,7 +733,7 @@ public class Parser
                  TypeRef(loc, ns.voidType) :
                  TypeRef(loc, parent) //remove 'toNullable' sine we don't want boxing for struct type
       */
-      returns := TypeRef.voidType(loc)
+      returns := CType.voidType(loc)
       if (flags.and(FConst.Static) != 0) {
 //        if (parent.isGeneric) {
 //          TypeDef gp := parent.deref
@@ -794,7 +778,7 @@ public class Parser
     //modern function
     if (curt === Token.funKeyword) {
       consume
-      TypeRef? type := null
+      CType? type := null
       name := consumeId
       return methodDef(loc, parent, doc, facets, flags, type, name)
     }
@@ -824,7 +808,7 @@ public class Parser
   **   <fieldGetter>  :=  "get" (<eos> | <block>)
   **   <fieldSetter>  :=  <protection> "set" (<eos> | <block>)
   **
-  private FieldDef fieldDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, TypeRef? type, Str name)
+  private FieldDef fieldDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, CType? type, Str name)
   {
     // define field itself
     field := FieldDef(loc, parent)
@@ -891,7 +875,7 @@ public class Parser
     set.accessorFor = f
     set.flags = f.flags.or(FConst.Setter)
     set.name  = f.name
-    set.ret   = TypeRef.voidType(loc)
+    set.ret   = CType.voidType(loc)
     set.params.add(ParamDef(loc, f.fieldType, "it"))
     f.set = set
   }
@@ -963,7 +947,7 @@ public class Parser
   **   <param>          :=  <type> <id> [":=" <expr>]
   **   <methodBody>     :=  <eos> | ( "{" <stmts> "}" )
   **
-  private MethodDef methodDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, TypeRef? ret, Str name)
+  private MethodDef methodDef(Loc loc, TypeDef parent, DocDef? doc, FacetDef[]? facets, Int flags, CType? ret, Str name)
   {
     method := MethodDef(loc, parent)
     method.doc    = doc
@@ -999,15 +983,14 @@ public class Parser
         method.ret = ret
       }
       else {
-        ret = TypeRef.voidType(loc)
+        ret = CType.voidType(loc)
         method.ret = ret
       }
     }
 
     // if This is returned, then we configure inheritedRet
     // right off the bat (this is actual signature we will use)
-    //TODO
-//    if (ret.isThis) method.inheritedRet = parent
+    if (ret.isThis) method.inheritedRet = parent.asRef
 
     // if no body expected
     //if (parent.isNative) flags = flags.or(FConst.Native)
@@ -1114,7 +1097,7 @@ public class Parser
   **
   ** Parse a type production into a CType and wrap it as AST TypeRef.
   **
-  protected TypeRef typeRef()
+  protected CType typeRef()
   {
 //    Loc loc := cur
 //    return TypeRef(loc, ctype(true))
@@ -1126,7 +1109,7 @@ public class Parser
   ** valid type production return it.  Otherwise leave
   ** the parser positioned on the current token.
   **
-  protected TypeRef? tryType(Bool maybeCast := false)
+  protected CType? tryType(Bool maybeCast := false)
   {
     // types can only begin with identifier, | or [
     if (curt !== Token.identifier && curt !== Token.pipe && curt !== Token.lbracket)
@@ -1185,9 +1168,9 @@ public class Parser
   **   <listType>  :=  <type> "[]"
   **   <mapType>   :=  ["["] <type> ":" <type> ["]"]
   **
-  protected TypeRef ctype(Bool isTypeRef := false)
+  protected CType ctype(Bool isTypeRef := false)
   {
-    TypeRef? t := null
+    CType? t := null
     loc := cur.loc
 
     // Types can begin with:
@@ -1215,7 +1198,7 @@ public class Parser
       e := err("Expecting type name not $cur", loc)
       if (curt == Token.eof) throw e
       consume
-      t = TypeRef.objType(loc)
+      t = CType.objType(loc)
     }
 
     // check for ? nullable
@@ -1233,8 +1216,7 @@ public class Parser
       consume(Token.lbracket)
       consume(Token.rbracket)
       valT := t
-      t = TypeRef(loc, "sys", "List")
-      t.genericArgs = [valT]
+      t = CType.listType(loc, valT)
       if (curt === Token.question && !cur.whitespace)
       {
         consume(Token.question)
@@ -1251,14 +1233,13 @@ public class Parser
     // check for ":" for map type
     if (curt === Token.colon)
     {
-      //TODO check
-//      if (t.isNullable && (t isnot GenericParameter)) throw err("Map type cannot have nullable key type")
+      if (t.isNullable) err("Map type cannot have nullable key type")
       consume(Token.colon)
       key := t
       val := ctype
       //throw err("temp test")
 //      t = MapType(key, val)
-      t = TypeRef.mapType(loc, key, val)
+      t = CType.mapType(loc, key, val)
     }
 
     // check for ? nullable
@@ -1275,31 +1256,27 @@ public class Parser
   ** Simple type signature:
   **   <simpleType>  :=  <id> ["::" <id>]
   **
-  private TypeRef simpleType(Bool allowDefaultParameterized := true)
+  private CType simpleType(Bool allowDefaultParameterized := true)
   {
     loc := cur.loc
     id := consumeId
 
-    TypeRef? type
+    CType? type
     // fully qualified
     if (curt === Token.doubleColon)
     {
       consume
 //      return ResolveImports.resolveQualified(this, id, consumeId, loc) ?: ns.voidType
-      type = TypeRef(loc, id, consumeId)
+      type = CType.makeRef(loc, id, consumeId)
     }
     else {
-      type = TypeRef(loc, null, id)
+      type = CType.makeRef(loc, null, id)
     }
 
     //generic param
     if (curt === Token.lt) {
-      //TODO check
-//      if (!type.isGeneric) {
-//        errReport(CompilerErr("$type is not Generic", loc))
-//      }
       consume
-      params := TypeRef[,]
+      params := CType[,]
       while (true) {
         type1 := typeRef
         params.add(type1)
@@ -1334,10 +1311,10 @@ public class Parser
   **
   protected FuncTypeDef funcType(Bool isTypeRef)
   {
-    params := TypeRef[,]
+    params := CType[,]
     names  := Str[,]
     loc := cur.loc
-    ret := TypeRef.voidType(loc)
+    ret := CType.voidType(loc)
 
     // opening pipe
     consume(Token.pipe)
@@ -1382,7 +1359,7 @@ public class Parser
     return ft
   }
 
-  private Bool funcTypeFormal(Bool isTypeRef, TypeRef[] params, Str[] names, Bool[] unnamed)
+  private Bool funcTypeFormal(Bool isTypeRef, CType[] params, Str[] names, Bool[] unnamed)
   {
     if (peekt === Token.colon) {
       names.add(consumeId)
@@ -1408,7 +1385,7 @@ public class Parser
     }
     else
     {
-      params.add(TypeRef.objType(cur.loc).toNullable)
+      params.add(CType.objType(cur.loc).toNullable)
       names.add(consumeId)
       return true
     }

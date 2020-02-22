@@ -131,11 +131,17 @@ class ResolveImports : CompilerStep
       {
         
         u.resolvedType = CType(u.podName, u.typeName)
-        ns.resolveTypeRef(u.resolvedType, u.loc)
-        if (!u.resolvedType.isResolved)
+        try
         {
-          err("Type not found in pod '$podName::$u.typeName'", u.loc)
-          return
+          ns.resolveTypeRef(u.resolvedType, u.loc)
+          if (!u.resolvedType.isResolved)
+          {
+            err("Type not found in pod '$podName::$u.typeName'", u.loc)
+            return
+          }
+        }
+        catch (CompilerErr e) {
+          errReport(e)
         }
       }
     }
@@ -146,7 +152,7 @@ class ResolveImports : CompilerStep
     if (pod.name != "sys") {
       //std and reflect is imported implicitly
       if (pod.name != "std") {
-        if (ns.depends.containsKey("std")) {
+        if (!ns.depends.containsKey("std")) {
           pod := ns.resolvePod("std", pod.loc)
           res.addAll(pod.types)
         }

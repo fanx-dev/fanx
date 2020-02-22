@@ -30,7 +30,7 @@ class IncCompiler {
   }
   
   static IncCompiler fromProps(File file) {
-    props := file.readProps
+    props := file.in.readProps
     podName := props["podName"]
     srcDirs := props["srcDirs"]
     
@@ -111,5 +111,8 @@ class IncCompiler {
   
   Void resolveAll() {
     pipelines.each |pass| { pass.run }
+  }
+
+  static Void main() {
   }
 }

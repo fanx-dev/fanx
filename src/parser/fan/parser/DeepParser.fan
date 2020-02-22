@@ -182,14 +182,10 @@ class DeepParser : Parser {
   ** Parse local variable declaration, the current token must be
   ** the identifier of the local variable.
   **
-  private LocalDefStmt localDefStmt(Loc loc, TypeRef? localType, Bool isEndOfStmt)
+  private LocalDefStmt localDefStmt(Loc loc, CType? localType, Bool isEndOfStmt)
   {
     // verify name doesn't conflict with an import type
     name := consumeId
-    //TODO check
-//    conflict := unit.importedTypes[name]
-//    if (conflict != null && conflict.size > 0)
-//      err("Variable name conflicts with imported type '$conflict.first'", loc)
 
     hasColon := false
     if (localType == null && curt === Token.colon) {
@@ -846,7 +842,7 @@ class DeepParser : Parser {
   **
   ** Handle a term expression which begins with a type literal.
   **
-  private Expr typeBaseExpr(Loc loc, TypeRef ctype)
+  private Expr typeBaseExpr(Loc loc, CType ctype)
   {
     // type or slot literal
     if (curt === Token.pound)
@@ -892,11 +888,10 @@ class DeepParser : Parser {
       return collectionLiteralExpr(loc, ctype)
     }
 
-    //TODO fix closure
-    // closure
-//    if (curt == Token.lbrace && ctype is FuncType)
+    // closure expr never parse as TypeBase
+//    if (curt == Token.lbrace && ctype.isFunc)
 //    {
-//      return closure(loc, (FuncType)ctype)
+//      return closure(loc, ctype)
 //    }
 
     // simple literal type(arg)
@@ -1145,7 +1140,7 @@ class DeepParser : Parser {
   **   <mapItems>   :=  ":" | (<mapPair> ("," <mapPair>)*)
   **   <mapPair>    :=  <expr> ":" <expr>
   **
-  private Expr collectionLiteralExpr(Loc loc, TypeRef? explicitType)
+  private Expr collectionLiteralExpr(Loc loc, CType? explicitType)
   {
     // empty list [,]
     if (peekt === Token.comma)
@@ -1182,13 +1177,12 @@ class DeepParser : Parser {
   ** else
   **   cur must be on comma after first item
   **
-  private ListLiteralExpr listLiteralExpr(Loc loc, TypeRef? explicitType, Expr? first)
+  private ListLiteralExpr listLiteralExpr(Loc loc, CType? explicitType, Expr? first)
   {
     // explicitType is type of List:  Str[,]
     if (explicitType != null) {
       elemType := explicitType
-      explicitType = TypeRef(loc, "sys", "List")
-      explicitType.genericArgs = [elemType]
+      explicitType = CType.listType(loc, elemType)
     }
     list := ListLiteralExpr(loc, explicitType)
 
@@ -1225,15 +1219,14 @@ class DeepParser : Parser {
   ** else
   **   cur must be on colon of first key/value pair
   **
-  private MapLiteralExpr mapLiteralExpr(Loc loc, TypeRef? explicitType, Expr? first)
+  private MapLiteralExpr mapLiteralExpr(Loc loc, CType? explicitType, Expr? first)
   {
-    //TODO check
     // explicitType is *the* map type: Str:Str[,]
-//    if (explicitType != null && explicitType isnot MapType)
-//    {
-//      err("Invalid map type '$explicitType' for map literal", loc)
-//      explicitType = null
-//    }
+    if (explicitType != null && !explicitType.isMap)
+    {
+      err("Invalid map type '$explicitType' for map literal", loc)
+      explicitType = null
+    }
 
     map := MapLiteralExpr(loc, explicitType)
 
@@ -1289,7 +1282,6 @@ class DeepParser : Parser {
     // otherwise this can only be a FuncType declaration,
     // so give it a whirl, and bail if that fails
     mark := pos
-    //TODO closure
 //    funcType := tryType as FuncType
     funcType := this.funcType(false)
 //    if (funcType == null) { reset(mark); return null }
@@ -1319,7 +1311,7 @@ class DeepParser : Parser {
       }
     }
 
-    ib := closure(cur.loc, FuncTypeDef.makeItBlock(cur.loc, TypeRef.objType(cur.loc).toNullable))
+    ib := closure(cur.loc, FuncTypeDef.makeItBlock(cur.loc, CType.objType(cur.loc).toNullable))
     ib.isItBlock = true
     //ib.itType = ns.error
     return ib
@@ -1359,7 +1351,7 @@ class DeepParser : Parser {
   ** field or method definition.  It is used to parse complex literals
   ** declared in a facet without mucking up the closure code path.
   **
-  private Expr complexLiteral(Loc loc, TypeRef ctype)
+  private Expr complexLiteral(Loc loc, CType ctype)
   {
     complex := ComplexLiteral(loc, ctype)
     consume(Token.lbrace)

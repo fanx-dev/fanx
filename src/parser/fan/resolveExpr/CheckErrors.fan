@@ -106,6 +106,9 @@ class CheckErrors : CompilerStep, Coerce
     if (self.base.typeDef.isForeign) return self.base
     m := self.mixins.find |CType t->Bool| { t.typeDef.isForeign }
     if (m != null) return m
+    if (self == self.base.typeDef) {
+      return null
+    }
     return foreignInheritance(self.base.typeDef)
   }
 
@@ -442,7 +445,7 @@ class CheckErrors : CompilerStep, Coerce
     // mixins cannot have native methods
     if (flags.and(FConst.Native) != 0)
     {
-      //TODO
+      //TODO native mixin
       if (curType.isMixin)
         err("Mixins cannot have native methods", m.loc)
     }
@@ -928,6 +931,7 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkSlotLiteral(SlotLiteralExpr expr)
   {
+    if (expr.slot == null) return
     checkSlotProtection(expr.slot, expr.loc)
   }
 
@@ -1088,6 +1092,8 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkShortcut(ShortcutExpr shortcut)
   {
+    if (shortcut.method == null) return
+    
     switch (shortcut.opToken)
     {
       // comparable
@@ -1145,6 +1151,7 @@ class CheckErrors : CompilerStep, Coerce
   private Expr? checkAssignField(FieldExpr lhs, Expr? rhs)
   {
     field := ((FieldExpr)lhs).field
+    if (field == null) return rhs
 
     // check protection scope (which might be more narrow than the scope
     // of the entire field as checked in checkProtection by checkField)
@@ -1228,9 +1235,8 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkConstruction(CallExpr call)
   {
-    if (!call.method.isCtor)
+    if (call.method != null && !call.method.isCtor)
     {
-      // TODO
       warn("Using static method '$call.method.qname' as constructor", call.loc)
 
       // check that ctor method is the expected type
@@ -1377,6 +1383,7 @@ class CheckErrors : CompilerStep, Coerce
   private Void checkField(FieldExpr f)
   {
     field := f.field
+    if (field == null) return
 
     // check protection scope
     checkSlotProtection(field, f.loc)

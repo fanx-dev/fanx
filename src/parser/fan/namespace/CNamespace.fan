@@ -171,6 +171,7 @@ abstract class CNamespace
       throw Err("Invalid typeRef: $typeRef, ${loc?.toLocStr}")
     
     pod := this.resolvePod(typeRef.podName, loc)
+    
     //GenericParameterType
     typeName := typeRef.name
     pos := typeName.index("^")
@@ -187,7 +188,11 @@ abstract class CNamespace
         resolveTypeRef(it, loc)
       }
     }
-    typeRef.resolveTo(pod.resolveType(typeName, true))
+    typeDef := pod.resolveType(typeName, false)
+    if (typeDef == null) {
+      throw CompilerErr("Type not found '$typeName'", loc)
+    }
+    typeRef.resolveTo(typeDef)
   }
 
   **

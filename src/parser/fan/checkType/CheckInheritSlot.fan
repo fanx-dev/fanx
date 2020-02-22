@@ -49,7 +49,20 @@ class CheckInheritSlot : CompilerStep
           return
         }
         if (list.contains(v)) return
-        list.add(v)
+        
+        //select
+        nlist := [,]
+        for (i:=0; i<list.size; ++i) {
+          old := list[i]
+          kp := CTypeDef.keep(old, v)
+          if (kp != null) {
+            nlist.add(kp)
+          }
+          else {
+            nlist.add(old).add(v)
+          }
+        }
+        inheriSlots[k] = nlist
       }
     }
     
@@ -58,6 +71,13 @@ class CheckInheritSlot : CompilerStep
     {
       if (slot.isAccessor || slot.isOverload) return
       
+      dupDef := t.slotDef(slot.name)
+      if (dupDef !== slot) {
+        f := slot as MethodDef
+        if (f != null && f.isStaticInit) {}
+        else
+          err("Duplicate slot name '$slot.name'", slot.loc)
+      }
       parentSlots := inheriSlots[slot.name]
       if (parentSlots == null) {
         if (slot.isOverride)
@@ -86,7 +106,7 @@ class CheckInheritSlot : CompilerStep
       if (impCounst > 1) {
         if (!t.hasSlotDef(k)) err("Must override ambiguous inheritance '${v[0].qname}' and '${v[1].qname}'", t.loc)
       }
-      else if (impCounst == 0) {
+      else if (impCounst == 0 && !t.isAbstract) {
         err("Must override abstract slot '${v[0].qname}'", t.loc)
       }
     
@@ -102,7 +122,8 @@ class CheckInheritSlot : CompilerStep
 //////////////////////////////////////////////////////////////////////////
 // Inherit
 //////////////////////////////////////////////////////////////////////////
-
+  
+  
   //do not allow same name slot for invokevirtual on private methods
   private Void checkNameConfilic(TypeDef t, CSlot parentSlot) {
     if (parentSlot.isCtor) return
@@ -224,7 +245,7 @@ class CheckInheritSlot : CompilerStep
     if (baseRet.isThis)
     {
       if (!defRet.isThis)
-        throw err("Return in override of '$base.qname' must be This", loc)
+        err("Return in override of '$base.qname' must be This", loc)
     }
     else
     {
@@ -312,7 +333,7 @@ class CheckInheritSlot : CompilerStep
 
     // check that types match
     if (!CMethod.sameType(base.fieldType, def.fieldType))
-      throw err("Type mismatch in override of '$base.qname' - '$base.fieldType' != '$def.fieldType'", loc)
+      err("Type mismatch in override of '$base.qname' - '$base.fieldType' != '$def.fieldType'", loc)
 
     // if overriding a field which has storage, then don't duplicate storage
     if (!base.isAbstract)
@@ -321,7 +342,7 @@ class CheckInheritSlot : CompilerStep
     // const field cannot override a field (const fields cannot be set,
     // therefore they can override only methods)
     if (def.isConst || def.isReadonly)
-      throw err("Const field '$def.name' cannot override field '$base.qname'", loc)
+      err("Const field '$def.name' cannot override field '$base.qname'", loc)
 
     // correct override
     return
