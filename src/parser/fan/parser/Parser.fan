@@ -170,6 +170,7 @@ public class Parser
       }
     }
 
+    endLoc(u)
     unit.usings.add(u)
   }
   
@@ -388,6 +389,7 @@ public class Parser
 
     // end of class body
     consume(Token.rbrace)
+    endLoc(def)
   }
 
   private CType inheritType()
@@ -852,6 +854,7 @@ public class Parser
     }
 
     endOfStmt
+    endLoc(field)
     return field
   }
 
@@ -904,6 +907,8 @@ public class Parser
         block = this.block
       else
         endOfStmt
+        
+      endLoc(curSlot)
 
       // const field cannot have getter/setter
       if (f.isConst || f.isReadonly)
@@ -1005,23 +1010,22 @@ public class Parser
       {
         endOfStmt
       }
-      return method
     }
+    else {
+        // ctor chain
+        if ((flags.and(FConst.Ctor) != 0) && (curt === Token.colon))
+          method.ctorChain = ctorChain(method);
 
-    // ctor chain
-    if ((flags.and(FConst.Ctor) != 0) && (curt === Token.colon))
-      method.ctorChain = ctorChain(method);
-
-    // body
-    if (curt != Token.lbrace) {
-      if (!parent.isNative) err("Expecting method body")
+        // body
+        if (curt != Token.lbrace) {
+          if (!parent.isNative) err("Expecting method body")
+        }
+        else
+          method.code = block
     }
-    else
-      method.code = block
-
     // exit scope
     curSlot = null
-
+    endLoc(method)
     return method
   }
 
@@ -1045,6 +1049,7 @@ public class Parser
       consume
       param.def = expr
     }
+    endLoc(param)
     return param
   }
 
@@ -1084,6 +1089,7 @@ public class Parser
         }
         consume(Token.rbrace)
       }
+      endLoc(f)
       facets.add(f)
     }
     return facets
@@ -1249,6 +1255,7 @@ public class Parser
       t = t.toNullable
     }
 
+    endLoc(t)
     return t
   }
 
@@ -1293,6 +1300,7 @@ public class Parser
     }
 
     // got it
+    endLoc(type)
     return type
   }
 
@@ -1356,6 +1364,8 @@ public class Parser
     ft := FuncTypeDef(loc, params, names, ret)
     ft.inferredSignature = inferred
     ft.unnamed = unnamed.first
+    
+    endLoc(ft)
     return ft
   }
 
@@ -1483,6 +1493,30 @@ public class Parser
       return tokens[pos+2]
     }
     return tokens[numTokens-1]
+  }
+  
+  **
+  ** update loc.len field
+  **
+  protected Void endLoc(CNode node) {
+    preToken := (pos>0)? tokens[pos-1] : cur
+    lastEnd := preToken.loc.offset+preToken.loc.len
+    self := node.loc
+    selfEnd := self.offset + self.len
+    if (lastEnd == selfEnd) return
+    if (lastEnd < selfEnd) return
+    
+    loc := Loc.make(self.file, self.line, self.col, self.offset, lastEnd-self.offset)
+    
+    if (node is Node) {
+      ((Node)node).loc = loc
+    }
+    else if (node is TypeDef) {
+      ((TypeDef)node).loc = loc
+    }
+    else if (node is CType) {
+      ((CType)node).loc = loc
+    }
   }
 
   **

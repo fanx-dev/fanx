@@ -32,6 +32,13 @@ class FuncTypeDef : Node {
     out.w(toStr)
   }
   
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    params.eachWhile |e| {
+      list.add(e)
+    }
+    list.add(ret)
+  }
+  
   override Str toStr() {
     s := StrBuf()
     s.add("|")
@@ -104,6 +111,13 @@ class ClosureExpr : Expr
   override Str toStr()
   {
     return "$signature { ... }"
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(signature)
+    if (code != null) {
+      list.add(code)
+    }
   }
 
   override Void print(AstWriter out)

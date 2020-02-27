@@ -348,6 +348,8 @@ abstract class Expr : Node
     }
     return exprs
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {}
 
 //////////////////////////////////////////////////////////////////////////
 // Debug

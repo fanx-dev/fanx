@@ -34,9 +34,10 @@ class FType : CTypeDef
     return Loc.make(attr.utf, line.u2)
   }
   
-  override DocDef? doc() { 
-    //TODO support doc
-    null
+  override DocDef? doc() {
+    lines := fpod.apiDoc.typeDoc(name)
+    if (lines.isEmpty) return null
+    return DocDef(fpod.loc, lines)
   }
   
 //  override CNamespace ns() { fpod.ns }

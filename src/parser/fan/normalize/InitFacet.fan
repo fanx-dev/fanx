@@ -28,8 +28,8 @@ class InitFacet : CompilerStep
 
   override Void run()
   {
-    debug("InitFacet")
-    walk(pod, VisitDepth.typeDef)
+    //debug("InitFacet")
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

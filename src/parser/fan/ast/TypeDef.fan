@@ -241,6 +241,19 @@ class TypeDef : CTypeDef
     v.exitTypeDef(this)
     v.exitUnit(unit)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (facets != null) {
+      facets.each |FacetDef f| {
+        list.add(f)
+      }
+    }
+    
+    slotDefs.each |slot| {
+      if (slot.isSynthetic) return
+      list.add(slot)
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Debug

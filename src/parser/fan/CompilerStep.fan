@@ -36,6 +36,15 @@ abstract class CompilerStep : Visitor
   **
   virtual Void run() { throw Err("unsupport") }
   
+  protected Void walkUnits(VisitDepth depth) {
+    walk(compiler.cunits, depth)
+  }
+  
+  **
+  ** current pod name
+  **
+  Str podName() { compiler.pod.name }
+  
 //////////////////////////////////////////////////////////////////////////
 // Convenience
 //////////////////////////////////////////////////////////////////////////
@@ -67,7 +76,6 @@ abstract class CompilerStep : Visitor
   
   CNamespace ns() { compiler.ns }
   
-  PodDef pod() { compiler.pod }
 
 //////////////////////////////////////////////////////////////////////////
 // Visitor

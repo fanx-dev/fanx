@@ -98,11 +98,7 @@ class Tokenizer
       }
       
       // fill in token's location
-      tok.loc.file = filename
-      tok.loc.line = curLine
-      tok.loc.col  = col
-      tok.loc.offset = offset
-      tok.loc.len = pos - offset
+      tok.loc = Loc.make(filename, curLine, col, offset, this.pos - offset)
       tok.newline = lastLine < line
       tok.whitespace = whitespace
 
@@ -514,11 +510,7 @@ class Tokenizer
       consume
 
       tok := TokenVal(Token.localeLiteral, buf.toStr)
-      tok.loc.file = filename
-      tok.loc.line = line
-      tok.loc.col  = col
-      tok.loc.offset = offset
-      tok.loc.len = this.pos - offset
+      tok.loc = Loc.make(filename, line, col, offset, this.pos - offset)
       tokens.add(tok)
 
       line = this.line; col = this.col; offset = this.pos
@@ -586,11 +578,7 @@ class Tokenizer
   private TokenVal makeVirtualToken(Int line, Int col, Int offset, Token kind, Obj? value := null)
   {
     tok := TokenVal(kind, value)
-    tok.loc.file  = filename
-    tok.loc.line  = line
-    tok.loc.col   = col
-    tok.loc.offset = offset
-    tok.loc.len = offset - this.pos
+    tok.loc = Loc.make(filename, line, col, offset, this.pos - offset)
     return tok
   }
 

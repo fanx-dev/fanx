@@ -30,8 +30,13 @@ class PodDef : Node, CPod
   override Version version() { throw UnsupportedErr("PodDef.version") }
 
   override Depend[] depends := [,]
+  
+  **
+  ** Map of dependencies keyed by pod name set in ResolveDepends.
+  **
+  [Str:CPod]? resolvedDepends
 
-  override File file() { throw UnsupportedErr() }
+  override File? file() { null }
 
   override CTypeDef? resolveType(Str name, Bool checked)
   {

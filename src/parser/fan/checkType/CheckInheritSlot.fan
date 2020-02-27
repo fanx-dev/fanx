@@ -30,11 +30,11 @@ class CheckInheritSlot : CompilerStep
 
   override Void run()
   {
-    debug("CheckInheritSlot")
+    //debug("CheckInheritSlot")
 
     // at this point OrderByInheritance should have everything
     // ordered correctly to just do a simple walk
-    walk(pod, VisitDepth.typeDef)
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

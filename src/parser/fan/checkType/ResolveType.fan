@@ -14,8 +14,8 @@ class ResolveType : CompilerStep {
   
   override Void run()
   {
-    debug("ResolveType")
-    walk(pod, VisitDepth.slotDef)
+    //debug("ResolveType")
+    walkUnits(VisitDepth.slotDef)
   }
 
   override Void visitTypeDef(TypeDef t)
@@ -115,7 +115,7 @@ class ResolveType : CompilerStep {
         // if more then one, first try to exclude those internal to other pods
         if (types.size > 1)
         {
-          publicTypes := types.exclude |t| { t.isInternal && t.podName != step.pod.name }
+          publicTypes := types.exclude |t| { t.isInternal && t.podName != step.podName }
           if (!publicTypes.isEmpty) types = publicTypes
         }
     

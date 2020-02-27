@@ -37,6 +37,10 @@ class UnaryExpr : Expr
     else
       return opToken.toStr + operand.toStr
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(operand)
+  }
 
   Token opToken   // operator token type (Token.bang, etc)
   Expr operand    // operand expression
@@ -85,6 +89,11 @@ class BinaryExpr : Expr
     lhs = lhs.walk(v)
     rhs = rhs.walk(v)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(lhs)
+    list.add(rhs)
+  }
 
 //  override Str serialize()
 //  {
@@ -127,6 +136,12 @@ class CondExpr : Expr
   {
     operands = walkExprs(v, operands)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    operands.each |e| {
+      list.add(e)
+    }
+  }
 
   override Str toStr()
   {
@@ -162,6 +177,10 @@ abstract class NameExpr : Expr
   override Void walkChildren(Visitor v)
   {
     target = walkExpr(v, target)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (target != null) list.add(target)
   }
 
   override Str toStr()
@@ -253,6 +272,13 @@ class CallExpr : NameExpr
   {
     target = walkExpr(v, target)
     args = walkExprs(v, args)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (target != null) list.add(target)
+    args.each |e| {
+      list.add(e)
+    }
   }
 
 //  override Str serialize()
@@ -668,6 +694,10 @@ class StaticTargetExpr : Expr
     that.id === ExprId.staticTarget && target == ((StaticTargetExpr)that).target
   }
 
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(target)
+  }
+
   override Str toStr()
   {
     return target.toStr
@@ -706,6 +736,10 @@ class TypeCheckExpr : Expr
   override Void walkChildren(Visitor v)
   {
     target = walkExpr(v, target)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(target)
   }
 
   override Bool isStmt()
@@ -779,6 +813,12 @@ class TernaryExpr : Expr
     trueExpr  = trueExpr.walk(v)
     falseExpr = falseExpr.walk(v)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(condition)
+    list.add(trueExpr)
+    list.add(falseExpr)
+  }
 
   override Str toStr()
   {
@@ -812,6 +852,13 @@ class ComplexLiteral : Expr
   override Void walkChildren(Visitor v)
   {
     vals = walkExprs(v, vals)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(target)
+    vals.each |e| {
+      list.add(e)
+    }
   }
 
   override Str toStr() { doToStr |expr| { expr.toStr } }
@@ -859,6 +906,10 @@ class DslExpr : Expr
   {
     out.w(toStr)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(anchorType)
+  }
 
   CType anchorType  // anchorType <|src|>
   Str src           // anchorType <|src|>
@@ -887,6 +938,10 @@ class ThrowExpr : Expr
   {
     exception = exception.walk(v)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(exception)
+  }
 
   override Str toStr() { "throw $exception" }
 
@@ -906,6 +961,10 @@ class AwaitExpr : Expr {
   override Void walkChildren(Visitor v)
   {
     expr = expr.walk(v)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(expr)
   }
 
   override Str toStr() { "await $expr" }
@@ -980,6 +1039,10 @@ class SizeOfExpr : Expr
   {
     return "sizeof($type)"
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(type)
+  }
 
   CType type
 }
@@ -996,6 +1059,10 @@ class AddressOfExpr : Expr
   override Void walkChildren(Visitor v)
   {
     var_v = var_v.walk(v)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(var_v)
   }
 
   override Str toStr()

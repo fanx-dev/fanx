@@ -69,6 +69,7 @@ class FPodNamespace : CNamespace
     // load it
     fpod := FPod(this, podName, Zip.open(file))
     fpod.read
+    if (!lazyLoad) fpod.readFully
     return fpod
   }
 
@@ -78,4 +79,5 @@ class FPodNamespace : CNamespace
 
   ** where to look for pod or null to delegate to Env.findPodFile
   const File? dir
+  Bool lazyLoad := true
 }

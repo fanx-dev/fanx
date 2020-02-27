@@ -6,7 +6,7 @@ class IncCompiler {
   
   new make(PodDef pod) {
     compiler = CompilerContext(pod)
-    compiler.ns = FPodNamespace(File(`../../env/lib/fan/`))
+    compiler.ns = FPodNamespace(null)
     
     pipelines = [
       BasicInit(compiler),
@@ -29,7 +29,7 @@ class IncCompiler {
     ]
   }
   
-  static IncCompiler fromProps(File file) {
+  static IncCompiler fromProps(File file, CNamespace? ns := null) {
     props := file.in.readProps
     podName := props["podName"]
     srcDirs := props["srcDirs"]
@@ -38,6 +38,7 @@ class IncCompiler {
     pod := PodDef(loc, podName)
     
     icom := IncCompiler(pod)
+    if (ns != null) icom.compiler.ns = ns
     
     dirs := parseDirs(file, srcDirs)
     dirs?.each |dir| {
@@ -84,33 +85,41 @@ class IncCompiler {
   private CompilationUnit parse(Str file, Str code) {
     unit := CompilationUnit(Loc.make(file), compiler.pod, file.toStr)
     parser := DeepParser(compiler.log, code, unit)
+    //echo(parser.tokens.join("\n")|t|{ t.loc.toStr + "\t\t" + t.kind + "\t\t" + t.val })
     parser.parse
     return unit
   }
   
-  Void updateSourceFile(File file, Bool isDelete := false) {
+  CompilationUnit? updateSourceFile(File file, Bool isDelete := false) {
     updateSource(file.osPath, file.readAllStr)
   }
   
-  Void updateSource(Str file, Str code, Bool isDelete := false) {
+  CompilationUnit? updateSource(Str file, Str code, Bool isDelete := false) {
     old := compiler.pod.units[file]
     if (old != null) {
       old.types.each |t| {
         compiler.pod.typeDefs.remove(t.name)
       }
+      compiler.pod.units.remove(file)
+      compiler.log.clearByFile(file)
     }
     
-    if (!isDelete) {
-      unit := parse(file, code)
-      compiler.pod.units[file] = unit
-      unit.types.each |t| {
-        compiler.pod.typeDefs[t.name] = t
-      }
+    if (isDelete) {
+      return old
     }
+    
+    unit := parse(file, code)
+    compiler.pod.units[file] = unit
+    unit.types.each |t| {
+      compiler.pod.typeDefs[t.name] = t
+    }
+    compiler.cunits.add(unit)
+    return unit
   }
   
   Void resolveAll() {
     pipelines.each |pass| { pass.run }
+    compiler.cunits.clear
   }
 
   static Void main() {

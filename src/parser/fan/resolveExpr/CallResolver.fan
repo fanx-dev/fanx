@@ -353,7 +353,7 @@ class CallResolver
 
     if (foundOnIt)
     {
-      target = ItExpr(loc) { enclosingClosure = curClosure }
+      target = ItExpr(loc.toPointLoc) { enclosingClosure = curClosure }
       target.ctype = baseIt
     }
 //    else if (curClosure != null)
@@ -364,7 +364,7 @@ class CallResolver
 //    }
     else
     {
-      target = ThisExpr(loc)
+      target = ThisExpr(loc.toPointLoc)
       target.ctype = curType.asRef
     }
   }

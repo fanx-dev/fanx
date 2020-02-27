@@ -34,8 +34,8 @@ class SlotNormalize : CompilerStep
 
   override Void run()
   {
-    debug("Normalize")
-    walk(pod, VisitDepth.typeDef)
+    //debug("Normalize")
+    walkUnits(VisitDepth.typeDef)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,8 @@ class SlotNormalize : CompilerStep
     if (code == null) return
 
     // once
-    if (m.isOnce) normalizeOnce(m, iInit)
+    //TODO
+    //if (m.isOnce) normalizeOnce(m, iInit)
   }
 
   private Void normalizeOnce(MethodDef m, Block iInit)

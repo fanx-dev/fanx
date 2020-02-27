@@ -83,17 +83,32 @@ class Block : Node
   Void walk(Visitor v, VisitDepth depth)
   {
     v.enterBlock(this)
-    copy := Stmt[,]
-    copy.capacity = stmts.size
-    stmts.each |Stmt stmt|
-    {
-      r := stmt.walk(v, depth)
-      if (r == null) copy.add(stmt)
-      else copy.addAll(r)
+    if (v.isReadOnly) {
+        stmts.each |Stmt stmt|
+        {
+          r := stmt.walk(v, depth)
+          if (r != null) throw Err("Expected return null for readonly Visitor")
+        }
     }
-    stmts = copy
+    else {
+        copy := Stmt[,]
+        copy.capacity = stmts.size
+        stmts.each |Stmt stmt|
+        {
+          r := stmt.walk(v, depth)
+          if (r == null) copy.add(stmt)
+          else copy.addAll(r)
+        }
+        stmts = copy
+    }
     v.visitBlock(this)
     v.exitBlock(this)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    stmts.each |stmt| {
+      list.add(stmt)
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////

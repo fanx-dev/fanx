@@ -62,6 +62,8 @@ abstract class Stmt : Node
     else
       return expr
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {}
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -75,22 +77,22 @@ abstract class Stmt : Node
 ** NopStmt
 **************************************************************************
 
-**
-** NopStmt is no operation do nothing statement.
-**
-class NopStmt : LowerLevelStmt
-{
-  new make(Loc loc) : super(loc, StmtId.nop) {}
-
-  override Bool isExit() { false }
-
-  override Bool isDefiniteAssign(|Expr lhs->Bool| f) { false }
-
-  override Void print(AstWriter out)
-  {
-    out.w("nop").nl
-  }
-}
+//**
+//** NopStmt is no operation do nothing statement.
+//**
+//class NopStmt : LowerLevelStmt
+//{
+//  new make(Loc loc) : super(loc, StmtId.nop) {}
+//
+//  override Bool isExit() { false }
+//
+//  override Bool isDefiniteAssign(|Expr lhs->Bool| f) { false }
+//
+//  override Void print(AstWriter out)
+//  {
+//    out.w("nop").nl
+//  }
+//}
 
 **************************************************************************
 ** ExprStmt
@@ -100,7 +102,7 @@ class NopStmt : LowerLevelStmt
 ** ExprStmt is a statement with a stand along expression such
 ** as an assignment or method call.
 **
-class ExprStmt : LowerLevelStmt
+class ExprStmt : Stmt
 {
   new make(Expr expr)
     : super(expr.loc, StmtId.expr)
@@ -115,6 +117,10 @@ class ExprStmt : LowerLevelStmt
   override Void walkChildren(Visitor v, VisitDepth depth)
   {
     expr = walkExpr(v, depth, expr)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(expr)
   }
 
   override Str toStr() { expr.toStr }
@@ -160,6 +166,15 @@ class LocalDefStmt : Stmt
   override Void walkChildren(Visitor v, VisitDepth depth)
   {
     init = walkExpr(v, depth, init)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (ctype != null) {
+      list.add(ctype)
+    }
+    if (init != null) {
+      list.add(init)
+    }
   }
 
   new makeCatchVar(Catch c)
@@ -223,6 +238,14 @@ class IfStmt : Stmt
     trueBlock.walk(v, depth)
     if (falseBlock != null) falseBlock.walk(v, depth)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(condition)
+    list.add(trueBlock)
+    if (falseBlock != null) {
+      list.add(falseBlock)
+    }
+  }
 
   override Void print(AstWriter out)
   {
@@ -247,7 +270,7 @@ class IfStmt : Stmt
 **
 ** ReturnStmt returns from the method
 **
-class ReturnStmt : LowerLevelStmt
+class ReturnStmt : Stmt
 {
   new make(Loc loc, Expr? expr := null)
     : super(loc, StmtId.returnStmt)
@@ -274,6 +297,12 @@ class ReturnStmt : LowerLevelStmt
   {
     expr = walkExpr(v, depth, expr)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (expr != null) {
+      list.add(expr)
+    }
+  }
 
   override Str toStr() { expr != null ? "return $expr" : "return" }
 
@@ -299,7 +328,7 @@ class ReturnStmt : LowerLevelStmt
 **
 ** ThrowStmt throws an exception
 **
-class ThrowStmt : LowerLevelStmt
+class ThrowStmt : Stmt
 {
   new make(Loc loc, Expr exception)
     : super(loc, StmtId.throwStmt)
@@ -314,6 +343,10 @@ class ThrowStmt : LowerLevelStmt
   override Void walkChildren(Visitor v, VisitDepth depth)
   {
     exception = walkExpr(v, depth, exception)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(exception)
   }
 
   override Void print(AstWriter out)
@@ -351,6 +384,21 @@ class ForStmt : Stmt
     condition = walkExpr(v, depth, condition)
     update = walkExpr(v, depth, update)
     block.walk(v, depth)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (init != null) {
+      list.add(init)
+    }
+    if (condition != null) {
+      list.add(condition)
+    }
+    if (update != null) {
+      list.add(update)
+    }
+    if (block != null) {
+      list.add(block)
+    }
   }
 
   override Void print(AstWriter out)
@@ -399,6 +447,11 @@ class WhileStmt : Stmt
   {
     condition = walkExpr(v, depth, condition)
     block.walk(v, depth)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(condition)
+    list.add(block)
   }
 
   override Void print(AstWriter out)
@@ -496,6 +549,23 @@ class TryStmt : Stmt
       v.exitFinally(this)
     }
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (block != null) {
+      list.add(block)
+    }
+
+    catches.each |b| {
+      list.add(b)
+    }
+    
+    if (exception != null) {
+      list.add(exception)
+    }
+    if (finallyBlock != null) {
+      list.add(finallyBlock)
+    }
+  }
 
   override Void print(AstWriter out)
   {
@@ -529,6 +599,16 @@ class Catch : Node
   {
     if (block.stmts.last?.id === StmtId.throwStmt) return true
     return block.isDefiniteAssign(f)
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (errType != null) {
+      list.add(errType)
+    }
+    
+    if (block != null) {
+      list.add(block)
+    }
   }
 
   override Void print(AstWriter out)
@@ -582,6 +662,16 @@ class SwitchStmt : Stmt
     cases.each |Case c| { c.walk(v, depth) }
     if (defaultBlock != null) defaultBlock.walk(v, depth)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    list.add(condition)
+    cases.each |c| {
+      list.add(c)
+    }
+    if (defaultBlock != null) {
+      list.add(defaultBlock)
+    }
+  }
 
   override Void print(AstWriter out)
   {
@@ -624,6 +714,12 @@ class Case : Node
 
     block.walk(v, depth)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (block != null) {
+      list.add(block)
+    }
+  }
 
   override Void print(AstWriter out)
   {
@@ -641,7 +737,7 @@ class Case : Node
 **************************************************************************
 ** Lower level Stmt
 **************************************************************************
-
+/*
 abstract class LowerLevelStmt : Stmt {
   new make(Loc loc, StmtId id) : super(loc, id) {}
   override Bool isExit() { false }
@@ -781,7 +877,7 @@ class ExceptionHandler : LowerLevelStmt {
     }
   }
 }
-
+*/
 **************************************************************************
 ** StmtId
 **************************************************************************

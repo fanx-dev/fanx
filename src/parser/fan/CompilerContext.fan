@@ -9,6 +9,11 @@ class CompilerContext {
   ** Current pod
   ** 
   PodDef pod
+
+  **
+  ** code to compile
+  **
+  CompilationUnit[] cunits
   
   **
   ** Log used for reporting compile errors
@@ -29,5 +34,6 @@ class CompilerContext {
     this.pod = pod
     log = CompilerLog()
     localeDefs = LocaleLiteralExpr[,]
+    cunits = CompilationUnit[,]
   }
 }

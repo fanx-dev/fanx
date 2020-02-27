@@ -31,8 +31,8 @@ class StmtNormalize : CompilerStep
 
   override Void run()
   {
-    debug("Normalize")
-    walk(pod, VisitDepth.slotDef)
+    //debug("Normalize")
+    walkUnits(VisitDepth.slotDef)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ class StmtNormalize : CompilerStep
   private Void addImplicitReturn(MethodDef m)
   {
     code := m.code
-    loc := code.loc
+    loc := code.stmts.size > 0 ? code.stmts.last.loc : code.loc
 
     // we allow return keyword to be omitted if there is exactly one statement
     if (code.size == 1 && !m.returnType.isVoid && code.stmts[0].id == StmtId.expr)

@@ -30,8 +30,8 @@ class InitEnum : CompilerStep
 
   override Void run()
   {
-    debug("InitEnum")
-    walk(pod, VisitDepth.typeDef)
+    //debug("InitEnum")
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

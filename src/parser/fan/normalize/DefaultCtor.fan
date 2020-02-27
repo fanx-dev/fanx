@@ -21,8 +21,8 @@ class DefaultCtor : CompilerStep
 
   override Void run()
   {
-    debug("DefaultCtor")
-    walk(pod, VisitDepth.typeDef)
+    //debug("DefaultCtor")
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

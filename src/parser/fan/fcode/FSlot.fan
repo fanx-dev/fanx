@@ -57,6 +57,12 @@ abstract class FSlot : CSlot, FConst
     flags     = in.readU4
   }
 
+  override DocDef? doc() {
+    lines := fparent.fpod.apiDoc.slotDoc(fparent.name, name)
+    if (lines.isEmpty) return null
+    return DocDef(fparent.fpod.loc, lines)
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////

@@ -26,9 +26,9 @@ mixin Visitor
   ** Peform a walk of the abstract syntax tree down
   ** to the specified depth.
   **
-  Void walk(PodDef pod, VisitDepth depth)
+  Void walk(CompilationUnit[] units, VisitDepth depth)
   {
-    pod.units.each |u| {
+    units.each |u| {
       u.types.each |t| { t.walk(this, depth) }
     }
   }
@@ -164,6 +164,11 @@ mixin Visitor
   ** the abstract syntax tree.
   **
   virtual Expr visitExpr(Expr expr) { expr }
+  
+  **
+  ** never change the ast
+  **
+  virtual Bool isReadOnly() { false }
 }
 
 **************************************************************************

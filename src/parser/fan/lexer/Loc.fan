@@ -9,16 +9,18 @@
 **
 ** Loc provides a source file, line number, and column number.
 **
-class Loc
+const class Loc
 {
-  new make(Str file, Int? line := null, Int? col := null)
+  new make(Str file, Int line := -1, Int? col := -1, Int offset := -1, Int len := 0)
   {
     this.file = file
     this.line = line
     this.col  = col
+    this.offset = offset
+    this.len = len
   }
 
-  new makeFile(File? file, Int? line := null, Int? col := null)
+  new makeFile(File? file, Int line := -1, Int col := -1, Int offset := -1, Int len := 0)
   {
     if (file != null)
     {
@@ -28,12 +30,24 @@ class Loc
       else
         this.file = file.pathStr
     }
+    else {
+      this.file = "Unknown"
+    }
     this.line = line
     this.col  = col
+    this.offset = offset
+    this.len = len
   }
+  
+  const static Loc invalidLoc := make("Unknown")
 
-  new makeUninit()
-  {
+  static Loc makeUninit() { invalidLoc }
+
+  **
+  ** change len to 0
+  **
+  Loc toPointLoc() {
+    make(file, line, col, offset, 0)
   }
   
   Str? filename()
@@ -60,8 +74,8 @@ class Loc
   override Int hash()
   {
     hash := file.hash
-    if (line != null) hash = hash.xor(line.hash)
-    if (col  != null) hash = hash.xor(col.hash)
+    if (line != -1) hash = hash.xor(line.hash)
+    if (col  != -1) hash = hash.xor(col.hash)
     return hash
   }
 
@@ -83,10 +97,10 @@ class Loc
   override Str toStr()
   {
     StrBuf s := StrBuf()
-    if (line != null)
+    if (true)
     {
       s.add("(").add(line)
-      if (col != null) s.add(",").add(col)
+      s.add(",").add(col)
       s.add(")")
     }
     return s.toStr
@@ -96,18 +110,28 @@ class Loc
   {
     StrBuf s := StrBuf()
     s.add(file)
-    if (line != null)
+    if (line != -1)
     {
       s.add("(").add(line)
-      if (col != null) s.add(",").add(col)
+      if (col != -1) s.add(",").add(col)
       s.add(")")
     }
     return s.toStr
   }
+  
+  Bool contains(Loc that) {
+    if (that.offset >= this.offset && 
+        (that.end <= this.end)) {
+      return true
+    }
+    return false
+  }
+  
+  Int end() { offset + len }
 
-  Str file := "Unknown"
-  Int? line
-  Int? col
-  Int? offset
-  Int? len
+  const Str file
+  const Int line
+  const Int col
+  const Int offset
+  const Int len
 }

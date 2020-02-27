@@ -59,6 +59,24 @@ abstract class CNamespace
         e.trace
     }
   }
+  
+  Void checkUpdate() {
+    dirtyPods := Str[,]
+    podCache.each |v,k| {
+      if (v.fileDirty) {
+        dirtyPods.add(k)
+      }
+    }
+    if (dirtyPods.size == 0) return
+    
+    echo("Reload pod: $dirtyPods")
+    
+    dirtyPods.each |p| {
+      podCache.remove(p)
+    }
+    typeCache.clear
+    cleanup
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Resolution
@@ -222,7 +240,7 @@ abstract class CNamespace
   **
   ** Map of dependencies keyed by pod name set in ResolveDepends.
   **
-  [Str:CPod]? depends
+  //[Str:CPod]? depends
 
 //////////////////////////////////////////////////////////////////////////
 // Predefined

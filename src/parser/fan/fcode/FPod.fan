@@ -38,13 +38,22 @@ final class FPod : CPod, FConst
     this.uris       = FTable.makeStrs(this)
     this.meta       = Str:Str[:]
     this.index      = Str:Str[:]
+    this.apiDoc     = FApiDoc(this)
+    if (zip != null && zip.file != null) {
+      timestamp = zip.file.modified.toMillis
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////
 // CPod
 //////////////////////////////////////////////////////////////////////////
 
-  override File file() { zip.file }
+  override File? file() {
+    if (zip == null || zip.file == null) return null
+    return zip.file
+  }
+
+  once Loc loc() { Loc.makeFile(file) }
 
   override CTypeDef? resolveType(Str name, Bool checked)
   {
@@ -195,19 +204,26 @@ final class FPod : CPod, FConst
     uris.read(in(`/fcode/uris.def`))
 
     // read type meta-data
-    in := this.in(`/fcode/types.def`)
+    tin := this.in(`/fcode/types.def`)
     ftypes = FType[,]
     ftypesByName = Str:CTypeDef[:]
-    if (in != null)
+    if (tin != null)
     {
-      in.readU2.times
+      tin.readU2.times
       {
-        ftype := FType(this).readMeta(in)
+        ftype := FType(this).readMeta(tin)
         ftypes.add(ftype)
         ftypesByName[ftype.name] = ftype
 //        ns.typeCache[ftype.qname] = ftype
       }
-      in.close
+      tin.close
+    }
+    
+    //read apidoc into memory
+    ftypes.each |FType t| {
+      docFile := this.in(`/doc/${t.name}.apidoc`)
+      if (docFile != null)
+        apiDoc.cache[t.name] = docFile.readAllLines
     }
 
 //    if (name == "sys") {
@@ -236,9 +252,14 @@ final class FPod : CPod, FConst
   **
   Void readFully()
   {
-    ftypes.each |FType t| { t.read }
+    ftypes.each |FType t| {
+      t.read
+    }
   }
 
+  **
+  ** load from Stream base zip
+  **
   Void readStream() {
     ftypes = FType[,]
     ftypesByName = Str:FType[:]
@@ -281,11 +302,16 @@ final class FPod : CPod, FConst
       else if (name.equals("fcode/strs.def")) strs.read(in);
       else if (name.equals("fcode/durations.def")) durations.read(in);
       else if (name.equals("fcode/uris.def")) uris.read(in);
+      else if (name.startsWith("doc/") && name.endsWith(".apidoc")) {
+        name = name[4..<(name.size-".apidoc".size)]
+        apiDoc.cache[name] = in.readAllLines
+      }
       else echo("WARNING: unexpected file in pod: " + name);
       in.close
 
       entry = zip.readNext
     }
+    //apiDoc.supportFile = false
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -375,6 +401,14 @@ final class FPod : CPod, FConst
   ** Get output stream to write the specified file to zip storage.
   **
   OutStream out(Uri uri) { zip.writeNext(uri) }
+  
+  
+  override Bool fileDirty() {
+    podFile := file
+    if (podFile == null) return false
+    if (podFile.modified.toMillis > timestamp) return true
+    return false
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -400,4 +434,7 @@ final class FPod : CPod, FConst
   FTable uris               // Uri literals
   [Str:CTypeDef]? ftypesByName // if loaded
 //  CType[]? virtualType      // compiler hack for sized primitive Type
+  FApiDoc apiDoc            // parse api doc
+  
+  Int timestamp             //time point of podFile modify
 }

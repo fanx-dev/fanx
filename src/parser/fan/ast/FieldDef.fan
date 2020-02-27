@@ -78,6 +78,25 @@ public class FieldDef : SlotDef, CField
     v.visitFieldDef(this)
     v.exitFieldDef(this)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (facets != null) {
+      facets.each |FacetDef f| {
+        list.add(f)
+      }
+    }
+    
+    if (init != null) {
+      list.add(init)
+    }
+    
+    if (get != null && !get.isSynthetic) {
+      list.add(get)
+    }
+    if (set != null && !set.isSynthetic) {
+      list.add(set)
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Debug

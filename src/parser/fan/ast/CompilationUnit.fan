@@ -39,7 +39,7 @@ class CompilationUnit : Node
 
   override Str toStr()
   {
-    return loc.toStr
+    return file + loc.toStr
   }
 
   // get all imported extendsion methods
@@ -62,6 +62,16 @@ class CompilationUnit : Node
   Void addTypeDef(TypeDef t) {
     types.add(t)
 //    pod.typeDefs[t.name] = t
+  }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    usings.each |u| {
+      list.add(u)
+    }
+    
+    types.each |t| {
+      list.add(t)
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////

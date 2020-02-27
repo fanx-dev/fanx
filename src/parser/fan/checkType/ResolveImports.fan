@@ -28,7 +28,7 @@ class ResolveImports : CompilerStep
   new make(CompilerContext compiler)
     : super(compiler)
   {
-    resolved[pod.name] = pod
+    //resolved[pod.name] = pod
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,10 +40,10 @@ class ResolveImports : CompilerStep
   **
   override Void run()
   {
-    debug("ResolveImports")
+    //debug("ResolveImports")
     
     // process each unit for Import.pod
-    pod.units.each |CompilationUnit unit|
+    compiler.cunits.each |CompilationUnit unit|
     {
       try
         resolveImports(unit)
@@ -52,7 +52,7 @@ class ResolveImports : CompilerStep
     }
 
     // process each unit for CompilationUnit.importedTypes
-    pod.units.each |CompilationUnit unit|
+    compiler.cunits.each |CompilationUnit unit|
     {
       try
         resolveImportedTypes(unit)
@@ -66,7 +66,7 @@ class ResolveImports : CompilerStep
       resolved.each |pod|
       {
         if (pod !== compiler.pod && pod.name != "sys")
-          compiler.ns.depends[pod.name] = pod
+          compiler.pod.resolvedDepends[pod.name] = pod
       }
     }
   }
@@ -149,15 +149,15 @@ class ResolveImports : CompilerStep
   
   private once CTypeDef[] defaultImportedTypes() {
     res := CTypeDef[,]
-    if (pod.name != "sys") {
+    if (podName != "sys") {
       //std and reflect is imported implicitly
-      if (pod.name != "std") {
-        if (!ns.depends.containsKey("std")) {
-          pod := ns.resolvePod("std", pod.loc)
+      if (podName != "std") {
+        if (!compiler.pod.resolvedDepends.containsKey("std")) {
+          pod := ns.resolvePod("std", compiler.pod.loc)
           res.addAll(pod.types)
         }
       }
-      pod := ns.resolvePod("sys", pod.loc)
+      pod := ns.resolvePod("sys", compiler.pod.loc)
       res.addAll(pod.types)
     }
     return res
@@ -331,7 +331,7 @@ class ResolveImports : CompilerStep
     if (cs.isScript) return
 
     // if we have a declared dependency that is ok
-    if (cs.ns.depends.containsKey(podName)) return
+    if (cs.pod.resolvedDepends.containsKey(podName)) return
 
     // if this is the pod being compiled that is obviously ok
     if (cs.pod.name == podName) return

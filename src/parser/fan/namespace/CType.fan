@@ -32,7 +32,7 @@ class CType : CNode, TypeMixin
   
   CTypeDef? resolvedType
   
-  override Loc loc { private set }
+  override Loc loc
   
 //////////////////////////////////////////////////////////////////////////
 // Ctors
@@ -73,11 +73,11 @@ class CType : CNode, TypeMixin
     return CType(podName, name)
   }
   
-  new makeResolvedType(CTypeDef resolvedType) {
+  new makeResolvedType(CTypeDef resolvedType, Loc? loc := null) {
     this.resolvedType = resolvedType
     this.name = resolvedType.name
     this.podName = resolvedType.podName
-    this.loc = this.resolvedType.loc
+    this.loc = loc ?: this.resolvedType.loc
   }
   
 //////////////////////////////////////////////////////////////////////////

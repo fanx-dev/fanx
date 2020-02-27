@@ -24,8 +24,8 @@ class InitDataClass : CompilerStep
 
   override Void run()
   {
-    debug("InitData")
-    walk(pod, VisitDepth.typeDef)
+    //debug("InitData")
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

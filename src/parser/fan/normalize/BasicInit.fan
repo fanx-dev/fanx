@@ -8,8 +8,8 @@ class BasicInit : CompilerStep {
   
   override Void run()
   {
-    debug("BasicInit")
-    walk(pod, VisitDepth.slotDef)
+    //debug("BasicInit")
+    walkUnits(VisitDepth.slotDef)
   }
 
   override Void visitTypeDef(TypeDef def)

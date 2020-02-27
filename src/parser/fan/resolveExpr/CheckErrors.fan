@@ -42,18 +42,18 @@ class CheckErrors : CompilerStep, Coerce
 
   override Void run()
   {
-    debug("CheckErrors")
-    checkPodDef(pod)
-    walk(pod, VisitDepth.expr)
+    //debug("CheckErrors")
+    //checkPodDef(pod)
+    walkUnits(VisitDepth.expr)
   }
 
 //////////////////////////////////////////////////////////////////////////
 // PodDef
 //////////////////////////////////////////////////////////////////////////
 
-  Void checkPodDef(PodDef pod)
-  {
-  }
+//  Void checkPodDef(PodDef pod)
+//  {
+//  }
 
 //////////////////////////////////////////////////////////////////////////
 // TypeDef

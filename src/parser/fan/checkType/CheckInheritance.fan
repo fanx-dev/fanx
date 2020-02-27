@@ -28,8 +28,8 @@ class CheckInheritance : CompilerStep
 
   override Void run()
   {
-    debug("CheckInheritance")
-    walk(pod, VisitDepth.typeDef)
+    //debug("CheckInheritance")
+    walkUnits(VisitDepth.typeDef)
   }
 
   override Void visitTypeDef(TypeDef t)

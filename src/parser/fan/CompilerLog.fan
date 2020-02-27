@@ -11,13 +11,14 @@ const class CompilerErr : Err
     this.level = level
     if (loc != null)
     {
-      this.file = loc.file
-      this.line = loc.line
-      this.col  = loc.col
+      this.loc = loc
+    }
+    else {
+      this.loc = Loc.makeUninit
     }
   }
 
-  Loc loc() { Loc(file ?: "Unknown", line, col) }
+  //Loc loc() { Loc(file ?: "Unknown", line, col) }
 
   Bool isErr() { level === LogLevel.err }
 
@@ -28,9 +29,7 @@ const class CompilerErr : Err
   }
 
   const LogLevel level
-  const Str? file
-  const Int? line
-  const Int? col
+  const Loc loc
 }
 
 **
@@ -48,6 +47,11 @@ class CompilerLog {
     this.errs       = CompilerErr[,]
     this.warns      = CompilerErr[,]
     this.out = out
+  }
+
+  Void clearByFile(Str file) {
+    //path := file.osPath
+    errs = errs.findAll { it.loc.file != file }
   }
   
   **

@@ -2,16 +2,19 @@
 class DebugTest : Test {
   Void test() {
     code := 
-    """ 
-        class Foo
-        {
-          Obj a() { return [] }
-          Obj b() { Int x = 4 }
-          Obj c() { return Str[:] }
-          Obj d() { return a as GooGoo }
-          Obj e() { return a is Kaggle }
-        }
-        """
+    Str<| 
+            class Foo { Str foo(Obj v) {
+              line := "foo $v."
+              return line } }
+
+            class Foo2 { Str foo(Obj v) {
+                      line := "foo $v. "
+                      return line } }
+
+            class Foo3 { Str foo(Obj v) {
+                      line := "foo $v.123"
+                      return line } }
+        |>
     
     
     pod := PodDef(Loc.makeUninit, "testPod")

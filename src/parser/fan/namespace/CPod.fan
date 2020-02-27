@@ -39,9 +39,9 @@ mixin CPod
 
   **
   ** Pod zip file.  Not all implementations have a backing
-  ** file in which case they will throw UnsupportedErr
+  ** file return null
   **
-  abstract File file()
+  abstract File? file()
 
   **
   ** Lookup a type by its simple name.  If the type doesn't
@@ -87,4 +87,7 @@ mixin CPod
     return name
   }
 
+  virtual Bool fileDirty() {
+    return false
+  }
 }

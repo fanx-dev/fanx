@@ -30,6 +30,39 @@ mixin CNode
   ** Pretty print this node and it's descendants.
   **
   abstract Void print(AstWriter out)
+  
+//////////////////////////////////////////////////////////////////////////
+// Tree
+//////////////////////////////////////////////////////////////////////////
+
+  virtual Void getChildren(CNode[] list, [Str:Obj]? options) {}
+  
+  **
+  ** find node of tree by loction
+  **
+  CNode findAt(Loc loc, CNode[]? path := null) {
+    list := CNode[,]
+    getChildren(list, null)
+    if (path != null) path.add(this)
+    for (i:=0; i<list.size; ++i) {
+      node := list[i]
+      if (node.loc.contains(loc)) {
+        return node.findAt(loc, path)
+      }
+    }
+    return this
+  }
+  
+  Void printTree(Int deep := 0) {
+    deep.times { Env.cur.out.print("  ") }
+    Env.cur.out.print(this.typeof.toStr + "\t" + this + "\t" + loc.offset + "," + loc.end+ "\n")
+    list := CNode[,]
+    getChildren(list, null)
+    for (i:=0; i<list.size; ++i) {
+      node := list[i]
+      node.printTree(deep+1)
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -72,5 +105,4 @@ abstract class Node : CNode
 //////////////////////////////////////////////////////////////////////////
 
   override Loc loc
-
 }

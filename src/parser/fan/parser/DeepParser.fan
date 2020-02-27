@@ -36,6 +36,7 @@ class DeepParser : Parser {
 
     // TODO: omit args if pass thru?
     callArgs(call, false)
+    endLoc(call)
     return call
   }
   
@@ -72,6 +73,7 @@ class DeepParser : Parser {
       consume(Token.rbrace)
     }
 
+    endLoc(block)
     return block
   }
 
@@ -149,6 +151,7 @@ class DeepParser : Parser {
 
     // return expression as statement
     stmt := ExprStmt(e)
+    endLoc(stmt)
     if (!isEndOfStmt) return stmt
     if (endOfStmt(null)) return stmt
 
@@ -175,6 +178,7 @@ class DeepParser : Parser {
       e = CallExpr(cur.loc, e, "add") { args.add(expr()) }
       if (curt === Token.rbrace || curt === Token.semicolon) break
     }
+    endLoc(e)
     return e
   }
 
@@ -205,6 +209,7 @@ class DeepParser : Parser {
     }
 
     if (isEndOfStmt) endOfStmt
+    endLoc(stmt)
     return stmt
   }
 
@@ -252,6 +257,7 @@ class DeepParser : Parser {
       stmt.expr = expr
       endOfStmt
     }
+    endLoc(stmt)
     return stmt
   }
 
@@ -265,6 +271,7 @@ class DeepParser : Parser {
     consume(Token.throwKeyword)
     stmt := ThrowStmt(loc, expr)
     endOfStmt
+    endLoc(stmt)
     return stmt
   }
 
@@ -279,7 +286,9 @@ class DeepParser : Parser {
     consume(Token.lparen)
     cond := expr
     consume(Token.rparen)
-    return WhileStmt(loc, cond, stmtOrBlock)
+    stmt := WhileStmt(loc, cond, stmtOrBlock)
+    endLoc(stmt)
+    return stmt
   }
 
   **
@@ -303,7 +312,7 @@ class DeepParser : Parser {
     consume(Token.rparen)
 
     stmt.block = stmtOrBlock
-
+    endLoc(stmt)
     return stmt
   }
 
@@ -316,6 +325,7 @@ class DeepParser : Parser {
     stmt := BreakStmt(cur.loc)
     consume(Token.breakKeyword)
     endOfStmt
+    endLoc(stmt)
     return stmt
   }
 
@@ -328,6 +338,7 @@ class DeepParser : Parser {
     stmt := ContinueStmt(cur.loc)
     consume(Token.continueKeyword)
     endOfStmt
+    endLoc(stmt)
     return stmt
   }
 
@@ -354,6 +365,7 @@ class DeepParser : Parser {
       consume
       stmt.finallyBlock = stmtOrBlock
     }
+    endLoc(stmt)
     return stmt
   }
 
@@ -376,6 +388,7 @@ class DeepParser : Parser {
     if (c.errVariable != null)
       c.block.stmts.insert(0, LocalDefStmt.makeCatchVar(c))
 
+    endLoc(c)
     return c
   }
 
@@ -407,6 +420,7 @@ class DeepParser : Parser {
         if (curt !== Token.defaultKeyword) // optimize away case fall-thru to default
         {
           c.block = switchBlock
+          endLoc(c)
           stmt.cases.add(c)
         }
       }
@@ -424,6 +438,7 @@ class DeepParser : Parser {
     }
     consume(Token.rbrace)
     endOfStmt
+    endLoc(stmt)
     return stmt
   }
 
@@ -432,6 +447,8 @@ class DeepParser : Parser {
     block := Block(cur.loc)
     while (curt !== Token.caseKeyword && curt != Token.defaultKeyword && curt !== Token.rbrace)
       block.stmts.add(stmt)
+      
+    endLoc(block)
     return block
   }
 
@@ -459,10 +476,16 @@ class DeepParser : Parser {
     if (expr == null) expr = ifExpr
     if (curt.isAssign)
     {
-      if (curt === Token.assign)
-        return BinaryExpr(expr, consume.kind, assignExpr)
-      else
-        return ShortcutExpr.makeBinary(expr, consume.kind, assignExpr)
+      if (curt === Token.assign) {
+        e := BinaryExpr(expr, consume.kind, assignExpr)
+        endLoc(e)
+        return e
+      }
+      else {
+        e := ShortcutExpr.makeBinary(expr, consume.kind, assignExpr)
+        endLoc(e)
+        return e
+      }
     }
     return expr
   }
@@ -495,6 +518,8 @@ class DeepParser : Parser {
       rhs := ifExprBody
       expr = BinaryExpr(lhs, Token.elvis, rhs)
     }
+    
+    endLoc(expr)
     return expr
   }
 
@@ -509,7 +534,9 @@ class DeepParser : Parser {
     {
       loc := cur.loc
       consume(Token.throwKeyword)
-      return ThrowExpr(loc, expr)
+      e := ThrowExpr(loc, expr)
+      endLoc(e)
+      return e
     }
     else
     {
@@ -532,6 +559,7 @@ class DeepParser : Parser {
         consume
         cond.operands.add(condAndExpr)
       }
+      endLoc(cond)
       expr = cond
     }
     return expr
@@ -552,6 +580,7 @@ class DeepParser : Parser {
         consume
         cond.operands.add(equalityExpr)
       }
+      endLoc(cond)
       expr = cond
     }
     return expr
@@ -585,6 +614,7 @@ class DeepParser : Parser {
         else
           expr = ShortcutExpr.makeBinary(lhs, tok, rhs)
       }
+      endLoc(expr)
     }
     return expr
   }
@@ -618,6 +648,7 @@ class DeepParser : Parser {
         default:
           expr = ShortcutExpr.makeBinary(expr, consume.kind, rangeExpr)
       }
+      endLoc(expr)
     }
     return expr
   }
@@ -634,7 +665,8 @@ class DeepParser : Parser {
       start := expr
       exclusive := consume.kind === Token.dotDotLt
       end := addExpr
-      return RangeLiteralExpr(expr.loc, start, end, exclusive)
+      expr = RangeLiteralExpr(expr.loc, start, end, exclusive)
+      endLoc(expr)
     }
     return expr
   }
@@ -646,8 +678,10 @@ class DeepParser : Parser {
   private Expr addExpr()
   {
     expr := multExpr
-    while (curt === Token.plus || curt === Token.minus)
+    while (curt === Token.plus || curt === Token.minus) {
       expr = ShortcutExpr.makeBinary(expr, consume.kind, multExpr)
+      endLoc(expr)
+    }
     return expr
   }
 
@@ -658,8 +692,10 @@ class DeepParser : Parser {
   private Expr multExpr()
   {
     expr := parenExpr
-    while (curt === Token.star || curt === Token.slash || curt === Token.percent)
+    while (curt === Token.star || curt === Token.slash || curt === Token.percent) {
       expr = ShortcutExpr.makeBinary(expr, consume.kind, parenExpr)
+      endLoc(expr)
+    }
     return expr
   }
 
@@ -686,7 +722,9 @@ class DeepParser : Parser {
     {
       consume
       if (castType == null) throw err("Expecting cast '(type)'")
-      return TypeCheckExpr(loc, ExprId.coerce, parenExpr, castType)
+      e := TypeCheckExpr(loc, ExprId.coerce, parenExpr, castType)
+      endLoc(e)
+      return e
     }
     reset(mark)
 
@@ -717,7 +755,9 @@ class DeepParser : Parser {
     if (tokt === Token.bang)
     {
       consume
-      return UnaryExpr(loc, Expr.tokenToExprId(tokt), tokt, parenExpr)
+      e := UnaryExpr(loc, Expr.tokenToExprId(tokt), tokt, parenExpr)
+      endLoc(e)
+      return e
     }
 
     if (tokt === Token.plus)
@@ -729,13 +769,17 @@ class DeepParser : Parser {
     if (tokt === Token.minus)
     {
       consume
-      return ShortcutExpr.makeUnary(loc, tokt, parenExpr)
+      e := ShortcutExpr.makeUnary(loc, tokt, parenExpr)
+      endLoc(e)
+      return e
     }
 
     if (tokt.isIncrementOrDecrement)
     {
       consume
-      return ShortcutExpr.makeUnary(loc, tokt, parenExpr)
+      e := ShortcutExpr.makeUnary(loc, tokt, parenExpr)
+      endLoc(e)
+      return e
     }
 
     expr := termExpr
@@ -748,6 +792,7 @@ class DeepParser : Parser {
       consume
       shortcut := ShortcutExpr.makeUnary(loc, tokt, expr)
       shortcut.isPostfixLeave = true
+      endLoc(shortcut)
       return shortcut
     }
 
@@ -804,7 +849,10 @@ class DeepParser : Parser {
       case Token.strLiteral:      return LiteralExpr(loc, ExprId.strLiteral, consume.val)
       case Token.durationLiteral: return LiteralExpr(loc, ExprId.durationLiteral, consume.val)
       case Token.uriLiteral:      return LiteralExpr(loc, ExprId.uriLiteral, consume.val)
-      case Token.localeLiteral:   return LocaleLiteralExpr(loc, consume.val)
+      case Token.localeLiteral:
+        expr := LocaleLiteralExpr(loc, consume.val)
+        endLoc(expr)
+        return expr
       case Token.lbracket:        return collectionLiteralExpr(loc, null)
       case Token.falseKeyword:    consume; return LiteralExpr.makeFalse(loc)
       case Token.nullKeyword:     consume; return LiteralExpr.makeNull(loc)
@@ -812,19 +860,29 @@ class DeepParser : Parser {
       case Token.thisKeyword:     consume; return ThisExpr(loc)
       case Token.itKeyword:       consume; return ItExpr(loc)
       case Token.trueKeyword:     consume; return LiteralExpr.makeTrue(loc)
-      case Token.pound:           consume; return SlotLiteralExpr(loc, curType.asRef(), consumeId)
-      case Token.awaitKeyword:    consume; return AwaitExpr(loc, this.expr)
+      case Token.pound:           
+        consume
+        expr := SlotLiteralExpr(loc, curType.asRef(), consumeId)
+        endLoc(expr)
+        return expr
+      case Token.awaitKeyword:
+        consume;
+        expr := AwaitExpr(loc, this.expr)
+        endLoc(expr)
+        return expr
       case Token.sizeofKeyword:   
         consume;
         consume(Token.lparen)
         expr := SizeOfExpr(loc, this.ctype)
         consume(Token.rparen)
+        endLoc(expr)
         return expr
       case Token.addressofKeyword:
         consume;
         consume(Token.lparen)
         expr := AddressOfExpr(loc, this.expr)
         consume(Token.rparen)
+        endLoc(expr)
         return expr
       case Token.pipe:
         c := tryClosure
@@ -848,10 +906,15 @@ class DeepParser : Parser {
     if (curt === Token.pound)
     {
       consume
-      if (curt === Token.identifier && !cur.newline)
-        return SlotLiteralExpr(loc, ctype, consumeId)
-      else
-        return LiteralExpr(loc, ExprId.typeLiteral, ctype)
+      if (curt === Token.identifier && !cur.newline) {
+        expr := SlotLiteralExpr(loc, ctype, consumeId)
+        endLoc(expr)
+        return expr
+      } else {
+        expr := LiteralExpr(loc, ExprId.typeLiteral, ctype)
+        endLoc(expr)
+        return expr
+      }
     }
 
     // dot is named super or static call chain
@@ -866,20 +929,24 @@ class DeepParser : Parser {
       }
       else
       {
-        return idExpr(StaticTargetExpr(loc, ctype), false, false)
+        target := StaticTargetExpr(loc, ctype)
+        endLoc(target)
+        return idExpr(target, false, false)
       }
     }
 
     // dsl
     if (curt == Token.dsl)
     {
-      srcLoc := Loc(cur.loc.file, cur.loc.line, cur.loc.col+2)
+      srcLoc := Loc(cur.loc.file, cur.loc.line, cur.loc.col+2, cur.loc.offset)
       dslVal := cur as TokenValDsl
-      return DslExpr(loc, ctype, srcLoc, consume.val)
+      expr := DslExpr(loc, ctype, srcLoc, consume.val)
       {
         leadingTabs = dslVal.leadingTabs
         leadingSpaces = dslVal.leadingSpaces
       }
+      endLoc(expr)
+      return expr
     }
 
     // list/map literal with explicit type
@@ -899,6 +966,7 @@ class DeepParser : Parser {
     {
       construction := CallExpr(loc, StaticTargetExpr(loc, ctype), "<ctor>", ExprId.construction)
       callArgs(construction)
+      endLoc(construction)
       return construction
     }
 
@@ -912,6 +980,7 @@ class DeepParser : Parser {
       ctor := CallExpr(loc, StaticTargetExpr(loc, ctype), "make")
       itBlock := tryItBlock
       if (itBlock != null) ctor.args.add(itBlock)
+      endLoc(ctor)
       return ctor
     }
 
@@ -969,6 +1038,7 @@ class DeepParser : Parser {
       if (itBlock != null) {
         x := CallExpr.make(loc, target, "with")
         x.args.add(itBlock)
+        endLoc(x)
         return x
       }
     }
@@ -994,7 +1064,9 @@ class DeepParser : Parser {
     if (curt == Token.amp)
     {
       consume
-      return UnknownVarExpr(loc, target, consumeId, ExprId.storage)
+      expr := UnknownVarExpr(loc, target, consumeId, ExprId.storage)
+      endLoc(expr)
+      return expr
     }
 
     if (peek.isCallOpenParen)
@@ -1020,6 +1092,7 @@ class DeepParser : Parser {
       call.isSafe    = safeCall
       call.noParens  = true
       call.args.add(closure)
+      endLoc(call)
       return call
     }
 
@@ -1033,6 +1106,7 @@ class DeepParser : Parser {
       call.isCheckedCall = checkedCall
       call.isSafe    = safeCall
       call.noParens  = true
+      endLoc(call)
       return call
     }
 
@@ -1041,7 +1115,9 @@ class DeepParser : Parser {
     // provide a more meaningful error
     if (curt === Token.pound) throw err("Unknown type '$name' for type literal", loc)
 
-    return UnknownVarExpr(loc, target, name) { isSafe = safeCall }
+    expr := UnknownVarExpr(loc, target, name) { isSafe = safeCall }
+    endLoc(expr)
+    return expr
   }
 
   **
@@ -1054,6 +1130,7 @@ class DeepParser : Parser {
     call.target  = target
     call.name    = consumeId
     callArgs(call)
+    endLoc(call)
     return call
   }
 
@@ -1106,6 +1183,7 @@ class DeepParser : Parser {
     call.target = target
     callArgs(call)
     call.name = "call"
+    endLoc(call)
     return call
   }
 
@@ -1125,7 +1203,9 @@ class DeepParser : Parser {
     // otherwise this must be a standard single key index
     expr := expr
     consume(Token.rbracket)
-    return ShortcutExpr.makeGet(loc, target, expr)
+    e := ShortcutExpr.makeGet(loc, target, expr)
+    endLoc(e)
+    return e
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1158,7 +1238,9 @@ class DeepParser : Parser {
     {
       err("Invalid list literal; use '[,]' for empty Obj[] list", loc)
       consume
-      return ListLiteralExpr(loc)
+      expr := ListLiteralExpr(loc)
+      endLoc(expr)
+      return expr
     }
 
     // read first expression
@@ -1210,6 +1292,7 @@ class DeepParser : Parser {
       list.vals.add(expr)
     }
     consume(Token.rbracket)
+    endLoc(list)
     return list
   }
 
@@ -1258,6 +1341,8 @@ class DeepParser : Parser {
       map.vals.add(expr)
     }
     consume(Token.rbracket)
+    
+    endLoc(map)
     return map
   }
 
@@ -1343,6 +1428,7 @@ class DeepParser : Parser {
     closure.code = block
     curClosure = oldClosure
 
+    endLoc(closure)
     return closure
   }
 
@@ -1363,6 +1449,7 @@ class DeepParser : Parser {
       endOfStmt
     }
     consume(Token.rbrace)
+    endLoc(complex)
     return complex
   }
 

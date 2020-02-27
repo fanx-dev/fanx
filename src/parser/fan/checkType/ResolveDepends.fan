@@ -37,7 +37,9 @@ class ResolveDepends : CompilerStep
   **
   override Void run()
   {
-    debug("ResolveDepends")
+    //debug("ResolveDepends")
+    //if (compiler.isScript) return
+    if (compiler.pod.resolvedDepends != null) return
 
     // if the input has no dependencies, then
     // assume a dependency on sys
@@ -48,17 +50,17 @@ class ResolveDepends : CompilerStep
 
     // we initialize the CNamespace.depends map
     // as we process each dependency
-    compiler.ns.depends = Str:CPod[:]
+    compiler.pod.resolvedDepends = Str:CPod[:]
 
     // process each dependency
     resolvePodDepend(pod)
 
     // check that everything has a dependency on sys
-    if (!isSys && !ns.depends.containsKey("sys"))
-      err("All pods must have a dependency on 'sys'", loc)
+    //if (!isSys && !ns.depends.containsKey("sys"))
+    //  err("All pods must have a dependency on 'sys'", loc)
 
     // depends self
-    ns.depends[pod.name] = pod
+    //ns.depends[pod.name] = pod
   }
   
   private Void resolvePodDepend(CPod pod) {
@@ -69,10 +71,10 @@ class ResolveDepends : CompilerStep
         err("Cyclic dependency on self '$name' in ${pod.name}", loc)
       }
       
-      dpod := ns.depends[name]
+      dpod := compiler.pod.resolvedDepends[name]
       if (dpod == null) {
         dpod = resolveDepend(cdepend)
-        ns.depends[name] = dpod
+        compiler.pod.resolvedDepends[name] = dpod
         resolvePodDepend(pod)
       }
     }

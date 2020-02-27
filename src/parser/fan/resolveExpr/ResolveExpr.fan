@@ -33,8 +33,8 @@ class ResolveExpr : CompilerStep
 
   override Void run()
   {
-    debug("ResolveExpr")
-    walk(pod, VisitDepth.expr)
+    //debug("ResolveExpr")
+    walkUnits(VisitDepth.expr)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,8 +94,11 @@ class ResolveExpr : CompilerStep
       def.init = LiteralExpr.makeDefaultLiteral(def.loc, def.ctype)
 
     // turn init into full assignment
-    if (def.init != null)
-      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.loc, def.var_v), def.init)
+    if (def.init != null) {
+      loc := def.init.loc
+      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.var_v.loc, def.var_v), def.init)
+      def.init.loc = loc
+    }
   }
 
   private Void resolveFor(ForStmt stmt)
@@ -301,7 +304,8 @@ class ResolveExpr : CompilerStep
         if (stypes.size > 1)
           compiler.log.err("Ambiguous type: " + stypes.join(", "), expr.loc)
         
-        staticTargetExpr := StaticTargetExpr(expr.loc, stypes.first)
+        type := CType.makeResolvedType(stypes.first.typeDef, expr.loc)
+        staticTargetExpr := StaticTargetExpr(expr.loc, type)
         staticTargetExpr.ctype = stypes.first
         call := expr as CallExpr
         if (call != null) {

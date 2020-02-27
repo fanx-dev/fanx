@@ -27,6 +27,7 @@ class ParameterizedField : CField
   override Str signature() { generic.signature }
   override Int flags() { generic.flags }
   override CFacet[]? facets() { generic.facets }
+  override DocDef? doc() { generic.doc }
 
   override CType fieldType
   override CMethod? getter
@@ -69,6 +70,7 @@ class ParameterizedMethod : CMethod
   override Str qname() { generic.qname }
   override Int flags() { generic.flags }
   override CFacet[]? facets() { generic.facets }
+  override DocDef? doc() { generic.doc }
 
   override Bool isParameterized()  { true }
 

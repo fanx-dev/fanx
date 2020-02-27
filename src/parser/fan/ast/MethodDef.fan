@@ -201,6 +201,22 @@ class MethodDef : SlotDef, CMethod
     v.visitMethodDef(this)
     v.exitMethodDef(this)
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (facets != null) {
+      facets.each |FacetDef f| {
+        list.add(f)
+      }
+    }
+    
+    if (ctorChain != null) {
+      list.add(ctorChain)
+    }
+    
+    if (code != null) {
+      list.add(code)
+    }
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Debug
