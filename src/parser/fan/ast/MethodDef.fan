@@ -208,6 +208,14 @@ class MethodDef : SlotDef, CMethod
         list.add(f)
       }
     }
+
+    if (ret != null) {
+      list.add(ret)
+    }
+    
+    paramDefs.each |p| {
+      list.add(p)
+    }
     
     if (ctorChain != null) {
       list.add(ctorChain)

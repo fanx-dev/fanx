@@ -14,16 +14,17 @@ class BasicInit : CompilerStep {
 
   override Void visitTypeDef(TypeDef def)
   {
+    loc := def.loc.toPointLoc
     if (def.inheritances.isEmpty) {
       def.baseSpecified = false
       if (def.isEnum)
-        def.inheritances.add(CType.enumType(def.loc))
+        def.inheritances.add(CType.enumType(loc))
       else if (def.qname != "sys::Obj")
-        def.inheritances.add(CType.objType(def.loc))
+        def.inheritances.add(CType.objType(loc))
     }
     
     if (def.isFacet)
-        def.inheritances.add(CType.facetType(def.loc))
+        def.inheritances.add(CType.facetType(loc))
     
 //    genericParams := def.genericParameters
 //    if (genericParams != null) {
@@ -32,7 +33,7 @@ class BasicInit : CompilerStep {
 //      }
 //    }
     
-    def.flags = normalizeFlags(def.flags, def.loc)
+    def.flags = normalizeFlags(def.flags, loc)
     initVirtualFlags(def)
   }
   

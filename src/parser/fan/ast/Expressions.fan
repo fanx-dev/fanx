@@ -167,6 +167,10 @@ abstract class NameExpr : Expr
   new make(Loc loc, ExprId id, Expr? target, Str? name)
     : super(loc, id)
   {
+    if (target != null) {
+      super.loc = Loc.make(target.loc.file, target.loc.line, target.loc.col
+        , target.loc.offset, (loc.end-target.loc.offset))
+    }
     this.target = target
     this.name   = name
     this.isSafe = false

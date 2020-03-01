@@ -46,6 +46,7 @@ mixin CNode
     if (path != null) path.add(this)
     for (i:=0; i<list.size; ++i) {
       node := list[i]
+      if (node.loc.len == 0) continue
       if (node.loc.contains(loc)) {
         return node.findAt(loc, path)
       }

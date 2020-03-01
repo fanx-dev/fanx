@@ -47,6 +47,10 @@ class MethodVar : Node
     isReassigned = true
     if (shadows != null) shadows.reassigned
   }
+  
+  override Void getChildren(CNode[] list, [Str:Obj]? options) {
+    if (ctype != null) list.add(ctype)
+  }
 
   MethodDef? method    // declared method (doCall if declared in closure)
   Int register        // register number

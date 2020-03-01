@@ -1443,7 +1443,7 @@ public class Parser
     if (curt !== Token.identifier) {
       e := err("Expected identifier, not '$cur'", cur.loc)
       if (curt == Token.eof) throw e
-      return "error"
+      return ""
     }
     return consume.val
   }

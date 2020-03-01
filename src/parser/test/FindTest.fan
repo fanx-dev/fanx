@@ -29,11 +29,66 @@ class FindTest : Test
                {
                   echo(age)
                   Foo.foo(1, 2)
-                  
-                }
+               }
             }
         |>
-    
+    run(code)
+  }
+  
+  Void test2() {
+    code := 
+    Str<| 
+            class Foo {
+               Void main()
+               {
+                  Foo.main()
+               }
+            }
+        |>
+    run(code)
+  }
+  
+  Void test3() {
+    code := 
+    Str<| 
+            class Foo {
+               Void main()
+               {
+                  "x".
+               }
+            }
+        |>
+    run(code)
+  }
+  
+  Void test4() {
+    code := 
+    Str<| 
+            class Foo {
+               Int abc := 0
+               Int main()
+               {
+                  return abc + 1
+               }
+            }
+        |>
+    run(code)
+  }
+  
+  Void test5() {
+    code := 
+    Str<| 
+            class Foo {
+               Void main(Foo b)
+               {
+                  echo(b)
+               }
+            }
+        |>
+    run(code)
+  }
+  
+  private Void run(Str code) {
     pod := PodDef(Loc.makeUninit, "testPod")
     m := IncCompiler(pod)
     

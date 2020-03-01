@@ -249,6 +249,10 @@ class TypeDef : CTypeDef
       }
     }
     
+    this.inheritances.each |t| {
+      list.add(t)
+    }
+    
     slotDefs.each |slot| {
       if (slot.isSynthetic) return
       list.add(slot)
