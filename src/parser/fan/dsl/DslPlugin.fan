@@ -122,7 +122,7 @@ abstract class DslPlugin : CompilerStep
 
         // if we made here, that means we have a non-whitespace
         // char which is to the left of the opening "<|" token
-        loc := Loc(dsl.srcLoc.file, dsl.srcLoc.line+i, j+1)
+        loc := Loc(dsl.srcLoc.file, dsl.srcLoc.line+i, j+1, dsl.srcLoc.offset)
         if (dsl.leadingTabs == 0)
           err("Leading space in $dsl.anchorType.name DSL must be $dsl.leadingSpaces spaces", loc)
         else

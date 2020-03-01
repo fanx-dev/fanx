@@ -930,7 +930,7 @@ class Tokenizer
   **
   CompilerErr err(Str msg, Loc? loc := null)
   {
-    if (loc == null) loc = Loc(filename, line, col)
+    if (loc == null) loc = Loc(filename, line, col, pos, 0)
     return log.err(msg, loc);
   }
 

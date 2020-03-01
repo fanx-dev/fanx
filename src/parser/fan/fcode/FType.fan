@@ -77,13 +77,13 @@ class FType : CTypeDef
     // lazy read from the pod file
     read
     
-    slotsCached = CSlot[,]
+    slotsMap := [Str:CSlot][:]
 
     // map all the declared fields and methods
-    ffields.each  |FField f|  { slotsCached.add(f) }
+    ffields.each  |FField f|  { slotsMap[f.name] = f }
     fmethods.each |FMethod m|
     {
-      f := slots[m.name] as FField
+      f := slotsMap[m.name] as FField
       if (f != null)
       {
         // if already mapped to field must be getter/setter
@@ -99,15 +99,17 @@ class FType : CTypeDef
       }
       else
       {
-        slotsCached.add(m)
+        slotsMap[m.name] = m
       }
     }
+    slotDefsCached = slotsMap.vals
+    slotDefMapCache = slotsMap
   }
   
-  private CSlot[]? slotsCached
+  private CSlot[]? slotDefsCached
   override CSlot[] slotDefs() {
-    if (slotsCached == null) reflect
-    return slotsCached
+    if (slotDefsCached == null) reflect
+    return slotDefsCached
   }
 
 //////////////////////////////////////////////////////////////////////////

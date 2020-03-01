@@ -235,22 +235,24 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   ** Map of the all defined slots, both fields and
   ** methods (including inherited slots).
   **
-  private [Str:CSlot]? slotsCache
+  private [Str:CSlot]? slotsMapCache
   
   virtual Str:CSlot slots() {
-    if (slotsCache != null) return slotsCache
+    if (slotsMapCache != null) return slotsMapCache
     
-    slotsCache = [Str:CSlot][:]
+    slotsMap := [Str:CSlot][:]
+    slotsMapCache = slotsMap
     
     slotDefs.each |s| {
       if (s.isGetter || s.isSetter || s.isOverload) return
-      slotsCache[s.name] = s
+      slotsMap[s.name] = s
     }
     
     this.inheritances.each |t| {
-      inherit(slotsCache, t)
+      inherit(slotsMap, t)
     }
-    return slotsCache
+    
+    return slotsMapCache
   }
   
   **

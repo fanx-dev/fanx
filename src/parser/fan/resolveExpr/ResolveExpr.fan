@@ -998,6 +998,7 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveDsl(DslExpr expr)
   {
+    ResolveType.doResolveType(this, expr.anchorType)
     plugin := DslPlugin.find(this, expr.loc, expr.anchorType)
     if (plugin == null)
     {

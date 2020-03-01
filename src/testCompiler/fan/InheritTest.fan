@@ -1310,5 +1310,18 @@ class InheritTest : CompilerTest
     verifyEq(y->y, 2)
   }
 
-
+  Void testOverridePrivate() {
+    verifyErrors(
+     "abstract class Base {
+        protected Bool? x := true
+      }
+      class Sub : Base {
+        private Int? x := 1
+      }
+      ",
+      [
+        5,3, "Cannot override non-virtual slot"
+      ]
+    )
+  }
 }
