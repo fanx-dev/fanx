@@ -7,7 +7,7 @@ export FAN_ENV_PATH=""
 fanc='../env/bin/fanb'
 
 echo 'build sys test'
-$fanc baseTest/pod.props
+#$fanc baseTest/pod.props
 $fanc testSys/pod.props
 
 echo 'build compiler test'

@@ -137,6 +137,12 @@ class Main
   ** init devHomeDir
   private static File getDevHomeDir() {
     devHome := Env.cur.vars["FANX_DEV_HOME"]
+    if (devHome != null) {
+      //Windows driver name
+      if (devHome.size > 1 && devHome[0].isAlpha && devHome[1] == ':') {
+        devHome = File.os(devHome).uri.toStr
+      }
+    }
     if (devHome == null)
       devHome = Pod.find("build", false)?.config("devHome")
     if (devHome == null)
