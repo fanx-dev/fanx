@@ -15,24 +15,14 @@ class FindTest : Test
     code := 
     Str<| 
             class Foo {
-               Int? age
-               Str? name
-
                Void foo(Int a, Int b) {
                  x := a + b
                  echo(x)
-                 p := Foo()
-                 Foo.make
-               }
-
-               Void main()
-               {
-                  echo(age)
-                  Foo.foo(1, 2)
                }
             }
         |>
-    run(code)
+    node := findAt(code, 80)
+    verifyType(node, LocalVarExpr#)
   }
   
   Void test2() {
@@ -45,7 +35,10 @@ class FindTest : Test
                }
             }
         |>
-    run(code)
+    node := findAt(code, 53)
+    verifyType(node, CType#)
+    node2 := findAt(code, 57)
+    verifyType(node2, CallExpr#)
   }
   
   Void test3() {
@@ -58,7 +51,8 @@ class FindTest : Test
                }
             }
         |>
-    run(code)
+    node := findAt(code, 56)
+    verifyType(node, UnknownVarExpr#)
   }
   
   Void test4() {
@@ -72,7 +66,8 @@ class FindTest : Test
                }
             }
         |>
-    run(code)
+    node := findAt(code, 78)
+    verifyType(node, FieldExpr#)
   }
   
   Void test5() {
@@ -85,10 +80,59 @@ class FindTest : Test
                }
             }
         |>
-    run(code)
+    node := findAt(code, 35)
+    verifyType(node, CType#)
   }
   
-  private Void run(Str code) {
+  Void test6() {
+    code := 
+    Str<| 
+            class Foo {
+               Void main()
+               {
+                  b := Foo()
+                  echo(b)
+               }
+            }
+        |>
+    node := findAt(code, 58)
+    verifyType(node, CType#)
+  }
+  
+  Void test7() {
+    code := 
+    Str<| 
+            enum class Foo {
+               red, green, blue
+               Void main()
+               {
+                  b := Foo.green
+                  echo(b)
+               }
+            }
+        |>
+    node := findAt(code, 85)
+    verifyType(node, CType#)
+    node2 := findAt(code, 90)
+    verifyType(node2, FieldExpr#)
+  }
+  
+  Void test8() {
+    code := 
+    Str<| 
+            class Foo {
+               Void foo() {}
+               Void main()
+               {
+                  foo()
+               }
+            }
+        |>
+    node := findAt(code, 73)
+    verifyType(node, CallExpr#)
+  }
+  
+  private CNode findAt(Str code, Int pos) {
     pod := PodDef(Loc.makeUninit, "testPod")
     m := IncCompiler(pod)
     
@@ -96,19 +140,13 @@ class FindTest : Test
     m.updateSource(file, code)
     
     m.resolveAll
-    m.compiler.pod.dump
+    //m.compiler.pod.dump
     
     m.compiler.pod.units.each |u| {
       u.printTree()
-      
-      (code.size+5).times |i| {
-        node := u.findAt(Loc.make("", 0, 0, i, 0))
-        echo(i.toStr +"\t"+
-            node.typeof + "\t" + 
-            node + "\t" + 
-            node.loc.offset + "," + 
-            node.loc.end)
-      }
     }
+    unit := m.compiler.pod.units.vals.first
+    node := unit.findAt(Loc.make("", 0, 0, pos, 0))
+    return node
   }
 }

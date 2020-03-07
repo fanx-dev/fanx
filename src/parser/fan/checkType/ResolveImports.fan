@@ -184,7 +184,7 @@ class ResolveImports : CompilerStep
     // add pod level imports first
     unit.usings.each |Using u|
     {
-      if (u.typeName == null)
+      if (u.typeName == null && u.resolvedPod != null)
         addAll(types, u.resolvedPod.types)
     }
 
@@ -192,7 +192,7 @@ class ResolveImports : CompilerStep
     // override any pod level imports)
     unit.usings.each |Using u|
     {
-      if (u.typeName != null)
+      if (u.typeName != null && u.resolvedType != null)
       {
         if (u.asName == null)
         {

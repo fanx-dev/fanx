@@ -41,13 +41,14 @@ class InitEnum : CompilerStep
     try
  
     {
-      addCtor
-      addFromStr
-      t.addFacet(CType.makeRef(t.loc, "sys", "Serializable"), ["simple":true])
+      loc := t.loc.toPointLoc
+      addCtor(loc)
+      addFromStr(loc)
+      t.addFacet(CType.makeRef(t.loc.toPointLoc, "sys", "Serializable"), ["simple":true])
 
       fields := FieldDef[,]
       t.enumDefs.each |EnumDef e| { fields.add(makeField(e)) }
-      fields.add(makeValsField)
+      fields.add(makeValsField(loc))
 
       // add enum fields to beginning of type
       fields.each |FieldDef f, Int i| { t.addSlot(f, i) }
@@ -64,7 +65,7 @@ class InitEnum : CompilerStep
   **
   ** Add constructor or enhance existing constructor.
   **
-  Void addCtor()
+  Void addCtor(Loc loc)
   {
     // our constructor definition
     MethodDef? m :=  null
@@ -94,17 +95,17 @@ class InitEnum : CompilerStep
     // add a synthetic one
     if (m == null)
     {
-      m = MethodDef(curType.loc, curType)
+      m = MethodDef(loc, curType)
       m.name = "make"
       m.flags = FConst.Ctor + FConst.Private + FConst.Synthetic
       m.ret = CType.voidType(curType.loc)
       m.code = Block(curType.loc)
-      m.code.stmts.add(ReturnStmt.makeSynthetic(curType.loc))
+      m.code.stmts.add(ReturnStmt.makeSynthetic(loc))
       curType.addSlot(m)
     }
 
     // Enum.make call
-    loc := m.loc
+    loc = m.loc
     m.ctorChain = CallExpr(loc, SuperExpr(loc), "make")
     m.ctorChain.isCtorChain = true
     m.ctorChain.args.add(UnknownVarExpr(loc, null, "\$ordinal"))
@@ -122,10 +123,10 @@ class InitEnum : CompilerStep
   **
   ** Add fromStr method.
   **
-  Void addFromStr()
+  Void addFromStr(Loc loc)
   {
     // static CurType fromStr(Str name, Bool checked := true)
-    loc := curType.loc
+    //loc := curType.loc
     m := MethodDef(loc, curType)
     m.name = "fromStr"
     m.flags = FConst.Public + FConst.Static + FConst.Ctor
@@ -189,7 +190,7 @@ class InitEnum : CompilerStep
   **
   ** Make vals field: List of Enum values
   **
-  FieldDef makeValsField()
+  FieldDef makeValsField(Loc loc)
   {
     // ensure there isn't already a slot with same name
     dup := curType.slotDef("vals")
@@ -201,7 +202,7 @@ class InitEnum : CompilerStep
         err("Enum 'vals' conflicts with inherited slot '$dup.qname'", curType.loc)
     }
 
-    loc := curType.loc
+    //loc := curType.loc
 
     // initializer
     listType := CType.listType(loc, curType.asRef())

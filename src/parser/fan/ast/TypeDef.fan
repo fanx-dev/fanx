@@ -45,7 +45,7 @@ class TypeDef : CTypeDef
   Void addFacet(CType type, [Str:Obj]? vals := null)
   {
     if (facets == null) facets = FacetDef[,]
-    loc := this.loc
+    loc := this.loc.toPointLoc
     f := FacetDef(loc, type)
     vals?.each |v, n|
     {

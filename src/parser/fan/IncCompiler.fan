@@ -3,6 +3,7 @@ class IncCompiler {
   
   CompilerContext compiler
   CompilerStep[] pipelines := [,]
+  Uri[]? srcDirs
   
   new make(PodDef pod) {
     compiler = CompilerContext(pod)
@@ -39,10 +40,12 @@ class IncCompiler {
     
     icom := IncCompiler(pod)
     if (ns != null) icom.compiler.ns = ns
+    baseDir := file.uri.parent
     
-    dirs := parseDirs(file, srcDirs)
+    dirs := parseDirs(baseDir, srcDirs)
+    icom.srcDirs = dirs
     dirs?.each |dir| {
-      fdir := (file.uri + dir).toFile
+      fdir := (baseDir + dir).toFile
       fdir.listFiles.each |f|{
         if (f.ext == "fan") {
           icom.updateSourceFile(f)
@@ -66,13 +69,13 @@ class IncCompiler {
     return subs
   }
   
-  static private Uri[]? parseDirs(File scriptFile, Str? str) {
+  static private Uri[]? parseDirs(Uri baseDir, Str? str) {
     if (str == null) return null
     srcDirs := Uri[,]
     str.split(',').each |d| {
       if (d.endsWith("*")) {
         srcUri := d[0..<-1].toUri
-        dirs := allDir(scriptFile.uri, srcUri)
+        dirs := allDir(baseDir, srcUri)
         srcDirs.addAll(dirs)
       }
       else {

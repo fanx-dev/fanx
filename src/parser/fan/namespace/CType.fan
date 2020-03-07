@@ -199,6 +199,12 @@ class CType : CNode, TypeMixin
 //    return d
 //  }
 
+   override Void getChildren(CNode[] list, [Str:Obj]? options) {
+     if (genericArgs != null) {
+        genericArgs.each { list.add(it) }
+     }
+   }
+
 //////////////////////////////////////////////////////////////////////////
 // Nullable
 //////////////////////////////////////////////////////////////////////////

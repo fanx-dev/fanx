@@ -1126,8 +1126,7 @@ class DeepParser : Parser {
   **
   private CallExpr callExpr(Expr? target)
   {
-    call := CallExpr(cur.loc)
-    call.target  = target
+    call := CallExpr(cur.loc, target)
     call.name    = consumeId
     callArgs(call)
     endLoc(call)

@@ -64,7 +64,7 @@ class InitFacet : CompilerStep
 
   private Void initSingleton()
   {
-    loc := curType.loc
+    loc := curType.loc.toPointLoc
 
     // private new make() {}
     m := MethodDef(loc, curType)
@@ -87,7 +87,7 @@ class InitFacet : CompilerStep
 
   private Void initStruct()
   {
-    loc := curType.loc
+    loc := curType.loc.toPointLoc
 
     // f?.call(this)
     call := CallExpr(loc, UnknownVarExpr(loc, null, "f"), "call")
