@@ -10,6 +10,7 @@
 ** AtomicInt is used to manage an integer variable shared
 ** between actor/threads with atomic updates.
 **
+@Extern
 final const native class AtomicInt
 {
 

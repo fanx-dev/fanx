@@ -6,24 +6,74 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
+native internal rtconst class PodList {
+  private Pod[] podList := [,]
+  private [Str:Pod] podMap := [:]
+  private Bool inited := false
+  private Lock lock := Lock()
+
+  private const static PodList cur := PodList()
+
+  new make() {}
+
+  private native Void doInit()
+  private Void init() {
+    lock.lock
+    if (!inited) {
+      doInit
+      inited = true
+    }
+    lock.unlock
+  }
+
+  static Pod[] listPod() {
+    cur.init
+    return cur.podList
+  }
+
+  static Pod? findPod(Str name, Bool checked := true) {
+    cur.init
+    return cur.podMap.getChecked(name, checked)
+  }
+
+  ** call in native
+  internal static Void addPod(Pod pod) {
+    cur.podList.add(pod)
+    cur.podMap[pod.name] = pod
+  }
+}
 
 **
 ** Pod represents a module of Types.  Pods serve as a type namespace
 ** as well as unit of deployment and versioning.
 **
-native final const class Pod
+native final rtconst class Pod
 {
   private const Str _name
   private const Version _version
   private const Depend[] _depends
   private const Uri _uri
-  private const [Str:Str] _meta
-  private const Type[] _types
-  private const [Str:Type] _typeMap
+  private [Str:Str] _meta
+  private Type[] _types
+  private [Str:Type] _typeMap
+  private Obj? compilerCache
+
+  private Bool inited := false
+  private Lock lock := Lock()
 
 //////////////////////////////////////////////////////////////////////////
 // Management
 //////////////////////////////////////////////////////////////////////////
+
+  private native Void doInit()
+  private Void init() {
+    lock.lock
+    if (!inited) {
+      doInit
+      inited = true
+    }
+    lock.unlock
+  }
 
   **
   ** Get the pod of the given instance which is convenience
@@ -36,14 +86,14 @@ native final const class Pod
   ** method will load all of the pods into memory, so it is an expensive
   ** operation.
   **
-  static Pod[] list() { Reflect.listPod }
+  static Pod[] list() { PodList.listPod }
 
   **
   ** Find a pod by name.  If the pod doesn't exist and checked
   ** is false then return null, otherwise throw UnknownPodErr.
   **
   static Pod? find(Str name, Bool checked := true) {
-    Reflect.findPod(name, checked)
+    PodList.findPod(name, checked)
   }
 
   **
@@ -62,18 +112,23 @@ native final const class Pod
   **
   ** Private constructor.
   **
-  private new make(Str name, Str version, Str[] depends, [Str:Str] meta, Type[] types) {
+  private new make(Str name, Str version, Str depends) {
     _name = name
     _version = Version(version)
-    _depends = depends.map { Depend(it) }
+    _depends = depends.split(',').map { Depend(it) }
     _uri = Uri.fromStr("fan://" + name);
-    _meta = meta
-    _types = types
-    typeMap := [Str:Type][:]
-    types.each {
-      typeMap[it.name] = it
-    }
-    _typeMap = typeMap
+    _meta = [:]
+    _types = Type[,]
+    _typeMap := [Str:Type][:]
+  }
+
+  internal Void addMeta(Str k, Str v) {
+    _meta[k] = v
+  }
+
+  internal Void addType(Type t) {
+    _types.add(t)
+    _typeMap[t.name] = t
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,14 +173,15 @@ native final const class Pod
   **
   ** List of the all defined types.
   **
-  Type[] types() { _types }
+  Type[] types() { init; return _types }
 
   **
   ** Find a type by name.  If the type doesn't exist and checked
   ** is false then return null, otherwise throw UnknownTypeErr.
   **
   Type? type(Str name, Bool checked := true) {
-    _typeMap.getChecked(name, checked)
+    init
+    return _typeMap.getChecked(name, checked)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -196,6 +252,6 @@ native final const class Pod
   }
 
 
-  @NoDoc native Obj? _getCompilerCache()
-  @NoDoc native Void _setCompilerCache(Obj? obj)
+  @NoDoc Obj? _getCompilerCache() { compilerCache }
+  @NoDoc Void _setCompilerCache(Obj? obj) { compilerCache = obj }
 }

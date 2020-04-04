@@ -10,8 +10,12 @@
 ** Method models a function with a formal parameter list and
 ** return value (or Void if no return).
 **
-native const class Method : Slot
+native rtconst class Method : Slot
 {
+  private const Str _returnsName
+  private Type? _returns
+  private const Int _id
+  private Param[] _params := [,]
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -20,7 +24,17 @@ native const class Method : Slot
   **
   ** Private constructor.
   **
-  private static new privateMake()
+  internal new privateMake(Type parent, Str name, Str? doc, Int flags, 
+      Str returnsName, Int id)
+    : super.make(parent, name, doc, flags) {
+    _returnsName = returnsName
+    _id = id
+  }
+
+  internal Void addParam(Str name, Str typeName, Int mask) {
+    p := Param(name, typeName, mask)
+    _params.add(p)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Signature
@@ -30,18 +44,27 @@ native const class Method : Slot
   ** Type returned by the method or sys::Void if no return value.
   ** Convenience for 'func.returns'.
   **
-  Type returns()
+  Type returns() {
+    if (_returns == null) {
+      _returns = Type.find(_returnsName)
+    }
+    return _returns
+  }
 
   **
   ** Get the parameters of the method.
   ** Convenience for 'func.params'.
   **
-  Param[] params()
+  Param[] params() { _params }
 
   **
   ** Get the function body of this method.
   **
-  Func func(Int arity := -1)
+  Func func(Int arity := -1) {
+    return |Obj a, Obj b, Obj c, Obj d, Obj e, Obj f, Obj g, Obj h->Obj| {
+      return this.call(a, b, c, d, e, f, g, h)
+    }
+  }
 
   **
   ** Evaluate the parameter default using reflection.  If this method is
@@ -51,18 +74,29 @@ native const class Method : Slot
   **
   //Obj? paramDef(Param param, Obj? instance := null)
 
+  override Str signature() {
+    sb := StrBuf()
+    sb.add(returns).add(" ").add(name).add("(")
+    params.each |p, i| {
+      if (i>0) sb.add(", ");
+      sb.add(p)
+    }
+    sb.add(")")
+    return sb.toStr
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Call Conveniences
 //////////////////////////////////////////////////////////////////////////
 
   ** Convenience for 'func.callList'
-  Obj? callList(Obj?[]? args)
+  Obj? callList(Obj?[]? args) { func.callList(args) }
 
   ** Convenience for 'func.callOn'
-  Obj? callOn(Obj? target, Obj?[]? args)
+  Obj? callOn(Obj? target, Obj?[]? args) { func.callOn(target, args) }
 
   ** Convenience for 'func.call'
-  Obj? call(Obj? a := null, Obj? b := null, Obj? c := null, Obj? d := null,
+  native Obj? call(Obj? a := null, Obj? b := null, Obj? c := null, Obj? d := null,
             Obj? e := null, Obj? f := null, Obj? g := null, Obj? h := null)
 
 }

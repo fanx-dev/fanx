@@ -596,7 +596,7 @@ native const final class Str
   ** [byteStart..<byteEnd]
   **
   private Str substring(Int byteStart, Int byteEnd) {
-    len := byteStart - byteEnd
+    len := byteEnd - byteStart
     bytes := Array<Int8>(len)
     Array.arraycopy(utf8, byteStart, bytes, 0, len)
     return make(bytes)

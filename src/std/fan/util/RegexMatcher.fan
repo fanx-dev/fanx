@@ -10,6 +10,7 @@
 ** RegexMatcher is used to matching operations
 ** on a regular expression.
 **
+@Extern
 native final class RegexMatcher
 {
 

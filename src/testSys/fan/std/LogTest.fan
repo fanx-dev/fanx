@@ -293,7 +293,7 @@ class LogTest : Test
 // TestLog
 //////////////////////////////////////////////////////////////////////////
 
-const class TestLog : Log
+rtconst class TestLog : Log
 {
   new make(Str name, Bool reg) : super(name, reg) {}
 

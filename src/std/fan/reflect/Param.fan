@@ -9,8 +9,12 @@
 **
 ** Param represents one parameter definition of a Func (or Method).
 **
-native final const class Param
+native final rtconst class Param
 {
+  private const Str _name
+  private const Str _typeName
+  private Type? _type
+  private const Int _mask
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -19,7 +23,11 @@ native final const class Param
   **
   ** Private constructor.
   **
-  private new make()
+  internal new make(Str name, Str typeName, Int mask) {
+    _name = name
+    _typeName = typeName
+    _mask = mask
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -28,22 +36,27 @@ native final const class Param
   **
   ** Name of the parameter.
   **
-  Str name()
+  Str name() { _name }
 
   **
   ** Type of the parameter.
   **
-  Type type()
+  Type type() {
+    if (_type == null) {
+      _type = Type.find(_typeName)
+    }
+    return _type
+  }
 
   **
   ** Return if this parameter has a default value.  If true,
   ** then callers are not required to specify an argument.
   **
-  Bool hasDefault()
+  Bool hasDefault() { _mask.and(0x01) != 0 }
 
   **
   ** Return "$type $name"
   **
-  override Str toStr()
+  override Str toStr() { "$type $name" }
 
 }

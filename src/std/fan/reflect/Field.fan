@@ -9,8 +9,11 @@
 **
 ** Field is a slot which models the ability to get and set a value.
 **
-native const class Field : Slot
+native rtconst class Field : Slot
 {
+  private const Str _typeName
+  private Type? _type
+  private const Int _id
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
@@ -31,12 +34,22 @@ native const class Field : Slot
   **   Foo foo := Foo#.make([f])
   **
   @NoDoc
-  static |Obj| makeSetFunc([Field:Obj?] vals)
+  static |Obj| makeSetFunc([Field:Obj?] vals) {
+    return |Obj obj| {
+      vals.each |v, k| {
+        k._unsafeSet(obj, v, false)
+      }
+    }
+  }
 
   **
   ** Private constructor.
   **
-  private static new privateMake()
+  internal new privateMake(Type parent, Str name, Str? doc, Int flags, Str typeName, Int id)
+    : super.make(parent, name, doc, flags) {
+    _typeName = typeName
+    _id = id
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Identity
@@ -45,7 +58,16 @@ native const class Field : Slot
   **
   ** Type stored by the field.
   **
-  Type type()
+  Type type() {
+    if (_type == null) {
+      _type = Type.find(_typeName)
+    }
+    return _type
+  }
+
+  override Str signature() {
+    "$type $name"
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Reflection
@@ -56,16 +78,18 @@ native const class Field : Slot
   ** static, then the instance parameter is ignored.  If the getter
   ** is non-null, then it is used to get the field.
   **
-  virtual Obj? get(Obj? instance := null)
+  native virtual Obj? get(Obj? instance := null)
 
   **
   ** Set the field for the specified instance.  If the field is
   ** static, then the instance parameter is ignored.  If the setter
   ** is non-null, then it is used to set the field.
   **
-  virtual Void set(Obj? instance, Obj? value)
+  virtual Void set(Obj? instance, Obj? value) {
+    _unsafeSet(instance, value, true)
+  }
 
   @NoDoc
-  virtual Void _unsafeSet(Obj? instance, Obj? value, Bool checkConst)
+  native virtual Void _unsafeSet(Obj? instance, Obj? value, Bool checkConst)
 
 }

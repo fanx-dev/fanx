@@ -7,14 +7,18 @@
 //  21 Dec 07  Brian Frank  Revamp
 //
 
-/*
+
 internal class LogMgr {
   private Str:Log map := [:]
-  private |LogRec rec|[] handlers := [,]
-  private Lock lock := Lock()
+  |LogRec rec|[] handlers := [,]
+  Lock lock := Lock()
 
   new make() {
     handlers.add |r|{ r.print }
+  }
+
+  |LogRec rec|[] handlersDup() {
+    lock.sync { handlers.dup }
   }
 
   Log[] logs() { lock.sync { map.vals } }
@@ -31,7 +35,6 @@ internal class LogMgr {
     }
   }
 }
-*/
 
 **
 ** LogLevel provides a set of discrete levels used to customize logging.
@@ -51,8 +54,19 @@ enum class LogLevel
 **
 ** See `docLang::Logging` for details and [examples]`examples::sys-logging`.
 **
-const class Log
+rtconst class Log
 {
+  private static const Unsafe<LogMgr> unsafeLogMgr := Unsafe(LogMgr())
+  private static LogMgr logMgr() { unsafeLogMgr.val }
+
+  override Bool isImmutable() {
+    true
+  }
+
+  override Obj toImmutable() {
+    this
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Factory
 //////////////////////////////////////////////////////////////////////////
@@ -61,13 +75,13 @@ const class Log
   ** Return a list of all the active logs which
   ** have been registered since system startup.
   **
-  native static Log[] list()
+  static Log[] list() { logMgr.logs }
 
   **
   ** Find a registered log by name.  If the log doesn't exist and
   ** checked is false then return null, otherwise throw Err.
   **
-  native static Log? find(Str name, Bool checked := true)
+  static Log? find(Str name, Bool checked := true) { logMgr.find(name, checked) }
 
   **
   ** Find an existing registered log by name or if not found then
@@ -98,7 +112,7 @@ const class Log
     if (register) doRegister(this)
   }
 
-  private native static Void doRegister(Log log)
+  private static Void doRegister(Log log) { logMgr.doRegister(log) }
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -124,7 +138,10 @@ const class Log
   ** the log level is logged.  Anything less severe is ignored.
   ** If the level is set to silent, then logging is disabled.
   **
-  native LogLevel level
+  LogLevel level := LogLevel.info {
+    get { logMgr.lock.sync { &level } }
+    set { t := it; logMgr.lock.sync { &level = t } }
+  }
   //native Void setLevel(LogLevel level)
 
   **
@@ -185,7 +202,7 @@ const class Log
   }
 
   ** static log
-  native static Void slog(Str name, LogRec rec)
+  //native static Void slog(Str name, LogRec rec)
 
   **
   ** Publish a log entry.  The convenience methods `err`, `warn`
@@ -193,7 +210,14 @@ const class Log
   ** handling.  The standard implementation is to call each of the
   ** installed `handlers` if the specified level is enabled.
   **
-  native virtual Void log(LogRec rec)
+  virtual Void log(LogRec rec) {
+    if (!isEnabled(rec.level)) return;
+    logMgr.lock.lock 
+      logMgr.handlers.each |h|{
+        h.call(rec)
+      }
+    logMgr.lock.unlock
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Handlers
@@ -202,18 +226,18 @@ const class Log
   **
   ** List all the handler functions installed to process log events.
   **
-  native static |LogRec rec|[] handlers()
+  static |LogRec rec|[] handlers() { logMgr.handlersDup }
 
   **
   ** Install a handler to receive callbacks on logging events.
   ** If the handler func is not immutable, then throw NotImmutableErr.
   **
-  native static Void addHandler(|LogRec rec| handler)
+  static Void addHandler(|LogRec rec| handler) { logMgr.handlers.add(handler) }
 
   **
   ** Uninstall a log handler.
   **
-  native static Void removeHandler(|LogRec rec| handler)
+  static Void removeHandler(|LogRec rec| handler) { logMgr.handlers.remove(handler) }
 
 
   internal native static Void printLogRec(LogRec rec, OutStream out)

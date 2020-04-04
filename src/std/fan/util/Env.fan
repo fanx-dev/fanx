@@ -11,6 +11,7 @@
 ** Env defines a pluggable class used to boot and manage a Fantom
 ** runtime environment.  Use `cur` to access the current Env instance.
 **
+@Extern
 native const class Env
 {
 
