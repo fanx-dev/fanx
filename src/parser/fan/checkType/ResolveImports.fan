@@ -124,6 +124,9 @@ class ResolveImports : CompilerStep
           errReport(e)
           return
         }
+        catch {
+          return
+        }
       }
 
       // if type specified, then resolve type

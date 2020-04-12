@@ -1500,22 +1500,23 @@ public class Parser
   **
   protected Void endLoc(CNode node) {
     preToken := (pos>0)? tokens[pos-1] : cur
-    lastEnd := preToken.loc.offset+preToken.loc.len
+    lastEnd := preToken.loc.offset+preToken.len
     self := node.loc
-    selfEnd := self.offset + self.len
+    selfEnd := self.offset + node.len
     if (lastEnd == selfEnd) return
     if (lastEnd < selfEnd) return
     
-    loc := Loc.make(self.file, self.line, self.col, self.offset, lastEnd-self.offset)
+    len := lastEnd-self.offset
+    //loc := Loc.make(self.file, self.line, self.col, self.offset, lastEnd-self.offset)
     
     if (node is Node) {
-      ((Node)node).loc = loc
+      ((Node)node).len = len
     }
     else if (node is TypeDef) {
-      ((TypeDef)node).loc = loc
+      ((TypeDef)node).len = len
     }
     else if (node is CType) {
-      ((CType)node).loc = loc
+      ((CType)node).len = len
     }
   }
 

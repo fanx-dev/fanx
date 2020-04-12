@@ -1,6 +1,8 @@
 
 abstract class CTypeDef : CDefNode, TypeMixin {
   
+  override Int len := 0
+
   **
   ** Get the flags bitmask.
   **

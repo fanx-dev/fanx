@@ -48,7 +48,7 @@ class DefaultCtor : CompilerStep
 
   static MethodDef addDefaultCtor(TypeDef parent, Int flags)
   {
-    loc := parent.loc.toPointLoc
+    loc := parent.loc
 
     block := Block(loc)
     block.stmts.add(ReturnStmt.makeSynthetic(loc))

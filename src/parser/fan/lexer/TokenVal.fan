@@ -92,7 +92,8 @@ class TokenVal
   Obj? val        // Str, Int, Float, Duration, or Str[]
   Bool newline    // have we processed one or more newlines since the last token
   Bool whitespace // was this token preceeded by whitespace
-  Loc loc         //position of token
+  Loc loc         // position of token
+  Int len         // length of token
 }
 
 **

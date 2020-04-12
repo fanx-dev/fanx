@@ -98,7 +98,8 @@ class Tokenizer
       }
       
       // fill in token's location
-      tok.loc = Loc.make(filename, curLine, col, offset, this.pos - offset)
+      tok.loc = Loc.make(filename, curLine, col, offset)
+      tok.len = this.pos - offset
       tok.newline = lastLine < line
       tok.whitespace = whitespace
 
@@ -510,7 +511,8 @@ class Tokenizer
       consume
 
       tok := TokenVal(Token.localeLiteral, buf.toStr)
-      tok.loc = Loc.make(filename, line, col, offset, this.pos - offset)
+      tok.loc = Loc.make(filename, line, col, offset)
+      tok.len = this.pos - offset
       tokens.add(tok)
 
       line = this.line; col = this.col; offset = this.pos
@@ -578,7 +580,8 @@ class Tokenizer
   private TokenVal makeVirtualToken(Int line, Int col, Int offset, Token kind, Obj? value := null)
   {
     tok := TokenVal(kind, value)
-    tok.loc = Loc.make(filename, line, col, offset, this.pos - offset)
+    tok.loc = Loc.make(filename, line, col, offset)
+    tok.len = this.pos - offset
     return tok
   }
 
@@ -930,7 +933,7 @@ class Tokenizer
   **
   CompilerErr err(Str msg, Loc? loc := null)
   {
-    if (loc == null) loc = Loc(filename, line, col, pos, 0)
+    if (loc == null) loc = Loc(filename, line, col, pos)
     return log.err(msg, loc);
   }
 

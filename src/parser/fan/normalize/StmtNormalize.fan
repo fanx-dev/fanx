@@ -63,7 +63,7 @@ class StmtNormalize : CompilerStep
   private Void addImplicitReturn(MethodDef m)
   {
     code := m.code
-    loc := Loc.make(code.loc.file, code.loc.line, code.loc.col, code.loc.end, 0)
+    loc := code.loc
 
     // we allow return keyword to be omitted if there is exactly one statement
     if (code.size == 1 && !m.returnType.isVoid && code.stmts[0].id == StmtId.expr)

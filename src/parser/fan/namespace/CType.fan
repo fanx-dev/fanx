@@ -33,6 +33,7 @@ class CType : CNode, TypeMixin
   CTypeDef? resolvedType
   
   override Loc loc
+  override Int len := 0
   
 //////////////////////////////////////////////////////////////////////////
 // Ctors

@@ -22,6 +22,7 @@ class FindTest : Test
             }
         |>
     node := findAt(code, 80)
+    echo(node)
     verifyType(node, LocalVarExpr#)
   }
   
@@ -146,7 +147,7 @@ class FindTest : Test
       u.printTree()
     }
     unit := m.compiler.pod.units.vals.first
-    node := unit.findAt(Loc.make("", 0, 0, pos, 0))
+    node := unit.findAt(Loc.make("", 0, 0, pos))
     return node
   }
 }

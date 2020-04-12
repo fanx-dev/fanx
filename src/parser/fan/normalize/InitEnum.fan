@@ -41,10 +41,10 @@ class InitEnum : CompilerStep
     try
  
     {
-      loc := t.loc.toPointLoc
+      loc := t.loc
       addCtor(loc)
       addFromStr(loc)
-      t.addFacet(CType.makeRef(t.loc.toPointLoc, "sys", "Serializable"), ["simple":true])
+      t.addFacet(CType.makeRef(t.loc, "sys", "Serializable"), ["simple":true])
 
       fields := FieldDef[,]
       t.enumDefs.each |EnumDef e| { fields.add(makeField(e)) }

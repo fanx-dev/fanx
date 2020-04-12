@@ -353,7 +353,7 @@ class CallResolver
 
     if (foundOnIt)
     {
-      target = ItExpr(loc.toPointLoc) { enclosingClosure = curClosure }
+      target = ItExpr(loc) { enclosingClosure = curClosure }
       target.ctype = baseIt
     }
 //    else if (curClosure != null)
@@ -364,7 +364,7 @@ class CallResolver
 //    }
     else
     {
-      target = ThisExpr(loc.toPointLoc)
+      target = ThisExpr(loc)
       target.ctype = curType.asRef
     }
   }
@@ -435,6 +435,7 @@ class CallResolver
     f := (CField)found
 
     field := FieldExpr(loc, target, name)
+    field.len = expr.len
 //    field.target = target
 //    field.name   = name
     field.field  = f

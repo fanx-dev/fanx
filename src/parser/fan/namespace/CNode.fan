@@ -46,8 +46,8 @@ mixin CNode
     if (path != null) path.add(this)
     for (i:=0; i<list.size; ++i) {
       node := list[i]
-      if (node.loc.len == 0) continue
-      if (node.loc.contains(loc)) {
+      if (node.len == 0) continue
+      if (node.locContains(loc)) {
         return node.findAt(loc, path)
       }
     }
@@ -56,7 +56,7 @@ mixin CNode
   
   Void printTree(Int deep := 0) {
     deep.times { Env.cur.out.print("  ") }
-    Env.cur.out.print(this.typeof.toStr + "\t" + this + "\t" + loc.offset + "," + loc.end+ "\n")
+    Env.cur.out.print(this.typeof.toStr + "\t" + this + "\t" + loc.offset + "," + (loc.offset+this.len) + "\n")
     list := CNode[,]
     getChildren(list, null)
     for (i:=0; i<list.size; ++i) {
@@ -65,11 +65,21 @@ mixin CNode
     }
   }
 
+  Bool locContains(Loc that) {
+    if (that.offset >= this.loc.offset && 
+        (that.offset <= this.loc.offset + this.len)) {
+      return true
+    }
+    return false
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
   abstract Loc loc()
+
+  abstract Int len()
 
 }
 
@@ -106,4 +116,5 @@ abstract class Node : CNode
 //////////////////////////////////////////////////////////////////////////
 
   override Loc loc
+  override Int len := 0
 }

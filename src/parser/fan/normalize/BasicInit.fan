@@ -14,7 +14,7 @@ class BasicInit : CompilerStep {
 
   override Void visitTypeDef(TypeDef def)
   {
-    loc := def.loc.toPointLoc
+    loc := def.loc
     if (def.inheritances.isEmpty) {
       def.baseSpecified = false
       if (def.isEnum)

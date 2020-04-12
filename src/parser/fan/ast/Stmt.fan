@@ -276,6 +276,7 @@ class ReturnStmt : Stmt
     : super(loc, StmtId.returnStmt)
   {
     this.expr = expr
+    if (expr != null) this.len = expr.len
   }
 
   static ReturnStmt makeSynthetic(Loc loc, Expr? expr := null)

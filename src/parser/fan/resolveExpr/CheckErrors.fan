@@ -550,7 +550,7 @@ class CheckErrors : CompilerStep, Coerce
     // check that each one is definitely assigned
     fields.each |FieldDef f|
     {
-      definite := m != null && m.code.isDefiniteAssign |Expr lhs->Bool|
+      definite := m != null && m.code != null && m.code.isDefiniteAssign |Expr lhs->Bool|
       {
         // can't be assignment if if lhs is not a field
         if (lhs.id !== ExprId.field) return false

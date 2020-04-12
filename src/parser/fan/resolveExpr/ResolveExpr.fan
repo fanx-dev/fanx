@@ -96,7 +96,9 @@ class ResolveExpr : CompilerStep
     // turn init into full assignment
     if (def.init != null) {
       loc := def.init.loc
-      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.var_v.loc, def.var_v), def.init)
+      varExpr := LocalVarExpr(def.var_v.loc, def.var_v)
+      varExpr.len = def.var_v.len
+      def.init = BinaryExpr.makeAssign(varExpr, def.init)
       def.init.loc = loc
     }
   }
@@ -305,13 +307,16 @@ class ResolveExpr : CompilerStep
           compiler.log.err("Ambiguous type: " + stypes.join(", "), expr.loc)
         
         type := CType.makeResolvedType(stypes.first.typeDef, expr.loc)
+        type.len = expr.name.size
         staticTargetExpr := StaticTargetExpr(expr.loc, type)
         staticTargetExpr.ctype = stypes.first
+        staticTargetExpr.len = expr.len
         call := expr as CallExpr
         if (call != null) {
-          expr = CallExpr(expr.loc, staticTargetExpr, "<ctor>", ExprId.construction)
-          ((CallExpr)expr).args = call.args
-          return expr
+          nexpr := CallExpr(expr.loc, staticTargetExpr, "<ctor>", ExprId.construction)
+          ((CallExpr)nexpr).args = call.args
+          nexpr.len = expr.len
+          return nexpr
         }
         else {
           return staticTargetExpr
@@ -560,7 +565,9 @@ class ResolveExpr : CompilerStep
       // attempt to a name in the current scope
       binding := resolveLocal(var_v.name, var_v.loc)
       if (binding != null) {
-        return LocalVarExpr(var_v.loc, binding)
+        res := LocalVarExpr(var_v.loc, binding)
+        res.len = var_v.len
+        return res
       }
     }
     
@@ -590,6 +597,7 @@ class ResolveExpr : CompilerStep
       field := curType.slots.get(var_v.name) as CField
       if (field != null) {
         fieldExpr := FieldExpr(var_v.loc, ThisExpr(var_v.loc), field.name)
+        fieldExpr.len = var_v.len
         fieldExpr.field = field
         fieldExpr.ctype = field.fieldType
         resolved = fieldExpr
@@ -714,9 +722,10 @@ class ResolveExpr : CompilerStep
       call.ctype = ns.error
       return call
     }
-    call = CallExpr.makeWithMethod(call.loc, binding, callMethod, call.args)
-    call.isCallOp = true
-    return call
+    ncall := CallExpr.makeWithMethod(call.loc, binding, callMethod, call.args)
+    ncall.len = call.len
+    ncall.isCallOp = true
+    return ncall
   }
 
   **

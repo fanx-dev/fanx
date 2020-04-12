@@ -72,6 +72,7 @@ class BinaryExpr : Expr
   {
     this.ctype = lhs.ctype
     this.leave = leave
+    super.len = (rhs.loc.offset + rhs.len) - lhs.loc.offset
   }
 
   override Obj? assignTarget() { id === ExprId.assign ? lhs : null }
@@ -167,9 +168,8 @@ abstract class NameExpr : Expr
   new make(Loc loc, ExprId id, Expr? target, Str? name)
     : super(loc, id)
   {
-    if (target != null) {
-      super.loc = Loc.make(target.loc.file, target.loc.line, target.loc.col
-        , target.loc.offset, (loc.end-target.loc.offset))
+    if (target != null && loc.offset > target.loc.offset) {
+      super.loc = target.loc
     }
     this.target = target
     this.name   = name
@@ -724,6 +724,7 @@ class TypeCheckExpr : Expr
     this.target = target
     this.check  = check
     this.ctype  = check
+    super.len = target.len
   }
 
   new coerce(Expr target, CType to)
@@ -735,6 +736,7 @@ class TypeCheckExpr : Expr
     this.check  = to
     this.ctype  = to
     this.synthetic = true
+    super.len = target.len
   }
 
   override Void walkChildren(Visitor v)

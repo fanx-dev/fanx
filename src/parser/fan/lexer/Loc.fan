@@ -11,16 +11,15 @@
 **
 const class Loc
 {
-  new make(Str file, Int line := -1, Int? col := -1, Int offset := -1, Int len := 0)
+  new make(Str file, Int line := -1, Int? col := -1, Int offset := -1)
   {
     this.file = file
     this.line = line
     this.col  = col
     this.offset = offset
-    this.len = len
   }
 
-  new makeFile(File? file, Int line := -1, Int col := -1, Int offset := -1, Int len := 0)
+  new makeFile(File? file, Int line := -1, Int col := -1, Int offset := -1)
   {
     if (file != null)
     {
@@ -36,19 +35,11 @@ const class Loc
     this.line = line
     this.col  = col
     this.offset = offset
-    this.len = len
   }
   
   const static Loc invalidLoc := make("Unknown")
 
   static Loc makeUninit() { invalidLoc }
-
-  **
-  ** change len to 0
-  **
-  Loc toPointLoc() {
-    make(file, line, col, offset, 0)
-  }
   
   Str? filename()
   {
@@ -118,20 +109,9 @@ const class Loc
     }
     return s.toStr
   }
-  
-  Bool contains(Loc that) {
-    if (that.offset >= this.offset && 
-        (that.end <= this.end)) {
-      return true
-    }
-    return false
-  }
-  
-  Int end() { offset + len }
 
   const Str file
   const Int line
   const Int col
   const Int offset
-  const Int len
 }
