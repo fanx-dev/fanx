@@ -59,4 +59,12 @@ native final rtconst class Param
   **
   override Str toStr() { "$type $name" }
 
+  override Bool isImmutable() {
+    true
+  }
+
+  override Obj toImmutable() {
+    this
+  }
+
 }

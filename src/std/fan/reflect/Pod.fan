@@ -41,6 +41,14 @@ native internal rtconst class PodList {
     cur.podList.add(pod)
     cur.podMap[pod.name] = pod
   }
+
+  override Bool isImmutable() {
+    true
+  }
+
+  override Obj toImmutable() {
+    this
+  }
 }
 
 **
@@ -254,4 +262,12 @@ native final rtconst class Pod
 
   @NoDoc Obj? _getCompilerCache() { compilerCache }
   @NoDoc Void _setCompilerCache(Obj? obj) { compilerCache = obj }
+
+  override Bool isImmutable() {
+    true
+  }
+
+  override Obj toImmutable() {
+    this
+  }
 }

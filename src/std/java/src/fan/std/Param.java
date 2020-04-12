@@ -51,6 +51,14 @@ public class Param
 
   public String toStr() { return type + " " + name; }
 
+  public boolean isImmutable() {
+    return true;
+  }
+
+  public Object toImmutable() {
+    return this;
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////

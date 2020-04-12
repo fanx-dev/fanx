@@ -235,4 +235,13 @@ native abstract rtconst class Slot
   ** Return a string representation of the Fantom code signature.
   **
   abstract Str signature()
+
+
+  override Bool isImmutable() {
+    true
+  }
+
+  override Obj toImmutable() {
+    this
+  }
 }

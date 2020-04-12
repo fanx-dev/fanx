@@ -802,5 +802,13 @@ public class FanType {
 	public static Slot slot(Type type, String name) {
 		return slot(type, name, true);
 	}
+
+	public static boolean isImmutable(Type type) {
+    return true;
+  }
+
+  public static Object toImmutable(Type type) {
+    return type;
+  }
 	
 }

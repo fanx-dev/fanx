@@ -23,15 +23,17 @@ internal class LogMgr {
 
   Log[] logs() { lock.sync { map.vals } }
 
-  Log find(Str name, Bool checked) {
+  Log? find(Str name, Bool checked) {
     res := lock.sync { map.get(name) }
     if (checked && res == null) throw Err()
     return res
   }
 
   Void doRegister(Log log) {
-    lock.sync {
+    lock.sync |->Obj?|{
+      if (map.containsKey(log.name)) throw ArgErr("Duplicate log name: $log.name")
       map[log.name] = log
+      return null
     }
   }
 }
@@ -107,6 +109,7 @@ rtconst class Log
   new make(Str name, Bool register) {
     Uri.checkName(name)
     this.name = name
+
     val := Env.cur.props(Int#.pod, `log.props`, 1min).get(name)
     if (val != null) level = LogLevel(val)
     if (register) doRegister(this)
@@ -232,7 +235,10 @@ rtconst class Log
   ** Install a handler to receive callbacks on logging events.
   ** If the handler func is not immutable, then throw NotImmutableErr.
   **
-  static Void addHandler(|LogRec rec| handler) { logMgr.handlers.add(handler) }
+  static Void addHandler(|LogRec rec| handler) {
+    if (!handler.isImmutable) throw NotImmutableErr()
+    logMgr.handlers.add(handler)
+  }
 
   **
   ** Uninstall a log handler.

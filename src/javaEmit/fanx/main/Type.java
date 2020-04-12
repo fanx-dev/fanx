@@ -161,4 +161,11 @@ public abstract class Type {
 		return qname().equals(((Type)obj).qname());
 	}
 
+	public boolean isImmutable() {
+    return true;
+  }
+
+  public Object toImmutable() {
+    return this;
+  }
 }
