@@ -159,6 +159,9 @@ class ClosureExpr : Expr
     // bail if we didn't expect an inferred the signature
     // or haven't gotten to InitClosures yet
 //    if (cls == null) return
+    if (t.genericArgs == null) {
+      return
+    }
 
     delArity := signature.params.size-1
     inferredArity := t.genericArgs.size-1

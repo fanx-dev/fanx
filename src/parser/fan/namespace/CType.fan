@@ -21,7 +21,6 @@ class CType : CNode, TypeMixin
     set { &genericArgs = it; if (it != null && it.any|a|{ a ===  this}) throw Err("self ref") }
   }
   
-  //TODO check
   ** for sized primitive type. the Int32's extName is 32
   Str? sized
   
@@ -49,11 +48,13 @@ class CType : CNode, TypeMixin
     this.loc = loc
     
     if (pod == "sys" || pod.isEmpty) {
-      if (name.size > 3 && name.startsWith("Int")) {
+      if (name.size > 3 && 
+        (name == "Int8" || name == "Int16" || name == "Int32" || name == "Int64") ) {
         sized = name[3..-1]
         this.name = name[0..<3]
       }
-      else if (name.size > 5 && name.startsWith("Float")) {
+      else if (name.size > 5 &&
+        (name == "Float32" || name == "Float64") ) {
         sized = name[5..-1]
         this.name = name[0..<5]
       }

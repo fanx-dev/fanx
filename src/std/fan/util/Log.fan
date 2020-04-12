@@ -112,6 +112,7 @@ rtconst class Log
 
     val := Env.cur.props(Int#.pod, `log.props`, 1min).get(name)
     if (val != null) level = LogLevel(val)
+    else level = LogLevel.info
     if (register) doRegister(this)
   }
 
@@ -141,7 +142,7 @@ rtconst class Log
   ** the log level is logged.  Anything less severe is ignored.
   ** If the level is set to silent, then logging is disabled.
   **
-  LogLevel level := LogLevel.info {
+  LogLevel level {
     get { logMgr.lock.sync { &level } }
     set { t := it; logMgr.lock.sync { &level = t } }
   }

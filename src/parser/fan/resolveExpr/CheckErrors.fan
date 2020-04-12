@@ -1460,8 +1460,10 @@ class CheckErrors : CompilerStep, Coerce
       {
         if (field is FieldDef && ((FieldDef)field).concreteBase != null)
           err("Field storage of inherited field '${field->concreteBase->qname}' not accessible (might try super)", f.loc)
-        else
+        else {
+          echo(field.qname + "," + field.typeof + ", " + f.loc)
           err("Invalid storage access of field '$field.qname' which doesn't have storage", f.loc)
+        }
         return
       }
 
