@@ -126,7 +126,11 @@ public class LocalFilePeer {
 
 	static File normalize(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;
-//			java.io.File canonical = jfile.getCanonicalFile();
+		try {
+			jfile = jfile.getCanonicalFile();
+		} catch (IOException e) {
+			jfile = jfile.getAbsoluteFile();
+		}
 		Uri uri = fileToUri(jfile, true);
 		return make(jfile, uri, false);
 	}

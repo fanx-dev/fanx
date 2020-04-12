@@ -90,6 +90,8 @@ class JarDist : JdkTask
   private Void podClasses(Str podName)
   {
     log.info("Pod [$podName]")
+    if (donePods.containsKey(podName)) return
+    donePods[podName] = true
 
     // open as zip and
     podFile := script.devHomeDir + `lib/fan/${podName}.pod`
@@ -104,8 +106,9 @@ class JarDist : JdkTask
     {
       if (dependStr.isEmpty) return
       depend := Depend(dependStr)
-      if (!podNames.contains(depend.name) && depend.name != "sys")
-        throw fatal("Missing dependency for '$podName': $depend")
+      podClasses(depend.name)
+      //if (!podNames.contains(depend.name) && depend.name != "sys")
+      //  throw fatal("Missing dependency for '$podName': $depend")
     }
 
     // if pod already has its java native code, then the pod
@@ -296,6 +299,8 @@ class JarDist : JdkTask
 
   ** List of pods to compile into JAR; sys is always implied
   Str[] podNames := Str[,]
+
+  private [Str:Bool] donePods := [:]
 
   private File? tempDir       // initTempDir
   private File? manifestFile  // manifest

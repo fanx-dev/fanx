@@ -369,6 +369,13 @@ public class Env extends FanObj {
     return tempDir;
   }
 
+  File curDir;
+
+  public File curDir() {
+    if (curDir == null) curDir = File.make(Uri.fromStr(System.getProperty("user.dir"), false));
+    return curDir;
+  }
+
   public File findFile(Uri uri) {
     return findFile(uri, true);
   }
