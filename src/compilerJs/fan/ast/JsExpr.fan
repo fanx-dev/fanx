@@ -983,13 +983,9 @@ class JsFieldExpr : JsExpr
       callStaticInit = true
       out.w("((")
       parent.write(out)
-      out.w(".static\$init && !")
+      out.w(".static\$init ? ")
       parent.write(out)
-      out.w(".static\$inited ? (")
-      parent.write(out)
-      out.w(".static\$inited=true,")
-      parent.write(out)
-      out.w(".static\$init()) : null),")
+      out.w(".static\$init() : null),")
     }
 
     old := support.thisName

@@ -20,6 +20,7 @@ class JsMethod : JsSlot
     this.isGetter   = m.isGetter
     this.isSetter   = m.isSetter
     this.isAsync    = m.flags.and(FConst.Async) != 0
+    this.isStaticInit = m.isStaticInit
     this.params     = m.params.map |CParam p->JsMethodParam| { JsMethodParam(s, p) }
     this.ret        = JsTypeRef(s, m.ret, m.loc)
     this.hasClosure = ClosureFinder(m).exists
@@ -66,6 +67,11 @@ class JsMethod : JsSlot
     out.w("function${sig(methParams)}", loc).nl
     out.w("{").nl
     out.indent
+
+    if (isStaticInit) {
+      out.w("if (${parent}.static\$inited) return;").nl
+      out.w("${parent}.static\$inited = true;").nl
+    }
 
     // def params
     params.each |p|
@@ -130,6 +136,7 @@ class JsMethod : JsSlot
   JsExpr? ctorChain       // ctorChain if has one
   JsBlock? code           // method body if has one
   Bool isAsync
+  Bool isStaticInit
 }
 
 **************************************************************************

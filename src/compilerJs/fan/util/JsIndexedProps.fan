@@ -33,7 +33,7 @@ class JsIndexedProps
     out.printLine(
       "(function() {
          ${JsPod.requireSys}
-         var i = fan.sys.Map.make(fan.sys.Str.\$type, new fan.sys.ListType(fan.sys.Str.\$type));")
+         var i = fan.std.Map.make(fan.sys.Str.\$type, new fan.sys.ListType(fan.sys.Str.\$type));")
 
     index.each |vals, key|
     {
@@ -42,7 +42,7 @@ class JsIndexedProps
     }
 
     out.printLine(
-      "  fan.sys.Env.cur().\$setIndex(i);
+      "  fan.std.Env.cur().\$setIndex(i);
        }).call(this);")
   }
 

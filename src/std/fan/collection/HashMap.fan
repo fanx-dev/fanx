@@ -209,7 +209,7 @@ rtconst class HashMap<K,V> : Map<K,V>
   @Operator override This set(K key, V val) {
     modify
     if (keySafe && !key.isImmutable)
-      throw NotImmutableErr("key is not immutable: ${key->typeof}")
+      throw NotImmutableErr("key is not immutable: ${key.typeof}")
     rawSet(key, val)
     return this
   }
@@ -217,7 +217,7 @@ rtconst class HashMap<K,V> : Map<K,V>
   override This add(K key, V val) {
     modify
     if (keySafe && !key.isImmutable)
-      throw NotImmutableErr("key is not immutable: ${key->typeof}")
+      throw NotImmutableErr("key is not immutable: ${key.typeof}")
     rehash
     hash := getHash(key)
     l := array[hash]

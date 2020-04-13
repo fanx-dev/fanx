@@ -3,19 +3,25 @@ fan.std.FilePeer = function(){}
 
 fan.std.FilePeer.make = function(uri, checkSlash) {
 	if (checkSlash == undefined) checkSlash = true;
-	self = fan.std.File.make();
-	self.m_file = new File("", uri.toStr());
+	self = new fan.std.File();
+	try {
+	  self.m_file = new File("", uri.toStr());
+	}
+	catch {}
 	return self;
 }
 
 fan.std.FilePeer.os = function(osPath) {
-	self = fan.std.File.make();
-	self.m_file = new File("", osPath);
+	self = new fan.std.File();
+	try {
+		self.m_file = new File("", osPath);
+	}
+	catch {}
 	return self;
 }
 
 fan.std.FilePeer.osRoots = function(osPath) {
-	return new fan.sys.List.make(1);
+	return fan.sys.List.make(1);
 }
 
 fan.std.FilePeer.createTemp = function(prefix, suffix, dir) {

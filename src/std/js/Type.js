@@ -48,6 +48,16 @@ fan.std.Type.prototype.$ctor = function(qname, base, mixins, facets, flags)
   this.m_slotsByName = null; // doReflect Str:Slot
 }
 
+fan.std.Type.prototype.isImmutable = function()
+{
+  return true;
+}
+
+fan.std.Type.prototype.toImmutable = function()
+{
+  return this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Naming
 //////////////////////////////////////////////////////////////////////////
@@ -322,6 +332,8 @@ fan.std.Type.prototype.loadFacets = function()
   for (var i=0; i<inheritance.size(); ++i)
   {
     var x = inheritance.get(i);
+    if (x === this) continue;
+    if (x.qname() == "sys::Obj") continue;
     if (x.m_myFacets) f.inherit(x.m_myFacets);
   }
   this.m_inheritedFacets = f;

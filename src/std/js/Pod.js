@@ -45,6 +45,16 @@ fan.std.Pod.prototype.$ctor = function(name)
   this.m_version = fan.std.Version.m_defVal;
 }
 
+fan.std.Pod.prototype.isImmutable = function()
+{
+  return true;
+}
+
+fan.std.Pod.prototype.toImmutable = function()
+{
+  return this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Methods
 //////////////////////////////////////////////////////////////////////////
@@ -107,7 +117,7 @@ fan.std.Pod.prototype.type = function(name, checked)
 
 fan.std.Pod.prototype.locale = function(key, def)
 {
-  return fan.sys.Env.cur().locale(this, key, def);
+  return fan.std.Env.cur().locale(this, key, def);
 }
 
 // addType

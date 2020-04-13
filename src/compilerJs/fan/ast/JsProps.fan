@@ -34,7 +34,7 @@ class JsProps : JsNode
   private static Void doWrite(Str pod, Uri uri, [Str:Str] props, JsWriter out)
   {
     key := "$pod:$uri"
-    out.w("with (fan.sys.Env.cur().\$props($key.toCode))").nl
+    out.w("with (fan.std.Env.cur().\$props($key.toCode))").nl
     out.w("{").nl
     out.indent
     props.each |v,k| { out.w("set($k.toCode,$v.toCode);").nl }

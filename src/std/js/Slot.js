@@ -25,6 +25,16 @@ fan.std.Slot.prototype.$ctor = function()
   this.m_facets = null;
 }
 
+fan.std.Slot.prototype.isImmutable = function()
+{
+  return true;
+}
+
+fan.std.Slot.prototype.toImmutable = function()
+{
+  return this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Identity
 //////////////////////////////////////////////////////////////////////////

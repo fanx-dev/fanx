@@ -126,7 +126,15 @@ fan.sys.ObjUtil.trap = function(obj, name, args)
 
 fan.sys.ObjUtil.doTrap = function(obj, name, args, type)
 {
-  var slot = type.slot(name, true);
+  var slot = type.slot(name, false);
+
+  if (slot == null) {
+    if (obj != null && name.equals("typeof")) {
+      return fan.std.Type.$typeof(obj);
+    }
+    throw fan.sys.UnknownSlotErr.make(type.qname()+"."+name);
+  }
+
   if (slot instanceof fan.std.Method)
   {
     return slot.invoke(obj, args);

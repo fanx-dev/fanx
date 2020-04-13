@@ -147,7 +147,7 @@ class NodeRunner
     buf.add("var tests = [\n")
 
     types := type == "*" ? pod.types : [pod.type(type)]
-    types.findAll { it.fits(Test#) && it.hasFacet(Js#) }.each |t|
+    types.findAll { it.fits(Test#) && !it.hasFacet(NoJs#) }.each |t|
     {
       buf.add("  {'type': fan.${pod.name}.${t.name},\n")
          .add("   'qname': '${t.qname}',\n")
@@ -162,9 +162,9 @@ class NodeRunner
   private Str envDirs()
   {
     buf := StrBuf()
-    buf.add("    fan.sys.Env.cur().m_homeDir = fan.sys.File.os(${Env.cur.homeDir.pathStr.toCode});\n")
-    buf.add("    fan.sys.Env.cur().m_workDir = fan.sys.File.os(${Env.cur.workDir.pathStr.toCode});\n")
-    buf.add("    fan.sys.Env.cur().m_tempDir = fan.sys.File.os(${Env.cur.tempDir.pathStr.toCode});\n")
+    buf.add("    fan.std.Env.cur().m_homeDir = fan.std.File.os(${Env.cur.homeDir.pathStr.toCode});\n")
+    buf.add("    fan.std.Env.cur().m_workDir = fan.std.File.os(${Env.cur.workDir.pathStr.toCode});\n")
+    buf.add("    fan.std.Env.cur().m_tempDir = fan.std.File.os(${Env.cur.tempDir.pathStr.toCode});\n")
     return buf.toStr()
   }
 
@@ -309,15 +309,15 @@ class NodeRunner
       (moduleDir + `${tempPod}.js`).out.writeChars(js).flush.close
 
     // tz.js
-    (Env.cur.homeDir + `etc/sys/tz.js`).copyTo(moduleDir + `tz.js`, copyOpts)
+    //(Env.cur.homeDir + `etc/sys/tz.js`).copyTo(moduleDir + `tz.js`, copyOpts)
 
     // units.js
-    out := (moduleDir + `units.js`).out
-    JsUnitDatabase().write(out)
-    out.flush.close
+    //out := (moduleDir + `units.js`).out
+    //JsUnitDatabase().write(out)
+    //out.flush.close
 
     // indexed-props
-    out = (moduleDir + `indexed-props.js`).out
+    out := (moduleDir + `indexed-props.js`).out
     JsIndexedProps().write(out, dependencies)
     out.flush.close
   }
@@ -330,8 +330,10 @@ class NodeRunner
       if ("sys" == pod.name)
       {
         buf.add("var fan = require('${pod.name}.js');\n")
-        buf.add("require('tz.js');\n")
-        buf.add("require('units.js');\n")
+        //buf.add("require('tz.js');\n")
+        //buf.add("require('units.js');\n")
+      }
+      else if ("sys" == pod.name) {
         buf.add("require('indexed-props.js');\n")
       }
       else buf.add("require('${pod.name}.js');\n")

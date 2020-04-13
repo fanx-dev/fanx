@@ -241,6 +241,7 @@ internal class TestRunner {
 
   private Int failures := 0
   private Int verifyCount := 0
+  private Str[] failureNames := [,]
 
   new make(Str arg) {
     pos := arg.find("::")
@@ -281,6 +282,15 @@ internal class TestRunner {
       }
     }
 
+    if (failureNames.size > 0) {
+      echo("Failed:")
+      failureNames.each {
+        echo("  "+it)
+      }
+      echo("")
+    }
+    
+
     echo("***")
     if (failures == 0) {
       echo("All tests passed! totalVerifyCount:$verifyCount")
@@ -306,6 +316,7 @@ internal class TestRunner {
       verifyCount += obj.verifyCount
       if (obj.failVerifyCount > 0) {
         ++failures
+        failureNames.add(meth.qname)
       }
       else {
         echo("Pass $meth [$obj.verifyCount]")
@@ -313,6 +324,7 @@ internal class TestRunner {
 
     } catch (Err e) {
       ++failures
+      failureNames.add(meth.qname)
       e.trace
     }
     finally {

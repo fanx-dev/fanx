@@ -27,8 +27,27 @@ fan.std.ConsoleOutStream.prototype.$ctor = function()
 {
   fan.std.OutStream.prototype.$ctor.call(this);
   this.m_buf = "";
+  fan.std.Charset.static$init();
+  fan.std.Endian.static$init();
+  this.m_charset = fan.std.Charset.m_utf8;
+  this.m_endian = fan.std.Endian.m_big;
 }
-fan.std.ConsoleOutStream.prototype.$typeof = function() { return fan.std.SysOutStream.$type; }
+fan.std.ConsoleOutStream.prototype.$typeof = function() { return fan.std.OutStream.$type; }
+
+
+fan.std.ConsoleOutStream.prototype.endian = function() {
+  return this.m_endian;
+}
+fan.std.ConsoleOutStream.prototype.endian$ = function(v) {
+  this.m_endian = v;
+}
+fan.std.ConsoleOutStream.prototype.charset = function() {
+  return this.m_charset;
+}
+fan.std.ConsoleOutStream.prototype.charset$ = function(v) {
+  this.m_charset = v;
+}
+
 fan.std.ConsoleOutStream.prototype.write = function(v)
 {
   if (v == 10) this.flush();

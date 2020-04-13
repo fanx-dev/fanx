@@ -8,7 +8,7 @@ fan.std.LocalFilePeer.init = function(self) {
 }
 
 fan.std.LocalFilePeer.make = function(file, uri) {
-	var f = fan.std.LocalFile();
+	var f = new fan.std.LocalFile();
 	f.peer = file;
 	f._uri = uri;
 	return f;

@@ -11,6 +11,6 @@ try {
   {
     var file = err.fileName;   if (file == null) file = 'Unknown';
     var line = err.lineNumber; if (line == null) line = 'Unknown';
-    fan.sys.Env.cur().out().printLine(err + ' (' + file + ':' + line + ')\n');
+    fan.std.Env.cur().out().printLine(err + ' (' + file + ':' + line + ')\n');
   }
 }

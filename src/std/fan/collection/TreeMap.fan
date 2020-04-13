@@ -198,7 +198,7 @@ class TreeMap<K,V> : Map<K,V> {
   override This set(K key, V val) {
     modify
     if (keySafe && !key.isImmutable)
-      throw NotImmutableErr("key is not immutable: ${key->typeof}")
+      throw NotImmutableErr("key is not immutable: ${key.typeof}")
     root = insertAt(key, val, root, true)
     return this
   }
@@ -308,7 +308,7 @@ class TreeMap<K,V> : Map<K,V> {
   override This add(K key, V val) {
     modify
     if (keySafe && !key.isImmutable)
-      throw NotImmutableErr("key is not immutable: ${key->typeof}")
+      throw NotImmutableErr("key is not immutable: ${key.typeof}")
     root = insertAt(key, val, root, false)
     return this
   }

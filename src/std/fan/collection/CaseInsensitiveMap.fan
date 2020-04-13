@@ -49,21 +49,21 @@ rtconst class CaseInsensitiveMap<K,V> : Map<K,V> {
   }
 
   @Operator override This set(K key, V val) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
+    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key.typeof")
     k := CIKey(key)
     _map.set(k, val)
     return this
   }
 
   override This add(K key, V val) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
+    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key.typeof")
     k := CIKey(key)
     _map.add(k, val)
     return this
   }
 
   @Operator override V? get(K key, V? defValue := super.defV) {
-    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key->typeof")
+    if (key isnot Str) throw UnsupportedErr("CI Map not keyed by Str: $key.typeof")
     k := CIKey(key)
     return _map.get(k, defValue)
   }

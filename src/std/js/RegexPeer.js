@@ -10,7 +10,7 @@ fan.std.RegexPeer.prototype.init = function(self) {
 
 fan.std.RegexPeer.prototype.matches = function(self, s)
 {
-  return this.matcher(s).matches();
+  return this.matcher(self, s).matches();
 }
 
 fan.std.RegexPeer.prototype.matcher = function(self, s)
