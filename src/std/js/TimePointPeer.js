@@ -8,7 +8,7 @@ fan.std.TimePointPeer.nowMillis = function() {
 
 fan.std.TimePointPeer.nanoTicks = function() {
 	var d = new Date();
-	return d.getTime() * fan.std.Duration.nsPerMilli;
+	return d.getTime() * fan.std.Duration.m_nsPerMilli;
 }
 
 fan.std.TimePointPeer.nowUniqueLast = 0;
