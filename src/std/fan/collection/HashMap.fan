@@ -241,7 +241,7 @@ rtconst class HashMap<K,V> : Map<K,V>
 
     old := l.removeByKey(key)
     if (old != null) --size
-    return old.value
+    return old?.value
   }
 
   override This clear() {

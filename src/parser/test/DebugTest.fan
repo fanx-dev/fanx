@@ -4,10 +4,9 @@ class DebugTest : Test {
     code := 
     Str<| 
             class Main {
-                Void main() {
-                  x := 1 + 2
-                  echo(x)
-                }
+                new make()
+
+                Str s := ""
             }
         |>
     
