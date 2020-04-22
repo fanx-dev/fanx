@@ -1,5 +1,12 @@
 ## ChangeLog
 
+## Build 3.1
+- Add Native C FFI
+- Add JarDistMain (build to Java JAR)
+- Add parser pod for IDE
+- Reflect Api to rtconst
+- Test on NodeJs
+
 ### Build 3.0 (2019-12-07)
 - Move Type to std pod
 - Support raw Array and Pointer

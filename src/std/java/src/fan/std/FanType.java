@@ -407,6 +407,7 @@ public class FanType {
 	}
 
 	private static void mergeFacets(Type self, java.util.Map<Type, Object> map) {
+		//这里会引起递归循环，所以不再继承Obj的facets
 		if (self.isObj()) return;
 		
 		java.util.Map<Type, Object> ps = getFacets(self);
