@@ -6,3 +6,4 @@ It is an object oriented, functional programming language designed to cross comp
 It features a familiar Java-like syntax, static (and dynamic) typing, elegant system library, closures, immutability, actor concurrency, and much more.
 
 [Learn About Fanx](https://github.com/chunquedong/fanx/blob/master/doc/Index.md)
+[中文文档](https://zhuanlan.zhihu.com/p/63336794)
