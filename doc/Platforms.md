@@ -6,3 +6,4 @@
 - The .NET runtime is unmaintained.
 - [The C backend is WIP](https://github.com/chunquedong/fanrun/tree/master/gen)
 - [Standalone VM](https://github.com/chunquedong/fanrun)
+- [LLVM Compiler is WIP](https://github.com/chunquedong/fanrun/tree/master/llvm)
