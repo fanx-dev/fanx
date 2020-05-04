@@ -83,5 +83,5 @@ class FPodNamespace : CNamespace
 
   ** where to look for pod or null to delegate to Env.findPodFile
   const File? dir
-  Bool lazyLoad := true
+  Bool lazyLoad := false
 }
