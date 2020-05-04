@@ -7,4 +7,4 @@
 // typedb=debug
 // web=error
 
-build = debug
+// build = debug

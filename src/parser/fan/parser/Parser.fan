@@ -1019,7 +1019,7 @@ public class Parser
         // body
         if (curt != Token.lbrace) {
           if (!parent.isNative) err("Expecting method body")
-          method.code = Block(loc)
+          //method.code = Block(loc)
         }
         else
           method.code = block

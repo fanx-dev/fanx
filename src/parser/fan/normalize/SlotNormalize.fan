@@ -201,6 +201,7 @@ class SlotNormalize : CompilerStep
     {
       if (!m.isInstanceCtor) return
       if (t.isNative) return
+      if (m.code == null) return
       if (m.ctorChain != null && m.ctorChain.target.id === ExprId.thisExpr) return
       call := CallExpr(m.loc, ThisExpr(m.loc), ii.name)
       m.code.stmts.insert(0, call.toStmt)
