@@ -49,7 +49,7 @@ public class Err
     }
     err.msg = ex.getMessage();
     err.actual = ex;
-    err.setCause(ex);
+    //err.setCause(ex);
     return err;
   }
 
@@ -108,23 +108,16 @@ public class Err
     }
     
     self.msg = msg;
-    self.cause = cause;
     self.setCause(cause);
   }
   
-  protected void setCause(Throwable cause) {
+  protected void setCause(Err cause) {
 	  if (cause == this) {
 	    	Err err = Err.make("Self-causation", cause);
 	    	throw err;
 	  }
 	  
-	  try {
-		  java.lang.reflect.Field field = Throwable.class.getDeclaredField("cause");
-		  field.setAccessible(true);
-		  field.set(this, cause);
-	  } catch (Throwable e) {
-		  e.printStackTrace();
-	  }
+	  this.cause = cause;
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,7 +130,7 @@ public class Err
    */
   public Err(Throwable actual)
   {
-	super(actual);
+    //super(actual);
     this.actual = actual;
     this.msg = actual.toString();
   }
@@ -181,12 +174,15 @@ public class Err
 
   public Err trace() { 
 	  toJava().printStackTrace();
+    if (cause != null) {
+      cause.printStackTrace();
+    }
 	  return this;
   }
   
   public String traceToStr() {
-	StringBuilder sb = new StringBuilder();
-	sb.append(toStr()).append("\n");
+    StringBuilder sb = new StringBuilder();
+    sb.append(toStr()).append("\n");
 	
     StackTraceElement[] elems = toJava().getStackTrace();
     for (StackTraceElement elem : elems)

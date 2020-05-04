@@ -63,13 +63,17 @@ class FPodNamespace : CNamespace
       buf.seek(0)
       fpod := FPod(this, podName, Zip.read(buf.in))
       fpod.readStream
+      fpod.zip.close
       return fpod
     }
 
     // load it
     fpod := FPod(this, podName, Zip.open(file))
     fpod.read
-    if (!lazyLoad) fpod.readFully
+    if (!lazyLoad) {
+      fpod.readFully
+      fpod.zip.close
+    }
     return fpod
   }
 
