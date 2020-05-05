@@ -16,6 +16,10 @@ class HelloWorld
 }
 ```
 
-[Learn About Fanx](https://github.com/chunquedong/fanx/blob/master/doc/Index.md)
-[Download](https://github.com/fanx-dev/fanx/releases)
-[中文文档](https://zhuanlan.zhihu.com/p/63336794)
+## Installing
+* [Download](https://github.com/fanx-dev/fanx/releases)
+- [QuickStart](https://github.com/fanx-dev/fanx/blob/master/doc/QuickStart.md)
+
+## Documentation
+* [Learn More](https://github.com/chunquedong/fanx/blob/master/doc/Index.md)
+* [中文文档](https://zhuanlan.zhihu.com/p/63336794)
