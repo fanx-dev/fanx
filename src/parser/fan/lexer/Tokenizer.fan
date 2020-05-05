@@ -12,6 +12,7 @@
 **
 class Tokenizer
 {
+  [Str:Str]? alias := null
   CompilerLog log
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -54,6 +55,10 @@ class Tokenizer
         if (cur == 0) break
         consume
       }
+    }
+    p := Tokenizer#.pod
+    if (p != null) {
+      alias = Env.cur.props(p, `alias.props`, 30sec)
     }
   }
 
@@ -159,10 +164,15 @@ class Tokenizer
     start := pos
 
     // find end of word to compute length
-    while (cur.isAlphaNum || cur == '_') consume
+    while (cur.isAlphaNum || cur == '_' || cur > 256) consume
 
     // create Str (gc note this string might now reference buf)
     word := buf[start..<pos]
+
+    //replace alias
+    if (alias != null) {
+      if (alias.containsKey(word)) word = alias[word]
+    }
 
     // check keywords
     keyword := Token.keywords[word]
@@ -173,7 +183,7 @@ class Tokenizer
     return TokenVal(Token.identifier, word)
   }
 
-  private static Bool isIdentifierStart(Int c) { c.isAlpha || c == '_' }
+  private static Bool isIdentifierStart(Int c) { c.isAlpha || c == '_' || c > 256 }
 
 //////////////////////////////////////////////////////////////////////////
 // Number

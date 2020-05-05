@@ -102,6 +102,29 @@ The return keyword will be deprecated in closures.
   }
 ```
 
+### Modern Style
+Written type after name
+```
+  class Person {
+    var age: Int
+    let name: Str
+
+    new make(n: Str) {
+      name = n
+    }
+
+    fun foo() : Str {
+      return name
+    }
+
+    static fun main() {
+      p : Person = Person("pick")
+      s := p.foo
+      echo(s)
+    }
+  }
+```
+
 ### Build Script ###
 The pod.props file:
 ```
@@ -185,6 +208,15 @@ Class default is 'final'
   virtual class Base {}
 ```
 
+### Unicode as Identifier ###
+```
+  class 一个类 {
+    static Void main() {
+      你好 := "你好"
+      回显(你好)
+    }
+  }
+```
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
 
 

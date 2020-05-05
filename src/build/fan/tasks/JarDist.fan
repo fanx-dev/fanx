@@ -188,6 +188,7 @@ class JarDist : JdkTask
     copyEtcFile(`etc/sys/timezone-aliases.props`, `res/sys/timezone-aliases.props`)
     copyEtcFile(`etc/sys/ext2mime.props`, `res/sys/ext2mime.props`)
     copyEtcFile(`etc/sys/units.txt`)
+    copyEtcFile(`etc/parser/alias.txt`)
   }
 
   private Void copyEtcFile(Uri uri, Uri destUri := uri)
