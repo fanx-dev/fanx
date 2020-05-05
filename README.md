@@ -18,7 +18,7 @@ class HelloWorld
 
 ## Installing
 * [Download](https://github.com/fanx-dev/fanx/releases)
-- [QuickStart](https://github.com/fanx-dev/fanx/blob/master/doc/QuickStart.md)
+* [QuickStart](https://github.com/fanx-dev/fanx/blob/master/doc/QuickStart.md)
 
 ## Documentation
 * [Learn More](https://github.com/chunquedong/fanx/blob/master/doc/Index.md)
