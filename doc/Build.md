@@ -44,10 +44,3 @@ build:
   cd src
   sh build_lib.sh
 ```
-
-### API Docs ###
-generate the HTML docs
-```
-  fan compilerDoc -all
-```
-
