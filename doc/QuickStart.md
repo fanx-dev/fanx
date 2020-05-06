@@ -5,7 +5,7 @@
 ### Installing
 
 * [Download](https://github.com/chunquedong/fanx/releases) the latest build
-* [IDE Tools](IDE.md)
+* [IDE](https://github.com/fanx-dev/fanIDE)
 
 ### Setup
 1. Ensure "{home}/bin" is in your path
