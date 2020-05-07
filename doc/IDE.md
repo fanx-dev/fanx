@@ -2,7 +2,7 @@
 
 ### Netbeans Plugin
 
-[FanIDE](https://github.com/fanx-dev/fanIDE)
+* [FanIDE](https://github.com/fanx-dev/fanIDE)
 
 ### Text Editors
 * [VS Code](https://github.com/a-mackay/fantom-syntax-highlighting)

@@ -31,8 +31,6 @@ Run:
 
 ### Hello World GUI
 ```
-using vaseGraphics
-using vaseWindow
 using vaseGui
 
 class HelloTest
