@@ -23,10 +23,7 @@ internal class UriParser {
   }
 
   private Void normalize() {
-    if (pathStr == "") {
-      //pathStr = "/"
-    }
-    else if (pathStr.startsWith("./")) {
+    if (pathStr.startsWith("./")) {
       pathStr = pathStr[2..-1]
     }
 
@@ -376,8 +373,11 @@ const final class Uri
     }
 
     if (path != null) {
-      path = encode ? encodeToken(path, sectionPath) : escapeToken(path, sectionPath)
-      buf.add(path)
+      if (host != null && path == "/") {}
+      else {
+        path = encode ? encodeToken(path, sectionPath) : escapeToken(path, sectionPath)
+        buf.add(path)
+      }
     }
 
     if (query != null && query.size > 0) {

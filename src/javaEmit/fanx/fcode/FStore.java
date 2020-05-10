@@ -141,7 +141,7 @@ public abstract class FStore
         String name = entry.getName();
         if (name.startsWith("fcode/")) continue;
         if (name.endsWith(".class")) continue;
-        String uri = (podUri + (entry.getName()));
+        String uri = (podUri +"/"+ (entry.getName()));
         list.add(new ResFile.ZipEntryFile(zipFile, entry, uri));
       }
       return list;

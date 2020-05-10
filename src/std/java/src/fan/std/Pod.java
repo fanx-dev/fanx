@@ -218,6 +218,8 @@ public class Pod extends FanObj {
 		fan.std.File f = (fan.std.File) filesMap.get(uri);
 		if (f != null || !checked)
 			return f;
+
+		//System.out.println(filesMap.toStr());
 		throw UnresolvedErr.make(uri.toStr());
 	}
 
