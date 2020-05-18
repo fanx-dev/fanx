@@ -5,14 +5,36 @@
 ### Return From Void ###
 not allow return a value from Void method, except return a Void type.
 
-### Float Literals ###
-The Default Number is Float
+
+### More Container ###
+LinkedList, Set, Tuple, ConcurrentMap, LRUCache, TreeMap and more.
 ```
-  f := 0.1   //Float
-  f := 0.2f  //Float
-  f := 0.3d  //Decimal
+  Tuple<Int, Str> tuple := Tuple(1, "a")
 ```
 
+### Actor Enhance ###
+```
+  class Bar {
+    Str foo(Str str) { str+"2" }
+  }
+
+  actor := ActorProxy { Bar() }
+  actor->foo("Hi")
+```
+```
+  //ActorLocal
+  static const AcotrLocal<Bar> local := ActorLocal()
+```
+
+### New JSON Api ###
+The new api support 'encoding' and 'nonstandard' options and xpath.
+```
+  val := JVal.readJson("""{name=["abc"]}""")
+  val.xpath("name[0]")
+  val->name->getAt(0)
+  s := val.asStr //safe cast
+  str := JVal.writeJson(val)
+```
 
 ### Extension Methods API ###
 Most Convenience methods are changed to extension methods to break the dependency.

@@ -1,7 +1,31 @@
 
 ## Differences from Fantom ##
 
-### Generics ###
+### Overview ###
+
+- Generics Type
+- Extension Method
+- Async/Await Coroutine
+- Checked Dynamic Invoke
+- Struct Type
+- RunTime Immutable
+- Readonly/Let keyword
+- Data Class
+- Initialization Assignment
+- Closure Inference
+- Local Return
+- Modern Style
+- Static Namespace
+- Primitive and Array type
+- Named Param
+- Virtual Class
+- Unicode Identifier
+- Float Literals Enhance
+- Build Script Enhance
+- Portable Library
+
+
+### Generics Type ###
 ```
   class Foo<T> {
     T? t
@@ -61,7 +85,7 @@ To override the toImmutable methods.
   }
 ```
 
-### Readonly keyword ###
+### Readonly/Let keyword ###
 readonly is a shallow const
 ```
   class Bar {
@@ -125,7 +149,58 @@ Written type after name
   }
 ```
 
-### Build Script ###
+### Static Namespace ###
+fanx allow same name static slots in inheritance.
+```
+   class Base {
+     static Void foo() {}
+   }
+   class Sub : Base {
+     static Void foo() {}
+
+     static Void main() {
+       foo  //call Sub.foo
+       Base.foo //call Base.foo
+     }
+   }
+```
+
+### Primitive and Array type ###
+
+More primitive type: Int8/Int16/Int32/Int64/Float32/Float64.
+
+### Named Param ###
+
+```
+  foo(name:0, name2:1)
+```
+
+### Virtual Class ###
+Class default is 'final'
+```
+  virtual class Base {}
+```
+
+### Unicode Identifier ###
+```
+  class 一个类 {
+    static Void main() {
+      你好 := "你好"
+      echo(你好)
+    }
+  }
+```
+
+### Float Literals Enhance ###
+The Default Number is Float
+```
+  f := 0.1   //Float
+  f := 0.2f  //Float
+  f := 0.3d  //Decimal
+```
+
+
+### Build Script Enhance ###
 The pod.props file:
 ```
   podName = testlib
@@ -145,78 +220,6 @@ The sys pod is written in Fantom with little native code.
 It's more portable to write a new backend platforms.
 Future targets might include C, LLVM, WebAssembly.
 
-### More Container ###
-LinkedList, Set, Tuple, ConcurrentMap, LRUCache, TreeMap and more.
-```
-  Tuple<Int, Str> tuple := Tuple(1, "a")
-```
-
-### New JSON Api ###
-The new api support 'encoding' and 'nonstandard' options and xpath.
-```
-  val := JVal.readJson("""{name=["abc"]}""")
-  val.xpath("name[0]")
-  val->name->getAt(0)
-  s := val.asStr //safe cast
-  str := JVal.writeJson(val)
-```
-
-### Actor Enhance ###
-```
-  class Bar {
-    Str foo(Str str) { str+"2" }
-  }
-
-  actor := ActorProxy { Bar() }
-  actor->foo("Hi")
-```
-```
-  //ActorLocal
-  static const AcotrLocal<Bar> local := ActorLocal()
-```
-
-
-### Static Namespace ###
-fanx allow same name static slots in inheritance.
-```
-   class Base {
-     static Void foo() {}
-   }
-   class Sub : Base {
-     static Void foo() {}
-
-     static Void main() {
-       foo  //call Sub.foo
-       Base.foo //call Base.foo
-     }
-   }
-```
-
-### Primitive type ###
-
-More primitive type: Int8/Int16/Int32/Int64/Float32/Float64.
-
-### Named Param ###
-
-```
-  foo(name:0, name2:1)
-```
-
-### Virtual Class ###
-Class default is 'final'
-```
-  virtual class Base {}
-```
-
-### Unicode as Identifier ###
-```
-  class 一个类 {
-    static Void main() {
-      你好 := "你好"
-      回显(你好)
-    }
-  }
-```
 [MoreDiff](https://github.com/chunquedong/fanx/blob/master/doc/MoreDiff.md)
 
 

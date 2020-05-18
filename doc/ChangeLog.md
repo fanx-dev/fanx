@@ -1,11 +1,11 @@
 ## ChangeLog
 
-## Build 3.2 (working)
+### Build 3.2 (working)
 - Fix Err warn on Windows
 - Unicode as Identifier
 - parser: close FPod
 
-## Build 3.1 (2020-04-22)
+### Build 3.1 (2020-04-22)
 - Add Native C FFI
 - Add JarDistMain (build to Java JAR)
 - Add parser pod for IDE
