@@ -307,7 +307,16 @@ class GenAsync : CompilerStep {
 
     implMethod.code.walkExpr |expr|
     {
-      expr.id === ExprId.localVar ? replaceLocalVar(expr) : expr
+      if (expr.id === ExprId.localVar) return replaceLocalVar(expr)
+      else if (expr.id === ExprId.closure) {
+        ClosureExpr closure := expr
+
+        closure.substitute = Expr.walkExpr(ExprVisitor(|Expr e->Expr| {
+            e.id === ExprId.localVar ? replaceLocalVar(e) : e
+          }),
+          closure.substitute)
+      }
+      return expr
     }
   }
 

@@ -29,7 +29,7 @@ virtual class BasePromise<T> : Promise<T> {
       else err = res
 
       isDone = true
-      whenDone?.call(res, err)
+      whenDone?.call(result, err)
       lret null
     }
   }

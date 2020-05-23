@@ -2,6 +2,14 @@
 
 class AsyncTest : Test {
 
+  private static Int inc(|Int->Int| f) { return f(1) }
+
+  async Int runClosure() {
+    a := 1
+    x := inc |Int t->Int|{ a + t }
+    return x
+  }
+
   async Void doLoop(Int n) {
     for (i:=0; i<n; ++i) {
       await i
@@ -51,6 +59,12 @@ class AsyncTest : Test {
 
     f := doTry(10)
     verifyEq(f.result, 100)
+  }
+
+  Void testClosure() {
+    init
+    res := runClosure
+    verifyEq(res.result, 2)
   }
 
 
