@@ -4,6 +4,7 @@
 - Fix Err warn on Windows
 - Unicode as Identifier
 - parser: close FPod
+- Fix Js safe warn
 
 ### Build 3.1 (2020-04-22)
 - Add Native C FFI

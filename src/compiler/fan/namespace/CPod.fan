@@ -60,6 +60,9 @@ mixin CPod
   **
   virtual CBridge? bridge() { null }
 
+  ** support Javascript
+  virtual Bool compileJs() { false }
+
   **
   ** Hash on name.
   **

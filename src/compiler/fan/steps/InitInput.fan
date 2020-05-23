@@ -111,6 +111,7 @@ class InitInput : CompilerStep
     meta["pod.depends"]    = input.depends.join(";")
     meta["pod.summary"]    = input.summary
     meta["pod.isScript"]   = input.isScript.toStr
+    meta["pod.compileJs"]  = input.compileJs.toStr
     meta["fcode.version"]  = FConst.FCodeVersion
     meta["build.host"]     = Env.cur.host
     meta["build.user"]     = Env.cur.user

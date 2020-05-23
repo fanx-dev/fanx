@@ -32,6 +32,8 @@ class PodDef : Node, CPod
 
   override CDepend[] depends() { ns.compiler.depends }
 
+  override Bool compileJs() { ns.compiler.input.compileJs }
+
   override File file() { throw UnsupportedErr() }
 
   override CType? resolveType(Str name, Bool checked)

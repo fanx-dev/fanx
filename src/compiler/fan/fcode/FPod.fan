@@ -179,6 +179,7 @@ final class FPod : CPod, FConst
     version = Version(meta.get("pod.version"))
     d := meta.get("pod.depends")
     depends = d.isEmpty ? CDepend[,] : d.split(';').map |s->CDepend| { CDepend.fromStr(s) }
+    compileJs = meta.get("pod.compileJs", "") == "true"
 
     // read tables
     names.read(in(`/fcode/names.def`))
@@ -382,6 +383,7 @@ final class FPod : CPod, FConst
   override Str name         // pod's unique name
   override Version version  // pod version
   override CDepend[] depends // pod dependencies
+  override Bool compileJs
   Str:Str meta              // pod meta
   Str:Obj index             // pod index
   Zip? zip                  // zipped storage
