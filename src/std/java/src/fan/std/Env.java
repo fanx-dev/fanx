@@ -108,6 +108,8 @@ public class Env extends FanObj {
   public final String runtime() {
     return "java";
   }
+
+  public final boolean isJs() { return false; }
   
   public final long javaVersion() { return BootEnv.javaVersion; }
 

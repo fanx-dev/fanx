@@ -78,6 +78,11 @@ native const class Env
   Str runtime()
 
   **
+  ** is Javascript runtime
+  **
+  Bool isJs()
+
+  **
   ** Get the Java VM Version as a single integer (8, 9, etc.).
   ** If the `runtime` is not java, return 0.
   **

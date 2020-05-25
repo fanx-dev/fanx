@@ -61,7 +61,7 @@ facet class Transient {}
 **
 ** Used to annoate types which should be compiled into JavaScript.
 **
-@Deprecated { msg = "use NoJs" }
+//@Deprecated { msg = "use NoJs" }
 facet class Js {}
 facet class NoJs {}
 

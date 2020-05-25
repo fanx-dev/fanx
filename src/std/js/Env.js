@@ -74,6 +74,8 @@ fan.std.Env.prototype.toStr = function() { return this.$typeof().toString(); }
 
 fan.std.Env.prototype.runtime = function() { return "js"; }
 
+fan.std.Env.prototype.isJs = function() { return true; }
+
 fan.std.Env.prototype.javaVersion = function() { return 0; }
 
 // parent
