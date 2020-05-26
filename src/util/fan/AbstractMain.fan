@@ -331,10 +331,19 @@ abstract class AbstractMain
   **
   virtual Int runServices(Service[] services)
   {
-    Env.cur.addShutdownHook |->| { shutdownServices }
+    hook := |->| { shutdownServices }
+    Env.cur.addShutdownHook(hook)
     services.each |Service s| { s.install }
     services.each |Service s| { s.start }
-    Actor.sleep(Duration.maxVal)
+
+    while (true) {
+      r := Env.cur.in.readLine()
+      //echo("debug $r")
+      if (r == "exit") break
+      Actor.sleep(500ms)
+    }
+    shutdownServices
+    Env.cur.removeShutdownHook(hook)
     return 0
   }
 
