@@ -1,11 +1,13 @@
 ## ChangeLog
 
-### Build 3.2 (working)
+### Build 3.2 (2020-06-07)
 - Fix Err warn on Windows
 - Unicode as Identifier
 - parser: close FPod
 - Fix Js safe warn
 - Fix closureExpr in async
+- Fix Js datetime
+- Add Process.outToIn
 
 ### Build 3.1 (2020-04-22)
 - Add Native C FFI
