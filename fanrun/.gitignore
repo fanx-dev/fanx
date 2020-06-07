@@ -1,0 +1,7 @@
+syntax: glob
+.DS_Store
+xcuserdata
+test/
+*.user
+temp
+
