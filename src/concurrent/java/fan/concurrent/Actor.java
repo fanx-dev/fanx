@@ -136,6 +136,9 @@ public class Actor
       //return new Map(Sys.StrType, Sys.ObjType.toNullable());
     }
   };
+  public static void setLocals(Map map) {
+    locals.set(map);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Implementation

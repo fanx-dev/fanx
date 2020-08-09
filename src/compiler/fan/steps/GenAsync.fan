@@ -119,6 +119,11 @@ class GenAsync : CompilerStep {
 
   private Void process()
   {
+    if (curMethod.code == null) {
+      genAbstractMethod
+      return
+    }
+    
     genCtx
     genAsyncMethod
     
@@ -269,10 +274,17 @@ class GenAsync : CompilerStep {
     cs := CallExpr.makeWithMethod(loc, null, ctxCls.method("make"), args)
     doCall.code.add(ReturnStmt.make(loc, cs))
   }
+
+  private Void genAbstractMethod() {
+    asyncCls = ParameterizedType.create(ns.asyncType, [curMethod.returnType])
+    curMethod.ret = asyncCls
+    curMethod.inheritedRet = null
+  }
   
   private Void genExportMethod() {
     implMethod.code = curMethod.code
     curMethod.ret = asyncCls
+    curMethod.inheritedRet = null
     curMethod.code = Block(loc)
     curMethod.vars.clear
     
