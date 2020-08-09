@@ -24,6 +24,10 @@ public class NioBufPeer {
 		return fbuf;
 	}
 
+	void alloc(NioBuf self, long size) {
+		buf = ByteBuffer.allocate((int)size);
+	}
+
 	void init(NioBuf self, File file, String mode, long pos, Long size) throws FileNotFoundException {
 		LocalFile lfile = (LocalFile) file;
 		try {
@@ -73,7 +77,7 @@ public class NioBufPeer {
 	}
 
 	long capacity(NioBuf self) {
-		return self.size();
+		return buf.capacity();
 	}
 
 	void capacity(NioBuf self, long capa) {
@@ -122,6 +126,7 @@ public class NioBufPeer {
 	}
 
 	public ByteBuffer toByteBuffer() {
-		return buf.duplicate();
+		//return buf.duplicate();
+		return buf;
 	}
 }

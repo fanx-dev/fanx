@@ -6,13 +6,21 @@
 //   2018-07-14  Jed Young
 //
 
-internal class FileBuf : Buf
+class NioBuf : Buf
 {
-  new make(File file, Str mode) : super.privateMake() {
-    init(file, mode)
+  new fromFile(File file, Str mode, Int pos, Int? size) : super.privateMake() {
+    init(file, mode, pos, size)
   }
 
-  protected native Void init(File file, Str mode)
+  new makeMem(Int size) : super.privateMake() {
+    alloc(size)
+  }
+
+  protected new make() {}
+
+  protected native Void init(File file, Str mode, Int pos, Int? size)
+
+  protected native Void alloc(Int size)
 
   native override Int size
   native override Int capacity
@@ -36,4 +44,3 @@ internal class FileBuf : Buf
     get { out.charset }
   }
 }
-

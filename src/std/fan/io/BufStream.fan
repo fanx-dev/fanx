@@ -21,18 +21,21 @@ internal class BufOutStream : OutStream {
     if (buf.capacity < buf.pos+1) {
       buf.capacity = buf.capacity * 2  + 1
     }
+    if (buf.pos+1 > buf.size) buf.size = buf.pos+1
+
     buf.setByte(buf.pos, byte)
     ++buf.pos
-    if (buf.pos > buf.size) buf.size = buf.pos
+    
     return this
   }
   override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
     if (buf.capacity < buf.pos+len) {
       buf.capacity = buf.capacity * 2  + len
     }
+    if (buf.pos+len > buf.size) buf.size = buf.pos+len
+    
     buf.setBytes(buf.pos, ba, off, len)
     buf.pos += len
-    if (buf.pos > buf.size) buf.size = buf.pos
     return this
   }
 
