@@ -100,7 +100,6 @@ class GenAsync : CompilerStep {
   }
   
   override Void visitMethodDef(MethodDef def) {
-    if (def.code == null) return
     if ((curMethod.flags.and(FConst.Async)) == 0) return
 
     loc = def.loc
@@ -143,7 +142,7 @@ class GenAsync : CompilerStep {
   private Void genCtx()
   {
     asyncCls = ParameterizedType.create(ns.asyncType, [curMethod.returnType])
-    ctxCls = TypeDef(ns, loc, curUnit, "Async\$"+name)
+    ctxCls = TypeDef(ns, loc, curUnit, "Async\$"+curType.name+"\$"+name)
     ctxCls.flags   = FConst.Internal + FConst.Final + FConst.Synthetic
     ctxCls.base    = asyncCls
     addTypeDef(ctxCls)
@@ -157,6 +156,7 @@ class GenAsync : CompilerStep {
 
   private Void addField(CType ctype, Str name) {
     // define storage field on closure class
+    if (ctype.isVoid) ctype = ns.objType.toNullable
     field := FieldDef(loc, ctxCls)
     field.name  = name
     field.flags = FConst.Internal + FConst.Storage + FConst.Synthetic
