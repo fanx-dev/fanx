@@ -126,6 +126,14 @@ class Cache {
     map[key] = item
   }
 
+  Void remove(Obj key) {
+    item := map.remove(key)
+    if (item == null) {
+      item.remove
+      onReomove(item)
+    }
+  }
+
   internal virtual Void onReomove(CacheItem e) {
     if (onRemoveItem != null && e.val != null) {
       onRemoveItem(e.val)
