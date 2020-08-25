@@ -32,6 +32,7 @@ class ExprFlat : CompilerStep
     def.code.stmts = stmts.dup
 
     //curType.dump
+    //def.print(AstWriter.make)
   }
 
   private Void stmt(Stmt stmt)
@@ -88,13 +89,24 @@ class ExprFlat : CompilerStep
       stmt.walk(ExprVisitor.make|Expr e->Expr| {
         //localDef init
         //echo("$e => $e.id")
-        if (e.id === ExprId.assign || e.id === ExprId.staticTarget) return e
+        if (e.id === ExprId.assign || 
+            e.id === ExprId.staticTarget ||
+            e.id === ExprId.field) return e
         return toTempVar(e)
       }, VisitDepth.expr)
+
+      //echo("stmt: $stmt => $stmt.id")
 
       //already become a local var
       if (stmt.id != StmtId.expr) {
         addStmt(stmt)
+      }
+      else if (stmt is ExprStmt) {
+        expr := ((ExprStmt)stmt).expr
+        //echo("expr: $expr")
+        if (expr.id === ExprId.assign) {
+          addStmt(stmt)
+        }
       }
       else {
         //discard the stmt result value

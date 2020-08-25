@@ -32,6 +32,7 @@ class AsyncTest : Test {
     return await n + 1
   }
 
+
   private Void init() {
     Actor.locals["async.runner"] = |Async<Obj> s| {
       if (s.next) {
@@ -67,6 +68,20 @@ class AsyncTest : Test {
     verifyEq(res.result, 2)
   }
 
+
+  Int fieldValue := 0
+  async Void doSetField(Int n) {
+    fieldValue = await doValue(n)
+    //echo("fieldValue:$fieldValue")
+  }
+
+  
+  Void testSetField() {
+    init
+    doSetField(2)
+    verifyEq(fieldValue, 3)
+  }
+  
 
   ////////////////////////////////////////////////
 
