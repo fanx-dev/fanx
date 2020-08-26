@@ -337,7 +337,7 @@ public class Pod extends FanObj {
 
   public static List flattenDepends(List pods)
   {
-    Map acc = new Map(Sys.StrType, Sys.PodType);
+    Map acc = Map.make();
     for (int i=0; i<pods.sz(); ++i)
       doFlattenDepends(acc, (Pod)pods.get(i));
     return acc.vals();
@@ -351,14 +351,14 @@ public class Pod extends FanObj {
     for (int i=0; i<depends.sz(); ++i)
     {
       Depend d = (Depend)depends.get(i);
-      doFlattenDepends(acc, Pod.find(d.name()));
+      doFlattenDepends(acc, Pod.find(d.name));
     }
   }
 
   public static List orderByDepends(List pods)
   {
     List left = pods.dup().sort();
-    List ordered = List.make(Sys.PodType, pods.size());
+    List ordered = List.make(pods.size());
     while (!left.isEmpty())
     {
       // find next pod that doesn't have depends in left list
@@ -377,7 +377,7 @@ public class Pod extends FanObj {
     {
       Depend d = (Depend)depends.get(i);
       for (int j=0; j<left.sz(); ++j)
-        if (d.name().equals(((Pod)left.get(j)).name()))
+        if (d.name.equals(((Pod)left.get(j)).name()))
           return false;
     }
     return true;

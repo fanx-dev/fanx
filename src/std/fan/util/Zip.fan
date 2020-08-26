@@ -117,7 +117,7 @@ native final class Zip
   **   out.writeLine("test")
   **   out.close
   **
-  OutStream writeNext(Uri path, DateTime modifyTime := DateTime.now,  [Str:Obj?]? opts := null)
+  OutStream writeNext(Uri path, TimePoint modifyTime := TimePoint.now,  [Str:Obj?]? opts := null)
 
   **
   ** Finish writing the contents of this zip file, but leave the underlying

@@ -135,22 +135,22 @@ public File readNext()
  }
 }
 
-public OutStream writeNext(Uri path) { return writeNext(path, DateTime.now(), null); }
-  public OutStream writeNext(Uri path, DateTime modifyTime) { return writeNext(path, modifyTime, null); }
-  public OutStream writeNext(Uri path, DateTime modifyTime, Map opts)
+public OutStream writeNext(Uri path) { return writeNext(path, TimePoint.now(), null); }
+  public OutStream writeNext(Uri path, TimePoint modifyTime) { return writeNext(path, modifyTime, null); }
+  public OutStream writeNext(Uri path, TimePoint modifyTime, Map opts)
   {
     if (zipOut == null) throw UnsupportedErr.make("Zip not opened for writing");
-    if (path.frag() != null) throw ArgErr.make("Path must not contain fragment: " + path);
+    if (path.frag != null) throw ArgErr.make("Path must not contain fragment: " + path);
     if (path.queryStr() != null) throw ArgErr.make("Path must not contain query: " + path);
 
     // Java 1.7+ supports ZIP64 which supports over 65,535 files, but
     // previous versions silently fail which is really bad; so add
     // Fantom specific sanity check here
-    if (Sys.javaVersion < Sys.JAVA_1_7)
+    /*if (Sys.javaVersion < Sys.JAVA_1_7)
     {
       if (zipOutCount >= 65535) throw UnsupportedErr.make("Zip cannot handle more than 65535 files");
       zipOutCount++;
-    }
+    }*/
 
     try
     {
@@ -160,7 +160,7 @@ public OutStream writeNext(Uri path) { return writeNext(path, DateTime.now(), nu
       ZipEntry entry = new ZipEntry(zipPath);
 
       // options
-      entry.setTime(modifyTime.toJava());
+      entry.setTime(modifyTime.toMillis());
       if (opts != null)
       {
         if (opts.get("level") != null)
@@ -178,22 +178,14 @@ public OutStream writeNext(Uri path) { return writeNext(path, DateTime.now(), nu
 
       // putNextEntry and return as SysOutStream
       zipOut.putNextEntry(entry);
-      return new SysOutStream(zipOut)
+      java.io.OutputStream zout = new java.io.FilterOutputStream(zipOut)
       {
-        public boolean close()
-        {
-          try
-          {
-            zipOut.closeEntry();
-            return true;
-          }
-          catch (java.io.IOException e)
-          {
-            e.printStackTrace();
-            return false;
-          }
+        @Override
+        public void close() throws IOException {
+          zipOut.closeEntry();
         }
       };
+      return SysOutStreamPeer.fromJava(zout, 0);
     }
     catch (java.io.IOException e)
     {

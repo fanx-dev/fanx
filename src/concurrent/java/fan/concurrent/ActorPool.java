@@ -116,12 +116,37 @@ public class ActorPool
     return super.trap(name, args);
   }
 
+  public Actor balance(List actors)
+  {
+    Actor best = (Actor)actors.get(0);
+    long bestSize = best.queueSize();
+    if (bestSize == 0) return best;
+
+    for (int i=1; i<actors.sz(); ++i)
+    {
+      Actor x = (Actor)actors.get(i);
+      long xSize = x.queueSize();
+      if (xSize < bestSize)
+      {
+        best = x;
+        bestSize = xSize;
+        if (bestSize == 0) return best;
+      }
+    }
+    return best;
+  }
+
+  final boolean hasPending()
+  {
+    return threadPool.hasPending();
+  }
+
   final void submit(Actor actor)
   {
     threadPool.submit(actor);
   }
 
-  final void schedule(Actor a, Duration d, Future f)
+  final void schedule(Actor a, Duration d, ActorFuture f)
   {
     scheduler.schedule(d.toNanos(), new ScheduledWork(a, f));
   }
@@ -140,6 +165,7 @@ public class ActorPool
       out.printLine("ActorPool");
       out.printLine("  name:       " + name);
       out.printLine("  maxThreads: " + maxThreads);
+      out.printLine("  maxTime:    " + maxTimeBeforeYield);
       threadPool.dump(out);
     }
     catch (Exception e) { out.printLine("  " + e + "\n"); }
@@ -152,12 +178,12 @@ public class ActorPool
 
   static class ScheduledWork implements Scheduler.Work
   {
-    ScheduledWork(Actor a, Future f) { actor = a; future = f; }
+    ScheduledWork(Actor a, ActorFuture f) { actor = a; future = f; }
     public String toString() { return "ScheduledWork msg=" + future.msg; }
     public void work() { if (!future.isCancelled()) actor._enqueue(future, false); }
     public void cancel() { future.cancel(); }
     final Actor actor;
-    final Future future;
+    final ActorFuture future;
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -169,5 +195,5 @@ public class ActorPool
   volatile boolean killed;
   public String name = "ActorPool";
   public long maxThreads = 100;
-  public long maxMsgsBeforeYield = 100;
+  public Duration maxTimeBeforeYield = Duration.fromSec(1);
 }

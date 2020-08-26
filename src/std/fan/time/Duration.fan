@@ -34,7 +34,7 @@ const struct class Duration
   static Int nowTicks() { TimePoint.nanoTicks }
 
   **
-  ** Create a Duration which represents the specified number of nanosecond ticks.
+  ** Create a Duration which represents the specified number of milli ticks.
   **
   private static new make(Int ticks) {
     if (ticks == 0) return zero

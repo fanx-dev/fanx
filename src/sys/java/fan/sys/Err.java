@@ -366,17 +366,17 @@ public class Err
 // Rebasing
 //////////////////////////////////////////////////////////////////////////
 
-//  public Err rebase()
-//  {
-//    this.actual = new RebaseException(actual != null ? actual : this);
-//    return this;
-//  }
-//
-//  public static class RebaseException extends RuntimeException
-//  {
-//    RebaseException(Throwable actual) { this.actual = actual; }
-//    final Throwable actual;
-//  }
+  public Err rebase()
+  {
+    this.actual = new RebaseException(actual != null ? actual : this);
+    return this;
+  }
+
+  public static class RebaseException extends RuntimeException
+  {
+    RebaseException(Throwable actual) { this.actual = actual; }
+    final Throwable actual;
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

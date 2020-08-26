@@ -10,6 +10,7 @@ package fan.concurrent;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * ThreadPool manages a pool of threads optimized for the Actor framework.
@@ -26,13 +27,14 @@ public class ThreadPool
    */
   public ThreadPool(String name, int max)
   {
-    this.name     = name;
-    this.max      = max;
-    this.idleTime = 5000; // 5sec
-    this.idle     = new LinkedList();
-    this.pending  = new LinkedList();
-    this.workers  = new HashMap(max*3);
-    this.state    = RUNNING;
+    this.name       = name;
+    this.max        = max;
+    this.idleTime   = 5000; // 5sec
+    this.idle       = new LinkedList();
+    this.pending    = new LinkedList();
+    this.hasPending = new AtomicBoolean();
+    this.workers    = new HashMap(max*3);
+    this.state      = RUNNING;
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,6 +95,7 @@ public class ThreadPool
       if (work == null) break;
       work._kill();
     }
+    hasPending.set(false);
 
     // interupt each thread
     Iterator it = workers.values().iterator();
@@ -101,7 +104,7 @@ public class ThreadPool
 
   /**
    * Wait for all threads to stop.
-   ** Return true on success or false on timeout.
+   * Return true on success or false on timeout.
    */
   public final synchronized boolean join(long msTimeout)
     throws InterruptedException
@@ -124,6 +127,11 @@ public class ThreadPool
 //////////////////////////////////////////////////////////////////////////
 // Work Management
 //////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Return if we have pending worker awaiting a thread.
+   */
+  boolean hasPending() { return hasPending.get(); }
 
   /**
    * Submit the given work to be run by a thread in this pool.
@@ -154,6 +162,7 @@ public class ThreadPool
 
     // queue the runnable until we have an idle thread
     pending.addLast(work);
+    hasPending.set(true);
   }
 
   /**
@@ -168,6 +177,7 @@ public class ThreadPool
     Work work = (Work)pending.poll();
     if (work != null)
     {
+      hasPending.set(!pending.isEmpty());
       w.post(work);
       return true;
     }
@@ -200,6 +210,7 @@ public class ThreadPool
 
   public void dump(fan.std.OutStream out)
   {
+    out.printLine("  hasPending: " + hasPending());
     out.printLine("  pending:    " + pending.size());
     out.printLine("  idle:       " + idle.size());
     out.printLine("  workers:    " + workers.size());
@@ -343,12 +354,13 @@ public class ThreadPool
   static final int STOPPING = 1;
   static final int DONE     = 2;
 
-  final String name;           // actor pool name
-  final int max;               // maximum number of threads to use
-  final int idleTime;          // time in ms to let threads idle (5sec)
-  private volatile int state;  // life cycle state
-  private LinkedList idle;     // idle threads waiting for work
-  private LinkedList pending;  // pending working we don't have threads for yet
-  private HashMap workers;     // map of all worker threads
-  private int counter;         // counter for all threads ever created
+  final String name;                // actor pool name
+  final int max;                    // maximum number of threads to use
+  final int idleTime;               // time in ms to let threads idle (5sec)
+  private volatile int state;       // life cycle state
+  private LinkedList idle;          // idle threads waiting for work
+  private AtomicBoolean hasPending; // if pending is non-empty
+  private LinkedList pending;       // pending working we don't have threads for yet
+  private HashMap workers;          // map of all worker threads
+  private int counter;              // counter for all threads ever created
 }

@@ -12,6 +12,7 @@
 ** See [docLang::Actors]`docLang::Actors` and
 ** [examples]`examples::concurrent-actors`.
 **
+@Js
 native const class Actor
 {
 
@@ -68,7 +69,7 @@ native const class Actor
 
   **
   ** Asynchronously send a message to this actor for processing.
-  ** If msg is not immutable or serializable, then IOErr is thrown.
+  ** If msg is not immutable, then NotImmutableErr is thrown.
   ** Throw Err if this actor's pool has been stopped.  Return
   ** a future which may be used to obtain the result once it the
   ** actor has processed the message.  If the message is coalesced
@@ -92,12 +93,13 @@ native const class Actor
   ** Schedule a message for delivery after the given future has completed.
   ** Completion may be due to the future returning a result, throwing an
   ** exception, or cancellation.  Send-when-complete messages are never
-  ** coalesced.  Also see `send` and `sendLater`.
+  ** coalesced.  The given future must be an actor based future.  Also
+  ** see `send` and `sendLater`.
   **
   Future sendWhenComplete(Future f, Obj? msg)
 
   ** Obsolete - use `sendWhenComplete`
-  @Deprecated { msg = "Use sendWhenComplete" }
+  @NoDoc @Deprecated { msg = "Use sendWhenComplete" }
   Future sendWhenDone(Future f, Obj? msg)
 
   **
@@ -108,21 +110,42 @@ native const class Actor
   **
   protected virtual Obj? receive(Obj? msg)
 
+//////////////////////////////////////////////////////////////////////////
+// Diagnostics
+//////////////////////////////////////////////////////////////////////////
+
+  // NOTE: these methods are marked as NoDoc, they are provided for
+  // low level access to monitor the actor, but they are subject to change.
+
+  **
+  ** Return debug string for the current state of this actor:
+  **   - idle: no messages queued
+  **   - running: currently assigned a thread and processing messages
+  **   - pending: messages are queued and waiting for thread
+  **
+  @NoDoc Str threadState()
+
   **
   ** Get the current number of messages pending on the message queue.
-  **
-  ** NOTE: this method is marked as NoDoc, it is provided for low level
-  ** access to monitor the actor, but it is subject to change.
   **
   @NoDoc Int queueSize()
 
   **
   ** Get the peak number of messages queued.
   **
-  ** NOTE: this method is marked as NoDoc, it is provided for low level
-  ** access to monitor the actor, but it is subject to change.
-  **
   @NoDoc Int queuePeak()
+
+  **
+  ** Get the total number of messages processed by receive method.
+  **
+  @NoDoc Int receiveCount()
+
+  **
+  ** Get the total number of nanosecond ticks spent in the receive
+  ** method processing messages.  Note that this value might lag until
+  ** the actor yields it thread.
+  **
+  @NoDoc Int receiveTicks()
 
 //////////////////////////////////////////////////////////////////////////
 // Utils

@@ -283,7 +283,7 @@ native final rtconst class Pod
     return acc.vals
   }
 
-  private static void doFlattenDepends([Str:Pod] acc, Pod pod)
+  private static Void doFlattenDepends([Str:Pod] acc, Pod pod)
   {
     if (acc[pod.name] != null) return
     acc[pod.name] = pod
@@ -307,14 +307,14 @@ native final rtconst class Pod
     {
       // find next pod that doesn't have depends in left list
       i := 0
-      for (i := 0; i<left.size; ++i)
+      for (i = 0; i<left.size; ++i)
         if (noDependsInLeft(left, left[i])) break
       ordered.add(left.removeAt(i))
     }
     return ordered
   }
 
-  private static boolean noDependsInLeft(Post[] left, Pod p)
+  private static Bool noDependsInLeft(Pod[] left, Pod p)
   {
     depends := p.depends
     for (i:=0; i<depends.size; ++i)

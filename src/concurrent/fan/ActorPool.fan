@@ -12,7 +12,8 @@
 **
 ** See [docLang::Actors]`docLang::Actors`
 **
-virtual native const class ActorPool
+@Js
+native const class ActorPool
 {
   static ActorPool defVal()
 
@@ -69,6 +70,15 @@ virtual native const class ActorPool
   This join(Duration? timeout := null)
 
   **
+  ** Given a list of one or more actors, return the next actor to use
+  ** to perform load balanced work. The default implemention returns
+  ** the actor with the lowest number of messages in its queue.
+  **
+  ** NOTE: this is an experimental feature which is subject to change
+  **
+  @NoDoc virtual Actor balance(Actor[] actors)
+
+  **
   ** Name to use for the pool and associated threads.
   **
   const Str name := "ActorPool"
@@ -81,15 +91,18 @@ virtual native const class ActorPool
   const Int maxThreads := 100
 
   **
-  ** Max number of messages processed by an actor before the actor yields
-  ** the thread another actor.  A high number allows processing lots of
-  ** quick messages to avoid excessive thread context switching.  A smaller
-  ** number can be used for long message processing where the thread context
-  ** switching might be less significant.
+  ** Max duration an actor will work processing messages before yielding its
+  ** thread.  Because actors require cooperative multi-tasking we don't
+  ** want to let an actor hog a thread forever and potentially starve out
+  ** other actors waiting for a thread.  Note its possible for an actor to
+  ** work longer than this time (especially if its blocking on I/O).  However
+  ** once this time has expired, the actor will not process subsequent messages
+  ** in its queue.  As an optimization an actor will never yield unless
+  ** the pool has other actors waiting for a thread.
   **
   ** NOTE: this method is marked as NoDoc, it is provided for low level
   ** access to tune the actor pool, but it is subject to change.
   **
-  @NoDoc const Int maxMsgsBeforeYield := 100
+  @NoDoc const Duration maxTimeBeforeYield := 5sec
 
 }
