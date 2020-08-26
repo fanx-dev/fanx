@@ -127,6 +127,7 @@ abstract class Async<T> : Promise<T>  {
       echo("state error")
     }
 
+    /*
     if (p is Async) {
       a := (Async)p
       if (a.isDone) echo("state error")
@@ -137,7 +138,8 @@ abstract class Async<T> : Promise<T>  {
       // avoid finding in Actor.locals
       runner.run(a)
     }
-    else if (p is Promise) {
+    else */
+    if (p is Promise) {
       a := (Promise)p
       a.then |res, err| {
         this.awaitRes = res

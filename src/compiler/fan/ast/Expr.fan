@@ -904,9 +904,6 @@ class CallExpr : NameExpr
   Bool isItAdd        // if using comma operator
   CMethod? method     // resolved method
   override Bool synthetic := false
-
-  //use by await code gen. convert foo() to foo_()
-  Bool awaited := false
 }
 
 **************************************************************************

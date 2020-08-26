@@ -75,14 +75,6 @@ class ExprFlat : CompilerStep
     stmt.walk(ExprVisitor(|Expr t->Expr| {
       if (t.id === ExprId.awaitExpr) {
         hasYield = true
-        //convert foo() to foo_()
-        c := ((AwaitExpr)t).expr
-        if (c.id == ExprId.call) {
-          m := ((CallExpr)c).method
-          if ((m.flags.and(FConst.Async)) != 0) {
-            ((CallExpr)c).awaited = true
-          }
-        }
       }
       else if (t.id === ExprId.boolOr || t.id === ExprId.boolAnd || t.id === ExprId.ternary || t.id === ExprId.elvis) {
         hasBool = true
