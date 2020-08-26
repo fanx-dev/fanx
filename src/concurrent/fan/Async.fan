@@ -146,17 +146,18 @@ abstract class Async<T> : Promise<T>  {
       }
     }
     else {
-      runner.awaitOther(this, p)
+      ok := runner.awaitOther(this, p)
+      if (!ok) {
+        this.awaitRes = p
+        runner.run(this)
+      }
     }
   }
 }
 
-class AsyncRunner {
-  virtual Void awaitOther(Async s, Obj? awaitObj) {
-    //echo("await other $awaitObj")
-    s.awaitRes = awaitObj
-    run(s)
-  }
+mixin AsyncRunner {
+  ** return false if not unknow 
+  protected virtual Bool awaitOther(Async s, Obj? awaitObj) { false }
 
   ** run in custem thread
   virtual Void run(Async s) {

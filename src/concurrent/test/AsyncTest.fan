@@ -1,9 +1,12 @@
 //using concurrent
 
+
+class TestAsyncRunner : AsyncRunner {}
+
 class AsyncTest : Test {
 
   private Void init() {
-    Actor.locals["async.runner"] = AsyncRunner()
+    Actor.locals["async.runner"] = TestAsyncRunner()
   }
 
   ////////////////////////////////////////////////

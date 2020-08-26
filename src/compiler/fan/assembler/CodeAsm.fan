@@ -945,7 +945,7 @@ class CodeAsm : CompilerSupport
     if (call.awaited) {
       m2 = m.parent.method(m.name+"_")
       if (m2 == null) {
-        throw Err("awaited method rewrite error: $call.method")
+        throw Err("awaited method rewrite error: $call.method, $call.loc")
       }
     }
     index := fpod.addMethodRef(m2, call.args.size)
