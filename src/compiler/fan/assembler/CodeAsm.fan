@@ -940,7 +940,15 @@ class CodeAsm : CompilerSupport
   private Void invokeCall(CallExpr call, Bool leave := call.leave)
   {
     m := call.method
-    index := fpod.addMethodRef(m, call.args.size)
+    m2 := m
+    //convert foo() to foo_()
+    if (call.awaited) {
+      m2 = m.parent.method(m.name+"_")
+      if (m2 == null) {
+        throw Err("awaited method rewrite error: $call.method")
+      }
+    }
+    index := fpod.addMethodRef(m2, call.args.size)
 
     // write CallVirtual, CallNonVirtual, CallStatic, CallNew, or CallCtor;
     // note that if a constructor call has a target (this or super), then it

@@ -2,19 +2,38 @@
 
 class AsyncTest : Test {
 
-  private static Int inc(|Int->Int| f) { return f(1) }
-
-  async Int runClosure() {
-    a := 1
-    x := inc |Int t->Int|{ a + t }
-    return x
+  private Void init() {
+    Actor.locals["async.runner"] = AsyncRunner()
   }
+
+  ////////////////////////////////////////////////
+
+  async Int doValue(Int n) {
+    return await n + 1
+  }
+
+  Void testInt() {
+    init
+
+    x := doValue(10)
+    verify(x is Async)
+    verifyEq(x.result, 11)
+  }
+
+  ////////////////////////////////////////////////
 
   async Void doLoop(Int n) {
     for (i:=0; i<n; ++i) {
       await i
     }
   }
+
+  Void testLoop() {
+    init
+    doLoop(10)
+  }
+
+  ////////////////////////////////////////////////
 
   async Int doTry(Int n) {
     try {
@@ -28,33 +47,6 @@ class AsyncTest : Test {
     }
   }
 
-  async Int doValue(Int n) {
-    return await n + 1
-  }
-
-
-  private Void init() {
-    Actor.locals["async.runner"] = |Async<Obj> s| {
-      if (s.next) {
-        echo("pause :" + s.awaitObj)
-        if (s.awaitObj is Promise) {
-          s.awaitObj = (s.awaitObj as Promise).result
-        }
-        s.run
-      }
-      echo("end")
-    }
-  }
-
-  Void test() {
-    init
-
-    x := doValue(10)
-    verify(x is Async)
-
-  	doLoop(10)
-  }
-
   Void testException() {
     init
 
@@ -62,11 +54,23 @@ class AsyncTest : Test {
     verifyEq(f.result, 100)
   }
 
+  ////////////////////////////////////////////////
+
+  private static Int inc(|Int->Int| f) { return f(1) }
+
+  async Int runClosure() {
+    a := 1
+    x := inc |Int t->Int|{ a + t }
+    return x
+  }
+
   Void testClosure() {
     init
     res := runClosure
     verifyEq(res.result, 2)
   }
+
+  ////////////////////////////////////////////////
 
 
   Int fieldValue := 0
@@ -81,7 +85,6 @@ class AsyncTest : Test {
     doSetField(2)
     verifyEq(fieldValue, 3)
   }
-  
 
   ////////////////////////////////////////////////
 

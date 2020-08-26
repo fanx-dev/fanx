@@ -49,7 +49,7 @@ abstract class InStream
   ** Attempt to read the next n bytes into the Buf at it's current
   ** position.  The buffer will be grown as needed.  Return the number
   ** of bytes read and increment buf's size and position accordingly.
-  ** Return null and leave buf's state untouched if end of stream.
+  ** Return -1 and leave buf's state untouched if end of stream.
   ** Note this method may not read the full number of n bytes, use
   ** `readBufFully` if you must block until all n bytes read.
   ** Throw IOErr on error.

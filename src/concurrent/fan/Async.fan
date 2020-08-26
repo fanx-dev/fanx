@@ -51,8 +51,8 @@ abstract class Async<T> : Promise<T>  {
 
 	override Bool isDone() { state == -1 }
 
-	** object to await and resolved value
-	Obj? awaitObj
+	** resolved value
+	Obj? awaitRes
 
   ** async function final return result
 	override T? result { protected set }
@@ -63,6 +63,11 @@ abstract class Async<T> : Promise<T>  {
 	** call when task done
 	private |T?, Err?|? whenDone
 
+  private AsyncRunner? runner
+
+  ** await by parent
+  private Async? parent
+
 	override Void then(|T?, Err?| f) {
 		if (isDone) {
       f.call(result, err)
@@ -70,16 +75,30 @@ abstract class Async<T> : Promise<T>  {
     else whenDone = f
 	}
 
-  Bool next() {
+  ** run next step
+  ** call by AsyncRunner
+  Bool step() {
+    //echo("step: $state  in $this")
     try {
       nextStep
     } catch (Err e) {
       this.err = e
       state = -1
     }
+    //echo("end step: $state in $this")
     
     if (isDone) {
+      //echo("done this:$this, parent:$parent, result:$result")
       whenDone?.call(result, err)
+      if (parent != null) {
+        parent.awaitRes = this.result
+        parent.err = this.err
+        parent.step
+      }
+      //dump exception
+      if (parent == null && whenDone == null && err != null) {
+        err.trace
+      }
       return false
     }
     return true
@@ -87,12 +106,61 @@ abstract class Async<T> : Promise<T>  {
 
 	protected abstract Bool nextStep()
 
-	This run() {
-		|Async s|? runner := Actor.locals["async.runner"]
+  ** auto start when no await keyword
+  @NoDoc
+	This start() {
+    //echo("start $this")
+		AsyncRunner? runner := Actor.locals["async.runner"]
 		if (runner == null) {
 			throw Err("Expect async.runner in Acotr.locals")
 		}
-		runner.call(this)
+    this.runner = runner
+		runner.run(this)
 		return this
 	}
+
+  ** call on await expr
+  @NoDoc
+  Void waitFor(Obj? p) {
+    //echo("await $p, runner:$runner")
+    if (runner == null) {
+      echo("state error")
+    }
+
+    if (p is Async) {
+      a := (Async)p
+      if (a.isDone) echo("state error")
+      a.parent = this
+      a.runner = this.runner
+
+      // not call start() on Async
+      // avoid finding in Actor.locals
+      runner.run(a)
+    }
+    else if (p is Promise) {
+      a := (Promise)p
+      a.then |res, err| {
+        this.awaitRes = res
+        this.err = err
+        runner.run(this)
+      }
+    }
+    else {
+      runner.awaitOther(this, p)
+    }
+  }
 }
+
+class AsyncRunner {
+  virtual Void awaitOther(Async s, Obj? awaitObj) {
+    //echo("await other $awaitObj")
+    s.awaitRes = awaitObj
+    run(s)
+  }
+
+  ** run in custem thread
+  virtual Void run(Async s) {
+    s.step
+  }
+}
+

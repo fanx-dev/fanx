@@ -13,7 +13,7 @@
     s2
     goto s6
     s3
-    s4 := yield expr
+    s4 := await expr
     s5
     s6
     return x
@@ -37,7 +37,7 @@ trans to =>
   }
 
   Asyc<Type> foo(p1) {
-    return foo_(p1).run
+    return foo_(p1).start
   }
 
   Iter foo_(p1, p2) {
@@ -53,11 +53,13 @@ trans to =>
          s2
          goto s6
          s3
-         ctx.awaitObj = expr
-         ctx.sate = 2
+         v := expr
+         ctx.sate = 1
+         ctx.waitFor(v)
          break
       case 1:
-         s4 := ctx.awaitObj
+         s4 := ctx.awaitRes
+         if (ctx.err != null) throw ctx.err
          s5
          s6
          ctx.result = x
@@ -299,10 +301,10 @@ class GenAsync : CompilerStep {
       }
     }
     
-    //return foo_(p1).run
+    //return foo_(p1).start
     internalMethod := curType.methodDef(name+"_")
     ctx := CallExpr.makeWithMethod(loc, ThisExpr(loc, curType), internalMethod, args)
-    ctx = CallExpr.makeWithMethod(loc, ctx, asyncCls.method("run"))
+    ctx = CallExpr.makeWithMethod(loc, ctx, asyncCls.method("start"))
     curMethod.code.add(ReturnStmt(loc, ctx))
   }
 
@@ -392,8 +394,8 @@ class GenAsync : CompilerStep {
               //if (ctx.err != null) throw Err()
               genCheckErr(stmts, stmt.loc)
 
-              //ctx.var1 = ctx.awaitObj
-              resField := fieldExpr(stmt.loc, "awaitObj")
+              //ctx.var1 = ctx.awaitRes
+              resField := fieldExpr(stmt.loc, "awaitRes")
               assignExpr.rhs = TypeCheckExpr.coerce(resField, assignExpr.lhs.ctype)
               stmts.add(assignExpr.toStmt)
 
@@ -463,18 +465,16 @@ class GenAsync : CompilerStep {
   }
 
   private Void genYield(Expr c, TargetLabel breakLabel, SwitchTable table, Stmt[] stmts) {
-    //ctx.awaitObj = foo_()
-    if (c.id == ExprId.call) {
-      ((CallExpr)c).method = curType.methodDef(name+"_")
-    }
-    setRes := BinaryExpr.makeAssign(fieldExpr(c.loc, "awaitObj"),
-              TypeCheckExpr.coerce(c,ns.objType.toNullable))
-    stmts.add(setRes.toStmt)
-
     //ctx.state = 3
     setState := BinaryExpr.makeAssign(fieldExpr(c.loc, "state")
         , Expr.makeForLiteral(c.loc, ns, table.jumps.size))
     stmts.add(setState.toStmt)
+
+    //ctx.waitFor(foo_())
+    arg := TypeCheckExpr.coerce(c, ns.objType.toNullable)
+    ctx := LocalVarExpr(loc, implMethod.vars.first)
+    awaitForExpr := CallExpr.makeWithMethod(loc, ctx, asyncCls.method("waitFor"), [arg])
+    stmts.add(awaitForExpr.toStmt)
 
     //break
     jump := JumpStmt.makeGoto(c.loc)
