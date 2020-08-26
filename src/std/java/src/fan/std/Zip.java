@@ -135,43 +135,71 @@ public File readNext()
  }
 }
 
-public OutStream writeNext(Uri path) { return writeNext(path, TimePoint.now()); }
-public OutStream writeNext(Uri path, TimePoint modifyTime)
-{
- if (zipOut == null) throw UnsupportedErr.make("Zip not opened for writing");
- if (path.frag != null) throw ArgErr.make("Path must not contain fragment: " + path);
- if (path.queryStr() != null) throw ArgErr.make("Path must not contain query: " + path);
+public OutStream writeNext(Uri path) { return writeNext(path, DateTime.now(), null); }
+  public OutStream writeNext(Uri path, DateTime modifyTime) { return writeNext(path, modifyTime, null); }
+  public OutStream writeNext(Uri path, DateTime modifyTime, Map opts)
+  {
+    if (zipOut == null) throw UnsupportedErr.make("Zip not opened for writing");
+    if (path.frag() != null) throw ArgErr.make("Path must not contain fragment: " + path);
+    if (path.queryStr() != null) throw ArgErr.make("Path must not contain query: " + path);
 
- // Java 1.7+ supports ZIP64 which supports over 65,535 files, but
- // previous versions silently fail which is really bad; so add
- // Fantom specific sanity check here
-// if (Sys.javaVersion < Sys.JAVA_1_7)
-// {
-//   if (zipOutCount >= 65535) throw UnsupportedErr.make("Zip cannot handle more than 65535 files");
-//   zipOutCount++;
-// }
+    // Java 1.7+ supports ZIP64 which supports over 65,535 files, but
+    // previous versions silently fail which is really bad; so add
+    // Fantom specific sanity check here
+    if (Sys.javaVersion < Sys.JAVA_1_7)
+    {
+      if (zipOutCount >= 65535) throw UnsupportedErr.make("Zip cannot handle more than 65535 files");
+      zipOutCount++;
+    }
 
- try
- {
-   String zipPath = path.toString();
-   if (zipPath.startsWith("/")) zipPath = zipPath.substring(1);
-   ZipEntry entry = new ZipEntry(zipPath);
-   entry.setTime(modifyTime.toMillis());
-   zipOut.putNextEntry(entry);
-   java.io.OutputStream zout = new java.io.FilterOutputStream(zipOut)
-   {
-	@Override
-	public void close() throws IOException {
-		zipOut.closeEntry();
-	}
-   };
-   return SysOutStreamPeer.fromJava(zout, 0);
- }
- catch (java.io.IOException e)
- {
-   throw IOErr.make(e);
- }
-}
+    try
+    {
+      // init ZipEntry
+      String zipPath = path.toString();
+      if (zipPath.startsWith("/")) zipPath = zipPath.substring(1);
+      ZipEntry entry = new ZipEntry(zipPath);
+
+      // options
+      entry.setTime(modifyTime.toJava());
+      if (opts != null)
+      {
+        if (opts.get("level") != null)
+        {
+          int level = ((Long)opts.get("level")).intValue();
+          zipOut.setLevel(level);
+          zipOut.setMethod(level == 0 ? ZipOutputStream.STORED : ZipOutputStream.DEFLATED);
+        }
+        if (opts.get("comment")          != null) entry.setComment((String)opts.get("comment"));
+        if (opts.get("crc")              != null) entry.setCrc((Long)opts.get("crc"));
+        if (opts.get("extra")            != null) entry.setExtra(((Buf)opts.get("extra")).safeArray());
+        if (opts.get("compressedSize")   != null) entry.setCompressedSize((Long)opts.get("compressedSize"));
+        if (opts.get("uncompressedSize") != null) entry.setSize((Long)opts.get("uncompressedSize"));
+      }
+
+      // putNextEntry and return as SysOutStream
+      zipOut.putNextEntry(entry);
+      return new SysOutStream(zipOut)
+      {
+        public boolean close()
+        {
+          try
+          {
+            zipOut.closeEntry();
+            return true;
+          }
+          catch (java.io.IOException e)
+          {
+            e.printStackTrace();
+            return false;
+          }
+        }
+      };
+    }
+    catch (java.io.IOException e)
+    {
+      throw IOErr.make(e);
+    }
+  }
 
 public boolean finish()
 {

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Files;
 
 import fan.sys.ArgErr;
 import fan.sys.IOErr;
@@ -105,6 +106,21 @@ public class LocalFilePeer {
 		long mills = jfile.lastModified();
 		return TimePoint.fromMillis(mills);
 	}
+
+  public boolean isReadable(LocalFile self) {
+  	java.io.File jfile = (java.io.File) self.peer;
+  	return Files.isReadable(jfile.toPath());
+  }
+
+  public boolean isWritable(LocalFile self) {
+  	java.io.File jfile = (java.io.File) self.peer;
+  	return Files.isWritable(jfile.toPath());
+  }
+
+  public boolean isExecutable(LocalFile self) {
+  	java.io.File jfile = (java.io.File) self.peer;
+  	return Files.isExecutable(jfile.toPath());
+  }
 
 	static String osPath(LocalFile self) {
 		java.io.File jfile = (java.io.File) self.peer;

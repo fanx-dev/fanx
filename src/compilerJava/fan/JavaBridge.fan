@@ -452,7 +452,7 @@ class JavaBridge : CBridge
 
     // handle Fantom to Java primitives
     if (expected.pod == primitives)
-      return coerceToPrimitive(expr, expected, onErr)
+      return coerceToPrimitive(expr, expected.toNonNullable, onErr)
 
     // handle Java primitives to Fan
     if (actual.pod == primitives)

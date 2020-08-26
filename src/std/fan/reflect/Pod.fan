@@ -270,4 +270,60 @@ native final rtconst class Pod
   override Obj toImmutable() {
     this
   }
+
+
+  **
+  ** Expand a set of pods to include all their recurisve dependencies.
+  ** This method is does not order them; see `orderByDepends()`.
+  **
+  static Pod[] flattenDepends(Pod[] pods) {
+    acc := [Str:Pod][:]
+    for (i:=0; i<pods.size; ++i)
+      doFlattenDepends(acc, pods[i])
+    return acc.vals
+  }
+
+  private static void doFlattenDepends([Str:Pod] acc, Pod pod)
+  {
+    if (acc[pod.name] != null) return
+    acc[pod.name] = pod
+    depends := pod.depends
+    for (i:=0; i<depends.size; ++i)
+    {
+      d := depends[i]
+      doFlattenDepends(acc, Pod.find(d.name));
+    }
+  }
+
+
+  **
+  ** Order a list of pods by their dependencies.
+  ** This method does not flatten dependencies - see `flattenDepends()`.
+  **
+  static Pod[] orderByDepends(Pod[] pods) {
+    left := pods.dup.sort
+    ordered := Pod[,] { capacity = pods.size }
+    while (!left.isEmpty)
+    {
+      // find next pod that doesn't have depends in left list
+      i := 0
+      for (i := 0; i<left.size; ++i)
+        if (noDependsInLeft(left, left[i])) break
+      ordered.add(left.removeAt(i))
+    }
+    return ordered
+  }
+
+  private static boolean noDependsInLeft(Post[] left, Pod p)
+  {
+    depends := p.depends
+    for (i:=0; i<depends.size; ++i)
+    {
+      d := depends[i]
+      for (j:=0; j<left.size; ++j)
+        if (d.name == left[j].name)
+          return false
+    }
+    return true
+  }
 }

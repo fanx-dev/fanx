@@ -30,15 +30,16 @@ class CompileJsPlugin : CompilerStep
     buf       := StrBuf()
     support   := JsCompilerSupport(this)
     sourcemap := SourceMap(support)
+    jsOut     := JsWriter(buf.out, sourcemap)
 
     jsPod = JsPod(support, pod, types)
-    jsPod.write(JsWriter(buf.out, sourcemap))
+    jsPod.write(jsOut)
 
     compiler.jsPod = jsPod
     compiler.js    = buf.toStr
 
     buf.clear
-    sourcemap.write(buf.clear.out)
+    sourcemap.write(jsOut.line, buf.clear.out)
     compiler.jsSourceMap = buf.toStr
   }
 

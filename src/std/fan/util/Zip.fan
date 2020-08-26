@@ -102,12 +102,22 @@ native final class Zip
   ** writing the entire zip file.  Throw UnsupportedErr if zip is not writing
   ** to an output stream.
   **
+  ** Next entry options:
+  **   - comment: Str entry comment
+  **   - crc: Int CRC-32 of the uncompressed data
+  **   - extra: Buf for extra bytes data field
+  **   - level: Int between 9 (best compression) to 0 (no compression)
+  **   - compressedSize: Int for compressed size of data
+  **   - uncompressedSize: Int for uncompressed size of data
+  **
+  ** NOTE: setting level to 0 sets method to STORE, else to DEFLATED.
+  **
   ** Examples:
   **   out := zip.writeNext(`/docs/test.txt`)
   **   out.writeLine("test")
   **   out.close
   **
-  OutStream writeNext(Uri path, TimePoint modifyTime := TimePoint.now)
+  OutStream writeNext(Uri path, DateTime modifyTime := DateTime.now,  [Str:Obj?]? opts := null)
 
   **
   ** Finish writing the contents of this zip file, but leave the underlying

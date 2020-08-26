@@ -61,7 +61,7 @@ final const native class AtomicInt
   native Int incrementAndGet()
 
   **
-  ** Atomically increment the current value by one and
+  ** Atomically decrement the current value by one and
   ** return the updated value.
   **
   native Int decrementAndGet()

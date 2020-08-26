@@ -170,6 +170,21 @@ abstract const class File
   abstract TimePoint? modified
 
   **
+  ** Return if this file is readable.
+  **
+  virtual Bool isReadable() { true }
+
+  **
+  ** Return if this file is writable.
+  **
+  virtual Bool isWritable() { false }
+
+  **
+  ** Return if this file is executable.
+  **
+  virtual Bool isExecutable() { false }
+
+  **
   ** Get this File as an operating system specific path on
   ** the local system.  If this File doesn't represent a
   ** path on the local file system then return null.
@@ -523,6 +538,10 @@ internal const class LocalFile : File
   native override File moveTo(File to)
   native override Void delete()
   native override File deleteOnExit()
+
+  native override Bool isReadable()
+  native override Bool isWritable()
+  native override Bool isExecutable()
 
   override Buf open(Str mode := "rw") {
     FileBuf(this, mode)
