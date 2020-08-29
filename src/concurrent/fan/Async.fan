@@ -78,12 +78,14 @@ abstract class Async<T> : Promise<T>  {
   ** run next step
   ** call by AsyncRunner
   Bool step() {
+    if (isDone) throw Err("state err, already done. $this")
     //echo("step: $state  in $this")
     try {
       nextStep
     } catch (Err e) {
       this.err = e
       state = -1
+      //e.trace
     }
     //echo("end step: $state in $this")
     
@@ -93,6 +95,7 @@ abstract class Async<T> : Promise<T>  {
       if (parent != null) {
         parent.awaitRes = this.result
         parent.err = this.err
+        if (parent.runner == null) parent.runner = this.runner
         parent.step
       }
       //dump exception
@@ -109,51 +112,59 @@ abstract class Async<T> : Promise<T>  {
   ** auto start when no await keyword
   @NoDoc
 	This start() {
-    //echo("start $this")
-		AsyncRunner? runner := Actor.locals["async.runner"]
-		if (runner == null) {
-			throw Err("Expect async.runner in Acotr.locals")
-		}
-    this.runner = runner
-		runner.run(this)
+    //first time run in current thread
+    this.step
+    //this.getRunner.run(this)
 		return this
 	}
 
-  ** call on await expr
-  @NoDoc
-  Void waitFor(Obj? p) {
-    //echo("await $p, runner:$runner")
-    if (runner == null) {
-      echo("state error")
+  private AsyncRunner getRunner() {
+    if (this.runner == null) {
+      this.runner = Actor.locals["async.runner"]
+      if (this.runner == null) {
+        throw Err("Expect async.runner in Acotr.locals")
+      }
     }
+    return this.runner
+  }
 
-    /*
+  ** call on await expr
+  ** return false if done
+  @NoDoc
+  Bool waitFor(Obj? p) {
     if (p is Async) {
       a := (Async)p
-      if (a.isDone) echo("state error")
-      a.parent = this
-      a.runner = this.runner
-
-      // not call start() on Async
-      // avoid finding in Actor.locals
-      runner.run(a)
+      //already done
+      if (a.isDone) {
+        //echo("already isDone $a")
+        this.awaitRes = a.result
+        this.err = a.err
+        return false
+      }
+      else {
+        //call me later
+        a.parent = this
+      }
     }
-    else */
-    if (p is Promise) {
+    else if (p is Promise) {
       a := (Promise)p
+      //init runner in current thread
+      r := getRunner
       a.then |res, err| {
         this.awaitRes = res
         this.err = err
-        runner.run(this)
+        //calback maybe in other thread
+        r.run(this)
       }
     }
     else {
-      ok := runner.awaitOther(this, p)
+      ok := getRunner.awaitOther(this, p)
       if (!ok) {
         this.awaitRes = p
-        runner.run(this)
+        getRunner.run(this)
       }
     }
+    return true
   }
 }
 

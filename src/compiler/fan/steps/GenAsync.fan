@@ -55,8 +55,7 @@ trans to =>
          s3
          v := expr
          ctx.sate = 1
-         ctx.waitFor(v)
-         break
+         if (ctx.waitFor(v)) break
       case 1:
          s4 := ctx.awaitRes
          if (ctx.err != null) throw ctx.err
@@ -474,16 +473,16 @@ class GenAsync : CompilerStep {
     arg := TypeCheckExpr.coerce(c, ns.objType.toNullable)
     ctx := LocalVarExpr(loc, implMethod.vars.first)
     awaitForExpr := CallExpr.makeWithMethod(loc, ctx, asyncCls.method("waitFor"), [arg])
-    stmts.add(awaitForExpr.toStmt)
 
-    //break
-    jump := JumpStmt.makeGoto(c.loc)
-    jump.target = breakLabel
-    stmts.add(jump)
+    //if (ctx.waitFor(v) break
+    jump0 := JumpStmt(loc, awaitForExpr)
+    jump0.ifFalse = false
+    jump0.target = breakLabel
+    stmts.add(jump0)
 
     //next block
-    label := TargetLabel(c.loc)
-    stmts.add(label)
-    table.jumps.add(label)
+    nextBlockLabel := TargetLabel(c.loc)
+    stmts.add(nextBlockLabel)
+    table.jumps.add(nextBlockLabel)
   }
 }
