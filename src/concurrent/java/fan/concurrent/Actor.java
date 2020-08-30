@@ -34,6 +34,7 @@ public class Actor
     return self;
   }
 
+  public static void make$(Actor self) { make$(self, ActorPool.defVal(), null); }
   public static void make$(Actor self, ActorPool pool) { make$(self, pool, null); }
   public static void make$(Actor self, ActorPool pool, Func receive)
   {

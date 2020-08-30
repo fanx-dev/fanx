@@ -45,6 +45,8 @@ virtual class BasePromise<T> : Promise<T> {
   }
 }
 
+
+@NoPeer
 abstract class Async<T> : Promise<T>  {
 	** execute step state
 	protected Int state := 0
@@ -166,6 +168,8 @@ abstract class Async<T> : Promise<T>  {
     }
     return true
   }
+
+  static native Promise sleep(Duration d)
 }
 
 mixin AsyncRunner {
