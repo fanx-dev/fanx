@@ -175,6 +175,7 @@ public final class ActorFuture
       msg = result = null;  // allow gc
       notifyAll();
       wd = whenDone; whenDone = null;
+      if (this.then != null) this.then.call(null, null);
     }
     sendWhenDone(wd);
   }
@@ -191,6 +192,7 @@ public final class ActorFuture
       result = r;
       notifyAll();
       wd = whenDone; whenDone = null;
+      if (this.then != null) this.then.call(r, null);
     }
     sendWhenDone(wd);
     return this;
@@ -207,6 +209,7 @@ public final class ActorFuture
       result = e;
       notifyAll();
       wd = whenDone; whenDone = null;
+      if (this.then != null) this.then.call(null, e);
     }
     sendWhenDone(wd);
     return this;
@@ -257,6 +260,20 @@ public final class ActorFuture
     ActorFuture future;
   }
 
+  void _then(Func f) {
+    synchronized (this) {
+      this.then = f;
+      if (state().isComplete()) {
+        if (state().isErr()) {
+          this.then.call(null, result);
+        }
+        else {
+          this.then.call(result, null);
+        }
+      }
+    }
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
@@ -272,5 +289,5 @@ public final class ActorFuture
   private volatile int state;  // processing state of message
   private Object result;       // result or exception of processing
   private ArrayList whenDone;  // list of messages to deliver when done
-
+  private Func then;
 }
