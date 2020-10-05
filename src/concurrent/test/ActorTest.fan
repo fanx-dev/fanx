@@ -816,10 +816,10 @@ class ActorTest : Test
   Void testBalance()
   {
     pool := ActorPool {}
-    a := Actor(pool) |msg| { if (msg != "start") Actor.sleep(100ms); return msg }
-    b := Actor(pool) |msg| { if (msg != "start") Actor.sleep(100ms); return msg }
-    c := Actor(pool) |msg| { if (msg != "start") Actor.sleep(100ms); return msg }
-    d := Actor(pool) |msg| { if (msg != "start") Actor.sleep(100ms); return msg }
+    a := Actor(pool) |msg| { if (msg != "start") Actor.sleep(300ms); return msg }
+    b := Actor(pool) |msg| { if (msg != "start") Actor.sleep(300ms); return msg }
+    c := Actor(pool) |msg| { if (msg != "start") Actor.sleep(300ms); return msg }
+    d := Actor(pool) |msg| { if (msg != "start") Actor.sleep(300ms); return msg }
     e := Actor(pool) |msg| { return msg }
 
     a.send("start").get; 4.times |x| { a.send(x) }
