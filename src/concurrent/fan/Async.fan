@@ -162,10 +162,8 @@ abstract class Async<T> : Promise<T>  {
     else if (p is ActorFuture) {
       a := (ActorFuture)p
       r := getRunner
-      a._then |res, err| {
-        this.awaitRes = res
-        this.err = err
-        //calback maybe in other thread
+      a._then |->| {
+        this.awaitRes = p
         r.run(this)
       }
     }

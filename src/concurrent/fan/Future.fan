@@ -111,7 +111,7 @@ internal native final const class ActorFuture  : Future
   override This completeErr(Err err)
   override This waitFor(Duration? timeout := null)
 
-  internal Void _then(|Obj?,Err?| f)
+  internal Void _then(|->| f)
 }
 
 **************************************************************************

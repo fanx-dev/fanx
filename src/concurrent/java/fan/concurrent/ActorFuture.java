@@ -175,7 +175,7 @@ public final class ActorFuture
       msg = result = null;  // allow gc
       notifyAll();
       wd = whenDone; whenDone = null;
-      if (this.then != null) this.then.call(null, null);
+      if (this.then != null) this.then.call();
     }
     sendWhenDone(wd);
   }
@@ -192,7 +192,7 @@ public final class ActorFuture
       result = r;
       notifyAll();
       wd = whenDone; whenDone = null;
-      if (this.then != null) this.then.call(r, null);
+      if (this.then != null) this.then.call();
     }
     sendWhenDone(wd);
     return this;
@@ -209,7 +209,7 @@ public final class ActorFuture
       result = e;
       notifyAll();
       wd = whenDone; whenDone = null;
-      if (this.then != null) this.then.call(null, e);
+      if (this.then != null) this.then.call();
     }
     sendWhenDone(wd);
     return this;
@@ -264,12 +264,7 @@ public final class ActorFuture
     synchronized (this) {
       this.then = f;
       if (state().isComplete()) {
-        if (state().isErr()) {
-          this.then.call(null, result);
-        }
-        else {
-          this.then.call(result, null);
-        }
+        this.then.call();
       }
     }
   }
