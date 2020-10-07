@@ -285,8 +285,9 @@ class Inherit : CompilerStep
     defRet := def.returnType
     baseRet := base.returnType
 
-    if (base.flags.and(FConst.Async) != 0) {
-      baseRet = (baseRet as ParameterizedType).genericArgs.first
+    if (base.flags.and(FConst.Async) != 0 && base.parent.podName != pod.name) {
+      //fix override Async<Void>
+      baseRet = ((ParameterizedType)baseRet).genericArgs.first
     }
 
     // if the base is defined as This, then all overrides must be This
