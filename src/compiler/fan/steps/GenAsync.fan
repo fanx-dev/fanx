@@ -58,7 +58,7 @@ trans to =>
          if (ctx.waitFor(v)) break
       case 1:
          s4 := ctx.awaitRes
-         if (ctx.err != null) throw ctx.err
+         if (ctx.err != null) { tmpErr = ctx.err; ctx.err = null; throw tmpErr; }
          s5
          s6
          ctx.result = x
@@ -448,7 +448,7 @@ class GenAsync : CompilerStep {
   }
 
   private Void genCheckErr(Stmt[] stmts, Loc loc) {
-    //if (ctx.err != null) throw Err()
+    //if (ctx.err != null) { tmpErr = ctx.err; ctx.err = null; throw tmpErr; }
     err := fieldExpr(loc, "err")
     cmp := ShortcutExpr.makeBinary(
             err,
@@ -459,7 +459,19 @@ class GenAsync : CompilerStep {
     jump := JumpStmt(loc, cmp)
     jump.target = TargetLabel(loc)
     stmts.add(jump)
-    stmts.add(ThrowStmt(loc, err))
+
+    //tmpErr = ctx.err
+    var_v := implMethod.addLocalVar(ns.errType, "tmpErr", null)
+    lvar := LocalVarExpr(loc, var_v)
+    storeTmp := BinaryExpr.makeAssign(lvar, err)
+    stmts.add(storeTmp.toStmt)
+
+    ///ctx.err = null
+    store := BinaryExpr.makeAssign(err, LiteralExpr.makeNull(loc, ns))
+    stmts.add(store.toStmt)
+
+    //throw tmpErr
+    stmts.add(ThrowStmt(loc, lvar))
     stmts.add(jump.target)
   }
 

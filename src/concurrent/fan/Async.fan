@@ -26,8 +26,10 @@ virtual class BasePromise<T> : Promise<T> {
   override Void complete(Obj? res, Bool success) {
   	lock.sync {
       if (success) result = res
-      else err = res
-
+      else {
+        if (res isnot Err) { echo("ERROR: not success res must is Err") }
+        err = res
+      }
       isDone = true
       whenDone?.call(result, err)
       lret null
