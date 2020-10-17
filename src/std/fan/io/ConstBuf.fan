@@ -37,7 +37,11 @@ internal rtconst class ConstBuf : Buf
    throw err
   }
 
-  override Int getByte(Int index) { buf.get(index) }
+  override Int getByte(Int index) {
+    Int8 b = buf.get(index)
+    //signed to unsigned
+    return b.and(0xFF)
+  }
   override Void setByte(Int index, Int byte) { throw err }
 
   override This trim() { throw err }
@@ -90,7 +94,7 @@ internal class ConstBufInStream : InStream {
   }
   override Int read() {
     if (pos >= buf.size) return -1
-    return buf[pos++]
+    return buf.getByte(pos++)
   }
   override Int skip(Int n) {
     pos := this.pos + n
@@ -105,7 +109,7 @@ internal class ConstBufInStream : InStream {
     m := avail
     if (m <= 0) return -1
     len = len.min(m)
-    buf.getBytes(buf.pos, ba, off, len)
+    buf.getBytes(pos, ba, off, len)
     this.pos += len
     return len
   }
@@ -122,7 +126,7 @@ internal class ConstBufInStream : InStream {
 
   override Int peek() {
     if (this.pos >= buf.size) return -1
-    return buf[this.pos+1]
+    return buf.getByte(this.pos+1)
   }
 }
 

@@ -1031,4 +1031,29 @@ if (!isJs) verifyErr(e) { buf.writeI8(10) }
     verifyEq(buf.charset, Charset.utf16BE)
     verifyEq(buf.in.charset, Charset.utf16BE)
   }
+
+  private Void printArray(Array<Int8> a) {
+    for (i:=0; i<a.size; ++i) {
+        echo(a[i])
+    }
+  }
+  
+  Void testConstBufStream() {
+    buf := Buf()
+    ba0 := "HI".toUtf8
+    buf.out.writeI4(2)
+    buf.out.writeBytes(ba0)
+    buf.flip
+    
+    printArray(ba0)
+    
+    Buf ibuf := buf.toImmutable
+    in := ibuf.in
+    ba := Array<Int8>(2)
+    in.readS4
+    in.readBytes(ba)
+    
+    printArray(ba)
+    verifyEq(Str.fromUtf8(ba), "HI")
+  }
 }
