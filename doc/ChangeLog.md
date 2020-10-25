@@ -1,5 +1,16 @@
 ## ChangeLog
 
+### Build 3.3 (2020-10-25)
+- Fix NioBuf
+- Fix async in abstract method
+- Update Fantom to 1.0.75
+- Rewrite AsyncRunner
+- Support Async.sleep
+- Support await concurrent::Future
+- Support override async method
+- Fix async exception handing
+- Fix ConstBuf Stream bug
+
 ### Build 3.2 (2020-06-07)
 - Fix Err warn on Windows
 - Unicode as Identifier
