@@ -26,6 +26,7 @@ class JsMethod : JsSlot
     this.hasClosure = ClosureFinder(m).exists
     if (m.ctorChain != null) this.ctorChain = JsExpr.makeFor(s, m.ctorChain)
     if (!m.isNative && !m.parent.isNative && m.code != null) this.code = JsBlock(s, m.code)
+    this.isNoPeer = m.parent.hasFacet("sys::NoPeer")
   }
 
   override MethodDef? node() { super.node }
@@ -91,6 +92,10 @@ class JsMethod : JsSlot
       {
         out.w("return ${parentPeer.qname}Peer.$methName${sig(methParams)};", loc).nl
       }
+      else if (isNoPeer) {
+        pars := [JsMethodParam.makeThis(support)].addAll(methParams)
+        out.w("return ${parentPeer.qname}Peer.$methName${sig(pars)};", loc).nl
+      }
       else
       {
         pars := isStatic ? params : [JsMethodParam.makeThis(support)].addAll(methParams)
@@ -137,6 +142,7 @@ class JsMethod : JsSlot
   JsBlock? code           // method body if has one
   Bool isAsync
   Bool isStaticInit
+  Bool isNoPeer
 }
 
 **************************************************************************

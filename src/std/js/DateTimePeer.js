@@ -55,7 +55,7 @@ fan.std.DateTimePeer.fromTicks = function(ticks, tz) {
 }
 
 fan.std.DateTimePeer.make = function( year,  month,  day,  hour,  min,  sec,  ns,  tz) {
-	var cal = new Date(year, month, day, hour, min, sec, ns/1000000);
+	var cal = new Date(year, month.ordinal(), day, hour, min, sec, ns/1000000);
 	
 	//cal.set(Calendar.MILLISECOND, (int)ns/1000000);
 	var dst = 0;
