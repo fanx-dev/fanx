@@ -132,12 +132,19 @@ internal class ObjDecoder
     // simple:   type(
     // list/map: type[
     // complex:  type || type{
+    // static slot: type.field
     if (curt == Token.LPAREN)
       return readSimple(line, t)
     else if (curt == Token.POUND)
       return readTypeOrSlotLiteral(line, t)
     else if (curt == Token.LBRACKET)
       return readCollection(curField, t)
+    else if (curt == Token.DOT) {
+      consume
+      Str slotName := consumeId("slot literal name")
+      slot := t.field(slotName)
+      return slot.get
+    }
     else
       return readComplex(line, t, root)
   }
