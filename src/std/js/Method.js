@@ -109,6 +109,9 @@ fan.std.Method.prototype.call = function()
     instance = args[0];
     args = Array.prototype.slice.call(args).slice(1);
   }
+  else {
+    args = Array.prototype.slice.call(args);
+  }
 
   return this.invoke(instance, fan.sys.List.make(fan.sys.Obj.$type, args));
 }

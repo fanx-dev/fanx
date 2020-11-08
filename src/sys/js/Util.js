@@ -16,6 +16,9 @@ fan.sys.List.make = function(arg1, arg2) {
 		else if (arg2 === undefined) {
 			return fan.sys.List.orign_make(1);
 		}
+		else {
+			throw "unkonw args:"+args2;
+		}
 	}
 	return fan.sys.List.orign_make(arg1);
 }
