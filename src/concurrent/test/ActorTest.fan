@@ -398,7 +398,7 @@ class ActorTest : Test
     futures.each |Future f, Int i| { verifyLater(start, f, durs[i], 100ms) }
   }
 
-  Void verifyLater(Duration start, Future f, Duration? expected, Duration tolerance := 20ms)
+  Void verifyLater(Duration start, Future f, Duration? expected, Duration tolerance := 40ms)
   {
     if (expected == null)
     {
@@ -763,7 +763,7 @@ class ActorTest : Test
     Future.waitForAll([f1, f2, f3, f4])
     t2 := Duration.now
     dur := t2 - t1
-    fudge := 15ms
+    fudge := 25ms
     verify(300ms <= dur && dur <= 300ms+fudge)
 
     // waitAll w/ timeout
@@ -806,7 +806,7 @@ class ActorTest : Test
     verifyEq(b.threadState, "pending")
     verifyEq(f.get, "ret: x")
     t2 := Duration.now
-    verify(t2 - t1 < 120ms)
+    verify(t2 - t1 < 150ms)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -826,6 +826,8 @@ class ActorTest : Test
     b.send("start").get; 3.times |x| { b.send(x) }
     c.send("start").get; 5.times |x| { c.send(x) }
     d.send("start").get; 3.times |x| { d.send(x) }
+
+    Actor.sleep(5ms)
 
     verifyEq(a.queueSize, 3)
     verifyEq(b.queueSize, 2)

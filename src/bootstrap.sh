@@ -10,7 +10,7 @@ export FAN_DEV_HOME=$FANX_DEV_HOME
  
 fanc='../release/fanx-3.3/bin/fanb'
 
-echo "bootstrap build from $fanc to $WORK_HOME"
+echo "bootstrap build from $fanc to $FANX_DEV_HOME"
 mkdir -p $WORK_PATH/../env/lib/fan
 
 
