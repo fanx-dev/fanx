@@ -16,6 +16,6 @@ javacParams=-source 8 -target 8
 // build output dir; default is Env.cur.workDir
 //devHome=/Users/yangjiandong/workspace/code/fanCore/devEnv/
 
-//jdkHome=/C:/Program Files/Java/jdk1.7/
-jdkHome=/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/
+jdkHome=/C:/Program Files/Java/jdk-11.0.8/
+//jdkHome=/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/
 //jdkHome=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home/
