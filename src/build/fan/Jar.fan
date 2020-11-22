@@ -1,5 +1,6 @@
 
-class JarDistMain
+** compiles a set of Fantom pods into a single Java JAR file
+class Jar
 {
   **
   ** mini build for boost

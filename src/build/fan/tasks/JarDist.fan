@@ -263,11 +263,15 @@ class JarDist : JdkTask
          """).close
 
     // compile main
-    Exec(script,
-      [javacExe,
+    params := (script.config("javacParams") ?: "").split.findAll |s| { !s.isEmpty }
+    cmd := [javacExe]
+    cmd.addAll(params)
+    cmd.addAll([
        "-cp", tempDir.osPath,
        "-d", tempDir.osPath,
-       file.osPath], tempDir).run
+       file.osPath])
+
+    Exec(script, cmd, tempDir).run
 
     // delete source file once we have compiled into .class file
     Delete(script, file).run
