@@ -283,11 +283,11 @@ class MiscTest : JavaTest
     verifySame(obj->a("foo"), "foo")
     verifySame(obj->b("foo"), "java.lang.String")
     verifyEq(obj->c(obj), obj.hash)
-    verifySame(obj->d(obj).toStr, "java.lang.IllegalMonitorStateException")
-    verifySame(obj->e(obj).toStr, "java.lang.IllegalMonitorStateException")
-    verifySame(obj->f(obj).toStr, "java.lang.IllegalMonitorStateException")
-    verifySame(obj->g(obj).toStr, "java.lang.IllegalMonitorStateException")
-    verifySame(obj->h(obj).toStr, "java.lang.IllegalMonitorStateException")
+    verify(obj->d(obj).toStr.startsWith("java.lang.IllegalMonitorStateException"))
+    verify(obj->e(obj).toStr.startsWith("java.lang.IllegalMonitorStateException"))
+    verify(obj->f(obj).toStr.startsWith("java.lang.IllegalMonitorStateException"))
+    verify(obj->g(obj).toStr.startsWith("java.lang.IllegalMonitorStateException"))
+    verify(obj->h(obj).toStr.startsWith("java.lang.IllegalMonitorStateException"))
   }
 
 //////////////////////////////////////////////////////////////////////////
