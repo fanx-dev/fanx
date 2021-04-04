@@ -9,9 +9,9 @@
 #include "system.h"
 #include <sys/types.h>
 #include <time.h>
-#include <unistd.h>
 
 #ifndef CF_WIN
+#include <unistd.h>
 
 void System_sleep(uint32_t millitm) {
     usleep(millitm * 1000);

@@ -7,7 +7,7 @@
 //
 
 #include "FCodeUtil.hpp"
-#include "escape.h"
+#include "util/escape.h"
 
 namespace FCodeUtil {
 
@@ -77,6 +77,10 @@ namespace FCodeUtil {
         // <sys::Ptr^T>
         std::string::size_type pos0 = extName.find("^");
         if (pos0 != std::string::npos) {
+            return "sys_Obj";
+        }
+
+        if (extName.size() == 0) {
             return "sys_Obj";
         }
         

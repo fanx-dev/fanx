@@ -7,9 +7,9 @@
 //
 
 #include "MethodGen.h"
-#include "MBuilder.hpp"
+#include "ir/MBuilder.hpp"
 #include "PodGen.hpp"
-#include "FCodeUtil.hpp"
+#include "ir/FCodeUtil.hpp"
 
 static const char* getUnionTagName(std::string &type) {
     const char* tagName = "";

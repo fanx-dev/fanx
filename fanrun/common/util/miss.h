@@ -20,7 +20,7 @@
  * Fixed int type
  */
 
-#ifdef  __STDC__
+#if 1
 #include <stdint.h>
 #else
 typedef signed char       int8_t;
@@ -43,6 +43,11 @@ typedef unsigned long long  uint64_t;
 #endif
 #endif
 
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 /*========================================================================
  * Boolean
  */
@@ -57,14 +62,14 @@ typedef unsigned long long  uint64_t;
  * misc
  */
 #ifdef  _MSC_VER
-#define inline      __inline
+//#define inline      __inline
 #define __func__    __FUNCTION__
-#define snprintf    _snprintf
-#define vsnprintf   _vsnprintf
+//#define snprintf    _snprintf
+//#define vsnprintf   _vsnprintf
 #define strcasecmp  _stricmp
 #define strtoll     _strtoi64
 #define tzset       _tzset
-#define isnan(x)   _isnan(x)
+//#define isnan(x)   _isnan(x)
 #endif
 
 //#if (NULL != 0)

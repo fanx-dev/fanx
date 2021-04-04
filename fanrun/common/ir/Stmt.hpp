@@ -8,10 +8,10 @@
 #ifndef Stmt_hpp
 #define Stmt_hpp
 
-#include "Code.h"
-#include "FPod.h"
+#include "../fcode/Code.h"
+#include "../fcode/FPod.h"
 //#include "common.h"
-#include "Printer.h"
+#include "../fcode/Printer.h"
 
 class IRMethod;
 class Block;

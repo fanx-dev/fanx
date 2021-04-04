@@ -9,6 +9,7 @@
 #define __runtime__LinkedList__
 
 #include "miss.h"
+#include <stddef.h>
 
 CF_BEGIN
 

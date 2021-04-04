@@ -7,7 +7,7 @@
 
 #include "FType.h"
 #include "FPod.h"
-#include "escape.h"
+#include "../util/escape.h"
 
 bool FSlot::isStatic() { return (flags & FFlags::Static); }
 

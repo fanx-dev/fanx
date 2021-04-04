@@ -59,10 +59,10 @@ namespace FFlags {
 struct FConstantas {
     std::vector<int64_t> ints;
     std::vector<double> reals;
-    std::vector<const std::string> strings;
+    std::vector<std::string> strings;
     std::vector<int64_t> durations;
-    std::vector<const std::string> uris;
-    std::vector<const std::string> decimals;
+    std::vector<std::string> uris;
+    std::vector<std::string> decimals;
     
     std::vector<void*> c_strings;
 };

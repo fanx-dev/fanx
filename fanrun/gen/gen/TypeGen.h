@@ -10,9 +10,9 @@
 #define GenType_h
 
 #include <stdio.h>
-#include "PodLoader.h"
-#include "Printer.h"
-#include "IRType.hpp"
+#include "fcode/PodLoader.h"
+#include "fcode/Printer.h"
+#include "ir/IRType.hpp"
 
 class PodGen;
 class MethodGen;

@@ -13,3 +13,8 @@ env/lib
 env/doc
 src/parser/goldenFile
 parser.jar
+fanrun/fanRun.vcproject/.vs/
+fanrun/fanRun.vcproject/gen/Debug/
+fanrun/fanRun.vcproject/run/Debug/
+fanrun/fanRun.vcproject/Debug/
+.vs/

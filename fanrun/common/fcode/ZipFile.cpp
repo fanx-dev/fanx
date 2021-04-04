@@ -6,7 +6,7 @@
 //
 
 #include "ZipFile.h"
-#include "unzip.h"
+#include "thirdparty/minizip/unzip.h"
 #include <unordered_map>
 #include <vector>
 

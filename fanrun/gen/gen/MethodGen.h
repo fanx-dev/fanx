@@ -9,9 +9,9 @@
 #ifndef MethodGen_h
 #define MethodGen_h
 
-#include "PodLoader.h"
-#include "Printer.h"
-#include "IRMethod.h"
+#include "fcode/PodLoader.h"
+#include "fcode/Printer.h"
+#include "ir/IRMethod.h"
 #include "TypeGen.h"
 
 struct MethodGen {

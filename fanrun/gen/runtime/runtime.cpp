@@ -9,7 +9,7 @@
 #include "runtime.h"
 #include "Env.hpp"
 #include "Vm.hpp"
-#include "system.h"
+#include "util/system.h"
 
 Vm *fvm = nullptr;
 

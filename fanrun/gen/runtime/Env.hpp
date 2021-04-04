@@ -9,7 +9,7 @@
 #ifndef __fcode__Env__
 #define __fcode__Env__
 
-#include "Gc.h"
+#include "gc/Gc.h"
 #include <assert.h>
 #include <vector>
 #include "runtime.h"

@@ -8,7 +8,7 @@
 
 #include "Vm.hpp"
 #include "Env.hpp"
-#include "system.h"
+#include "util/system.h"
 
 Vm::Vm() {
     gc = new Gc(this);

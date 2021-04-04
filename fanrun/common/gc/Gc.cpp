@@ -13,7 +13,7 @@
 #include <assert.h>
 //#include "BitmapTest.h"
 #include <functional>
-#include "system.h"
+#include "util/system.h"
 
 void Gc::gcThreadRun() {
     while (true) {

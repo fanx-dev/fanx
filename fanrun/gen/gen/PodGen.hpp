@@ -9,11 +9,11 @@
 #define Generator_hpp
 
 #include <stdio.h>
-#include "PodLoader.h"
-#include "Printer.h"
+#include "fcode/PodLoader.h"
+#include "fcode/Printer.h"
 #include "TypeGen.h"
 #include <unordered_map>
-#include "IRType.hpp"
+#include "ir/IRType.hpp"
 
 class PodGen {
     IRModule *module;

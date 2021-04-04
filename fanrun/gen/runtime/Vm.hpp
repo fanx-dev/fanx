@@ -9,7 +9,7 @@
 #ifndef Vm_hpp
 #define Vm_hpp
 
-#include "Gc.h"
+#include "gc/Gc.h"
 #include <assert.h>
 #include <vector>
 #include <stdio.h>

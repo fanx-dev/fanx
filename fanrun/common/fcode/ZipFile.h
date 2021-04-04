@@ -11,6 +11,11 @@
 #include <string>
 #include <vector>
 
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 #ifndef _unz64_H
 typedef struct unz_file_info_s unz_file_info;
 #endif

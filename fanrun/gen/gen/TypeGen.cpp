@@ -7,10 +7,10 @@
 //
 
 #include "TypeGen.h"
-#include "escape.h"
+#include "util/escape.h"
 #include "PodGen.hpp"
 #include "MethodGen.h"
-#include "FCodeUtil.hpp"
+#include "ir/FCodeUtil.hpp"
 #include <stdlib.h>
 
 TypeGen::TypeGen(FType *type, IRType *irType)

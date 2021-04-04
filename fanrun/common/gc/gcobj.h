@@ -13,7 +13,7 @@
 extern  "C" {
 #endif
     
-#include "miss.h"
+#include "../util/miss.h"
 typedef struct GcObj_ {
 //    void *next;
     void *type;

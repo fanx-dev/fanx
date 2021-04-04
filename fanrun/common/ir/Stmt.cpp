@@ -8,10 +8,10 @@
 #include "Stmt.hpp"
 #include "IRMethod.h"
 #include "FCodeUtil.hpp"
-#include "escape.h"
+#include "util/escape.h"
 
 extern "C" {
-#include "utf8.h"
+#include "util/utf8.h"
 }
 
 TypeInfo::TypeInfo(const std::string &pod, const std::string &name, bool isValue, bool isBuildin, bool isNullable)

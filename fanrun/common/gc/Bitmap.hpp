@@ -10,9 +10,10 @@
 #define Bitmap_hpp
 
 #include <stdio.h>
-#include "miss.h"
+#include "util/miss.h"
 #include <stdlib.h>
 #include <memory.h>
+#include <assert.h>
 
 class Bitmap {
     uint64_t *words;

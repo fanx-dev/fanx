@@ -14,9 +14,9 @@ extern  "C" {
 #endif
 
 //#include "common.h"
-#include "miss.h"
+#include "util/miss.h"
 #include "type.h"
-#include "gcobj.h"
+#include "gc/gcobj.h"
 
 #include <stdlib.h>
 #include <stdio.h>
