@@ -47,6 +47,7 @@ mixin FConst
   const static Int Readonly   := 0x00400000
   const static Int Async      := 0x00800000
   const static Int Overload   := 0x01000000 //imples param default by Overload
+  const static Int Closure    := 0x02000000
   const static Int FlagsMask  := 0x0fffffff
 
 //////////////////////////////////////////////////////////////////////////

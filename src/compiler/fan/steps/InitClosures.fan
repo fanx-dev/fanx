@@ -78,7 +78,7 @@ class InitClosures : CompilerStep
   private Void genClass()
   {
     cls = TypeDef(ns, loc, closure.enclosingType.unit, closure.name)
-    cls.flags   = FConst.Internal + FConst.Final + FConst.Synthetic
+    cls.flags   = FConst.Internal + FConst.Final + FConst.Synthetic + FConst.Closure
     cls.base    = closure.signature
     cls.closure = closure
     closure.cls = cls
