@@ -21,7 +21,7 @@ struct JmpBuf {
 
 class Vm;
 
-class Env {
+class Env : public fr_Env_struct {
 public:
     std::atomic<bool> isStoped;
     Vm *vm;

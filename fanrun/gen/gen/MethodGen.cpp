@@ -55,18 +55,13 @@ bool MethodGen::genPrototype(Printer *printer, bool funcPtr, bool isValType) {
     
     if (funcPtr) {
         //void (*foo3_val)(
-        printer->printf("fr_Err (*%s%s)(", name.c_str(), valFlag);
+        printer->printf("%s (*%s%s)(", typeName.c_str(), name.c_str(), valFlag);
     } else {
         //void sys_Int_foo3_val(
-        printer->printf("fr_Err %s_%s%s(", parent->name.c_str(), name.c_str(), valFlag);
+        printer->printf("%s %s_%s%s(", typeName.c_str(), parent->name.c_str(), name.c_str(), valFlag);
     }
     
     printer->printf("fr_Env __env");
-    
-    //return var
-    if (typeName != "void") {
-        printer->printf(", %s *__ret", typeName.c_str());
-    }
     
     if (!isStatic) {
         if (isValType) {
@@ -94,7 +89,7 @@ void MethodGen::genDeclares(Printer *printer, bool funcPtr, bool isValType) {
 
 void MethodGen::genNativePrototype(Printer *printer, bool funcPtr, bool isValType) {
     genPrototype(printer, funcPtr, isValType);
-    printer->println(" { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }");
+    printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }");
 }
 
 void MethodGen::genImples(Printer *printer) {
@@ -157,19 +152,18 @@ void MethodGen::genImplesToVal(Printer *printer) {
     
     auto typeName = getTypeDeclName(method->returnType);
     
-    std::string retVar;
+    //std::string retVar;
     if (typeName != "sys_Void") {
-        retVar = "__ret,";
+        printer->printf("return ");
     }
-    printer->printf("return ");
     
     //int i = method->paramCount;
     if (FCodeUtil::isBuildinValType(method->c_parent)) {
-        printer->printf("%s_%s_val(__env, %s FR_UNBOXING_VAL(__self, %s)"
-                        , parent->name.c_str(), name.c_str(), retVar.c_str(), parent->name.c_str());
+        printer->printf("%s_%s_val(__env, FR_UNBOXING_VAL(__self, %s)"
+                        , parent->name.c_str(), name.c_str(), parent->name.c_str());
     } else {
-        printer->printf("%s_%s_val(__env, %s __self"
-                        , parent->name.c_str(), name.c_str(), retVar.c_str());
+        printer->printf("%s_%s_val(__env, __self"
+                        , parent->name.c_str(), name.c_str());
     }
     
     int paramNum = method->paramCount;

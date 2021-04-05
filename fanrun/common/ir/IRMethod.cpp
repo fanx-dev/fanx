@@ -125,7 +125,7 @@ IRMethod::IRMethod(FPod *curPod, FMethod *method) :
 }
 
 void IRMethod::print(Printer& printer, int pass) {
-    printer.println("fr_Err __err; int __errOccurAt;");
+    printer.println("int __errOccurAt;");
     for(int i=paramCount; i<methodVars->locals.size(); ++i) {
         Var &v = methodVars->locals[i];
         printer.printf("%s %s; ", v.type.getName().c_str(), v.name.c_str());
@@ -142,6 +142,8 @@ void IRMethod::print(Printer& printer, int pass) {
     }
     
     printer._print("__errTable:\n");
+    printer.println("{");
+    printer.println("fr_Err __err = __env->error;");
     printer.println("if (!__err || !FR_TYPE_IS(__err, sys_Err)) abort();");
     if (errTable) {
         for (FTrap &trap : errTable->traps) {
@@ -151,6 +153,10 @@ void IRMethod::print(Printer& printer, int pass) {
                            , trap.start, trap.end, type.c_str(), handler->pos);
         }
     }
-    printer.println("return __err;");
+
+    if (!isVoid) {
+        printer.println("return 0;");
+    }
+    printer.println("}");
 }
 

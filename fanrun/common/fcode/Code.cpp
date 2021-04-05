@@ -157,6 +157,7 @@ void Code::readSwitch(Buffer &buffer, FOpObj &op) {
     for (int i=0; i<count; ++i) {
         table[i] = buffer.readUInt16();
     }
+    op.i1 = count;
     op.table = table;
 }
 

@@ -55,8 +55,13 @@ typedef struct fr_Array_ {
     fr_Obj data[1];
 } fr_Array;
 
-extern fr_Type sys_Array_class__;
-
+#ifdef  __cplusplus
+extern  "C" {
+#endif
+    extern fr_Type sys_Array_class__;
+#ifdef  __cplusplus
+}
+#endif
 
 void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
     fr_Obj obj = fr_fromGcObj(gcobj);

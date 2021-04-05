@@ -2,6 +2,7 @@
 
 #include "sys.h"
 
+#ifndef _MSC_VER
 #include <execinfo.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,44 +58,27 @@ char *getTraceString() {
     str[strSize] = 0;
     return str;
 }
+#else
+char* getTraceString() { return ""; }
+#endif
 
 
-fr_Err sys_NativeC_toId(fr_Env __env, sys_Int *__ret, sys_Obj self){
-    *__ret = (int64_t)self;
-    return 0;
-}
-fr_Err sys_NativeC_typeName(fr_Env __env, sys_Str *__ret, sys_Obj self){
+sys_Int sys_NativeC_toId(fr_Env __env, sys_Obj self) { return (int64_t)self; }
+
+sys_Str sys_NativeC_typeName(fr_Env __env, sys_Obj self) {
     if (self == NULL) {
-        *__ret = sys_Str_defVal;
-        return NULL;
+        return sys_Str_defVal;
     }
     fr_Type type = fr_getClass(__env, self);
     const char * name = type->name;
-    *__ret = (sys_Str)fr_newStrUtf8(__env, name, strlen(name));
-    return NULL;
+    return (sys_Str)fr_newStrUtf8(__env, name, strlen(name));
 }
 
-fr_Err sys_NativeC_print(fr_Env __env, sys_Array utf8){
-    puts((const char*)utf8->data);
-    return 0;
-}
-fr_Err sys_NativeC_printErr(fr_Env __env, sys_Array utf8){
-    fprintf(stderr, "%s\n", (const char*)utf8->data);
-    return 0;
-}
-
-fr_Err sys_NativeC_stackTrace(fr_Env __env, sys_Str *__ret){
-//    void* callstack[128];
-//    int i, frames = backtrace(callstack, 128);
-//    char** strs = backtrace_symbols(callstack, frames);
-//    for (i = 0; i < frames; ++i) {
-//        printf("%s\n", strs[i]);
-//    }
-//    free(strs);
-    
+void sys_NativeC_print(fr_Env __env, sys_Array utf8) { puts((const char*)utf8->data); }
+void sys_NativeC_printErr(fr_Env __env, sys_Array utf8) { fprintf(stderr, "ERROR:%s\n", (const char*)utf8->data); }
+sys_Str sys_NativeC_stackTrace(fr_Env __env) {
     char *data = getTraceString();
     sys_Str str = (sys_Str)fr_newStrUtf8(__env, data, -1);
     free(data);
-    *__ret = str;
-    return 0;
+    return str;
 }

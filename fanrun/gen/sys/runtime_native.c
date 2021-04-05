@@ -47,14 +47,14 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int elemSize, size_t len) {
     return array;
 }
 
-fr_Err sys_Str_format(fr_Env __env, sys_Str *__ret, sys_Str format, sys_List args) {
-    FR_RET_ALLOC_THROW(sys_UnsupportedErr);
-}
+sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }
+
 
 //sys_Int strHash(sys_Str str);
 //size_t utf8encode(const wchar_t *us, char *des, size_t n, int *illegal);
 //size_t utf8decode(char const *str, wchar_t *des, size_t n, int *illegal);
-fr_Err sys_Str_fromCStr(fr_Env __env, sys_Str *__ret, sys_Ptr utf8, sys_Int byteLen);
+sys_Str sys_Str_fromCStr(fr_Env __env, sys_Ptr utf8, sys_Int byteLen);
+sys_Array sys_Str_toUtf8(fr_Env __env, sys_Str_ref __self);
 
 fr_Obj fr_newStrUtf8(fr_Env __env, const char *bytes, ssize_t size) {
     size_t len;
@@ -63,7 +63,7 @@ fr_Obj fr_newStrUtf8(fr_Env __env, const char *bytes, ssize_t size) {
     if (size == -1) len = strlen(bytes);
     else len = size;
     
-    sys_Str_fromCStr(__env, &str, (sys_Ptr)bytes, len);
+    str = sys_Str_fromCStr(__env, (sys_Ptr)bytes, len);
     return str;
 }
 //fr_Obj fr_newStr(fr_Env __env, const wchar_t *data, size_t size, bool copy) {
@@ -97,8 +97,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj, bool *isCopy) {
 //    str->utf8 = utf8;
     
     sys_Str str = (sys_Str)obj;
-    sys_Array array;
-    sys_Str_toUtf8(env__, &array, str);
+    sys_Array array = sys_Str_toUtf8(env__, str);
     const char *data = (const char*)array->data;
     if (isCopy) *isCopy = false;
     return data;

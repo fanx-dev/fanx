@@ -17,8 +17,8 @@ extern  "C" {
 #endif
 
 typedef void *fr_Obj;
-struct fr_Env_;
-typedef void *fr_Env;
+struct fr_Env_struct;
+typedef struct fr_Env_struct *fr_Env;
     
 struct fr_Facet {
     const char *type;

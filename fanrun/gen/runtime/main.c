@@ -15,9 +15,9 @@ int main() {
     fr_Env env = fr_getEnv(NULL);
     baseTest_init__(env);
     
-    fr_Err e = baseTest_Main_main(env);
-    if (e) {
-        sys_Err_trace(env, &e, e);
+    baseTest_Main_main(env);
+    if (env->error) {
+        sys_Err_trace(env, env->error);
     }
     
     //test gc

@@ -16,6 +16,7 @@ extern  "C" {
 #endif
     
 struct sys_Obj_struct {
+    char __unused__; //C not allow empty struct
 };
 
 struct sys_Int_struct {
@@ -37,21 +38,22 @@ struct sys_Array_struct {
 };
 
 struct sys_Func_struct {
+    char __unused__; //C not allow empty struct
 };
-    
+
 struct sys_Ptr_struct {
     void *_val;
 };
 
-fr_Err sys_Func_call__8(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f, sys_Obj_null g, sys_Obj_null h);
-fr_Err sys_Func_call__7(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f, sys_Obj_null g);
-fr_Err sys_Func_call__6(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f);
-fr_Err sys_Func_call__5(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e);
-fr_Err sys_Func_call__4(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d);
-fr_Err sys_Func_call__3(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c);
-fr_Err sys_Func_call__2(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b);
-fr_Err sys_Func_call__1(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self, sys_Obj_null a);
-fr_Err sys_Func_call__0(fr_Env __env, sys_Obj_null *__ret, sys_Func_ref __self);
+sys_Obj_null sys_Func_call__8(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f, sys_Obj_null g, sys_Obj_null h);
+sys_Obj_null sys_Func_call__7(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f, sys_Obj_null g);
+sys_Obj_null sys_Func_call__6(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e, sys_Obj_null f);
+sys_Obj_null sys_Func_call__5(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d, sys_Obj_null e);
+sys_Obj_null sys_Func_call__4(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c, sys_Obj_null d);
+sys_Obj_null sys_Func_call__3(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b, sys_Obj_null c);
+sys_Obj_null sys_Func_call__2(fr_Env __env, sys_Func_ref __self, sys_Obj_null a, sys_Obj_null b);
+sys_Obj_null sys_Func_call__1(fr_Env __env, sys_Func_ref __self, sys_Obj_null a);
+sys_Obj_null sys_Func_call__0(fr_Env __env, sys_Func_ref __self);
 
 #ifdef  __cplusplus
 } //end "C"

@@ -233,6 +233,21 @@ void MBuilder::initJumpTarget() {
                 
                 break;
             }
+            case FOp::Switch: {
+                int size = opObj.i1;
+                for (int i = 0; i < size; ++i) {
+                    int16_t pos = opObj.table[i];
+                    FOpObj* op = posToOp[pos];
+                    if (op) {
+                        op->blockBegin = true;
+                    }
+                    if (i + 1 < code.ops.size()) {
+                        FOpObj* next = &code.ops[i + 1];
+                        next->blockBegin = true;
+                    }
+                }
+                break;
+            }
             default:
                 break;
         }
@@ -282,6 +297,16 @@ void MBuilder::linkBlock() {
                 target->incoming.push_back(b);
             }
                 break;
+            case FOp::Switch: {
+                int size = lastOp.i1;
+                for (int i = 0; i < size; ++i) {
+                    int16_t pos = lastOp.table[i];
+                    Block* target = posToBlock[pos];
+                    b->branchs.push_back(target);
+                    target->incoming.push_back(b);
+                }
+                break;
+            }
             case FOp::Return:
             case FOp::Throw:
                 break;
@@ -893,6 +918,11 @@ void MBuilder::parseBlock(Block *block, Block *previous) {
             }
             case FOp::Switch: {
                 //newBlock();
+                SwitchStmt* stmt = new SwitchStmt();
+                stmt->tableSize = opObj.i1;
+                stmt->table = opObj.table;
+                stmt->var = block->pop();
+                block->addStmt(stmt);
                 break;
             }
             case FOp::Throw: {

@@ -43,6 +43,7 @@ namespace FFlags {
     const uint32_t Readonly   = 0x00400000;
     const uint32_t Async      = 0x00800000;
     const uint32_t Overload   = 0x01000000;
+    const uint32_t Closure    = 0x02000000;
     const uint32_t FlagsMask  = 0x0fffffff;
     
     

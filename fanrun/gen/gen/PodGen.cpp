@@ -94,7 +94,7 @@ void PodGen::genHeader(Printer *printer) {
     printer->println("extern \"C\" {");
     printer->println("#endif //__cplusplus");
     
-    printer->println("#include \"runtime.h\"");
+    printer->println("#include \"runtime/runtime.h\"");
     for (int i=0; i<pod->c_dependPods.size(); ++i) {
         std::string& dep = pod->c_dependPods[i];
         printer->println("#include \"%s.h\"", dep.c_str());
@@ -118,7 +118,7 @@ void PodGen::genHeader(Printer *printer) {
         }
     }
     if (hasNative) {
-        printer->println("#include \"%s_native.h\"", podName.c_str());
+        printer->println("#include \"%s/%s_native.h\"", podName.c_str(), podName.c_str());
         printer->newLine();
     }
     
@@ -177,10 +177,21 @@ void PodGen::genImple(Printer *printer) {
 }
 
 void PodGen::genConstPool(Printer *printer) {
-    printer->println("fr_Obj %s_ConstPoolStrs[%d] = {};", podName.c_str(), pod->constantas.strings.size());
-    printer->println("fr_Obj %s_ConstPoolUris[%d] = {};", podName.c_str(), pod->constantas.uris.size());
-    printer->println("fr_Obj %s_ConstPoolDurations[%d] = {};", podName.c_str(), pod->constantas.durations.size());
-    printer->println("fr_Obj %s_ConstPoolDecimals[%d] = {};", podName.c_str(), pod->constantas.decimals.size());
+    int size = pod->constantas.strings.size();
+    if (size == 0) size = 1;//C not allow empty array
+    printer->println("fr_Obj %s_ConstPoolStrs[%d] = {0};", podName.c_str(), size);
+
+    size = pod->constantas.uris.size();
+    if (size == 0) size = 1;
+    printer->println("fr_Obj %s_ConstPoolUris[%d] = {0};", podName.c_str(), size);
+
+    size = pod->constantas.durations.size();
+    if (size == 0) size = 1;
+    printer->println("fr_Obj %s_ConstPoolDurations[%d] = {0};", podName.c_str(), size);
+
+    size = pod->constantas.decimals.size();
+    if (size == 0) size = 1;
+    printer->println("fr_Obj %s_ConstPoolDecimals[%d] = {0};", podName.c_str(), size);
 }
 
 void PodGen::genStaticInit(Printer *printer) {

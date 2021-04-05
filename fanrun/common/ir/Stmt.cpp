@@ -15,7 +15,7 @@ extern "C" {
 }
 
 TypeInfo::TypeInfo(const std::string &pod, const std::string &name, bool isValue, bool isBuildin, bool isNullable)
-: pod(pod), name(name), isValue(isValue), isBuildin(isBuildin), isNullable(isNullable){
+: pod(pod), name(name), isValue(isValue), isBuildin(isBuildin), isNullable(isNullable), typeRef(-1), isMixin(false), isPass(false) {
 }
 
 std::string TypeInfo::getName() const {
@@ -180,7 +180,7 @@ void ConstStmt::print(Printer& printer) {
         }
         case FOp::LoadInt: {
             int64_t i = curPod->constantas.ints[opObj.i1];
-            printer.printf("%s = %lld;", varName.c_str(), i);
+            printer.printf("%s = %lldLL;", varName.c_str(), i);
             break;
         }
         case FOp::LoadFloat: {
@@ -400,32 +400,26 @@ void CallStmt::print(Printer& printer) {
     }
     else {
         std::string voidFlag;
-        if (isVoid) {
-            voidFlag = "_VOID";
-        }
+        if (!isVoid) printer.printf("%s = ", retValue.getName().c_str());
 
         bool isValueType = false;
         if (!isStatic && params.at(0).isValueType()) {
             isValueType = true;
-            printer.printf("FR%s_CALL(%d, %s, %s_val", voidFlag.c_str(), this->pos, typeName.c_str(), mthName.c_str());
+            printer.printf("FR_CALL(%s, %s_val", typeName.c_str(), mthName.c_str());
         }
         else if (isVirtual) {
             if (isMixin) {
-                printer.printf("FR%s_ICALL(%d, %s, %s", voidFlag.c_str(), this->pos, typeName.c_str(), mthName.c_str());
+                printer.printf("FR_ICALL(%s, %s", typeName.c_str(), mthName.c_str());
             }
             else {
-                printer.printf("FR%s_VCALL(%d, %s, %s", voidFlag.c_str(), this->pos, typeName.c_str(), mthName.c_str());
+                printer.printf("FR_VCALL(%s, %s", typeName.c_str(), mthName.c_str());
             }
         }
         else if (isStatic) {
-            printer.printf("FR%s_SCALL(%d, %s, %s", voidFlag.c_str(), this->pos, typeName.c_str(), mthName.c_str());
+            printer.printf("FR_SCALL(%s, %s", typeName.c_str(), mthName.c_str());
         }
         else {
-            printer.printf("FR%s_CALL(%d, %s, %s", voidFlag.c_str(), this->pos, typeName.c_str(), mthName.c_str());
-        }
-        
-        if (!isVoid) {
-            printer.printf(",(%s*)(&%s)", retValue.getTypeName().c_str(), retValue.getName().c_str());
+            printer.printf("FR_CALL(%s, %s", typeName.c_str(), mthName.c_str());
         }
     }
     
@@ -455,7 +449,7 @@ void CallStmt::print(Printer& printer) {
             printer.printf("%s", params[i].getName(true).c_str());
         }
     }
-    printer.printf(");");
+    printer.printf(");FR_CHECK_ERR(%d);", this->pos);
 }
 
 void FieldStmt::print(Printer& printer) {
@@ -714,57 +708,53 @@ void CompareStmt::print(Printer& printer) {
     if (cmpType == -1) {
         switch (opObj.opcode) {
             case FOp::Compare: {
-                printer.printf("FR_VCALL(%d, sys_Obj, compare, &%s, (sys_Obj)%s, (sys_Obj)%s);"
-                                , this->pos
+                printer.printf("%s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);"
                                 , result.getName().c_str()
-                                , param1.getName().c_str(), param2.getName().c_str());
+                                , param1.getName().c_str(), param2.getName().c_str()
+                                , this->pos);
                 break;
             }
             case FOp::CompareEQ: {
-                printer.printf("FR_VCALL(%d, sys_Obj, equals, &%s, (sys_Obj)%s, (sys_Obj)%s);"
-                               , this->pos
+                printer.printf("%s = FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);"
                                , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str());
+                               , param1.getName().c_str(), param2.getName().c_str()
+                               , this->pos);
                 break;
             }
             case FOp::CompareNE: {
-                printer.printf("FR_VCALL(%d, sys_Obj, equals, &%s, (sys_Obj)%s, (sys_Obj)%s); %s = !%s;"
-                               , this->pos
+                printer.printf("%s = !FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s); FR_CHECK_ERR(%d);"
                                , result.getName().c_str()
                                , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str(), result.getName().c_str());
+                               , result.getName().c_str(), result.getName().c_str()
+                               , this->pos);
                 break;
             }
             case FOp::CompareLT: {
-                printer.printf("{ sys_Int __cmp_res; FR_VCALL(%d, sys_Obj, compare, &__cmp_res, (sys_Obj)%s, (sys_Obj)%s); %s = __cmp_res < 0; }"
-                               //, result.getName().c_str()
-                               , this->pos
+                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) < 0; FR_CHECK_ERR(%d); }"
+                               , result.getName().c_str()
                                , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str());
+                               , this->pos);
                 break;
             }
             case FOp::CompareLE: {
-                printer.printf("{ sys_Int __cmp_res; FR_VCALL(%d, sys_Obj, compare, &__cmp_res, (sys_Obj)%s, (sys_Obj)%s); %s = __cmp_res <= 0; }"
-                               //, result.getName().c_str()
-                               , this->pos
+                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) <= 0; FR_CHECK_ERR(%d); }"
+                               , result.getName().c_str()
                                , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str());
+                               , this->pos);
                 break;
             }
             case FOp::CompareGE: {
-                printer.printf("{ sys_Int __cmp_res; FR_VCALL(%d, sys_Obj, compare, &__cmp_res, (sys_Obj)%s, (sys_Obj)%s); %s = __cmp_res >= 0; }"
-                               //, result.getName().c_str()
-                               , this->pos
+                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) >= 0; FR_CHECK_ERR(%d); }"
+                               , result.getName().c_str()
                                , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str());
+                               , this->pos);
                 break;
             }
             case FOp::CompareGT: {
-                printer.printf("{ sys_Int __cmp_res; FR_VCALL(%d, sys_Obj, compare, &__cmp_res, (sys_Obj)%s, (sys_Obj)%s); %s = __cmp_res > 0; }"
-                               //, result.getName().c_str()
-                               , this->pos
+                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) > 0; FR_CHECK_ERR(%d); }"
+                               , result.getName().c_str()
                                , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str());
+                               , this->pos);
                 break;
             }
             case FOp::CompareSame: {
@@ -787,9 +777,9 @@ void CompareStmt::print(Printer& printer) {
 
 void ReturnStmt::print(Printer& printer) {
     if (isVoid) {
-        printer.printf("return NULL;");
+        printer.printf("return;");
     } else {
-        printer.printf("*__ret = %s; return NULL;", retValue.getName(true).c_str());
+        printer.printf("return %s;", retValue.getName(true).c_str());
     }
 }
 
@@ -819,10 +809,10 @@ void ExceptionStmt::print(Printer& printer) {
 //                        printer.println("fr_clearErr(__env); goto l__%d;", handler);
 //                    }
                     if (itr->catchType != -1) {
-                        printer.printf("%s == __err;", itr->catchVar.getName().c_str());
+                        printer.printf("%s == __env->error;", itr->catchVar.getName().c_str());
                     }
                     else {
-                        printer.printf("__err = NULL;");
+                        printer.printf("__env->error = NULL;");
                     }
                 }
                 else if (itr->etype == FinallyStart) {
@@ -961,4 +951,14 @@ void TypeCheckStmt::print(Printer& printer) {
         printer.printf("%s = FR_TYPE_IS(%s, %s);"
                    , result.getName().c_str(), obj.getName().c_str(), typeName.c_str());
     }
+}
+
+void SwitchStmt::print(Printer& printer) {
+    printer.println("switch (%s) {", var.getName().c_str());
+    printer.indent();
+    for (int i = 0; i < tableSize; ++i) {
+        printer.println("  case %d: goto l__%d;", i, table[i]);
+    }
+    printer.unindent();
+    printer.println("}");
 }

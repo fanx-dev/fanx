@@ -24,8 +24,12 @@ extern  "C" {
 #include <string.h>
 
 //#define LONG_JMP_EXCEPTION
+typedef fr_Obj fr_Err;
 
-typedef void *fr_Env;
+struct fr_Env_struct {
+    fr_Err error;
+};
+typedef struct fr_Env_struct *fr_Env;
 typedef void *fr_Fvm;
 
 ////////////////////////////
@@ -44,7 +48,7 @@ void fr_releaseEnv(fr_Fvm vm, fr_Env env);
 //jmp_buf *fr_topJmpBuf(fr_Env self);
 //#endif
 
-typedef fr_Obj fr_Err;
+
 //fr_Obj fr_getErr(fr_Env self);
 //void fr_setErr(fr_Env self, fr_Obj err);
 //void fr_clearErr(fr_Env self);
@@ -133,32 +137,28 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_ALLOC(type) ((type##_ref)fr_alloc(__env, type##_class__, -1))
 #define FR_INIT_VAL(val, type) (memset(&val, 0, sizeof(struct type##_struct)))
 
-#define FR_BEGIN_FUNC fr_Err __err; int __errOccurAt;
+#define FR_BEGIN_FUNC int __errOccurAt;
 #define FR_TRY /*try*/
 #define FR_CATCH /*catch(...)*/
-#define FR_THROW(pos, err) do{__err = err; __errOccurAt = pos; goto __errTable;}while(0)
+#define FR_THROW(pos, err) do{__env->error = err; __errOccurAt = pos; goto __errTable;}while(0)
 #define FR_THROW_NPE(pos) FR_THROW(pos, fr_makeNPE(__env))
 #define FR_CHECK_NULL(pos, obj) do{ if (!obj) FR_THROW_NPE(pos); }while(false)
 #define FR_ERR_TYPE(type) (FR_TYPE_IS(fr_getErr(__env), type))
 #define FR_ALLOC_THROW(pos, errType) FR_THROW(pos, FR_ALLOC(errType))
 
-#define FR_RET_THROW(err) return err;
-#define FR_RET_ALLOC_THROW(errType) FR_RET_THROW(FR_ALLOC(errType))
-#define FR_RET_THROW_NPE() FR_RET_THROW(fr_makeNPE(__env))
+#define FR_SET_ERROR(err) do{__env->error = err;}while(0)
+#define FR_SET_ERROR_ALLOC(errType) FR_SET_ERROR(FR_ALLOC(errType))
+#define FR_SET_ERROR_NPE() FR_SET_ERROR(fr_makeNPE(__env))
 
 #define _FR_VTABLE(typeName, self) ( (struct typeName##_vtable*)(((struct fr_Class_*)fr_getClass(__env, self))+1) )
 #define _FR_IVTABLE(typeName, self) ( (struct typeName##_vtable*)fr_getInterfaceVTable(__env, self, typeName##_class__) )
 
-#define _FR_CHECK_ERR(expr, errPos) do{ __err = expr; if (__err) { __errOccurAt = errPos; goto __errTable;} }while(0)
-#define FR_VOID_VCALL(pos, type, method, self, ...) _FR_CHECK_ERR(_FR_VTABLE(type, self)->method(__env, self, ## __VA_ARGS__), pos)
-#define FR_VOID_ICALL(pos, type, method, self, ...) _FR_CHECK_ERR(_FR_IVTABLE(type, self)->method(__env, self, ## __VA_ARGS__), pos)
-#define FR_VOID_CALL(pos, type, method, self, ...)  _FR_CHECK_ERR(type##_##method(__env, self, ## __VA_ARGS__), pos)
-#define FR_VOID_SCALL(pos, type, method, ...)  _FR_CHECK_ERR(type##_##method(__env, ## __VA_ARGS__), pos)
+#define FR_CHECK_ERR(errPos) do{ if (__env->error) { __errOccurAt = errPos; goto __errTable;} }while(0)
 
-#define FR_VCALL(pos, type, method, ret, self, ...) _FR_CHECK_ERR(_FR_VTABLE(type, self)->method(__env, ret, self, ## __VA_ARGS__), pos)
-#define FR_ICALL(pos, type, method, ret, self, ...) _FR_CHECK_ERR(_FR_IVTABLE(type, self)->method(__env, ret, self, ## __VA_ARGS__), pos)
-#define FR_CALL(pos, type, method, ret, self, ...)  _FR_CHECK_ERR(type##_##method(__env, ret, self, ## __VA_ARGS__), pos)
-#define FR_SCALL(pos, type, method, ret, ...)  _FR_CHECK_ERR(type##_##method(__env, ret, ## __VA_ARGS__), pos)
+#define FR_VCALL(type, method, self, ...) _FR_VTABLE(type, self)->method(__env, self, ## __VA_ARGS__)
+#define FR_ICALL(type, method, self, ...) _FR_IVTABLE(type, self)->method(__env, self, ## __VA_ARGS__)
+#define FR_CALL(type, method, self, ...)  type##_##method(__env, self, ## __VA_ARGS__)
+#define FR_SCALL(type, method, ...)  type##_##method(__env, ## __VA_ARGS__)
 
 
 #define FR_BOXING_STRUCT(target, value, fromType, toType) {\

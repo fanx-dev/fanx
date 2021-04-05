@@ -103,7 +103,7 @@ struct Var {
 };
 
 enum class StmtType {
-  Const, Store, Field, Call, Alloc, Compare, Return, Jump, Throw, Exception, Coerce, TypeCheck
+  Const, Store, Field, Call, Alloc, Compare, Return, Jump, Throw, Exception, Coerce, TypeCheck, Switch
 };
 
 class Stmt {
@@ -293,5 +293,16 @@ public:
     virtual StmtType stmtType() override { return StmtType::TypeCheck; }
 };
 
+
+class SwitchStmt : public Stmt {
+public:
+    Expr var;
+    uint16_t* table;
+    int tableSize;
+
+    virtual void print(Printer& printer) override;
+
+    virtual StmtType stmtType() override { return StmtType::Switch; }
+};
 
 #endif /* Stmt_hpp */

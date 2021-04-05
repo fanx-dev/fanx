@@ -131,6 +131,12 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
                 name += "$";
                 name += std::to_string(method.paramCount);
             }
+            //Closure is special that overide the overload version
+            else if ((meta.flags & FFlags::Closure) && method.paramCount < 8 && name == "call") {
+                name += "$";
+                name += std::to_string(method.paramCount);
+            }
+
             method.c_stdName = name;
             
             method.c_mangledSimpleName = name;

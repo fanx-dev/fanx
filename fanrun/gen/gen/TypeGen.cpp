@@ -112,7 +112,7 @@ void TypeGen::genVTable(Printer *printer) {
 //            printer->println("struct %s_vtable super__;", base.c_str());
 //        }
 //    }
-    
+    int count = 0;
     IRVTable *vtable = irType->vtables[0];
     for (int i = 0; i<vtable->functions.size(); ++i) {
         IRVirtualMethod &method = vtable->functions[i];
@@ -124,6 +124,11 @@ void TypeGen::genVTable(Printer *printer) {
         }
         MethodGen gmethod(this, method.method);
         gmethod.genDeclares(printer, true, false);
+        ++count;
+    }
+
+    if (count == 0) {
+        printer->println("char __unused__; //C not allow empty struct");
     }
     
     printer->unindent();
@@ -143,6 +148,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
     printer->println("type->name = \"%s\";", rawTypeName.c_str());
     
     printer->println("type->allocSize = sizeof(struct %s_struct);", name.c_str());
+    printer->println("type->staticInited = false;");
     
     std::string baseName = getTypeNsName(type->meta.base);
     //sys::Obj's base class is NULL
@@ -328,6 +334,7 @@ void TypeGen::genNativePrototype(Printer *printer) {
 }
 
 void TypeGen::genField(Printer *printer) {
+    int count = 0;
     for (int i=0; i<type->fields.size(); ++i) {
         FField *field = &type->fields[i];
         if ((field->flags & FFlags::Static) != 0) {
@@ -339,6 +346,10 @@ void TypeGen::genField(Printer *printer) {
         auto name = FCodeUtil::getIdentifierName(type->c_pod, field->name);
         std::string typeName = FCodeUtil::getTypeDeclName(type->c_pod, field->type);
         printer->println("%s %s;", typeName.c_str(), name.c_str());
+        ++count;
+    }
+    if (count == 0) {
+        printer->println("char __unused__; //C not allow empty struct");
     }
 }
 
