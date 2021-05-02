@@ -1,8 +1,9 @@
 #include "std.h"
 
 
-fr_Err std_Process_env(fr_Env __env, std_Map *__ret, std_Process_ref __self) { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }
-fr_Err std_Process_run(fr_Env __env, std_Process *__ret, std_Process_ref __self) { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }
-fr_Err std_Process_join(fr_Env __env, sys_Int *__ret, std_Process_ref __self) { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }
-fr_Err std_Process_kill(fr_Env __env, std_Process *__ret, std_Process_ref __self) { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }
 
+std_Map std_Process_env(fr_Env __env, std_Process_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
+std_OutStream std_Process_outToIn(fr_Env __env, std_Process_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
+std_Process std_Process_run(fr_Env __env, std_Process_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
+sys_Int std_Process_join(fr_Env __env, std_Process_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
+std_Process std_Process_kill(fr_Env __env, std_Process_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }

@@ -7,7 +7,7 @@
 //
 
 #include "runtime.h"
-#include "Env.hpp"
+#include "ThreadEnv.hpp"
 #include "Vm.hpp"
 #include "util/system.h"
 
@@ -103,3 +103,6 @@ void fr_addStaticRef(fr_Env self, fr_Obj *obj) {
     env->vm->addStaticRef(obj);
 }
 
+void fr_setErr(fr_Env self, fr_Err err) {
+    self->error = err;
+}

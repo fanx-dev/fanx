@@ -233,7 +233,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
 
 void TypeGen::genVTableInit(Printer *printer) {
     irType->initVTable();
-    printer->println("void **vtable = (void*)(type+1);");
+    printer->println("void **vtable = (void**)(type+1);");
 
     printer->println("if (%d >= MAX_INTERFACE_SIZE) abort();", irType->vtables.size()-1);
     int pos = 0;

@@ -7,7 +7,7 @@
 //
 
 #include "Vm.hpp"
-#include "Env.hpp"
+#include "ThreadEnv.hpp"
 #include "util/system.h"
 
 Vm::Vm() {

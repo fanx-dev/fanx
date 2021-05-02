@@ -1,3 +1,3 @@
 #include "std.h"
 
-fr_Err std_Uuid_make(fr_Env __env, std_Uuid *__ret) { FR_RET_ALLOC_THROW(sys_UnsupportedErr); }
+std_Uuid std_Uuid_make(fr_Env __env) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 yangjiandong. All rights reserved.
 //
 
-#include "Env.hpp"
+#include "ThreadEnv.hpp"
 #include "Vm.hpp"
 
 Env::Env(Vm *vm) : vm(vm)//, error(0)

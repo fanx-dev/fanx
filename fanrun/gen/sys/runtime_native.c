@@ -172,7 +172,7 @@ fr_Obj fr_box_float(fr_Env __env, sys_Float_val val) {
     if (val == sys_Float_negInf) index = 6;
     if (val == sys_Float_posInf) index = 7;
     else {
-        FR_BOXING_VAL(obj, val, sys_Int, sys_Obj);
+        FR_BOXING_VAL(obj, val, sys_Float, sys_Obj);
         return obj;
     }
     

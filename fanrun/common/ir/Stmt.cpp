@@ -208,7 +208,7 @@ void ConstStmt::print(Printer& printer) {
         }
         case FOp::LoadDuration: {
             int64_t i = curPod->constantas.durations[opObj.i1];
-            printer.printf("std_Duration_fromTicks(__env, &%s, %lld);", varName.c_str(), i);
+            printer.printf("%s = std_Duration_fromTicks(__env, %lld);", varName.c_str(), i);
             break;
         }
         case FOp::LoadUri: {
@@ -218,9 +218,9 @@ void ConstStmt::print(Printer& printer) {
             escapeStr(rawstr, str);
             
             printer.println("%s = (std_Uri)(%s_ConstPoolUris[%d]);", varName.c_str(), curPod->name.c_str(), opObj.i1);
-            printer.printf("if (%s == NULL) { std_Uri_fromStr__1(__env, ((std_Uri)(%s_ConstPoolStrs[%d])), (sys_Str)fr_newStrUtf8(__env, \"%s\", %d));"
-                           , varName.c_str(), curPod->name.c_str(), opObj.i1, str.c_str(), len);
-            printer.printf("%s = (std_Uri)(%s_ConstPoolStrs[%d]); }", varName.c_str(), curPod->name.c_str(), opObj.i1);
+            printer.printf("if (%s == NULL) { std_Uri_fromStr__1(__env, (sys_Str)fr_newStrUtf8(__env, \"%s\", %d));"
+                           , varName.c_str(), str.c_str(), len);
+            printer.printf("%s = (std_Uri)(%s_ConstPoolUris[%d]); }", varName.c_str(), curPod->name.c_str(), opObj.i1);
             break;
         }
         case FOp::LoadType: {
@@ -400,7 +400,7 @@ void CallStmt::print(Printer& printer) {
     }
     else {
         std::string voidFlag;
-        if (!isVoid) printer.printf("%s = ", retValue.getName().c_str());
+        if (!isVoid) printer.printf("%s = (%s)", retValue.getName().c_str(), retValue.getTypeName().c_str());
 
         bool isValueType = false;
         if (!isStatic && params.at(0).isValueType()) {
@@ -808,12 +808,6 @@ void ExceptionStmt::print(Printer& printer) {
 //                    } else {
 //                        printer.println("fr_clearErr(__env); goto l__%d;", handler);
 //                    }
-                    if (itr->catchType != -1) {
-                        printer.printf("%s == __env->error;", itr->catchVar.getName().c_str());
-                    }
-                    else {
-                        printer.printf("__env->error = NULL;");
-                    }
                 }
                 else if (itr->etype == FinallyStart) {
                     //printer.println("goto l__%d;//goto finally", handler);
@@ -837,6 +831,12 @@ void ExceptionStmt::print(Printer& printer) {
                 printer.println(") {");
             }
              */
+            if (catchType != -1) {
+                printer.println("%s = (%s)__env->error;", catchVar.getName().c_str(), catchVar.getTypeName().c_str());
+            }
+            else {
+                printer.println("__env->error = NULL;");
+            }
             break;
         case CatchEnd:
             printer.println("//catch end");

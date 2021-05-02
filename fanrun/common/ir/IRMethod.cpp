@@ -40,7 +40,7 @@ void Block::print(IRMethod *method, Printer& printer, int pass) {
         for (int i=0; i<locals.size(); ++i) {
             Var &v = locals[i];
             if (v.isExport) {
-                printer.printf("%s %s; ", v.type.getName().c_str(), v.name.c_str());
+                printer.printf("%s %s = 0; ", v.type.getName().c_str(), v.name.c_str());
                 has = true;
             }
         }
@@ -58,7 +58,7 @@ void Block::print(IRMethod *method, Printer& printer, int pass) {
     int start = 0;
     int end = (int)stmts.size();
     bool printLast = false;
-    if (stmts.size() > 0) {
+    if (stmts.size() > 1) {
         if (dynamic_cast<ExceptionStmt*>(stmts[0])) {
             stmts[0]->print(printer);
             printer.newLine();
@@ -125,10 +125,10 @@ IRMethod::IRMethod(FPod *curPod, FMethod *method) :
 }
 
 void IRMethod::print(Printer& printer, int pass) {
-    printer.println("int __errOccurAt;");
+    printer.println("int __errOccurAt = -1;");
     for(int i=paramCount; i<methodVars->locals.size(); ++i) {
         Var &v = methodVars->locals[i];
-        printer.printf("%s %s; ", v.type.getName().c_str(), v.name.c_str());
+        printer.printf("%s %s = 0; ", v.type.getName().c_str(), v.name.c_str());
     }
     printer.newLine();
     

@@ -37,7 +37,7 @@ void sys_Array_arraycopy(fr_Env __env, sys_Obj src, sys_Int srcOffset, sys_Obj d
 
 void sys_Array_fill(fr_Env __env, sys_Obj array, sys_Obj_null val, sys_Int times) {
     sys_Array oarray = (sys_Array)array;
-    for (uint64_t i = 0; i<times; ++i) {
+    for (int64_t i = 0; i<times; ++i) {
         oarray->data[i] = val;
     }
 }

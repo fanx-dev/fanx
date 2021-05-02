@@ -3,7 +3,7 @@
 //  gen
 //
 //  Created by yangjiandong on 2017/9/10.
-//  Copyright © 2017年 yangjiandong. All rights reserved.
+//  Copyright © 2017 yangjiandong. All rights reserved.
 //
 
 #ifndef runtime_h
@@ -50,7 +50,7 @@ void fr_releaseEnv(fr_Fvm vm, fr_Env env);
 
 
 //fr_Obj fr_getErr(fr_Env self);
-//void fr_setErr(fr_Env self, fr_Obj err);
+void fr_setErr(fr_Env self, fr_Err err);
 //void fr_clearErr(fr_Env self);
 
 ////////////////////////////
@@ -140,13 +140,13 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_BEGIN_FUNC int __errOccurAt;
 #define FR_TRY /*try*/
 #define FR_CATCH /*catch(...)*/
-#define FR_THROW(pos, err) do{__env->error = err; __errOccurAt = pos; goto __errTable;}while(0)
+#define FR_THROW(pos, err) do{fr_setErr(__env, err); __errOccurAt = pos; goto __errTable;}while(0)
 #define FR_THROW_NPE(pos) FR_THROW(pos, fr_makeNPE(__env))
 #define FR_CHECK_NULL(pos, obj) do{ if (!obj) FR_THROW_NPE(pos); }while(false)
 #define FR_ERR_TYPE(type) (FR_TYPE_IS(fr_getErr(__env), type))
 #define FR_ALLOC_THROW(pos, errType) FR_THROW(pos, FR_ALLOC(errType))
 
-#define FR_SET_ERROR(err) do{__env->error = err;}while(0)
+#define FR_SET_ERROR(err) do{fr_setErr(__env, err);}while(0)
 #define FR_SET_ERROR_ALLOC(errType) FR_SET_ERROR(FR_ALLOC(errType))
 #define FR_SET_ERROR_NPE() FR_SET_ERROR(fr_makeNPE(__env))
 

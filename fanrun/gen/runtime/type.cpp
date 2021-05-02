@@ -8,7 +8,7 @@
 
 #include "runtime.h"
 #include <stdio.h>
-#include "Env.hpp"
+#include "ThreadEnv.hpp"
 #include "Vm.hpp"
 
 bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type) {

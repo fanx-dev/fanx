@@ -89,7 +89,13 @@ void MethodGen::genDeclares(Printer *printer, bool funcPtr, bool isValType) {
 
 void MethodGen::genNativePrototype(Printer *printer, bool funcPtr, bool isValType) {
     genPrototype(printer, funcPtr, isValType);
-    printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }");
+    auto typeName = getTypeDeclName(method->returnType);
+    if (typeName == "sys_Void") {
+        printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }");
+    }
+    else {
+        printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }");
+    }
 }
 
 void MethodGen::genImples(Printer *printer) {
