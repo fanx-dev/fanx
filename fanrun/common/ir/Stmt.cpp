@@ -882,6 +882,14 @@ void CoerceStmt::print(Printer& printer) {
                            , from.getName().c_str(), typeName2.c_str());
             return;
         }
+        else if (!isNull1 && isNull2) {
+            if (from.getType().pod == to.getType().pod && from.getType().name == to.getType().name) {
+                //no-null to null
+                printer.printf("%s = (%s)(%s);", to.getName().c_str()
+                    , typeName2.c_str(), from.getName().c_str());
+                return;
+            }
+        }
     }
     else if (!isVal1 && isVal2) {
         if (FCodeUtil::isBuildinVal(to.getTypeName())) {

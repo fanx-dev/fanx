@@ -94,7 +94,7 @@ rtconst class HashMap<K,V> : Map<K,V>
   new make(Int capacity:=16, Float loadFactor:=0.75) : super.privateMake() {
     //this.type = type
     if (capacity <= 0) capacity = 1
-    array = MapEntryList?[,] { it->size = capacity }
+    array = MapEntryList?[,] { it.size = capacity }
     this.loadFactor = loadFactor
   }
 

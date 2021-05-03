@@ -320,9 +320,15 @@ rtconst abstract class Map<K,V>
   **
   virtual V? defV := null {
     set {
-      if (!it.isImmutable) throw NotImmutableErr()
-      if (isRO) throw ReadonlyErr()
-      &defV = it.toImmutable
+      if (it == null) {
+        if (isRO) throw ReadonlyErr()
+        &defV = null
+      }
+      else {
+        if (!it.isImmutable) throw NotImmutableErr()
+        if (isRO) throw ReadonlyErr()
+        &defV = it.toImmutable
+      }
     }
   }
 

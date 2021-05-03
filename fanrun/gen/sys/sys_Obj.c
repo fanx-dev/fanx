@@ -14,3 +14,8 @@ sys_Obj_null sys_Obj_trap(fr_Env __env, sys_Obj_ref __self, sys_Str name, sys_Li
 sys_Enum_null sys_Enum_doFromStr(fr_Env __env, sys_Str type, sys_Str name, sys_Bool checked) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }
 
 
+sys_Bool sys_Obj_isImmutable(fr_Env __env, sys_Obj_ref __self) {
+	fr_Type t = fr_getClass(__env, __self);
+	if (t->flags & 0x00000002) return true;
+	return false;
+}

@@ -12,6 +12,8 @@
 #include "Vm.hpp"
 
 bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type) {
+    if (!obj) return false;
+
     fr_Type tempType = fr_getClass(env, obj);
     while (true) {
         if (tempType == type) return true;

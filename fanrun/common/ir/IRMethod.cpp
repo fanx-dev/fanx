@@ -125,6 +125,9 @@ IRMethod::IRMethod(FPod *curPod, FMethod *method) :
 }
 
 void IRMethod::print(Printer& printer, int pass) {
+    //if (method->c_mangledName == "std_HashMap_each") {
+    //    printf("DEBUG\n");
+    //}
     printer.println("int __errOccurAt = -1;");
     for(int i=paramCount; i<methodVars->locals.size(); ++i) {
         Var &v = methodVars->locals[i];

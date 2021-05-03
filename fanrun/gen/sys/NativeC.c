@@ -59,7 +59,7 @@ char *getTraceString() {
     return str;
 }
 #else
-char* getTraceString() { return ""; }
+char* getTraceString() { return _strdup("unsupport trace"); }
 #endif
 
 

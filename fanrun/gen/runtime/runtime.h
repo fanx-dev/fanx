@@ -96,6 +96,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj str, bool *isCopy);
     
 //fr_Obj fr_toTypeObj(fr_Env env, fr_Type);
 fr_Err fr_makeNPE(fr_Env __env);
+fr_Err fr_makeCastError(fr_Env __env);
 
 ////////////////////////////
 // Buildin type
@@ -132,7 +133,8 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
     
 #define FR_TYPE_IS(obj, type) fr_isClass(__env, obj, type##_class__)
 #define FR_TYPE_AS(obj, type) (type)(FR_TYPE_IS(obj, type)?obj:NULL)
-#define FR_CAST(pos, ret, obj, type, toType) do{if (FR_TYPE_IS(obj, type)) ret = (toType)obj; else FR_THROW_NPE(pos); }while(0)
+#define FR_CAST(pos, ret, obj, type, toType) do{ if (!obj || FR_TYPE_IS(obj, type)) ret = (toType)obj; \
+    else FR_THROW(pos, fr_makeCastError(__env)); }while(0)
 
 #define FR_ALLOC(type) ((type##_ref)fr_alloc(__env, type##_class__, -1))
 #define FR_INIT_VAL(val, type) (memset(&val, 0, sizeof(struct type##_struct)))

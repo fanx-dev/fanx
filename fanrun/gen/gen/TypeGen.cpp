@@ -146,7 +146,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
     FTypeRef &typeRef = type->c_pod->typeRefs[type->meta.self];
     std::string &rawTypeName = type->c_pod->names[typeRef.typeName];
     printer->println("type->name = \"%s\";", rawTypeName.c_str());
-    
+    printer->println("type->flags = %d;", type->meta.flags);
     printer->println("type->allocSize = sizeof(struct %s_struct);", name.c_str());
     printer->println("type->staticInited = false;");
     

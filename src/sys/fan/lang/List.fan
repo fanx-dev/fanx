@@ -1140,7 +1140,7 @@ rtconst abstract class List<V>
   override V[] toImmutable() {
     if (isImmutable) return this
     nlist := ArrayList<V>(size)
-    each |v| { nlist.add(v.toImmutable) }
+    each |v| { nlist.add(v?.toImmutable) }
     nlist.readOnly = true
     nlist.immutable = true
     return nlist

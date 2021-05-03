@@ -114,9 +114,7 @@ native rtconst abstract class Obj
   **   - a Func object may or may not be immutable - see `sys::Func`.
   **   - other instances are assumed mutable and return false
   **
-  virtual Bool isImmutable() {
-    false
-  }
+  virtual Bool isImmutable()
 
   **
   ** Get an immutable representation of this instance or throw
@@ -133,6 +131,7 @@ native rtconst abstract class Obj
   **
   virtual Obj toImmutable() {
     //if (typeof.isConst) return this
+    if (isImmutable) return this
     throw NotImmutableErr(toStr)
   }
 

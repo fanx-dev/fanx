@@ -124,6 +124,11 @@ fr_Err fr_makeNPE(fr_Env __env) {
     sys_NullErr_make__0(__env, npe);
     return npe;
 }
+fr_Err fr_makeCastError(fr_Env __env) {
+    sys_CastErr npe = FR_ALLOC(sys_CastErr);
+    sys_CastErr_make__0(__env, npe);
+    return npe;
+}
 ////////////////////////////////////////////////////////////////
 //#include <unordered_map>
 //#include <mutex>
