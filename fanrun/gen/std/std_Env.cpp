@@ -1,13 +1,28 @@
 #include "std.h"
 
+std_Env std_Env_cur_ = NULL;
 
-std_Env std_Env_cur(fr_Env __env) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
-void std_Env_make(fr_Env __env, std_Env_ref __self, std_Env parent) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }
+std_Env std_Env_cur(fr_Env __env) {
+	if (std_Env_cur_ == NULL) {
+		std_Env_cur_ = FR_ALLOC(std_Env);
+		std_Env_make(__env, std_Env_cur_, NULL);
+		fr_Obj *obj = (fr_Obj*)(&std_Env_cur_);
+		fr_addStaticRef(__env, obj);
+	}
+	return std_Env_cur_;
+}
+
+void std_Env_make(fr_Env __env, std_Env_ref __self, std_Env parent) {
+	__self->parent = parent;
+}
+
 std_Env_null std_Env_parent(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
 sys_Str std_Env_platform(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
 sys_Str std_Env_os(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
 sys_Str std_Env_arch(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
-sys_Str std_Env_runtime(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
+sys_Str std_Env_runtime(fr_Env __env, std_Env_ref __self) {
+	return (sys_Str)fr_newStrUtf8(__env, "C", -1);
+}
 sys_Bool std_Env_isJs(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
 sys_Int std_Env_javaVersion(fr_Env __env, std_Env_ref __self) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }
 sys_Int std_Env_idHash(fr_Env __env, std_Env_ref __self, sys_Obj_null obj) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }

@@ -92,4 +92,5 @@ native final class RegexMatcher
   **
   Int end(Int group := 0)
 
+  native protected override Void finalize()
 }

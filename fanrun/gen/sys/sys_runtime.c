@@ -19,7 +19,7 @@
 #ifdef  __cplusplus
 extern  "C" {
 #endif
-    
+
 void fr_finalizeObj(fr_Env __env, fr_Obj _obj) {
     sys_Obj obj = (sys_Obj)_obj;
     _FR_VTABLE(sys_Obj, obj)->finalize(__env, obj);
@@ -129,6 +129,13 @@ fr_Err fr_makeCastError(fr_Env __env) {
     sys_CastErr_make__0(__env, npe);
     return npe;
 }
+
+void fr_printError(fr_Env __env, fr_Err error) {
+    sys_Err e = (sys_Err)error;
+    char* str = fr_getStrUtf8(__env, e->traceStr, NULL);
+    fprintf(stderr, "%s\n", str);
+}
+
 ////////////////////////////////////////////////////////////////
 //#include <unordered_map>
 //#include <mutex>

@@ -46,11 +46,11 @@ extern  "C" {
     };
     
     struct std_RegexMatcher_struct {
-        char todo;
+        void *cmatch;
     };
     
     struct std_Env_struct {
-        char todo;
+        std_Env parent;
     };
     
 #ifdef  __cplusplus

@@ -30,27 +30,27 @@
     <ClCompile Include="..\..\gen\runtime\ThreadEnv.cpp" />
     <ClCompile Include="..\..\gen\runtime\type.cpp" />
     <ClCompile Include="..\..\gen\runtime\Vm.cpp" />
-    <ClCompile Include="..\..\gen\std\Atomic.cpp" />
-    <ClCompile Include="..\..\gen\std\BufCrypto.cpp" />
-    <ClCompile Include="..\..\gen\std\Decimal.cpp" />
-    <ClCompile Include="..\..\gen\std\Env.cpp" />
-    <ClCompile Include="..\..\gen\std\Extension.cpp" />
-    <ClCompile Include="..\..\gen\std\File.cpp" />
-    <ClCompile Include="..\..\gen\std\FileBuf.cpp" />
-    <ClCompile Include="..\..\gen\std\Log.cpp" />
-    <ClCompile Include="..\..\gen\std\Math.cpp" />
-    <ClCompile Include="..\..\gen\std\NativeCharset.cpp" />
-    <ClCompile Include="..\..\gen\std\NioBuf.cpp" />
-    <ClCompile Include="..\..\gen\std\Process.cpp" />
-    <ClCompile Include="..\..\gen\std\Reflect.cpp" />
-    <ClCompile Include="..\..\gen\std\Regex.cpp" />
-    <ClCompile Include="..\..\gen\std\Stream.cpp" />
-    <ClCompile Include="..\..\gen\std\Time.cpp" />
-    <ClCompile Include="..\..\gen\std\Unsafe.cpp" />
-    <ClCompile Include="..\..\gen\std\Uuid.cpp" />
-    <ClCompile Include="..\..\gen\std\Zip.cpp" />
-    <ClCompile Include="..\..\gen\sys\NativeC.c" />
-    <ClCompile Include="..\..\gen\sys\runtime_native.c" />
+    <ClCompile Include="..\..\gen\std\std_Atomic.cpp" />
+    <ClCompile Include="..\..\gen\std\std_BufCrypto.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Decimal.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Env.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Extension.cpp" />
+    <ClCompile Include="..\..\gen\std\std_File.cpp" />
+    <ClCompile Include="..\..\gen\std\std_FileBuf.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Log.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Math.cpp" />
+    <ClCompile Include="..\..\gen\std\std_NativeCharset.cpp" />
+    <ClCompile Include="..\..\gen\std\std_NioBuf.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Process.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Reflect.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Regex.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Stream.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Time.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Unsafe.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Uuid.cpp" />
+    <ClCompile Include="..\..\gen\std\std_Zip.cpp" />
+    <ClCompile Include="..\..\gen\sys\sys_NativeC.c" />
+    <ClCompile Include="..\..\gen\sys\sys_runtime.c" />
     <ClCompile Include="..\..\gen\sys\sys_Array.c" />
     <ClCompile Include="..\..\gen\sys\sys_Bool.c" />
     <ClCompile Include="..\..\gen\sys\sys_Float.c" />
@@ -78,8 +78,8 @@
     <ClInclude Include="..\..\gen\runtime\ThreadEnv.hpp" />
     <ClInclude Include="..\..\gen\runtime\type.h" />
     <ClInclude Include="..\..\gen\runtime\Vm.hpp" />
-    <ClInclude Include="..\..\gen\std\Reflect.h" />
     <ClInclude Include="..\..\gen\std\std_native.h" />
+    <ClInclude Include="..\..\gen\std\std_Reflect.h" />
     <ClInclude Include="..\..\gen\sys\sys_native.h" />
     <ClInclude Include="..\..\gen\temp\baseTest.h" />
     <ClInclude Include="..\..\gen\temp\baseTest_prototype.h" />
@@ -162,6 +162,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

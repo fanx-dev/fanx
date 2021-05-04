@@ -97,6 +97,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj str, bool *isCopy);
 //fr_Obj fr_toTypeObj(fr_Env env, fr_Type);
 fr_Err fr_makeNPE(fr_Env __env);
 fr_Err fr_makeCastError(fr_Env __env);
+void fr_printError(fr_Env __env, fr_Err error);
 
 ////////////////////////////
 // Buildin type
@@ -149,7 +150,7 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_ALLOC_THROW(pos, errType) FR_THROW(pos, FR_ALLOC(errType))
 
 #define FR_SET_ERROR(err) do{fr_setErr(__env, err);}while(0)
-#define FR_SET_ERROR_ALLOC(errType) FR_SET_ERROR(FR_ALLOC(errType))
+#define FR_SET_ERROR_ALLOC(errType) do{errType __err=FR_ALLOC(errType); errType##_make__0(__env, __err); FR_SET_ERROR(__err); }while(0)
 #define FR_SET_ERROR_NPE() FR_SET_ERROR(fr_makeNPE(__env))
 
 #define _FR_VTABLE(typeName, self) ( (struct typeName##_vtable*)(((struct fr_Class_*)fr_getClass(__env, self))+1) )
@@ -184,7 +185,12 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_CHECK_POINT() fr_checkPoint(__env)
 #define FR_SET_DIRTY(obj) fr_setGcDirty(__env, (fr_Obj)obj)
     
-#define FR_STATIC_INIT(type) do{if(!type##_class__->staticInited) {type##_class__->staticInited=true;type##_static__init(__env);}}while(0)
+#define FR_STATIC_INIT(type) do{\
+    if(!type##_class__->staticInited) {\
+        type##_class__->staticInited=true;\
+        type##_static__init(__env);\
+        if (__env->error) { fr_printError(__env, __env->error); abort(); }\
+    }}while(0)
 
 #ifdef  __cplusplus
 }
