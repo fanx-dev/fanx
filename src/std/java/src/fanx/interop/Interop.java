@@ -123,7 +123,7 @@ public class Interop
    */
   public static File toFan(java.io.File file)
   {
-    return LocalFilePeer.fromJava(file);
+    return LocalFile.fromJava(file);
   }
   
   /**
@@ -196,7 +196,7 @@ public class Interop
    */
   public static java.io.File toJava(File file)
   {
-    return LocalFilePeer.toJava(file);
+    return LocalFile.toJava(file);
   }
 
 ////////////////////////////////////////////////////////////////////////////

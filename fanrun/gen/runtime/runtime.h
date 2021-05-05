@@ -90,9 +90,7 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int elemSize, size_t len);
 
 //fr_Obj fr_newStr(fr_Env __env, const wchar_t *data, size_t size, bool copy);
 fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
-//NullTerminated
-//fr_Obj fr_newStrNT(fr_Env __env, const wchar_t *data, bool copy);
-const char *fr_getStrUtf8(fr_Env env__, fr_Obj str, bool *isCopy);
+const char *fr_getStrUtf8(fr_Env env__, fr_Obj str);
     
 //fr_Obj fr_toTypeObj(fr_Env env, fr_Type);
 fr_Err fr_makeNPE(fr_Env __env);
@@ -129,6 +127,9 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 // Other
 ////////////////////////////
 
+//NullTerminated Str
+#define FR_STR(bytes) fr_newStrUtf8(env__, bytes, -1)
+
 #define FR_TYPE(type) (std_Type)0;
     //TODO fr_toTypeObj(__env, type##_class__)
     
@@ -146,11 +147,15 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_THROW(pos, err) do{fr_setErr(__env, err); __errOccurAt = pos; goto __errTable;}while(0)
 #define FR_THROW_NPE(pos) FR_THROW(pos, fr_makeNPE(__env))
 #define FR_CHECK_NULL(pos, obj) do{ if (!obj) FR_THROW_NPE(pos); }while(false)
-#define FR_ERR_TYPE(type) (FR_TYPE_IS(fr_getErr(__env), type))
-#define FR_ALLOC_THROW(pos, errType) FR_THROW(pos, FR_ALLOC(errType))
+//#define FR_ERR_TYPE(type) (FR_TYPE_IS(fr_getErr(__env), type))
+//#define FR_ALLOC_THROW(pos, errType) FR_THROW(pos, FR_ALLOC(errType))
 
 #define FR_SET_ERROR(err) do{fr_setErr(__env, err);}while(0)
-#define FR_SET_ERROR_ALLOC(errType) do{errType __err=FR_ALLOC(errType); errType##_make__0(__env, __err); FR_SET_ERROR(__err); }while(0)
+#define FR_SET_ERROR_MAKE(errType, msg) do{\
+        errType __err=FR_ALLOC(errType);\
+        errType##_make__1(__env, __err, (sys_Str)fr_newStrUtf8(__env, msg, -1));\
+        FR_SET_ERROR(__err); \
+    }while(0)
 #define FR_SET_ERROR_NPE() FR_SET_ERROR(fr_makeNPE(__env))
 
 #define _FR_VTABLE(typeName, self) ( (struct typeName##_vtable*)(((struct fr_Class_*)fr_getClass(__env, self))+1) )

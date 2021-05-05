@@ -266,7 +266,7 @@ public class PathFile
     {
       Path destPath = null;
       if (to instanceof LocalFile)
-        destPath = ((java.io.File)(((LocalFile)to).peer)).toPath();
+        destPath = ((java.io.File)(((LocalFile)to).jfile)).toPath();
       else if (to instanceof PathFile)
         destPath = ((PathFile)to).path;
       else

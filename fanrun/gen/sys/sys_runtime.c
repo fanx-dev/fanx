@@ -47,7 +47,7 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int elemSize, size_t len) {
     return array;
 }
 
-sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }
+sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); }
 
 
 //sys_Int strHash(sys_Str str);
@@ -85,7 +85,7 @@ fr_Obj fr_newStrUtf8(fr_Env __env, const char *bytes, ssize_t size) {
 //    size_t size = wcslen(data);
 //    return fr_newStr(__env, data, size, copy);
 //}
-const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj, bool *isCopy) {
+const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj) {
 //    size_t size;
 //    size_t realSize;
 //    sys_Str str = (sys_Str)obj;
@@ -99,7 +99,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj, bool *isCopy) {
     sys_Str str = (sys_Str)obj;
     sys_Array array = sys_Str_toUtf8(env__, str);
     const char *data = (const char*)array->data;
-    if (isCopy) *isCopy = false;
+    //if (isCopy) *isCopy = false;
     return data;
 }
 

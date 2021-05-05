@@ -29,7 +29,7 @@ void sys_Array_arraycopy(fr_Env __env, sys_Obj src, sys_Int srcOffset, sys_Obj d
     sys_Array asrc = (sys_Array)src;
     sys_Array adest = (sys_Array)dest;
     if (asrc->elemType != adest->elemType) {
-        FR_SET_ERROR_ALLOC(sys_ArgErr); return;
+        FR_SET_ERROR_MAKE(sys_ArgErr, "arraycopy require same elemment type"); return;
     }
     memmove(((char*)adest->data)+(destOffset*adest->elemSize),
             ((char*)asrc->data)+(srcOffset*asrc->elemSize), length*asrc->elemSize);

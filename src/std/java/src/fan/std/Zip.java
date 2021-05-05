@@ -48,7 +48,7 @@ private Zip(File f)
 
    // open the file
    this.file = (LocalFile)f;
-   this.zipFile = new ZipFile(LocalFilePeer.toJava(file));
+   this.zipFile = new ZipFile(LocalFile.toJava(file));
  }
  catch (java.io.IOException e)
  {

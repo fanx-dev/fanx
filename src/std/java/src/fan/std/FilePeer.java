@@ -6,6 +6,7 @@ import fan.sys.IOErr;
 import fan.sys.List;
 
 public class FilePeer {
+	/*
 	static File make(Uri uri, boolean checkSlash) {
 		if (uri.scheme != null && !uri.scheme.equals("file")) {
 			throw ArgErr.make("Invalid Uri scheme for local file: " + uri);
@@ -20,16 +21,17 @@ public class FilePeer {
 	static File make(Uri uri) {
 		return make(uri, true);
 	}
+	*/
 
 	static File os(String osPath) {
-		return LocalFilePeer.fromJava(new java.io.File(osPath));
+		return LocalFile.fromJava(new java.io.File(osPath));
 	}
 
 	static List osRoots() {
 		java.io.File[] roots = java.io.File.listRoots();
 		List list = List.make(roots.length);
 		for (int i = 0; i < roots.length; ++i) {
-			list.add(LocalFilePeer.fromJava(roots[i]));
+			list.add(LocalFile.fromJava(roots[i]));
 		}
 		return list;
 	}
@@ -49,11 +51,11 @@ public class FilePeer {
 		if (dir != null) {
 			if (!(dir instanceof LocalFile))
 				throw IOErr.make("Dir is not on local file system: " + dir);
-			d = LocalFilePeer.toJava((LocalFile) dir);
+			d = LocalFile.toJava((LocalFile) dir);
 		}
 
 		try {
-			return LocalFilePeer.fromJava(java.io.File.createTempFile(prefix, suffix, d));
+			return LocalFile.fromJava(java.io.File.createTempFile(prefix, suffix, d));
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}
@@ -147,8 +149,8 @@ public class FilePeer {
 		// permissions until we get 1.7 support
 		try {
 			if (from instanceof LocalFile && to instanceof LocalFile) {
-				java.io.File jfrom = (java.io.File) ((LocalFile)from).peer;
-				java.io.File jto = (java.io.File) ((LocalFile)to).peer;
+				java.io.File jfrom = (java.io.File) ((LocalFile)from).jfile;
+				java.io.File jto = (java.io.File) ((LocalFile)to).jfile;
 				jto.setReadable(jfrom.canRead(), false);
 				jto.setWritable(jfrom.canWrite(), false);
 				jto.setExecutable(jfrom.canExecute(), false);

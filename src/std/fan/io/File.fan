@@ -31,7 +31,12 @@ abstract const class File
   ** directory.  Throw ArgErr if the Uri has a scheme other than null
   ** or "file:".
   **
-  native static new make(Uri uri, Bool checkSlash := true)
+  static new make(Uri uri, Bool checkSlash := true) {
+    if (uri.scheme != null && uri.scheme != "file") {
+      throw ArgErr("Invalid Uri scheme for local file: " + uri.toStr)
+    }
+    return LocalFile(uri, checkSlash)
+  }
 
   static File fromPath(Str path, Bool checkSlash := true) {
     File(path.toUri, checkSlash)
@@ -519,12 +524,10 @@ abstract const class File
 **************************************************************************
 ** LocalFile
 **************************************************************************
-@NoPeer
-internal const class LocalFile : File
+@Extern
+internal native const class LocalFile : File
 {
-  protected const Obj? peer
-  native private Void init()
-  new make(Uri uri) : super.privateMake(uri) { init }
+  new make(Uri uri, Bool checkSlash := true)
 
   native override FileStore? store()
 

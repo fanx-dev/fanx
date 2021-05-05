@@ -413,7 +413,7 @@ public class Env extends FanObj {
   public File findPodFile(String name) {
     java.io.File jfile = sysEnv().getPodFile(name, false);
     if (jfile == null) return null;
-    File file = LocalFilePeer.fromJava(jfile);
+    File file = LocalFile.fromJava(jfile);
 
     // verify case since Windoze is case insensitive
     String actualName = file.normalize().name();

@@ -17,16 +17,71 @@ import fan.sys.ArgErr;
 import fan.sys.IOErr;
 import fan.sys.List;
 import fanx.util.FileUtil;
+import fanx.main.Sys;
+import fanx.main.Type;
 
-public class LocalFilePeer {
-	static void init(LocalFile self) {
-		String path = self.uri().pathStr;
-		self.peer = new java.io.File(path);
+public class LocalFile extends fan.std.File {
+	java.io.File jfile;
+
+	// boiler plate for reflection
+	public Type typeof()
+	{
+		if (type == null) type = Sys.findType("std::LocalFile");
+		return type;
+	}
+	private static Type type;
+
+	public static LocalFile make(Uri uri, boolean checkSlash) {
+		LocalFile self = new LocalFile();
+	    make$(self, uri, checkSlash);
+	    return self;
+	}
+
+	public static LocalFile make(Uri uri) {
+		return make(uri, true);
+	}
+
+	// constructor implementation called by subclasses
+	public static void make$(LocalFile self, Uri uri, boolean checkSlash) {
+		String path = uri.pathStr;
+		java.io.File file = new java.io.File(path);
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				if (!uri.isDir()) {
+					if (checkSlash)
+						throw IOErr.make("Must use trailing slash for dir: " + uri);
+					else
+						uri = uri.plusSlash();
+				}
+			} else {
+				if (uri.isDir())
+					throw IOErr.make("Cannot use trailing slash for file: " + uri);
+			}
+		}
+		self.jfile = file;
+		fan.std.File.privateMake$(self, uri);
 	}
 
 	public static LocalFile fromJava(java.io.File file) {
 		Uri uri = fileToUri(file, false);
 		return make(file, uri, false);
+	}
+
+	static LocalFile make(java.io.File file, Uri uri, boolean check) {
+		if (check && file.exists()) {
+			if (file.isDirectory()) {
+				if (!uri.isDir())
+					throw IOErr.make("Must use trailing slash for dir: " + uri);
+			} else {
+				if (uri.isDir())
+					throw IOErr.make("Cannot use trailing slash for file: " + uri);
+			}
+		}
+
+		LocalFile f = new LocalFile();
+		f.jfile = file;
+		f._uri = uri;
+		return f;
 	}
 	
 	private static Uri fileToUri(java.io.File file, boolean normalize) {
@@ -51,29 +106,11 @@ public class LocalFilePeer {
 	}
 	
 	public static java.io.File toJava(File self) {
-		java.io.File jfile = (java.io.File)((LocalFile)self).peer;
+		java.io.File jfile = (java.io.File)((LocalFile)self).jfile;
 		return jfile;
 	}
 
-	static LocalFile make(java.io.File file, Uri uri, boolean check) {
-		if (check && file.exists()) {
-			if (file.isDirectory()) {
-				if (!uri.isDir())
-					throw IOErr.make("Must use trailing slash for dir: " + uri);
-			} else {
-				if (uri.isDir())
-					throw IOErr.make("Cannot use trailing slash for file: " + uri);
-			}
-		}
-
-		LocalFile f = new LocalFile();
-		f.peer = file;
-		f._uri = uri;
-		return f;
-	}
-
-	static FileStore store(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public FileStore store() {
 		FileStore fs = new FileStore();
 		boolean spaceKnown = jfile.getTotalSpace() > 0;
 		fs.totalSpace = spaceKnown ? jfile.getTotalSpace() : -1;
@@ -82,53 +119,43 @@ public class LocalFilePeer {
 		return fs;
 	}
 
-
-	static boolean exists(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public boolean exists() {
 		return jfile.exists();
 	}
 
-	static long size(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public long size() {
 		if (jfile.isDirectory())
 			return 0;
 		return jfile.length();
 	}
 
-	static void modified(LocalFile self, TimePoint time) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public void modified(TimePoint time) {
 		long t = time.toMillis();
 		jfile.setLastModified(t);
 	}
 
-	static TimePoint modified(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public TimePoint modified() {
 		long mills = jfile.lastModified();
 		return TimePoint.fromMillis(mills);
 	}
 
-  public boolean isReadable(LocalFile self) {
-  	java.io.File jfile = (java.io.File) self.peer;
-  	return Files.isReadable(jfile.toPath());
-  }
+	public boolean isReadable() {
+		return Files.isReadable(jfile.toPath());
+	}
 
-  public boolean isWritable(LocalFile self) {
-  	java.io.File jfile = (java.io.File) self.peer;
-  	return Files.isWritable(jfile.toPath());
-  }
+	public boolean isWritable() {
+		return Files.isWritable(jfile.toPath());
+	}
 
-  public boolean isExecutable(LocalFile self) {
-  	java.io.File jfile = (java.io.File) self.peer;
-  	return Files.isExecutable(jfile.toPath());
-  }
+	public boolean isExecutable() {
+		return Files.isExecutable(jfile.toPath());
+	}
 
-	static String osPath(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public String osPath() {
 		return jfile.getPath();
 	}
 
-	static List list(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public List list() {
 		java.io.File[] ls = jfile.listFiles();
 		if (ls == null) {
 			return List.defVal;
@@ -140,8 +167,7 @@ public class LocalFilePeer {
 		return res;
 	}
 
-	static File normalize(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public File normalize() {
 		try {
 			jfile = jfile.getCanonicalFile();
 		} catch (IOException e) {
@@ -181,17 +207,16 @@ public class LocalFilePeer {
 		}
 	}
 
-	static File create(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
-		if (self.isDir())
+	public File create() {
+		if (this.isDir())
 			createDir(jfile);
 		else
 			createFile(jfile);
-		return self;
+		return this;
 	}
 
-	static File moveTo(LocalFile self, File ato) {
-		java.io.File file = (java.io.File) self.peer;
+	public File moveTo(File ato) {
+		java.io.File file = jfile;
 
 		if (file.isDirectory() != ato.isDir()) {
 			if (file.isDirectory())
@@ -203,7 +228,7 @@ public class LocalFilePeer {
 		if (!(ato instanceof LocalFile))
 			throw IOErr.make("Cannot move LocalFile to " + ato.typeof());
 
-		java.io.File dest = (java.io.File) (((LocalFile) ato).peer);
+		java.io.File dest = (java.io.File) (((LocalFile) ato).jfile);
 
 		if (dest.exists())
 			throw IOErr.make("moveTo already exists: " + ato);
@@ -220,8 +245,7 @@ public class LocalFilePeer {
 		return ato;
 	}
 
-	static void delete(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public void delete() {
 		deleteJFile(jfile);
 	}
 
@@ -247,14 +271,15 @@ public class LocalFilePeer {
 	    }
 	}
 
-	static File deleteOnExit(LocalFile self) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public File deleteOnExit() {
 		jfile.deleteOnExit();
-		return self;
+		return this;
 	}
 
-	static InStream in(LocalFile self, long bufferSize) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public InStream in() {
+		return in(4096);
+	}
+	public InStream in(long bufferSize) {
 		try {
 			FileInputStream fin = new FileInputStream(jfile);
 			return SysInStreamPeer.fromJava(fin, bufferSize);
@@ -263,8 +288,13 @@ public class LocalFilePeer {
 		}
 	}
 
-	static OutStream out(LocalFile self, boolean append, long bufferSize) {
-		java.io.File jfile = (java.io.File) self.peer;
+	public OutStream out() {
+		return out(false);
+	}
+	public OutStream out(boolean append) {
+		return out(append, 4096);
+	}
+	public OutStream out(boolean append, long bufferSize) {
 		try {
 			java.io.File parent = jfile.getParentFile();
 		    if (parent != null && !parent.exists()) parent.mkdirs();
@@ -276,5 +306,25 @@ public class LocalFilePeer {
 		} catch (java.io.IOException e) {
 			throw IOErr.make(e);
 		}
+	}
+
+	public Buf open() {
+		return open("rw");
+	}
+	public Buf open(String mode) {
+		return FileBuf.make(this, mode);
+	}
+
+	public Buf mmap() {
+		return mmap("rw");
+	}
+	public Buf mmap(String mode) {
+		return mmap(mode, 0);
+	}
+	public Buf mmap(String mode, long pos) {
+		return mmap(mode, pos, this.size());
+	}
+	public Buf mmap(String mode, long pos, long size) {
+		return NioBuf.fromFile(this, mode, pos, size);
 	}
 }

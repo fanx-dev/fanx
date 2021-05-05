@@ -15,7 +15,7 @@ public class FileBufPeer {
 
 	void init(FileBuf self, File file, String mode) throws FileNotFoundException {
 		LocalFile lfile = (LocalFile) file;
-		fp = new RandomAccessFile((java.io.File) lfile.peer, mode);
+		fp = new RandomAccessFile((java.io.File) lfile.jfile, mode);
 	}
 
 	long size(FileBuf self) {

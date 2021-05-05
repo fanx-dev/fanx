@@ -91,10 +91,10 @@ void MethodGen::genNativePrototype(Printer *printer, bool funcPtr, bool isValTyp
     genPrototype(printer, funcPtr, isValType);
     auto typeName = getTypeDeclName(method->returnType);
     if (typeName == "sys_Void") {
-        printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); }");
+        printer->println(" { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); }");
     }
     else {
-        printer->println(" { FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0; }");
+        printer->println(" { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }");
     }
 }
 

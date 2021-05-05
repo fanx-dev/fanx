@@ -52,6 +52,16 @@ extern  "C" {
     struct std_Env_struct {
         std_Env parent;
     };
+
+    struct std_LocalFile_struct {
+        //std_File_struct super__;
+        std_Uri _uri;
+
+        sys_Int size;
+        sys_Bool isDir;
+        sys_Int mtime;
+        sys_Bool exists;
+    };
     
 #ifdef  __cplusplus
 } //end "C"

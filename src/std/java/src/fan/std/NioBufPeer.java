@@ -54,7 +54,7 @@ public class NioBufPeer {
 			RandomAccessFile fp = null;
 			FileChannel chan = null;
 			try {
-				fp = new RandomAccessFile((java.io.File) lfile.peer, rw);
+				fp = new RandomAccessFile((java.io.File) lfile.jfile, rw);
 				chan = fp.getChannel();
 				buf = (chan.map(mm, pos, size.longValue()));
 			} finally {

@@ -142,7 +142,7 @@ sys_Str sys_Int_toRadix_val(fr_Env __env, sys_Int_pass __self, sys_Int radix, sy
     else if (radix == 16) {
         return sys_Int_toHex_val(__env, __self, width);
     }
-    FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return 0;
+    FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0;
 }
 
 size_t utf8encode(wchar_t* us, char* des, size_t n, int* illegal);
@@ -166,7 +166,7 @@ sys_Str sys_Int_toCode_val(fr_Env __env, sys_Int_pass __self, sys_Int base) {
         snprintf(buf, 256, "%llx", __self);
         return (sys_Str)fr_newStrUtf8(__env, buf, -1);
     }
-    FR_SET_ERROR_ALLOC(sys_UnsupportedErr); return NULL;
+    FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return NULL;
 }
 
 sys_Float sys_Int_toFloat_val(fr_Env __env, sys_Int_pass __self) { return (double)__self; }
