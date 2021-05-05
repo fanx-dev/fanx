@@ -902,17 +902,22 @@ void CoerceStmt::print(Printer& printer) {
         return;
     }
     else if (isVal1 && !isVal2) {
-        if (typeName1 == "sys_Int") {
+        if (typeName1 == "sys_Int" || typeName1 == "sys_Int8" || typeName1 == "sys_Int16" || typeName1 == "sys_Int32" || typeName1 == "sys_Int64") {
             printer.printf("%s = (%s)FR_BOX_INT(%s);"
                            , to.getName().c_str(), typeName2.c_str(), from.getName().c_str());
         }
-        else if (typeName1 == "sys_Float") {
+        else if (typeName1 == "sys_Float" || typeName1 == "sys_Float32" || typeName1 == "sys_Float64") {
             printer.printf("%s = (%s)FR_BOX_FLOAT(%s);"
                            , to.getName().c_str(), typeName2.c_str(), from.getName().c_str());
         }
         else if (typeName1 == "sys_Bool") {
             printer.printf("%s = (%s)FR_BOX_BOOL(%s);"
                            , to.getName().c_str(), typeName2.c_str(), from.getName().c_str());
+        }
+        else if (typeName1 == "sys_Ptr") {
+            printer.printf("FR_BOXING_VAL(%s, %s, %s, %s);"
+                , to.getName().c_str(), from.getName(true).c_str()
+                , typeName1.c_str(), typeName2.c_str());
         }
         else {
             printer.printf("FR_BOXING_STRUCT(%s, %s, %s, %s);"

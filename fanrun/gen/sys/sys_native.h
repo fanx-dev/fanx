@@ -14,7 +14,15 @@
 #ifdef  __cplusplus
 extern  "C" {
 #endif
-    
+
+typedef sys_Int_null sys_Int8_ref;
+typedef sys_Int_null sys_Int16_ref;
+typedef sys_Int_null sys_Int32_ref;
+typedef sys_Int_null sys_Int64_ref;
+typedef sys_Float_null sys_Float32_ref;
+typedef sys_Float_null sys_Float64_ref;
+
+
 struct sys_Obj_struct {
     char __unused__; //C not allow empty struct
 };

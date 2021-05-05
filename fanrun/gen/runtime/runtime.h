@@ -111,7 +111,7 @@ typedef int8_t  sys_Int8;
 typedef int16_t sys_Int16;
 typedef int32_t sys_Int32;
 typedef int64_t sys_Int64;
-    
+
 typedef double sys_Float_val;
 typedef double sys_Float64_val;
 typedef float sys_Float32_val;
