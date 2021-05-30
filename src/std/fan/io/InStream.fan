@@ -84,7 +84,7 @@ abstract class InStream
   ** or false if the stream was closed abnormally.  Default implementation
   ** does nothing and returns true.
   **
-  virtual Bool close() { true }
+  virtual Bool close() { bitsBuf = 0; return true }
 
   **
   ** Attempt to skip 'n' number of bytes.  Return the number of bytes
@@ -316,6 +316,53 @@ abstract class InStream
     readBytes(ba)
     return Str.fromUtf8(ba)
   }
+
+  private Int bitsBuf;
+
+  **
+  ** Read between 0 and 64 bits from the input stream.  Bits which
+  ** are partial bytes are consumed from the input stream one byte
+  ** at a time.  Throw IOErr on error or if end of stream is reached
+  ** before given number of bits can be read.
+  **
+  Int readBits(Int num) {
+    // arg checking
+    if (num == 0) return 0;
+    if (num < 0 || num > 64) throw ArgErr.make("Bit num not 0 - 64: " + num);
+
+    // buffer is stored in two bytes: <size> <byte>
+    Int bitsBuf = this.bitsBuf;
+    Int bufByte = bitsBuf.and(0xff);
+    Int bufSize = (bitsBuf.shiftr(8)).and(0xff);
+
+    // read bits, sourcing a new byte once we run out bits
+    // in current byte buffer
+    result := 0;
+    for (i:=num-1; i>=0; --i)
+    {
+      if (bufSize == 0)
+      {
+        bufByte = r();
+        if (bufByte < 0) throw IOErr.make("End of stream");
+        bufSize = 8;
+      }
+      bit := (bufByte.shiftr(bufSize - 1)).and(0x1);
+      bufSize--;
+      result = result.shiftl(1).or(bit);
+    }
+
+    // update buffer and return result
+    this.bitsBuf = (bufSize.shiftl(8)).or(bufByte);
+    return result;
+  }
+
+  **
+  ** Get number of bits left in current byte which have not been
+  ** read by `readBits` yet.  For example if three bits are read, then
+  ** return 5 to indicate number of bits left to sync up up to byte
+  ** boundaries.  Not part of public API!
+  **
+  @NoDoc Int numPendingBits() { (bitsBuf.shiftr(8)).and(0xff) }
 
 //////////////////////////////////////////////////////////////////////////
 // Text Data

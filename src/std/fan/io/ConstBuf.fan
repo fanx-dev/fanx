@@ -122,7 +122,7 @@ internal class ConstBufInStream : InStream {
     }
     return this
   }
-  override Bool close() { true }
+  //override Bool close() { true }
 
   override Int peek() {
     if (this.pos >= buf.size) return -1

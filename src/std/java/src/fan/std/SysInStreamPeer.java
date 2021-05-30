@@ -158,6 +158,7 @@ public class SysInStreamPeer {
 
   public boolean close(SysInStream self) {
     try {
+      self.bitsBuf = 0;
       this.inputStream.close();
       return true;
     } catch (IOException e) {

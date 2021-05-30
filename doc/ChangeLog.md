@@ -8,6 +8,7 @@
 - List groupBy, groupByInto
 - BoolArray clear, eachTrue, getAndSet
 - Int.clip, Float.clip
+- Bit I/O: OutStream.writeBits, InStream.readBits
 
 ### Build 3.3 (2020-10-25)
 - Fix NioBuf

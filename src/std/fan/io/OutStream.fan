@@ -50,6 +50,56 @@ abstract class OutStream
     return this
   }
 
+  private Int bitsBuf
+
+  **
+  ** Write between 0 and 64 bits of the given integer value.  Bits which
+  ** are only a partial byte are bufferred in RAM until `flush`.
+  **
+  This writeBits(Int val, Int num) {
+    // arg checking
+    if (num == 0) return this;
+    if (num < 0 || num > 64) throw ArgErr.make("Bit num not 0 - 64: " + num);
+
+    // buffer is stored in two bytes: <size> <byte>
+    Int bitsBuf = this.bitsBuf;
+    Int bufByte = bitsBuf.and(0xff);
+    Int bufSize = (bitsBuf.shiftr(8)).and(0xff);
+
+    // write bits, sinking byte once we reach 8 bits
+    for (i:= num-1; i>=0; --i)
+    {
+      bit := (val.shiftr(i)).and(0x1);
+      bufByte = bufByte.or(bit.shiftl(7 - bufSize));
+      bufSize++;
+      if (bufSize == 8)
+      {
+        write(bufByte);
+        bufByte = 0;
+        bufSize = 0;
+      }
+    }
+
+    // save buffer and return this
+    this.bitsBuf = (bufSize.shiftl(8)).or(bufByte);
+    return this;
+  }
+
+  private Void flushBits()
+  {
+    if (bitsBuf != 0)
+    {
+      write(bitsBuf.and(0xff));
+      bitsBuf = 0;
+    }
+  }
+
+  **
+  ** Get number of bits written by `writeBits` which haven't been
+  ** written as a complete byte yet.  Not part of public API!
+  **
+  @NoDoc Int numPendingBits() { (bitsBuf.shiftr(8)).and(0xff) }
+
   **
   ** Writes len bytes from the specified byte array starting at offset off to this output stream.
   **
@@ -64,7 +114,7 @@ abstract class OutStream
   ** Flush the stream so any buffered bytes are written out.  Default
   ** implementation does nothing.  Throw IOErr on error.  Return this.
   **
-  virtual This flush() { this }
+  virtual This flush() { flushBits(); return this }
 
   **
   ** If this output stream is mapped to a file device, then

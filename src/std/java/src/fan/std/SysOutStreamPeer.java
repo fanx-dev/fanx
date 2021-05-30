@@ -119,7 +119,8 @@ public class SysOutStreamPeer {
 
 	public OutStream sync(SysOutStream self) {
 		try {
-			this.outStream.flush();
+			self.flush();
+			//this.outStream.flush();
 			if (fd != null) fd.sync();
 			return self;
 		} catch (IOException e) {
@@ -129,6 +130,7 @@ public class SysOutStreamPeer {
 
 	public OutStream flush(SysOutStream self) {
 		try {
+			self.flushBits();
 			this.outStream.flush();
 			return self;
 		} catch (IOException e) {
@@ -138,6 +140,7 @@ public class SysOutStreamPeer {
 
 	public boolean close(SysOutStream self) {
 		try {
+			self.flushBits();
 			if (this.outStream != null)
 				this.outStream.close();
 			return true;

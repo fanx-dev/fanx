@@ -58,8 +58,8 @@ internal class BufOutStream : OutStream {
     return this
   }
   override This sync() { buf.sync; return this }
-  override This flush() { this }
-  override Bool close() { true }
+  //override This flush() { super.flush }
+  //override Bool close() { super.close }
 }
 
 internal class BufInStream : InStream {
@@ -122,7 +122,7 @@ internal class BufInStream : InStream {
     }
     return this
   }
-  override Bool close() { true }
+  //override Bool close() { super.close }
 
   override Int peek() {
     if (buf.pos >= buf.size) return -1
