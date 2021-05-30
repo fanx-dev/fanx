@@ -1050,6 +1050,28 @@ class ListTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// GroupBy
+//////////////////////////////////////////////////////////////////////////
+
+
+  Void testGroupBy()
+  {
+    list := ["ape", "bear", "camel", "deer", "eel"]
+
+    verifyEq(list.groupBy { it.size }, Obj:Str[][3:["ape", "eel"], 4:["bear", "deer"], 5:["camel"]])
+    verifyEq(list.groupBy |s| { s.size }, Obj:Str[][3:["ape", "eel"], 4:["bear", "deer"], 5:["camel"]])
+    verifyEq(list.groupBy |s->Int| { s.size }, Int:Str[][3:["ape", "eel"], 4:["bear", "deer"], 5:["camel"]])
+
+    verifyEq(list.groupBy |Str s, Int i->Str| { i.toStr }, Str:Str[]["0":["ape"], "1":["bear"], "2":["camel"], "3":["deer"], "4":["eel"]])
+
+    map := Int:Str[][:]
+    list.groupByInto(map) { it.size }
+    verifyEq(map, Int:Str[][3:["ape", "eel"], 4:["bear", "deer"], 5:["camel"]])
+    ["fox", "goat"].groupByInto(map) |s| { s.size }
+    verifyEq(map, Int:Str[][3:["ape", "eel", "fox"], 4:["bear", "deer", "goat"], 5:["camel"]])
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Any/All
 //////////////////////////////////////////////////////////////////////////
 

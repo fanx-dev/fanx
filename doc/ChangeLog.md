@@ -5,7 +5,7 @@
 - ObjDecoder support static const
 - fanrun: new ABI
 - fanrun: add NoNative facet
-
+- List groupBy, groupByInto
 
 ### Build 3.3 (2020-10-25)
 - Fix NioBuf
