@@ -41,7 +41,7 @@ internal mixin ConstFlags
 ** Types model the inheritance relationships and provide a mapping
 ** for all the slots both inherited and declared.
 **
-abstract native rtconst class Type
+@NoNative native abstract rtconst class Type
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ abstract native rtconst class Type
   }
 }
 
-native internal rtconst class BaseType : Type
+@NoNative native internal rtconst class BaseType : Type
 {
   private const Pod _pod
   private const Str _typeName
@@ -780,7 +780,7 @@ native internal rtconst class BaseType : Type
   //Str? doc()
 }
 
-native internal rtconst class ProxyType : Type {
+@NoNative native internal rtconst class ProxyType : Type {
   const Type root
 
   new privateMake(Type root) : 
@@ -806,7 +806,7 @@ native internal rtconst class ProxyType : Type {
   override Facet? facet(Type type, Bool checked := true) { root.facet(type, checked) }
 }
 
-native internal rtconst class NullableType : ProxyType {
+@NoNative native internal rtconst class NullableType : ProxyType {
 
   new privateMake(Type root) : super.privateMake(root) {}
 
@@ -842,7 +842,7 @@ native internal rtconst class NullableType : ProxyType {
   override Type toNonNullable() { root }
 }
 
-native internal rtconst class ParameterizedType : ProxyType {
+@NoNative native internal rtconst class ParameterizedType : ProxyType {
   private const Str _signature
   private const Type nullable
 

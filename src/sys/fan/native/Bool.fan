@@ -10,7 +10,6 @@
 ** Bool represents a boolean condition of true or false.
 **
 @Serializable { simple = true }
-@Extern
 native const struct class Bool
 {
 

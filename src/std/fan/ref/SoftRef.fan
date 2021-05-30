@@ -9,7 +9,6 @@
 **
 ** Soft reference objects, which are cleared at the discretion of the garbage collector in response to memory demand.
 **
-@Extern
 final native class SoftRef<T>
 {
   ** Creates a new soft reference that refers to the given object.

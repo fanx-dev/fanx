@@ -436,6 +436,13 @@ void MBuilder::call(Block *block, FOpObj &opObj, bool isVirtual, bool isStatic
         TypeInfo selfType(curPod, methodRef->parent);
         stmt->params.insert(stmt->params.begin(), asType(block, block->pop(), selfType, opObj.pos));
     }
+
+    if (isStatic) {
+        FType* ftype = FCodeUtil::getFTypeFromTypeRef(curPod, methodRef->parent);
+        if (ftype->c_isSimpleSym) {
+            stmt->isSimpleSym = true;
+        }
+    }
     
     TypeInfo retType(curPod, methodRef->retType);
     stmt->isVoid = retType.isVoid();

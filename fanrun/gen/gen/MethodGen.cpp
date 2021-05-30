@@ -113,11 +113,12 @@ void MethodGen::genImples(Printer *printer) {
         return;
     }
     
-    if (parent->type->c_isExtern) {
-        //skip Func
+    if (parent->type->c_isNative) {
+        /*skip Func
         if (parent->name == "sys_Array") {
             return;
         }
+        */
    
         std::string &methodName = method->c_stdName;
         if (!method->code.isEmpty() && methodName != "static$init" && methodName != "instance$init$") {

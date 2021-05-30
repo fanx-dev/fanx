@@ -6,7 +6,7 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
-native internal rtconst class PodList {
+@NoNative native internal rtconst class PodList {
   private Pod[] podList := [,]
   private [Str:Pod] podMap := [:]
   private Bool inited := false
@@ -55,7 +55,7 @@ native internal rtconst class PodList {
 ** Pod represents a module of Types.  Pods serve as a type namespace
 ** as well as unit of deployment and versioning.
 **
-native final rtconst class Pod
+@NoNative native final rtconst class Pod
 {
   private const Str _name
   private const Version _version

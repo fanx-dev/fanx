@@ -4,7 +4,7 @@
 **
 ** Raw pointer for C FFI
 **
-@NoDoc @Extern
+@NoDoc
 const native struct class Ptr<T> {
   static const Ptr<T> nil
   private new make()

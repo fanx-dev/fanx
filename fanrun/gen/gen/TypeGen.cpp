@@ -46,7 +46,7 @@ void TypeGen::genTypeDeclare(Printer *printer) {
 
 void TypeGen::genStruct(Printer *printer) {
 //    if (FCodeUtil::isBuildinValType(type)) return;
-    if (type->c_isExtern) {
+    if (type->c_isNative) {
         printer->println("//native struct %s_struct", name.c_str());
         return;
     }
@@ -289,7 +289,7 @@ void TypeGen::genMethodDeclare(Printer *printer) {
 }
 
 void TypeGen::genNativePrototype(Printer *printer) {
-    if (type->c_isExtern) {
+    if (type->c_isNative) {
         //gen static fields
         for (int i=0; i<type->fields.size(); ++i) {
             FField *field = &type->fields[i];
@@ -357,7 +357,7 @@ void TypeGen::genStaticField(Printer *printer, bool isExtern) {
 //    if ((type->meta.flags & FFlags::Native) != 0) {
 //        isExtern = true;
 //    }
-    if (type->c_isExtern) {
+    if (type->c_isNative) {
         isExtern = true;
     }
     

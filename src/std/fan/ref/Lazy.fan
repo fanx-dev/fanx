@@ -9,7 +9,6 @@
 **
 ** call initial when val is null
 **
-@Extern
 final native const class Lazy<T>
 {
   new make(|->T| initial)

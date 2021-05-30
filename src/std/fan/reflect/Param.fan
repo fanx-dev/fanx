@@ -9,7 +9,7 @@
 **
 ** Param represents one parameter definition of a Func (or Method).
 **
-native final rtconst class Param
+@NoNative native final rtconst class Param
 {
   private const Str _name
   private const Str _typeName

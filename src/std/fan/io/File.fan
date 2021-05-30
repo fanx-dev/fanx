@@ -524,7 +524,6 @@ abstract const class File
 **************************************************************************
 ** LocalFile
 **************************************************************************
-@Extern
 internal native const class LocalFile : File
 {
   new make(Uri uri, Bool checkSlash := true)

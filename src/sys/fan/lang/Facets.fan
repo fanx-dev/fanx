@@ -150,8 +150,14 @@ facet class FacetMeta
 facet class NoPeer {}
 
 **
-** to indicate local native class
+** extern link symbol
 **
 facet class Extern {
-  const Bool simple := false
+  const Str include := ""
 }
+
+**
+** ignore native in C runtime
+**
+facet class NoNative {}
+

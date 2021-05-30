@@ -10,7 +10,6 @@
 ** Int is used to represent a signed 64-bit integer.
 **
 @Serializable { simple = true }
-@Extern
 native const struct class Int : Num
 {
 

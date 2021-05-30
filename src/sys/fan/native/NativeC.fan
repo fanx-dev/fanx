@@ -17,7 +17,7 @@ class NativeC {
 
 }
 
-@NoDoc
+@NoDoc @Extern
 class Libc {
 
   static native Size_t strlen(Ptr<Int8> cstr)

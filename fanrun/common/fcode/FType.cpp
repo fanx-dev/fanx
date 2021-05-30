@@ -149,7 +149,8 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
         }
     }
     {
-        c_isExtern = false;
+        c_isNative = (meta.flags & FFlags::Native) != 0;
+        c_isSimpleSym = false;
         int attrCount = buffer.readUInt16();
         //attrs.resize(attrCount);
         for (int i=0; i<attrCount; ++i) {
@@ -160,9 +161,11 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
             if (FFacets *fs = dynamic_cast<FFacets*>(attr)) {
                 for (FFacet &f : fs->facets) {
                     FTypeRef &tRef = pod->typeRefs[f.type];
+                    if (pod->names[tRef.podName] == "sys" && pod->names[tRef.typeName] == "NoNative") {
+                        c_isNative = false;
+                    }
                     if (pod->names[tRef.podName] == "sys" && pod->names[tRef.typeName] == "Extern") {
-                        c_isExtern = true;
-                        break;
+                        c_isSimpleSym = true;
                     }
                 }
             }

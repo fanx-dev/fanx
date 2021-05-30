@@ -12,7 +12,6 @@
 ** numeric type for financial applications.
 **
 @Serializable { simple = true }
-@Extern
 native const struct class Decimal : Num
 {
 

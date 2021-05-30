@@ -7,7 +7,6 @@
 //
 
 @NoDoc
-@Extern
 final native const class Lock
 {
 

@@ -13,7 +13,7 @@ using sys::Int64 as Size_t
 **
 ** StrBuf is a mutable sequence of Int characters.
 **
-native final class StrBuf
+@NoNative native final class StrBuf
 {
   private Array<Char> buf
   private Int _size

@@ -153,7 +153,7 @@ public:
 
 class CallStmt : public Stmt {
 public:
-    FMethodRef *methodRef;
+    FMethodRef *methodRef = NULL;
     
     std::string typeName;
     std::string mthName;
@@ -161,16 +161,17 @@ public:
     
     std::vector<Expr> params;
     Expr retValue;
-    bool isVoid;
-    bool isStatic;
-    bool isVirtual;
-    bool isMixin;
-    bool isCtor;
+    bool isVoid = false;
+    bool isStatic = false;
+    bool isVirtual = false;
+    bool isMixin = false;
+    bool isCtor = false;
+    bool isSimpleSym = false;
     
     //for compare which no methodRef
     //std::vector<std::string> argsType;
     
-    CallStmt() : methodRef(NULL), isCtor(false) {}
+    CallStmt() {}
     
     virtual void print(Printer& printer) override;
     

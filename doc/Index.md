@@ -4,7 +4,7 @@
 ### Introduction
 - [Quick Start](QuickStart.md)
 - [Tutorial](Tour.md)
-- [Differ from Fantom](DiffFantom.md)
+- [Change from Fantom](DiffFantom.md)
 - [Setup](Setup.md)
 - [IDEs](IDE.md)
 

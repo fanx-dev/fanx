@@ -1,5 +1,12 @@
 ## ChangeLog
 
+### Build 3.4 (working)
+- JS support NoPeer facet
+- ObjDecoder support static const
+- fanrun: new ABI
+- fanrun: add NoNative facet
+
+
 ### Build 3.3 (2020-10-25)
 - Fix NioBuf
 - Fix async in abstract method

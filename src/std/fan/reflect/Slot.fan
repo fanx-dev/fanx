@@ -9,7 +9,7 @@
 **
 ** Slot represents a member field or method on a Type.
 **
-native abstract rtconst class Slot
+@NoNative native abstract rtconst class Slot
 {
   private Type _parent
   private const Str _name

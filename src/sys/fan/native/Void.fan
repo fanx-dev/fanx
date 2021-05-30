@@ -9,7 +9,7 @@
 **
 ** Void is used to represent the absence of a return value in a Method.
 **
-const final native class Void
+@NoNative native const final class Void
 {
 
   **

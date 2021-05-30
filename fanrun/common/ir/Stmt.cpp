@@ -392,7 +392,7 @@ void CallStmt::print(Printer& printer) {
     
     bool isFirstArg = false;
     bool isExternC = false;
-    if (isStatic && typeName == "sys_Libc") {
+    if (isStatic && isSimpleSym) {
         isFirstArg = true;
         isExternC = true;
         if (!isVoid) printer.printf("%s = ", retValue.getName().c_str());

@@ -11,7 +11,6 @@
 ** Float is used to represent a 64-bit floating point number.
 **
 @Serializable { simple = true }
-@Extern
 native const struct class Float : Num
 {
 

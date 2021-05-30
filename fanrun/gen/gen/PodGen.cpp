@@ -112,7 +112,7 @@ void PodGen::genHeader(Printer *printer) {
     bool hasNative = false;
     for (int i=0; i<sortedTypes.size(); ++i) {
         TypeGen *gtype = sortedTypes[i];
-        if ((gtype->type->meta.flags & FFlags::Native) != 0) {
+        if (gtype->type->c_isNative) {
             hasNative = true;
             break;
         }

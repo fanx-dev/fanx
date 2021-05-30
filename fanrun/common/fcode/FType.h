@@ -90,7 +90,8 @@ public:
     
     FTypeMeta meta;
     FPod *c_pod;
-    bool c_isExtern;
+    bool c_isNative;
+    bool c_isSimpleSym;
     
     //cache
     std::string c_name;

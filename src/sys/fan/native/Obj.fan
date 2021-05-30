@@ -9,7 +9,6 @@
 **
 ** Obj is the root class of all classes.
 **
-@Extern
 native rtconst abstract class Obj
 {
 

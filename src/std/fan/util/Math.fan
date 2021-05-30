@@ -1,5 +1,5 @@
 
-native mixin Math
+@NoNative native mixin Math
 {
   **
   ** Float value for e which is the base of natural logarithms.
