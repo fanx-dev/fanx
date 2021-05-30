@@ -68,6 +68,17 @@
   }
 
   **
+  ** Clip this float between the min and max.  If its less than min then
+  ** return min, if its greater than max return max, otherwise return this
+  ** float itself.
+  **
+  static extension Float clip(Float self, Float min, Float max) {
+    if (self < min) return min
+    if (self > max) return max
+    return self
+  }
+
+  **
   ** Returns the smallest whole number greater than or equal
   ** to this number.
   **

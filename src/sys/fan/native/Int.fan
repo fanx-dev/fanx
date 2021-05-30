@@ -216,6 +216,17 @@ native const struct class Int : Num
   Int max(Int that) { this > that ? this : that }
 
   **
+  ** Clip this integer between the min and max.  If its less than min then
+  ** return min, if its greater than max return max, otherwise return this
+  ** integer itself.
+  **
+  Int clip(Int min, Int max) {
+    if (this < min) return min
+    if (this > max) return max
+    return this
+  }
+
+  **
   ** Return this value raised to the specified power.
   ** Throw ArgErr if pow is less than zero.
   **

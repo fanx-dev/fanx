@@ -116,4 +116,33 @@ class BoolArray {
     return this
   }
 
+  ** Set entire array to false
+  This clear() {
+    for (i:=0; i<words.size; ++i) words[i] = 0;
+    return this
+  }
+
+  ** Iterate each index set to true
+  Void eachTrue(|Int index| f) {
+    for (i:=0; i<words.size; ++i)
+    {
+      if (words[i] == 0) continue
+      for (j:=0; j<32; ++j)
+      {
+        index := (i.shiftl(0x05)) + j
+        if (get(index)) f.call(index)
+      }
+    }
+  }
+  ** Set the value at given index and return the previous value.
+  Bool getAndSet(Int pos, Bool val) {
+    i := pos.shiftr(0x5);
+    mask := 1.shiftl(pos.and(0x1F))
+    prev := words[i].and(mask) != 0
+    if (val)
+      words[i] = words[i].or(mask);
+    else
+      words[i] = words[i].and(mask.not);
+    return prev
+  }
 }

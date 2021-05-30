@@ -31,6 +31,12 @@ fan.std.Math.log   = function(self) { return fan.sys.Float.make(Math.log(self));
 fan.std.Math.log10 = function(self) { return fan.sys.Float.make(Math.log(self) / Math.LN10); }
 fan.std.Math.min   = function(self, that) { return fan.sys.Float.make(Math.min(self, that)); }
 fan.std.Math.max   = function(self, that) { return fan.sys.Float.make(Math.max(self, that)); }
+fan.std.Math.clip = function(self, min, max)
+{
+  if (self < min) return min;
+  if (self > max) return max;
+  return self;
+}
 fan.std.Math.negate = function(self) { return fan.sys.Float.make(-self); }
 fan.std.Math.pow   = function(self, exp) { return fan.sys.Float.make(Math.pow(self, exp)); }
 fan.std.Math.round = function(self) { return fan.sys.Float.make(Math.round(self)); }

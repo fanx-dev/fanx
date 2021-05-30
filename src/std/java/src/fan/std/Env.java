@@ -169,12 +169,7 @@ public class Env extends FanObj {
 
   private static String initHost() {
     try {
-      return java.net.InetAddress.getLocalHost().getHostName();
-    } catch (Throwable e) {
-    }
-
-    try {
-      // fallbacks if DNS resolution fails
+      // use environment vars first to avoid DNS calls
       String s;
       s = System.getenv("HOSTNAME");
       if (s != null)
@@ -182,6 +177,12 @@ public class Env extends FanObj {
       s = System.getenv("FAN_HOSTNAME");
       if (s != null)
         return s;
+    } catch (Throwable e) {
+    }
+
+    try {
+      // this will block if the network is down
+      return java.net.InetAddress.getLocalHost().getHostName();
     } catch (Throwable e) {
     }
 

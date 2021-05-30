@@ -6,6 +6,8 @@
 - fanrun: new ABI
 - fanrun: add NoNative facet
 - List groupBy, groupByInto
+- BoolArray clear, eachTrue, getAndSet
+- Int.clip, Float.clip
 
 ### Build 3.3 (2020-10-25)
 - Fix NioBuf

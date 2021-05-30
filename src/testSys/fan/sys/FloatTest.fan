@@ -363,6 +363,15 @@ class FloatTest : Test
     verifyEq(0f.max(1f), 1f)
     verifyEq((-99.0f).max(-6666.0f), -99.0f)
 
+    // clip
+    verifyEq((3f).clip(0f, 100f), 3f)
+    verifyEq((-3f).clip(0f, 100f), 0f)
+    verifyEq((0f).clip(0f, 100f), 0f)
+    verifyEq((99f).clip(0f, 100f), 99f)
+    verifyEq((100f).clip(0f, 100f), 100f)
+    verifyEq((100.7f).clip(0f, 100f), 100f)
+    verifyEq((890.7f).clip(0f, 100f), 100f)
+
     // ceil
     verifyEq(88f.ceil, 88f)
     verifyEq(6.335f.ceil, 7f)

@@ -170,6 +170,13 @@ public final class FanInt
     return that;
   }
 
+  public static long clip(long self, long min, long max)
+  {
+    if (self < min) return min;
+    if (self > max) return max;
+    return self;
+  }
+
   public static long pow(long self, long pow)
   {
     if (pow < 0) throw ArgErr.make("pow < 0");

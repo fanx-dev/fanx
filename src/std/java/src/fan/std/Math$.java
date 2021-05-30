@@ -61,6 +61,13 @@ public class Math$ {
 		return that;
 	}
 
+	public static double clip(double self, double min, double max)
+	{
+	    if (self < min) return min;
+	    if (self > max) return max;
+	    return self;
+	}
+
 	public static double ceil(double self) {
 		return Math.ceil(self);
 	}

@@ -320,6 +320,14 @@ class IntTest : Test
     verifyEq((-99).max(-6666), -99)
     verifyEq('a'.max(' '), 'a')
 
+    verifyEq(3.clip(0, 100), 3)
+    verifyEq(3.clip(4, 4), 4)
+    verifyEq((-3).clip(0, 100), 0)
+    verifyEq(0.clip(0, 100), 0)
+    verifyEq(100.clip(0, 100), 100)
+    verifyEq(101.clip(0, 100), 100)
+    verifyEq(201.clip(0, 100), 100)
+
     verifyEq(5.pow(0), 1)
     verifyEq(5.pow(1), 5)
     verifyEq(5.pow(2), 25)
