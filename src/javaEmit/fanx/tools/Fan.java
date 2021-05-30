@@ -25,7 +25,7 @@ import fanx.util.*;
  */
 public class Fan
 {
-  final static String version = "3.3";
+  final static String version = "3.4";
 //////////////////////////////////////////////////////////////////////////
 // Execute
 //////////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ public class Fan
   static void version(String progName)
   {
     println(progName);
-    println("Copyright (c) 2019, chunquedong");
+    println("Copyright (c) 2019-2021, chunquedong");
     println("Licensed under the Academic Free License version 3.0");
     println("");
     println("Java Runtime:");

@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 3.4 (working)
+### Build 3.4 (2021-05-30)
 - JS support NoPeer facet
 - ObjDecoder support static const
 - fanrun: new ABI
