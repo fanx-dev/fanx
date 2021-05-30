@@ -816,7 +816,7 @@ public class Parser
     field := FieldDef(loc, parent)
     field.doc    = doc
     field.facets = facets
-    field.flags  = flags.and(FConst.ParserFlagsMask.not)
+    field.flags  = flags
     field.name   = name
     if (type != null) field.fieldType = type
 

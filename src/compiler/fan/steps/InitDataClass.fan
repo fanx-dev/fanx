@@ -31,7 +31,7 @@ class InitDataClass : CompilerStep
 
   override Void visitTypeDef(TypeDef t)
   {
-    if (t.flags.and(Parser.Data) == 0) return
+    if (t.flags.and(FConst.Data) == 0) return
 
     addCtor
     addHash

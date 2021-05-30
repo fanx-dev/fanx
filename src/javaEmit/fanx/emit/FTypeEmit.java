@@ -170,7 +170,12 @@ public abstract class FTypeEmit
   {
     if ((f.flags & FConst.Storage) != 0)
     {
-      FieldEmit fe = emitField(f.name, pod.typeRef(f.type).jsig(), jflags(f.flags));
+      // make const class once fields volatile
+      int jflags = jflags(f.flags);
+      if ((f.flags & FConst.Once) != 0 && (type.flags & FConst.Const) != 0)
+        jflags |= EmitConst.VOLATILE;
+
+      FieldEmit fe = emitField(f.name, pod.typeRef(f.type).jsig(), jflags);
       FFacetEmit.emitField(fe, pod, f.attrs);
     }
   }

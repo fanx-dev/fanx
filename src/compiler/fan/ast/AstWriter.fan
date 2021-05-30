@@ -98,7 +98,7 @@ class AstWriter
     if (flags.and(FConst.Synthetic) != 0) w("synthetic ")
     if (flags.and(FConst.Getter)    != 0) w("getter ")
     if (flags.and(FConst.Setter)    != 0) w("setter ")
-
+    if (flags.and(FConst.Once)      != 0) w("once ")
     return this
   }
 

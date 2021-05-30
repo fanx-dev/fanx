@@ -260,6 +260,7 @@ class FPrinter : FConst
     if (flags.and(FConst.Readonly)  != 0) s.add("readonly ")
     if (flags.and(FConst.Async)     != 0) s.add("async ")
     if (flags.and(FConst.Overload)  != 0) s.add("overload ")
+    if (flags.and(FConst.Once)      != 0) s.add("once ")
     return s.toStr[0..-2]
   }
 

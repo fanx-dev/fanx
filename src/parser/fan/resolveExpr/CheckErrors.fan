@@ -200,20 +200,13 @@ class CheckErrors : CompilerStep, Coerce
     // in another check
     t.fieldDefs.each |FieldDef f|
     {
-      if (!f.isConst && !f.isStatic && f.isStorage /* && !isSys*/) {
+      if (!f.isConst && !f.isStatic && f.isStorage /* && !isSys*/ && !f.isOnce) {
         if (t.isNative && t.pod.name == "sys") {
           //pass
         }
         else
           err("Const type '$t.name' cannot contain non-const field '$f.name'", f.loc)
       }
-    }
-
-    // check that no once methods
-    t.methodDefs.each |MethodDef m|
-    {
-      if (m.isOnce)
-        err("Const type '$t.name' cannot contain once method '$m.name'", m.loc)
     }
   }
 
@@ -286,7 +279,7 @@ class CheckErrors : CompilerStep, Coerce
     // these modifiers are never allowed on a field
     if (flags.and(FConst.Ctor) != 0)    err("Cannot use 'new' modifier on field", loc)
     if (flags.and(FConst.Final) != 0)   err("Cannot use 'final' modifier on field", loc)
-    if (flags.and(FConst.Once) != 0)    err("Cannot use 'once' modifier on field", loc)
+    if (flags.and(FConst.Once) != 0 && flags.and(FConst.Synthetic) == 0) err("Cannot use 'once' modifier on field", loc)
 
     // check invalid protection combinations
     checkProtectionFlags(flags, loc)

@@ -211,6 +211,7 @@ class ApiDocWriter
     if (flags.and(FConst.Readonly)  != 0) s.join("readonly")
     if (flags.and(FConst.Async)     != 0) s.join("async")
     if (flags.and(FConst.Overload)  != 0) s.join("overload")
+    if (flags.and(FConst.Once)  != 0) s.join("once")
     return s.toStr
   }
 

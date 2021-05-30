@@ -699,7 +699,7 @@ class CheckErrorsTest : CompilerTest
 
          1,  15, "Const type 'Foo' cannot subclass non-const class 'Bar'", // further tests in testConstInheritance
         22,  3, "Const type 'Foo' cannot contain non-const field 'j'",
-        30,  3, "Const type 'Foo' cannot contain once method 'p'",
+        //30,  3, "Const type 'Foo' cannot contain once method 'p'",
 
         34,  1, "Non-const type 'Roo' cannot subclass const class 'Foo'",
         35, 25, "Const type 'Boo' cannot contain non-const field 'x'",

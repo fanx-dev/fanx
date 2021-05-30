@@ -49,6 +49,7 @@ public interface FConst
   public static final int Async      = 0x00800000;
   public static final int Overload   = 0x01000000;
   public static final int Closure    = 0x02000000;
+  public static final int Once       = 0x04000000;
   public static final int FlagsMask  = 0x0fffffff;
 
 //////////////////////////////////////////////////////////////////////////

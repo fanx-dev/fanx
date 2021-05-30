@@ -155,7 +155,7 @@ public class Parser : CompilerSupport
     {
       //data class
       if (curt === Token.identifier && cur.val == "data") {
-        flags = flags.or(Parser.Data)
+        flags = flags.or(FConst.Data)
         consume
       }
       // enum class
@@ -325,7 +325,7 @@ public class Parser : CompilerSupport
         case Token.finalKeyword:     flags = flags.or(FConst.Final)
         case Token.internalKeyword:  flags = flags.or(FConst.Internal);  protection = true
         case Token.nativeKeyword:    flags = flags.or(FConst.Native)
-        case Token.onceKeyword:      flags = flags.or(Once) // Parser only flag
+        case Token.onceKeyword:      flags = flags.or(FConst.Once) // Parser only flag
         case Token.extensionKeyword: flags = flags.or(FConst.Extension)
         case Token.overrideKeyword:  flags = flags.or(FConst.Override)
         case Token.privateKeyword:   flags = flags.or(FConst.Private);   protection = true
@@ -567,7 +567,7 @@ public class Parser : CompilerSupport
     field := FieldDef(loc, parent)
     field.doc    = doc
     field.facets = facets
-    field.flags  = flags.and(ParserFlagsMask.not)
+    field.flags  = flags
     field.name   = name
     if (type != null) field.fieldType = type
 
@@ -2650,12 +2650,6 @@ public class Parser : CompilerSupport
 //////////////////////////////////////////////////////////////////////////
 // Parser Flags
 //////////////////////////////////////////////////////////////////////////
-
-  // These are flags used only by the parser we merge with FConst
-  // flags by starting from most significant bit and working down
-  const static Int Once     := 0x8000_0000
-  const static Int Data     := 0x4000_0000
-  const static Int ParserFlagsMask := 0
 
   // Bitwise and this mask to clear all protection scope flags
   const static Int ProtectionMask := (FConst.Public).or(FConst.Protected).or(FConst.Private).or(FConst.Internal).not

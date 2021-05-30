@@ -41,6 +41,7 @@ mixin CSlot
   Bool isSynthetic() { flags.and(FConst.Synthetic) != 0 }
   Bool isVirtual()   { flags.and(FConst.Virtual)   != 0 }
   Bool isOverload()  { flags.and(FConst.Overload)  != 0 }
+  Bool isOnce()      { flags.and(FConst.Once)      != 0 }
 
   Bool isInstanceCtor() { isCtor && !isStatic }
   Bool isStaticCtor() { isCtor && isStatic }

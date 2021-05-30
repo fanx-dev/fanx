@@ -74,11 +74,6 @@ class MethodDef : SlotDef, CMethod
   Bool isFieldSetter() { accessorFor != null && paramDefs.size == 1  }
 
   **
-  ** Return if this is a once method
-  **
-  Bool isOnce() { flags.and(FConst.Once) != 0 }
-
-  **
   ** Return if this is a constructor with an it-block as last parameter
   **
   Bool isItBlockCtor()

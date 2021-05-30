@@ -47,6 +47,8 @@ mixin FConst
   const static Int Readonly   := 0x00400000
   const static Int Async      := 0x00800000
   const static Int Overload   := 0x01000000 //imples param default by Overload
+  const static Int Closure    := 0x02000000
+  const static Int Once       := 0x04000000
   const static Int FlagsMask  := 0x0fffffff
   
 //////////////////////////////////////////////////////////////////////////
@@ -55,9 +57,7 @@ mixin FConst
 
   // These are flags used only by the parser we merge with FConst
   // flags by starting from most significant bit and working down
-  const static Int Once     := 0x8000_0000
   const static Int Data     := 0x4000_0000
-  const static Int ParserFlagsMask := 0
 
   // Bitwise and this mask to clear all protection scope flags
   const static Int ProtectionMask := (FConst.Public).or(FConst.Protected).or(FConst.Private).or(FConst.Internal).not

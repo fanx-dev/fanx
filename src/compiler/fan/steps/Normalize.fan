@@ -173,8 +173,7 @@ class Normalize : CompilerStep
     loc := m.loc
 
     // we'll report these errors in CheckErrors
-    if (curType.isConst || curType.isMixin ||
-        m.isStatic || m.isCtor || m.isFieldAccessor)
+    if (curType.isMixin || m.isStatic || m.isCtor || m.isFieldAccessor)
       return
 
     // error checking
@@ -184,7 +183,7 @@ class Normalize : CompilerStep
 
     // generate storage field
     f := FieldDef(loc, curType)
-    f.flags     = FConst.Private + FConst.Storage + FConst.Synthetic
+    f.flags     = FConst.Private + FConst.Storage + FConst.Synthetic + FConst.Once
     f.name      = m.name + "\$Store"
     f.fieldType = ns.objType.toNullable
     f.init      = Expr.makeForLiteral(loc, ns, "_once_")

@@ -605,6 +605,34 @@ class MiscTest : CompilerTest
   }
 
 //////////////////////////////////////////////////////////////////////////
+// Once Const
+//////////////////////////////////////////////////////////////////////////
+
+  Void testOnceConst()
+  {
+    compile(
+     "const class A
+      {
+        virtual once Str x() { Int.random.toStr }
+        once DateTime bad() { throw Err.make }
+      }
+
+      const class B : A
+      {
+        override Str x() { Int.random.toStr }
+      }
+      ")
+
+     a := pod.type("A").make
+     b := pod.type("B").make
+     verifySame(a->x, a->x)
+     verifyNotSame(b->x, b->x)
+     verifyErr(Err#) { a->bad }
+     verifyErr(Err#) { a->bad }
+     verifyErr(Err#) { a->bad }
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Func Types
 //////////////////////////////////////////////////////////////////////////
 
