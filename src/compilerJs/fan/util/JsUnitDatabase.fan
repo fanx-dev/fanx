@@ -14,7 +14,9 @@ class JsUnitDatabase
   Void write(OutStream out)
   {
     // open etc/sys/units.txt
-    in := Env.cur.findFile(`etc/sys/units.txt`).in
+    file := Env.cur.findFile(`etc/sys/units.txt`, false)
+    if (file == null) return
+    in := file.in
     out.printLine(
       "(function () {
        ${JsPod.requireSys}
