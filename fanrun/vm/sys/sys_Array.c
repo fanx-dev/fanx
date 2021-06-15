@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void sys_Array_make_f(fr_Env env, fr_Obj self, fr_Int size) {
+void sys_Array_make(fr_Env env, fr_Obj self, fr_Int size) {
     fr_Array *array;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
@@ -19,7 +19,7 @@ void sys_Array_make_f(fr_Env env, fr_Obj self, fr_Int size) {
     //fr_unlock(env);
     return;
 }
-fr_Obj sys_Array_get_f(fr_Env env, fr_Obj self, fr_Int pos) {
+fr_Obj sys_Array_get(fr_Env env, fr_Obj self, fr_Int pos) {
     fr_Array *array;
     fr_Obj result;
     //fr_lock(env);
@@ -28,7 +28,7 @@ fr_Obj sys_Array_get_f(fr_Env env, fr_Obj self, fr_Int pos) {
     //fr_unlock(env);
     return result;
 }
-void sys_Array_set_f(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
+void sys_Array_set(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
     fr_Array *array;
     //fr_Obj result;
     //fr_lock(env);
@@ -37,7 +37,7 @@ void sys_Array_set_f(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
     //fr_unlock(env);
     return;
 }
-fr_Int sys_Array_size_f(fr_Env env, fr_Obj self) {
+fr_Int sys_Array_size(fr_Env env, fr_Obj self) {
     fr_Array *array;
     fr_Int result;
     //fr_lock(env);
@@ -46,7 +46,7 @@ fr_Int sys_Array_size_f(fr_Env env, fr_Obj self) {
     //fr_unlock(env);
     return result;
 }
-fr_Obj sys_Array_realloc_f(fr_Env env, fr_Obj self, fr_Int newSize) {
+fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
     fr_Array *array;
     fr_Array *narray;
     //FObj **p;
@@ -74,7 +74,7 @@ fr_Obj sys_Array_realloc_f(fr_Env env, fr_Obj self, fr_Int newSize) {
     return newArray;
 }
 
-void sys_Array_arraycopy_f(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, fr_Int destOffset, fr_Int length) {
+void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, fr_Int destOffset, fr_Int length) {
     fr_Array *array;
     fr_Array *other;
     
@@ -86,19 +86,19 @@ void sys_Array_arraycopy_f(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest
     
     //fr_unlock(env);
 }
-void sys_Array_fill_f(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
+void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
     fr_Array *array;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
     memset(array->data, (int64_t)obj, times);
 }
-//fr_Obj sys_Array_fromJava_f(fr_Env env, fr_Obj of, fr_Obj array) {
+//fr_Obj sys_Array_fromJava(fr_Env env, fr_Obj of, fr_Obj array) {
 //    return NULL;
 //}
-//fr_Obj sys_Array_toJava_f(fr_Env env, fr_Obj self, fr_Obj clz) {
+//fr_Obj sys_Array_toJava(fr_Env env, fr_Obj self, fr_Obj clz) {
 //    return NULL;
 //}
-void sys_Array_finalize_f(fr_Env env, fr_Obj self) {
+void sys_Array_finalize(fr_Env env, fr_Obj self) {
     fr_Array *array;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
@@ -107,6 +107,6 @@ void sys_Array_finalize_f(fr_Env env, fr_Obj self) {
     array->size = 0;
     //fr_unlock(env);
 }
-void sys_Array_static__init_f(fr_Env env) {
+void sys_Array_static__init(fr_Env env) {
     return;
 }

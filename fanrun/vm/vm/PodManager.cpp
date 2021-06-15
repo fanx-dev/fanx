@@ -272,7 +272,7 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
     type->c_allocStaticSize = staticSize;
     
     //get native alloc size
-    if (type->c_isExtern) {
+    if (type->c_isNative) {
         FPod *pod = type->c_pod;
         std::string name = pod->name +"_"+ type->c_name + "__allocSize__";
         int (*func)() = (int (*)())nativeFuncMap[name];

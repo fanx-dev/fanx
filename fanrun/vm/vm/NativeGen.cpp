@@ -142,7 +142,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
     //--------------------------------
     // gen struct
     if (printType == PrintType::pStruct
-        && (type->c_isExtern)) {
+        && (type->c_isNative)) {
         std::string typeName = preName;
         escape(typeName);
         //escapeKeyword(typeName);
@@ -166,7 +166,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
     
     //--------------------------------
     // gen allocSize
-    if ((type->c_isExtern)) {
+    if ((type->c_isNative)) {
         std::string typeName = preName;
         escape(typeName);
         //escapeKeyword(typeName);
@@ -244,16 +244,16 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
         }
         
         if (printType == PrintType::pRegisterDef) {
-            printer->println("void %s(fr_Env env, void *param, void *ret);", escapeName.c_str());
+            printer->println("void %s_v(fr_Env env, void *param, void *ret);", escapeName.c_str());
         }
         else if (printType == PrintType::pRegisterCode) {
-            printer->println("fr_registerMethod(vm, \"%s\", %s);", name.c_str(), escapeName.c_str());
+            printer->println("fr_registerMethod(vm, \"%s\", %s_v);", name.c_str(), escapeName.c_str());
         }
         else if (printType == PrintType::pNatiAll) {
             
             //--------------------------------
             // get arg method
-            printer->println("void %s(fr_Env env, void *param, void *ret) {", escapeName.c_str());
+            printer->println("void %s_v(fr_Env env, void *param, void *ret) {", escapeName.c_str());
             printer->indent();
             genNativeMethod(pod, type, method, printer, PrintType::pNatiLocalDecl);
             
@@ -271,7 +271,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             if (!isVoid) {
                 printer->printf("retValue.%s = ", retTagName.c_str());
             }
-            printer->printf("%s_f(env", escapeName.c_str());
+            printer->printf("%s(env", escapeName.c_str());
             genNativeMethod(pod, type, method, printer, PrintType::pNatiArgPass);
             printer->println(");");
             if (!isVoid) {
@@ -291,7 +291,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             } else {
                 printer->printf("void");
             }
-            printer->printf(" %s_f(fr_Env env", escapeName.c_str());
+            printer->printf(" %s(fr_Env env", escapeName.c_str());
             genNativeMethod(pod, type, method, printer, PrintType::pImpeDef);
             printer->println(");");
             
@@ -303,7 +303,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             } else {
                 printer->printf("void");
             }
-            printer->printf(" %s_f(fr_Env env", escapeName.c_str());
+            printer->printf(" %s(fr_Env env", escapeName.c_str());
             genNativeMethod(pod, type, method, printer, PrintType::pImpeDef);
             printer->println(") {");
             printer->indent();
