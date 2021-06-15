@@ -7,6 +7,7 @@
 //
 
 #include "runtime.h"
+#include "system.h"
 
 //#if FR_RUN
 #include "../temp/baseTest.h"

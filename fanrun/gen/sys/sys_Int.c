@@ -34,7 +34,7 @@ sys_Int sys_Int_random(fr_Env __env, sys_Range_null r) {
     }
 }
 
-void sys_Int_privateMake_val(fr_Env __env, sys_Int_pass __self) { return 0; }
+void sys_Int_privateMake_val(fr_Env __env, sys_Int_pass __self) { return; }
 
 sys_Bool sys_Int_equals_val(fr_Env __env, sys_Int_pass __self, sys_Obj_null obj) {
     if (!obj) return false;

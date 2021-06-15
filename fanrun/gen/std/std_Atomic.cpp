@@ -32,3 +32,4 @@ void std_AtomicRef_val__1(fr_Env __env, std_AtomicRef_ref __self, sys_Obj_null i
 sys_Obj_null std_AtomicRef_getAndSet(fr_Env __env, std_AtomicRef_ref __self, sys_Obj_null val) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
 sys_Bool std_AtomicRef_compareAndSet(fr_Env __env, std_AtomicRef_ref __self, sys_Obj_null expect, sys_Obj_null update) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
 sys_Str std_AtomicRef_toStr(fr_Env __env, std_AtomicRef_ref __self) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
+

@@ -9,9 +9,9 @@
 #include "sys.h"
 #include <stdio.h>
 
-sys_Obj_null sys_Obj_trap(fr_Env __env, sys_Obj_ref __self, sys_Str name, sys_List_null args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); }
+sys_Obj_null sys_Obj_trap(fr_Env __env, sys_Obj_ref __self, sys_Str name, sys_List_null args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
 
-sys_Enum_null sys_Enum_doFromStr(fr_Env __env, sys_Str type, sys_Str name, sys_Bool checked) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); }
+sys_Enum_null sys_Enum_doFromStr(fr_Env __env, sys_Str type, sys_Str name, sys_Bool checked) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
 
 
 sys_Bool sys_Obj_isImmutable(fr_Env __env, sys_Obj_ref __self) {

@@ -38,6 +38,7 @@ sys_Obj_null sys_Func_call__1(fr_Env __env, sys_Func_ref __self, sys_Obj_null a)
 }
 sys_Obj_null sys_Func_call__0(fr_Env __env, sys_Func_ref __self) {
     FR_SET_ERROR_MAKE(sys_ArgErr, "Func.call not override");
+    return 0;
 }
 
 

@@ -47,7 +47,7 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int elemSize, size_t len) {
     return array;
 }
 
-sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); }
+sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
 
 
 //sys_Int strHash(sys_Str str);
@@ -132,7 +132,7 @@ fr_Err fr_makeCastError(fr_Env __env) {
 
 void fr_printError(fr_Env __env, fr_Err error) {
     sys_Err e = (sys_Err)error;
-    char* str = fr_getStrUtf8(__env, e->traceStr, NULL);
+    const char* str = fr_getStrUtf8(__env, e->traceStr);
     fprintf(stderr, "%s\n", str);
 }
 
