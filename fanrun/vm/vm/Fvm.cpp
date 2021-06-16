@@ -75,10 +75,10 @@ int Fvm::allocSize(void *type) {
     return ((FType *)(type))->c_allocSize;
 }
 
-void Fvm::visitChildren(Collector *gc, FObj* obj) {
+void Fvm::visitChildren(Collector *gc, GcObj* obj) {
     Env *env = nullptr;
     
-    FType *ftype = fr_getFType(env, obj);
+    FType *ftype = fr_getFType((fr_Env)env, fr_fromGcObj(obj));
     FType *objArray = podManager->findType(env, "sys", "Array");
     if (ftype == objArray) {
         fr_Array *array = (fr_Array *)obj;
@@ -86,7 +86,7 @@ void Fvm::visitChildren(Collector *gc, FObj* obj) {
             for (size_t i=0; i<array->size; ++i) {
                 FObj * obj = array->data[i];
                 //list->push_back((FObj*)obj);
-                gc->onVisit((FObj*)obj);
+                gc->onVisit(fr_toGcObj((FObj*)obj));
             }
         }
         return;
@@ -100,11 +100,11 @@ void Fvm::visitChildren(Collector *gc, FObj* obj) {
         if (f.flags & FFlags::Static) {
             //pass;
         } else {
-            fr_Value *val = podManager->getInstanceFieldValue(obj, &f);
+            fr_Value *val = podManager->getInstanceFieldValue(fr_fromGcObj(obj), &f);
             fr_ValueType vtype = podManager->getValueType(env, ftype->c_pod, f.type);
             if (vtype == fr_vtObj) {
                 //list->push_back((FObj*)val->o);
-                gc->onVisit((FObj*)val->o);
+                gc->onVisit(fr_toGcObj((FObj*)val->o));
             }
         }
     }
@@ -114,13 +114,13 @@ void Fvm::walkRoot(Collector *gc) {
     LinkedListElem *it = LinkedList_first(&globalRefList);
     LinkedListElem *end = LinkedList_end(&globalRefList);
     while (it != end) {
-        gc->onVisit(reinterpret_cast<FObj*>(it->data));
+        gc->onVisit(fr_toGcObj(reinterpret_cast<FObj*>(it->data)));
         it = it->next;
     }
     
     //static field
     for (auto it = staticFieldRef.begin(); it != staticFieldRef.end(); ++it) {
-        gc->onVisit(*reinterpret_cast<FObj **>(*it));
+        gc->onVisit(fr_toGcObj(*reinterpret_cast<FObj **>(*it)));
     }
     
     //local
@@ -129,7 +129,7 @@ void Fvm::walkRoot(Collector *gc) {
         env->walkLocalRoot(gc);
     }
 }
-void Fvm::finalizeObj(FObj* obj) {
+void Fvm::finalizeObj(GcObj* obj) {
     Env *env = getEnv();
     
     fr_TagValue val;

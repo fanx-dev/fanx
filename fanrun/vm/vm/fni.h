@@ -28,11 +28,6 @@ typedef enum fr_ValueType_ {
     fr_vtPtr,
 } fr_ValueType;
 
-/**
- * internal type
- */
-struct GcObj_;
-typedef struct GcObj_ FObj;
 
 /**
  * typedef for Fantom
@@ -45,16 +40,16 @@ typedef void * fr_Ptr;
 /**
  * user client handle type
  */
-typedef FObj **fr_Obj;
+typedef void *fr_Obj;
 
-struct FType;
-typedef struct FType *fr_Type;
+struct fr_Class_;
+typedef struct fr_Class_ *fr_Type;
 
-struct FField;
-typedef struct FField *fr_Field;
+struct fr_Field_;
+typedef struct fr_Field_ *fr_Field;
 
-struct FMethod;
-typedef struct FMethod *fr_Method;
+struct fr_Method_;
+typedef struct fr_Method_ *fr_Method;
 
 /**
  * union type, store any thing
@@ -62,7 +57,7 @@ typedef struct FMethod *fr_Method;
 typedef union fr_Value_ {
     fr_Int i;
     fr_Float f;
-    FObj *o;
+    void *o;
     fr_Obj h;
     fr_Bool b;
     void *p;
@@ -81,7 +76,8 @@ typedef struct fr_TagValue_ {
  * fr_Env is a API per thread
  */
 //struct fr_Env_;
-typedef void *fr_Env;
+struct fr_Env_struct;
+typedef struct fr_Env_struct *fr_Env;
 
 /**
  * Fantom VM
@@ -122,17 +118,6 @@ void fr_yieldGc(fr_Env self);
  * must only insert at before of IO blocking.
  */
 void fr_allowGc(fr_Env self);
-
-/**
- * fatch pointer from handle
- */
-FObj *fr_getPtr(fr_Env self, fr_Obj obj);
-
-/**
- * convert the pointer to handle
- * the pointer may be relocate by gc
- */
-fr_Obj fr_toHandle(fr_Env self, FObj *obj);
 
 /**
  * add local ref. it will be auto releae when method finished.
@@ -254,7 +239,7 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value);
 /**
  * new create Str obj from utf8
  */
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t len);
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
 
 /**
  * get utf8 from Str obj.

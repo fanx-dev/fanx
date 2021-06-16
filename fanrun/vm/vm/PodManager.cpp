@@ -264,7 +264,7 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
             f.c_offset = staticSize;
             staticSize += d;
         } else {
-            f.c_offset = size;
+            f.c_offset = size-sizeof( fr_ObjHeader);
             size += d;
         }
     }
@@ -471,7 +471,7 @@ FType *PodManager::getInstanceType(Env *env, fr_TagValue &val) {
             type = ptrType;
             break;
         case fr_vtObj:
-            type = fr_getFType(env, val.any.o);
+            type = fr_getFType((fr_Env)env, (FObj*)val.any.o);
             break;
         default:
             type = objType;

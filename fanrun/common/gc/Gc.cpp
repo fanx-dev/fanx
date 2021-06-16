@@ -35,7 +35,7 @@ Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
     , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false)
 {
     lastAllocSize = 29;
-    collectLimit = 1000;
+    collectLimit = 100000;
 #if GC_USE_BITMAP
     //pass
 #else

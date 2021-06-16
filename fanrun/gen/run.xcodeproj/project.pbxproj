@@ -37,7 +37,6 @@
 		32EA552226788823003219EA /* baseTest.h in Sources */ = {isa = PBXBuildFile; fileRef = 320544602203196300ECB5F2 /* baseTest.h */; };
 		32EA552326788823003219EA /* sys.h in Sources */ = {isa = PBXBuildFile; fileRef = 3291F92C1F6D416C00F12438 /* sys.h */; };
 		32EA55332679982D003219EA /* sys_Enum.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55262679982D003219EA /* sys_Enum.c */; };
-		32EA55342679982D003219EA /* pod_sys_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55272679982D003219EA /* pod_sys_register.c */; };
 		32EA55352679982D003219EA /* sys_NativeC.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55282679982D003219EA /* sys_NativeC.c */; };
 		32EA55362679982D003219EA /* sys_Int.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55292679982D003219EA /* sys_Int.c */; };
 		32EA55372679982D003219EA /* sys_Num.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552A2679982D003219EA /* sys_Num.c */; };
@@ -99,7 +98,6 @@
 		32EA54FA26787B68003219EA /* ThreadEnv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ThreadEnv.hpp; sourceTree = "<group>"; };
 		32EA55252679982D003219EA /* pod_sys_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_native.h; sourceTree = "<group>"; };
 		32EA55262679982D003219EA /* sys_Enum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Enum.c; sourceTree = "<group>"; };
-		32EA55272679982D003219EA /* pod_sys_register.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_register.c; sourceTree = "<group>"; };
 		32EA55282679982D003219EA /* sys_NativeC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
 		32EA55292679982D003219EA /* sys_Int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
 		32EA552A2679982D003219EA /* sys_Num.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
@@ -216,7 +214,6 @@
 			children = (
 				32EA55252679982D003219EA /* pod_sys_native.h */,
 				32EA55262679982D003219EA /* sys_Enum.c */,
-				32EA55272679982D003219EA /* pod_sys_register.c */,
 				32EA55282679982D003219EA /* sys_NativeC.c */,
 				32EA55292679982D003219EA /* sys_Int.c */,
 				32EA552A2679982D003219EA /* sys_Num.c */,
@@ -302,7 +299,6 @@
 				32EA55352679982D003219EA /* sys_NativeC.c in Sources */,
 				32EA551726788823003219EA /* README.txt in Sources */,
 				32EA55372679982D003219EA /* sys_Num.c in Sources */,
-				32EA55342679982D003219EA /* pod_sys_register.c in Sources */,
 				32EA553B2679982D003219EA /* pod_sys_native.c in Sources */,
 				32EA551826788823003219EA /* system.h in Sources */,
 				32EA551926788823003219EA /* tinycthread.h in Sources */,

@@ -39,7 +39,7 @@ extern  "C"  {
       
       fr_TagValue ret;
       e->pop(&ret);
-      return ret.any.o;
+      return (FObj*)ret.any.o;
   }
   char *sys_Str_getUtf8(fr_Env env__, FObj * self__) {
 //      fr_Value args;
@@ -85,7 +85,7 @@ FObj * ObjFactory::allocObj(Env *env, FType *type, int addRef, int size) {
         size = ftype->c_allocSize;
     }
     
-    FObj * obj = (FObj *)env->vm->gc->alloc(ftype, size);
+    GcObj * obj = (GcObj *)env->vm->gc->alloc(ftype, size);
     //obj->type = ftype;
 //    for (int i=0; i<ftype->fields.size(); ++i) {
 //        FField &f = ftype->fields[i];
@@ -98,7 +98,7 @@ FObj * ObjFactory::allocObj(Env *env, FType *type, int addRef, int size) {
 //        }
 //    }
     
-    return obj;
+    return fr_fromGcObj(obj);
 }
 
 CF_BEGIN
@@ -178,10 +178,10 @@ FObj * ObjFactory::box(Env *env, fr_Value &any, fr_ValueType vtype) {
         if (cache) {
             auto found = boxedInt.find(i);
             if (found != boxedInt.end()) {
-                obj = fr_getPtr(env, found->second);
+                obj = fr_getPtr((fr_Env)env, found->second);
             }
         }
-        obj = sys_Int_box__(env, i, 1);
+        obj = sys_Int_box__((fr_Env)env, i, 1);
         
         if (cache) {
             fr_Obj objRef = env->newGlobalRef(obj);
@@ -191,20 +191,20 @@ FObj * ObjFactory::box(Env *env, fr_Value &any, fr_ValueType vtype) {
     }
         break;
     case fr_vtFloat: {
-        obj = sys_Float_box__(env, any.f, 1);
+        obj = sys_Float_box__((fr_Env)env, any.f, 1);
     }
         break;
     case fr_vtBool: {
         if (!trueObj) {
-            obj = sys_Bool_box__(env, true, 0);
+            obj = sys_Bool_box__((fr_Env)env, true, 0);
             trueObj = env->newGlobalRef(obj);
-            obj = sys_Bool_box__(env, false, 0);
+            obj = sys_Bool_box__((fr_Env)env, false, 0);
             falseObj = env->newGlobalRef(obj);
         }
         if (any.b) {
-            obj = fr_getPtr(env, trueObj);
+            obj = fr_getPtr((fr_Env)env, trueObj);
         } else {
-            obj = fr_getPtr(env, falseObj);
+            obj = fr_getPtr((fr_Env)env, falseObj);
         }
     }
         break;
@@ -215,13 +215,13 @@ FObj * ObjFactory::box(Env *env, fr_Value &any, fr_ValueType vtype) {
 }
 
 bool ObjFactory::unbox(Env *env, FObj * &obj, fr_Value &value) {
-    fr_ValueType type = env->podManager->getValueTypeByType(env, fr_getFType(env, obj));
+    fr_ValueType type = env->podManager->getValueTypeByType(env, fr_getFType((fr_Env)env, obj));
     if (type == fr_vtInt) {
-        value.i = sys_Int_unbox__(env, obj);
+        value.i = sys_Int_unbox__((fr_Env)env, obj);
     } else if (type == fr_vtFloat) {
-        value.f = sys_Float_unbox__(env, obj);
+        value.f = sys_Float_unbox__((fr_Env)env, obj);
     } else if (type == fr_vtBool) {
-        value.b = sys_Bool_unbox__(env, obj);
+        value.b = sys_Bool_unbox__((fr_Env)env, obj);
     } else {
         value.o = obj;
         return false;
@@ -237,24 +237,24 @@ FObj *ObjFactory::getString(Env *env, FPod *curPod, uint16_t sid) {
     
     fr_Obj objRef = (fr_Obj)curPod->constantas.c_strings[sid];
     if (objRef) {
-        return fr_getPtr(env, objRef);
+        return fr_getPtr((fr_Env)env, objRef);
     }
     
     const std::string &utf8 = curPod->constantas.strings[sid];
-    FObj *obj = (FObj *)sys_Str_fromUtf8_(env, utf8.c_str());
+    FObj *obj = (FObj *)sys_Str_fromUtf8_((fr_Env)env, utf8.c_str());
     objRef = env->newGlobalRef(obj);
     curPod->constantas.c_strings[sid] = (void*)objRef;
     
-    return fr_getPtr(env, objRef);
+    return fr_getPtr((fr_Env)env, objRef);
 }
 
 FObj * ObjFactory::newString(Env *env, const char *utf8) {
-    FObj * obj = (FObj *)sys_Str_fromUtf8_(env, utf8);
+    FObj * obj = (FObj *)sys_Str_fromUtf8_((fr_Env)env, utf8);
     return obj;
 }
 
 const char *ObjFactory::getStrUtf8(Env *env, FObj *obj) {
-    return sys_Str_getUtf8(env, obj);
+    return sys_Str_getUtf8((fr_Env)env, obj);
 }
 
 //FObj *ObjFactory::getWrappedType(Env *env, FType *type) {

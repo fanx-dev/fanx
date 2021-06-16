@@ -28,11 +28,6 @@ typedef enum fr_ValueType_ {
     fr_vtPtr,
 } fr_ValueType;
 
-/**
- * internal type
- */
-struct GcObj_;
-typedef struct GcObj_ FObj;
 
 /**
  * typedef for Fantom
@@ -62,7 +57,7 @@ typedef struct fr_Method_ *fr_Method;
 typedef union fr_Value_ {
     fr_Int i;
     fr_Float f;
-    FObj *o;
+    void *o;
     fr_Obj h;
     fr_Bool b;
     void *p;
@@ -123,17 +118,6 @@ void fr_yieldGc(fr_Env self);
  * must only insert at before of IO blocking.
  */
 void fr_allowGc(fr_Env self);
-
-/**
- * fatch pointer from handle
- */
-FObj *fr_getPtr(fr_Env self, fr_Obj obj);
-
-/**
- * convert the pointer to handle
- * the pointer may be relocate by gc
- */
-fr_Obj fr_toHandle(fr_Env self, FObj *obj);
 
 /**
  * add local ref. it will be auto releae when method finished.

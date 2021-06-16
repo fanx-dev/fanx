@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "fni.h"
+#include "vm.h"
 #include <unordered_map>
 
 class Env;

@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni.h"
 #include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 

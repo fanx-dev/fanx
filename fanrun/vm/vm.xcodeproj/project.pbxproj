@@ -258,12 +258,12 @@
 				3237F7731BB76D3600A58B54 /* Fvm.h */,
 				3237F7751BB773B500A58B54 /* fni.cpp */,
 				3237F7761BB773B500A58B54 /* fni.h */,
+				321249512213067B00EF1830 /* vm.h */,
 				323C30B61BC0AC0600F15091 /* ObjFactory.cpp */,
 				323C30B71BC0AC0600F15091 /* ObjFactory.h */,
 				325231111DAC88940044DBF8 /* ExeEngine.h */,
 				3212494E221305CF00EF1830 /* NativeGen.cpp */,
 				3212494F221305CF00EF1830 /* NativeGen.h */,
-				321249512213067B00EF1830 /* vm.h */,
 			);
 			path = vm;
 			sourceTree = "<group>";

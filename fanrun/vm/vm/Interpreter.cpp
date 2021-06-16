@@ -535,7 +535,7 @@ bool Interpreter::exeStep() {
                 entry = context->peek();
                 //fr_ValueType vtype = context->podManager->getValueType(context, curPod, i2);
                 fr_Value out;
-                context->unbox(entry->any.o, out);
+                context->unbox((FObj*)entry->any.o, out);
                 entry->any = out;
                 entry->type = context->podManager->getValueType(context
                                                         , frame()->curPod, i2);
@@ -557,7 +557,7 @@ bool Interpreter::exeStep() {
         case FOp::Throw: {
             fr_TagValue val;
             val = *context->peek();
-            context->throwError(val.any.o);
+            context->throwError((FObj*)val.any.o);
             goto Step_throw;
             break;
         }
@@ -577,7 +577,7 @@ bool Interpreter::exeStep() {
             bool rc = context->pop(&entry);
             assert(rc);
             assert(entry.type == fr_vtObj);
-            obj = entry.any.o;
+            obj = (FObj*)entry.any.o;
             break;
         }
         case FOp::CatchErrStart: {
@@ -638,14 +638,14 @@ void Interpreter::compareEq(int16_t t1, int16_t t2, bool notEq) {
     else if (isPrimitive1) {
         fr_Value any;
         if (p2.any.o != nullptr) {
-            context->unbox(p2.any.o, any);
+            context->unbox((FObj*)p2.any.o, any);
             ret = p1.any.o == any.o;
         }
     }
     else if (isPrimitive2) {
         fr_Value any;
         if (p1.any.o != nullptr) {
-            context->unbox(p1.any.o, any);
+            context->unbox((FObj*)p1.any.o, any);
             ret = p2.any.o == any.o;
         }
     }
@@ -689,7 +689,7 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
     else if (isPrimitive1) {
         fr_Value any;
         if (p2.any.o != nullptr) {
-            context->unbox(p2.any.o, any);
+            context->unbox((FObj*)p2.any.o, any);
             res = (char*)p1.any.o - (char*)any.o;
         } else {
             res = 1;
@@ -698,7 +698,7 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
     else if (isPrimitive2) {
         fr_Value any;
         if (p1.any.o != nullptr) {
-            context->unbox(p1.any.o, any);
+            context->unbox((FObj*)p1.any.o, any);
             res = (char*)any.o - (char*)p2.any.o;
         } else {
             res = -1;

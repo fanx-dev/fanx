@@ -17,7 +17,7 @@
 
 fr_Env fr_getEnv(fr_Fvm vm) {
     Fvm *v = (Fvm*)vm;
-    return v->getEnv();
+    return (fr_Env)v->getEnv();
 }
 
 void fr_releaseEnv(fr_Fvm vm, fr_Env env) {
@@ -80,7 +80,7 @@ int fr_getFuncArity(fr_Env env, fr_Type clz) {
 }
 
 struct FType *fr_getFType(fr_Env self, FObj *obj) {
-    return (struct FType *)gc_getType(obj);
+    return (struct FType *)gc_getType(fr_toGcObj(obj));
 }
 //struct FType *fr_toFType(fr_Env self, FObj *obj);
 const char *fr_getTypeName(fr_Env self, FObj *obj) {
@@ -136,7 +136,7 @@ FType *fr_toFType(fr_Env self, fr_Type otype) {
     //Env *e = (Env*)self;
     //FObj *typeObj = fr_getPtr(self, otype);
     //FType *ftype = e->podManager->getFType(e, typeObj);
-    return otype;
+    return (FType*)otype;
 }
 
 
@@ -172,7 +172,7 @@ fr_Type fr_findType(fr_Env self, const char *pod, const char *type) {
     FType *t = e->findType(pod, type);
     //e->unlock();
     //return fr_getTypeObj(self, t);
-    return t;
+    return (fr_Type)t;
 }
 fr_Type fr_toType(fr_Env self, fr_ValueType vt) {
     Env *e = (Env*)self;
@@ -180,7 +180,7 @@ fr_Type fr_toType(fr_Env self, fr_ValueType vt) {
     FType *t = e->toType(vt);
     //e->unlock();
     //return fr_getTypeObj(self, t);
-    return t;
+    return (fr_Type)t;
 }
 
 bool fr_fitType(fr_Env self, fr_Type a, fr_Type b) {
@@ -191,7 +191,7 @@ bool fr_fitType(fr_Env self, fr_Type a, fr_Type b) {
     
     //FObj *typeObj2 = fr_getPtr(self, b);
     //FType *ftype2 = e->podManager->getFType(e, typeObj2);
-    return e->fitType(a, b);
+    return e->fitType((FType*)a, (FType*)b);
 }
 
 fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
@@ -205,7 +205,7 @@ fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
     //e->unlock();
     
     //return fr_getTypeObj(self, t);
-    return t;
+    return (fr_Type)t;
 }
 fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
     if (obj == 0) {
@@ -213,11 +213,11 @@ fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
     }
     //fr_lock(self);
     FObj *o = fr_getPtr(self, obj);
-    FType *type = (FType*)gc_getType(o);
+    FType *type = (FType*)gc_getType(fr_toGcObj(o));
     //fr_unlock(self);
     
     //return fr_getTypeObj(self, type);
-    return type;
+    return (fr_Type)type;
 }
 
 bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type) {
@@ -257,7 +257,7 @@ void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
     
     fr_ValueType vt = (fr_ValueType)a->valueType;
     if (vt == fr_vtObj) {
-        val->h = fr_toHandle(self, val->o);
+        val->h = fr_toHandle(self, (FObj*)val->o);
     }
 }
 void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
@@ -329,7 +329,7 @@ static void popRet(Env *context, FMethod *method, fr_Value *ret) {
         context->pop(&val);
         if (ret) {
             if (val.type == fr_vtObj) {
-                ret->h = fr_toHandle(context, val.any.o);
+                ret->h = fr_toHandle((fr_Env)context, (FObj*)val.any.o);
             } else {
                 *ret = val.any;
             }
@@ -394,7 +394,7 @@ void fr_callOnObj(fr_Env self, const char *name
     FType *type = e->podManager->getInstanceType(e, entry);
     method = e->podManager->findVirtualMethod(e, type, name, paramCount);
     
-    fr_callMethod(self, method, argCount, arg, ret);
+    fr_callMethod(self, (fr_Method)method, argCount, arg, ret);
 }
 
 void fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name
@@ -417,7 +417,7 @@ void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg)
     Env *e = (Env*)self;
     //e->lock();
     fr_Value val;
-    fr_ValueType vtype = e->podManager->getValueType(e, field->c_parent->c_pod, field->type);
+    fr_ValueType vtype = e->podManager->getValueType(e, ((FField*)field)->c_parent->c_pod, ((FField*)field)->type);
     if (vtype == fr_vtObj) {
         val.o = fr_getPtr(self, arg->h);
     } else {
@@ -433,7 +433,7 @@ bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val)
     bool rc = e->getStaticField(ffield, val);
     fr_ValueType vtype = e->podManager->getValueType(e, ffield->c_parent->c_pod, ffield->type);
     if (val && vtype == fr_vtObj) {
-        val->h = fr_toHandle(self, val->o);
+        val->h = fr_toHandle(self, (FObj*)val->o);
     }
     //e->unlock();
     return rc;
@@ -442,7 +442,7 @@ void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value
     Env *e = (Env*)self;
     //e->lock();
     fr_Value val;
-    fr_ValueType vtype = e->podManager->getValueType(e, field->c_parent->c_pod, field->type);
+    fr_ValueType vtype = e->podManager->getValueType(e, ((FField*)field)->c_parent->c_pod, ((FField*)field)->type);
     if (vtype == fr_vtObj) {
         val.o = fr_getPtr(self, arg->h);
     } else {
@@ -458,7 +458,7 @@ bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value
     bool rc = e->getInstanceField(*bottom, (FField *)field, val);
     fr_ValueType vtype = e->podManager->getValueType(e, ffield->c_parent->c_pod, ffield->type);
     if (val && vtype == fr_vtObj) {
-        val->h = fr_toHandle(self, val->o);
+        val->h = fr_toHandle(self, (FObj*)val->o);
     }
     //e->unlock();
     return rc;
@@ -634,10 +634,21 @@ fr_Obj fr_objToStr(fr_Env self, fr_Value obj, fr_ValueType vtype) {
     if (vtype != fr_vtHandle) {
         //TODO op
         if (vtype == fr_vtObj) {
-            obj.h = fr_toHandle(self, obj.o);
+            obj.h = fr_toHandle(self, (FObj*)obj.o);
         } else {
             obj.h = fr_box(self, &obj, vtype);
         }
     }
     return fr_handleToStr(self, obj.h);
+}
+
+GcObj *fr_toGcObj(FObj *obj) {
+    GcObj *g = (GcObj*)obj;
+    --g;
+    return g;
+    
+}
+FObj *fr_fromGcObj(GcObj *g) {
+    FObj *obj = (FObj*)(++g);
+    return obj;
 }

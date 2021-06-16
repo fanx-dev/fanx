@@ -48,7 +48,7 @@ FObj *makeArgArray(Env *env, int start, int argc, const char * argv[]) {
         env->callNonVirtual(listAdd, 1);
     }
     env->pop(&val);
-    return val.any.o;
+    return (FObj*)val.any.o;
 }
 
 //-p/Users/yangjiandong/workspace/code/fanx/env/ -d baseTest::BoxingTest.main
@@ -148,7 +148,7 @@ int main(int argc, const char * argv[]) {
     sys_register(&vm);
     
     vm.start();
-    //env->trace = debug;
+    env->trace = debug;
     
     FObj *args = makeArgArray(env, i+1, argc, argv);
     

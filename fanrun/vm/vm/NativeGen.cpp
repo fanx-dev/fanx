@@ -218,7 +218,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             }
         }
         
-        name = method->c_stdName;// preName + methodName;
+        name = preName + method->c_stdName;// preName + methodName;
 //        if ((method->flags & FFlags::Setter) || (method->flags & FFlags::Overload)) {
 //            name += "$";
 //            name += std::to_string(method->paramCount);

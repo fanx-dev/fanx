@@ -11,6 +11,7 @@
 #include "Interpreter.h"
 #include "Gc.h"
 #include <atomic>
+#include "vm.h"
 
 Env::Env(Fvm *vm)
     : vm(vm)
@@ -80,7 +81,7 @@ void printValue(fr_TagValue *val) {
             break;
         case fr_vtObj:
             if (val->any.o) {
-                printf("%s(%p)", fr_getTypeName(NULL, val->any.o), val->any.o);
+                printf("%s(%p)", fr_getTypeName(NULL, (FObj*)val->any.o), val->any.o);
             } else {
                 printf("null");
             }
@@ -156,7 +157,7 @@ void Env::push(fr_TagValue *val) {
     }
 #ifndef NODEBUG
     if (val->type == fr_vtObj) {
-        if (!vm->gc->isRef(val->any.o)) {
+        if (!vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
     }
@@ -176,7 +177,7 @@ bool Env::pop(fr_TagValue *val) {
     }
 #ifndef NODEBUG
     if (val->type == fr_vtObj) {
-        if (!vm->gc->isRef(val->any.o)) {
+        if (!vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
     }
@@ -255,7 +256,7 @@ void Env::deleteGlobalRef(fr_Obj obj) {
 }
 
 FObj * Env::allocObj(FType *type, int addRef, int size) {
-    return podManager->objFactory.allocObj(this, type, addRef);
+    return podManager->objFactory.allocObj(this, type, addRef, size);
 }
 
 void Env::walkLocalRoot(Collector *gc) {
@@ -264,16 +265,16 @@ void Env::walkLocalRoot(Collector *gc) {
         fr_TagValue *val = (fr_TagValue*)(((char*)(frame+1)) + frame->paddingSize);
         for (; val<(fr_TagValue*)stackTop; ++val) {
             if (val->type == fr_vtObj && val->any.o) {
-                gc->onVisit((FObj*)val->any.o);
+                gc->onVisit(fr_toGcObj((FObj*)val->any.o));
             }
         }
     }
     
     if (getError()) {
-        gc->onVisit(getError());
+        gc->onVisit(fr_toGcObj(getError()));
     }
     if (thread) {
-        gc->onVisit(thread);
+        gc->onVisit(fr_toGcObj(thread));
     }
 }
 
@@ -379,7 +380,7 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
             val.type = this->podManager->getValueType(this
                                                     , curPod, method->returnType);
             if (val.type == fr_vtObj) {
-                val.any.o = fr_getPtr(this, ret.h);
+                val.any.o = fr_getPtr((fr_Env)this, ret.h);
             }
             this->push(&val);
         }
@@ -496,7 +497,7 @@ void Env::setStaticField(FField *field, fr_Value *val) {
             
             if (sfield->o) {
                 //gc_setDirty(sfield->o, 1);
-                vm->gc->setDirty(sfield->o);
+                vm->gc->setDirty(fr_toGcObj((FObj*)sfield->o));
             }
         } else {
             *sfield = *val;
@@ -524,7 +525,7 @@ bool Env::getStaticField(FField *field, fr_Value *val) {
 
 void Env::setInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
     if ((field->flags & FFlags::Static)==0) {
-        fr_Value *sfield = podManager->getInstanceFieldValue(bottom.o, field);
+        fr_Value *sfield = podManager->getInstanceFieldValue((FObj*)bottom.o, field);
         fr_ValueType vtype = podManager->getValueType(this, field->c_parent->c_pod, field->type);
         //assert(vtype == val->type);
         
@@ -532,7 +533,7 @@ void Env::setInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
             *sfield = *val;
             if (sfield->o) {
                 //gc_setDirty(sfield->o, 1);
-                vm->gc->setDirty(sfield->o);
+                vm->gc->setDirty(fr_toGcObj((FObj*)sfield->o));
             }
         } else {
             *sfield = *val;
@@ -541,7 +542,7 @@ void Env::setInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
 }
 bool Env::getInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
     if ((field->flags & FFlags::Static)==0) {
-        fr_Value *sfield = podManager->getInstanceFieldValue(bottom.o, field);
+        fr_Value *sfield = podManager->getInstanceFieldValue((FObj*)bottom.o, field);
         //fr_ValueType vtype = podManager->getValueType(this, field->c_parent->c_pod, field->type);
         *val = *sfield;
         //val->type = vtype;
@@ -582,7 +583,7 @@ void Env::throwError(FObj * err) {
 }
 
 void Env::printError(FObj * err) {
-    FType *ftype = fr_getFType(this, err);
+    FType *ftype = fr_getFType((fr_Env)this, err);
     std::string &name = ftype->c_name;
     printf("error: %s\n", name.c_str());
     //TODO call Err.trace
@@ -609,7 +610,7 @@ void Env::throwNPE() {
     FMethod *ctor = type->c_methodMap["make"];
     newObj(type, ctor, 2);
     fr_TagValue error = *peek();
-    throwError(error.any.o);
+    throwError((FObj*)error.any.o);
 }
 
 void Env::throwNew(const char* podName, const char* typeName, const char* msg, int addRef) {
@@ -624,7 +625,7 @@ void Env::throwNew(const char* podName, const char* typeName, const char* msg, i
     
     newObjByName(podName, typeName, "make", 2);
     fr_TagValue error = *peek();
-    throwError(error.any.o);
+    throwError((FObj*)error.any.o);
 }
 
 void Env::clearError() {
@@ -633,9 +634,9 @@ void Env::clearError() {
 }
 
 fr_Array* Env::arrayNew(FType *elemType, size_t elemSize, size_t size) {
-    fr_Type arrayType = findType("sys", "Array");
+    FType *arrayType = findType("sys", "Array");
     
-    size_t allocSize = sizeof(fr_Array)+(elemSize*(size+1));
+    size_t allocSize = sizeof(fr_ObjHeader)+sizeof(fr_Array)+(elemSize*(size+1));
     fr_Array *a = (fr_Array*)allocObj(arrayType, 2, (int)allocSize);
     a->elemType = elemType;
     a->elemSize = (int32_t)elemSize;
