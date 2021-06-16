@@ -342,7 +342,10 @@ bool PodManager::isPrimitiveType(Env *env, FPod *curPod, uint16_t tid) {
     }
     
     FType *type = getType(env, curPod, tid);
-    
+    return isPrimitiveType(env, type);
+}
+
+bool PodManager::isPrimitiveType(Env *env, FType *type) {
     if (!intType) initSysType(env);
     
     if (type == intType) {

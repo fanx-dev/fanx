@@ -77,6 +77,7 @@ public:
     bool isVoidType(Env *env, FType *type);
     bool isNullableType(Env *env, FPod *curPod, uint16_t tid);
     bool isPrimitiveType(Env *env, FPod *curPod, uint16_t tid);
+    bool isPrimitiveType(Env *env, FType *type);
     
     void initTypeAllocSize(Env *env, FType *type);
     FType *getInstanceType(Env *env, fr_TagValue &val);

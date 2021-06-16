@@ -2,13 +2,13 @@
 #include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
-fr_Bool sys_Bool_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {
-    return false;
-}
-void sys_Bool_privateMake(fr_Env env, fr_Bool self) {
-    return;
-}
-fr_Bool sys_Bool_equals(fr_Env env, fr_Bool self, fr_Obj obj) {
+//fr_Bool sys_Bool_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {
+//    return false;
+//}
+//void sys_Bool_privateMake_val(fr_Env env, fr_Bool self) {
+//    return;
+//}
+fr_Bool sys_Bool_equals_val(fr_Env env, fr_Bool self, fr_Obj obj) {
     fr_Type type;
     bool eq = false;
     if (obj == NULL) {
@@ -27,16 +27,16 @@ fr_Bool sys_Bool_equals(fr_Env env, fr_Bool self, fr_Obj obj) {
     return eq;
 }
 
-fr_Bool sys_Bool_not(fr_Env env, fr_Bool self) {
+fr_Bool sys_Bool_not__val(fr_Env env, fr_Bool self) {
     return !self;
 }
-fr_Bool sys_Bool_and(fr_Env env, fr_Bool self, fr_Bool b) {
+fr_Bool sys_Bool_and__val(fr_Env env, fr_Bool self, fr_Bool b) {
     return self && b;
 }
-fr_Bool sys_Bool_or(fr_Env env, fr_Bool self, fr_Bool b) {
+fr_Bool sys_Bool_or__val(fr_Env env, fr_Bool self, fr_Bool b) {
     return self || b;
 }
-fr_Bool sys_Bool_xor(fr_Env env, fr_Bool self, fr_Bool b) {
+fr_Bool sys_Bool_xor__val(fr_Env env, fr_Bool self, fr_Bool b) {
     return self != b;
 }
 void sys_Bool_static__init(fr_Env env) {

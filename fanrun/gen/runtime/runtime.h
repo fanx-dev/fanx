@@ -23,6 +23,8 @@ extern  "C" {
 #include <setjmp.h>
 #include <string.h>
 
+#include "fni.h"
+
 //#define LONG_JMP_EXCEPTION
 typedef fr_Obj fr_Err;
 
@@ -76,20 +78,8 @@ void fr_setGcDirty(fr_Env self, fr_Obj obj);
 // Util
 ////////////////////////////
 
-typedef enum fr_ValueType_ {
-    fr_vtOther, //unsed
-    fr_vtObj,
-    fr_vtInt,
-    fr_vtFloat,
-    fr_vtBool,
-    fr_vtHandle,
-    fr_vtPtr,
-} fr_ValueType;
-
-fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int elemSize, size_t len);
-
 //fr_Obj fr_newStr(fr_Env __env, const wchar_t *data, size_t size, bool copy);
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
+//fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
 const char *fr_getStrUtf8(fr_Env env__, fr_Obj str);
     
 //fr_Obj fr_toTypeObj(fr_Env env, fr_Type);

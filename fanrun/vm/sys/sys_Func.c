@@ -2,19 +2,19 @@
 #include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
-void sys_Func_make(fr_Env env, fr_Obj self) {
-    //struct sys_Func_ *p = (struct sys_Func_*)fr_getPtr(env, self);
-    return;
-}
-fr_Obj sys_Func_callList(fr_Env env, fr_Obj self, fr_Obj args) {
-    return 0;
-}
-fr_Obj sys_Func_callOn(fr_Env env, fr_Obj self, fr_Obj target, fr_Obj args) {
-    return 0;
-}
-fr_Obj sys_Func_bind(fr_Env env, fr_Obj self, fr_Obj args) {
-    return 0;
-}
+//void sys_Func_make(fr_Env env, fr_Obj self) {
+//    //struct sys_Func_ *p = (struct sys_Func_*)fr_getPtr(env, self);
+//    return;
+//}
+//fr_Obj sys_Func_callList(fr_Env env, fr_Obj self, fr_Obj args) {
+//    return 0;
+//}
+//fr_Obj sys_Func_callOn(fr_Env env, fr_Obj self, fr_Obj target, fr_Obj args) {
+//    return 0;
+//}
+//fr_Obj sys_Func_bind(fr_Env env, fr_Obj self, fr_Obj args) {
+//    return 0;
+//}
 void sys_Func_static__init(fr_Env env) {
     return;
 }

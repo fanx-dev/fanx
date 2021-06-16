@@ -218,15 +218,24 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             }
         }
         
-        name = preName + methodName;
-        if ((method->flags & FFlags::Setter) || (method->flags & FFlags::Overload)) {
-            name += "$";
-            name += std::to_string(method->paramCount);
-        }
+        name = method->c_stdName;// preName + methodName;
+//        if ((method->flags & FFlags::Setter) || (method->flags & FFlags::Overload)) {
+//            name += "$";
+//            name += std::to_string(method->paramCount);
+//        }
         
-        std::string escapeName = name;
-        escape(escapeName);
+        std::string escapeName = method->c_mangledName;
+        //escape(escapeName);
         //escapeKeyword(escapeName);
+        
+        const char *valFlag = "";
+        if ((method->flags & FFlags::Static) == 0) {
+            if (type->c_mangledName == "sys_Int" ||
+                type->c_mangledName == "sys_Float" ||
+                type->c_mangledName == "sys_Bool"||
+                type->c_mangledName == "sys_Ptr")
+            valFlag = "_val";
+        }
         
         //--------------------------------
         //get return type
@@ -271,7 +280,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             if (!isVoid) {
                 printer->printf("retValue.%s = ", retTagName.c_str());
             }
-            printer->printf("%s(env", escapeName.c_str());
+            printer->printf("%s%s(env", escapeName.c_str(), valFlag);
             genNativeMethod(pod, type, method, printer, PrintType::pNatiArgPass);
             printer->println(");");
             if (!isVoid) {
@@ -291,7 +300,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             } else {
                 printer->printf("void");
             }
-            printer->printf(" %s(fr_Env env", escapeName.c_str());
+            printer->printf(" %s%s(fr_Env env", escapeName.c_str(), valFlag);
             genNativeMethod(pod, type, method, printer, PrintType::pImpeDef);
             printer->println(");");
             
@@ -303,7 +312,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             } else {
                 printer->printf("void");
             }
-            printer->printf(" %s(fr_Env env", escapeName.c_str());
+            printer->printf(" %s%s(fr_Env env", escapeName.c_str(), valFlag);
             genNativeMethod(pod, type, method, printer, PrintType::pImpeDef);
             printer->println(") {");
             printer->indent();

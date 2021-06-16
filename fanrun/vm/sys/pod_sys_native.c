@@ -229,11 +229,11 @@ void sys_Bool_equals_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.b;
 
 
-    retValue.b = sys_Bool_equals(env, arg_0, arg_1);
+    retValue.b = sys_Bool_equals_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Bool_not_v(fr_Env env, void *param, void *ret) {
+void sys_Bool_not__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Bool arg_0; 
     fr_Value retValue;
@@ -242,29 +242,11 @@ void sys_Bool_not_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.b;
 
 
-    retValue.b = sys_Bool_not(env, arg_0);
+    retValue.b = sys_Bool_not__val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Bool_and_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_Value value_1;
-    fr_Bool arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1);
-    arg_1 = value_1.b;
-
-    fr_getParam(env, param, &value_0, 0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_and(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Bool_or_v(fr_Env env, void *param, void *ret) {
+void sys_Bool_and__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Bool arg_0; 
     fr_Value value_1;
@@ -278,11 +260,11 @@ void sys_Bool_or_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.b;
 
 
-    retValue.b = sys_Bool_or(env, arg_0, arg_1);
+    retValue.b = sys_Bool_and__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Bool_xor_v(fr_Env env, void *param, void *ret) {
+void sys_Bool_or__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Bool arg_0; 
     fr_Value value_1;
@@ -296,7 +278,25 @@ void sys_Bool_xor_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.b;
 
 
-    retValue.b = sys_Bool_xor(env, arg_0, arg_1);
+    retValue.b = sys_Bool_or__val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Bool_xor__v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Bool arg_0; 
+    fr_Value value_1;
+    fr_Bool arg_1; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1);
+    arg_1 = value_1.b;
+
+    fr_getParam(env, param, &value_0, 0);
+    arg_0 = value_0.b;
+
+
+    retValue.b = sys_Bool_xor__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -368,7 +368,7 @@ void sys_Float_equals_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.b = sys_Float_equals(env, arg_0, arg_1);
+    retValue.b = sys_Float_equals_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -381,7 +381,7 @@ void sys_Float_isNaN_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.b = sys_Float_isNaN(env, arg_0);
+    retValue.b = sys_Float_isNaN_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -394,7 +394,7 @@ void sys_Float_negate_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_negate(env, arg_0);
+    retValue.f = sys_Float_negate_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -412,7 +412,7 @@ void sys_Float_mult_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_mult(env, arg_0, arg_1);
+    retValue.f = sys_Float_mult_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -430,7 +430,7 @@ void sys_Float_multInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_multInt(env, arg_0, arg_1);
+    retValue.f = sys_Float_multInt_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -448,7 +448,7 @@ void sys_Float_div_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_div(env, arg_0, arg_1);
+    retValue.f = sys_Float_div_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -466,7 +466,7 @@ void sys_Float_divInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_divInt(env, arg_0, arg_1);
+    retValue.f = sys_Float_divInt_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -484,7 +484,7 @@ void sys_Float_mod_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_mod(env, arg_0, arg_1);
+    retValue.f = sys_Float_mod_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -502,7 +502,7 @@ void sys_Float_modInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_modInt(env, arg_0, arg_1);
+    retValue.f = sys_Float_modInt_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -520,7 +520,7 @@ void sys_Float_plus_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_plus(env, arg_0, arg_1);
+    retValue.f = sys_Float_plus_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -538,7 +538,7 @@ void sys_Float_plusInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_plusInt(env, arg_0, arg_1);
+    retValue.f = sys_Float_plusInt_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -556,7 +556,7 @@ void sys_Float_minus_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_minus(env, arg_0, arg_1);
+    retValue.f = sys_Float_minus_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -574,7 +574,7 @@ void sys_Float_minusInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.f = sys_Float_minusInt(env, arg_0, arg_1);
+    retValue.f = sys_Float_minusInt_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -587,7 +587,7 @@ void sys_Float_bits_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.i = sys_Float_bits(env, arg_0);
+    retValue.i = sys_Float_bits_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -600,7 +600,7 @@ void sys_Float_bits32_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.i = sys_Float_bits32(env, arg_0);
+    retValue.i = sys_Float_bits32_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -613,7 +613,7 @@ void sys_Float_toStr_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.h = sys_Float_toStr(env, arg_0);
+    retValue.h = sys_Float_toStr_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -626,7 +626,7 @@ void sys_Float_toInt_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.i = sys_Float_toInt(env, arg_0);
+    retValue.i = sys_Float_toInt_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -644,7 +644,7 @@ void sys_Float_toLocale_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.f;
 
 
-    retValue.h = sys_Float_toLocale(env, arg_0, arg_1);
+    retValue.h = sys_Float_toLocale_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -802,7 +802,7 @@ void sys_Int_privateMake_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    sys_Int_privateMake(env, arg_0);
+    sys_Int_privateMake_val(env, arg_0);
 }
 
 void sys_Int_equals_v(fr_Env env, void *param, void *ret) {
@@ -819,7 +819,7 @@ void sys_Int_equals_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.b = sys_Int_equals(env, arg_0, arg_1);
+    retValue.b = sys_Int_equals_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -837,7 +837,7 @@ void sys_Int_compare_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_compare(env, arg_0, arg_1);
+    retValue.i = sys_Int_compare_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -850,7 +850,7 @@ void sys_Int_negate_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_negate(env, arg_0);
+    retValue.i = sys_Int_negate_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -863,7 +863,7 @@ void sys_Int_increment_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_increment(env, arg_0);
+    retValue.i = sys_Int_increment_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -876,7 +876,7 @@ void sys_Int_decrement_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_decrement(env, arg_0);
+    retValue.i = sys_Int_decrement_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -894,7 +894,7 @@ void sys_Int_mult_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_mult(env, arg_0, arg_1);
+    retValue.i = sys_Int_mult_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -912,7 +912,7 @@ void sys_Int_multFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_multFloat(env, arg_0, arg_1);
+    retValue.f = sys_Int_multFloat_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -930,7 +930,7 @@ void sys_Int_div_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_div(env, arg_0, arg_1);
+    retValue.i = sys_Int_div_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -948,7 +948,7 @@ void sys_Int_divFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_divFloat(env, arg_0, arg_1);
+    retValue.f = sys_Int_divFloat_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -966,7 +966,7 @@ void sys_Int_mod_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_mod(env, arg_0, arg_1);
+    retValue.i = sys_Int_mod_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -984,7 +984,7 @@ void sys_Int_modFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_modFloat(env, arg_0, arg_1);
+    retValue.f = sys_Int_modFloat_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1002,7 +1002,7 @@ void sys_Int_plus_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_plus(env, arg_0, arg_1);
+    retValue.i = sys_Int_plus_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1020,7 +1020,7 @@ void sys_Int_plusFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_plusFloat(env, arg_0, arg_1);
+    retValue.f = sys_Int_plusFloat_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1038,7 +1038,7 @@ void sys_Int_minus_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_minus(env, arg_0, arg_1);
+    retValue.i = sys_Int_minus_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1056,11 +1056,11 @@ void sys_Int_minusFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_minusFloat(env, arg_0, arg_1);
+    retValue.f = sys_Int_minusFloat_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Int_not_v(fr_Env env, void *param, void *ret) {
+void sys_Int_not__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Int arg_0; 
     fr_Value retValue;
@@ -1069,29 +1069,11 @@ void sys_Int_not_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_not(env, arg_0);
+    retValue.i = sys_Int_not__val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Int_and_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Int arg_0; 
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0);
-    arg_0 = value_0.i;
-
-
-    retValue.i = sys_Int_and(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Int_or_v(fr_Env env, void *param, void *ret) {
+void sys_Int_and__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Int arg_0; 
     fr_Value value_1;
@@ -1105,11 +1087,11 @@ void sys_Int_or_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_or(env, arg_0, arg_1);
+    retValue.i = sys_Int_and__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Int_xor_v(fr_Env env, void *param, void *ret) {
+void sys_Int_or__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Int arg_0; 
     fr_Value value_1;
@@ -1123,7 +1105,25 @@ void sys_Int_xor_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_xor(env, arg_0, arg_1);
+    retValue.i = sys_Int_or__val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Int_xor__v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Int arg_0; 
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0);
+    arg_0 = value_0.i;
+
+
+    retValue.i = sys_Int_xor__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1141,7 +1141,7 @@ void sys_Int_shiftl_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_shiftl(env, arg_0, arg_1);
+    retValue.i = sys_Int_shiftl_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1159,7 +1159,7 @@ void sys_Int_shiftr_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_shiftr(env, arg_0, arg_1);
+    retValue.i = sys_Int_shiftr_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1177,7 +1177,7 @@ void sys_Int_shifta_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_shifta(env, arg_0, arg_1);
+    retValue.i = sys_Int_shifta_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1195,7 +1195,7 @@ void sys_Int_pow_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.i = sys_Int_pow(env, arg_0, arg_1);
+    retValue.i = sys_Int_pow_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1208,7 +1208,7 @@ void sys_Int_toStr_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.h = sys_Int_toStr(env, arg_0);
+    retValue.h = sys_Int_toStr_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1226,7 +1226,7 @@ void sys_Int_toHex_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.h = sys_Int_toHex(env, arg_0, arg_1);
+    retValue.h = sys_Int_toHex_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1249,7 +1249,7 @@ void sys_Int_toRadix_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.h = sys_Int_toRadix(env, arg_0, arg_1, arg_2);
+    retValue.h = sys_Int_toRadix_val(env, arg_0, arg_1, arg_2);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1262,7 +1262,7 @@ void sys_Int_toChar_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.h = sys_Int_toChar(env, arg_0);
+    retValue.h = sys_Int_toChar_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1280,7 +1280,7 @@ void sys_Int_toCode_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.h = sys_Int_toCode(env, arg_0, arg_1);
+    retValue.h = sys_Int_toCode_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1293,7 +1293,7 @@ void sys_Int_toFloat_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.i;
 
 
-    retValue.f = sys_Int_toFloat(env, arg_0);
+    retValue.f = sys_Int_toFloat_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1363,7 +1363,7 @@ void sys_Ptr_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    sys_Ptr_make(env, arg_0);
+    sys_Ptr_make_val(env, arg_0);
 }
 
 void sys_Ptr_stackAlloc_v(fr_Env env, void *param, void *ret) {
@@ -1388,7 +1388,7 @@ void sys_Ptr_load_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    retValue.h = sys_Ptr_load(env, arg_0);
+    retValue.h = sys_Ptr_load_val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1405,7 +1405,7 @@ void sys_Ptr_store_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    sys_Ptr_store(env, arg_0, arg_1);
+    sys_Ptr_store_val(env, arg_0, arg_1);
 }
 
 void sys_Ptr_plus_v(fr_Env env, void *param, void *ret) {
@@ -1422,7 +1422,7 @@ void sys_Ptr_plus_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    retValue.p = sys_Ptr_plus(env, arg_0, arg_1);
+    retValue.p = sys_Ptr_plus_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1444,7 +1444,7 @@ void sys_Ptr_set_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    sys_Ptr_set(env, arg_0, arg_1, arg_2);
+    sys_Ptr_set_val(env, arg_0, arg_1, arg_2);
 }
 
 void sys_Ptr_get_v(fr_Env env, void *param, void *ret) {
@@ -1461,7 +1461,7 @@ void sys_Ptr_get_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.p;
 
 
-    retValue.h = sys_Ptr_get(env, arg_0, arg_1);
+    retValue.h = sys_Ptr_get_val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 

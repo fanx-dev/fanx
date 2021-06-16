@@ -83,7 +83,7 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
     }
     
     for (int i=0; i<type->fieldCount; ++i) {
-        fr_Field &f = type->fieldList[i];
+        fr_Field_ &f = type->fieldList[i];
         if (!f.isStatic && !f.isValType) {
             fr_Obj* objAddress = (fr_Obj*)(((char*)(obj)) + f.offset);
             if (*objAddress == NULL) continue;
@@ -203,7 +203,7 @@ void Vm::registerClass(const char *pod, const char *clz, fr_Type type) {
     typeDb[podName][clzName] = type;
     //classSet.insert(type);
     for (int i=0; i<type->fieldCount; ++i) {
-        fr_Field &f = type->fieldList[i];
+        fr_Field_ &f = type->fieldList[i];
         if (f.isStatic && !f.isValType) {
             fr_Obj* objAddress = (fr_Obj*)(f.pointer);
             addStaticRef(objAddress);

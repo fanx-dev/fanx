@@ -9,7 +9,7 @@ fr_Int sys_NativeC_toId(fr_Env env, fr_Obj self) {
 }
 fr_Obj sys_NativeC_typeName(fr_Env env, fr_Obj self) {
     const char *name = fr_getTypeName(env, fr_getPtr(env, self));
-    return fr_newStrUtf8(env, name);
+    return fr_newStrUtf8(env, name, -1);
 }
 void sys_NativeC_print(fr_Env env, fr_Obj utf8) {
     fr_Array *a;
@@ -22,7 +22,7 @@ void sys_NativeC_printErr(fr_Env env, fr_Obj utf8) {
     fprintf( stderr, "%s\n", (const char*)a->data);
 }
 fr_Obj sys_NativeC_stackTrace(fr_Env env) {
-    return fr_newStrUtf8(env, "TODO");
+    return fr_newStrUtf8(env, "TODO", -1);
 }
 fr_Obj sys_Str_format(fr_Env env, fr_Obj format, fr_Obj args) {
     return 0;

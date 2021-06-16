@@ -3,5 +3,5 @@ podName = baseTest
 summary = test for boot vm from draft
 version = 2.0
 srcDirs = test/
-depends = sys 2.0, std 1.0
+depends = sys 2.0
 

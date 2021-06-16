@@ -19,13 +19,13 @@ extern  "C" {
 typedef void *fr_Obj;
 struct fr_Env_struct;
 typedef struct fr_Env_struct *fr_Env;
-    
+
 struct fr_Facet {
     const char *type;
     const char *val;
 };
 
-struct fr_Field {
+struct fr_Field_ {
     const char *name;
     uint32_t flags;
     const char *type;
@@ -38,7 +38,7 @@ struct fr_Field {
     struct fr_Facet *facetList;
 };
 
-struct fr_MethodParam {
+struct fr_MethodParam_ {
     const char *name;
     uint32_t flags;
     const char *type;
@@ -46,14 +46,14 @@ struct fr_MethodParam {
 
 typedef void (*fr_Function)(fr_Env env__, void *self__, void *returnVar__, int varCount__, ...);
 
-struct fr_Method {
+struct fr_Method_ {
     const char *name;
     uint32_t flags;
     const char *retType;
     //const char *inheritReturenType;
     fr_Function func;
     int paramsCount;
-    struct fr_MethodParam *paramsList;
+    struct fr_MethodParam_ *paramsList;
     
     int facetCount;
     struct fr_Facet *facetList;
@@ -78,10 +78,10 @@ struct fr_Class_ {
     int mixinCount;
   
     int fieldCount;
-    struct fr_Field *fieldList;
+    struct fr_Field_ *fieldList;
     
     int methodCount;
-    struct fr_Method *methodList;
+    struct fr_Method_ *methodList;
     
     int facetCount;
     struct fr_Facet *facetList;

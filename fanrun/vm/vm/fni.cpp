@@ -583,7 +583,7 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
 // Str
 ////////////////////////////
 
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t len) {
     Env *e = (Env*)self;
     //e->lock();
     FObj *str = e->podManager->objFactory.newString(e, bytes);
@@ -592,14 +592,14 @@ fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
     return objRef;
 }
 
-const char *fr_getStrUtf8(fr_Env self, fr_Obj str, bool *isCopy) {
+const char *fr_getStrUtf8(fr_Env self, fr_Obj str) {
     Env *e = (Env*)self;
     //e->lock();
     const char *cstr = e->podManager->objFactory.getStrUtf8(e, fr_getPtr(self, str));
     //e->unlock();
-    if (isCopy) {
-        *isCopy = false;
-    }
+//    if (isCopy) {
+//        *isCopy = false;
+//    }
     return cstr;
 }
 
@@ -610,7 +610,7 @@ void fr_releaseStrUtf8(fr_Env self, fr_Obj str, const char *bytes) {
 fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
     fr_Obj str;
     if (!x) {
-        return fr_newStrUtf8(env, "null");
+        return fr_newStrUtf8(env, "null", -1);
     }
     // if it is primitive type must be unbox before call it's method.
     fr_Value val;

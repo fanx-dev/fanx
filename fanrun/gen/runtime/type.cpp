@@ -11,6 +11,17 @@
 #include "ThreadEnv.hpp"
 #include "Vm.hpp"
 
+
+bool fr_fitType(fr_Env env, fr_Type tempType, fr_Type type) {
+    while (true) {
+        if (tempType == type) return true;
+        if (tempType == tempType->base) break;
+        tempType = tempType->base;
+        if (!tempType) break;
+    }
+    return false;
+}
+
 bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type) {
     if (!obj) return false;
 

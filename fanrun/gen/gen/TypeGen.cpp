@@ -159,7 +159,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         printer->println("type->base = (fr_Type)%s_class__;", baseName.c_str());
     }
     printer->println("type->fieldCount = %d;", type->fields.size());
-    printer->println("type->fieldList = (struct fr_Field*)malloc(sizeof(struct fr_Field)*%d);", type->fields.size());
+    printer->println("type->fieldList = (struct fr_Field_*)malloc(sizeof(struct fr_Field_)*%d);", type->fields.size());
     //int offset = 0;
     for (int i=0; i<type->fields.size(); ++i) {
         FField &field = type->fields[i];
@@ -193,7 +193,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
     }
     
     printer->println("type->methodCount = %d;", type->methods.size());
-    printer->println("type->methodList = (struct fr_Method*)malloc(sizeof(struct fr_Method)*%d);", type->methods.size());
+    printer->println("type->methodList = (struct fr_Method_*)malloc(sizeof(struct fr_Method_)*%d);", type->methods.size());
     //int offset = 0;
     for (int i=0; i<type->methods.size(); ++i) {
         FMethod &method = type->methods[i];
@@ -214,7 +214,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         }
         
         printer->println("type->methodList[%d].paramsCount = %d;", i, method.paramCount);
-        printer->println("type->methodList[%d].paramsList = (struct fr_MethodParam*)malloc(sizeof(struct fr_MethodParam)*%d);"
+        printer->println("type->methodList[%d].paramsList = (struct fr_MethodParam_*)malloc(sizeof(struct fr_MethodParam_)*%d);"
                          , i, method.paramCount);
         
         for (int j=0; j<method.paramCount; ++j) {
@@ -357,9 +357,9 @@ void TypeGen::genStaticField(Printer *printer, bool isExtern) {
 //    if ((type->meta.flags & FFlags::Native) != 0) {
 //        isExtern = true;
 //    }
-    if (type->c_isNative) {
-        isExtern = true;
-    }
+//    if (type->c_isNative) {
+//        isExtern = true;
+//    }
     
     for (int i=0; i<type->fields.size(); ++i) {
         FField *field = &type->fields[i];

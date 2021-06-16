@@ -2,7 +2,7 @@
 #include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
-#include "FType.h"
+//#include "FType.h"
 //
 //void sys_Obj_make(fr_Env env, fr_Obj self) {
 //    return;
@@ -36,7 +36,7 @@ fr_Obj sys_Obj_trap(fr_Env env, fr_Obj self, fr_Obj name, fr_Obj args) {
         //TODO
     }
     
-    const char *sname = fr_getStrUtf8(env, name, nullptr);
+    const char *sname = fr_getStrUtf8(env, name);
     fr_Value ret;
     fr_callOnObj(env, sname, 1+0, &val, &ret);
     //TODO

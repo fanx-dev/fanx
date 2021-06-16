@@ -45,16 +45,16 @@ typedef void * fr_Ptr;
 /**
  * user client handle type
  */
-typedef FObj **fr_Obj;
+typedef void *fr_Obj;
 
-struct FType;
-typedef struct FType *fr_Type;
+struct fr_Class_;
+typedef struct fr_Class_ *fr_Type;
 
-struct FField;
-typedef struct FField *fr_Field;
+struct fr_Field_;
+typedef struct fr_Field_ *fr_Field;
 
-struct FMethod;
-typedef struct FMethod *fr_Method;
+struct fr_Method_;
+typedef struct fr_Method_ *fr_Method;
 
 /**
  * union type, store any thing
@@ -81,7 +81,8 @@ typedef struct fr_TagValue_ {
  * fr_Env is a API per thread
  */
 //struct fr_Env_;
-typedef void *fr_Env;
+struct fr_Env_struct;
+typedef struct fr_Env_struct *fr_Env;
 
 /**
  * Fantom VM
@@ -254,7 +255,7 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value);
 /**
  * new create Str obj from utf8
  */
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t len);
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
 
 /**
  * get utf8 from Str obj.
