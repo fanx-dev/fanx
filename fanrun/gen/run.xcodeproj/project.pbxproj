@@ -8,6 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		320544622203196300ECB5F2 /* baseTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 320544612203196300ECB5F2 /* baseTest.c */; };
+		3235215C268AAD9100EE50DF /* sys_Enum.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235214F268AAD9100EE50DF /* sys_Enum.c */; };
+		3235215D268AAD9100EE50DF /* pod_sys_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352150268AAD9100EE50DF /* pod_sys_register.c */; };
+		3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352151268AAD9100EE50DF /* sys_NativeC.c */; };
+		3235215F268AAD9100EE50DF /* sys_Int.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352152268AAD9100EE50DF /* sys_Int.c */; };
+		32352160268AAD9100EE50DF /* sys_Num.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352153268AAD9100EE50DF /* sys_Num.c */; };
+		32352161268AAD9100EE50DF /* sys_Obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32352155268AAD9100EE50DF /* sys_Obj.cpp */; };
+		32352162268AAD9100EE50DF /* sys_Float.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352156268AAD9100EE50DF /* sys_Float.c */; };
+		32352163268AAD9100EE50DF /* sys_Bool.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352157268AAD9100EE50DF /* sys_Bool.c */; };
+		32352164268AAD9100EE50DF /* pod_sys_native.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352158268AAD9100EE50DF /* pod_sys_native.c */; };
+		32352165268AAD9100EE50DF /* sys_Ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352159268AAD9100EE50DF /* sys_Ptr.c */; };
+		32352166268AAD9100EE50DF /* sys_Array.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235215A268AAD9100EE50DF /* sys_Array.c */; };
+		32352167268AAD9100EE50DF /* sys_Func.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235215B268AAD9100EE50DF /* sys_Func.c */; };
 		324A54B42000EE130083C73E /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 324A54B22000EE130083C73E /* sys.c */; };
 		324BFA8523BC692A007F2863 /* type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324BFA8423BC692A007F2863 /* type.cpp */; };
 		326165501FF8A578002174D6 /* Vm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3261654F1FF8A578002174D6 /* Vm.cpp */; };
@@ -36,20 +48,8 @@
 		32EA552026788823003219EA /* runtime.h in Sources */ = {isa = PBXBuildFile; fileRef = 3291F9271F6D416C00F12438 /* runtime.h */; };
 		32EA552226788823003219EA /* baseTest.h in Sources */ = {isa = PBXBuildFile; fileRef = 320544602203196300ECB5F2 /* baseTest.h */; };
 		32EA552326788823003219EA /* sys.h in Sources */ = {isa = PBXBuildFile; fileRef = 3291F92C1F6D416C00F12438 /* sys.h */; };
-		32EA55332679982D003219EA /* sys_Enum.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55262679982D003219EA /* sys_Enum.c */; };
-		32EA55352679982D003219EA /* sys_NativeC.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55282679982D003219EA /* sys_NativeC.c */; };
-		32EA55362679982D003219EA /* sys_Int.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55292679982D003219EA /* sys_Int.c */; };
-		32EA55372679982D003219EA /* sys_Num.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552A2679982D003219EA /* sys_Num.c */; };
-		32EA55382679982D003219EA /* sys_Obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552C2679982D003219EA /* sys_Obj.cpp */; };
-		32EA55392679982D003219EA /* sys_Float.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552D2679982D003219EA /* sys_Float.c */; };
-		32EA553A2679982D003219EA /* sys_Bool.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552E2679982D003219EA /* sys_Bool.c */; };
-		32EA553B2679982D003219EA /* pod_sys_native.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA552F2679982D003219EA /* pod_sys_native.c */; };
-		32EA553C2679982D003219EA /* sys_Ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55302679982D003219EA /* sys_Ptr.c */; };
-		32EA553D2679982D003219EA /* sys_Array.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55312679982D003219EA /* sys_Array.c */; };
-		32EA553E2679982D003219EA /* sys_Func.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55322679982D003219EA /* sys_Func.c */; };
 		32EA5542267998A1003219EA /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA553F267998A1003219EA /* fni.cpp */; };
 		32EA55442679B13B003219EA /* sys_runtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55432679B13B003219EA /* sys_runtime.c */; };
-		32EA55452679C27B003219EA /* fni.h in Sources */ = {isa = PBXBuildFile; fileRef = 32EA5540267998A1003219EA /* fni.h */; };
 		32EA55462679C27B003219EA /* vm.h in Sources */ = {isa = PBXBuildFile; fileRef = 32EA5541267998A1003219EA /* vm.h */; };
 /* End PBXBuildFile section */
 
@@ -68,6 +68,21 @@
 /* Begin PBXFileReference section */
 		320544602203196300ECB5F2 /* baseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseTest.h; sourceTree = "<group>"; };
 		320544612203196300ECB5F2 /* baseTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = baseTest.c; sourceTree = "<group>"; };
+		3235214C268AAD9100EE50DF /* fni.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fni.h; sourceTree = "<group>"; };
+		3235214E268AAD9100EE50DF /* pod_sys_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_native.h; sourceTree = "<group>"; };
+		3235214F268AAD9100EE50DF /* sys_Enum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Enum.c; sourceTree = "<group>"; };
+		32352150268AAD9100EE50DF /* pod_sys_register.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_register.c; sourceTree = "<group>"; };
+		32352151268AAD9100EE50DF /* sys_NativeC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
+		32352152268AAD9100EE50DF /* sys_Int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
+		32352153268AAD9100EE50DF /* sys_Num.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
+		32352154268AAD9100EE50DF /* pod_sys_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_struct.h; sourceTree = "<group>"; };
+		32352155268AAD9100EE50DF /* sys_Obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sys_Obj.cpp; sourceTree = "<group>"; };
+		32352156268AAD9100EE50DF /* sys_Float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Float.c; sourceTree = "<group>"; };
+		32352157268AAD9100EE50DF /* sys_Bool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Bool.c; sourceTree = "<group>"; };
+		32352158268AAD9100EE50DF /* pod_sys_native.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_native.c; sourceTree = "<group>"; };
+		32352159268AAD9100EE50DF /* sys_Ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Ptr.c; sourceTree = "<group>"; };
+		3235215A268AAD9100EE50DF /* sys_Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Array.c; sourceTree = "<group>"; };
+		3235215B268AAD9100EE50DF /* sys_Func.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Func.c; sourceTree = "<group>"; };
 		324A54B22000EE130083C73E /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		324BFA8023BB962B007F2863 /* Bitmap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bitmap.hpp; sourceTree = "<group>"; };
 		324BFA8223BC4711007F2863 /* BitmapTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapTest.h; sourceTree = "<group>"; };
@@ -96,21 +111,7 @@
 		32DED48923BF8F2100348B1E /* gci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gci.h; sourceTree = "<group>"; };
 		32EA54F926787B68003219EA /* ThreadEnv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadEnv.cpp; sourceTree = "<group>"; };
 		32EA54FA26787B68003219EA /* ThreadEnv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ThreadEnv.hpp; sourceTree = "<group>"; };
-		32EA55252679982D003219EA /* pod_sys_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_native.h; sourceTree = "<group>"; };
-		32EA55262679982D003219EA /* sys_Enum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Enum.c; sourceTree = "<group>"; };
-		32EA55282679982D003219EA /* sys_NativeC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
-		32EA55292679982D003219EA /* sys_Int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
-		32EA552A2679982D003219EA /* sys_Num.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
-		32EA552B2679982D003219EA /* pod_sys_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_struct.h; sourceTree = "<group>"; };
-		32EA552C2679982D003219EA /* sys_Obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sys_Obj.cpp; sourceTree = "<group>"; };
-		32EA552D2679982D003219EA /* sys_Float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Float.c; sourceTree = "<group>"; };
-		32EA552E2679982D003219EA /* sys_Bool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Bool.c; sourceTree = "<group>"; };
-		32EA552F2679982D003219EA /* pod_sys_native.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_native.c; sourceTree = "<group>"; };
-		32EA55302679982D003219EA /* sys_Ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Ptr.c; sourceTree = "<group>"; };
-		32EA55312679982D003219EA /* sys_Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Array.c; sourceTree = "<group>"; };
-		32EA55322679982D003219EA /* sys_Func.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Func.c; sourceTree = "<group>"; };
 		32EA553F267998A1003219EA /* fni.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
-		32EA5540267998A1003219EA /* fni.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fni.h; sourceTree = "<group>"; };
 		32EA5541267998A1003219EA /* vm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
 		32EA55432679B13B003219EA /* sys_runtime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_runtime.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,6 +127,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3235214B268AAD9100EE50DF /* fni */ = {
+			isa = PBXGroup;
+			children = (
+				3235214C268AAD9100EE50DF /* fni.h */,
+				3235214D268AAD9100EE50DF /* sys */,
+			);
+			name = fni;
+			path = ../fni;
+			sourceTree = "<group>";
+		};
+		3235214D268AAD9100EE50DF /* sys */ = {
+			isa = PBXGroup;
+			children = (
+				3235214E268AAD9100EE50DF /* pod_sys_native.h */,
+				3235214F268AAD9100EE50DF /* sys_Enum.c */,
+				32352150268AAD9100EE50DF /* pod_sys_register.c */,
+				32352151268AAD9100EE50DF /* sys_NativeC.c */,
+				32352152268AAD9100EE50DF /* sys_Int.c */,
+				32352153268AAD9100EE50DF /* sys_Num.c */,
+				32352154268AAD9100EE50DF /* pod_sys_struct.h */,
+				32352155268AAD9100EE50DF /* sys_Obj.cpp */,
+				32352156268AAD9100EE50DF /* sys_Float.c */,
+				32352157268AAD9100EE50DF /* sys_Bool.c */,
+				32352158268AAD9100EE50DF /* pod_sys_native.c */,
+				32352159268AAD9100EE50DF /* sys_Ptr.c */,
+				3235215A268AAD9100EE50DF /* sys_Array.c */,
+				3235215B268AAD9100EE50DF /* sys_Func.c */,
+			);
+			path = sys;
+			sourceTree = "<group>";
+		};
 		327A0CF722194A88001A6EF0 /* gc */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,7 +193,7 @@
 		3291F9081F6D40C200F12438 = {
 			isa = PBXGroup;
 			children = (
-				32EA55242679982D003219EA /* sys */,
+				3235214B268AAD9100EE50DF /* fni */,
 				327A0CF722194A88001A6EF0 /* gc */,
 				327A0CFB22194A88001A6EF0 /* util */,
 				3291F9211F6D416C00F12438 /* runtime */,
@@ -183,7 +215,6 @@
 			children = (
 				32EA55432679B13B003219EA /* sys_runtime.c */,
 				32EA553F267998A1003219EA /* fni.cpp */,
-				32EA5540267998A1003219EA /* fni.h */,
 				32EA5541267998A1003219EA /* vm.h */,
 				32EA54F926787B68003219EA /* ThreadEnv.cpp */,
 				32EA54FA26787B68003219EA /* ThreadEnv.hpp */,
@@ -207,27 +238,6 @@
 				3291F92C1F6D416C00F12438 /* sys.h */,
 			);
 			path = temp;
-			sourceTree = "<group>";
-		};
-		32EA55242679982D003219EA /* sys */ = {
-			isa = PBXGroup;
-			children = (
-				32EA55252679982D003219EA /* pod_sys_native.h */,
-				32EA55262679982D003219EA /* sys_Enum.c */,
-				32EA55282679982D003219EA /* sys_NativeC.c */,
-				32EA55292679982D003219EA /* sys_Int.c */,
-				32EA552A2679982D003219EA /* sys_Num.c */,
-				32EA552B2679982D003219EA /* pod_sys_struct.h */,
-				32EA552C2679982D003219EA /* sys_Obj.cpp */,
-				32EA552D2679982D003219EA /* sys_Float.c */,
-				32EA552E2679982D003219EA /* sys_Bool.c */,
-				32EA552F2679982D003219EA /* pod_sys_native.c */,
-				32EA55302679982D003219EA /* sys_Ptr.c */,
-				32EA55312679982D003219EA /* sys_Array.c */,
-				32EA55322679982D003219EA /* sys_Func.c */,
-			);
-			name = sys;
-			path = ../vm/sys;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -288,44 +298,44 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32EA55452679C27B003219EA /* fni.h in Sources */,
+				32352162268AAD9100EE50DF /* sys_Float.c in Sources */,
+				32352167268AAD9100EE50DF /* sys_Func.c in Sources */,
+				3235215F268AAD9100EE50DF /* sys_Int.c in Sources */,
 				32EA55462679C27B003219EA /* vm.h in Sources */,
 				32EA551126788823003219EA /* gci.h in Sources */,
 				32EA551226788823003219EA /* Gc.h in Sources */,
 				32EA551326788823003219EA /* gcobj.h in Sources */,
+				32352160268AAD9100EE50DF /* sys_Num.c in Sources */,
 				32EA551426788823003219EA /* Bitmap.hpp in Sources */,
 				32EA551526788823003219EA /* BitmapTest.h in Sources */,
 				32EA551626788823003219EA /* LinkedList.h in Sources */,
-				32EA55352679982D003219EA /* sys_NativeC.c in Sources */,
 				32EA551726788823003219EA /* README.txt in Sources */,
-				32EA55372679982D003219EA /* sys_Num.c in Sources */,
-				32EA553B2679982D003219EA /* pod_sys_native.c in Sources */,
 				32EA551826788823003219EA /* system.h in Sources */,
 				32EA551926788823003219EA /* tinycthread.h in Sources */,
-				32EA55392679982D003219EA /* sys_Float.c in Sources */,
 				32EA551A26788823003219EA /* miss.h in Sources */,
 				32EA5542267998A1003219EA /* fni.cpp in Sources */,
+				32352165268AAD9100EE50DF /* sys_Ptr.c in Sources */,
 				32EA551B26788823003219EA /* utf8.h in Sources */,
-				32EA553C2679982D003219EA /* sys_Ptr.c in Sources */,
-				32EA553E2679982D003219EA /* sys_Func.c in Sources */,
+				32352163268AAD9100EE50DF /* sys_Bool.c in Sources */,
 				32EA551D26788823003219EA /* ThreadEnv.hpp in Sources */,
+				3235215D268AAD9100EE50DF /* pod_sys_register.c in Sources */,
+				32352166268AAD9100EE50DF /* sys_Array.c in Sources */,
 				32EA551E26788823003219EA /* type.h in Sources */,
 				32EA551F26788823003219EA /* Vm.hpp in Sources */,
-				32EA55362679982D003219EA /* sys_Int.c in Sources */,
 				32EA552026788823003219EA /* runtime.h in Sources */,
 				32EA552226788823003219EA /* baseTest.h in Sources */,
-				32EA55332679982D003219EA /* sys_Enum.c in Sources */,
+				32352164268AAD9100EE50DF /* pod_sys_native.c in Sources */,
 				32EA552326788823003219EA /* sys.h in Sources */,
+				3235215C268AAD9100EE50DF /* sys_Enum.c in Sources */,
+				3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */,
 				32EA55442679B13B003219EA /* sys_runtime.c in Sources */,
-				32EA553D2679982D003219EA /* sys_Array.c in Sources */,
 				327A0D0822194A88001A6EF0 /* system.c in Sources */,
 				324BFA8523BC692A007F2863 /* type.cpp in Sources */,
-				32EA553A2679982D003219EA /* sys_Bool.c in Sources */,
-				32EA55382679982D003219EA /* sys_Obj.cpp in Sources */,
 				327A0D0A22194A88001A6EF0 /* LinkedList.c in Sources */,
 				32C107071FE6B57B006248C6 /* main.c in Sources */,
 				3291F9311F6D416C00F12438 /* runtime.cpp in Sources */,
 				327A0D0922194A88001A6EF0 /* utf8.c in Sources */,
+				32352161268AAD9100EE50DF /* sys_Obj.cpp in Sources */,
 				324A54B42000EE130083C73E /* sys.c in Sources */,
 				327A0D0622194A88001A6EF0 /* Gc.cpp in Sources */,
 				327A0D0722194A88001A6EF0 /* tinycthread.c in Sources */,
@@ -381,6 +391,7 @@
 				HEADER_SEARCH_PATHS = (
 					../common,
 					../gen,
+					../fni,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -426,6 +437,7 @@
 				HEADER_SEARCH_PATHS = (
 					../common,
 					../gen,
+					../fni,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;

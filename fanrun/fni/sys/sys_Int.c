@@ -29,8 +29,8 @@ fr_Bool sys_Int_equals_val(fr_Env env, fr_Int self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Int_ *other = (struct sys_Int_ *)fr_getPtr(env, obj);
-    eq = self == other->value;
+    struct sys_Int_struct *other = (struct sys_Int_struct *)fr_getPtr(env, obj);
+    eq = self == other->_val;
     //fr_unlock(env);
     return eq;
 }
@@ -49,8 +49,8 @@ fr_Int sys_Int_compare_val(fr_Env env, fr_Int self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Int_ *other = (struct sys_Int_ *)fr_getPtr(env, obj);
-    result = self - other->value;
+    struct sys_Int_struct *other = (struct sys_Int_struct *)fr_getPtr(env, obj);
+    result = self - other->_val;
     //fr_unlock(env);
     return result;
 }

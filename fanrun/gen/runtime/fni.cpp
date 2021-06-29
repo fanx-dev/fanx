@@ -25,7 +25,7 @@ void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func) {
 
 FObj *fr_getPtr(fr_Env self, fr_Obj obj) {
     if (obj == 0) return NULL;
-    return *reinterpret_cast<FObj**>(obj);
+    return (FObj*)(obj);
 }
 
 fr_Obj fr_toHandle(fr_Env self, FObj *obj) {

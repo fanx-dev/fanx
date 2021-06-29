@@ -36,8 +36,8 @@ fr_Bool sys_Float_equals_val(fr_Env env, fr_Float self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Float_ *other = (struct sys_Float_ *)fr_getPtr(env, obj);
-    eq = self == other->value;
+    struct sys_Float_struct *other = (struct sys_Float_struct *)fr_getPtr(env, obj);
+    eq = self == other->_val;
     //fr_unlock(env);
     return eq;
 }

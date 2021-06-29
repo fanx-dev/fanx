@@ -1,7 +1,7 @@
 #include "pod_sys_native.h"
 #include "pod_sys_struct.h"
 
-int sys_Obj__allocSize__() {return sizeof(struct sys_Obj_);}
+int sys_Obj__allocSize__() {return sizeof(struct sys_Obj_struct);}
 
 void sys_Obj_trap_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -62,7 +62,7 @@ void sys_Enum_doFromStr_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Array__allocSize__() {return sizeof(struct sys_Array_);}
+int sys_Array__allocSize__() {return sizeof(struct sys_Array_struct);}
 
 void sys_Array_make_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -213,7 +213,7 @@ void sys_Array_finalize_v(fr_Env env, void *param, void *ret) {
     sys_Array_finalize(env, arg_0);
 }
 
-int sys_Bool__allocSize__() {return sizeof(struct sys_Bool_);}
+int sys_Bool__allocSize__() {return sizeof(struct sys_Bool_struct);}
 
 void sys_Bool_equals_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -300,7 +300,7 @@ void sys_Bool_xor__v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Float__allocSize__() {return sizeof(struct sys_Float_);}
+int sys_Float__allocSize__() {return sizeof(struct sys_Float_struct);}
 
 void sys_Float_makeBits_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -648,7 +648,7 @@ void sys_Float_toLocale_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Func__allocSize__() {return sizeof(struct sys_Func_);}
+int sys_Func__allocSize__() {return sizeof(struct sys_Func_struct);}
 
 void sys_Func_call_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -756,7 +756,7 @@ void sys_BindFunc_call_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Int__allocSize__() {return sizeof(struct sys_Int_);}
+int sys_Int__allocSize__() {return sizeof(struct sys_Int_struct);}
 
 void sys_Int_fromStr_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -1353,7 +1353,7 @@ void sys_NativeC_stackTrace_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Ptr__allocSize__() {return sizeof(struct sys_Ptr_);}
+int sys_Ptr__allocSize__() {return sizeof(struct sys_Ptr_struct);}
 
 void sys_Ptr_make_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;

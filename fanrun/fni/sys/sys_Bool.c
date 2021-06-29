@@ -21,8 +21,8 @@ fr_Bool sys_Bool_equals_val(fr_Env env, fr_Bool self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Bool_ *other = (struct sys_Bool_ *)fr_getPtr(env, obj);
-    eq = self == other->value;
+    struct sys_Bool_struct *other = (struct sys_Bool_struct *)fr_getPtr(env, obj);
+    eq = self == other->_val;
     //fr_unlock(env);
     return eq;
 }

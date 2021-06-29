@@ -68,7 +68,7 @@ fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
 //    }
     //result = false;
     //fr_unlock(env);
-    size_t allocSize = sizeof(struct sys_Array_) + (newSize*sizeof(void*));
+    size_t allocSize = sizeof(struct sys_Array_struct) + (newSize*sizeof(void*));
     memcpy(narray, array, allocSize);
     narray->size = newSize;
     return newArray;

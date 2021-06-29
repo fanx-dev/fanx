@@ -330,12 +330,12 @@ void CallStmt::print(Printer& printer) {
     
     if (typeName == "sys_Array") {
         if (mthName == "get") {
-            printer.printf("%s = ((%s*)(%s->data))[%s];", retValue.getName().c_str(), extName.c_str(),
+            printer.printf("%s = ((%s*)(%s->_val.data))[%s];", retValue.getName().c_str(), extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str());
             return;
         }
         else if (mthName == "set") {
-            printer.printf("((%s*)(%s->data))[%s] = %s;", extName.c_str(),
+            printer.printf("((%s*)(%s->_val.data))[%s] = %s;", extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str(), params[2].getName().c_str());
             return;
         }

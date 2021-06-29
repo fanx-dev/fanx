@@ -150,13 +150,13 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
         
         printer->indent();
         if (typeName == "sys_Obj_") {
-            printer->println("struct FObj *_ super;");
+            printer->println("//struct FObj *_ super;");
         } else {
             FTypeRef &typeRef = pod->typeRefs[type->meta.base];
             std::string &podName = pod->names[typeRef.podName];
             std::string &typeName = pod->names[typeRef.typeName];
             std::string preName = podName + "_" + typeName;
-            printer->println("//struct %s_ super;", preName.c_str());
+            printer->println("//struct %s_struct super;", preName.c_str());
         }
         printer->unindent();
         
@@ -183,7 +183,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
         }
         else if (printType == PrintType::pNatiAll) {
             printer->println("int %s_allocSize__() {"
-                             "return sizeof(struct %s);}"
+                             "return sizeof(struct %sstruct);}"
                              , typeName.c_str(), typeName.c_str());
             //printer->println("void %sstatic__init(fr_Env self, void *param, void *ret);"
             //                 , typeName.c_str(), typeName.c_str());

@@ -9,6 +9,7 @@
 #include "sys.h"
 #include "runtime.h"
 
+
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -39,10 +40,10 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, size_t elemSize, size_t len) {
     
     size_t allocSize = sizeof(struct sys_Array_struct) + (elemSize * len) + 1;
     sys_Array_ref array = (sys_Array_ref)fr_alloc(self, sys_Array_class__, allocSize);
-    array->elemType = elemType;
-    array->elemSize = elemSize;
-    array->valueType = vtype;
-    array->size = len;
+    array->_val.elemType = elemType;
+    array->_val.elemSize = elemSize;
+    array->_val.valueType = vtype;
+    array->_val.size = len;
     return array;
 }
 
@@ -97,7 +98,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj) {
     
     sys_Str str = (sys_Str)obj;
     sys_Array array = sys_Str_toUtf8(env__, str);
-    const char *data = (const char*)array->data;
+    const char *data = (const char*)array->_val.data;
     //if (isCopy) *isCopy = false;
     return data;
 }

@@ -18,7 +18,7 @@ CF_BEGIN
 /**
  * internal type
  */
-struct sys_Obj_;
+struct sys_Obj_struct;
 typedef struct sys_Obj_ FObj;
 
 /**
@@ -52,7 +52,7 @@ void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
 const char *fr_getTypeName(fr_Env self, FObj *obj);
 
 typedef struct fr_Array_ {
-    struct FType *elemType;
+    fr_Type elemType;
     int32_t valueType;
     int32_t elemSize;
     fr_Int size;

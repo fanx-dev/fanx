@@ -16,7 +16,7 @@ Printer::Printer() : indentation(0), needIndent(false), file(NULL), console(true
 Printer::Printer(const char *path) : indentation(0), needIndent(false), file(NULL), console(false) {
     file = fopen(path, "w");
     if (!file) {
-        ::printf("open file error %s", path);
+        ::printf("open file error %s\n", path);
     }
     ::printf("printer:%s\n", path);
 }
