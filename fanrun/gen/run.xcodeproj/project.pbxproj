@@ -9,14 +9,12 @@
 /* Begin PBXBuildFile section */
 		320544622203196300ECB5F2 /* baseTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 320544612203196300ECB5F2 /* baseTest.c */; };
 		3235215C268AAD9100EE50DF /* sys_Enum.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235214F268AAD9100EE50DF /* sys_Enum.c */; };
-		3235215D268AAD9100EE50DF /* pod_sys_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352150268AAD9100EE50DF /* pod_sys_register.c */; };
 		3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352151268AAD9100EE50DF /* sys_NativeC.c */; };
 		3235215F268AAD9100EE50DF /* sys_Int.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352152268AAD9100EE50DF /* sys_Int.c */; };
 		32352160268AAD9100EE50DF /* sys_Num.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352153268AAD9100EE50DF /* sys_Num.c */; };
 		32352161268AAD9100EE50DF /* sys_Obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32352155268AAD9100EE50DF /* sys_Obj.cpp */; };
 		32352162268AAD9100EE50DF /* sys_Float.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352156268AAD9100EE50DF /* sys_Float.c */; };
 		32352163268AAD9100EE50DF /* sys_Bool.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352157268AAD9100EE50DF /* sys_Bool.c */; };
-		32352164268AAD9100EE50DF /* pod_sys_native.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352158268AAD9100EE50DF /* pod_sys_native.c */; };
 		32352165268AAD9100EE50DF /* sys_Ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352159268AAD9100EE50DF /* sys_Ptr.c */; };
 		32352166268AAD9100EE50DF /* sys_Array.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235215A268AAD9100EE50DF /* sys_Array.c */; };
 		32352167268AAD9100EE50DF /* sys_Func.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235215B268AAD9100EE50DF /* sys_Func.c */; };
@@ -69,9 +67,7 @@
 		320544602203196300ECB5F2 /* baseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseTest.h; sourceTree = "<group>"; };
 		320544612203196300ECB5F2 /* baseTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = baseTest.c; sourceTree = "<group>"; };
 		3235214C268AAD9100EE50DF /* fni.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fni.h; sourceTree = "<group>"; };
-		3235214E268AAD9100EE50DF /* pod_sys_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_native.h; sourceTree = "<group>"; };
 		3235214F268AAD9100EE50DF /* sys_Enum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Enum.c; sourceTree = "<group>"; };
-		32352150268AAD9100EE50DF /* pod_sys_register.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_register.c; sourceTree = "<group>"; };
 		32352151268AAD9100EE50DF /* sys_NativeC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
 		32352152268AAD9100EE50DF /* sys_Int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
 		32352153268AAD9100EE50DF /* sys_Num.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
@@ -79,7 +75,6 @@
 		32352155268AAD9100EE50DF /* sys_Obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sys_Obj.cpp; sourceTree = "<group>"; };
 		32352156268AAD9100EE50DF /* sys_Float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Float.c; sourceTree = "<group>"; };
 		32352157268AAD9100EE50DF /* sys_Bool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Bool.c; sourceTree = "<group>"; };
-		32352158268AAD9100EE50DF /* pod_sys_native.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_sys_native.c; sourceTree = "<group>"; };
 		32352159268AAD9100EE50DF /* sys_Ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Ptr.c; sourceTree = "<group>"; };
 		3235215A268AAD9100EE50DF /* sys_Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Array.c; sourceTree = "<group>"; };
 		3235215B268AAD9100EE50DF /* sys_Func.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Func.c; sourceTree = "<group>"; };
@@ -140,9 +135,7 @@
 		3235214D268AAD9100EE50DF /* sys */ = {
 			isa = PBXGroup;
 			children = (
-				3235214E268AAD9100EE50DF /* pod_sys_native.h */,
 				3235214F268AAD9100EE50DF /* sys_Enum.c */,
-				32352150268AAD9100EE50DF /* pod_sys_register.c */,
 				32352151268AAD9100EE50DF /* sys_NativeC.c */,
 				32352152268AAD9100EE50DF /* sys_Int.c */,
 				32352153268AAD9100EE50DF /* sys_Num.c */,
@@ -150,7 +143,6 @@
 				32352155268AAD9100EE50DF /* sys_Obj.cpp */,
 				32352156268AAD9100EE50DF /* sys_Float.c */,
 				32352157268AAD9100EE50DF /* sys_Bool.c */,
-				32352158268AAD9100EE50DF /* pod_sys_native.c */,
 				32352159268AAD9100EE50DF /* sys_Ptr.c */,
 				3235215A268AAD9100EE50DF /* sys_Array.c */,
 				3235215B268AAD9100EE50DF /* sys_Func.c */,
@@ -318,13 +310,11 @@
 				32EA551B26788823003219EA /* utf8.h in Sources */,
 				32352163268AAD9100EE50DF /* sys_Bool.c in Sources */,
 				32EA551D26788823003219EA /* ThreadEnv.hpp in Sources */,
-				3235215D268AAD9100EE50DF /* pod_sys_register.c in Sources */,
 				32352166268AAD9100EE50DF /* sys_Array.c in Sources */,
 				32EA551E26788823003219EA /* type.h in Sources */,
 				32EA551F26788823003219EA /* Vm.hpp in Sources */,
 				32EA552026788823003219EA /* runtime.h in Sources */,
 				32EA552226788823003219EA /* baseTest.h in Sources */,
-				32352164268AAD9100EE50DF /* pod_sys_native.c in Sources */,
 				32EA552326788823003219EA /* sys.h in Sources */,
 				3235215C268AAD9100EE50DF /* sys_Enum.c in Sources */,
 				3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */,

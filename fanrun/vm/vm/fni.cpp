@@ -55,7 +55,7 @@ fr_Obj fr_toHandle(fr_Env self, FObj *obj) {
     return objRef;
 }
 
-bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos) {
+bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *vtype) {
     Env *e = (Env*)env;
     //e->lock();
     fr_TagValue *tval = (fr_TagValue *)param;
@@ -65,8 +65,10 @@ bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos) {
     }
     if (tval->type == fr_vtObj) {
         val->h = &(tval->any.o);
+        *vtype = fr_vtHandle;
     } else {
         *val = tval->any;
+        *vtype = tval->type;
     }
     return true;
 }

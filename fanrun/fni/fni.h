@@ -102,7 +102,7 @@ void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func);
 // Param
 ////////////////////////////
 
-bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos);
+bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *vtype);
 
 ////////////////////////////
 // GC
