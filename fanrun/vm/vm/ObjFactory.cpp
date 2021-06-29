@@ -85,7 +85,7 @@ FObj * ObjFactory::allocObj(Env *env, FType *type, int addRef, int size) {
         size = ftype->c_allocSize;
     }
     
-    GcObj * obj = (GcObj *)env->vm->gc->alloc(ftype, size);
+    GcObj * obj = (GcObj *)env->vm->gc->alloc(ftype, size + sizeof(struct GcObj_));
     //obj->type = ftype;
 //    for (int i=0; i<ftype->fields.size(); ++i) {
 //        FField &f = ftype->fields[i];
@@ -117,54 +117,54 @@ CF_END
 FObj * sys_Int_box__(fr_Env self, fr_Int i, int addRef) {
     Env *e = (Env*)self;
     FType *type = e->toType(fr_vtInt);
-    int size = sizeof(fr_ObjHeader) + sizeof(fr_Int);
+    int size = sizeof(fr_Int);
     
     FObj * obj = e->allocObj(type, addRef, size);
     //FObj * obj = fr_allocObj(self, type, addRef, size);
     
-    fr_Int *val = (fr_Int*)(((char*)obj) + sizeof(fr_ObjHeader));
+    fr_Int *val = (fr_Int*)(((char*)obj));
     *val = i;
     return obj;
 }
 fr_Int sys_Int_unbox__(fr_Env self, FObj * i) {
     assert(i);
-    fr_Int *val = (fr_Int*)(((char*)i) + sizeof(fr_ObjHeader));
+    fr_Int *val = (fr_Int*)(((char*)i));
     return *val;
 }
 
 FObj * sys_Float_box__(fr_Env self, fr_Float i, int addRef) {
     Env *e = (Env*)self;
     FType *type = e->toType(fr_vtFloat);
-    int size = sizeof(fr_ObjHeader) + sizeof(fr_Float);
+    int size = sizeof(fr_Float);
     
     FObj * obj = e->allocObj(type, addRef, size);
     //FObj * obj = fr_allocObj(self, type, addRef, size);
     
-    fr_Float *val = (fr_Float*)(((char*)obj) + sizeof( fr_ObjHeader));
+    fr_Float *val = (fr_Float*)(((char*)obj));
     *val = i;
     return obj;
 }
 fr_Float sys_Float_unbox__(fr_Env self, FObj * i) {
     assert(i);
-    fr_Float *val = (fr_Float*)(((char*)i) + sizeof( fr_ObjHeader));
+    fr_Float *val = (fr_Float*)(((char*)i));
     return *val;
 }
 
 FObj * sys_Bool_box__(fr_Env self, fr_Bool i, int addRef) {
     Env *e = (Env*)self;
     FType *type = e->toType(fr_vtBool);
-    int size = sizeof( fr_ObjHeader) + sizeof(fr_Bool);
+    int size = sizeof(fr_Bool);
     
     FObj * obj = e->allocObj(type, addRef, size);
     //FObj * obj = fr_allocObj(self, type, addRef, size);
     
-    fr_Bool *val = (fr_Bool*)(((char*)obj) + sizeof( fr_ObjHeader));
+    fr_Bool *val = (fr_Bool*)(((char*)obj));
     *val = i;
     return obj;
 }
 fr_Bool sys_Bool_unbox__(fr_Env self, FObj * i) {
     assert(i);
-    fr_Bool *val = (fr_Bool*)(((char*)i) + sizeof( fr_ObjHeader));
+    fr_Bool *val = (fr_Bool*)(((char*)i));
     return *val;
 }
 #endif

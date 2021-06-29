@@ -246,7 +246,7 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
     
     //init super
     if (isRootType(env, type)) {
-        size = sizeof( fr_ObjHeader);
+        size = 0;
     } else {
         FType *base = getType(env, type->c_pod, type->meta.base);
         initTypeAllocSize(env, base);
@@ -264,7 +264,7 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
             f.c_offset = staticSize;
             staticSize += d;
         } else {
-            f.c_offset = size-sizeof( fr_ObjHeader);
+            f.c_offset = size;
             size += d;
         }
     }
@@ -539,9 +539,8 @@ FType *PodManager::getType(Env *env, FPod *curPod, uint16_t tid) {
         FPod *pod = findPod(podName);
         FType *type = pod->c_typeMap[typeName];
         typeRef.c_type = type;
-        
-        initTypeAllocSize(env, type);
     }
+    initTypeAllocSize(env, typeRef.c_type);
     return typeRef.c_type;
 }
 

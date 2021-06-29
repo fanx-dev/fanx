@@ -643,12 +643,14 @@ fr_Obj fr_objToStr(fr_Env self, fr_Value obj, fr_ValueType vtype) {
 }
 
 GcObj *fr_toGcObj(FObj *obj) {
+    if (obj == nullptr) return nullptr;
     GcObj *g = (GcObj*)obj;
     --g;
     return g;
     
 }
 FObj *fr_fromGcObj(GcObj *g) {
+    if (g == nullptr) return nullptr;
     FObj *obj = (FObj*)(++g);
     return obj;
 }

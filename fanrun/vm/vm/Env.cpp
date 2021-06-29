@@ -157,7 +157,7 @@ void Env::push(fr_TagValue *val) {
     }
 #ifndef NODEBUG
     if (val->type == fr_vtObj) {
-        if (!vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
+        if (val->any.o != NULL && !vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
     }
@@ -177,7 +177,7 @@ bool Env::pop(fr_TagValue *val) {
     }
 #ifndef NODEBUG
     if (val->type == fr_vtObj) {
-        if (!vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
+        if (val->any.o != NULL && !vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
     }
@@ -636,7 +636,7 @@ void Env::clearError() {
 fr_Array* Env::arrayNew(FType *elemType, size_t elemSize, size_t size) {
     FType *arrayType = findType("sys", "Array");
     
-    size_t allocSize = sizeof(fr_ObjHeader)+sizeof(fr_Array)+(elemSize*(size+1));
+    size_t allocSize = sizeof(fr_Array)+(elemSize*(size+1));
     fr_Array *a = (fr_Array*)allocObj(arrayType, 2, (int)allocSize);
     a->elemType = elemType;
     a->elemSize = (int32_t)elemSize;

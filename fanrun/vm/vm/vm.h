@@ -38,7 +38,7 @@ fr_Obj fr_toHandle(fr_Env self, FObj *obj);
  */
 struct FType;
 //struct fr_ObjHeader { struct FType * type; bool dirty; int mark;  };
-typedef GcObj fr_ObjHeader;
+//typedef GcObj fr_ObjHeader;
 
 /**
  * internal alloc obj
