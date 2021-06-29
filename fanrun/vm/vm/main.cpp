@@ -159,9 +159,10 @@ int main(int argc, const char * argv[]) {
     vm.stop();
 
     puts("DONE!");
-    
     System_sleep(1000);
-    exit(0);
+    vm.gc->collect();
+    System_sleep(1000);
+    //exit(0);
     return 0;
 }
 #endif

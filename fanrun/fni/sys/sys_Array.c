@@ -99,12 +99,12 @@ void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
 //    return NULL;
 //}
 void sys_Array_finalize(fr_Env env, fr_Obj self) {
-    fr_Array *array;
+    //fr_Array *array;
     //fr_lock(env);
-    array = (fr_Array *)fr_getPtr(env, self);
-    free(array->data);
+    //array = (fr_Array *)fr_getPtr(env, self);
+    //free(array->data);
     //array->data = NULL;
-    array->size = 0;
+    //array->size = 0;
     //fr_unlock(env);
 }
 void sys_Array_static__init(fr_Env env) {

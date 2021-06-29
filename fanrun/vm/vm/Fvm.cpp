@@ -75,18 +75,18 @@ int Fvm::allocSize(void *type) {
     return ((FType *)(type))->c_allocSize;
 }
 
-void Fvm::visitChildren(Collector *gc, GcObj* obj) {
+void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
     Env *env = nullptr;
-    
-    FType *ftype = fr_getFType((fr_Env)env, fr_fromGcObj(obj));
+    FObj *fobj = fr_fromGcObj(gcobj);
+    FType *ftype = fr_getFType((fr_Env)env, fobj);
     FType *objArray = podManager->findType(env, "sys", "Array");
     if (ftype == objArray) {
-        fr_Array *array = (fr_Array *)obj;
+        fr_Array *array = (fr_Array *)fobj;
         if (array->valueType == fr_vtObj) {
             for (size_t i=0; i<array->size; ++i) {
-                FObj * obj = array->data[i];
+                FObj * elem = array->data[i];
                 //list->push_back((FObj*)obj);
-                gc->onVisit(fr_toGcObj((FObj*)obj));
+                gc->onVisit(fr_toGcObj((FObj*)elem));
             }
         }
         return;
@@ -100,11 +100,11 @@ void Fvm::visitChildren(Collector *gc, GcObj* obj) {
         if (f.flags & FFlags::Static) {
             //pass;
         } else {
-            fr_Value *val = podManager->getInstanceFieldValue(fr_fromGcObj(obj), &f);
+            fr_Value *val = podManager->getInstanceFieldValue(fobj, &f);
             fr_ValueType vtype = podManager->getValueType(env, ftype->c_pod, f.type);
             if (vtype == fr_vtObj) {
                 //list->push_back((FObj*)val->o);
-                gc->onVisit(fr_toGcObj((FObj*)val->o));
+                gc->onVisit(fr_toGcObj((FObj*)(val->o)));
             }
         }
     }
@@ -134,7 +134,7 @@ void Fvm::finalizeObj(GcObj* obj) {
     
     fr_TagValue val;
     val.type = fr_vtObj;
-    val.any.o = obj;
+    val.any.o = fr_fromGcObj(obj);
     env->push(&val);
     
     FMethod *m = env->findMethod("sys", "Obj", "finalize");

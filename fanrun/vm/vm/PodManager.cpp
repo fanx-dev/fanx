@@ -282,7 +282,11 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
         }
         size = func();
         if (size > type->c_allocSize) {
-            type->c_allocSize = size;
+            if (type->c_mangledName == "sys_Func" || type->c_mangledName == "sys_Obj") { /*pass*/ }
+            else {
+                if (size < 8) size = 8; // 64bit align
+                type->c_allocSize = size;
+            }
         }
     }
     
