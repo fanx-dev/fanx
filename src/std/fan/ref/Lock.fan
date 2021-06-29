@@ -17,5 +17,14 @@ final native const class Lock
 
   Void unlock()
 
-  Obj? sync(|->Obj?| f)
+  Obj? sync(|->Obj?| f) {
+    lock
+    try {
+      return f.call()
+    }
+    finally {
+      unlock
+    }
+    return null
+  }
 }

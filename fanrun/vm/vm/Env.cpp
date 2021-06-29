@@ -389,7 +389,7 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         //context->unlock();
     }
     else {
-        bool isNative = (method->flags & FFlags::Native) || (method->c_parent->meta.flags & FFlags::Native);
+        bool isNative = (method->flags & FFlags::Native) || (method->c_parent->c_isNative);
         if (!method->code.isEmpty()) {
             isNative = false;
         }

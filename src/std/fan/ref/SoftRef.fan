@@ -9,6 +9,7 @@
 **
 ** Soft reference objects, which are cleared at the discretion of the garbage collector in response to memory demand.
 **
+/*
 final native class SoftRef<T>
 {
   ** Creates a new soft reference that refers to the given object.
@@ -18,4 +19,4 @@ final native class SoftRef<T>
   ** If this reference object has been cleared, either by the program or by the garbage collector, then this method returns null.
   T? get()
 }
-
+*/

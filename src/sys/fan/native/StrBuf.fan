@@ -49,7 +49,7 @@ using sys::Int64 as Size_t
   ** The number of characters this buffer can hold without
   ** allocating more memory.
   **
-  native Int capacity {
+  Int capacity {
     set {
       if (it > &capacity) {
         nbuf := Array.realloc(buf, it)

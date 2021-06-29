@@ -112,6 +112,8 @@ public class FanObj extends IObj implements Comparable {
 	public static Object toImmutable(Object self) {
 		if (self == null)
 			return null;
+		if (isImmutable(self)) return self;
+		
 		if (self instanceof FanObj)
 			return ((FanObj) self).toImmutable();
 		else if (self instanceof Err)

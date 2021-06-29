@@ -10,19 +10,25 @@
 ** Unsafe is used to wrap a non-const mutable objects so that
 ** it can be passed as an immutable reference.
 **
-native const final class Unsafe<T>
+@NoNative native rtconst final class Unsafe<T>
 {
-
+  private Obj? value
   **
   ** Wrap specified object.
   **
-  new make(T val)
-
-  ** as same as 'get'
-  T val()
+  new make(T val) { value = val }
 
   **
   ** Get the wrapped object.
   **
-  T get()
+  T val() { value }
+
+  **
+  ** Get the wrapped object.
+  **
+  T get() { value }
+
+  override Bool isImmutable() { true }
+
+  override Unsafe<T> toImmutable() { this }
 }

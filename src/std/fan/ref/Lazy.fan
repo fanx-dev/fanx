@@ -9,9 +9,31 @@
 **
 ** call initial when val is null
 **
-final native const class Lazy<T>
+@NoNative final native rtconst class Lazy<T>
 {
-  new make(|->T| initial)
+  private Obj? value
+  private const Lock lock
+  private const |->T| initial
+  
+  new make(|->T| initial) {
+    this.initial = initial.toImmutable
+  }
 
-  T get()
+  T get() {
+    if (value == null) {
+      lock.lock
+      try {
+        res := initial.call()
+        value = res.toImmutable
+      }
+      finally {
+        lock.unlock
+      }
+    }
+    return value
+  }
+
+  override Bool isImmutable() { true }
+
+  override Lazy<T> toImmutable() { this }
 }

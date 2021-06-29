@@ -151,7 +151,7 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
         std::string typeName = preName;
         escape(typeName);
         //escapeKeyword(typeName);
-        printer->println("struct %s{", typeName.c_str());
+        printer->println("struct %sstruct{", typeName.c_str());
         
         printer->indent();
         if (typeName == "sys_Obj_") {

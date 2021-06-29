@@ -12,8 +12,6 @@
 #include "Fvm.h"
 #include <string.h>
 
-#ifndef FR_RUN
-
 CF_BEGIN
 
 void sys_register(fr_Fvm vm);
@@ -86,7 +84,7 @@ int main(int argc, const char * argv[]) {
     }
     
     if (libPath == NULL) {
-        const char *fanHome = getenv("FANTOM_HOME");
+        const char *fanHome = getenv("FANX_HOME");
         if (fanHome == NULL) {
             printf("required -p for fanHome\n");
             return -1;
@@ -100,7 +98,6 @@ int main(int argc, const char * argv[]) {
     if (name == NULL) {
         printf("Usage:\n  fan [options] <pod>::<type>.<method> [args]*\n");
         printf("Options:\n");
-        printf("  -g\tgenCode\n");
         printf("  -p\tfanHome\n");
         return -1;
     }
@@ -138,13 +135,6 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-    if (nativeOutPath) {
-        NativeGen nativeGen;
-        //nativeGen.genStub = true;
-        nativeGen.genNative(nativeOutPath, "sys", &podMgr);
-        puts("------------------");
-    }
-    
     sys_register(&vm);
     
     vm.start();
@@ -165,4 +155,3 @@ int main(int argc, const char * argv[]) {
     //exit(0);
     return 0;
 }
-#endif
