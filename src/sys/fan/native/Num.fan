@@ -9,7 +9,7 @@
 **
 ** Num is the base class for number classes: `Int`, `Float`, and `Decimal`.
 **
-@NoNative native const abstract class Num
+native const abstract class Num
 {
 
 //////////////////////////////////////////////////////////////////////////

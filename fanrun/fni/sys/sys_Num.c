@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
 //void sys_Num_make(fr_Env env, fr_Obj self) {

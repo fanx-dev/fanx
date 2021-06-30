@@ -59,7 +59,7 @@ native const struct class Int : Num
   ** Minimum value which can be stored in a
   ** signed 64-bit Int: -9,223,372,036,854,775,808
   **
-  const static Int minVal //:= -9_223_372_036_854_775_808
+  const static Int minVal := -9_223_372_036_854_775_807-1
 
   //const static Int invalidVal
 

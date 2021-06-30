@@ -242,7 +242,7 @@ bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type) {
 // Array
 ////////////////////////////
 
-fr_Obj fr_arrayNew(fr_Env self, fr_Type type, size_t elemSize, size_t size) {
+fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size) {
     Env *env = (Env*)self;
     fr_Array *a = env->arrayNew(fr_toFType(self, type), elemSize, size);
     return fr_toHandle(self, (FObj*)a);

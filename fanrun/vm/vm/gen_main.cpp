@@ -27,6 +27,7 @@ int main(int argc, const char * argv[]) {
             case 'g': {
                 nativeOutPath = op+1;
             }
+                break;
             case 'c': {
                 genImplCode = true;
             }

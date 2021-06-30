@@ -12,7 +12,7 @@
 ** to be performed without locking.  Refer to the ConcurrentHashMap Javadoc
 ** for the detailed semanatics on behavior and performance.
 **
-@NoNative native const final class ConcurrentMap<K,V>
+native const final class ConcurrentMap<K,V>
 {
   private const Unsafe<Map<K,V>> store
   private const Lock lock

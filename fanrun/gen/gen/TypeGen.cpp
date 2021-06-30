@@ -47,8 +47,13 @@ void TypeGen::genTypeDeclare(Printer *printer) {
 void TypeGen::genStruct(Printer *printer) {
 //    if (FCodeUtil::isBuildinValType(type)) return;
     if (type->c_isNative) {
-        printer->println("//native struct %s_struct", name.c_str());
-        return;
+        if (type->c_pod->name == "sys") {
+            if (type->c_name == "Int" || type->c_name == "Float" || type->c_name == "Bool" || type->c_name == "Ptr") {
+                //type->c_allocSize = 8;
+                printer->println("//native struct %s_struct", name.c_str());
+                return;
+            }
+        }
     }
     
     std::string baseName = getTypeNsName(type->meta.base);

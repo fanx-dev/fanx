@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
 #include <math.h>
@@ -36,8 +36,8 @@ fr_Bool sys_Float_equals_val(fr_Env env, fr_Float self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Float_struct *other = (struct sys_Float_struct *)fr_getPtr(env, obj);
-    eq = self == other->_val;
+    fr_Float *other = (fr_Float *)fr_getPtr(env, obj);
+    eq = self == *other;
     //fr_unlock(env);
     return eq;
 }
@@ -224,23 +224,23 @@ fr_Obj sys_Float_toCode_val(fr_Env env, fr_Float self) {
 void sys_Float_make_val(fr_Env env, fr_Float self) {
     return;
 }
-void sys_Float_static__init(fr_Env env) {
-    fr_Value val;
-    //val.type = fr_vtFloat;
-    val.i = 0;
-    fr_setStaticFieldS(env, "sys", "Float", "defVal", &val);
-    val.i = INFINITY;
-    fr_setStaticFieldS(env, "sys", "Float", "posInf", &val);
-    val.i = -INFINITY;
-    fr_setStaticFieldS(env, "sys", "Float", "negInf", &val);
-    val.i = NAN;
-    fr_setStaticFieldS(env, "sys", "Float", "nan", &val);
-    val.i = 2.71828182845904523536;
-    fr_setStaticFieldS(env, "sys", "Float", "e", &val);
-    val.i = cf_Math_pi;
-    fr_setStaticFieldS(env, "sys", "Float", "pi", &val);
-    return;
-}
+//void sys_Float_static__init(fr_Env env) {
+//    fr_Value val;
+//    //val.type = fr_vtFloat;
+//    val.i = 0;
+//    fr_setStaticFieldS(env, "sys", "Float", "defVal", &val);
+//    val.i = INFINITY;
+//    fr_setStaticFieldS(env, "sys", "Float", "posInf", &val);
+//    val.i = -INFINITY;
+//    fr_setStaticFieldS(env, "sys", "Float", "negInf", &val);
+//    val.i = NAN;
+//    fr_setStaticFieldS(env, "sys", "Float", "nan", &val);
+//    val.i = 2.71828182845904523536;
+//    fr_setStaticFieldS(env, "sys", "Float", "e", &val);
+//    val.i = cf_Math_pi;
+//    fr_setStaticFieldS(env, "sys", "Float", "pi", &val);
+//    return;
+//}
 fr_Obj sys_Float_toLocale_val(fr_Env env, fr_Float selfj, fr_Obj pattern){ return 0; }
 
 fr_Int sys_Float_toInt_val(fr_Env env, fr_Float self) { return (fr_Int)self; }

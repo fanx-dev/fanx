@@ -14,7 +14,6 @@
 		3235217C268AADEE00EE50DF /* sys_NativeC.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235216E268AADAC00EE50DF /* sys_NativeC.c */; };
 		3235217D268AADEE00EE50DF /* sys_Int.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235216F268AADAC00EE50DF /* sys_Int.c */; };
 		3235217E268AADEE00EE50DF /* sys_Num.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352170268AADAC00EE50DF /* sys_Num.c */; };
-		3235217F268AADEE00EE50DF /* pod_sys_struct.h in Sources */ = {isa = PBXBuildFile; fileRef = 32352171268AADAC00EE50DF /* pod_sys_struct.h */; };
 		32352180268AADEE00EE50DF /* sys_Obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32352172268AADAC00EE50DF /* sys_Obj.cpp */; };
 		32352181268AADEE00EE50DF /* sys_Float.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352173268AADAC00EE50DF /* sys_Float.c */; };
 		32352182268AADEE00EE50DF /* sys_Bool.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352174268AADAC00EE50DF /* sys_Bool.c */; };
@@ -151,7 +150,6 @@
 		3235216E268AADAC00EE50DF /* sys_NativeC.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
 		3235216F268AADAC00EE50DF /* sys_Int.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
 		32352170268AADAC00EE50DF /* sys_Num.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
-		32352171268AADAC00EE50DF /* pod_sys_struct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pod_sys_struct.h; sourceTree = "<group>"; };
 		32352172268AADAC00EE50DF /* sys_Obj.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sys_Obj.cpp; sourceTree = "<group>"; };
 		32352173268AADAC00EE50DF /* sys_Float.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Float.c; sourceTree = "<group>"; };
 		32352174268AADAC00EE50DF /* sys_Bool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Bool.c; sourceTree = "<group>"; };
@@ -307,7 +305,6 @@
 				3235216E268AADAC00EE50DF /* sys_NativeC.c */,
 				3235216F268AADAC00EE50DF /* sys_Int.c */,
 				32352170268AADAC00EE50DF /* sys_Num.c */,
-				32352171268AADAC00EE50DF /* pod_sys_struct.h */,
 				32352172268AADAC00EE50DF /* sys_Obj.cpp */,
 				32352173268AADAC00EE50DF /* sys_Float.c */,
 				32352174268AADAC00EE50DF /* sys_Bool.c */,
@@ -659,7 +656,6 @@
 				3235217C268AADEE00EE50DF /* sys_NativeC.c in Sources */,
 				3235217D268AADEE00EE50DF /* sys_Int.c in Sources */,
 				3235217E268AADEE00EE50DF /* sys_Num.c in Sources */,
-				3235217F268AADEE00EE50DF /* pod_sys_struct.h in Sources */,
 				32352180268AADEE00EE50DF /* sys_Obj.cpp in Sources */,
 				32352181268AADEE00EE50DF /* sys_Float.c in Sources */,
 				32352182268AADEE00EE50DF /* sys_Bool.c in Sources */,

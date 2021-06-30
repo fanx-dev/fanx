@@ -10,7 +10,7 @@
 ** Unsafe is used to wrap a non-const mutable objects so that
 ** it can be passed as an immutable reference.
 **
-@NoNative native rtconst final class Unsafe<T>
+native rtconst final class Unsafe<T>
 {
   private Obj? value
   **

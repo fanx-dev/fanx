@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 #include <math.h>
 #include <wctype.h>
@@ -29,8 +29,8 @@ fr_Bool sys_Int_equals_val(fr_Env env, fr_Int self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Int_struct *other = (struct sys_Int_struct *)fr_getPtr(env, obj);
-    eq = self == other->_val;
+    fr_Int *other = (fr_Int *)fr_getPtr(env, obj);
+    eq = self == *other;
     //fr_unlock(env);
     return eq;
 }
@@ -49,8 +49,8 @@ fr_Int sys_Int_compare_val(fr_Env env, fr_Int self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Int_struct *other = (struct sys_Int_struct *)fr_getPtr(env, obj);
-    result = self - other->_val;
+    fr_Int *other = (fr_Int *)fr_getPtr(env, obj);
+    result = self - *other;
     //fr_unlock(env);
     return result;
 }
@@ -226,14 +226,14 @@ fr_Float sys_Int_toFloat_val(fr_Env env, fr_Int self) { return self; }
 void sys_Int_make_val(fr_Env env, fr_Int self) {
     return;
 }
-void sys_Int_static__init(fr_Env env) {
-    fr_Value val;
-    //val.type = fr_vtInt;
-    val.i = 0;
-    fr_setStaticFieldS(env, "sys", "Int", "defVal", &val);
-    val.i = INT64_MAX;
-    fr_setStaticFieldS(env, "sys", "Int", "maxVal", &val);
-    val.i = INT64_MIN;
-    fr_setStaticFieldS(env, "sys", "Int", "minVal", &val);
-    return;
-}
+//void sys_Int_static__init(fr_Env env) {
+//    fr_Value val;
+//    //val.type = fr_vtInt;
+//    val.i = 0;
+//    fr_setStaticFieldS(env, "sys", "Int", "defVal", &val);
+//    val.i = INT64_MAX;
+//    fr_setStaticFieldS(env, "sys", "Int", "maxVal", &val);
+//    val.i = INT64_MIN;
+//    fr_setStaticFieldS(env, "sys", "Int", "minVal", &val);
+//    return;
+//}

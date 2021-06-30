@@ -32,7 +32,6 @@
 		32352200268B316300EE50DF /* std_TimePoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DB268B316300EE50DF /* std_TimePoint.c */; };
 		32352201268B316300EE50DF /* std_Type.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DC268B316300EE50DF /* std_Type.c */; };
 		32352202268B316300EE50DF /* std_TimeZone.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DD268B316300EE50DF /* std_TimeZone.c */; };
-		32352203268B316300EE50DF /* std_SoftRef.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DE268B316300EE50DF /* std_SoftRef.c */; };
 		32352204268B316300EE50DF /* std_AtomicRef.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DF268B316300EE50DF /* std_AtomicRef.c */; };
 		32352205268B316300EE50DF /* std_Decimal.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E0268B316300EE50DF /* std_Decimal.c */; };
 		32352206268B316300EE50DF /* std_SysOutStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E1268B316300EE50DF /* std_SysOutStream.c */; };
@@ -62,6 +61,7 @@
 		3235222B268B38D200EE50DF /* std_ConcurrentMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352223268B38D200EE50DF /* std_ConcurrentMap.c */; };
 		3235222C268B38D200EE50DF /* std_Math.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352224268B38D200EE50DF /* std_Math.c */; };
 		3235222D268B38D200EE50DF /* std_Zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352225268B38D200EE50DF /* std_Zip.c */; };
+		3235222F268C343300EE50DF /* std_FileSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235222E268C343300EE50DF /* std_FileSystem.c */; };
 		324A54B42000EE130083C73E /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 324A54B22000EE130083C73E /* sys.c */; };
 		324BFA8523BC692A007F2863 /* type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324BFA8423BC692A007F2863 /* type.cpp */; };
 		326165501FF8A578002174D6 /* Vm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3261654F1FF8A578002174D6 /* Vm.cpp */; };
@@ -115,7 +115,6 @@
 		32352151268AAD9100EE50DF /* sys_NativeC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_NativeC.c; sourceTree = "<group>"; };
 		32352152268AAD9100EE50DF /* sys_Int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Int.c; sourceTree = "<group>"; };
 		32352153268AAD9100EE50DF /* sys_Num.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Num.c; sourceTree = "<group>"; };
-		32352154268AAD9100EE50DF /* pod_sys_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_sys_struct.h; sourceTree = "<group>"; };
 		32352155268AAD9100EE50DF /* sys_Obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sys_Obj.cpp; sourceTree = "<group>"; };
 		32352156268AAD9100EE50DF /* sys_Float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Float.c; sourceTree = "<group>"; };
 		32352157268AAD9100EE50DF /* sys_Bool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Bool.c; sourceTree = "<group>"; };
@@ -136,7 +135,6 @@
 		323521DB268B316300EE50DF /* std_TimePoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_TimePoint.c; sourceTree = "<group>"; };
 		323521DC268B316300EE50DF /* std_Type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Type.c; sourceTree = "<group>"; };
 		323521DD268B316300EE50DF /* std_TimeZone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_TimeZone.c; sourceTree = "<group>"; };
-		323521DE268B316300EE50DF /* std_SoftRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_SoftRef.c; sourceTree = "<group>"; };
 		323521DF268B316300EE50DF /* std_AtomicRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_AtomicRef.c; sourceTree = "<group>"; };
 		323521E0268B316300EE50DF /* std_Decimal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Decimal.c; sourceTree = "<group>"; };
 		323521E1268B316300EE50DF /* std_SysOutStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_SysOutStream.c; sourceTree = "<group>"; };
@@ -152,7 +150,6 @@
 		323521EB268B316300EE50DF /* std_Locale.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Locale.c; sourceTree = "<group>"; };
 		323521EC268B316300EE50DF /* std_Extension.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Extension.c; sourceTree = "<group>"; };
 		323521ED268B316300EE50DF /* std_Process.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Process.c; sourceTree = "<group>"; };
-		323521EE268B316300EE50DF /* pod_std_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_std_struct.h; sourceTree = "<group>"; };
 		323521EF268B316300EE50DF /* std_AtomicInt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_AtomicInt.c; sourceTree = "<group>"; };
 		323521F0268B316300EE50DF /* std_FileBuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_FileBuf.c; sourceTree = "<group>"; };
 		323521F1268B316300EE50DF /* std_NioBuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_NioBuf.c; sourceTree = "<group>"; };
@@ -172,6 +169,7 @@
 		32352223268B38D200EE50DF /* std_ConcurrentMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_ConcurrentMap.c; sourceTree = "<group>"; };
 		32352224268B38D200EE50DF /* std_Math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Math.c; sourceTree = "<group>"; };
 		32352225268B38D200EE50DF /* std_Zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Zip.c; sourceTree = "<group>"; };
+		3235222E268C343300EE50DF /* std_FileSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_FileSystem.c; sourceTree = "<group>"; };
 		324A54B22000EE130083C73E /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		324BFA8023BB962B007F2863 /* Bitmap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bitmap.hpp; sourceTree = "<group>"; };
 		324BFA8223BC4711007F2863 /* BitmapTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapTest.h; sourceTree = "<group>"; };
@@ -234,7 +232,6 @@
 				32352151268AAD9100EE50DF /* sys_NativeC.c */,
 				32352152268AAD9100EE50DF /* sys_Int.c */,
 				32352153268AAD9100EE50DF /* sys_Num.c */,
-				32352154268AAD9100EE50DF /* pod_sys_struct.h */,
 				32352155268AAD9100EE50DF /* sys_Obj.cpp */,
 				32352156268AAD9100EE50DF /* sys_Float.c */,
 				32352157268AAD9100EE50DF /* sys_Bool.c */,
@@ -248,6 +245,7 @@
 		323521CF268B316300EE50DF /* std */ = {
 			isa = PBXGroup;
 			children = (
+				3235222E268C343300EE50DF /* std_FileSystem.c */,
 				32352223268B38D200EE50DF /* std_ConcurrentMap.c */,
 				32352224268B38D200EE50DF /* std_Math.c */,
 				32352220268B38D200EE50DF /* std_NullableType.c */,
@@ -270,7 +268,6 @@
 				323521DB268B316300EE50DF /* std_TimePoint.c */,
 				323521DC268B316300EE50DF /* std_Type.c */,
 				323521DD268B316300EE50DF /* std_TimeZone.c */,
-				323521DE268B316300EE50DF /* std_SoftRef.c */,
 				323521DF268B316300EE50DF /* std_AtomicRef.c */,
 				323521E0268B316300EE50DF /* std_Decimal.c */,
 				323521E1268B316300EE50DF /* std_SysOutStream.c */,
@@ -286,7 +283,6 @@
 				323521EB268B316300EE50DF /* std_Locale.c */,
 				323521EC268B316300EE50DF /* std_Extension.c */,
 				323521ED268B316300EE50DF /* std_Process.c */,
-				323521EE268B316300EE50DF /* pod_std_struct.h */,
 				323521EF268B316300EE50DF /* std_AtomicInt.c */,
 				323521F0268B316300EE50DF /* std_FileBuf.c */,
 				323521F1268B316300EE50DF /* std_NioBuf.c */,
@@ -497,6 +493,7 @@
 				3235220A268B316300EE50DF /* std_Unsafe.c in Sources */,
 				3235215C268AAD9100EE50DF /* sys_Enum.c in Sources */,
 				32352211268B316300EE50DF /* std_Process.c in Sources */,
+				3235222F268C343300EE50DF /* std_FileSystem.c in Sources */,
 				3235220B268B316300EE50DF /* std_Log.c in Sources */,
 				32352207268B316300EE50DF /* std_Uuid.c in Sources */,
 				3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */,
@@ -514,7 +511,6 @@
 				327A0D0A22194A88001A6EF0 /* LinkedList.c in Sources */,
 				32C107071FE6B57B006248C6 /* main.c in Sources */,
 				3291F9311F6D416C00F12438 /* runtime.cpp in Sources */,
-				32352203268B316300EE50DF /* std_SoftRef.c in Sources */,
 				327A0D0922194A88001A6EF0 /* utf8.c in Sources */,
 				32352229268B38D200EE50DF /* std_ProxyType.c in Sources */,
 				32352161268AAD9100EE50DF /* sys_Obj.cpp in Sources */,

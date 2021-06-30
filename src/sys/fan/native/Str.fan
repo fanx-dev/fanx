@@ -11,7 +11,7 @@ using sys::Int32 as Char
 **
 ** Str represents a sequence of Unicode characters.
 **
-@NoNative native const final class Str
+native const final class Str
 {
   private readonly Array<Int8> utf8
   private const Int charLen

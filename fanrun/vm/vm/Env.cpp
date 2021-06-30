@@ -633,13 +633,14 @@ void Env::clearError() {
     error = NULL;
 }
 
-fr_Array* Env::arrayNew(FType *elemType, size_t elemSize, size_t size) {
+fr_Array* Env::arrayNew(FType *elemType, int32_t elemSize, size_t size) {
+    if (elemSize <= 0) elemSize = sizeof(void*);
     FType *arrayType = findType("sys", "Array");
     
     size_t allocSize = sizeof(fr_Array)+(elemSize*(size+1));
     fr_Array *a = (fr_Array*)allocObj(arrayType, 2, (int)allocSize);
     a->elemType = elemType;
-    a->elemSize = (int32_t)elemSize;
+    a->elemSize = elemSize;
     a->valueType = podManager->getValueTypeByType(this, elemType);
     
     a->size = size;

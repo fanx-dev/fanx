@@ -119,7 +119,7 @@ void PodGen::genHeader(Printer *printer) {
     }
     if (hasNative) {
         //printer->println("#include \"%s/pod_%s_native.h\"", podName.c_str(), podName.c_str());
-        printer->println("#include \"%s/pod_%s_struct.h\"", podName.c_str(), podName.c_str());
+        //printer->println("#include \"%s/pod_%s_struct.h\"", podName.c_str(), podName.c_str());
         printer->newLine();
     }
     

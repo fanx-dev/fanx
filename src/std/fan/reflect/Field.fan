@@ -9,7 +9,7 @@
 **
 ** Field is a slot which models the ability to get and set a value.
 **
-@NoNative native rtconst class Field : Slot
+native rtconst class Field : Slot
 {
   private const Str _typeName
   private Type? _type

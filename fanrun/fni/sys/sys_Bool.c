@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
 //fr_Bool sys_Bool_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {
@@ -21,8 +21,8 @@ fr_Bool sys_Bool_equals_val(fr_Env env, fr_Bool self, fr_Obj obj) {
     }
     
     //fr_lock(env);
-    struct sys_Bool_struct *other = (struct sys_Bool_struct *)fr_getPtr(env, obj);
-    eq = self == other->_val;
+    fr_Bool *other = (fr_Bool *)fr_getPtr(env, obj);
+    eq = self == *other;
     //fr_unlock(env);
     return eq;
 }
@@ -39,10 +39,10 @@ fr_Bool sys_Bool_or__val(fr_Env env, fr_Bool self, fr_Bool b) {
 fr_Bool sys_Bool_xor__val(fr_Env env, fr_Bool self, fr_Bool b) {
     return self != b;
 }
-void sys_Bool_static__init(fr_Env env) {
-    fr_Value val;
-    //val.type = fr_vtBool;
-    val.b = false;
-    fr_setStaticFieldS(env, "sys", "Bool", "defVal", &val);
-    return;
-}
+//void sys_Bool_static__init(fr_Env env) {
+//    fr_Value val;
+//    //val.type = fr_vtBool;
+//    val.b = false;
+//    fr_setStaticFieldS(env, "sys", "Bool", "defVal", &val);
+//    return;
+//}

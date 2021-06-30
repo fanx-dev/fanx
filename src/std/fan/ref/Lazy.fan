@@ -9,7 +9,7 @@
 **
 ** call initial when val is null
 **
-@NoNative final native rtconst class Lazy<T>
+final native rtconst class Lazy<T>
 {
   private Obj? value
   private const Lock lock

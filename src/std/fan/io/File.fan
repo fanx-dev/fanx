@@ -542,7 +542,7 @@ abstract const class File
 **************************************************************************
 ** LocalFile
 **************************************************************************
-@NoNative internal native const class LocalFile : File
+internal native const class LocalFile : File
 {
   new make(Uri uri, Bool checkSlash := true) {
     if (FileSystem.exists(uri.toStr)) {

@@ -11,17 +11,18 @@
 ** Env defines a pluggable class used to boot and manage a Fantom
 ** runtime environment.  Use `cur` to access the current Env instance.
 **
-@NoNative native const class Env
+native const class Env
 {
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
+  static const Env _cur := Env()
 
   **
   ** Get the current runtime environment
   **
-  static Env cur()
+  static Env cur() { _cur }
 
   **
   ** Subclasses are constructed from a parent environment.

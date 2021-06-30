@@ -24,8 +24,8 @@ void fr_finalizeObj(fr_Env __env, fr_Obj _obj) {
     sys_Obj obj = (sys_Obj)_obj;
     _FR_VTABLE(sys_Obj, obj)->finalize(__env, obj);
 }
-fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, size_t elemSize, size_t len) {
-    if (elemSize <= 0) elemSize = sizeof(fr_Obj);
+fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) {
+    if (elemSize <= 0) elemSize = sizeof(void*);
     fr_ValueType vtype = fr_vtObj;
     if (elemType == sys_Int_class__) {
         vtype = fr_vtInt;
@@ -38,12 +38,12 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, size_t elemSize, size_t len) {
         elemSize = sizeof(bool);
     }
     
-    size_t allocSize = sizeof(struct sys_Array_struct) + (elemSize * len) + 1;
-    sys_Array_ref array = (sys_Array_ref)fr_alloc(self, sys_Array_class__, allocSize);
-    array->_val.elemType = elemType;
-    array->_val.elemSize = elemSize;
-    array->_val.valueType = vtype;
-    array->_val.size = len;
+    size_t allocSize = sizeof(struct fr_Array_) + (elemSize * len) + 1;
+    fr_Array *array = (fr_Array*)fr_alloc(self, sys_Array_class__, allocSize);
+    array->elemType = elemType;
+    array->elemSize = elemSize;
+    array->valueType = vtype;
+    array->size = len;
     return array;
 }
 
@@ -98,7 +98,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj) {
     
     sys_Str str = (sys_Str)obj;
     sys_Array array = sys_Str_toUtf8(env__, str);
-    const char *data = (const char*)array->_val.data;
+    const char *data = (const char*)((fr_Array*)array)->data;
     //if (isCopy) *isCopy = false;
     return data;
 }

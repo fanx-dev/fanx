@@ -273,19 +273,9 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
     
     //get native alloc size
     if (type->c_isNative) {
-        FPod *pod = type->c_pod;
-        std::string name = pod->name +"_"+ type->c_name + "__allocSize__";
-        int (*func)() = (int (*)())nativeFuncMap[name];
-        if (func == NULL) {
-            printf("ERROR:not found native method: %s\n", name.c_str());
-            abort();
-        }
-        size = func();
-        if (size > type->c_allocSize) {
-            if (type->c_mangledName == "sys_Func" || type->c_mangledName == "sys_Obj") { /*pass*/ }
-            else {
-                if (size < 8) size = 8; // 64bit align
-                type->c_allocSize = size;
+        if (type->c_pod->name == "sys") {
+            if (type->c_name == "Int" || type->c_name == "Float" || type->c_name == "Bool" || type->c_name == "Ptr") {
+                type->c_allocSize = 8;
             }
         }
     }

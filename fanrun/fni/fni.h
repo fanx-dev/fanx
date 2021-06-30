@@ -154,7 +154,7 @@ bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type);
 // Array
 ////////////////////////////
 
-fr_Obj fr_arrayNew(fr_Env self, fr_Type type, size_t elemSize, size_t size);
+fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size);
 size_t fr_arrayLen(fr_Env self, fr_Obj array);
 void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val);
 void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val);

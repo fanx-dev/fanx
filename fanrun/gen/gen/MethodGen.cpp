@@ -113,23 +113,28 @@ void MethodGen::genImples(Printer *printer) {
         return;
     }
     
-    if (parent->type->c_isNative) {
-        /*skip Func
-        if (parent->name == "sys_Array") {
-            return;
-        }
-        */
-   
-        std::string &methodName = method->c_stdName;
-        if (!method->code.isEmpty() && methodName != "static$init" && methodName != "instance$init$") {
-            //has code
-        }
-        else {
-            return;
-        }
-    }
+//    if (parent->type->c_isNative) {
+//        /*skip Func
+//        if (parent->name == "sys_Array") {
+//            return;
+//        }
+//        */
+//
+//        std::string &methodName = method->c_stdName;
+//        if (!method->code.isEmpty() && methodName != "static$init" && methodName != "instance$init$") {
+//            //has code
+//        }
+//        else {
+//            return;
+//        }
+//    }
     
     if ((parent->type->meta.flags & FFlags::Native) != 0 && method->code.isEmpty()) return;
+    
+    if (parent->name == "sys_Float" && method->c_stdName == "static$init") {
+        printer->println("#include <math.h>");
+        printer->println("#include <float.h>");
+    }
     
     genPrototype(printer, false, isVal);
     printer->println(" {");

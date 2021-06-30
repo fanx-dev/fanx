@@ -138,7 +138,7 @@ public:
     void stackTrace(char *buf, int size, const char *delimiter);
     void printStackTrace();
     
-    fr_Array *arrayNew(FType *elemType, size_t elemSize, size_t size);
+    fr_Array *arrayNew(FType *elemType, int32_t elemSize, size_t size);
     void arrayGet(fr_Array *array, size_t index, fr_Value *val);
     void arraySet(fr_Array *array, size_t index, fr_Value *val);
 };

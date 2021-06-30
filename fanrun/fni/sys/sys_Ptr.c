@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
 void sys_Ptr_make_val(fr_Env env, fr_Ptr self) {

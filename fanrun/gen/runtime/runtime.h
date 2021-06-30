@@ -23,7 +23,7 @@ extern  "C" {
 #include <setjmp.h>
 #include <string.h>
 
-#include "fni.h"
+#include "vm.h"
 
 //#define LONG_JMP_EXCEPTION
 typedef fr_Obj fr_Err;
@@ -108,6 +108,20 @@ typedef float sys_Float32;
 
 typedef bool sys_Bool_val;
 typedef void * sys_Ptr_val;
+
+struct sys_Int_struct {
+    int64_t _val;
+};
+struct sys_Float_struct {
+    double _val;
+};
+struct sys_Bool_struct {
+    bool _val;
+};
+
+struct sys_Ptr_struct {
+    void *_val;
+};
 
 fr_Obj fr_box_int(fr_Env, sys_Int_val val);
 fr_Obj fr_box_float(fr_Env, sys_Float_val val);

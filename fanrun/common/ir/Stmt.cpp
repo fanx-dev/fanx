@@ -185,7 +185,20 @@ void ConstStmt::print(Printer& printer) {
         }
         case FOp::LoadFloat: {
             double i = curPod->constantas.reals[opObj.i1];
-            printer.printf("%s = %g;", varName.c_str(), i);
+            if (isinf(i)) {
+                if (i < 0) {
+                    printer.printf("%s = -INFINITY;", varName.c_str());
+                }
+                else {
+                    printer.printf("%s = INFINITY;", varName.c_str());
+                }
+            }
+            else if (isnan(i)) {
+                printer.printf("%s = NAN;", varName.c_str());
+            }
+            else {
+                printer.printf("%s = %.20f;", varName.c_str(), i);
+            }
             break;
         }
         case FOp::LoadDecimal: {
@@ -330,12 +343,12 @@ void CallStmt::print(Printer& printer) {
     
     if (typeName == "sys_Array") {
         if (mthName == "get") {
-            printer.printf("%s = ((%s*)(%s->_val.data))[%s];", retValue.getName().c_str(), extName.c_str(),
+            printer.printf("%s = ((%s*)(((fr_Array*)%s)->data))[%s];", retValue.getName().c_str(), extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str());
             return;
         }
         else if (mthName == "set") {
-            printer.printf("((%s*)(%s->_val.data))[%s] = %s;", extName.c_str(),
+            printer.printf("((%s*)(((fr_Array*)%s)->data))[%s] = %s;", extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str(), params[2].getName().c_str());
             return;
         }

@@ -10,7 +10,7 @@
 ** Method models a function with a formal parameter list and
 ** return value (or Void if no return).
 **
-@NoNative native rtconst class Method : Slot
+native rtconst class Method : Slot
 {
   private const Str _returnsName
   private Type? _returns

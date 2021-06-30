@@ -177,29 +177,29 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
         //escapeKeyword(typeName);
         
         if (printType == PrintType::pRegisterDef) {
-            printer->println("int %s_allocSize__();", typeName.c_str());
+            //printer->println("int %s_allocSize__();", typeName.c_str());
             //printer->println("void %sstatic__init(fr_Env self, void *param, void *ret);", typeName.c_str());
         }
         else if (printType == PrintType::pRegisterCode) {
-            printer->println("fr_registerMethod(vm, \"%s_allocSize__\", (fr_NativeFunc)%s_allocSize__);"
-                             , preName.c_str(), typeName.c_str());
+            //printer->println("fr_registerMethod(vm, \"%s_allocSize__\", (fr_NativeFunc)%s_allocSize__);"
+            //                 , preName.c_str(), typeName.c_str());
             //printer->println("fr_registerMethod(vm, \"%sstatic$init\", (fr_NativeFunc)%sstatic__init);"
             //                 , preName.c_str(), typeName.c_str());
         }
         else if (printType == PrintType::pNatiAll) {
-            printer->println("int %s_allocSize__() {"
-                             "return sizeof(struct %sstruct);}"
-                             , typeName.c_str(), typeName.c_str());
+            //printer->println("int %s_allocSize__() {"
+            //                 "return sizeof(struct %sstruct);}"
+            //                 , typeName.c_str(), typeName.c_str());
             //printer->println("void %sstatic__init(fr_Env self, void *param, void *ret);"
             //                 , typeName.c_str(), typeName.c_str());
-            printer->newLine();
+            //printer->newLine();
         }
     }
     
-    bool optimize = false;
-    if ((preName == "sys_Func_")) {
-        optimize = true;
-    }
+//    bool optimize = false;
+//    if ((preName == "sys_Func_")) {
+//        optimize = true;
+//    }
     
     std::string name;
     for (int i=0; i<type->methods.size(); ++i) {
@@ -216,12 +216,12 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
             continue;
         }
         
-        std::string &methodName = pod->names[method->name];
-        if (!optimize && (type->meta.flags & FFlags::Native) != 0 && ((method->flags & FFlags::Native)==0)) {
-            if (!method->code.isEmpty() && methodName != "static$init" && methodName != "instance$init$") {
-                continue;
-            }
-        }
+//        std::string &methodName = pod->names[method->name];
+//        if (!optimize && (type->meta.flags & FFlags::Native) != 0 && ((method->flags & FFlags::Native)==0)) {
+//            if (!method->code.isEmpty() && methodName != "static$init" && methodName != "instance$init$") {
+//                continue;
+//            }
+//        }
         
         name = preName + method->c_stdName;// preName + methodName;
 //        if ((method->flags & FFlags::Setter) || (method->flags & FFlags::Overload)) {
@@ -365,7 +365,7 @@ void NativeGen::genNativePod(std::string &path, FPod *pod, Printer *printer, Pri
             std::string file = path + podName + "_" + typeName + ".c";
             Printer typePrinter(file.c_str());
             typePrinter.println("#include \"vm.h\"");
-            typePrinter.println("#include \"pod_%s_struct.h\"", podName.c_str());
+            //typePrinter.println("#include \"pod_%s_struct.h\"", podName.c_str());
             typePrinter.println("#include \"pod_%s_native.h\"", podName.c_str());
             typePrinter.newLine();
             genNativeType(pod, type, preName, &typePrinter, printType);
@@ -398,17 +398,17 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     
     //---------------------------struct
     if (genStub) {
-        std::string initFile0 = path + "pod_" + podName + "_struct.h";
-        Printer printer0(initFile0.c_str());
-        
-        printer0.println("#include \"vm.h\"");
-        printer0.println("CF_BEGIN");
-        printer0.newLine();
-        
-        //gen methods implements
-        genNativePod(path, pod, &printer0, PrintType::pStruct);
-        printer0.newLine();
-        printer0.println("CF_END");
+//        std::string initFile0 = path + "pod_" + podName + "_struct.h";
+//        Printer printer0(initFile0.c_str());
+//
+//        printer0.println("#include \"vm.h\"");
+//        printer0.println("CF_BEGIN");
+//        printer0.newLine();
+//
+//        //gen methods implements
+//        //genNativePod(path, pod, &printer0, PrintType::pStruct);
+//        printer0.newLine();
+//        printer0.println("CF_END");
     }
     //---------------------------header file
     std::string initFile1 = path + "pod_" + podName + "_native.h";
@@ -427,7 +427,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     std::string initFile2 = path + "pod_" + podName + "_native.c";
     Printer printer2(initFile2.c_str());
     printer2.println("#include \"pod_%s_native.h\"", podName.c_str());
-    printer2.println("#include \"pod_%s_struct.h\"", podName.c_str());
+    //printer2.println("#include \"pod_%s_struct.h\"", podName.c_str());
     printer2.newLine();
     
     //gen methods implements

@@ -19,7 +19,7 @@
 **      Each entry must is written to the stream using `writeNext`
 **
 @NoJs
-@NoNative native final class Zip
+native final class Zip
 {
 
 //////////////////////////////////////////////////////////////////////////

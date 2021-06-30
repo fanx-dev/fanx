@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "pod_sys_struct.h"
+//#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
 #include <stdlib.h>
@@ -13,8 +13,9 @@ void sys_Array_make(fr_Env env, fr_Obj self, fr_Int size) {
     fr_Int len = sizeof(fr_Obj)*size;
     array->size = size;
     array->elemType = fr_findType(env, "sys", "Obj");
+    array->elemSize = sizeof(void*);
     //array->data = (FObj**)malloc(len);
-    memset(array->data, 0, len);
+    memset(array->data, 0, len*array->elemSize);
     
     //fr_unlock(env);
     return;
@@ -55,8 +56,8 @@ fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
     
-    fr_Obj newArray = fr_arrayNew(self, array->elemType, array->elemSize, newSize);
-    narray = (fr_Array *)fr_getPtr(self, newArray);
+    fr_Obj newArray = fr_arrayNew(env, array->elemType, array->elemSize, newSize);
+    narray = (fr_Array *)fr_getPtr(env, newArray);
     //p = realloc(array->data, newSize * sizeof(fr_Obj));
 //    if (p) {
 //        if (newSize > array->size) {
@@ -68,8 +69,12 @@ fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
 //    }
     //result = false;
     //fr_unlock(env);
-    size_t allocSize = sizeof(struct sys_Array_struct) + (newSize*sizeof(void*));
-    memcpy(narray, array, allocSize);
+    size_t copySize = sizeof(struct fr_Array_) + (newSize * array->elemSize);
+    size_t oldSize = sizeof(struct fr_Array_) + (array->size * array->elemSize);
+    if (oldSize < copySize) {
+        copySize = oldSize;
+    }
+    memcpy(narray, array, copySize);
     narray->size = newSize;
     return newArray;
 }

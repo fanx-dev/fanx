@@ -47,13 +47,6 @@ void Vm::releaseEnv(Env *env) {
     delete env;
 }
 
-typedef struct fr_Array_ {
-    fr_Type elemType;
-    int32_t valueType;
-    int32_t elemSize;
-    int64_t size;
-    fr_Obj data[1];
-} fr_Array;
 
 #ifdef  __cplusplus
 extern  "C" {

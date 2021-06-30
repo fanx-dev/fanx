@@ -161,9 +161,9 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
             if (FFacets *fs = dynamic_cast<FFacets*>(attr)) {
                 for (FFacet &f : fs->facets) {
                     FTypeRef &tRef = pod->typeRefs[f.type];
-                    if (pod->names[tRef.podName] == "sys" && pod->names[tRef.typeName] == "NoNative") {
-                        c_isNative = false;
-                    }
+//                    if (pod->names[tRef.podName] == "sys" && pod->names[tRef.typeName] == "NoNative") {
+//                        c_isNative = false;
+//                    }
                     if (pod->names[tRef.podName] == "sys" && pod->names[tRef.typeName] == "Extern") {
                         c_isSimpleSym = true;
                     }

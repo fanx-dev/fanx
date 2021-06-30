@@ -156,8 +156,5 @@ facet class Extern {
   const Str include := ""
 }
 
-**
-** ignore native in C runtime
-**
-facet class NoNative {}
+
 

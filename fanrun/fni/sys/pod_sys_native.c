@@ -1,7 +1,4 @@
 #include "pod_sys_native.h"
-#include "pod_sys_struct.h"
-
-int sys_Obj__allocSize__() {return sizeof(struct sys_Obj_struct);}
 
 void sys_Obj_trap_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -42,831 +39,6 @@ void sys_Obj_isImmutable_v(fr_Env env, void *param, void *ret) {
     retValue.b = sys_Obj_isImmutable(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
-
-void sys_Enum_doFromStr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Bool arg_2; 
-    fr_ValueType vtype_2;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.b;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.h = sys_Enum_doFromStr(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
-int sys_Array__allocSize__() {return sizeof(struct sys_Array_struct);}
-
-void sys_Array_make_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_Array_make(env, arg_0, arg_1);
-}
-
-void sys_Array_size_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.i = sys_Array_size(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Array_get_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.h = sys_Array_get(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Array_set_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_ValueType vtype_2;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_Array_set(env, arg_0, arg_1, arg_2);
-}
-
-void sys_Array_realloc_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.h = sys_Array_realloc(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Array_arraycopy_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_ValueType vtype_2;
-    fr_Value value_3;
-    fr_Int arg_3; 
-    fr_ValueType vtype_3;
-    fr_Value value_4;
-    fr_Int arg_4; 
-    fr_ValueType vtype_4;
-
-    fr_getParam(env, param, &value_4, 4, &vtype_4);
-    arg_4 = value_4.i;
-
-    fr_getParam(env, param, &value_3, 3, &vtype_3);
-    arg_3 = value_3.i;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_Array_arraycopy(env, arg_0, arg_1, arg_2, arg_3, arg_4);
-}
-
-void sys_Array_fill_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Int arg_2; 
-    fr_ValueType vtype_2;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.i;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_Array_fill(env, arg_0, arg_1, arg_2);
-}
-
-void sys_Array_finalize_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_Array_finalize(env, arg_0);
-}
-
-int sys_Bool__allocSize__() {return sizeof(struct sys_Bool_struct);}
-
-void sys_Bool_equals_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_equals_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Bool_not__v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_not__val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Bool_and__v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Bool arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.b;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_and__val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Bool_or__v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Bool arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.b;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_or__val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Bool_xor__v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Bool arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Bool arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.b;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.b;
-
-
-    retValue.b = sys_Bool_xor__val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-int sys_Float__allocSize__() {return sizeof(struct sys_Float_struct);}
-
-void sys_Float_makeBits_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Int arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.i;
-
-
-    retValue.f = sys_Float_makeBits(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_makeBits32_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Int arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.i;
-
-
-    retValue.f = sys_Float_makeBits32(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_fromStr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Bool arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.b;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.f = sys_Float_fromStr(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_random_v(fr_Env env, void *param, void *ret) {
-    fr_Value retValue;
-
-
-    retValue.f = sys_Float_random(env);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_equals_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.b = sys_Float_equals_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_isNaN_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.b = sys_Float_isNaN_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_negate_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_negate_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_mult_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Float arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.f;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_mult_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_multInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_multInt_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_div_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Float arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.f;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_div_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_divInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_divInt_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_mod_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Float arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.f;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_mod_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_modInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_modInt_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_plus_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Float arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.f;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_plus_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_plusInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_plusInt_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_minus_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Float arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.f;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_minus_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_minusInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Int arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.f = sys_Float_minusInt_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_bits_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.i = sys_Float_bits_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_bits32_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.i = sys_Float_bits32_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_toStr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.h = sys_Float_toStr_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_toInt_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.i = sys_Float_toInt_val(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_Float_toLocale_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
-    arg_0 = value_0.f;
-
-
-    retValue.h = sys_Float_toLocale_val(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-int sys_Func__allocSize__() {return sizeof(struct sys_Func_struct);}
-
-void sys_Func_call_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_ValueType vtype_2;
-    fr_Value value_3;
-    fr_Obj arg_3; 
-    fr_ValueType vtype_3;
-    fr_Value value_4;
-    fr_Obj arg_4; 
-    fr_ValueType vtype_4;
-    fr_Value value_5;
-    fr_Obj arg_5; 
-    fr_ValueType vtype_5;
-    fr_Value value_6;
-    fr_Obj arg_6; 
-    fr_ValueType vtype_6;
-    fr_Value value_7;
-    fr_Obj arg_7; 
-    fr_ValueType vtype_7;
-    fr_Value value_8;
-    fr_Obj arg_8; 
-    fr_ValueType vtype_8;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_8, 8, &vtype_8);
-    arg_8 = value_8.h;
-
-    fr_getParam(env, param, &value_7, 7, &vtype_7);
-    arg_7 = value_7.h;
-
-    fr_getParam(env, param, &value_6, 6, &vtype_6);
-    arg_6 = value_6.h;
-
-    fr_getParam(env, param, &value_5, 5, &vtype_5);
-    arg_5 = value_5.h;
-
-    fr_getParam(env, param, &value_4, 4, &vtype_4);
-    arg_4 = value_4.h;
-
-    fr_getParam(env, param, &value_3, 3, &vtype_3);
-    arg_3 = value_3.h;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.h = sys_Func_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
-    *((fr_Value*)ret) = retValue;
-}
-
-void sys_BindFunc_call_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_ValueType vtype_1;
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_ValueType vtype_2;
-    fr_Value value_3;
-    fr_Obj arg_3; 
-    fr_ValueType vtype_3;
-    fr_Value value_4;
-    fr_Obj arg_4; 
-    fr_ValueType vtype_4;
-    fr_Value value_5;
-    fr_Obj arg_5; 
-    fr_ValueType vtype_5;
-    fr_Value value_6;
-    fr_Obj arg_6; 
-    fr_ValueType vtype_6;
-    fr_Value value_7;
-    fr_Obj arg_7; 
-    fr_ValueType vtype_7;
-    fr_Value value_8;
-    fr_Obj arg_8; 
-    fr_ValueType vtype_8;
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_8, 8, &vtype_8);
-    arg_8 = value_8.h;
-
-    fr_getParam(env, param, &value_7, 7, &vtype_7);
-    arg_7 = value_7.h;
-
-    fr_getParam(env, param, &value_6, 6, &vtype_6);
-    arg_6 = value_6.h;
-
-    fr_getParam(env, param, &value_5, 5, &vtype_5);
-    arg_5 = value_5.h;
-
-    fr_getParam(env, param, &value_4, 4, &vtype_4);
-    arg_4 = value_4.h;
-
-    fr_getParam(env, param, &value_3, 3, &vtype_3);
-    arg_3 = value_3.h;
-
-    fr_getParam(env, param, &value_2, 2, &vtype_2);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, &vtype_1);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    retValue.h = sys_BindFunc_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
-    *((fr_Value*)ret) = retValue;
-}
-
-int sys_Int__allocSize__() {return sizeof(struct sys_Int_struct);}
 
 void sys_Int_fromStr_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -1494,67 +666,248 @@ void sys_Int_toFloat_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_NativeC_toId_v(fr_Env env, void *param, void *ret) {
+void sys_Func_call_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Obj arg_2; 
+    fr_ValueType vtype_2;
+    fr_Value value_3;
+    fr_Obj arg_3; 
+    fr_ValueType vtype_3;
+    fr_Value value_4;
+    fr_Obj arg_4; 
+    fr_ValueType vtype_4;
+    fr_Value value_5;
+    fr_Obj arg_5; 
+    fr_ValueType vtype_5;
+    fr_Value value_6;
+    fr_Obj arg_6; 
+    fr_ValueType vtype_6;
+    fr_Value value_7;
+    fr_Obj arg_7; 
+    fr_ValueType vtype_7;
+    fr_Value value_8;
+    fr_Obj arg_8; 
+    fr_ValueType vtype_8;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_8, 8, &vtype_8);
+    arg_8 = value_8.h;
+
+    fr_getParam(env, param, &value_7, 7, &vtype_7);
+    arg_7 = value_7.h;
+
+    fr_getParam(env, param, &value_6, 6, &vtype_6);
+    arg_6 = value_6.h;
+
+    fr_getParam(env, param, &value_5, 5, &vtype_5);
+    arg_5 = value_5.h;
+
+    fr_getParam(env, param, &value_4, 4, &vtype_4);
+    arg_4 = value_4.h;
+
+    fr_getParam(env, param, &value_3, 3, &vtype_3);
+    arg_3 = value_3.h;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.h;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_Func_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_BindFunc_call_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Obj arg_2; 
+    fr_ValueType vtype_2;
+    fr_Value value_3;
+    fr_Obj arg_3; 
+    fr_ValueType vtype_3;
+    fr_Value value_4;
+    fr_Obj arg_4; 
+    fr_ValueType vtype_4;
+    fr_Value value_5;
+    fr_Obj arg_5; 
+    fr_ValueType vtype_5;
+    fr_Value value_6;
+    fr_Obj arg_6; 
+    fr_ValueType vtype_6;
+    fr_Value value_7;
+    fr_Obj arg_7; 
+    fr_ValueType vtype_7;
+    fr_Value value_8;
+    fr_Obj arg_8; 
+    fr_ValueType vtype_8;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_8, 8, &vtype_8);
+    arg_8 = value_8.h;
+
+    fr_getParam(env, param, &value_7, 7, &vtype_7);
+    arg_7 = value_7.h;
+
+    fr_getParam(env, param, &value_6, 6, &vtype_6);
+    arg_6 = value_6.h;
+
+    fr_getParam(env, param, &value_5, 5, &vtype_5);
+    arg_5 = value_5.h;
+
+    fr_getParam(env, param, &value_4, 4, &vtype_4);
+    arg_4 = value_4.h;
+
+    fr_getParam(env, param, &value_3, 3, &vtype_3);
+    arg_3 = value_3.h;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.h;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_BindFunc_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Str_format_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_Str_format(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Bool_equals_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Bool arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.b;
+
+
+    retValue.b = sys_Bool_equals_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Bool_not__v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Bool arg_0; 
     fr_ValueType vtype_0;
     fr_Value retValue;
 
     fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.b;
 
 
-    retValue.i = sys_NativeC_toId(env, arg_0);
+    retValue.b = sys_Bool_not__val(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_NativeC_typeName_v(fr_Env env, void *param, void *ret) {
+void sys_Bool_and__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
-    fr_Obj arg_0; 
+    fr_Bool arg_0; 
     fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Bool arg_1; 
+    fr_ValueType vtype_1;
     fr_Value retValue;
 
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.b;
+
     fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.b;
 
 
-    retValue.h = sys_NativeC_typeName(env, arg_0);
+    retValue.b = sys_Bool_and__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_NativeC_print_v(fr_Env env, void *param, void *ret) {
+void sys_Bool_or__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
-    fr_Obj arg_0; 
+    fr_Bool arg_0; 
     fr_ValueType vtype_0;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_NativeC_print(env, arg_0);
-}
-
-void sys_NativeC_printErr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_ValueType vtype_0;
-
-    fr_getParam(env, param, &value_0, 0, &vtype_0);
-    arg_0 = value_0.h;
-
-
-    sys_NativeC_printErr(env, arg_0);
-}
-
-void sys_NativeC_stackTrace_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_1;
+    fr_Bool arg_1; 
+    fr_ValueType vtype_1;
     fr_Value retValue;
 
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.b;
 
-    retValue.h = sys_NativeC_stackTrace(env);
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.b;
+
+
+    retValue.b = sys_Bool_or__val(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-int sys_Ptr__allocSize__() {return sizeof(struct sys_Ptr_struct);}
+void sys_Bool_xor__v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Bool arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Bool arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.b;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.b;
+
+
+    retValue.b = sys_Bool_xor__val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
 
 void sys_Ptr_make_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
@@ -1684,9 +1037,293 @@ void sys_Ptr_get_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void sys_Str_format_v(fr_Env env, void *param, void *ret) {
+void sys_Array_make_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_Array_make(env, arg_0, arg_1);
+}
+
+void sys_Array_size_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.i = sys_Array_size(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Array_get_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_Array_get(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Array_set_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Obj arg_2; 
+    fr_ValueType vtype_2;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.h;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_Array_set(env, arg_0, arg_1, arg_2);
+}
+
+void sys_Array_realloc_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_Array_realloc(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Array_arraycopy_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Obj arg_2; 
+    fr_ValueType vtype_2;
+    fr_Value value_3;
+    fr_Int arg_3; 
+    fr_ValueType vtype_3;
+    fr_Value value_4;
+    fr_Int arg_4; 
+    fr_ValueType vtype_4;
+
+    fr_getParam(env, param, &value_4, 4, &vtype_4);
+    arg_4 = value_4.i;
+
+    fr_getParam(env, param, &value_3, 3, &vtype_3);
+    arg_3 = value_3.i;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.h;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_Array_arraycopy(env, arg_0, arg_1, arg_2, arg_3, arg_4);
+}
+
+void sys_Array_fill_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Int arg_2; 
+    fr_ValueType vtype_2;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.i;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_Array_fill(env, arg_0, arg_1, arg_2);
+}
+
+void sys_Array_finalize_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_Array_finalize(env, arg_0);
+}
+
+void sys_NativeC_toId_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.i = sys_NativeC_toId(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_NativeC_typeName_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = sys_NativeC_typeName(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_NativeC_print_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_NativeC_print(env, arg_0);
+}
+
+void sys_NativeC_printErr_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    sys_NativeC_printErr(env, arg_0);
+}
+
+void sys_NativeC_stackTrace_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.h = sys_NativeC_stackTrace(env);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_makeBits_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Int arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.i;
+
+
+    retValue.f = sys_Float_makeBits(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_makeBits32_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Int arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.i;
+
+
+    retValue.f = sys_Float_makeBits32(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_fromStr_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Bool arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.b;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.f = sys_Float_fromStr(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_random_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.f = sys_Float_random(env);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_equals_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
     fr_ValueType vtype_0;
     fr_Value value_1;
     fr_Obj arg_1; 
@@ -1697,10 +1334,358 @@ void sys_Str_format_v(fr_Env env, void *param, void *ret) {
     arg_1 = value_1.h;
 
     fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.b = sys_Float_equals_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_isNaN_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.b = sys_Float_isNaN_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_negate_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_negate_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_mult_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Float arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.f;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_mult_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_multInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_multInt_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_div_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Float arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.f;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_div_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_divInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_divInt_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_mod_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Float arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.f;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_mod_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_modInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_modInt_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_plus_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Float arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.f;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_plus_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_plusInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_plusInt_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_minus_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Float arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.f;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_minus_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_minusInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Int arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.i;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.f = sys_Float_minusInt_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_bits_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.i = sys_Float_bits_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_bits32_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.i = sys_Float_bits32_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_toStr_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.h = sys_Float_toStr_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_toInt_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.i = sys_Float_toInt_val(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Float_toLocale_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Float arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    if (vtype_0 == fr_vtHandle) fr_unbox(env, value_0.h, &value_0);
+    arg_0 = value_0.f;
+
+
+    retValue.h = sys_Float_toLocale_val(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void sys_Enum_doFromStr_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Bool arg_2; 
+    fr_ValueType vtype_2;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.b;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
     arg_0 = value_0.h;
 
 
-    retValue.h = sys_Str_format(env, arg_0, arg_1);
+    retValue.h = sys_Enum_doFromStr(env, arg_0, arg_1, arg_2);
     *((fr_Value*)ret) = retValue;
 }
 
