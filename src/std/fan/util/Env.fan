@@ -11,7 +11,7 @@
 ** Env defines a pluggable class used to boot and manage a Fantom
 ** runtime environment.  Use `cur` to access the current Env instance.
 **
-native const class Env
+@NoNative native const class Env
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,18 +26,11 @@ native const class Env
   **
   ** Subclasses are constructed from a parent environment.
   **
-  protected new make(Env parent := Env.cur)
+  protected new make()
 
 //////////////////////////////////////////////////////////////////////////
 // Non-Virtuals
 //////////////////////////////////////////////////////////////////////////
-
-  **
-  ** Get the parent environment or null if this is the bootstrap
-  ** environment.  Many virtual methods delegate to their parent by
-  ** default.
-  **
-  Env? parent()
 
   **
   ** Name of the host platform as a string formatted

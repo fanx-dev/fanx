@@ -521,29 +521,85 @@ abstract const class File
 
 }
 
+@NoDoc internal class FileSystem {
+  native static Bool exists(Str path)
+  native static Int size(Str path)
+  native static Int modified(Str path)
+  native static Bool setModified(Str path, Int time)
+  native static Str? osPath(Str path)
+  native static Str[] list(Str path)
+  native static Str normalize(Str path)
+  native static Bool create(Str path)
+  native static Bool moveTo(Str path, Str to)
+  native static Bool delete(Str path)
+  native static Bool deleteOnExit(Str path)
+  native static Bool isReadable(Str path)
+  native static Bool isWritable(Str path)
+  native static Bool isExecutable(Str path)
+  native static Bool isDir(Str path)
+}
+
 **************************************************************************
 ** LocalFile
 **************************************************************************
-internal native const class LocalFile : File
+@NoNative internal native const class LocalFile : File
 {
-  new make(Uri uri, Bool checkSlash := true)
+  new make(Uri uri, Bool checkSlash := true) {
+    if (FileSystem.exists(uri.toStr)) {
+      if (FileSystem.isDir(uri.toStr)) {
+        if (!uri.isDir()) {
+          if (checkSlash)
+            throw IOErr.make("Must use trailing slash for dir: " + uri)
+          else
+            uri = uri.plusSlash()
+        }
+      } else {
+        if (uri.isDir())
+          throw IOErr.make("Cannot use trailing slash for file: " + uri)
+      }
+    }
+  }
 
   native override FileStore? store()
 
-  native override Bool exists()
-  native override Int size()
-  native override TimePoint? modified
-  native override Str? osPath()
-  native override File[] list()
-  native override File normalize()
-  native override File create()
-  native override File moveTo(File to)
-  native override Void delete()
-  native override File deleteOnExit()
+  override Bool exists() { FileSystem.exists(uri.toStr) }
+  override Int size() { FileSystem.size(uri.toStr) }
+  override TimePoint? modified {
+    get { TimePoint.fromMillis(FileSystem.modified(uri.toStr)) }
+    set { FileSystem.setModified(uri.toStr, it.toMillis) }
+  }
+  override Str? osPath() { FileSystem.osPath(uri.toStr) }
+  override File[] list() {
+    res := FileSystem.list(uri.toStr)
+    return res.map { File.fromPath(it, false) }
+  }
+  override File normalize() {
+    nor := FileSystem.normalize(uri.toStr)
+    return File.fromPath(nor, false)
+  }
+  override File create() {
+    ok := FileSystem.create(uri.toStr)
+    if (!ok) throw IOErr("Can't create file: $uri")
+    return this
+  }
+  override File moveTo(File to) {
+    ok := FileSystem.moveTo(uri.toStr, to.uri.toStr)
+    if (!ok) throw IOErr("Can't moveTo file: $uri to; to.uri")
+    return this
+  }
+  override Void delete() {
+    ok := FileSystem.delete(uri.toStr)
+    if (!ok) throw IOErr("Can't delete file: $uri")
+  }
+  override File deleteOnExit() {
+    ok := FileSystem.deleteOnExit(uri.toStr)
+    if (!ok) throw IOErr("deleteOnExit error: $uri")
+    return this
+  }
 
-  native override Bool isReadable()
-  native override Bool isWritable()
-  native override Bool isExecutable()
+  override Bool isReadable() { FileSystem.isReadable(uri.toStr) }
+  override Bool isWritable() { FileSystem.isWritable(uri.toStr) }
+  override Bool isExecutable() { FileSystem.isExecutable(uri.toStr) }
 
   override Buf open(Str mode := "rw") {
     FileBuf(this, mode)
