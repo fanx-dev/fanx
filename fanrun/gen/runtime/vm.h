@@ -56,7 +56,7 @@ typedef struct fr_Array_ {
     int32_t valueType;
     int32_t elemSize;
     fr_Int size;
-    FObj* data[1];
+    char data[1];
 } fr_Array;
 
 CF_END

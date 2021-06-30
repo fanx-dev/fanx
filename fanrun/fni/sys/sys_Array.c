@@ -25,7 +25,7 @@ fr_Obj sys_Array_get(fr_Env env, fr_Obj self, fr_Int pos) {
     fr_Obj result;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
-    result = fr_toHandle(env, array->data[pos]);
+    result = fr_toHandle(env, ((FObj**)array->data)[pos]);
     //fr_unlock(env);
     return result;
 }
@@ -34,7 +34,7 @@ void sys_Array_set(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
     //fr_Obj result;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
-    array->data[pos] = fr_getPtr(env, val);
+    ((FObj**)array->data)[pos] = fr_getPtr(env, val);
     //fr_unlock(env);
     return;
 }
@@ -87,7 +87,7 @@ void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, 
     array = (fr_Array *)fr_getPtr(env, dest);
     other = (fr_Array *)fr_getPtr(env, src);
     
-    memccpy(array->data+destOffset, other->data, srcOffset, length);
+    memcpy(((char*)array->data)+destOffset, ((char*)other->data) + srcOffset, length);
     
     //fr_unlock(env);
 }

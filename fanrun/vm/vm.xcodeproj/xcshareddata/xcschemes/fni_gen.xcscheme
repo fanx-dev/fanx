@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-g/Users/yangjiandong/workspace/code/fanx/fanrun/fni/std/ -p/Users/yangjiandong/workspace/code/fanx/env/ -d -c std"
+            argument = "-g/Users/yangjiandong/workspace/code/fanx/fanrun/fni/std/ -p/Users/yangjiandong/workspace/code/fanx/env/ -d std"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

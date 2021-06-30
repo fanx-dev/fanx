@@ -225,11 +225,13 @@ size_t fr_arrayLen(fr_Env self, fr_Obj array) {
 }
 void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
     fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    val->o = a->data[index];
+    //TODO
+    val->o = ((FObj**)(a->data))[index];
 }
 void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
     fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    a->data[index] = (FObj*)val->o;
+    //TODO
+    ((FObj**)(a->data))[index] = (FObj*)val->o;
 }
 
 ////////////////////////////

@@ -333,10 +333,14 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
 }
 
 static bool hasNative(FType *type) {
-    if ((type->meta.flags & FFlags::Native) != 0) return true;
+    //if ((type->meta.flags & FFlags::Native) != 0) return true;
     for (int i=0; i<type->methods.size(); ++i) {
         FMethod *method = &type->methods[i];
         if ((method->flags & FFlags::Native) != 0) {
+            return true;
+        }
+        
+        if ((type->meta.flags & FFlags::Native) != 0 && method->code.isEmpty() && (method->flags & FFlags::Abstract) == 0) {
             return true;
         }
     }

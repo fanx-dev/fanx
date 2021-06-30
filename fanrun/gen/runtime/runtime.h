@@ -68,7 +68,7 @@ void fr_gc(fr_Env self);
 //GcObj *fr_toGcObj(fr_Obj obj);
 //fr_Obj fr_fromGcObj(GcObj *g);
 #define fr_toGcObj(obj) (((GcObj*)(obj))-1)
-#define fr_fromGcObj(g) ((fr_Obj)(((GcObj*)(g))+1))
+#define fr_fromGcObj(g) ((FObj*)(((GcObj*)(g))+1))
 void fr_checkPoint(fr_Env self);
 void fr_yieldGc(fr_Env self);
 void fr_endYieldGc(fr_Env self);

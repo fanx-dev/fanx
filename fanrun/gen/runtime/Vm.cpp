@@ -57,14 +57,14 @@ extern  "C" {
 #endif
 
 void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
-    fr_Obj obj = fr_fromGcObj(gcobj);
+    FObj* obj = fr_fromGcObj(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
     
     if (type == sys_Array_class__) {
         fr_Array *array = (fr_Array*)obj;
         if (array->valueType == fr_vtObj) {
             for (int i=0; i<array->size; ++i) {
-                fr_Obj elem = array->data[i];
+                FObj* elem = ((FObj**)(array->data))[i];
                 if (elem) {
                     GcObj *gp = fr_toGcObj(elem);
                     //list->push_back(gp);

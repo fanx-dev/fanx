@@ -329,7 +329,7 @@ native const final class Str
           break
         }
       }
-      if (match) return charCount
+      if (match) return charCount-1
     }
     return -1
   }
