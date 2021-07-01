@@ -56,7 +56,10 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) 
 sys_Str sys_Str_fromCStr(fr_Env __env, sys_Ptr utf8, sys_Int byteLen);
 sys_Array sys_Str_toUtf8(fr_Env __env, sys_Str_ref __self);
 
-fr_Obj fr_newStrUtf8(fr_Env __env, const char *bytes, ssize_t size) {
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
+    return fr_newStrUtf8N(self, bytes, -1);
+}
+fr_Obj fr_newStrUtf8N(fr_Env __env, const char *bytes, ssize_t size) {
     size_t len;
     sys_Str str;
     

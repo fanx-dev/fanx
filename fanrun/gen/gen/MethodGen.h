@@ -25,6 +25,7 @@ struct MethodGen {
     
     void genDeclares(Printer *printer, bool funcPtr, bool isValType);
     void genNativePrototype(Printer *printer, bool funcPtr, bool isValType);
+    void genVarArgsFunc(Printer *printer);
     void genImples(Printer *printer);
     void genImplesToVal(Printer *printer);
     void genStub(Printer *printer);
@@ -35,6 +36,7 @@ private:
     std::string getTypeDeclName(uint16_t tid, bool forPass = false);
     bool genPrototype(Printer *printer, bool funcPtr, bool isValType);
     void genMethodStub(Printer *printer, bool isValType);
+    void printParam(Printer *printer, int printType);
 };
 
 #endif /* MethodGen_h */

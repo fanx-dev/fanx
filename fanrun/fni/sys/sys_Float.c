@@ -212,7 +212,7 @@ fr_Obj sys_Float_toStr_val(fr_Env env, fr_Float self) {
     fr_Obj str;
     
     snprintf(buf, 128, "%g", self);
-    str = fr_newStrUtf8(env, buf, -1);
+    str = fr_newStrUtf8(env, buf);
     
     return str;
 }

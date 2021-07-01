@@ -339,8 +339,42 @@ static void popRet(Env *context, FMethod *method, fr_Value *ret) {
     }
     //context->unlock();
 }
+fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args) {
+    fr_Value valueArgs[10] = {0};
+    fr_Value ret;
+    for(int i=0; i<argCount; i++) {
+        FMethod *f = (FMethod*)method;
+        int paramIndex = i;
+        if ((f->flags & FFlags::Static) == 0) {
+            --paramIndex;
+        }
+        if (paramIndex == -1) {
+            valueArgs[i].i = va_arg(args, int64_t);
+            continue;
+        }
+        
+        std::string type = f->c_parent->c_pod->names[f->vars[paramIndex].type];
+        if (type == "sys_Bool") {
+            valueArgs[i].b = va_arg(args, int);
+        }
+        else {
+            valueArgs[i].i = va_arg(args, int64_t);
+        }
+    }
+    ret.i = 0;
+    fr_callMethodA(self, method, argCount, valueArgs, &ret);
+    return ret;
+}
 
-void fr_callMethod(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
+fr_Value fr_callMethod(fr_Env self, fr_Method method, int argCount, ...) {
+    va_list args;
+    fr_Value ret;
+    va_start(args, argCount);
+    ret = fr_callMethodV(self, method, argCount, args);
+    va_end(args);
+    return ret;
+}
+void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
     //TODO
     Env *e = (Env*)self;
     int paramCount = pushArg(self, method, argCount, arg);
@@ -363,7 +397,41 @@ void fr_callNonVirtual(fr_Env self, fr_Method method
     
     popRet(e, (FMethod*)method, ret);
 }
-void fr_newObj(fr_Env self, fr_Type type, fr_Method method
+fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
+    fr_Value valueArgs[10] = {0};
+    fr_Value ret;
+    for(int i=0; i<argCount; i++) {
+        FMethod *f = (FMethod*)method;
+        int paramIndex = i;
+        if ((f->flags & FFlags::Static) == 0) {
+            --paramIndex;
+        }
+        if (paramIndex == -1) {
+            valueArgs[i].i = va_arg(args, int64_t);
+            continue;
+        }
+        
+        std::string type = f->c_parent->c_pod->names[f->vars[paramIndex].type];
+        if (type == "sys_Bool") {
+            valueArgs[i].b = va_arg(args, int);
+        }
+        else {
+            valueArgs[i].i = va_arg(args, int64_t);
+        }
+    }
+    ret.i = 0;
+    fr_newObjA(self, type, method, argCount, valueArgs, &ret);
+    return ret;
+}
+fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ...) {
+    va_list args;
+    fr_Value ret;
+    va_start(args, argCount);
+    ret = fr_callMethodV(self, method, argCount, args);
+    va_end(args);
+    return ret;
+}
+void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
                , int argCount, fr_Value *arg, fr_Value *ret) {
     Env *e = (Env*)self;
     argCount = pushArg(self, method, argCount, arg);
@@ -372,38 +440,48 @@ void fr_newObj(fr_Env self, fr_Type type, fr_Method method
     popRet(e, (FMethod*)method, ret);
 }
 
-void fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
-                     , int argCount, fr_Value *arg, fr_Value *ret) {
-    Env *e = (Env*)self;
-    fr_Method method = (fr_Method)e->podManager->findMethod(e, pod, type, name, argCount);
+fr_Value fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
+                     , int argCount, ...) {
+    va_list args;
+    fr_Value ret;
+    va_start(args, argCount);
     
-    argCount = pushArg(self, method, argCount, arg);
-    e->newObj(((FMethod*)method)->c_parent, (FMethod*)method, argCount);
+    fr_Type ftype = fr_findType(self, pod, type);
+    fr_Method m = fr_findMethod(self, ftype, name);
     
-    popRet(e, (FMethod*)method, ret);
+    ret = fr_newObjV(self, ftype, m, argCount, args);
+    va_end(args);
+    return ret;
 }
 
-void fr_callOnObj(fr_Env self, const char *name
-                         , int argCount, fr_Value *arg, fr_Value *ret) {
-    Env *e = (Env*)self;
-    FObj *obj = fr_getPtr(self, arg[0].h);
+fr_Value fr_callOnObj(fr_Env self, const char *name
+                         , int argCount, ...) {
+    va_list args;
+    fr_Value ret;
+    va_start(args, argCount);
+    fr_Obj obj = va_arg(args, fr_Obj);
+    va_start(args, argCount);
     
-    FMethod *method = nullptr;
-    fr_TagValue entry;
-    int paramCount = --argCount;
-    entry.type = fr_vtObj;
-    entry.any.o = obj;
-    FType *type = e->podManager->getInstanceType(e, entry);
-    method = e->podManager->findVirtualMethod(e, type, name, paramCount);
+    fr_Type ftype = fr_getObjType(self, obj);
+    fr_Method m = fr_findMethod(self, ftype, name);
     
-    fr_callMethod(self, (fr_Method)method, argCount, arg, ret);
+    ret = fr_callMethodV(self, m, argCount, args);
+    va_end(args);
+    return ret;
 }
 
-void fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name
-                        , int argCount, fr_Value *arg, fr_Value *ret) {
-    Env *e = (Env*)self;
-    fr_Method m = (fr_Method)e->podManager->findMethod(e, pod, type, name, -1);
-    fr_callMethod(self, m, argCount, arg, ret);
+fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name
+                        , int argCount, ...) {
+    va_list args;
+    fr_Value ret;
+    va_start(args, argCount);
+    
+    fr_Type ftype = fr_findType(self, pod, type);
+    fr_Method m = fr_findMethod(self, ftype, name);
+    
+    ret = fr_callMethodV(self, m, argCount, args);
+    va_end(args);
+    return ret;
 }
 
 ////////////////////////////
@@ -584,8 +662,10 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
 ////////////////////////////
 // Str
 ////////////////////////////
-
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t len) {
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
+    return fr_newStrUtf8N(self, bytes, -1);
+}
+fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t len) {
     Env *e = (Env*)self;
     //e->lock();
     FObj *str = e->podManager->objFactory.newString(e, bytes);
@@ -612,7 +692,7 @@ void fr_releaseStrUtf8(fr_Env self, fr_Obj str, const char *bytes) {
 fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
     fr_Obj str;
     if (!x) {
-        return fr_newStrUtf8(env, "null", -1);
+        return fr_newStrUtf8(env, "null");
     }
     // if it is primitive type must be unbox before call it's method.
     fr_Value val;

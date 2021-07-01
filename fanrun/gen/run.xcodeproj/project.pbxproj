@@ -20,12 +20,10 @@
 		32352167268AAD9100EE50DF /* sys_Func.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235215B268AAD9100EE50DF /* sys_Func.c */; };
 		323521F5268B316300EE50DF /* std_DateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D0268B316300EE50DF /* std_DateTime.c */; };
 		323521F6268B316300EE50DF /* std_Env.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D1268B316300EE50DF /* std_Env.c */; };
-		323521F7268B316300EE50DF /* std_Pod.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D2268B316300EE50DF /* std_Pod.c */; };
+		323521F7268B316300EE50DF /* std_Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323521D2268B316300EE50DF /* std_Pod.cpp */; };
 		323521F8268B316300EE50DF /* std_Lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D3268B316300EE50DF /* std_Lock.c */; };
-		323521F9268B316300EE50DF /* pod_std_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D4268B316300EE50DF /* pod_std_register.c */; };
 		323521FA268B316300EE50DF /* std_SysInStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D5268B316300EE50DF /* std_SysInStream.c */; };
 		323521FB268B316300EE50DF /* std_Field.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D6268B316300EE50DF /* std_Field.c */; };
-		323521FC268B316300EE50DF /* pod_std_native.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D7268B316300EE50DF /* pod_std_native.c */; };
 		323521FD268B316300EE50DF /* std_File.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D8268B316300EE50DF /* std_File.c */; };
 		323521FE268B316300EE50DF /* std_NativeCharset.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521D9268B316300EE50DF /* std_NativeCharset.c */; };
 		323521FF268B316300EE50DF /* std_Regex.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521DA268B316300EE50DF /* std_Regex.c */; };
@@ -37,7 +35,7 @@
 		32352206268B316300EE50DF /* std_SysOutStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E1268B316300EE50DF /* std_SysOutStream.c */; };
 		32352207268B316300EE50DF /* std_Uuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E2268B316300EE50DF /* std_Uuid.c */; };
 		32352208268B316300EE50DF /* std_AtomicBool.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E3268B316300EE50DF /* std_AtomicBool.c */; };
-		32352209268B316300EE50DF /* std_PodList.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E4268B316300EE50DF /* std_PodList.c */; };
+		32352209268B316300EE50DF /* std_PodList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323521E4268B316300EE50DF /* std_PodList.cpp */; };
 		3235220B268B316300EE50DF /* std_Log.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E7268B316300EE50DF /* std_Log.c */; };
 		3235220C268B316300EE50DF /* std_BufCrypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E8268B316300EE50DF /* std_BufCrypto.c */; };
 		3235220D268B316300EE50DF /* std_BaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E9268B316300EE50DF /* std_BaseType.c */; };
@@ -115,12 +113,10 @@
 		3235215B268AAD9100EE50DF /* sys_Func.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_Func.c; sourceTree = "<group>"; };
 		323521D0268B316300EE50DF /* std_DateTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_DateTime.c; sourceTree = "<group>"; };
 		323521D1268B316300EE50DF /* std_Env.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Env.c; sourceTree = "<group>"; };
-		323521D2268B316300EE50DF /* std_Pod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Pod.c; sourceTree = "<group>"; };
+		323521D2268B316300EE50DF /* std_Pod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = std_Pod.cpp; sourceTree = "<group>"; };
 		323521D3268B316300EE50DF /* std_Lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Lock.c; sourceTree = "<group>"; };
-		323521D4268B316300EE50DF /* pod_std_register.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_std_register.c; sourceTree = "<group>"; };
 		323521D5268B316300EE50DF /* std_SysInStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_SysInStream.c; sourceTree = "<group>"; };
 		323521D6268B316300EE50DF /* std_Field.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Field.c; sourceTree = "<group>"; };
-		323521D7268B316300EE50DF /* pod_std_native.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pod_std_native.c; sourceTree = "<group>"; };
 		323521D8268B316300EE50DF /* std_File.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_File.c; sourceTree = "<group>"; };
 		323521D9268B316300EE50DF /* std_NativeCharset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_NativeCharset.c; sourceTree = "<group>"; };
 		323521DA268B316300EE50DF /* std_Regex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Regex.c; sourceTree = "<group>"; };
@@ -132,7 +128,7 @@
 		323521E1268B316300EE50DF /* std_SysOutStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_SysOutStream.c; sourceTree = "<group>"; };
 		323521E2268B316300EE50DF /* std_Uuid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Uuid.c; sourceTree = "<group>"; };
 		323521E3268B316300EE50DF /* std_AtomicBool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_AtomicBool.c; sourceTree = "<group>"; };
-		323521E4268B316300EE50DF /* std_PodList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_PodList.c; sourceTree = "<group>"; };
+		323521E4268B316300EE50DF /* std_PodList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = std_PodList.cpp; sourceTree = "<group>"; };
 		323521E5268B316300EE50DF /* pod_std_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_std_native.h; sourceTree = "<group>"; };
 		323521E7268B316300EE50DF /* std_Log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Log.c; sourceTree = "<group>"; };
 		323521E8268B316300EE50DF /* std_BufCrypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_BufCrypto.c; sourceTree = "<group>"; };
@@ -234,12 +230,10 @@
 				32352225268B38D200EE50DF /* std_Zip.c */,
 				323521D0268B316300EE50DF /* std_DateTime.c */,
 				323521D1268B316300EE50DF /* std_Env.c */,
-				323521D2268B316300EE50DF /* std_Pod.c */,
+				323521D2268B316300EE50DF /* std_Pod.cpp */,
 				323521D3268B316300EE50DF /* std_Lock.c */,
-				323521D4268B316300EE50DF /* pod_std_register.c */,
 				323521D5268B316300EE50DF /* std_SysInStream.c */,
 				323521D6268B316300EE50DF /* std_Field.c */,
-				323521D7268B316300EE50DF /* pod_std_native.c */,
 				323521D8268B316300EE50DF /* std_File.c */,
 				323521D9268B316300EE50DF /* std_NativeCharset.c */,
 				323521DA268B316300EE50DF /* std_Regex.c */,
@@ -251,7 +245,7 @@
 				323521E1268B316300EE50DF /* std_SysOutStream.c */,
 				323521E2268B316300EE50DF /* std_Uuid.c */,
 				323521E3268B316300EE50DF /* std_AtomicBool.c */,
-				323521E4268B316300EE50DF /* std_PodList.c */,
+				323521E4268B316300EE50DF /* std_PodList.cpp */,
 				323521E5268B316300EE50DF /* pod_std_native.h */,
 				323521E7268B316300EE50DF /* std_Log.c */,
 				323521E8268B316300EE50DF /* std_BufCrypto.c */,
@@ -415,7 +409,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				32352162268AAD9100EE50DF /* sys_Float.c in Sources */,
-				323521F9268B316300EE50DF /* pod_std_register.c in Sources */,
 				32352167268AAD9100EE50DF /* sys_Func.c in Sources */,
 				3235215F268AAD9100EE50DF /* sys_Int.c in Sources */,
 				32EA55462679C27B003219EA /* vm.h in Sources */,
@@ -425,7 +418,7 @@
 				32EA551326788823003219EA /* gcobj.h in Sources */,
 				32352160268AAD9100EE50DF /* sys_Num.c in Sources */,
 				32EA551426788823003219EA /* Bitmap.hpp in Sources */,
-				32352209268B316300EE50DF /* std_PodList.c in Sources */,
+				32352209268B316300EE50DF /* std_PodList.cpp in Sources */,
 				32EA551526788823003219EA /* BitmapTest.h in Sources */,
 				32EA551626788823003219EA /* LinkedList.h in Sources */,
 				32EA551726788823003219EA /* README.txt in Sources */,
@@ -447,7 +440,7 @@
 				323521F6268B316300EE50DF /* std_Env.c in Sources */,
 				32EA551B26788823003219EA /* utf8.h in Sources */,
 				323521FE268B316300EE50DF /* std_NativeCharset.c in Sources */,
-				323521F7268B316300EE50DF /* std_Pod.c in Sources */,
+				323521F7268B316300EE50DF /* std_Pod.cpp in Sources */,
 				32352163268AAD9100EE50DF /* sys_Bool.c in Sources */,
 				32352213268B316300EE50DF /* std_FileBuf.c in Sources */,
 				32352202268B316300EE50DF /* std_TimeZone.c in Sources */,
@@ -468,7 +461,6 @@
 				3235220B268B316300EE50DF /* std_Log.c in Sources */,
 				32352207268B316300EE50DF /* std_Uuid.c in Sources */,
 				3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */,
-				323521FC268B316300EE50DF /* pod_std_native.c in Sources */,
 				32EA55442679B13B003219EA /* sys_runtime.c in Sources */,
 				3235220C268B316300EE50DF /* std_BufCrypto.c in Sources */,
 				3235220D268B316300EE50DF /* std_BaseType.c in Sources */,

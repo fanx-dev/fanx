@@ -98,6 +98,138 @@ void MethodGen::genNativePrototype(Printer *printer, bool funcPtr, bool isValTyp
     }
 }
 
+void MethodGen::printParam(Printer *printer, int printType) {
+    bool isStatic = (method->flags & FFlags::Static);
+    int count = method->paramCount;
+    if (!isStatic) {
+        ++count;
+    }
+    
+    for (int j=0; j<count; ++j) {
+        std::string varName;
+        std::string typeName;
+        std::string tagName;
+        //std::string vtName;
+        
+        //bool nullable = false;
+        //fr_ValueType vtype = fr_vtObj;
+//        bool selfUnbox = false;
+        
+        int rIndex = count - j - 1;
+        
+        if (isStatic) {
+            int varIndex = j;
+            if (printType == 1) {
+                varIndex = rIndex;
+            }
+            FMethodVar &var = method->vars[varIndex];
+            //varName = pod->names[var.name];
+            //vtype = podMgr->getExactValueType(pod, var.type, nullable);
+            varName = FCodeUtil::getIdentifierName(parent->type->c_pod, var.name);
+            typeName = getTypeDeclName(var.type, true);
+        }
+        else {
+            if ((printType == 1 && rIndex == 0)
+                || (printType != 1 && j == 0)) {
+                varName = "self";
+                typeName = parent->name;
+            }
+            else {
+                int varIndex = j-1;
+                if (printType == 1) {
+                    varIndex = rIndex-1;
+                }
+                FMethodVar &var = method->vars[varIndex];
+                varName = FCodeUtil::getIdentifierName(parent->type->c_pod, var.name);
+                typeName = getTypeDeclName(var.type, true);
+            }
+        }
+        tagName = getUnionTagName(typeName);
+        
+        if (printType == 0) {
+            //print locals declear
+            printer->println("fr_Value value_%d;", j);
+            printer->println("%s arg_%d; ", typeName.c_str(), j);
+            //printer->println("fr_ValueType vtype_%d;", j);
+        }
+        else if (printType == 1) {
+            //print box and unbox
+            //printer->println("fr_getParam(env, param, &value_%d, %d, &vtype_%d);", rIndex, rIndex, rIndex);
+            printer->println("value_%d = ((fr_Value*)param)[%d];", rIndex, rIndex);
+//            if (selfUnbox) {
+//                printer->println("if (vtype_%d == fr_vtHandle) fr_unbox(env, value_%d.h, &value_%d);", rIndex, rIndex, rIndex);
+//            }
+            
+            printer->println("arg_%d = value_%d.%s;"
+                             , rIndex, rIndex , tagName.c_str());
+            
+            printer->newLine();
+        }
+        else if (printType == 2) {
+            //print call methods param
+            if (j == 0 && parent->type->c_isSimpleSym && method->code.isEmpty()) {
+                printer->printf("arg_%d", j);
+            }
+            else {
+                printer->printf(", arg_%d", j);
+            }
+        }
+    }
+}
+
+void MethodGen::genVarArgsFunc(Printer *printer) {
+    
+    //bool isVal = !isStatic && parent->isValueType;
+    if ((method->flags & FFlags::Abstract) != 0) {
+        return;
+    }
+    
+    printer->println("void %s_%s_v(fr_Env env, void *param, void *ret) {", parent->name.c_str(), name.c_str());
+    printer->indent();
+    printParam(printer, 0);
+    
+    bool isVoid = false;
+    auto retTypeName = getTypeDeclName(method->returnType);
+    if (retTypeName == "sys_Void") {
+        isVoid = true;
+    }
+
+    if (!isVoid) {
+        printer->println("fr_Value retValue;");
+    }
+
+    printer->newLine();
+    printParam(printer, 1);
+
+    printer->newLine();
+
+    //--------------------------------
+    // gen method call
+    if (!isVoid) {
+        std::string retTagName = getUnionTagName(retTypeName);
+        printer->printf("retValue.%s = ", retTagName.c_str());
+    }
+    const char* valFlag = "";
+    if (!isStatic && FCodeUtil::isBuildinValType(method->c_parent)) {
+        valFlag = "_val";
+    }
+    if (parent->type->c_isSimpleSym && method->code.isEmpty()) {
+        printer->printf("%s(", name.c_str());
+    }
+    else {
+        printer->printf("%s_%s%s(env", parent->name.c_str(), name.c_str(), valFlag);
+    }
+    printParam(printer, 2);
+    printer->println(");");
+    if (!isVoid) {
+        //printer->println("retValue.type = %s;", retVtName.c_str());
+        printer->println("*((fr_Value*)ret) = retValue;");
+    }
+
+    printer->unindent();
+    printer->println("}");
+}
+
 void MethodGen::genImples(Printer *printer) {
     //if (name != "flatten") return;
     

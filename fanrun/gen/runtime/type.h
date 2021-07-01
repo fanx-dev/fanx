@@ -32,7 +32,8 @@ struct fr_Field_ {
     int offset;
     bool isStatic;
     bool isValType;
-    void *pointer;
+    
+    void *pointer;//address of static field
   
     int facetCount;
     struct fr_Facet *facetList;
@@ -44,13 +45,14 @@ struct fr_MethodParam_ {
     const char *type;
 };
 
-typedef void (*fr_Function)(fr_Env env__, void *self__, void *returnVar__, int varCount__, ...);
+typedef void* (*fr_Function)(fr_Env env__, void *param, void *retValue);
 
 struct fr_Method_ {
     const char *name;
     uint32_t flags;
     const char *retType;
     //const char *inheritReturenType;
+    //int offset; //vtable offset
     fr_Function func;
     int paramsCount;
     struct fr_MethodParam_ *paramsList;
@@ -72,7 +74,7 @@ struct fr_Class_ {
     uint32_t flags;
     
     int allocSize;
-    fr_Obj typeObj;
+    //fr_Obj typeObj;
   
     struct fr_Class_ *base;
     int mixinCount;
@@ -87,13 +89,15 @@ struct fr_Class_ {
     struct fr_Facet *facetList;
     
     bool staticInited;
+    
+    fr_Obj reflectObj;
   
     //fr_Function finalize;
     
     struct fr_IVTableMapItem interfaceVTableIndex[MAX_INTERFACE_SIZE];
 };
 
-struct fr_Pod {
+struct fr_Pod_ {
     const char *name;
     const char *version;
     const char *depends;
@@ -112,7 +116,7 @@ void **fr_getInterfaceVTable(fr_Env env, fr_Obj obj, fr_Type itype);
 void fr_registerClass(fr_Env env, const char *pod, const char *clz, fr_Type type);
 //fr_Type fr_findClass(fr_Env env, const char *pod, const char *clz);
     
-void fr_registerPod(fr_Env env, struct fr_Pod *pod);
+void fr_registerPod(fr_Env env, struct fr_Pod_ *pod);
 
 #ifdef  __cplusplus
 }//extern  "C" {

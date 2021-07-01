@@ -240,7 +240,7 @@ void PodGen::genStaticInit(Printer *printer) {
     printer->newLine();
     printer->newLine();
     
-    printer->println("struct fr_Pod *pod = (struct fr_Pod *)malloc(sizeof(struct fr_Pod));");
+    printer->println("struct fr_Pod_ *pod = (struct fr_Pod_ *)malloc(sizeof(struct fr_Pod_));");
     printer->println("pod->name = \"%s\";", podName.c_str());
     printer->println("pod->version = \"%s\";", pod->version.c_str());
     printer->println("pod->depends = \"%s\";", pod->depends.c_str());

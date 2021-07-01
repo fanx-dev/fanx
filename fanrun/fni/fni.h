@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "miss.h"
+#include <stdarg.h>
 
 CF_BEGIN
 
@@ -166,21 +167,22 @@ void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val);
 fr_Method fr_findMethod(fr_Env self, fr_Type type, const char *name);
 fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramCount);
 
-void fr_callMethod(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
+fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args);
+fr_Value fr_callMethod(fr_Env self, fr_Method method, int argCount, ...);
+void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
 
 void fr_callNonVirtual(fr_Env self, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret);
-void fr_newObj(fr_Env self, fr_Type type, fr_Method method
+
+fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args);
+fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ...);
+void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
                , int argCount, fr_Value *arg, fr_Value *ret);
 
-void fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
-               , int argCount, fr_Value *arg, fr_Value *ret);
-
-void fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name
-                          , int argCount, fr_Value *arg, fr_Value *ret);
-
-void fr_callOnObj(fr_Env self, const char *name
-                    , int argCount, fr_Value *arg, fr_Value *ret);
+//short cut
+fr_Value fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name, int argCount, ...);
+fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name, int argCount, ...);
+fr_Value fr_callOnObj(fr_Env self, const char *name, int argCount, ...);
 
 ////////////////////////////
 // Field
@@ -239,7 +241,8 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value);
 /**
  * new create Str obj from utf8
  */
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes, ssize_t size);
+fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes);
+fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t size);
 
 /**
  * get utf8 from Str obj.

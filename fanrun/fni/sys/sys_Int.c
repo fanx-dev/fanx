@@ -206,7 +206,7 @@ fr_Obj sys_Int_toStr_val(fr_Env env, fr_Int self) {
     fr_Obj str;
     
     snprintf(buf, 128, "%lld", self);
-    str = fr_newStrUtf8(env, buf, -1);
+    str = fr_newStrUtf8(env, buf);
     return str;
 }
 fr_Obj sys_Int_toHex_val(fr_Env env, fr_Int self, fr_Int width) {

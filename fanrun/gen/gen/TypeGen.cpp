@@ -99,6 +99,8 @@ void TypeGen::genImple(Printer *printer) {
         if (!gmethod.isStatic && isValueType) {
             gmethod.genImplesToVal(printer);
         }
+        
+        gmethod.genVarArgsFunc(printer);
         printer->newLine();
     }
     genTypeInit(printer);
@@ -215,7 +217,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
             printer->println("type->methodList[%d].func = (fr_Function)NULL;", i);
         }
         else {
-            printer->println("type->methodList[%d].func = (fr_Function)%s;", i, method.c_mangledName.c_str());
+            printer->println("type->methodList[%d].func = (fr_Function)%s_v;", i, method.c_mangledName.c_str());
         }
         
         printer->println("type->methodList[%d].paramsCount = %d;", i, method.paramCount);

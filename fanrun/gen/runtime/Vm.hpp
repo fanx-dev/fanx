@@ -34,7 +34,7 @@ public:
     typedef std::map<std::string, fr_Type > ClassMap;
     typedef std::map<std::string, ClassMap > PodMap;
     PodMap typeDb;
-    std::map<std::string, struct fr_Pod*> pods;
+    std::map<std::string, struct fr_Pod_*> pods;
 
 public:
     //std::set<fr_Type> classSet;
@@ -43,7 +43,7 @@ public:
     ~Vm();
     
     void registerClass(const char *pod, const char *clz, fr_Type type);
-    void registerPod(struct fr_Pod *pod);
+    void registerPod(struct fr_Pod_ *pod);
     fr_Type findClass(const char *pod, const char *clz);
     
     void start();

@@ -42,7 +42,7 @@ void fr_VTable_init(fr_Env env, fr_Type type) {
     type->fieldCount = 0;
     type->methodCount = 0;
     type->allocSize = 0;
-    type->typeObj = NULL;
+    type->reflectObj = NULL;
     type->staticInited = false;
 }
 
@@ -81,7 +81,7 @@ void fr_registerClass(fr_Env env, const char *pod, const char *clz, fr_Type type
 //    return e->vm->findClass(pod, clz);
 //}
 
-void fr_registerPod(fr_Env env, struct fr_Pod *pod) {
+void fr_registerPod(fr_Env env, struct fr_Pod_ *pod) {
     Env *e = (Env*)env;
     e->vm->registerPod(pod);
 }

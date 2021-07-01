@@ -203,7 +203,7 @@ void Vm::registerClass(const char *pod, const char *clz, fr_Type type) {
         }
     }
 }
-void Vm::registerPod(struct fr_Pod *pod) {
+void Vm::registerPod(struct fr_Pod_ *pod) {
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     pods[pod->name] = pod;
 }
