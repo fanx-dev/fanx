@@ -70,6 +70,7 @@ typedef SSIZE_T ssize_t;
 #define strtoll     _strtoi64
 #define tzset       _tzset
 //#define isnan(x)   _isnan(x)
+#define strdup		_strdup
 #endif
 
 //#if (NULL != 0)

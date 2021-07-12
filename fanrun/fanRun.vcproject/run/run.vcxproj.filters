@@ -27,12 +27,6 @@
     <ClCompile Include="..\..\gen\runtime\Vm.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\temp\baseTest.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\temp\sys.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\common\gc\Gc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -51,94 +45,49 @@
     <ClCompile Include="..\..\common\util\utf8.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Array.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Bool.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Float.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Func.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Int.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Obj.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_Ptr.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\temp\std.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\gen\runtime\ThreadEnv.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Atomic.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Array.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_BufCrypto.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Bool.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Decimal.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Enum.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Env.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Float.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Extension.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Func.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_File.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Int.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_FileBuf.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_NativeC.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Log.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Num.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Math.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Obj.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_NativeCharset.cpp">
+    <ClCompile Include="..\..\fni\sys\sys_Ptr.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_NioBuf.cpp">
+    <ClCompile Include="..\..\gen\temp\baseTest.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Process.cpp">
+    <ClCompile Include="..\..\gen\temp\sys.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Reflect.cpp">
+    <ClCompile Include="..\..\gen\runtime\fni.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Regex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Stream.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Time.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Unsafe.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Uuid.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\std\std_Zip.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_runtime.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\sys\sys_NativeC.c">
+    <ClCompile Include="..\..\gen\runtime\sys_runtime.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -150,18 +99,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gen\runtime\Vm.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\baseTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\baseTest_prototype.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\sys.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\sys_prototype.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\gc\Bitmap.hpp">
@@ -197,19 +134,28 @@
     <ClInclude Include="..\..\common\util\utf8.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gen\sys\sys_native.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\std\std_native.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\std.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\gen\runtime\ThreadEnv.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gen\std\std_Reflect.h">
+    <ClInclude Include="..\..\fni\fni.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\baseTest.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\baseTest_prototype.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\sys.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\sys_prototype.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fni\sys\pod_sys_native.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\runtime\vm.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

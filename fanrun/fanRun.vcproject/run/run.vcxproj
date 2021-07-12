@@ -25,41 +25,24 @@
     <ClCompile Include="..\..\common\util\system.c" />
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Array.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Bool.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Enum.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Float.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Func.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Int.c" />
+    <ClCompile Include="..\..\fni\sys\sys_NativeC.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Num.c" />
+    <ClCompile Include="..\..\fni\sys\sys_Obj.cpp" />
+    <ClCompile Include="..\..\fni\sys\sys_Ptr.c" />
+    <ClCompile Include="..\..\gen\runtime\fni.cpp" />
     <ClCompile Include="..\..\gen\runtime\main.c" />
     <ClCompile Include="..\..\gen\runtime\runtime.cpp" />
+    <ClCompile Include="..\..\gen\runtime\sys_runtime.c" />
     <ClCompile Include="..\..\gen\runtime\ThreadEnv.cpp" />
     <ClCompile Include="..\..\gen\runtime\type.cpp" />
     <ClCompile Include="..\..\gen\runtime\Vm.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Atomic.cpp" />
-    <ClCompile Include="..\..\gen\std\std_BufCrypto.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Decimal.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Env.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Extension.cpp" />
-    <ClCompile Include="..\..\gen\std\std_File.cpp" />
-    <ClCompile Include="..\..\gen\std\std_FileBuf.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Log.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Math.cpp" />
-    <ClCompile Include="..\..\gen\std\std_NativeCharset.cpp" />
-    <ClCompile Include="..\..\gen\std\std_NioBuf.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Process.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Reflect.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Regex.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Stream.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Time.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Unsafe.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Uuid.cpp" />
-    <ClCompile Include="..\..\gen\std\std_Zip.cpp" />
-    <ClCompile Include="..\..\gen\sys\sys_NativeC.c" />
-    <ClCompile Include="..\..\gen\sys\sys_runtime.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Array.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Bool.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Float.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Func.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Int.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Obj.c" />
-    <ClCompile Include="..\..\gen\sys\sys_Ptr.c" />
     <ClCompile Include="..\..\gen\temp\baseTest.c" />
-    <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
   </ItemGroup>
   <ItemGroup>
@@ -74,16 +57,15 @@
     <ClInclude Include="..\..\common\util\system.h" />
     <ClInclude Include="..\..\common\util\tinycthread.h" />
     <ClInclude Include="..\..\common\util\utf8.h" />
+    <ClInclude Include="..\..\fni\fni.h" />
+    <ClInclude Include="..\..\fni\sys\pod_sys_native.h" />
     <ClInclude Include="..\..\gen\runtime\runtime.h" />
     <ClInclude Include="..\..\gen\runtime\ThreadEnv.hpp" />
     <ClInclude Include="..\..\gen\runtime\type.h" />
+    <ClInclude Include="..\..\gen\runtime\vm.h" />
     <ClInclude Include="..\..\gen\runtime\Vm.hpp" />
-    <ClInclude Include="..\..\gen\std\std_native.h" />
-    <ClInclude Include="..\..\gen\std\std_Reflect.h" />
-    <ClInclude Include="..\..\gen\sys\sys_native.h" />
     <ClInclude Include="..\..\gen\temp\baseTest.h" />
     <ClInclude Include="..\..\gen\temp\baseTest_prototype.h" />
-    <ClInclude Include="..\..\gen\temp\std.h" />
     <ClInclude Include="..\..\gen\temp\sys.h" />
     <ClInclude Include="..\..\gen\temp\sys_prototype.h" />
   </ItemGroup>
@@ -157,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\gen\sys;$(ProjectDir)..\..\gen\temp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
