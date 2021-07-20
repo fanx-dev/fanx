@@ -121,7 +121,10 @@ native const final class Str
   **
   ** Get the byte at postion
   **
-  Int8 getByte(Int i) { utf8[i] }
+  Int getByte(Int i) {
+    c := utf8[i]
+    return 0xff.and(c)
+  }
 
   **
   ** size of utf8
@@ -264,9 +267,8 @@ native const final class Str
   ** via the '==' operator will have the same reference such that
   ** '===' will be true.
   **
-  Str intern() {
-    throw Err("TODO")
-  }
+  @NoDoc
+  native Str intern()
 
   **
   ** Return if this Str starts with the specified Str.
@@ -304,7 +306,8 @@ native const final class Str
   **
   Int find(Str s, Int offset := 0) {
     if (s.size == 0) return 0
-    if (s.size > this.size) return -1
+    if (offset < 0) offset += size
+    if (s.size > this.size-offset) return -1
 
     if (s.size > 10 && this.size > 20) {
       return kmpFindIndex(this, s, offset)
@@ -355,7 +358,7 @@ native const final class Str
   **
   ** D.E.Knuth V.R.Pratt J.H.Morris Algorithm
   **
-  private static Int kmpFindIndex(Str self, Str t, Int offset) {
+  internal static Int kmpFindIndex(Str self, Str t, Int offset) {
     charCount := offset
     byteOffset := self.toByteIndex(offset)
 
@@ -409,26 +412,39 @@ native const final class Str
   Int findr(Str s, Int offset := s.size-1) {
     if (s.isEmpty) return 0
     if (offset < 0) offset += size
+    if (s.size > offset+1) return -1
+
     start := toByteIndex(offset)
-    charCount := offset
+    pos := -1
     len := s.byteLen
     for (i:=start; i>=0; --i) {
       ch := getByte(i)
       if (ch.and(0xC0) == 0x80) {
         continue
       }
-      else {
-        --charCount
-      }
+
       match := true
       for (j:=0; j<len; ++j) {
+        if (i+j >= byteLen) {
+          match = false
+          break
+        }
         if (getByte(i+j) != s.getByte(j)) {
           match = false
           break
         }
       }
-      if (match) return charCount
+      if (match) {
+        pos = i
+        break
+      }
     }
+
+    //byte pos to charCount
+    if (pos != -1) {
+      return toCharIndex(pos)
+    }
+
     return -1
   }
 
@@ -489,11 +505,22 @@ native const final class Str
   @Operator Int get(Int index) {
     //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
     if (isAscii) {
-      return utf8[index]
+      return getByte(index)
     }
 
     bytePos := toByteIndex(index)
     return decodeCharAt(bytePos)
+  }
+
+  private Int toCharIndex(Int byteIndex) {
+    charCount := 0
+    for (i:=0; i<byteIndex; ++i) {
+      ch := utf8[i]
+      if (ch.and(0xC0) != 0x80) {
+        ++charCount
+      }
+    }
+    return charCount
   }
 
   internal Int toByteIndex(Int index) {
@@ -514,7 +541,7 @@ native const final class Str
 
   internal Int decodeCharAt(Int i, Array<Int>? readSize := null) {
     c1 := getByte(i); ++i
-    if (c1 < 0) return -1
+    //if (c1 < 0) return -1
     size := 0
     ch := 0
     //echo("decod1 $c1")
@@ -587,8 +614,10 @@ native const final class Str
   @Operator Str getRange(Range range) {
     s := range.startIndex(size)
     e := range.endIndex(size)
+    if (e < 0 || s >= size) return ""
     bs := toByteIndex(s)
     es := toByteIndex(e)
+    if (e+1 < s) throw IndexErr("range:$range, size:$size")
     return substring(bs, es+1)
   }
 
@@ -606,8 +635,12 @@ native const final class Str
   ** Concat the value of obj.toStr
   **
   @Operator Str plus(Obj? obj) {
-    if (obj == null) return this
+    if (obj == null) obj = "null";
     Str str := obj.toStr
+
+    if (size() == 0) return str
+    if (str.size() == 0) return this
+
     len := byteLen + str.byteLen
     bytes := Array<Int8>(len)
     Array.arraycopy(utf8, 0, bytes, 0, byteLen)
@@ -662,7 +695,7 @@ native const final class Str
   **
   Void eachr(|Int ch, Int index| f) {
     charIndex := size
-    for (i:=byteLen-1; i>=0; ++i) {
+    for (i:=byteLen-1; i>=0; --i) {
       ch := getByte(i)
       if (ch.and(0xC0) != 0x80) {
         --charIndex
@@ -705,14 +738,28 @@ native const final class Str
     for (i:=0; i<size; ++i) {
       c := decodeCharAt(bytePos, readSize)
       bytePos += readSize[0]
-      if (!f(c, i)) return true
+      if (!f(c, i)) return false
     }
-    return false
+    return true
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
 //////////////////////////////////////////////////////////////////////////
+  private static const Str[] spacesCache = premakeSpaces()
+
+  private static Str[] premakeSpaces()
+  {
+    spaces := Str[,]
+    s := StrBuf()
+    for (i:=0; i<20; ++i)
+    {
+      spaces.add(s.toStr)
+      s.addChar(' ')
+    }
+    return spaces
+  }
+
   **
   ** Get the a Str containing the specified number of spaces.  Also
   ** see `justl` and `justr` to justify an existing string.
@@ -722,6 +769,8 @@ native const final class Str
   **   Str.spaces(2)  =>  "  "
   **
   static Str spaces(Int n) {
+    if (n < 20) return spacesCache[n]
+
     sb := StrBuf()
     for (i:=0; i<n; ++i) {
       sb.addChar(' ')
@@ -1143,7 +1192,7 @@ native const final class Str
     }
 
     // NOTE: these escape sequences are duplicated in ObjEncoder
-    len := self.size();
+    len := self.byteLen;
     readSize := Array<Int>(1)
     for (i:=0; i<len; )
     {
@@ -1151,15 +1200,15 @@ native const final class Str
       i += readSize[0]
       switch (c)
       {
-        case '\n': s.addChar('\\').addChar('n'); break;
-        case '\r': s.addChar('\\').addChar('r'); break;
-        case '\f': s.addChar('\\').addChar('f'); break;
-        case '\t': s.addChar('\\').addChar('t'); break;
-        case '\\': s.addChar('\\').addChar('\\'); break;
-        case '"':  if (q == '"')  s.addChar('\\').addChar('"');  else s.addChar(c); break;
-        case '`':  if (q == '`')  s.addChar('\\').addChar('`');  else s.addChar(c); break;
-        case '\'': if (q == '\'') s.addChar('\\').addChar('\''); else s.addChar(c); break;
-        case '$':  s.addChar('\\').addChar('\$'); break;
+        case '\n': s.addChar('\\').addChar('n'); //break;
+        case '\r': s.addChar('\\').addChar('r'); //break;
+        case '\f': s.addChar('\\').addChar('f'); //break;
+        case '\t': s.addChar('\\').addChar('t'); //break;
+        case '\\': s.addChar('\\').addChar('\\'); //break;
+        case '"':  if (q == '"')  s.addChar('\\').addChar('"');  else s.addChar(c); //break;
+        case '`':  if (q == '`')  s.addChar('\\').addChar('`');  else s.addChar(c); //break;
+        case '\'': if (q == '\'') s.addChar('\\').addChar('\''); else s.addChar(c); //break;
+        case '$':  s.addChar('\\').addChar('\$'); //break;
         default:
           if (c < ' ' || (escu && c > 127))
           {

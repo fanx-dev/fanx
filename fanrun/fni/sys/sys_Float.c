@@ -4,20 +4,35 @@
 
 #include <math.h>
 #include <float.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define cf_Math_pi 3.14159265358979323846
 
 fr_Float sys_Float_makeBits(fr_Env env, fr_Int bits) {
-    return 0;
+    double *d = (double*)(&bits);
+    return *d;
 }
 fr_Float sys_Float_makeBits32(fr_Env env, fr_Int bits) {
-    return 0;
+    int32_t i = (int32_t)bits;
+    float *d = (float*)(&i);
+    return *d;
 }
 fr_Float sys_Float_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {
-    return 0;
+    const char *str = fr_getStrUtf8(env, s);
+    char *pos = NULL;
+    fr_Float val = strtod(str, &pos);
+    
+    if (checked && ((str-pos) != strlen(str)) ) {
+        char buf[128];
+        snprintf(buf, 128, "Invalid Float: %s", str);
+        fr_throwNew(env, "sys", "ParseErr", buf);
+    }
+    return val;
 }
 fr_Float sys_Float_random(fr_Env env) {
-    return 0;
+    fr_Float v = (double)(rand()) / RAND_MAX;
+    return v;
 }
 //void sys_Float_privateMake_val(fr_Env env, fr_Float self) {
 //    //return 0;
@@ -104,11 +119,10 @@ fr_Float sys_Float_divInt_val(fr_Env env, fr_Float self, fr_Int b) {
     return self / b;
 }
 fr_Float sys_Float_mod_val(fr_Env env, fr_Float self, fr_Float b) {
-    //TODO
-    return 0;//self % b;
+    return fmod(self, b);
 }
 fr_Float sys_Float_modInt_val(fr_Env env, fr_Float self, fr_Int b) {
-    return 0;
+    return fmod(self, b);
 }
 fr_Float sys_Float_plus_val(fr_Env env, fr_Float self, fr_Float b) {
     return self + b;
@@ -201,15 +215,33 @@ fr_Float sys_Float_toRadians_val(fr_Env env, fr_Float self) {
 }
 */
 fr_Int sys_Float_bits_val(fr_Env env, fr_Float self) {
-    return 0;
+    int64_t *v = (int64_t*)(&self);
+    return *v;
 }
 fr_Int sys_Float_bits32_val(fr_Env env, fr_Float self) {
-    return 0;
+    float f = self;
+    int32_t *v = (int32_t*)(&f);
+    return *v;
 }
 fr_Obj sys_Float_toStr_val(fr_Env env, fr_Float self) {
     char buf[128];
     buf[0] = 0;
     fr_Obj str;
+    
+    if (self == -0.0) {
+        return fr_newStrUtf8(env, "-0.0");
+    }
+    else if (isnan(self)) {
+        return fr_newStrUtf8(env, "NaN");
+    }
+    else if (isinf(self)) {
+        if (self > 0) {
+            return fr_newStrUtf8(env, "INF");
+        }
+        else {
+            return fr_newStrUtf8(env, "-INF");
+        }
+    }
     
     snprintf(buf, 128, "%g", self);
     str = fr_newStrUtf8(env, buf);
@@ -241,6 +273,8 @@ void sys_Float_make_val(fr_Env env, fr_Float self) {
 //    fr_setStaticFieldS(env, "sys", "Float", "pi", &val);
 //    return;
 //}
-fr_Obj sys_Float_toLocale_val(fr_Env env, fr_Float selfj, fr_Obj pattern){ return 0; }
+fr_Obj sys_Float_toLocale_val(fr_Env env, fr_Float selfj, fr_Obj pattern){
+    return sys_Float_toStr_val(env, selfj);
+}
 
 fr_Int sys_Float_toInt_val(fr_Env env, fr_Float self) { return (fr_Int)self; }

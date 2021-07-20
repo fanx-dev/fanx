@@ -279,7 +279,7 @@ native final class StrBuf
   ** Return the current buffer contents as a Str.
   **
   override Str toStr() {
-    Str.fromChars(buf)
+    Str.fromChars(buf, 0, size)
   }
 
   **

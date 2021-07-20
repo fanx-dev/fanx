@@ -32,7 +32,7 @@ void Gc::gcThreadRun() {
 }
 
 Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
-    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false)
+    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(false)
 {
     lastAllocSize = 29;
     collectLimit = 100000;
@@ -181,6 +181,8 @@ bool Gc::isStopTheWorld() {
 }
 
 void Gc::doCollect() {
+    if (!enable) return;
+    
     if (trace) {
         printf("******* start gc: memory:%ld (limit:%ld, last:%ld)\n", allocSize, collectLimit, lastAllocSize);
     }

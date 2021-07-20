@@ -4,9 +4,21 @@
 #include <math.h>
 #include <wctype.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <string.h>
 
 fr_Int sys_Int_fromStr(fr_Env env, fr_Obj s, fr_Int radix, fr_Bool checked) {
-    return 0;
+    const char *str = fr_getStrUtf8(env, s);
+    char *pos = NULL;
+    fr_Int val = strtoll(str, &pos, (int)radix);
+    
+    if (checked && ((str-pos) != strlen(str)) ) {
+        char buf[128];
+        snprintf(buf, 128, "Invalid Int: %s", str);
+        fr_throwNew(env, "sys", "ParseErr", buf);
+    }
+    return val;
 }
 fr_Int sys_Int_random(fr_Env env, fr_Obj r) {
     //TODO
@@ -210,15 +222,58 @@ fr_Obj sys_Int_toStr_val(fr_Env env, fr_Int self) {
     return str;
 }
 fr_Obj sys_Int_toHex_val(fr_Env env, fr_Int self, fr_Int width) {
-    return 0;
+    char buf[128];
+    buf[0] = 0;
+    fr_Obj str;
+    
+    snprintf(buf, 128, "%0*x", (int)width, (int)self);
+    str = fr_newStrUtf8(env, buf);
+    return str;
 }
 fr_Obj sys_Int_toRadix_val(fr_Env env, fr_Int self, fr_Int radix, fr_Int width) {
-    return 0;
+    char buf[128];
+    buf[0] = 0;
+    fr_Obj str;
+    switch (radix) {
+        case 16:
+            snprintf(buf, 128, "%0*x", (int)width, (int)self);
+            break;
+        case 10:
+            snprintf(buf, 128, "%0*d", (int)width, (int)self);
+            break;
+        case 8:
+            snprintf(buf, 128, "%0*o", (int)width, (int)self);
+            break;
+        case 2:
+            //TODO
+            abort();
+            break;
+    }
+    str = fr_newStrUtf8(env, buf);
+    return str;
 }
 fr_Obj sys_Int_toChar_val(fr_Env env, fr_Int self) {
-    return 0;
+    char buf[128];
+    buf[0] = 0;
+    fr_Obj str;
+    snprintf(buf, 128, "%c", (int)self);
+    str = fr_newStrUtf8(env, buf);
+    return str;
 }
 fr_Obj sys_Int_toCode_val(fr_Env env, fr_Int self, fr_Int base) {
+    if (base == 10) return sys_Int_toStr_val(env, self);
+    if (base == 16) {
+        char buf[128];
+        buf[0] = 0;
+        fr_Obj str;
+        //TODO unicode
+        snprintf(buf, 128, "%#x", (int)self);
+        str = fr_newStrUtf8(env, buf);
+        return str;
+    }
+    char buf[128];
+    snprintf(buf, 128, "Invalid base %d", (int)base);
+    fr_throwNew(env, "sys", "ArgErr", buf);
     return 0;
 }
 fr_Float sys_Int_toFloat_val(fr_Env env, fr_Int self) { return self; }

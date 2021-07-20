@@ -53,6 +53,7 @@ public:
     long lastAllocSize;
     long allocSize;
     int trace;
+    bool enable;
     
 public:
 

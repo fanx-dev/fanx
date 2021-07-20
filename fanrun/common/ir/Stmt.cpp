@@ -342,6 +342,13 @@ void CallStmt::print(Printer& printer) {
     }
     
     if (typeName == "sys_Array") {
+        //bounds check
+        if (mthName == "get" || mthName == "set") {
+            printer.println("if (%s < 0 || %s >= ((fr_Array*)%s)->size ) { fr_Err err = fr_makeIndexError(__env, %s, ((fr_Array*)%s)->size); FR_THROW(%d, err); }",
+                            params[1].getName().c_str(), params[1].getName().c_str(), params[0].getName().c_str(),
+                            params[1].getName().c_str(), params[0].getName().c_str(), this->pos);
+        }
+        
         if (mthName == "get") {
             printer.printf("%s = ((%s*)(((fr_Array*)%s)->data))[%s];", retValue.getName().c_str(), extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str());
@@ -615,6 +622,18 @@ void CompareStmt::print(Printer& printer) {
                            , result.getName().c_str(), param1.getName().c_str());
             return;
         }
+        case FOp::CompareSame: {
+            printer.printf("%s = ((sys_Obj)%s == (sys_Obj)%s);"
+                           , result.getName().c_str()
+                           , param1.getName().c_str(), param2.getName().c_str());
+            return;
+        }
+        case FOp::CompareNotSame: {
+            printer.printf("%s = ((sys_Obj)%s != (sys_Obj)%s);"
+                           , result.getName().c_str()
+                           , param1.getName().c_str(), param2.getName().c_str());
+            return;
+        }
         default:
             break;
     }
@@ -629,9 +648,11 @@ void CompareStmt::print(Printer& printer) {
     }
     
     const char *op = "==";
+    bool isCompare = false;
     switch (opObj.opcode) {
         case FOp::Compare: {
             op = "-";
+            isCompare = true;
             break;
         }
         case FOp::CompareEQ: {
@@ -644,18 +665,22 @@ void CompareStmt::print(Printer& printer) {
         }
         case FOp::CompareLT: {
             op = "<";
+            isCompare = true;
             break;
         }
         case FOp::CompareLE: {
             op = "<=";
+            isCompare = true;
             break;
         }
         case FOp::CompareGE: {
             op = ">=";
+            isCompare = true;
             break;
         }
         case FOp::CompareGT: {
             op = ">";
+            isCompare = true;
             break;
         }
         case FOp::CompareSame: {
@@ -680,112 +705,149 @@ void CompareStmt::print(Printer& printer) {
     
     //value type
     if (isVal1 && isVal2) {
-        printer.printf("%s = %s %s %s;", result.getName().c_str()
+        printer.printf("%s = (%s %s %s);", result.getName().c_str()
                        , param1.getName().c_str(), op, param2.getName().c_str());
     }
     else if (!isVal1 && !isVal2) {
         cmpType = -1;
+        //if (a == NULL) { if (b == NULL) { ... } else { ... } }
+        printer.printf("if (%s == NULL) { if (%s == NULL) {", param1.getName().c_str(), param2.getName().c_str());
+        if (isCompare) {
+            printer.printf("int __cmpRes = 0;");
+            if (opObj.opcode ==  FOp::Compare) {
+                printer.printf("%s = __cmpRes;", result.getName().c_str());
+            }
+            else {
+                printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
+            }
+        }
+        else if (opObj.opcode == FOp::CompareNE) {
+            printer.printf("%s = false;", result.getName().c_str());
+        }
+        else if (opObj.opcode == FOp::CompareEQ){
+            printer.printf("%s = true;", result.getName().c_str());
+        }
+        else {
+            printf("ERROR:unknow cmp opcode:%d", opObj.opcode);
+        }
+        
+        printer.printf("} else {");
+        if (isCompare) {
+            printer.printf("int __cmpRes = -1;");
+            if (opObj.opcode ==  FOp::Compare) {
+                printer.printf("%s = __cmpRes;", result.getName().c_str());
+            }
+            else {
+                printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
+            }
+        }
+        else if (opObj.opcode == FOp::CompareNE) {
+            printer.printf("%s = true;", result.getName().c_str());
+        }
+        else {
+            printer.printf("%s = false;", result.getName().c_str());
+        }
+        printer.println("} }");
+        
+        //else if (b == NULL) {}
+        printer.println("else if (%s == NULL) {", param2.getName().c_str());
+        if (isCompare) {
+            printer.printf("int __cmpRes = 1;");
+            if (opObj.opcode ==  FOp::Compare) {
+                printer.printf("%s = __cmpRes;", result.getName().c_str());
+            }
+            else {
+                printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
+            }
+        }
+        else if (opObj.opcode == FOp::CompareNE || opObj.opcode == FOp::CompareNotSame) {
+            printer.printf("%s = true;", result.getName().c_str());
+        }
+        else {
+            printer.printf("%s = false;", result.getName().c_str());
+        }
+        printer.println("} else {");
     }
     else {
         if (!isVal1) {
-            printer.printf("if (%s == NULL) FR_THROW_NPE(%d);", param1.getName().c_str(), this->pos);
-            printer.printf("if (!FR_TYPE_IS(%s, %s) )"
-                           , param1.getName().c_str(), param2.getTypeName().c_str());
-            if (opObj.opcode == FOp::Compare) {
-                printer.printf("%s = -1;", result.getName().c_str());
-            } else {
+            printer.printf("if (%s == NULL || !FR_TYPE_IS(%s, %s) ) {", param1.getName().c_str(), param1.getName().c_str(), param2.getTypeName().c_str());
+            if (isCompare) {
+                printer.printf("int __cmpRes = -1;");
+                if (opObj.opcode ==  FOp::Compare) {
+                    printer.printf("%s = __cmpRes;", result.getName().c_str());
+                }
+                else {
+                    printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
+                }
+            }
+            else if (opObj.opcode == FOp::CompareNE) {
+                printer.printf("%s = true;", result.getName().c_str());
+            }
+            else {
                 printer.printf("%s = false;", result.getName().c_str());
             }
             
-            printer.printf("else %s = FR_UNBOXING_VAL(%s, %s) %s %s;", result.getName().c_str()
+            printer.printf("} else { %s = FR_UNBOXING_VAL(%s, %s) %s %s; }", result.getName().c_str()
                            , param1.getName().c_str(), param2.getTypeName().c_str()
                            , op, param2.getName().c_str());
         }
         else if (!isVal2) {
-            printer.printf("if (%s == NULL) FR_THROW_NPE(%d);", param2.getName().c_str(), this->pos);
-            printer.printf("if (!FR_TYPE_IS(%s, %s) )"
-                           , param2.getName().c_str(), param1.getTypeName().c_str());
-            if (opObj.opcode == FOp::Compare) {
-                printer.printf("%s = -1;", result.getName().c_str());
-            } else {
+            printer.printf("if (%s == NULL || !FR_TYPE_IS(%s, %s) ) {", param2.getName().c_str(), param2.getName().c_str(), param1.getTypeName().c_str());
+            if (isCompare) {
+                printer.printf("int __cmpRes = 1;");
+                if (opObj.opcode ==  FOp::Compare) {
+                    printer.printf("%s = __cmpRes;", result.getName().c_str());
+                }
+                else {
+                    printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
+                }
+            }
+            else if (opObj.opcode == FOp::CompareNE) {
+                printer.printf("%s = true;", result.getName().c_str());
+            }
+            else {
                 printer.printf("%s = false;", result.getName().c_str());
             }
             
-            printer.printf("else %s = %s %s FR_UNBOXING_VAL(%s, %s);", result.getName().c_str()
+            printer.printf("} else { %s = %s %s FR_UNBOXING_VAL(%s, %s); }", result.getName().c_str()
                            , param1.getName().c_str(), op
                            , param2.getName().c_str(), param1.getTypeName().c_str());
         }
     }
     
     //pointer object
-    if (cmpType == -1) {
-        switch (opObj.opcode) {
-            case FOp::Compare: {
-                printer.printf("%s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);"
-                                , result.getName().c_str()
-                                , param1.getName().c_str(), param2.getName().c_str()
-                                , this->pos);
-                break;
-            }
-            case FOp::CompareEQ: {
-                printer.printf("%s = FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareNE: {
-                printer.printf("%s = !FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s); FR_CHECK_ERR(%d);"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , result.getName().c_str(), result.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareLT: {
-                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) < 0; FR_CHECK_ERR(%d); }"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareLE: {
-                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) <= 0; FR_CHECK_ERR(%d); }"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareGE: {
-                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) >= 0; FR_CHECK_ERR(%d); }"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareGT: {
-                printer.printf("{ %s = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s) > 0; FR_CHECK_ERR(%d); }"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str()
-                               , this->pos);
-                break;
-            }
-            case FOp::CompareSame: {
-                printer.printf("%s = (sys_Obj)%s == (sys_Obj)%s;"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str());
-                break;
-            }
-            case FOp::CompareNotSame: {
-                printer.printf("%s = (sys_Obj)%s != (sys_Obj)%s;"
-                               , result.getName().c_str()
-                               , param1.getName().c_str(), param2.getName().c_str());
-                break;
-            }
-            default:
-                printf("ERROR:unknow cmp opcode:%d", opObj.opcode);
+    if (cmpType != -1) {
+        return;
+    }
+    
+    if (isCompare) {
+        printer.printf("int __cmpRes = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);",
+                       param1.getName().c_str(), param2.getName().c_str()
+                       , this->pos);
+        if (opObj.opcode ==  FOp::Compare) {
+            printer.printf("%s = __cmpRes;", result.getName().c_str());
+        }
+        else {
+            printer.printf("%s = __cmpRes %s 0;", result.getName().c_str(), op);
         }
     }
+    else if (opObj.opcode == FOp::CompareNE) {
+        printer.printf("%s = !FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s); FR_CHECK_ERR(%d);"
+                       , result.getName().c_str()
+                       , param1.getName().c_str(), param2.getName().c_str()
+                       , result.getName().c_str(), result.getName().c_str()
+                       , this->pos);
+    }
+    else if (opObj.opcode == FOp::CompareEQ) {
+        printer.printf("%s = FR_VCALL(sys_Obj, equals, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);"
+                       , result.getName().c_str()
+                       , param1.getName().c_str(), param2.getName().c_str()
+                       , this->pos);
+    }
+    else {
+        printf("ERROR:unknow cmp opcode:%d", opObj.opcode);
+    }
+    printer.printf("}");
 }
 
 void ReturnStmt::print(Printer& printer) {
@@ -847,9 +909,9 @@ void ExceptionStmt::print(Printer& printer) {
             if (catchType != -1) {
                 printer.println("%s = (%s)__env->error;", catchVar.getName().c_str(), catchVar.getTypeName().c_str());
             }
-            else {
-                printer.println("__env->error = NULL;");
-            }
+            //else {
+            printer.println("__env->error = NULL;");
+            //}
             break;
         case CatchEnd:
             printer.println("//catch end");

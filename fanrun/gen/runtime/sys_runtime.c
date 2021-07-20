@@ -132,6 +132,14 @@ fr_Err fr_makeCastError(fr_Env __env) {
     sys_CastErr_make__0(__env, npe);
     return npe;
 }
+fr_Err fr_makeIndexError(fr_Env __env, fr_Int index, fr_Int limit) {
+    char buf[128] = {0};
+    snprintf(buf, 128, "index (%d) out of bounds (%d)", (int)index, (int)limit);
+    fr_Obj msg = fr_newStrUtf8(__env, buf);
+    sys_IndexErr err = FR_ALLOC(sys_IndexErr);
+    sys_IndexErr_make__1(__env, err, msg);
+    return err;
+}
 
 void fr_printError(fr_Env __env, fr_Err error) {
     sys_Err e = (sys_Err)error;

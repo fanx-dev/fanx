@@ -85,6 +85,7 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj str);
 //fr_Obj fr_toTypeObj(fr_Env env, fr_Type);
 fr_Err fr_makeNPE(fr_Env __env);
 fr_Err fr_makeCastError(fr_Env __env);
+fr_Err fr_makeIndexError(fr_Env __env, fr_Int index, fr_Int limit);
 void fr_printError(fr_Env __env, fr_Err error);
 
 ////////////////////////////
