@@ -427,7 +427,7 @@ fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ..
     va_list args;
     fr_Value ret;
     va_start(args, argCount);
-    ret = fr_callMethodV(self, method, argCount, args);
+    ret = fr_newObjV(self, type, method, argCount, args);
     va_end(args);
     return ret;
 }
