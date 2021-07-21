@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 
 void sys_Obj_trap_v(fr_Env env, void *param, void *ret);
 void sys_Obj_isImmutable_v(fr_Env env, void *param, void *ret);

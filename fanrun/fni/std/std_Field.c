@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 #include "type.h"
 

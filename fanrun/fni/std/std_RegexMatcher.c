@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 void std_RegexMatcher_make(fr_Env env, fr_Obj self) {

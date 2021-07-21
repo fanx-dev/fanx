@@ -7,7 +7,7 @@
 //
 
 #include "runtime.h"
-#include "ThreadEnv.hpp"
+#include "Env.hpp"
 #include "Vm.hpp"
 #include "util/system.h"
 

@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include "PodManager.h"
-#include "vm.h"
+#include "fni_ext.h"
 #include "gci.h"
 #include <unordered_map>
 #include <thread>

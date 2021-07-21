@@ -245,19 +245,14 @@ fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes);
 fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t size);
 
 /**
- * get utf8 from Str obj.
+ * get utf8 from Str obj. the life time depends on str object.
  */
 const char *fr_getStrUtf8(fr_Env self, fr_Obj str);
 
 /**
- * release utf8 and the local ref of Str
- */
-//void fr_releaseStrUtf8(fr_Env self, fr_Obj str, const char *bytes);
-
-/**
  * call obj.toStr and return result
  */
-fr_Obj fr_objToStr(fr_Env env, fr_Value obj, fr_ValueType vtype);
+//fr_Obj fr_objToStr(fr_Env env, fr_Value obj, fr_ValueType vtype);
 
 
 CF_END

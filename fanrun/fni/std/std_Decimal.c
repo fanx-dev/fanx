@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Obj std_Decimal_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {

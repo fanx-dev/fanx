@@ -368,7 +368,7 @@ void NativeGen::genNativePod(std::string &path, FPod *pod, Printer *printer, Pri
         else {
             std::string file = path + podName + "_" + typeName + ".c";
             Printer typePrinter(file.c_str());
-            typePrinter.println("#include \"vm.h\"");
+            typePrinter.println("#include \"fni_ext.h\"");
             //typePrinter.println("#include \"pod_%s_struct.h\"", podName.c_str());
             typePrinter.println("#include \"pod_%s_native.h\"", podName.c_str());
             typePrinter.newLine();
@@ -388,7 +388,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     std::string initFile = path + "pod_" + podName + "_register.c";
     Printer printer(initFile.c_str());
     
-    printer.println("#include \"vm.h\"");
+    printer.println("#include \"fni_ext.h\"");
     printer.newLine();
     genNativePod(path, pod, &printer, PrintType::pRegisterDef);
     
@@ -405,7 +405,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
 //        std::string initFile0 = path + "pod_" + podName + "_struct.h";
 //        Printer printer0(initFile0.c_str());
 //
-//        printer0.println("#include \"vm.h\"");
+//        printer0.println("#include \"fni_ext.h\"");
 //        printer0.println("CF_BEGIN");
 //        printer0.newLine();
 //
@@ -418,7 +418,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     std::string initFile1 = path + "pod_" + podName + "_native.h";
     Printer printer1(initFile1.c_str());
     
-    printer1.println("#include \"vm.h\"");
+    printer1.println("#include \"fni_ext.h\"");
     printer1.println("CF_BEGIN");
     printer1.newLine();
     

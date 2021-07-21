@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 void std_FileBuf_init(fr_Env env, fr_Obj self, fr_Obj file, fr_Obj mode) {

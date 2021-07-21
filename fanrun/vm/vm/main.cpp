@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Env.h"
 #include "NativeGen.h"
-#include "Fvm.h"
+#include "Vm.h"
 #include <string.h>
 
 CF_BEGIN

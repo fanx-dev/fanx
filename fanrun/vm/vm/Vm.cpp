@@ -6,7 +6,7 @@
 //  Copyright (c) 2015, yangjiandong. All rights reserved.
 //
 
-#include "Fvm.h"
+#include "Vm.h"
 #include "Env.h"
 #include <assert.h>
 #include <atomic>

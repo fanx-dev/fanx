@@ -655,33 +655,33 @@ void Env::arrayGet(fr_Array *array, size_t index, fr_Value *val) {
     //val->h = fr_toHandle(self, a->data[index]);
     
     size_t elemSize = array->elemSize;
-    if (array->valueType == fr_vtInt) {
-        switch (elemSize) {
-            case 1: {
-                int8_t *t = (int8_t*)array->data;
-                val->i = t[index];
-                break;
-            }
-            case 2: {
-                int16_t *t = (int16_t*)array->data;
-                val->i = t[index];
-                //resVal.type = fr_vtInt;
-                break;
-            }
-            case 4: {
-                int32_t *t = (int32_t*)array->data;
-                val->i = *t;
-                //resVal.type = fr_vtInt;
-                break;
-            }
-            case 8: {
-                int64_t *t = (int64_t*)array->data;
-                val->i = *t;
-                //resVal.type = fr_vtInt;
-                break;
-            }
+
+    switch (elemSize) {
+        case 1: {
+            int8_t *t = (int8_t*)array->data;
+            val->i = t[index];
+            break;
+        }
+        case 2: {
+            int16_t *t = (int16_t*)array->data;
+            val->i = t[index];
+            //resVal.type = fr_vtInt;
+            break;
+        }
+        case 4: {
+            int32_t *t = (int32_t*)array->data;
+            val->i = *t;
+            //resVal.type = fr_vtInt;
+            break;
+        }
+        case 8: {
+            int64_t *t = (int64_t*)array->data;
+            val->i = *t;
+            //resVal.type = fr_vtInt;
+            break;
         }
     }
+    
 }
 void Env::arraySet(fr_Array *array, size_t index, fr_Value *val) {
     if (index >= array->size) {
@@ -691,28 +691,27 @@ void Env::arraySet(fr_Array *array, size_t index, fr_Value *val) {
     //a->data[index] = fr_getPtr(self, val->h);
     
     size_t elemSize = array->elemSize;
-    if (array->valueType == fr_vtInt) {
-        switch (elemSize) {
-            case 1: {
-                int8_t *t = (int8_t*)array->data;
-                t[index] = val->i;
-                break;
-            }
-            case 2: {
-                int16_t *t = (int16_t*)array->data;
-                t[index] = val->i;
-                break;
-            }
-            case 4: {
-                int32_t *t = (int32_t*)array->data;
-                t[index] = (int32_t)val->i;
-                break;
-            }
-            case 8: {
-                int64_t *t = (int64_t*)array->data;
-                t[index] = val->i;
-                break;
-            }
+
+    switch (elemSize) {
+        case 1: {
+            int8_t *t = (int8_t*)array->data;
+            t[index] = val->i;
+            break;
+        }
+        case 2: {
+            int16_t *t = (int16_t*)array->data;
+            t[index] = val->i;
+            break;
+        }
+        case 4: {
+            int32_t *t = (int32_t*)array->data;
+            t[index] = (int32_t)val->i;
+            break;
+        }
+        case 8: {
+            int64_t *t = (int64_t*)array->data;
+            t[index] = val->i;
+            break;
         }
     }
 }

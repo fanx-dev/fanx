@@ -2710,7 +2710,7 @@ void std_BaseType_doInit_v(fr_Env env, void *param, void *ret) {
     std_BaseType_doInit(env, arg_0);
 }
 
-void std_Field_get_v(fr_Env env, void *param, void *ret) {
+void std_Field_getDirectly_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_ValueType vtype_0;
@@ -2726,11 +2726,11 @@ void std_Field_get_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.h = std_Field_get(env, arg_0, arg_1);
+    retValue.h = std_Field_getDirectly(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Field__unsafeSet_v(fr_Env env, void *param, void *ret) {
+void std_Field_setDirectly_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_ValueType vtype_0;
@@ -2740,12 +2740,6 @@ void std_Field__unsafeSet_v(fr_Env env, void *param, void *ret) {
     fr_Value value_2;
     fr_Obj arg_2; 
     fr_ValueType vtype_2;
-    fr_Value value_3;
-    fr_Bool arg_3; 
-    fr_ValueType vtype_3;
-
-    fr_getParam(env, param, &value_3, 3, &vtype_3);
-    arg_3 = value_3.b;
 
     fr_getParam(env, param, &value_2, 2, &vtype_2);
     arg_2 = value_2.h;
@@ -2757,7 +2751,7 @@ void std_Field__unsafeSet_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_Field__unsafeSet(env, arg_0, arg_1, arg_2, arg_3);
+    std_Field_setDirectly(env, arg_0, arg_1, arg_2);
 }
 
 void std_Method_call_v(fr_Env env, void *param, void *ret) {
@@ -2819,6 +2813,68 @@ void std_Method_call_v(fr_Env env, void *param, void *ret) {
 
 
     retValue.h = std_Method_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_MethodFunc_call_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_ValueType vtype_0;
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_ValueType vtype_1;
+    fr_Value value_2;
+    fr_Obj arg_2; 
+    fr_ValueType vtype_2;
+    fr_Value value_3;
+    fr_Obj arg_3; 
+    fr_ValueType vtype_3;
+    fr_Value value_4;
+    fr_Obj arg_4; 
+    fr_ValueType vtype_4;
+    fr_Value value_5;
+    fr_Obj arg_5; 
+    fr_ValueType vtype_5;
+    fr_Value value_6;
+    fr_Obj arg_6; 
+    fr_ValueType vtype_6;
+    fr_Value value_7;
+    fr_Obj arg_7; 
+    fr_ValueType vtype_7;
+    fr_Value value_8;
+    fr_Obj arg_8; 
+    fr_ValueType vtype_8;
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_8, 8, &vtype_8);
+    arg_8 = value_8.h;
+
+    fr_getParam(env, param, &value_7, 7, &vtype_7);
+    arg_7 = value_7.h;
+
+    fr_getParam(env, param, &value_6, 6, &vtype_6);
+    arg_6 = value_6.h;
+
+    fr_getParam(env, param, &value_5, 5, &vtype_5);
+    arg_5 = value_5.h;
+
+    fr_getParam(env, param, &value_4, 4, &vtype_4);
+    arg_4 = value_4.h;
+
+    fr_getParam(env, param, &value_3, 3, &vtype_3);
+    arg_3 = value_3.h;
+
+    fr_getParam(env, param, &value_2, 2, &vtype_2);
+    arg_2 = value_2.h;
+
+    fr_getParam(env, param, &value_1, 1, &vtype_1);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, &vtype_0);
+    arg_0 = value_0.h;
+
+
+    retValue.h = std_MethodFunc_call(env, arg_0, arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8);
     *((fr_Value*)ret) = retValue;
 }
 

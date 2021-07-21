@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Int std_TimePoint_nowMillis(fr_Env env) {

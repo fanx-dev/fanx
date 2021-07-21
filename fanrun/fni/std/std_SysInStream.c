@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Int std_SysInStream_toSigned(fr_Env env, fr_Int val, fr_Int byteNum) {

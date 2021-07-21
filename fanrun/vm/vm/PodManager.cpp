@@ -10,7 +10,7 @@
 #include "Printer.h"
 #include "Env.h"
 //#include "StackFrame.h"
-#include "Fvm.h"
+#include "Vm.h"
 
 
 ////////////////////////////////////////////////////////////////
@@ -530,9 +530,25 @@ FType *PodManager::getType(Env *env, FPod *curPod, uint16_t tid) {
         std::string &podName = curPod->names[typeRef.podName];
         std::string &typeName = curPod->names[typeRef.typeName];
         
-        FPod *pod = findPod(podName);
-        FType *type = pod->c_typeMap[typeName];
-        typeRef.c_type = type;
+        std::string::size_type pos = typeName.find("^");
+        if (pos != std::string::npos) {
+            std::string pname = typeName.substr(0, pos);
+            std::string cname = typeName.substr(pos+1);
+            FPod *curPod = findPod(podName);
+            auto itr = curPod->c_typeMap.find(pname);
+            if (itr == curPod->c_typeMap.end()) {
+                throw std::string("Unknow Type:")+typeName;
+            }
+            FType *ftype = itr->second;
+            uint16_t ttid = ftype->findGenericParamBound(cname);
+            FType *type = getType(env, curPod, ttid);
+            typeRef.c_type = type;
+        }
+        else {
+            FPod *pod = findPod(podName);
+            FType *type = pod->c_typeMap[typeName];
+            typeRef.c_type = type;
+        }
     }
     initTypeAllocSize(env, typeRef.c_type);
     return typeRef.c_type;

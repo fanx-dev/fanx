@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Obj std_DateTime_now(fr_Env env, fr_Obj tolerance) {

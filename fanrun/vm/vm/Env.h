@@ -10,7 +10,7 @@
 #define __vm__Env__
 
 #include <stdio.h>
-#include "Fvm.h"
+#include "Vm.h"
 #include <vector>
 #include <set>
 #include "tinycthread.h"

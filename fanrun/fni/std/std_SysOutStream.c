@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Obj std_SysOutStream_write(fr_Env env, fr_Obj self, fr_Int byte) {

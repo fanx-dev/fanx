@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 CF_BEGIN
 
 fr_Obj sys_Obj_trap(fr_Env env, fr_Obj self, fr_Obj name, fr_Obj args);

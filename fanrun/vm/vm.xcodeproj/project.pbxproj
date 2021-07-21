@@ -23,7 +23,7 @@
 		32352186268AADEE00EE50DF /* sys_Func.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352178268AADAC00EE50DF /* sys_Func.c */; };
 		32352197268B28BE00EE50DF /* IRType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323EF2462306F0F600B27E68 /* IRType.cpp */; };
 		32352198268B28BE00EE50DF /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E35221950F2001A6EF0 /* adler32.c */; };
-		32352199268B28BE00EE50DF /* Fvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7721BB76D3600A58B54 /* Fvm.cpp */; };
+		32352199268B28BE00EE50DF /* Vm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7721BB76D3600A58B54 /* Vm.cpp */; };
 		3235219A268B28BE00EE50DF /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E24221950F2001A6EF0 /* deflate.c */; };
 		3235219B268B28BE00EE50DF /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E23221950F2001A6EF0 /* compress.c */; };
 		3235219C268B28BE00EE50DF /* ioapi_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E12221950F2001A6EF0 /* ioapi_buf.c */; };
@@ -57,7 +57,7 @@
 		323521B8268B28BE00EE50DF /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0DCC221950E3001A6EF0 /* utf8.c */; };
 		323521B9268B28BE00EE50DF /* ObjFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323C30B61BC0AC0600F15091 /* ObjFactory.cpp */; };
 		323521BA268B28BE00EE50DF /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E32221950F2001A6EF0 /* trees.c */; };
-		323521BB268B28BE00EE50DF /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7751BB773B500A58B54 /* fni.cpp */; };
+		323521BB268B28BE00EE50DF /* fni_ext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7751BB773B500A58B54 /* fni_ext.cpp */; };
 		323521BC268B28BE00EE50DF /* miniunz.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E1E221950F2001A6EF0 /* miniunz.c */; };
 		323521BD268B28BE00EE50DF /* minizip.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0E1D221950F2001A6EF0 /* minizip.c */; };
 		323521BE268B28BE00EE50DF /* Code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A0DE0221950E3001A6EF0 /* Code.cpp */; };
@@ -69,12 +69,14 @@
 		323521C5268B28BE00EE50DF /* escape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A0DC8221950E3001A6EF0 /* escape.cpp */; };
 		323521C6268B28BE00EE50DF /* Printer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A0DD7221950E3001A6EF0 /* Printer.cpp */; };
 		323521CE268B296F00EE50DF /* gen_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323521CD268B296F00EE50DF /* gen_main.cpp */; };
+		3235228726A84C7C00EE50DF /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235228626A84C7C00EE50DF /* fni.cpp */; };
+		3235228826A84EE200EE50DF /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235228626A84C7C00EE50DF /* fni.cpp */; };
 		323668F61BB64DE60030F788 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323668F51BB64DE60030F788 /* main.cpp */; };
 		3236694D1BB64F1A0030F788 /* PodManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3236694B1BB64F1A0030F788 /* PodManager.cpp */; };
 		323669501BB64F470030F788 /* Env.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3236694E1BB64F470030F788 /* Env.cpp */; };
 		323669831BB675730030F788 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323669811BB675730030F788 /* Interpreter.cpp */; };
-		3237F7741BB76D3600A58B54 /* Fvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7721BB76D3600A58B54 /* Fvm.cpp */; };
-		3237F7771BB773B500A58B54 /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7751BB773B500A58B54 /* fni.cpp */; };
+		3237F7741BB76D3600A58B54 /* Vm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7721BB76D3600A58B54 /* Vm.cpp */; };
+		3237F7771BB773B500A58B54 /* fni_ext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3237F7751BB773B500A58B54 /* fni_ext.cpp */; };
 		323C30B81BC0AC0600F15091 /* ObjFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323C30B61BC0AC0600F15091 /* ObjFactory.cpp */; };
 		323EF2472306F0F600B27E68 /* IRType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323EF2462306F0F600B27E68 /* IRType.cpp */; };
 		327A0DF2221950E3001A6EF0 /* escape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A0DC8221950E3001A6EF0 /* escape.cpp */; };
@@ -142,7 +144,7 @@
 /* Begin PBXFileReference section */
 		3212494E221305CF00EF1830 /* NativeGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeGen.cpp; sourceTree = "<group>"; };
 		3212494F221305CF00EF1830 /* NativeGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeGen.h; sourceTree = "<group>"; };
-		321249512213067B00EF1830 /* vm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
+		321249512213067B00EF1830 /* fni_ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fni_ext.h; sourceTree = "<group>"; };
 		32352169268AADAC00EE50DF /* fni.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fni.h; sourceTree = "<group>"; };
 		3235216B268AADAC00EE50DF /* pod_sys_native.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pod_sys_native.h; sourceTree = "<group>"; };
 		3235216C268AADAC00EE50DF /* sys_Enum.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Enum.c; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		32352178268AADAC00EE50DF /* sys_Func.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sys_Func.c; sourceTree = "<group>"; };
 		323521CC268B28BE00EE50DF /* fni_gen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fni_gen; sourceTree = BUILT_PRODUCTS_DIR; };
 		323521CD268B296F00EE50DF /* gen_main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gen_main.cpp; sourceTree = "<group>"; };
+		3235228626A84C7C00EE50DF /* fni.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
 		323668F21BB64DE60030F788 /* vm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vm; sourceTree = BUILT_PRODUCTS_DIR; };
 		323668F51BB64DE60030F788 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3236694B1BB64F1A0030F788 /* PodManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PodManager.cpp; sourceTree = "<group>"; };
@@ -167,9 +170,9 @@
 		3236694F1BB64F470030F788 /* Env.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Env.h; sourceTree = "<group>"; };
 		323669811BB675730030F788 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
 		323669821BB675730030F788 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
-		3237F7721BB76D3600A58B54 /* Fvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fvm.cpp; sourceTree = "<group>"; };
-		3237F7731BB76D3600A58B54 /* Fvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fvm.h; sourceTree = "<group>"; };
-		3237F7751BB773B500A58B54 /* fni.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
+		3237F7721BB76D3600A58B54 /* Vm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vm.cpp; sourceTree = "<group>"; };
+		3237F7731BB76D3600A58B54 /* Vm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vm.h; sourceTree = "<group>"; };
+		3237F7751BB773B500A58B54 /* fni_ext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni_ext.cpp; sourceTree = "<group>"; };
 		323C30B61BC0AC0600F15091 /* ObjFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjFactory.cpp; sourceTree = "<group>"; };
 		323C30B71BC0AC0600F15091 /* ObjFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjFactory.h; sourceTree = "<group>"; };
 		323EF2452306F0F600B27E68 /* IRType.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IRType.hpp; sourceTree = "<group>"; };
@@ -289,6 +292,7 @@
 		32352168268AADAC00EE50DF /* fni */ = {
 			isa = PBXGroup;
 			children = (
+				3235228626A84C7C00EE50DF /* fni.cpp */,
 				32352169268AADAC00EE50DF /* fni.h */,
 				3235216A268AADAC00EE50DF /* sys */,
 			);
@@ -351,10 +355,10 @@
 				3236694F1BB64F470030F788 /* Env.h */,
 				323669811BB675730030F788 /* Interpreter.cpp */,
 				323669821BB675730030F788 /* Interpreter.h */,
-				3237F7721BB76D3600A58B54 /* Fvm.cpp */,
-				3237F7731BB76D3600A58B54 /* Fvm.h */,
-				3237F7751BB773B500A58B54 /* fni.cpp */,
-				321249512213067B00EF1830 /* vm.h */,
+				3237F7721BB76D3600A58B54 /* Vm.cpp */,
+				3237F7731BB76D3600A58B54 /* Vm.h */,
+				3237F7751BB773B500A58B54 /* fni_ext.cpp */,
+				321249512213067B00EF1830 /* fni_ext.h */,
 				323C30B61BC0AC0600F15091 /* ObjFactory.cpp */,
 				323C30B71BC0AC0600F15091 /* ObjFactory.h */,
 				325231111DAC88940044DBF8 /* ExeEngine.h */,
@@ -597,7 +601,7 @@
 			files = (
 				32352197268B28BE00EE50DF /* IRType.cpp in Sources */,
 				32352198268B28BE00EE50DF /* adler32.c in Sources */,
-				32352199268B28BE00EE50DF /* Fvm.cpp in Sources */,
+				32352199268B28BE00EE50DF /* Vm.cpp in Sources */,
 				3235219A268B28BE00EE50DF /* deflate.c in Sources */,
 				3235219B268B28BE00EE50DF /* compress.c in Sources */,
 				3235219C268B28BE00EE50DF /* ioapi_buf.c in Sources */,
@@ -632,12 +636,13 @@
 				323521B8268B28BE00EE50DF /* utf8.c in Sources */,
 				323521B9268B28BE00EE50DF /* ObjFactory.cpp in Sources */,
 				323521BA268B28BE00EE50DF /* trees.c in Sources */,
-				323521BB268B28BE00EE50DF /* fni.cpp in Sources */,
+				323521BB268B28BE00EE50DF /* fni_ext.cpp in Sources */,
 				323521BC268B28BE00EE50DF /* miniunz.c in Sources */,
 				323521BD268B28BE00EE50DF /* minizip.c in Sources */,
 				323521BE268B28BE00EE50DF /* Code.cpp in Sources */,
 				323521BF268B28BE00EE50DF /* PodManager.cpp in Sources */,
 				323521C0268B28BE00EE50DF /* tinycthread.c in Sources */,
+				3235228726A84C7C00EE50DF /* fni.cpp in Sources */,
 				323521C2268B28BE00EE50DF /* MBuilder.cpp in Sources */,
 				323521C3268B28BE00EE50DF /* zutil.c in Sources */,
 				323521C4268B28BE00EE50DF /* PodLoader.cpp in Sources */,
@@ -650,6 +655,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3235228826A84EE200EE50DF /* fni.cpp in Sources */,
 				32352179268AADEE00EE50DF /* pod_sys_native.h in Sources */,
 				3235217A268AADEE00EE50DF /* sys_Enum.c in Sources */,
 				3235217B268AADEE00EE50DF /* pod_sys_register.c in Sources */,
@@ -665,7 +671,7 @@
 				32352186268AADEE00EE50DF /* sys_Func.c in Sources */,
 				323EF2472306F0F600B27E68 /* IRType.cpp in Sources */,
 				327A0E4B221950F2001A6EF0 /* adler32.c in Sources */,
-				3237F7741BB76D3600A58B54 /* Fvm.cpp in Sources */,
+				3237F7741BB76D3600A58B54 /* Vm.cpp in Sources */,
 				327A0E43221950F2001A6EF0 /* deflate.c in Sources */,
 				327A0E42221950F2001A6EF0 /* compress.c in Sources */,
 				327A0E3B221950F2001A6EF0 /* ioapi_buf.c in Sources */,
@@ -699,7 +705,7 @@
 				327A0DF5221950E3001A6EF0 /* utf8.c in Sources */,
 				323C30B81BC0AC0600F15091 /* ObjFactory.cpp in Sources */,
 				327A0E49221950F2001A6EF0 /* trees.c in Sources */,
-				3237F7771BB773B500A58B54 /* fni.cpp in Sources */,
+				3237F7771BB773B500A58B54 /* fni_ext.cpp in Sources */,
 				327A0E40221950F2001A6EF0 /* miniunz.c in Sources */,
 				327A0E3F221950F2001A6EF0 /* minizip.c in Sources */,
 				327A0DFD221950E3001A6EF0 /* Code.cpp in Sources */,

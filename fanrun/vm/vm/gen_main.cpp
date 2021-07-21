@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Env.h"
 #include "NativeGen.h"
-#include "Fvm.h"
+#include "Vm.h"
 #include <string.h>
 
 int main(int argc, const char * argv[]) {

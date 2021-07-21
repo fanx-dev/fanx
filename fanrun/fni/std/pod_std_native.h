@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 CF_BEGIN
 
 void std_AtomicInt_make(fr_Env env, fr_Obj self, fr_Int val);
@@ -162,9 +162,10 @@ fr_Obj std_Pod_files(fr_Env env, fr_Obj self);
 fr_Obj std_Pod_file(fr_Env env, fr_Obj self, fr_Obj uri, fr_Bool checked);
 fr_Obj std_Type_typeof_(fr_Env env, fr_Obj obj);
 void std_BaseType_doInit(fr_Env env, fr_Obj self);
-fr_Obj std_Field_get(fr_Env env, fr_Obj self, fr_Obj instance);
-void std_Field__unsafeSet(fr_Env env, fr_Obj self, fr_Obj instance, fr_Obj value, fr_Bool checkConst);
+fr_Obj std_Field_getDirectly(fr_Env env, fr_Obj self, fr_Obj instance);
+void std_Field_setDirectly(fr_Env env, fr_Obj self, fr_Obj instance, fr_Obj value);
 fr_Obj std_Method_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g, fr_Obj h);
+fr_Obj std_MethodFunc_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g, fr_Obj h);
 fr_Obj std_BufCrypto_toDigest(fr_Env env, fr_Obj buf, fr_Obj algorithm);
 fr_Int std_BufCrypto_crc(fr_Env env, fr_Obj buf, fr_Obj algorithm);
 fr_Obj std_BufCrypto_hmac(fr_Env env, fr_Obj buf, fr_Obj algorithm, fr_Obj key);

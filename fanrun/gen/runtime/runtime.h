@@ -23,7 +23,7 @@ extern  "C" {
 #include <setjmp.h>
 #include <string.h>
 
-#include "vm.h"
+#include "fni_ext.h"
 
 //#define LONG_JMP_EXCEPTION
 typedef fr_Obj fr_Err;

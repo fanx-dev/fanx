@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 
 void std_AtomicInt_make_v(fr_Env env, void *param, void *ret);
 void std_AtomicInt_val_v(fr_Env env, void *param, void *ret);
@@ -161,9 +161,10 @@ void std_Pod_files_v(fr_Env env, void *param, void *ret);
 void std_Pod_file_v(fr_Env env, void *param, void *ret);
 void std_Type_typeof__v(fr_Env env, void *param, void *ret);
 void std_BaseType_doInit_v(fr_Env env, void *param, void *ret);
-void std_Field_get_v(fr_Env env, void *param, void *ret);
-void std_Field__unsafeSet_v(fr_Env env, void *param, void *ret);
+void std_Field_getDirectly_v(fr_Env env, void *param, void *ret);
+void std_Field_setDirectly_v(fr_Env env, void *param, void *ret);
 void std_Method_call_v(fr_Env env, void *param, void *ret);
+void std_MethodFunc_call_v(fr_Env env, void *param, void *ret);
 void std_BufCrypto_toDigest_v(fr_Env env, void *param, void *ret);
 void std_BufCrypto_crc_v(fr_Env env, void *param, void *ret);
 void std_BufCrypto_hmac_v(fr_Env env, void *param, void *ret);
@@ -417,9 +418,10 @@ void std_register(fr_Fvm vm) {
     fr_registerMethod(vm, "std_Pod_file", std_Pod_file_v);
     fr_registerMethod(vm, "std_Type_typeof", std_Type_typeof__v);
     fr_registerMethod(vm, "std_BaseType_doInit", std_BaseType_doInit_v);
-    fr_registerMethod(vm, "std_Field_get", std_Field_get_v);
-    fr_registerMethod(vm, "std_Field__unsafeSet", std_Field__unsafeSet_v);
+    fr_registerMethod(vm, "std_Field_getDirectly", std_Field_getDirectly_v);
+    fr_registerMethod(vm, "std_Field_setDirectly", std_Field_setDirectly_v);
     fr_registerMethod(vm, "std_Method_call", std_Method_call_v);
+    fr_registerMethod(vm, "std_MethodFunc_call", std_MethodFunc_call_v);
     fr_registerMethod(vm, "std_BufCrypto_toDigest", std_BufCrypto_toDigest_v);
     fr_registerMethod(vm, "std_BufCrypto_crc", std_BufCrypto_crc_v);
     fr_registerMethod(vm, "std_BufCrypto_hmac", std_BufCrypto_hmac_v);

@@ -52,6 +52,7 @@
 		3235222C268B38D200EE50DF /* std_Math.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352224268B38D200EE50DF /* std_Math.c */; };
 		3235222D268B38D200EE50DF /* std_Zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 32352225268B38D200EE50DF /* std_Zip.c */; };
 		3235222F268C343300EE50DF /* std_FileSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235222E268C343300EE50DF /* std_FileSystem.c */; };
+		3235228526A8371100EE50DF /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235228426A8371100EE50DF /* fni.cpp */; };
 		324A54B42000EE130083C73E /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 324A54B22000EE130083C73E /* sys.c */; };
 		324BFA8523BC692A007F2863 /* type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324BFA8423BC692A007F2863 /* type.cpp */; };
 		326165501FF8A578002174D6 /* Vm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3261654F1FF8A578002174D6 /* Vm.cpp */; };
@@ -62,7 +63,7 @@
 		327A0D0A22194A88001A6EF0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 327A0D0522194A88001A6EF0 /* LinkedList.c */; };
 		3291F9311F6D416C00F12438 /* runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3291F9261F6D416C00F12438 /* runtime.cpp */; };
 		32C107071FE6B57B006248C6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 32C107051FE6B57B006248C6 /* main.c */; };
-		32EA54FB26787B68003219EA /* ThreadEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA54F926787B68003219EA /* ThreadEnv.cpp */; };
+		32EA54FB26787B68003219EA /* Env.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA54F926787B68003219EA /* Env.cpp */; };
 		32EA551126788823003219EA /* gci.h in Sources */ = {isa = PBXBuildFile; fileRef = 32DED48923BF8F2100348B1E /* gci.h */; };
 		32EA551226788823003219EA /* Gc.h in Sources */ = {isa = PBXBuildFile; fileRef = 327A0CF822194A88001A6EF0 /* Gc.h */; };
 		32EA551326788823003219EA /* gcobj.h in Sources */ = {isa = PBXBuildFile; fileRef = 327A0CFA22194A88001A6EF0 /* gcobj.h */; };
@@ -74,15 +75,15 @@
 		32EA551926788823003219EA /* tinycthread.h in Sources */ = {isa = PBXBuildFile; fileRef = 327A0D0222194A88001A6EF0 /* tinycthread.h */; };
 		32EA551A26788823003219EA /* miss.h in Sources */ = {isa = PBXBuildFile; fileRef = 327A0D0322194A88001A6EF0 /* miss.h */; };
 		32EA551B26788823003219EA /* utf8.h in Sources */ = {isa = PBXBuildFile; fileRef = 327A0D0422194A88001A6EF0 /* utf8.h */; };
-		32EA551D26788823003219EA /* ThreadEnv.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA54FA26787B68003219EA /* ThreadEnv.hpp */; };
+		32EA551D26788823003219EA /* Env.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA54FA26787B68003219EA /* Env.hpp */; };
 		32EA551E26788823003219EA /* type.h in Sources */ = {isa = PBXBuildFile; fileRef = 324BFA8323BC692A007F2863 /* type.h */; };
 		32EA551F26788823003219EA /* Vm.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 3261654E1FF8A578002174D6 /* Vm.hpp */; };
 		32EA552026788823003219EA /* runtime.h in Sources */ = {isa = PBXBuildFile; fileRef = 3291F9271F6D416C00F12438 /* runtime.h */; };
 		32EA552226788823003219EA /* baseTest.h in Sources */ = {isa = PBXBuildFile; fileRef = 320544602203196300ECB5F2 /* baseTest.h */; };
 		32EA552326788823003219EA /* sys.h in Sources */ = {isa = PBXBuildFile; fileRef = 3291F92C1F6D416C00F12438 /* sys.h */; };
-		32EA5542267998A1003219EA /* fni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA553F267998A1003219EA /* fni.cpp */; };
+		32EA5542267998A1003219EA /* fni_ext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA553F267998A1003219EA /* fni_ext.cpp */; };
 		32EA55442679B13B003219EA /* sys_runtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 32EA55432679B13B003219EA /* sys_runtime.c */; };
-		32EA55462679C27B003219EA /* vm.h in Sources */ = {isa = PBXBuildFile; fileRef = 32EA5541267998A1003219EA /* vm.h */; };
+		32EA55462679C27B003219EA /* fni_ext.h in Sources */ = {isa = PBXBuildFile; fileRef = 32EA5541267998A1003219EA /* fni_ext.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -150,6 +151,7 @@
 		32352224268B38D200EE50DF /* std_Math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Math.c; sourceTree = "<group>"; };
 		32352225268B38D200EE50DF /* std_Zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Zip.c; sourceTree = "<group>"; };
 		3235222E268C343300EE50DF /* std_FileSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_FileSystem.c; sourceTree = "<group>"; };
+		3235228426A8371100EE50DF /* fni.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
 		324A54B22000EE130083C73E /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		324BFA8023BB962B007F2863 /* Bitmap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bitmap.hpp; sourceTree = "<group>"; };
 		324BFA8223BC4711007F2863 /* BitmapTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapTest.h; sourceTree = "<group>"; };
@@ -176,10 +178,10 @@
 		3291F92C1F6D416C00F12438 /* sys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sys.h; sourceTree = "<group>"; };
 		32C107051FE6B57B006248C6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		32DED48923BF8F2100348B1E /* gci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gci.h; sourceTree = "<group>"; };
-		32EA54F926787B68003219EA /* ThreadEnv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadEnv.cpp; sourceTree = "<group>"; };
-		32EA54FA26787B68003219EA /* ThreadEnv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ThreadEnv.hpp; sourceTree = "<group>"; };
-		32EA553F267998A1003219EA /* fni.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
-		32EA5541267998A1003219EA /* vm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
+		32EA54F926787B68003219EA /* Env.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Env.cpp; sourceTree = "<group>"; };
+		32EA54FA26787B68003219EA /* Env.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Env.hpp; sourceTree = "<group>"; };
+		32EA553F267998A1003219EA /* fni_ext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fni_ext.cpp; sourceTree = "<group>"; };
+		32EA5541267998A1003219EA /* fni_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fni_ext.h; sourceTree = "<group>"; };
 		32EA55432679B13B003219EA /* sys_runtime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys_runtime.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -200,6 +202,7 @@
 				323521CF268B316300EE50DF /* std */,
 				3235214C268AAD9100EE50DF /* fni.h */,
 				3235214D268AAD9100EE50DF /* sys */,
+				3235228426A8371100EE50DF /* fni.cpp */,
 			);
 			name = fni;
 			path = ../fni;
@@ -319,10 +322,10 @@
 			isa = PBXGroup;
 			children = (
 				32EA55432679B13B003219EA /* sys_runtime.c */,
-				32EA553F267998A1003219EA /* fni.cpp */,
-				32EA5541267998A1003219EA /* vm.h */,
-				32EA54F926787B68003219EA /* ThreadEnv.cpp */,
-				32EA54FA26787B68003219EA /* ThreadEnv.hpp */,
+				32EA553F267998A1003219EA /* fni_ext.cpp */,
+				32EA5541267998A1003219EA /* fni_ext.h */,
+				32EA54F926787B68003219EA /* Env.cpp */,
+				32EA54FA26787B68003219EA /* Env.hpp */,
 				324BFA8423BC692A007F2863 /* type.cpp */,
 				324BFA8323BC692A007F2863 /* type.h */,
 				3261654E1FF8A578002174D6 /* Vm.hpp */,
@@ -411,7 +414,7 @@
 				32352162268AAD9100EE50DF /* sys_Float.c in Sources */,
 				32352167268AAD9100EE50DF /* sys_Func.c in Sources */,
 				3235215F268AAD9100EE50DF /* sys_Int.c in Sources */,
-				32EA55462679C27B003219EA /* vm.h in Sources */,
+				32EA55462679C27B003219EA /* fni_ext.h in Sources */,
 				32EA551126788823003219EA /* gci.h in Sources */,
 				32EA551226788823003219EA /* Gc.h in Sources */,
 				32352200268B316300EE50DF /* std_TimePoint.c in Sources */,
@@ -423,6 +426,7 @@
 				32EA551626788823003219EA /* LinkedList.h in Sources */,
 				32EA551726788823003219EA /* README.txt in Sources */,
 				32352201268B316300EE50DF /* std_Type.c in Sources */,
+				3235228526A8371100EE50DF /* fni.cpp in Sources */,
 				323521F8268B316300EE50DF /* std_Lock.c in Sources */,
 				3235220E268B316300EE50DF /* std_LocalFile.c in Sources */,
 				323521FA268B316300EE50DF /* std_SysInStream.c in Sources */,
@@ -434,7 +438,7 @@
 				32352214268B316300EE50DF /* std_NioBuf.c in Sources */,
 				3235222D268B38D200EE50DF /* std_Zip.c in Sources */,
 				32EA551A26788823003219EA /* miss.h in Sources */,
-				32EA5542267998A1003219EA /* fni.cpp in Sources */,
+				32EA5542267998A1003219EA /* fni_ext.cpp in Sources */,
 				32352217268B316300EE50DF /* std_RegexMatcher.c in Sources */,
 				32352165268AAD9100EE50DF /* sys_Ptr.c in Sources */,
 				323521F6268B316300EE50DF /* std_Env.c in Sources */,
@@ -445,7 +449,7 @@
 				32352213268B316300EE50DF /* std_FileBuf.c in Sources */,
 				32352202268B316300EE50DF /* std_TimeZone.c in Sources */,
 				323521FB268B316300EE50DF /* std_Field.c in Sources */,
-				32EA551D26788823003219EA /* ThreadEnv.hpp in Sources */,
+				32EA551D26788823003219EA /* Env.hpp in Sources */,
 				32352166268AAD9100EE50DF /* sys_Array.c in Sources */,
 				32EA551E26788823003219EA /* type.h in Sources */,
 				3235222C268B38D200EE50DF /* std_Math.c in Sources */,
@@ -483,7 +487,7 @@
 				320544622203196300ECB5F2 /* baseTest.c in Sources */,
 				326165501FF8A578002174D6 /* Vm.cpp in Sources */,
 				32352208268B316300EE50DF /* std_AtomicBool.c in Sources */,
-				32EA54FB26787B68003219EA /* ThreadEnv.cpp in Sources */,
+				32EA54FB26787B68003219EA /* Env.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "fni_ext.h"
 #include "pod_std_native.h"
 
 fr_Bool std_Lock_tryLock(fr_Env env, fr_Obj self, fr_Int nanoTime) {
