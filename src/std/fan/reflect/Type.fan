@@ -511,6 +511,8 @@ native abstract rtconst class Type
   override Obj toImmutable() {
     this
   }
+
+  internal Bool isObj() { qname == "sys::Obj" }
 }
 
 native internal rtconst class BaseType : Type
@@ -531,6 +533,7 @@ native internal rtconst class BaseType : Type
 
   private Field[] _fields := [,]
   private Method[] _methods := [,]
+  private Slot[] _declareSlots := [,]
   private Slot[] _slots := [,]
   private [Str:Slot]? slotMap := [:]
 
@@ -548,6 +551,14 @@ native internal rtconst class BaseType : Type
     lock.lock
     if (!inited) {
       doInit
+
+      slotMap = resolveSlots
+      _slots = slotMap.vals
+      _slots.each |s| {
+        if (s is Field) _fields.add((Field)s)
+        else _methods.add((Method)s)
+      }
+
       inited = true
     }
     lock.unlock
@@ -568,6 +579,10 @@ native internal rtconst class BaseType : Type
     _signature = signature
     _flags = flags
 
+    if (baseName == null && flags.and(ConstFlags.Mixin) != 0) {
+      baseName = "sys::Obj"
+    }
+
     _baseName = baseName
     _mixinsName = mixinsName
 
@@ -575,10 +590,7 @@ native internal rtconst class BaseType : Type
   }
 
   internal Void addSlot(Slot s) {
-    _slots.add(s)
-    if (s is Field) _fields.add((Field)s)
-    else _methods.add((Method)s)
-    slotMap[s.name] = s
+    _declareSlots.add(s)
   }
 
   protected Void initInheritance() {
@@ -604,6 +616,95 @@ native internal rtconst class BaseType : Type
   }
 
   protected override Int flags() { _flags }
+
+//////////////////////////////////////////////////////////////////////////
+// resolve inheritance
+//////////////////////////////////////////////////////////////////////////
+
+  private static Void mergeSlots([Str:Slot] out, Type base) {
+    bslots := base.slots
+    for (i:=0; i<bslots.size; ++i) {
+      slot := bslots[i]
+      
+      if (slot.isStatic || slot.isCtor) continue
+      
+      name := slot.name
+      oldSlot := out.get(name)
+      if (oldSlot == null) {
+        out[name] = slot
+        continue
+      }
+      
+      if (base.isObj) continue
+      if (slot.isAbstract && !oldSlot.isAbstract) {
+        continue
+      }
+      
+      if (slot.flags.and(ConstFlags.Getter.or(ConstFlags.Setter)) != 0) {
+        if (oldSlot is Field) {
+          Field field = oldSlot
+          if (slot.flags.and(ConstFlags.Getter) != 0)
+                field.getter = slot
+              else
+                field.setter = slot
+          continue
+        }
+      }
+
+      if (slot.flags.and(ConstFlags.Overload) != 0) {
+        continue
+      }
+      out[name] = slot
+    }
+  }
+
+  private [Str:Slot] resolveSlots() {
+    [Str:Slot] slots := [:]
+
+    // get inheritance slots
+    if (!this.isObj && !this.isMixin) {
+      mergeSlots(slots, this.base)
+    }
+    for (i := 0; i < mixins.size; ++i) {
+      t := mixins.get(i)
+      mergeSlots(slots, t)
+    }
+
+    for (i:=0; i<_declareSlots.size; ++i) {
+      f := _declareSlots[i]
+      if (f is Field) {
+        if (this.isNative() && f.flags.and(ConstFlags.Private) != 0) {
+          continue
+        }
+        slots.set(f.name, f);
+      }
+      else if (f is Method) {
+        if (this.isNative() && f.flags.and(ConstFlags.Private) != 0) {
+          continue;
+        }
+        
+        if (f.flags.and(ConstFlags.Getter) != 0) {
+          Field field = slots.get(f.name);
+          field.getter = f;
+          continue;
+        }
+        if (f.flags.and(ConstFlags.Setter) != 0) {
+          Field field = slots.get(f.name);
+          field.setter = f;
+          continue;
+        }
+        if (f.flags.and(ConstFlags.Overload) != 0) {
+          continue;
+        }
+
+        slots.set(f.name, f);
+      }
+    }
+
+    return slots
+  }
+
+  private Bool isNative() { flags.and(ConstFlags.Native) != 0 }
 
 //////////////////////////////////////////////////////////////////////////
 // Naming

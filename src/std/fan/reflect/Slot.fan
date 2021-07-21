@@ -107,7 +107,7 @@ native abstract rtconst class Slot
 // Flags
 //////////////////////////////////////////////////////////////////////////
 
-  private Int flags() { _flags }
+  protected Int flags() { _flags }
 
   **
   ** Return if slot is abstract (no implementation provided).
