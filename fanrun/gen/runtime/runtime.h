@@ -70,8 +70,8 @@ void fr_gc(fr_Env self);
 #define fr_toGcObj(obj) (((GcObj*)(obj))-1)
 #define fr_fromGcObj(g) ((FObj*)(((GcObj*)(g))+1))
 void fr_checkPoint(fr_Env self);
-void fr_yieldGc(fr_Env self);
-void fr_endYieldGc(fr_Env self);
+void fr_allowGc(fr_Env self);
+void fr_endAllowGc(fr_Env self);
 void fr_setGcDirty(fr_Env self, fr_Obj obj);
 
 ////////////////////////////

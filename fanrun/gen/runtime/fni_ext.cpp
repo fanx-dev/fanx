@@ -63,11 +63,6 @@ const char *fr_getTypeName(fr_Env self, FObj *obj) {
 // GC
 ////////////////////////////
 
-void fr_allowGc(fr_Env self) {
-//    Env *e = (Env*)self;
-    //TODO fr_allowGc GC
-}
-
 fr_Obj fr_newLocalRef(fr_Env self, fr_Obj obj) {
     //Env *e = (Env*)self;
     //fr_lock(self);
@@ -161,10 +156,12 @@ fr_Type fr_toType(fr_Env self, fr_ValueType vt) {
 }
 
 fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
-    //return fr_getTypeObj(self, t);
-    //TODO
-    return fr_getClass(self, obj->p);
+    if (vtype == fr_vtHandle) {
+        return fr_getObjType(self, obj->p);
+    }
+    return fr_toType(self, vtype);
 }
+
 fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
     if (obj == 0) {
         return 0;
@@ -366,6 +363,42 @@ bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value
     char *v = ((char*)bottom->p) + field->offset;
     val->i = *((uint64_t*)v);
     return true;
+}
+
+
+bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val) {
+    fr_Type type = fr_getObjType(env, obj);
+    fr_Field field = fr_findField(env, type, name);
+    
+    if (field == NULL) return false;
+    
+    if ((field->flags & FFlags_Static) != 0) {
+        fr_setStaticField(env, type, field, &val);
+    }
+    else {
+        fr_Value self;
+        self.h = obj;
+        fr_setInstanceField(env, &self, field, &val);
+    }
+    return true;
+}
+fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
+    fr_Type type = fr_getObjType(env, obj);
+    fr_Field field = fr_findField(env, type, name);
+    fr_Value ret;
+    ret.i = 0;
+    
+    if (field == NULL) return ret;
+    
+    if ((field->flags & FFlags_Static) != 0) {
+        fr_getStaticField(env, type, field, &ret);
+    }
+    else {
+        fr_Value self;
+        self.h = obj;
+        fr_getInstanceField(env, &self, field, &ret);
+    }
+    return ret;
 }
 
 ////////////////////////////

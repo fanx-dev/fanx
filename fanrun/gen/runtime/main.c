@@ -23,7 +23,7 @@ int main() {
     
     //test gc
     System_sleep(1000);
-    fr_yieldGc(env);
+    fr_allowGc(env);
     fr_gc(env);
     System_sleep(2000);
     

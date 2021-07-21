@@ -92,37 +92,6 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
     return ret;
 }
 
-////////////////////////////
-// Field
-////////////////////////////
-
-void fr_setStaticFieldS(fr_Env self, const char *pod, const char *typeName, const char *name, fr_Value *val) {
-    //Env *e = (Env*)self;
-    fr_Type type = fr_findType(self, pod, typeName);
-    fr_Field field = fr_findField(self, type, name);
-    fr_setStaticField(self, type, field, val);
-}
-bool fr_getStaticFieldS(fr_Env self, const char *pod, const char *typeName, const char *name, fr_Value *val) {
-    //Env *e = (Env*)self;
-    fr_Type type = fr_findType(self, pod, typeName);
-    fr_Field field = fr_findField(self, type, name);
-    bool rc = fr_getStaticField(self, type, field, val);
-    return rc;
-}
-void fr_setFieldS(fr_Env self, fr_Value *bottom, const char *name, fr_Value *val) {
-    //Env *e = (Env*)self;
-    fr_Type type = fr_getObjType(self, bottom->h);;
-    fr_Field field = fr_findField(self, type, name);
-    fr_setInstanceField(self, bottom, field, val);
-}
-bool fr_getFieldS(fr_Env self, fr_Value *bottom, const char *name, fr_Value *val) {
-    //Env *e = (Env*)self;
-    fr_Type type = fr_getObjType(self, bottom->h);
-    fr_Field field = fr_findField(self, type, name);
-    int rc = fr_getInstanceField(self, bottom, field, val);
-    return rc;
-}
-
 
 ////////////////////////////
 // Str

@@ -21,12 +21,12 @@ CF_BEGIN
  */
 typedef enum fr_ValueType_ {
     fr_vtOther, //unsed
-    fr_vtObj,
-    fr_vtInt,
-    fr_vtFloat,
-    fr_vtBool,
-    fr_vtHandle,
-    fr_vtPtr,
+    fr_vtObj,   //internal ref
+    fr_vtInt,   //int64
+    fr_vtFloat, //float64
+    fr_vtBool,  //bool
+    fr_vtHandle,//fni handle
+    fr_vtPtr,   //sys::Ptr
 } fr_ValueType;
 
 
@@ -56,12 +56,12 @@ typedef struct fr_Method_ *fr_Method;
  * union type, store any thing
  */
 typedef union fr_Value_ {
-    fr_Int i;
-    fr_Float f;
-    void *o;
-    fr_Obj h;
-    fr_Bool b;
-    void *p;
+    fr_Int i; //fr_vtInt
+    fr_Float f;//fr_vtFloat
+    void *o;  //fr_vtObj
+    fr_Obj h; //fr_vtHandle
+    fr_Bool b;//fr_vtBool
+    void *p;  //fr_vtPtr
 } fr_Value;
 
 /**
@@ -110,115 +110,114 @@ bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *
 ////////////////////////////
 
 /**
- * stop the world and yield gc to run
+ * check need stop the world
  */
-void fr_yieldGc(fr_Env self);
+void fr_checkPoint(fr_Env env);
 
 /**
  * allow gc to run in backgroud.
  * must only insert at before of IO blocking.
  */
-void fr_allowGc(fr_Env self);
+void fr_allowGc(fr_Env env);
+void fr_endAllowGc(fr_Env env);
 
 /**
  * add local ref. it will be auto releae when method finished.
  */
-fr_Obj fr_newLocalRef(fr_Env self, fr_Obj obj);
-void fr_deleteLocalRef(fr_Env self, fr_Obj obj);
+fr_Obj fr_newLocalRef(fr_Env env, fr_Obj obj);
+void fr_deleteLocalRef(fr_Env env, fr_Obj obj);
 
 /**
  * add global ref.
  */
-fr_Obj fr_newGlobalRef(fr_Env self, fr_Obj obj);
-void fr_deleteGlobalRef(fr_Env self, fr_Obj obj);
+fr_Obj fr_newGlobalRef(fr_Env env, fr_Obj obj);
+void fr_deleteGlobalRef(fr_Env env, fr_Obj obj);
 
 /**
  * alloc obj without init
  */
-fr_Obj fr_allocObj(fr_Env self, fr_Type type, int size);
+fr_Obj fr_allocObj(fr_Env env, fr_Type type, int size);
 
 ////////////////////////////
 // Type
 ////////////////////////////
 
-fr_Type fr_findType(fr_Env self, const char *pod, const char *type);
-fr_Type fr_toType(fr_Env self, fr_ValueType vt);
+fr_Type fr_findType(fr_Env env, const char *pod, const char *type);
+fr_Type fr_toType(fr_Env env, fr_ValueType vt);
 
-bool fr_fitType(fr_Env self, fr_Type a, fr_Type b);
-fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype);
-fr_Type fr_getObjType(fr_Env self, fr_Obj obj);
-bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type);
+bool fr_fitType(fr_Env env, fr_Type a, fr_Type b);
+fr_Type fr_getInstanceType(fr_Env env, fr_Value *obj, fr_ValueType vtype);
+fr_Type fr_getObjType(fr_Env env, fr_Obj obj);
+bool fr_isInstanceOf(fr_Env env, fr_Obj obj, fr_Type type);
 
-//fr_Obj fr_toTypeObj(fr_Env self, fr_Type type);
+//fr_Obj fr_toTypeObj(fr_Env env, fr_Type type);
 
 ////////////////////////////
 // Array
 ////////////////////////////
 
-fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size);
-size_t fr_arrayLen(fr_Env self, fr_Obj array);
-void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val);
-void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val);
+fr_Obj fr_arrayNew(fr_Env env, fr_Type type, int32_t elemSize, size_t size);
+size_t fr_arrayLen(fr_Env env, fr_Obj array);
+void fr_arrayGet(fr_Env env, fr_Obj array, size_t index, fr_Value *val);
+void fr_arraySet(fr_Env env, fr_Obj array, size_t index, fr_Value *val);
 
 ////////////////////////////
 // Method
 ////////////////////////////
 
-fr_Method fr_findMethod(fr_Env self, fr_Type type, const char *name);
-fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramCount);
+fr_Method fr_findMethod(fr_Env env, fr_Type type, const char *name);
+fr_Method fr_findMethodN(fr_Env env, fr_Type type, const char *name, int paramCount);
 
-fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args);
-fr_Value fr_callMethod(fr_Env self, fr_Method method, int argCount, ...);
-void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
+fr_Value fr_callMethodV(fr_Env env, fr_Method method, int argCount, va_list args);
+fr_Value fr_callMethod(fr_Env env, fr_Method method, int argCount, ...);
+void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
 
-void fr_callNonVirtual(fr_Env self, fr_Method method
+void fr_callNonVirtual(fr_Env env, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret);
 
-fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args);
-fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ...);
-void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
+fr_Value fr_newObjV(fr_Env env, fr_Type type, fr_Method method, int argCount, va_list args);
+fr_Value fr_newObj(fr_Env env, fr_Type type, fr_Method method, int argCount, ...);
+void fr_newObjA(fr_Env env, fr_Type type, fr_Method method
                , int argCount, fr_Value *arg, fr_Value *ret);
 
 //short cut
-fr_Value fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name, int argCount, ...);
-fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const char *name, int argCount, ...);
-fr_Value fr_callOnObj(fr_Env self, const char *name, int argCount, ...);
+fr_Value fr_newObjS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
+fr_Value fr_callMethodS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
+fr_Value fr_callOnObj(fr_Env env, const char *name, int argCount, ...);
 
 ////////////////////////////
 // Field
 ////////////////////////////
 
-fr_Field fr_findField(fr_Env self, fr_Type type, const char *name);
+fr_Field fr_findField(fr_Env env, fr_Type type, const char *name);
 
-void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val);
-bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val);
-void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *val);
-bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *val);
+void fr_setStaticField(fr_Env env, fr_Type type, fr_Field field, fr_Value *val);
+bool fr_getStaticField(fr_Env env, fr_Type type, fr_Field field, fr_Value *val);
+void fr_setInstanceField(fr_Env env, fr_Value *bottom, fr_Field field, fr_Value *val);
+bool fr_getInstanceField(fr_Env env, fr_Value *bottom, fr_Field field, fr_Value *val);
 
-void fr_setStaticFieldS(fr_Env self, const char *pod, const char *type, const char *name, fr_Value *val);
-bool fr_getStaticFieldS(fr_Env self, const char *pod, const char *type, const char *name, fr_Value *val);
-void fr_setFieldS(fr_Env self, fr_Value *bottom, const char *name, fr_Value *val);
-bool fr_getFieldS(fr_Env self, fr_Value *bottom, const char *name, fr_Value *val);
+bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val);
+fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name);
 
 /////////////////////////////////////////////////////////////////////////////////
 // exception
 ////////////////////////////////////////////////////////////////////
 
-fr_Obj fr_getErr(fr_Env self);
+fr_Obj fr_getErr(fr_Env env);
 
-bool fr_errOccurred(fr_Env self);
+bool fr_errOccurred(fr_Env env);
 
-void fr_printErr(fr_Env self, fr_Obj err);
+void fr_printErr(fr_Env env, fr_Obj err);
 
-void fr_throw(fr_Env self, fr_Obj err);
+void fr_throw(fr_Env env, fr_Obj err);
 
-void fr_throwNPE(fr_Env self);
+void fr_throwNPE(fr_Env env);
 
-void fr_throwUnsupported(fr_Env self);
+void fr_throwUnsupported(fr_Env env);
 
-void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg);
+void fr_throwNew(fr_Env env, const char *pod, const char *type, const char *msg);
 
-void fr_clearErr(fr_Env self);
+void fr_clearErr(fr_Env env);
 
 ////////////////////////////////////////////////////////////////////
 // box
@@ -227,12 +226,12 @@ void fr_clearErr(fr_Env self);
 /**
  * box primitive type to obj
  */
-fr_Obj fr_box(fr_Env self, fr_Value *value, fr_ValueType vtype);
+fr_Obj fr_box(fr_Env env, fr_Value *value, fr_ValueType vtype);
 
 /**
  * fatch primitive type from obj
  */
-bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value);
+bool fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value);
 
 ////////////////////////////////////////////////////////////////////
 // Str
@@ -241,13 +240,13 @@ bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value);
 /**
  * new create Str obj from utf8
  */
-fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes);
-fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t size);
+fr_Obj fr_newStrUtf8(fr_Env env, const char *bytes);
+fr_Obj fr_newStrUtf8N(fr_Env env, const char *bytes, ssize_t size);
 
 /**
  * get utf8 from Str obj. the life time depends on str object.
  */
-const char *fr_getStrUtf8(fr_Env self, fr_Obj str);
+const char *fr_getStrUtf8(fr_Env env, fr_Obj str);
 
 /**
  * call obj.toStr and return result
