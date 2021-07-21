@@ -77,6 +77,7 @@ native abstract rtconst class Type
   **
   static Type? find(Str qname, Bool checked := true) {
     i := qname.find("::")
+    if (i == -1) throw ArgErr("qname format error: $qname")
     podName := qname[0..<i]
     name := qname[i+2..-1]
     pod := Pod.find(podName, checked)
@@ -520,7 +521,7 @@ native internal rtconst class BaseType : Type
   private const Str _signature
   private const Int _flags
 
-  private const Str _baseName
+  private const Str? _baseName
   private const Str _mixinsName
   private Type? _base
   private Type[]? _mixins
@@ -531,7 +532,7 @@ native internal rtconst class BaseType : Type
   private Field[] _fields := [,]
   private Method[] _methods := [,]
   private Slot[] _slots := [,]
-  private [Str:Slot]? slotMap
+  private [Str:Slot]? slotMap := [:]
 
   private FacetList _facets := FacetList()
 
@@ -555,17 +556,20 @@ native internal rtconst class BaseType : Type
   **
   ** Private constructor.
   **
-  protected new privateMake(Pod pod, Str name, Str signature, Int flags, Str baseName, Str mixinsName)
+  protected new privateMake(Pod pod, Str qname, Str signature, Int flags, Str? baseName, Str mixinsName)
     : super.privateMake() {
     _pod = pod
+
+    i := qname.find("::")
+    if (i == -1) throw ArgErr("qname format error: $qname")
+    name := qname[i+2..-1]
     _typeName = name
-    _qname = pod.name+"::"+name
+    _qname = qname
     _signature = signature
     _flags = flags
 
     _baseName = baseName
     _mixinsName = mixinsName
-
 
     nullable = NullableType.privateMake(this)
   }
@@ -579,8 +583,11 @@ native internal rtconst class BaseType : Type
 
   protected Void initInheritance() {
     if (_mixins != null) return
-    _base = Type.find(_baseName)
-    _mixins = _mixinsName.split('/').map { Type.find(it) }
+    
+    if (_baseName != null) _base = Type.find(_baseName)
+    
+    if (_mixinsName.isEmpty) _mixins = [,]
+    else _mixins = _mixinsName.split('/').map { Type.find(it) }
 
     //make inheritance
     [Type:Obj?] inher := [:]

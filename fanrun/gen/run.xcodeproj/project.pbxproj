@@ -38,7 +38,7 @@
 		32352209268B316300EE50DF /* std_PodList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323521E4268B316300EE50DF /* std_PodList.cpp */; };
 		3235220B268B316300EE50DF /* std_Log.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E7268B316300EE50DF /* std_Log.c */; };
 		3235220C268B316300EE50DF /* std_BufCrypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E8268B316300EE50DF /* std_BufCrypto.c */; };
-		3235220D268B316300EE50DF /* std_BaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521E9268B316300EE50DF /* std_BaseType.c */; };
+		3235220D268B316300EE50DF /* std_BaseType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323521E9268B316300EE50DF /* std_BaseType.cpp */; };
 		3235220E268B316300EE50DF /* std_LocalFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521EA268B316300EE50DF /* std_LocalFile.c */; };
 		3235220F268B316300EE50DF /* std_Locale.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521EB268B316300EE50DF /* std_Locale.c */; };
 		32352210268B316300EE50DF /* std_Extension.c in Sources */ = {isa = PBXBuildFile; fileRef = 323521EC268B316300EE50DF /* std_Extension.c */; };
@@ -132,7 +132,7 @@
 		323521E5268B316300EE50DF /* pod_std_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pod_std_native.h; sourceTree = "<group>"; };
 		323521E7268B316300EE50DF /* std_Log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Log.c; sourceTree = "<group>"; };
 		323521E8268B316300EE50DF /* std_BufCrypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_BufCrypto.c; sourceTree = "<group>"; };
-		323521E9268B316300EE50DF /* std_BaseType.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_BaseType.c; sourceTree = "<group>"; };
+		323521E9268B316300EE50DF /* std_BaseType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = std_BaseType.cpp; sourceTree = "<group>"; };
 		323521EA268B316300EE50DF /* std_LocalFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_LocalFile.c; sourceTree = "<group>"; };
 		323521EB268B316300EE50DF /* std_Locale.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Locale.c; sourceTree = "<group>"; };
 		323521EC268B316300EE50DF /* std_Extension.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Extension.c; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 				323521E5268B316300EE50DF /* pod_std_native.h */,
 				323521E7268B316300EE50DF /* std_Log.c */,
 				323521E8268B316300EE50DF /* std_BufCrypto.c */,
-				323521E9268B316300EE50DF /* std_BaseType.c */,
+				323521E9268B316300EE50DF /* std_BaseType.cpp */,
 				323521EA268B316300EE50DF /* std_LocalFile.c */,
 				323521EB268B316300EE50DF /* std_Locale.c */,
 				323521EC268B316300EE50DF /* std_Extension.c */,
@@ -463,7 +463,7 @@
 				3235215E268AAD9100EE50DF /* sys_NativeC.c in Sources */,
 				32EA55442679B13B003219EA /* sys_runtime.c in Sources */,
 				3235220C268B316300EE50DF /* std_BufCrypto.c in Sources */,
-				3235220D268B316300EE50DF /* std_BaseType.c in Sources */,
+				3235220D268B316300EE50DF /* std_BaseType.cpp in Sources */,
 				3235220F268B316300EE50DF /* std_Locale.c in Sources */,
 				3235221D268B374500EE50DF /* std.c in Sources */,
 				323521F5268B316300EE50DF /* std_DateTime.c in Sources */,

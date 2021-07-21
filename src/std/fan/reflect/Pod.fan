@@ -123,11 +123,12 @@ native final rtconst class Pod
   private new make(Str name, Str version, Str depends) {
     _name = name
     _version = Version(version)
-    _depends = depends.split(',').map { Depend(it) }
+    if (depends.isEmpty) _depends = Depend[,]
+    else _depends = depends.split(',').map { Depend(it) }
     _uri = Uri.fromStr("fan://" + name);
     _meta = [:]
     _types = Type[,]
-    _typeMap := [Str:Type][:]
+    _typeMap = [Str:Type][:]
   }
 
   internal Void addMeta(Str k, Str v) {

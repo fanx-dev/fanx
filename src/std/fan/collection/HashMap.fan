@@ -178,7 +178,7 @@ rtconst class HashMap<K,V> : Map<K,V>
 
     newSize := size < 256 ? size * 2 + 8 : (size * 1.5).toInt
     oldArray := this.array
-    array = MapEntryList?[,] { it->size = newSize }
+    array = MapEntryList?[,] { it.size = newSize }
     size = 0
 
     for (i:=0; i<oldArray.size; ++i) {
