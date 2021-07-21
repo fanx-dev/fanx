@@ -513,6 +513,35 @@ native abstract rtconst class Type
   }
 
   internal Bool isObj() { qname == "sys::Obj" }
+
+  internal static Obj? objTrap(Obj self, Str name, Obj?[]? args) {
+    type := self.typeof
+    slot := type.slot(name)
+    if (slot == null) {
+      throw UnknownSlotErr(type.qname()+"."+name)
+    }
+
+    if (slot is Method) {
+      Method m = (Method)slot;
+      if (m.isStatic() || m.isCtor()) {
+        return m.callList(args);
+      }
+      return m.callOn(self, args);
+    }
+    else if (slot is Field) {
+      Field f = (Field)slot;
+      argc := args == null ? 0 : args.size
+      if (argc == 0) {
+        return f.get(self);
+      }
+      else if (argc == 1) {
+        f.set(self, args.get(0));
+        return null;
+      }
+    }
+    
+    throw ArgErr.make("Invalid number of args to get or set field '" + type.qname()+"."+name + "'("+args+")");
+  }
 }
 
 native internal rtconst class BaseType : Type
@@ -678,7 +707,11 @@ native internal rtconst class BaseType : Type
         }
         slots.set(f.name, f);
       }
-      else if (f is Method) {
+    }
+
+    for (i:=0; i<_declareSlots.size; ++i) {
+      f := _declareSlots[i]
+      if (f is Method) {
         if (this.isNative() && f.flags.and(ConstFlags.Private) != 0) {
           continue;
         }

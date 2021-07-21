@@ -40,6 +40,33 @@ namespace FCodeUtil {
         
         return ttype;
     }
+
+    std::string getTypeRawName(FPod *pod, uint16_t tid) {
+        //Obj's base class
+        if (tid == 0xFFFF) {
+            return "";
+        }
+        
+        FTypeRef &typeRef = pod->typeRefs[tid];
+        std::string &podName = pod->names[typeRef.podName];
+        std::string &typeName = pod->names[typeRef.typeName];
+        
+        std::string::size_type pos = typeName.find("^");
+        if (pos != std::string::npos) {
+            std::string pname = typeName.substr(0, pos);
+            std::string cname = typeName.substr(pos+1);
+            FPod *curPod = pod->c_loader->findPod(podName);
+            auto itr = curPod->c_typeMap.find(pname);
+            if (itr == curPod->c_typeMap.end()) {
+                throw std::string("Unknow Type:")+typeName;
+            }
+            FType *ftype = itr->second;
+            uint16_t ttid = ftype->findGenericParamBound(cname);
+            return getTypeRawName(curPod, ttid);
+        }
+        std::string res = podName + "::" + typeName;
+        return res;
+    }
     
     std::string getTypeNsName(FPod *pod, uint16_t tid) {
         //Obj's base class

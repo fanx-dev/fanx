@@ -252,12 +252,13 @@ const char *fr_getStrUtf8(fr_Env self, fr_Obj str);
 /**
  * release utf8 and the local ref of Str
  */
-void fr_releaseStrUtf8(fr_Env self, fr_Obj str, const char *bytes);
+//void fr_releaseStrUtf8(fr_Env self, fr_Obj str, const char *bytes);
 
 /**
  * call obj.toStr and return result
  */
 fr_Obj fr_objToStr(fr_Env env, fr_Value obj, fr_ValueType vtype);
+
 
 CF_END
 

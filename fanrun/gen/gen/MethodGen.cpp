@@ -241,7 +241,10 @@ void MethodGen::genImples(Printer *printer) {
         return;
     }
     
-    if ((parent->name == "sys_BindFunc" || parent->name == "sys_Func") && parent->type->c_pod->names[method->name] == "call") {
+    //do not generate 'call' overload version
+    if ((parent->name == "sys_BindFunc" || parent->name == "sys_Func" ||
+         parent->name == "std_Method" || parent->name == "std_MethodFunc")
+        && parent->type->c_pod->names[method->name] == "call") {
         return;
     }
     

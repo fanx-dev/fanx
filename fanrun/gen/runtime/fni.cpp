@@ -28,6 +28,7 @@ FObj *fr_getPtr(fr_Env self, fr_Obj obj) {
 }
 
 fr_Obj fr_toHandle(fr_Env self, FObj *obj) {
+    //FObj *obj = (FObj*)aobj;
     if (obj == NULL) return NULL;
     //Env *e = (Env*)self;
     fr_Obj objRef;
@@ -253,54 +254,12 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
     return NULL;
 }
 
-namespace FFlags {
-    const uint32_t Abstract   = 0x00000001;
-    const uint32_t Const      = 0x00000002;
-    const uint32_t Ctor       = 0x00000004;
-    const uint32_t Enum       = 0x00000008;
-    const uint32_t Facet      = 0x00000010;
-    const uint32_t Final      = 0x00000020;
-    const uint32_t Getter     = 0x00000040;
-    const uint32_t Internal   = 0x00000080;
-    const uint32_t Mixin      = 0x00000100;
-    const uint32_t Native     = 0x00000200;
-    const uint32_t Override   = 0x00000400;
-    const uint32_t Private    = 0x00000800;
-    const uint32_t Protected  = 0x00001000;
-    const uint32_t Public     = 0x00002000;
-    const uint32_t Setter     = 0x00004000;
-    const uint32_t Static     = 0x00008000;
-    const uint32_t Storage    = 0x00010000;
-    const uint32_t Synthetic  = 0x00020000;
-    const uint32_t Virtual    = 0x00040000;
-    
-    const uint32_t Struct     = 0x00080000;
-    const uint32_t Extension  = 0x00100000;
-    const uint32_t RuntimeConst=0x00200000;
-    const uint32_t Readonly   = 0x00400000;
-    const uint32_t Async      = 0x00800000;
-    const uint32_t Overload   = 0x01000000;
-    const uint32_t Closure    = 0x02000000;
-    const uint32_t FlagsMask  = 0x0fffffff;
-    
-    
-    const uint32_t Param       = 0x0001;  // parameter or local variable
-    const uint32_t ParamDefault= 0x0002; //the param has default
-    
-    //////////////////////////////////////////////////////////////////////////
-    // MethodRefFlags
-    //////////////////////////////////////////////////////////////////////////
-    const uint32_t RefOverload = 0x0001;
-    const uint32_t RefSetter   = 0x0002;
-}
-
-
 fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args) {
     fr_Value valueArgs[10] = {0};
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
-        if ((method->flags & FFlags::Static) == 0) {
+        if ((method->flags & FFlags_Static) == 0) {
             --paramIndex;
         }
         if (paramIndex == -1) {
@@ -343,7 +302,7 @@ void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, 
 //    }
 //    popRet(e, (FMethod*)method, ret);
     
-    if (method->flags & FFlags::Virtual || method->flags & FFlags::Abstract) {
+    if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {
         fr_Type type = fr_getObjType(self, arg[0].h);
         fr_Method realMethod = fr_findMethod(self, type, method->name);
         if (!realMethod) {
@@ -366,7 +325,7 @@ fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, v
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
-        if ((method->flags & FFlags::Static) == 0) {
+        if ((method->flags & FFlags_Static) == 0) {
             --paramIndex;
         }
         if (paramIndex == -1) {
@@ -456,7 +415,7 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
 ////////////////////////////
 
 fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
-    Env *e = (Env*)self;
+    //Env *e = (Env*)self;
     
     for (int i=0; i<type->fieldCount; ++i) {
         fr_Field field = type->fieldList+i;
@@ -468,12 +427,22 @@ fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
 }
 
 void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg) {
-    //Env *e = (Env*)self;
-    field->pointer = arg->p;
+    if (strcmp(field->type, "sys::Bool") == 0) {
+        fr_Bool *addr = ((fr_Bool*)field->pointer);
+        *addr = arg->b;
+        return;
+    }
+    fr_Int *addr = ((fr_Int*)field->pointer);
+    *addr = arg->i;
 }
 
 bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val) {
-    val->p = field->pointer;
+    if (strcmp(field->type, "sys::Bool") == 0) {
+        fr_Bool *addr = ((fr_Bool*)field->pointer);
+        val->b = *addr;
+        return true;
+    }
+    val->i = *((fr_Int*)field->pointer);
     return true;
 }
 void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *arg) {
@@ -547,13 +516,10 @@ bool fr_errOccurred(fr_Env self) {
 //    //fr_unlock(self);
 //}
 //
-//void fr_clearErr(fr_Env self) {
-//    Env *e = (Env*)self;
-//    //fr_lock(self);
-//    e->clearError();
-//    //fr_unlock(self);
-////}
-//
+void fr_clearErr(fr_Env self) {
+    self->error = NULL;
+}
+
 void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg) {
     Env *e = (Env*)self;
     //e->lock();
@@ -582,61 +548,76 @@ void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg
 // box
 ////////////////////////////
 //
-//fr_Obj fr_box(fr_Env self, fr_Value *value, fr_ValueType vtype) {
-//    Env *e = (Env*)self;
-//    //e->lock();
-//    FObj *obj = e->box(*value, vtype);
-//    fr_Obj objRef = fr_toHandle(self, obj);
-//    //e->unlock();
-//    return objRef;
-//}
-//bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
-//    Env *e = (Env*)self;
-//    //e->lock();
-//    bool ok = e->unbox(fr_getPtr(self, obj), *value);
-//    //e->unlock();
-//    if (!ok) {
-//        value->h = obj;
-//    }
-//    return ok;
-//}
+fr_Obj fr_box(fr_Env env, fr_Value *value, fr_ValueType vtype) {
+    fr_Obj res = value->h;
+    if (vtype == fr_vtBool) {
+        res = fr_box_bool(env, value->b);
+    }
+    else if (vtype == fr_vtInt) {
+        res = fr_box_int(env, value->i);
+    }
+    else if (vtype == fr_vtFloat) {
+        res = fr_box_float(env, value->f);
+    }
+    return res;
+}
+bool fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value) {
+    
+    fr_Type type = fr_getObjType(env, obj);
+    if (strcmp(type->name, "sys::Bool") == 0) {
+        fr_Bool *v = (fr_Bool*)fr_getPtr(env, obj);
+        value->b = *v;
+    }
+    else if (strcmp(type->name, "sys::Int") == 0) {
+        fr_Int *v = (fr_Int*)fr_getPtr(env, obj);
+        value->i = *v;
+    }
+    else if (strcmp(type->name, "sys::Float") == 0) {
+        fr_Float *v = (fr_Float*)fr_getPtr(env, obj);
+        value->f = *v;
+    }
+    else {
+        return false;
+    }
+    return true;
+}
 
 ////////////////////////////
 // Str
 ////////////////////////////
 
-//
-//fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
-//    fr_Obj str;
-//    if (!x) {
-//        return fr_newStrUtf8(env, "null");
-//    }
-//    // if it is primitive type must be unbox before call it's method.
-//    fr_Value val;
-//    val.h = x;
-//    fr_unbox(env, x, &val);
-//
-//    fr_Value rVal;
-//    fr_Type type = fr_getObjType(env, x);
-//
-//    fr_Method method = fr_findMethod(env, type, "toStr");
-//
-//    fr_callMethod(env, method, 1, &val, &rVal);
-//
-//    str = rVal.h;
-//    return str;
-//}
-//
-//fr_Obj fr_objToStr(fr_Env self, fr_Value obj, fr_ValueType vtype) {
-////    Env *e = (Env*)self;
-//
-//    if (vtype != fr_vtHandle) {
-//        //TODO op
-//        if (vtype == fr_vtObj) {
-//            obj.h = fr_toHandle(self, obj.o);
-//        } else {
-//            obj.h = fr_box(self, &obj, vtype);
-//        }
-//    }
-//    return fr_handleToStr(self, obj.h);
-//}
+
+fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
+    fr_Obj str;
+    if (!x) {
+        return fr_newStrUtf8(env, "null");
+    }
+    // if it is primitive type must be unbox before call it's method.
+    fr_Value val;
+    val.h = x;
+    fr_unbox(env, x, &val);
+
+    fr_Value rVal;
+    fr_Type type = fr_getObjType(env, x);
+
+    fr_Method method = fr_findMethod(env, type, "toStr");
+
+    fr_callMethodA(env, method, 1, &val, &rVal);
+
+    str = rVal.h;
+    return str;
+}
+
+fr_Obj fr_objToStr(fr_Env self, fr_Value obj, fr_ValueType vtype) {
+//    Env *e = (Env*)self;
+
+    if (vtype != fr_vtHandle) {
+        //TODO op
+        if (vtype == fr_vtObj) {
+            obj.h = fr_toHandle(self, (FObj*)obj.o);
+        } else {
+            obj.h = fr_box(self, &obj, vtype);
+        }
+    }
+    return fr_handleToStr(self, obj.h);
+}

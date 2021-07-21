@@ -76,12 +76,30 @@ native rtconst class Field : Slot
 // Reflection
 //////////////////////////////////////////////////////////////////////////
 
+  override Obj? trap(Str name, Obj?[]? args := null) {
+    // private undocumented access
+    if (name == "getter")
+      return getter
+    if (name == "setter")
+      return setter
+    return super.trap(name, args)
+  }
+
   **
   ** Get the field for the specified instance.  If the field is
   ** static, then the instance parameter is ignored.  If the getter
   ** is non-null, then it is used to get the field.
   **
-  native virtual Obj? get(Obj? instance := null)
+  virtual Obj? get(Obj? instance := null) {
+    if (getter != null) {
+      return getter.call(instance)
+    }
+    return getDirectly(instance)
+  }
+
+
+  private native Obj? getDirectly(Obj? instance)
+  private native Void setDirectly(Obj? instance, Obj? value)
 
   **
   ** Set the field for the specified instance.  If the field is
@@ -93,6 +111,27 @@ native rtconst class Field : Slot
   }
 
   @NoDoc
-  native virtual Void _unsafeSet(Obj? instance, Obj? value, Bool checkConst)
+  virtual Void _unsafeSet(Obj? instance, Obj? value, Bool checkConst) {
+    if (flags.and(ConstFlags.Const) != 0) {
+      if (checkConst)
+        throw ReadonlyErr.make("Cannot set const field " + qname());
+      else if (value != null && !value.isImmutable())
+        throw ReadonlyErr.make("Cannot set const field " + qname() + " with mutable value");
+    }
+
+    // check static
+    if (flags.and(ConstFlags.Static) != 0)
+      throw ReadonlyErr.make("Cannot set static field " + qname());
+
+    // use the setter by default, however if we have a storage field and
+    // the setter was auto-generated then falldown to set the actual field
+    // to avoid private setter implicit overrides
+    if ((setter != null && !setter.isSynthetic())) {
+      setter.call(instance, value);
+      return;
+    }
+
+    setDirectly(instance, value)
+  }
 
 }

@@ -16,6 +16,7 @@ native rtconst class Method : Slot
   private Type? _returns
   private const Int _id
   private Param[] _params := [,]
+  private MethodFunc _func
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -29,6 +30,7 @@ native rtconst class Method : Slot
     : super.make(parent, name, doc, flags) {
     _returnsName = returnsName
     _id = id
+    _func = MethodFunc(this)
   }
 
   internal Void addParam(Str name, Str typeName, Int mask) {
@@ -61,9 +63,7 @@ native rtconst class Method : Slot
   ** Get the function body of this method.
   **
   Func func(Int arity := -1) {
-    return |Obj a, Obj b, Obj c, Obj d, Obj e, Obj f, Obj g, Obj h->Obj| {
-      return this.call(a, b, c, d, e, f, g, h)
-    }
+    _func
   }
 
   **
@@ -85,6 +85,10 @@ native rtconst class Method : Slot
     return sb.toStr
   }
 
+  override Bool isImmutable() {
+    true
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Call Conveniences
 //////////////////////////////////////////////////////////////////////////
@@ -99,4 +103,19 @@ native rtconst class Method : Slot
   native Obj? call(Obj? a := null, Obj? b := null, Obj? c := null, Obj? d := null,
             Obj? e := null, Obj? f := null, Obj? g := null, Obj? h := null)
 
+}
+
+native internal rtconst class MethodFunc<R,A,B,C,D,E,F,G,H> : Func<R,A,B,C,D,E,F,G,H> {
+    private Method method
+
+    new make(Method m) {
+      method = m
+    }
+
+    native override R call(A? a := null, B? b := null, C? c := null, D? d := null,
+                 E? e := null, F? f := null, G? g := null, H? h := null)
+
+    override Bool isImmutable() {
+      true
+    }
 }

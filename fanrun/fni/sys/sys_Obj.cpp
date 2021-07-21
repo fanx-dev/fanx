@@ -32,19 +32,7 @@
 //    return fr_newStrUtf8(env, buf);
 //}
 fr_Obj sys_Obj_trap(fr_Env env, fr_Obj self, fr_Obj name, fr_Obj args) {
-    fr_Value val;
-    val.h = (self);
-    //val.type = fr_vtHandle;
-    
-    if (args) {
-        //TODO
-    }
-    
-    const char *sname = fr_getStrUtf8(env, name);
-    fr_Value ret;
-    fr_callOnObj(env, sname, 1+0, &val, &ret);
-    //TODO
-    return 0;
+    return fr_callMethodS(env, "std", "Type", "objTrap", 3, self, name, args).h;
 }
 //
 fr_Bool sys_Obj_isImmutable(fr_Env env, fr_Obj self) {

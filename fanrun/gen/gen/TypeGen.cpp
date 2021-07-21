@@ -175,7 +175,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         FCodeUtil::escapeIdentifierName(fieldIdName);
         
         printer->println("type->fieldList[%d].name = \"%s\";", i, fieldName.c_str());
-        std::string typeName = getTypeNsName(field.type);
+        std::string typeName = FCodeUtil::getTypeRawName(type->c_pod, field.type);
         printer->println("type->fieldList[%d].type = \"%s\";", i, typeName.c_str());
         printer->println("type->fieldList[%d].flags = %d;", i, field.flags);
     
@@ -197,6 +197,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
                          , i, name.c_str(), fieldIdName.c_str());
         }
         
+        printer->println("type->fieldList[%d].parent = type;", i);
     }
     
     printer->println("type->methodCount = %d;", type->methods.size());
@@ -209,7 +210,7 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         FCodeUtil::escapeIdentifierName(fieldIdName);
         
         printer->println("type->methodList[%d].name = \"%s\";", i, fieldName.c_str());
-        std::string typeName = getTypeNsName(method.returnType);
+        std::string typeName = FCodeUtil::getTypeRawName(type->c_pod, method.returnType);
         printer->println("type->methodList[%d].retType = \"%s\";", i, typeName.c_str());
         printer->println("type->methodList[%d].flags = %d;", i, method.flags);
         
@@ -220,6 +221,8 @@ void TypeGen::genTypeMetadata(Printer *printer) {
             printer->println("type->methodList[%d].func = (fr_Function)%s_v;", i, method.c_mangledName.c_str());
         }
         
+        printer->println("type->methodList[%d].parent = type;", i);
+        
         printer->println("type->methodList[%d].paramsCount = %d;", i, method.paramCount);
         printer->println("type->methodList[%d].paramsList = (struct fr_MethodParam_*)malloc(sizeof(struct fr_MethodParam_)*%d);"
                          , i, method.paramCount);
@@ -228,8 +231,8 @@ void TypeGen::genTypeMetadata(Printer *printer) {
             FMethodVar &var = method.vars[j];
             std::string name = type->c_pod->names[var.name];
             printer->println("type->methodList[%d].paramsList[%d].name = \"%s\";", i, j, name.c_str());
-            name = type->c_pod->names[var.type];
-            printer->println("type->methodList[%d].paramsList[%d].type = \"%s\";", i, j, name.c_str());
+            std::string paramTypeName = FCodeUtil::getTypeRawName(type->c_pod, var.type);
+            printer->println("type->methodList[%d].paramsList[%d].type = \"%s\";", i, j, paramTypeName.c_str());
             printer->println("type->methodList[%d].paramsList[%d].flags = %d;", i, j, var.flags);
         }
     }

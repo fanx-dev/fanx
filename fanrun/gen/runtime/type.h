@@ -20,6 +20,8 @@ typedef void *fr_Obj;
 struct fr_Env_struct;
 typedef struct fr_Env_struct *fr_Env;
 
+typedef struct fr_Class_ *fr_Type;
+
 struct fr_Facet {
     const char *type;
     const char *val;
@@ -37,6 +39,8 @@ struct fr_Field_ {
   
     int facetCount;
     struct fr_Facet *facetList;
+    
+    fr_Type parent;
 };
 
 struct fr_MethodParam_ {
@@ -59,9 +63,11 @@ struct fr_Method_ {
     
     int facetCount;
     struct fr_Facet *facetList;
+    
+    fr_Type parent;
 };
 
-typedef struct fr_Class_ *fr_Type;
+
 struct fr_IVTableMapItem {
     fr_Type type;
     uint64_t vtableOffset;
