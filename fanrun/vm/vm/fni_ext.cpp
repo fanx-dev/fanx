@@ -77,16 +77,8 @@ bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *
 // Type
 ////////////////////////////
 
-int fr_getFuncArity(fr_Env env, fr_Type clz) {
-    return 0;
-}
-
 struct FType *fr_getFType(fr_Env self, FObj *obj) {
     return (struct FType *)gc_getType(fr_toGcObj(obj));
-}
-//struct FType *fr_toFType(fr_Env self, FObj *obj);
-const char *fr_getTypeName(fr_Env self, FObj *obj) {
-    return fr_getFType(self, obj)->c_name.c_str();
 }
 
 ////////////////////////////
@@ -216,26 +208,17 @@ fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
     return (fr_Type)t;
 }
 fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
-    if (obj == 0) {
-        return 0;
-    }
     //fr_lock(self);
     FObj *o = fr_getPtr(self, obj);
+    if (o == 0) {
+        return 0;
+    }
     FType *type = (FType*)gc_getType(fr_toGcObj(o));
     //fr_unlock(self);
     
     //return fr_getTypeObj(self, type);
     return (fr_Type)type;
 }
-
-//fr_Obj fr_toTypeObj(fr_Env self, fr_Type type) {
-//    Env *e = (Env*)self;
-//    //e->lock();
-//    FObj *obj = e->podManager->getWrappedType(e, (FType *)type);
-//    fr_Obj objRef = fr_toHandle(self, obj);
-//    //e->unlock();
-//    return objRef;
-//}
 
 ////////////////////////////
 // Array
@@ -247,10 +230,6 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size) {
     return fr_toHandle(self, (FObj*)a);
 }
 
-size_t fr_arrayLen(fr_Env self, fr_Obj array) {
-    fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    return a->size;
-}
 void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
     fr_Array *a = (fr_Array*)fr_getPtr(self, array);
     Env *e = (Env*)self;
@@ -336,32 +315,6 @@ static void popRet(Env *context, FMethod *method, fr_Value *ret) {
     }
     //context->unlock();
 }
-fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args) {
-    fr_Value valueArgs[10] = {0};
-    fr_Value ret;
-    for(int i=0; i<argCount; i++) {
-        FMethod *f = (FMethod*)method;
-        int paramIndex = i;
-        if ((f->flags & FFlags::Static) == 0) {
-            --paramIndex;
-        }
-        if (paramIndex == -1) {
-            valueArgs[i].i = va_arg(args, int64_t);
-            continue;
-        }
-        
-        std::string type = f->c_parent->c_pod->names[f->vars[paramIndex].type];
-        if (type == "sys_Bool") {
-            valueArgs[i].b = va_arg(args, int);
-        }
-        else {
-            valueArgs[i].i = va_arg(args, int64_t);
-        }
-    }
-    ret.i = 0;
-    fr_callMethodA(self, method, argCount, valueArgs, &ret);
-    return ret;
-}
 
 void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
     //TODO
@@ -385,32 +338,6 @@ void fr_callNonVirtual(fr_Env self, fr_Method method
     e->callNonVirtual((FMethod*)method, argCount);
     
     popRet(e, (FMethod*)method, ret);
-}
-fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
-    fr_Value valueArgs[10] = {0};
-    fr_Value ret;
-    for(int i=0; i<argCount; i++) {
-        FMethod *f = (FMethod*)method;
-        int paramIndex = i;
-        if ((f->flags & FFlags::Static) == 0) {
-            --paramIndex;
-        }
-        if (paramIndex == -1) {
-            valueArgs[i].i = va_arg(args, int64_t);
-            continue;
-        }
-        
-        std::string type = f->c_parent->c_pod->names[f->vars[paramIndex].type];
-        if (type == "sys_Bool") {
-            valueArgs[i].b = va_arg(args, int);
-        }
-        else {
-            valueArgs[i].i = va_arg(args, int64_t);
-        }
-    }
-    ret.i = 0;
-    fr_newObjA(self, type, method, argCount, valueArgs, &ret);
-    return ret;
 }
 
 void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
@@ -481,42 +408,7 @@ bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value
     //e->unlock();
     return rc;
 }
-bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val) {
-    fr_Type type = fr_getObjType(env, obj);
-    fr_Field field = fr_findField(env, type, name);
-    FField *ffield = (FField*)field;
-    
-    if (field == NULL) return false;
-    
-    if ((ffield->flags & FFlags::Static) != 0) {
-        fr_setStaticField(env, type, field, &val);
-    }
-    else {
-        fr_Value self;
-        self.h = obj;
-        fr_setInstanceField(env, &self, field, &val);
-    }
-    return true;
-}
-fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
-    fr_Type type = fr_getObjType(env, obj);
-    fr_Field field = fr_findField(env, type, name);
-    FField *ffield = (FField*)field;
-    fr_Value ret;
-    ret.i = 0;
-    
-    if (field == NULL) return ret;
-    
-    if ((ffield->flags & FFlags::Static) != 0) {
-        fr_getStaticField(env, type, field, &ret);
-    }
-    else {
-        fr_Value self;
-        self.h = obj;
-        fr_getInstanceField(env, &self, field, &ret);
-    }
-    return ret;
-}
+
 ////////////////////////////
 // exception
 ////////////////////////////
@@ -632,15 +524,3 @@ const char *fr_getStrUtf8(fr_Env self, fr_Obj str) {
 //    //pass;
 //}
 
-GcObj *fr_toGcObj(FObj *obj) {
-    if (obj == nullptr) return nullptr;
-    GcObj *g = (GcObj*)obj;
-    --g;
-    return g;
-    
-}
-FObj *fr_fromGcObj(GcObj *g) {
-    if (g == nullptr) return nullptr;
-    FObj *obj = (FObj*)(++g);
-    return obj;
-}

@@ -52,6 +52,8 @@ typedef struct fr_Field_ *fr_Field;
 struct fr_Method_;
 typedef struct fr_Method_ *fr_Method;
 
+struct fr_Pod_;
+
 /**
  * union type, store any thing
  */

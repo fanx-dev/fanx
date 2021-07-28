@@ -8,7 +8,7 @@ fr_Int sys_NativeC_toId(fr_Env env, fr_Obj self) {
     return (fr_Int)self;
 }
 fr_Obj sys_NativeC_typeName(fr_Env env, fr_Obj self) {
-    const char *name = fr_getTypeName(env, fr_getPtr(env, self));
+    const char *name = fr_getTypeName(env, self);
     return fr_newStrUtf8(env, name);
 }
 void sys_NativeC_print(fr_Env env, fr_Obj utf8) {

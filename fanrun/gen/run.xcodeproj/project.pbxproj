@@ -152,6 +152,7 @@
 		32352225268B38D200EE50DF /* std_Zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_Zip.c; sourceTree = "<group>"; };
 		3235222E268C343300EE50DF /* std_FileSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = std_FileSystem.c; sourceTree = "<group>"; };
 		3235228426A8371100EE50DF /* fni.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fni.cpp; sourceTree = "<group>"; };
+		323522D426A9918B00EE50DF /* fni_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fni_private.h; sourceTree = "<group>"; };
 		324A54B22000EE130083C73E /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		324BFA8023BB962B007F2863 /* Bitmap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bitmap.hpp; sourceTree = "<group>"; };
 		324BFA8223BC4711007F2863 /* BitmapTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapTest.h; sourceTree = "<group>"; };
@@ -199,6 +200,7 @@
 		3235214B268AAD9100EE50DF /* fni */ = {
 			isa = PBXGroup;
 			children = (
+				323522D426A9918B00EE50DF /* fni_private.h */,
 				323521CF268B316300EE50DF /* std */,
 				3235214C268AAD9100EE50DF /* fni.h */,
 				3235214D268AAD9100EE50DF /* sys */,
