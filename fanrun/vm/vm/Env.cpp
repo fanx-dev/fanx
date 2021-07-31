@@ -331,12 +331,6 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     //assert(curFrame->operandStack.size() >= paramCount);
     
     if (trace) {
-        if (method->c_mangledName == "std_Type_typeof") {
-            printf("XXX");
-        }
-        if (method->c_mangledName == "baseTest_Main_test") {
-            printf("XXX");
-        }
         printf("before call:");
         printOperandStack();
         printf("\n");
@@ -618,7 +612,13 @@ void Env::throwNPE() {
     this->push(&entry);
     
     FType *type = podManager->getNpeType(this);
-    FMethod *ctor = type->c_methodMap["make"];
+    //FMethod *ctor = type->c_methodMap["make"];
+    auto itr = type->c_methodMap.find("make");
+    if (itr == type->c_methodMap.end()) {
+        abort();
+    }
+    FMethod *ctor = itr->second;
+
     newObj(type, ctor, 2);
     fr_TagValue error = *peek();
     throwError((FObj*)error.any.o);

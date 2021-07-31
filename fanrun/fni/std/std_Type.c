@@ -1,6 +1,6 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
-#include "type.h"
+//#include "type.h"
 
 fr_Obj std_Type_typeof_(fr_Env env, fr_Obj obj) {
     fr_Type type = fr_getObjType(env, obj);

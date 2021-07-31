@@ -25,6 +25,8 @@ public:
     PodLoader();
     ~PodLoader();
 
+    std::unordered_map<std::string, FPod*>& allPods() { return podMap; }
+
 private:
 };
 

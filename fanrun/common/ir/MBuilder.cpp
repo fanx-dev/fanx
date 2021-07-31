@@ -459,8 +459,9 @@ void MBuilder::call(Block *block, FOpObj &opObj, bool isVirtual, bool isStatic
                 name += "$";
                 name += std::to_string(methodRef->paramCount);
             }
-            FMethod *fmethod = ftype->c_methodMap[name];
-            if (fmethod) {
+            auto itr = ftype->c_methodMap.find(name);
+            if (itr != ftype->c_methodMap.end()) {
+                FMethod *fmethod = itr->second;
                 std::string returnType = FCodeUtil::getTypeNsName(ftype->c_pod, fmethod->returnType);
                 isThis = returnType == "sys_This";
             }

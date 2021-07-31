@@ -38,6 +38,9 @@ void PodManager::loadNativeMethod(FMethod *method) {
         
         if (method->c_native == NULL && method->code.isEmpty()) {
             printf("ERROR: not found native func %s\n", fullName.c_str());
+            if ((method->flags & FFlags::Native) != 0) {
+                abort();
+            }
         }
     }
 }
@@ -47,16 +50,22 @@ FMethod *PodManager::getMethod(Env *env, FPod *curPod, FMethodRef &methodRef) {
     if (!methodRef.c_method) {
         std::string methodName = curPod->names[methodRef.name];
         FType *type = getType(env, curPod, methodRef.parent);
-        FMethod *method = type->c_methodMap[methodName];
         
-        if (method == NULL) {
-            printf("ERROR: method not found %s", methodName.c_str());
+        auto itr = type->c_methodMap.find(methodName);
+        if (itr == type->c_methodMap.end()) {
+            printf("ERROR: method not found %s\n", methodName.c_str());
             return NULL;
         }
+        FMethod *method = itr->second;
         
         //getter or setter/overload
         if (method->paramCount != methodRef.paramCount) {
-            method = type->c_methodMap[methodName +"$"+ std::to_string(methodRef.paramCount)];
+            itr = type->c_methodMap.find(methodName +"$"+ std::to_string(methodRef.paramCount));
+            if (itr == type->c_methodMap.end()) {
+                printf("ERROR: method not found %s %d\n", methodName.c_str(), methodRef.paramCount);
+                return NULL;
+            }
+            method = itr->second;
         }
         
         loadNativeMethod(method);
@@ -104,13 +113,25 @@ FMethod *PodManager::getVirtualMethod(Env *env, FType *instanceType, FPod *curPo
 FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &name, int paramCount) {
     initTypeAllocSize(env, type);
     
-    FMethod *method;
+    FMethod *method = NULL;
     if (paramCount != -1) {
-        method = type->c_methodMap[name +"$"+ std::to_string(paramCount)];
+        //method = type->c_methodMap[name +"$"+ std::to_string(paramCount)];
+        auto itr = type->c_methodMap.find(name +"$"+ std::to_string(paramCount));
+        if (itr != type->c_methodMap.end()) {
+            method = itr->second;
+        }
     }
-    else {
-        method = type->c_methodMap[name];
+    if (method == NULL) {
+        //method = type->c_methodMap[name];
+        auto itr = type->c_methodMap.find(name);
+        if (itr != type->c_methodMap.end()) {
+            method = itr->second;
+            if (paramCount != -1 && method->paramCount != paramCount) {
+                method = NULL;
+            }
+        }
     }
+    
     
     assert(method);
     
@@ -138,15 +159,26 @@ FMethod *PodManager::findVirtualMethod(Env *env, FType *instanceType, const std:
     }
     
     if (fr == instanceType->c_virtualMethodMapByName.end()) {
-        FMethod *method = nullptr;
+        FMethod *method = NULL;
         FPod *pod = instanceType->c_pod;
         
         //getter or setter/overload
         if (paramCount != -1) {
-            method = instanceType->c_methodMap[name +"$"+ std::to_string(paramCount)];
+            //method = instanceType->c_methodMap[name +"$"+ std::to_string(paramCount)];
+            auto itr = instanceType->c_methodMap.find(name +"$"+ std::to_string(paramCount));
+            if (itr != instanceType->c_methodMap.end()) {
+                method = itr->second;
+            }
         }
-        else {
-            method = instanceType->c_methodMap[name];
+        if (method == NULL) {
+            //method = instanceType->c_methodMap[name];
+            auto itr = instanceType->c_methodMap.find(name);
+            if (itr != instanceType->c_methodMap.end()) {
+                method = itr->second;
+                if (paramCount != -1 && method->paramCount != paramCount) {
+                    method = NULL;
+                }
+            }
         }
         
         if (!method) {
@@ -169,12 +201,12 @@ FMethod *PodManager::findVirtualMethod(Env *env, FType *instanceType, const std:
         }
         
         if (method == NULL) {
-            printf("ERROR: method not found %s %d", name.c_str(), paramCount);
+            printf("ERROR: method not found %s %d\n", name.c_str(), paramCount);
             return NULL;
         }
         
         loadNativeMethod(method);
-        if (paramCount != method->paramCount) {
+        if (paramCount != -1) {
             instanceType->c_virtualMethodMapByName[name +"$"+ std::to_string(paramCount)] = method;
         }
         else {
@@ -302,8 +334,9 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
         env = vm->getEnv();
     }
     if (env) {
-        FMethod *method = type->c_methodMap["static$init"];
-        if (method) {
+        auto itr = type->c_methodMap.find("static$init");
+        if (itr != type->c_methodMap.end()) {
+            FMethod *method = itr->second;
             if (method->c_native == nullptr) {
                 FPod *pod = type->c_pod;
                 std::string fullName = pod->name + "_" + type->c_name + "_static$init";

@@ -1,6 +1,6 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
-#include "type.h"
+//#include "type.h"
 
 bool isBuildValueType(const char *name, fr_ValueType *vt);
 

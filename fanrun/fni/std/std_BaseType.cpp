@@ -1,7 +1,8 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
-#include "Vm.hpp"
-#include "Env.hpp"
+//#include "Vm.hpp"
+//#include "Env.hpp"
+#include <string>
 
 void std_BaseType_doInit(fr_Env env, fr_Obj self) {
     //Env *e = (Env*)env;

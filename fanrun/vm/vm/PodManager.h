@@ -20,7 +20,7 @@ class Env;
 class Fvm;
 
 class PodManager {
-    PodLoader podLoader;
+    
     std::unordered_map<std::string, fr_NativeFunc> nativeFuncMap;
 private:
     FType *intType;
@@ -34,6 +34,7 @@ private:
 public:
     ObjFactory objFactory;
     Fvm *vm;
+    PodLoader podLoader;
     
 public:
     bool load(const std::string &path, const std::string &name);

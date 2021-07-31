@@ -15,6 +15,7 @@
 CF_BEGIN
 
 void sys_register(fr_Fvm vm);
+void std_register(fr_Fvm vm);
 
 CF_END
 
@@ -136,6 +137,7 @@ int main(int argc, const char * argv[]) {
     }
     
     sys_register(&vm);
+    std_register(&vm);
     
     vm.start();
     env->trace = debug;

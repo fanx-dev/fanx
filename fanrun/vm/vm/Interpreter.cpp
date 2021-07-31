@@ -503,9 +503,20 @@ bool Interpreter::exeStep() {
             std::string msg;
             bool fit = isTypeof(i2, false, &msg);
             if (!fit) {
-                context->throwNew("sys", "CastErr", msg.c_str(), 1);
-                goto Step_throw;
-                break;
+                fr_TagValue val = *context->peek();
+                if (val.type == fr_vtObj && val.any.o == NULL) {
+
+                    bool toNullable = context->podManager->isNullableType(context
+                        , frame()->curPod, i2);
+                    if (toNullable) {
+                        break;
+                    }
+                    else {
+                        context->throwNew("sys", "CastErr", msg.c_str(), 1);
+                        goto Step_throw;
+                        break;
+                    }
+                }
             }
             bool fromNullable = context->podManager->isNullableType(context
                                                     , frame()->curPod, i1);
@@ -760,6 +771,9 @@ bool Interpreter::isTypeof(uint16_t tid, bool pop, std::string *msg) {
     } else {
         val = *context->peek();
     }
+    if (val.type == fr_vtObj && val.any.o == NULL) {
+        return false;
+    }
     FType *type = context->podManager->getInstanceType(context, val);
     bool fit = context->podManager->fitType(context, type, frame()->curPod, tid);
     
@@ -794,7 +808,7 @@ void Interpreter::callNew(int16_t mid) {
         pushObj((FObj*)a);
         return;
     }
-    
+
     FObj * obj = context->allocObj(method->c_parent, 1);
     
     fr_TagValue self;
