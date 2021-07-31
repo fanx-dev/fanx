@@ -12,7 +12,7 @@
 
 #include "fni.h"
 #include <assert.h>
-#include "gcobj.h"
+#include "gc/gcobj.h"
 
 CF_BEGIN
 
@@ -110,6 +110,8 @@ struct fr_Field_ {
     struct fr_Facet_ *facetList;
     
     fr_Type parent;
+
+    void* internalSlot;
 };
 
 struct fr_MethodParam_ {
@@ -134,6 +136,8 @@ struct fr_Method_ {
     struct fr_Facet_ *facetList;
     
     fr_Type parent;
+
+    void* internalSlot;
 };
 
 
@@ -168,6 +172,7 @@ struct fr_Class_ {
     fr_Obj reflectObj;
   
     //fr_Function finalize;
+    void* internalType;
     
     struct fr_IVTableMapItem interfaceVTableIndex[MAX_INTERFACE_SIZE];
 };

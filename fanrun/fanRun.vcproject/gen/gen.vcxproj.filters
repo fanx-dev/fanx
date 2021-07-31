@@ -150,6 +150,9 @@
     <ClInclude Include="..\..\gen\gen\TypeGen.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\fni\fni_private.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\thirdparty\minizip\ioapi.c">

@@ -32,6 +32,8 @@ struct FField : public FSlot {
     uint16_t c_offset;
     FType *c_parent;
     std::string c_mangledName;
+
+    void* c_reflectSlot;
 };
 
 struct FMethodVar : public FSlot {
@@ -58,7 +60,9 @@ struct FMethod : public FSlot {
     FType *c_parent;
     
     FNativeFunc c_native;
-    void *c_wrappedMethod;
+
+    void* c_reflectSlot;
+    
     void (*c_jit)(void *env);
     uint16_t c_jitLocalCount;
     std::string c_stdName;
@@ -105,7 +109,7 @@ public:
     std::unordered_map<std::string, FMethod*> c_virtualMethodMapByName;
     std::unordered_map<FMethodRef*, FMethod*> c_virtualMethodMap;
     std::unordered_map<FMethod*, FMethod*> c_virtualMethodMapByMethod;
-    void *c_wrappedType;
+    void *c_reflectType;
     
 public:
     void read(FPod *pod, FTypeMeta &meta, Buffer &buffer);

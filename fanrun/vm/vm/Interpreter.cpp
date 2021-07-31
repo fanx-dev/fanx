@@ -162,7 +162,8 @@ bool Interpreter::exeStep() {
     
     if (context->trace) {
         const char *opName = OpNames[(int)opcode];
-        printf("%d:%s\n", frame()->pc, opName);
+        int pc = frame()->pc;
+        printf("%d:%s\n", pc, opName);
     }
     
     int16_t i1 = 0;

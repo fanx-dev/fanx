@@ -7,7 +7,7 @@
 //
 
 #include "NativeGen.h"
-#include "escape.h"
+#include "util/escape.h"
 
 NativeGen::NativeGen() : genStub(false) {
     

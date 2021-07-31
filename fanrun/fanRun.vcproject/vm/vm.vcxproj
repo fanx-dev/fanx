@@ -19,13 +19,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\fcode\Buffer.cpp" />
+    <ClCompile Include="..\..\common\fcode\Code.cpp" />
+    <ClCompile Include="..\..\common\fcode\FAttr.cpp" />
+    <ClCompile Include="..\..\common\fcode\FPod.cpp" />
+    <ClCompile Include="..\..\common\fcode\FType.cpp" />
+    <ClCompile Include="..\..\common\fcode\PodLoader.cpp" />
+    <ClCompile Include="..\..\common\fcode\Printer.cpp" />
+    <ClCompile Include="..\..\common\fcode\ZipFile.cpp" />
     <ClCompile Include="..\..\common\gc\Gc.cpp" />
+    <ClCompile Include="..\..\common\ir\FCodeUtil.cpp" />
+    <ClCompile Include="..\..\common\ir\IRMethod.cpp" />
+    <ClCompile Include="..\..\common\ir\IRType.cpp" />
+    <ClCompile Include="..\..\common\ir\MBuilder.cpp" />
+    <ClCompile Include="..\..\common\ir\Stmt.cpp" />
     <ClCompile Include="..\..\common\util\escape.cpp" />
     <ClCompile Include="..\..\common\util\LinkedList.c" />
     <ClCompile Include="..\..\common\util\system.c" />
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
     <ClCompile Include="..\..\fni\fni.cpp" />
+    <ClCompile Include="..\..\fni\sys\pod_sys_native.c" />
+    <ClCompile Include="..\..\fni\sys\pod_sys_register.c" />
     <ClCompile Include="..\..\fni\sys\sys_Array.c" />
     <ClCompile Include="..\..\fni\sys\sys_Bool.c" />
     <ClCompile Include="..\..\fni\sys\sys_Enum.c" />
@@ -36,22 +51,54 @@
     <ClCompile Include="..\..\fni\sys\sys_Num.c" />
     <ClCompile Include="..\..\fni\sys\sys_Obj.cpp" />
     <ClCompile Include="..\..\fni\sys\sys_Ptr.c" />
-    <ClCompile Include="..\..\gen\runtime\Env.cpp" />
-    <ClCompile Include="..\..\gen\runtime\fni_ext.cpp" />
-    <ClCompile Include="..\..\gen\runtime\main.c" />
-    <ClCompile Include="..\..\gen\runtime\runtime.cpp" />
-    <ClCompile Include="..\..\gen\runtime\sys_runtime.c" />
-    <ClCompile Include="..\..\gen\runtime\type.cpp" />
-    <ClCompile Include="..\..\gen\runtime\Vm.cpp" />
-    <ClCompile Include="..\..\gen\temp\baseTest.c" />
-    <ClCompile Include="..\..\gen\temp\sys.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\iowin32.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\miniunz.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\minizip.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\unzip.c" />
+    <ClCompile Include="..\..\thirdparty\minizip\zip.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\adler32.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\compress.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\crc32.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\deflate.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\infback.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\inffast.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\inflate.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\inftrees.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\trees.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\uncompr.c" />
+    <ClCompile Include="..\..\thirdparty\zlib\zutil.c" />
+    <ClCompile Include="..\..\vm\vm\Env.cpp" />
+    <ClCompile Include="..\..\vm\vm\fni_ext.cpp" />
+    <ClCompile Include="..\..\vm\vm\Interpreter.cpp" />
+    <ClCompile Include="..\..\vm\vm\main.cpp" />
+    <ClCompile Include="..\..\vm\vm\NativeGen.cpp" />
+    <ClCompile Include="..\..\vm\vm\ObjFactory.cpp" />
+    <ClCompile Include="..\..\vm\vm\PodManager.cpp" />
+    <ClCompile Include="..\..\vm\vm\type.cpp" />
+    <ClCompile Include="..\..\vm\vm\Vm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\fcode\Buffer.h" />
+    <ClInclude Include="..\..\common\fcode\Code.h" />
+    <ClInclude Include="..\..\common\fcode\FAttr.h" />
+    <ClInclude Include="..\..\common\fcode\FPod.h" />
+    <ClInclude Include="..\..\common\fcode\FType.h" />
+    <ClInclude Include="..\..\common\fcode\PodLoader.h" />
+    <ClInclude Include="..\..\common\fcode\Printer.h" />
+    <ClInclude Include="..\..\common\fcode\ZipFile.h" />
     <ClInclude Include="..\..\common\gc\Bitmap.hpp" />
     <ClInclude Include="..\..\common\gc\BitmapTest.h" />
     <ClInclude Include="..\..\common\gc\Gc.h" />
     <ClInclude Include="..\..\common\gc\gci.h" />
     <ClInclude Include="..\..\common\gc\gcobj.h" />
+    <ClInclude Include="..\..\common\ir\FCodeUtil.hpp" />
+    <ClInclude Include="..\..\common\ir\IRMethod.h" />
+    <ClInclude Include="..\..\common\ir\IRType.hpp" />
+    <ClInclude Include="..\..\common\ir\MBuilder.hpp" />
+    <ClInclude Include="..\..\common\ir\Stmt.hpp" />
     <ClInclude Include="..\..\common\util\escape.h" />
     <ClInclude Include="..\..\common\util\LinkedList.h" />
     <ClInclude Include="..\..\common\util\miss.h" />
@@ -61,21 +108,44 @@
     <ClInclude Include="..\..\fni\fni.h" />
     <ClInclude Include="..\..\fni\fni_private.h" />
     <ClInclude Include="..\..\fni\sys\pod_sys_native.h" />
-    <ClInclude Include="..\..\gen\runtime\Env.hpp" />
-    <ClInclude Include="..\..\gen\runtime\fni_ext.h" />
-    <ClInclude Include="..\..\gen\runtime\runtime.h" />
-    <ClInclude Include="..\..\gen\runtime\type.h" />
-    <ClInclude Include="..\..\gen\runtime\Vm.hpp" />
-    <ClInclude Include="..\..\gen\temp\baseTest.h" />
-    <ClInclude Include="..\..\gen\temp\baseTest_prototype.h" />
-    <ClInclude Include="..\..\gen\temp\sys.h" />
-    <ClInclude Include="..\..\gen\temp\sys_prototype.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\crypt.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi_buf.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi_mem.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\iowin32.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\unzip.h" />
+    <ClInclude Include="..\..\thirdparty\minizip\zip.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\crc32.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\deflate.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\inffast.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\inffixed.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\inflate.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\inftrees.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\trees.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\zconf.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\zconf.in.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\zlib.h" />
+    <ClInclude Include="..\..\thirdparty\zlib\zutil.h" />
+    <ClInclude Include="..\..\vm\vm\Env.h" />
+    <ClInclude Include="..\..\vm\vm\ExeEngine.h" />
+    <ClInclude Include="..\..\vm\vm\fni_ext.h" />
+    <ClInclude Include="..\..\vm\vm\Interpreter.h" />
+    <ClInclude Include="..\..\vm\vm\NativeGen.h" />
+    <ClInclude Include="..\..\vm\vm\ObjFactory.h" />
+    <ClInclude Include="..\..\vm\vm\PodManager.h" />
+    <ClInclude Include="..\..\vm\vm\Vm.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\common\util\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\thirdparty\zlib\README" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{40ab281e-4072-4111-9510-5a59464d201e}</ProjectGuid>
-    <RootNamespace>run</RootNamespace>
+    <ProjectGuid>{A801BEFC-1B57-4AC1-A6A2-1C4C1112EF96}</ProjectGuid>
+    <RootNamespace>vm</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,16 +209,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;FR_VM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\vm\vm;$(ProjectDir)..\..\fni;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

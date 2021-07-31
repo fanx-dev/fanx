@@ -10,7 +10,7 @@
 #include "Env.h"
 #include <assert.h>
 #include <atomic>
-#include "Gc.h"
+#include "gc/Gc.h"
 
 #ifdef FR_LLVM
     #include "SimpleLLVMJIT.hpp"

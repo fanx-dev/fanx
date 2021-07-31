@@ -24,9 +24,6 @@
     <ClCompile Include="..\..\gen\runtime\type.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\runtime\Vm.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\common\gc\Gc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -43,9 +40,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\util\utf8.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\runtime\ThreadEnv.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\sys\sys_Array.c">
@@ -84,10 +78,19 @@
     <ClCompile Include="..\..\gen\temp\sys.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\runtime\fni.cpp">
+    <ClCompile Include="..\..\gen\runtime\sys_runtime.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\runtime\sys_runtime.c">
+    <ClCompile Include="..\..\gen\runtime\fni_ext.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\runtime\Env.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\runtime\Vm.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\fni.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -96,9 +99,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gen\runtime\type.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\runtime\Vm.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\gc\Bitmap.hpp">
@@ -134,12 +134,6 @@
     <ClInclude Include="..\..\common\util\utf8.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gen\runtime\ThreadEnv.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\fni\fni.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\gen\temp\baseTest.h">
       <Filter>源文件</Filter>
     </ClInclude>
@@ -155,8 +149,20 @@
     <ClInclude Include="..\..\fni\sys\pod_sys_native.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gen\runtime\vm.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="..\..\fni\fni_private.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\runtime\fni_ext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\runtime\Env.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\runtime\Vm.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fni\fni.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

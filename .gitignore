@@ -19,3 +19,5 @@ fanrun/fanRun.vcproject/run/Debug/
 fanrun/fanRun.vcproject/Debug/
 .vs/
 fanrun/thirdparty/libffi-3.4.2
+fanrun/fanRun.vcproject/vm_gen/Debug/
+fanrun/fanRun.vcproject/vm/Debug/

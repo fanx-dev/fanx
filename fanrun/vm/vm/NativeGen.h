@@ -11,8 +11,8 @@
 
 #include <stdio.h>
 
-#include "Printer.h"
-#include "FPod.h"
+#include "fcode/Printer.h"
+#include "fcode/FPod.h"
 #include "PodManager.h"
 
 class NativeGen {

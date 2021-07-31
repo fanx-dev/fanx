@@ -13,8 +13,8 @@
 #include "Vm.h"
 #include <vector>
 #include <set>
-#include "tinycthread.h"
-#include "system.h"
+#include "util/tinycthread.h"
+#include "util/system.h"
 #include <atomic>
 
 struct StackFrame {

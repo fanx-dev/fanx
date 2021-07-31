@@ -12,10 +12,10 @@
 #include <stdio.h>
 #include "PodManager.h"
 #include "fni_ext.h"
-#include "gci.h"
+#include "gc/gci.h"
 #include <unordered_map>
 #include <thread>
-#include "LinkedList.h"
+#include "util/LinkedList.h"
 #include "../vm/ExeEngine.h"
 #include <assert.h>
 #include <mutex>

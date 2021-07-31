@@ -9,7 +9,7 @@
 #include "Env.h"
 #include <assert.h>
 #include "Interpreter.h"
-#include "Gc.h"
+#include "gc/Gc.h"
 #include <atomic>
 #include "vm.h"
 
@@ -68,6 +68,14 @@ void Env::start(const char* podName, const char* type, const char* name, FObj *a
     //popFrame();
 }
 
+static const char* getFObjTypeName(FObj* o) {
+    if (o == 0) {
+        return "";
+    }
+    FType* type = (FType*)gc_getType(fr_toGcObj(o));
+    return type->c_mangledName.c_str();
+}
+
 void printValue(fr_TagValue *val) {
     switch (val->type) {
         case fr_vtBool:
@@ -81,7 +89,7 @@ void printValue(fr_TagValue *val) {
             break;
         case fr_vtObj:
             if (val->any.o) {
-                printf("%s(%p)", fr_getTypeName(NULL, (FObj*)val->any.o), val->any.o);
+                printf("%s(%p)", getFObjTypeName((FObj*)val->any.o), val->any.o);
             } else {
                 printf("null");
             }
@@ -311,7 +319,7 @@ FType * Env::getInstanceType(fr_TagValue *obj) {
     return ftype;
 }
 bool Env::fitType(FType * a, FType * b) {
-    return podManager->fitTypeByType(this, (FType*)a, (FType*)b);
+    return podManager->fitTypeByType(this, a, b);
 }
 
 ////////////////////////////
@@ -323,9 +331,12 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     //assert(curFrame->operandStack.size() >= paramCount);
     
     if (trace) {
-//        if (method->c_mangledName == "sys_Obj_echo") {
-//            printf("");
-//        }
+        if (method->c_mangledName == "std_Type_typeof") {
+            printf("XXX");
+        }
+        if (method->c_mangledName == "baseTest_Main_test") {
+            printf("XXX");
+        }
         printf("before call:");
         printOperandStack();
         printf("\n");
@@ -355,7 +366,7 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     if (trace) {
         std::string &name = method->c_parent->c_pod->names[method->name];
         std::string &typeName = method->c_parent->c_name;
-        printf(">>>>>>>>>call %s#%s,native%d, ", typeName.c_str(), name.c_str(), method->c_native?1:0);
+        printf(">>>>>>>>>call %s#%s,isNative:%d, ", typeName.c_str(), name.c_str(), method->c_native?1:0);
         printParam((fr_TagValue*)curFrame, paramCountWithSelf);
         printStackTrace();
         printf("\n");

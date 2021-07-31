@@ -29,14 +29,109 @@ FObj *fr_fromGcObj(GcObj *g) {
     return obj;
 }
 
+
+////////////////////////////
+// Array
+////////////////////////////
+
+size_t fr_arrayLen(fr_Env self, fr_Obj array) {
+    fr_Array *a = (fr_Array*)fr_getPtr(self, array);
+    return a->size;
+}
+
+void fr_arrayGet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
+    fr_Array *array = (fr_Array*)fr_getPtr(self, _array);
+
+    if (index >= array->size) {
+        fr_throwNew(self, "sys", "IndexErr", "out index");
+        return;
+    }
+    
+    size_t elemSize = array->elemSize;
+
+    switch (elemSize) {
+        case 1: {
+            int8_t *t = (int8_t*)array->data;
+            val->i = t[index];
+            break;
+        }
+        case 2: {
+            int16_t *t = (int16_t*)array->data;
+            val->i = t[index];
+            //resVal.type = fr_vtInt;
+            break;
+        }
+        case 4: {
+            int32_t *t = (int32_t*)array->data;
+            val->i = *t;
+            //resVal.type = fr_vtInt;
+            break;
+        }
+        case 8: {
+            int64_t *t = (int64_t*)array->data;
+            val->i = *t;
+            //resVal.type = fr_vtInt;
+            break;
+        }
+    }
+
+    fr_ValueType vt = (fr_ValueType)array->valueType;
+    if (vt == fr_vtObj) {
+        val->h = fr_toHandle(self, (FObj*)val->o);
+    }
+}
+void fr_arraySet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
+    fr_Array* array = (fr_Array*)fr_getPtr(self, _array);
+
+    if (index >= array->size) {
+        fr_throwNew(self, "sys", "IndexErr", "out index");
+        return;
+    }
+    //a->data[index] = fr_getPtr(self, val->h);
+    
+    size_t elemSize = array->elemSize;
+
+    switch (elemSize) {
+        case 1: {
+            int8_t *t = (int8_t*)array->data;
+            t[index] = val->i;
+            break;
+        }
+        case 2: {
+            int16_t *t = (int16_t*)array->data;
+            t[index] = val->i;
+            break;
+        }
+        case 4: {
+            int32_t *t = (int32_t*)array->data;
+            t[index] = (int32_t)val->i;
+            break;
+        }
+        case 8: {
+            int64_t *t = (int64_t*)array->data;
+            t[index] = val->i;
+            break;
+        }
+    }
+}
+
+////////////////////////////
+// type
+////////////////////////////
+
 const char *fr_getTypeName(fr_Env self, fr_Obj obj) {
     fr_Type type = fr_getObjType(self, obj);
     return type->name;
 }
 
-size_t fr_arrayLen(fr_Env self, fr_Obj array) {
-    fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    return a->size;
+bool fr_fitType(fr_Env env, fr_Type tempType, fr_Type type) {
+    while (true) {
+        if (tempType == type) return true;
+        if (tempType == tempType->base) break;
+        tempType = tempType->base;
+        if (!tempType) break;
+    }
+    return false;
 }
 
 bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type) {
@@ -44,6 +139,33 @@ bool fr_isInstanceOf(fr_Env self, fr_Obj obj, fr_Type type) {
     bool rc = fr_fitType(self, itype, type);
     //fr_unlock(self);
     return rc;
+}
+
+fr_Type fr_toType(fr_Env self, fr_ValueType vt) {
+    //Env *e = (Env*)self;
+    
+    switch (vt) {
+        case fr_vtInt:
+            return fr_findType(self, "sys", "Int");
+            break;
+        case fr_vtFloat:
+            return fr_findType(self, "sys", "Float");
+            break;
+        case fr_vtBool:
+            return fr_findType(self, "sys", "Bool");
+            break;
+        default:
+            break;
+    }
+    
+    return fr_findType(self, "sys", "Obj");
+}
+
+fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
+    if (vtype == fr_vtHandle) {
+        return fr_getObjType(self, obj->p);
+    }
+    return fr_toType(self, vtype);
 }
 
 ////////////////////////////
@@ -88,6 +210,20 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
     return ret;
 }
 
+void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
+               , int argCount, fr_Value *arg, fr_Value *ret) {
+    fr_Obj obj = fr_allocObj(self, type, -1);
+    
+    fr_Value newArgs[10];
+    newArgs[0].h = obj;
+    for (int i=0; i<argCount; ++i) {
+        newArgs[i+1] = arg[i];
+    }
+    
+    fr_callMethodA(self, method, argCount+1, newArgs, ret);
+    ret->h = obj;
+}
+
 fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
     fr_Value valueArgs[10] = {0};
     fr_Value ret;
@@ -122,7 +258,7 @@ fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ..
     return ret;
 }
 
-fr_Value fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
+fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
                      , int argCount, ...) {
     va_list args;
     fr_Value ret;
@@ -133,7 +269,7 @@ fr_Value fr_newObjS(fr_Env self, const char *pod, const char *type, const char *
     
     ret = fr_newObjV(self, ftype, m, argCount, args);
     va_end(args);
-    return ret;
+    return ret.h;
 }
 
 fr_Value fr_callOnObj(fr_Env self, const char *name
@@ -166,6 +302,9 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
     return ret;
 }
 
+////////////////////////////
+// Field
+////////////////////////////
 
 bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val) {
     fr_Type type = fr_getObjType(env, obj);
@@ -201,6 +340,36 @@ fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
         fr_getInstanceField(env, &self, field, &ret);
     }
     return ret;
+}
+
+////////////////////////////
+// exception
+////////////////////////////
+
+void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg) {
+    fr_Obj err = fr_newObjS(self, pod, type, "make", 1, msg);
+    fr_throw(self, err);
+}
+
+
+void fr_printErr(fr_Env self, fr_Obj err) {
+    fr_callOnObj(self, "trace", 1, err);
+}
+
+void fr_clearErr(fr_Env self) {
+    fr_throw(self, NULL);
+}
+
+void fr_throwNPE(fr_Env self) {
+    fr_throwNew(self, "sys", "NullErr", "null pointer");
+}
+
+void fr_throwUnsupported(fr_Env self) {
+    fr_throwNew(self, "sys", "UnsupportedErr", "unsupported");
+}
+
+bool fr_errOccurred(fr_Env self) {
+    return fr_getErr(self) != NULL;
 }
 
 ////////////////////////////

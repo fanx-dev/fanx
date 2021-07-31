@@ -10,11 +10,11 @@
 #define __vm__PodManager__
 
 #include <stdio.h>
-#include "FPod.h"
+#include "fcode/FPod.h"
 #include <unordered_map>
 #include "fni.h"
 #include "ObjFactory.h"
-#include "PodLoader.h"
+#include "fcode/PodLoader.h"
 
 class Env;
 class Fvm;

@@ -43,6 +43,7 @@
     <ClInclude Include="..\..\common\util\system.h" />
     <ClInclude Include="..\..\common\util\tinycthread.h" />
     <ClInclude Include="..\..\common\util\utf8.h" />
+    <ClInclude Include="..\..\fni\fni_private.h" />
     <ClInclude Include="..\..\gen\gen\MethodGen.h" />
     <ClInclude Include="..\..\gen\gen\PodGen.hpp" />
     <ClInclude Include="..\..\gen\gen\TypeGen.h" />

@@ -1,12 +1,7 @@
-#include "fni.h"
+#include "fni_private.h"
 //#include "pod_sys_struct.h"
 #include "pod_sys_native.h"
 
-#ifndef FR_VM
-    #include "type.h"
-#else
-    #include "FType.h"
-#endif
 
 //void sys_Obj_make(fr_Env env, fr_Obj self) {
 //    return;
@@ -38,11 +33,8 @@ fr_Obj sys_Obj_trap(fr_Env env, fr_Obj self, fr_Obj name, fr_Obj args) {
 fr_Bool sys_Obj_isImmutable(fr_Env env, fr_Obj self) {
     fr_Type t = fr_getObjType(env, self);
     
-#ifndef FR_VM
-    if (((struct fr_Class_*)t)->flags & 0x00000002) return true;
-#else
-    if (((FType*)t)->meta.flags & 0x00000002) return true;
-#endif
+    if (t->flags & FFlags_Const/*0x00000002*/) return true;
+
     return false;
 }
 //fr_Obj sys_Obj_toImmutable(fr_Env env, fr_Obj self) {

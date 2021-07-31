@@ -10,9 +10,9 @@
 #define __vm__Interpreter__
 
 #include <stdio.h>
-#include "Code.h"
+#include "fcode/Code.h"
 #include <unordered_map>
-#include "FType.h"
+#include "fcode/FType.h"
 #include "Env.h"
 #include "../vm/ExeEngine.h"
 #include <assert.h>

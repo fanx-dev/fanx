@@ -10,7 +10,7 @@
 #define __vm__fni__
 
 #include <stdio.h>
-#include "miss.h"
+#include "util/miss.h"
 #include <stdarg.h>
 
 CF_BEGIN
@@ -183,7 +183,7 @@ void fr_newObjA(fr_Env env, fr_Type type, fr_Method method
                , int argCount, fr_Value *arg, fr_Value *ret);
 
 //short cut
-fr_Value fr_newObjS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
+fr_Obj fr_newObjS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
 fr_Value fr_callMethodS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
 fr_Value fr_callOnObj(fr_Env env, const char *name, int argCount, ...);
 

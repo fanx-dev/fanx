@@ -20,7 +20,7 @@ void FType::readMethod(FMethod &method, Buffer &buffer) {
     method.paramCount = buffer.readUInt8();
     method.localCount = buffer.readUInt8();
     method.c_native = NULL;
-    method.c_wrappedMethod = NULL;
+    method.c_reflectSlot = NULL;
     method.c_jit = NULL;
     
     for (int j=0,n=method.paramCount+method.localCount; j<n; ++j) {
@@ -80,7 +80,7 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
     c_allocSize = -1;
     c_allocStaticSize = -1;
     c_staticData = NULL;
-    c_wrappedType = NULL;
+    c_reflectType = NULL;
     this->meta = meta;
     this->c_pod = pod;
     FTypeRef &typeRef = pod->typeRefs[meta.self];
@@ -102,6 +102,7 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
             fields[i].attrCount = attrCount;
             fields[i].c_offset = -1;
             fields[i].c_parent = this;
+            fields[i].c_reflectSlot = NULL;
             for (int i=0; i<attrCount; ++i) {
                 FAttr *attr = FAttr::readAttr(pod, buffer);
                 if (attr) {

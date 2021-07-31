@@ -11,7 +11,7 @@
 
 #include "fni_private.h"
 #include <assert.h>
-#include "gcobj.h"
+#include "gc/gcobj.h"
 
 CF_BEGIN
 
@@ -33,7 +33,7 @@ struct FType;
 
 struct FType *fr_getFType(fr_Env self, FObj *obj);
 struct FType *fr_toFType(fr_Env self, fr_Type otype);
-
+fr_Type fr_fromFType(fr_Env env, struct FType* ftype);
 
 CF_END
 

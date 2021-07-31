@@ -126,32 +126,6 @@ fr_Type fr_findType(fr_Env self, const char *pod, const char *type) {
     //return fr_getTypeObj(self, t);
     return t;
 }
-fr_Type fr_toType(fr_Env self, fr_ValueType vt) {
-    //Env *e = (Env*)self;
-    
-    switch (vt) {
-        case fr_vtInt:
-            return fr_findType(self, "sys", "Int");
-            break;
-        case fr_vtFloat:
-            return fr_findType(self, "sys", "Float");
-            break;
-        case fr_vtBool:
-            return fr_findType(self, "sys", "Bool");
-            break;
-        default:
-            break;
-    }
-    
-    return fr_findType(self, "sys", "Obj");
-}
-
-fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
-    if (vtype == fr_vtHandle) {
-        return fr_getObjType(self, obj->p);
-    }
-    return fr_toType(self, vtype);
-}
 
 fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
     if (obj == 0) {
@@ -167,28 +141,10 @@ fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
 }
 
 ////////////////////////////
-// Array
-////////////////////////////
-
-
-void fr_arrayGet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
-    fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    //TODO
-    val->o = ((FObj**)(a->data))[index];
-}
-void fr_arraySet(fr_Env self, fr_Obj array, size_t index, fr_Value *val) {
-    fr_Array *a = (fr_Array*)fr_getPtr(self, array);
-    //TODO
-    ((FObj**)(a->data))[index] = (FObj*)val->o;
-}
-
-////////////////////////////
 // call
 ////////////////////////////
 
 fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramCount) {
-    //Env *e = (Env*)self;
-    //FMethod *m = e->podManager->findMethodInType(e, (FType*)type, name, paramCount);
     
     for (int i=0; i<type->methodCount; ++i) {
         fr_Method method = type->methodList+i;
@@ -230,20 +186,6 @@ void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, 
 void fr_callNonVirtual(fr_Env self, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret) {
     method->func(self, arg, ret);
-}
-
-void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
-               , int argCount, fr_Value *arg, fr_Value *ret) {
-    fr_Obj obj = fr_alloc(self, type, -1);
-    
-    fr_Value newArgs[10];
-    newArgs[0].h = obj;
-    for (int i=0; i<argCount; ++i) {
-        newArgs[i+1] = arg[i];
-    }
-    
-    method->func(self, newArgs, ret);
-    ret->h = obj;
 }
 
 ////////////////////////////
@@ -303,54 +245,9 @@ fr_Obj fr_getErr(fr_Env self) {
     return (fr_Obj)obj;
 }
 
-bool fr_errOccurred(fr_Env self) {
-    Env *e = (Env*)self;
-    bool oc;
-    //e->lock();
-    oc = e->error != NULL;
-    //e->unlock();
-    return oc;
+void fr_throw(fr_Env self, fr_Obj err) {
+    fr_setErr(self, err);
 }
-//
-//void fr_printErr(fr_Env self, fr_Obj err) {
-//    Env *e = (Env*)self;
-//    e->printError(fr_getPtr(self, err));
-//}
-//
-//void fr_throw(fr_Env self, fr_Obj err) {
-//    Env *e = (Env*)self;
-//    //fr_lock(self);
-//    e->throwError(fr_getPtr(self, err));
-//    //fr_unlock(self);
-//}
-//
-void fr_clearErr(fr_Env self) {
-    self->error = NULL;
-}
-
-void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg) {
-    Env *e = (Env*)self;
-    //e->lock();
-    //e->throwNew(pod, type, msg, 2);
-    //e->unlock();
-    //TODO;
-}
-//
-//void fr_throwNPE(fr_Env self) {
-//    Env *e = (Env*)self;
-//    //e->lock();
-//    e->throwNPE();
-//    //e->unlock();
-//}
-//
-//void fr_throwUnsupported(fr_Env self) {
-//    fr_throwNew(self, "sys", "UnsupportedErr", "unsupported");
-//}
-//
-//void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter) {
-//    Env *e = (Env*)self;
-//    e->stackTrace(buf, size, delimiter);
-//}
 
 ////////////////////////////
 // box
