@@ -65,10 +65,10 @@ bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *
     }
     if (tval->type == fr_vtObj) {
         val->h = &(tval->any.o);
-        *vtype = fr_vtHandle;
+        if (vtype) *vtype = fr_vtHandle;
     } else {
         *val = tval->any;
-        *vtype = tval->type;
+        if (vtype) *vtype = tval->type;
     }
     return true;
 }
@@ -395,15 +395,16 @@ fr_Obj fr_box(fr_Env self, fr_Value *value, fr_ValueType vtype) {
     //e->unlock();
     return objRef;
 }
-bool fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
+fr_ValueType fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
     Env *e = (Env*)self;
     //e->lock();
-    bool ok = e->unbox(fr_getPtr(self, obj), *value);
-    //e->unlock();
-    if (!ok) {
+    FObj *fobj = fr_getPtr(self, obj);
+    fr_ValueType vt = e->unbox(fobj, *value);
+    if (vt == fr_vtObj && value->o == fobj) {
         value->h = obj;
     }
-    return ok;
+    //e->unlock();
+    return vt;
 }
 
 ////////////////////////////

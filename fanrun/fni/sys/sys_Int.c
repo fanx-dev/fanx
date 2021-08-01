@@ -13,7 +13,7 @@ fr_Int sys_Int_fromStr(fr_Env env, fr_Obj s, fr_Int radix, fr_Bool checked) {
     char *pos = NULL;
     fr_Int val = strtoll(str, &pos, (int)radix);
     
-    if (checked && ((str-pos) != strlen(str)) ) {
+    if (checked && ((pos-str) != strlen(str)) ) {
         char buf[128];
         snprintf(buf, 128, "Invalid Int: %s", str);
         fr_throwNew(env, "sys", "ParseErr", buf);

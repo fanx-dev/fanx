@@ -120,15 +120,16 @@ void NativeGen::genNativeMethod(FPod *pod, FType *type, FMethod *method, Printer
             //print locals declear
             printer->println("fr_Value value_%d;", j);
             printer->println("%s arg_%d; ", typeName.c_str(), j);
-            printer->println("fr_ValueType vtype_%d;", j);
+            //printer->println("fr_ValueType vtype_%d;", j);
         }
         else if (printType == PrintType::pNatiArgGet) {
             //print box and unbox
-            printer->println("fr_getParam(env, param, &value_%d, %d, &vtype_%d);", rIndex, rIndex, rIndex);
+            //printer->println("fr_getParam(env, param, &value_%d, %d, &vtype_%d);", rIndex, rIndex, rIndex);
+            printer->println("fr_getParam(env, param, &value_%d, %d, NULL);", rIndex, rIndex);
             
-            if (selfUnbox) {
+            /*if (selfUnbox) {
                 printer->println("if (vtype_%d == fr_vtHandle) fr_unbox(env, value_%d.h, &value_%d);", rIndex, rIndex, rIndex);
-            }
+            }*/
             
             printer->println("arg_%d = value_%d.%s;"
                              , rIndex, rIndex , tagName.c_str());

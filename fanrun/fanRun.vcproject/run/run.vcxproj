@@ -26,6 +26,39 @@
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
     <ClCompile Include="..\..\fni\fni.cpp" />
+    <ClCompile Include="..\..\fni\std\std_AtomicBool.c" />
+    <ClCompile Include="..\..\fni\std\std_AtomicInt.c" />
+    <ClCompile Include="..\..\fni\std\std_AtomicRef.c" />
+    <ClCompile Include="..\..\fni\std\std_BaseType.cpp" />
+    <ClCompile Include="..\..\fni\std\std_BufCrypto.c" />
+    <ClCompile Include="..\..\fni\std\std_DateTime.c" />
+    <ClCompile Include="..\..\fni\std\std_Decimal.c" />
+    <ClCompile Include="..\..\fni\std\std_Env.c" />
+    <ClCompile Include="..\..\fni\std\std_Extension.c" />
+    <ClCompile Include="..\..\fni\std\std_Field.c" />
+    <ClCompile Include="..\..\fni\std\std_File.c" />
+    <ClCompile Include="..\..\fni\std\std_FileBuf.c" />
+    <ClCompile Include="..\..\fni\std\std_FileSystem.c" />
+    <ClCompile Include="..\..\fni\std\std_Locale.c" />
+    <ClCompile Include="..\..\fni\std\std_LocalFile.c" />
+    <ClCompile Include="..\..\fni\std\std_Lock.c" />
+    <ClCompile Include="..\..\fni\std\std_Log.c" />
+    <ClCompile Include="..\..\fni\std\std_Math.c" />
+    <ClCompile Include="..\..\fni\std\std_Method.c" />
+    <ClCompile Include="..\..\fni\std\std_NativeCharset.c" />
+    <ClCompile Include="..\..\fni\std\std_NioBuf.c" />
+    <ClCompile Include="..\..\fni\std\std_Pod.cpp" />
+    <ClCompile Include="..\..\fni\std\std_PodList.cpp" />
+    <ClCompile Include="..\..\fni\std\std_Process.c" />
+    <ClCompile Include="..\..\fni\std\std_Regex.c" />
+    <ClCompile Include="..\..\fni\std\std_RegexMatcher.c" />
+    <ClCompile Include="..\..\fni\std\std_SysInStream.c" />
+    <ClCompile Include="..\..\fni\std\std_SysOutStream.c" />
+    <ClCompile Include="..\..\fni\std\std_TimePoint.c" />
+    <ClCompile Include="..\..\fni\std\std_TimeZone.c" />
+    <ClCompile Include="..\..\fni\std\std_Type.c" />
+    <ClCompile Include="..\..\fni\std\std_Uuid.c" />
+    <ClCompile Include="..\..\fni\std\std_Zip.c" />
     <ClCompile Include="..\..\fni\sys\sys_Array.c" />
     <ClCompile Include="..\..\fni\sys\sys_Bool.c" />
     <ClCompile Include="..\..\fni\sys\sys_Enum.c" />
@@ -44,6 +77,7 @@
     <ClCompile Include="..\..\gen\runtime\type.cpp" />
     <ClCompile Include="..\..\gen\runtime\Vm.cpp" />
     <ClCompile Include="..\..\gen\temp\baseTest.c" />
+    <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +94,6 @@
     <ClInclude Include="..\..\common\util\utf8.h" />
     <ClInclude Include="..\..\fni\fni.h" />
     <ClInclude Include="..\..\fni\fni_private.h" />
-    <ClInclude Include="..\..\fni\sys\pod_sys_native.h" />
     <ClInclude Include="..\..\gen\runtime\Env.hpp" />
     <ClInclude Include="..\..\gen\runtime\fni_ext.h" />
     <ClInclude Include="..\..\gen\runtime\runtime.h" />
@@ -68,6 +101,8 @@
     <ClInclude Include="..\..\gen\runtime\Vm.hpp" />
     <ClInclude Include="..\..\gen\temp\baseTest.h" />
     <ClInclude Include="..\..\gen\temp\baseTest_prototype.h" />
+    <ClInclude Include="..\..\gen\temp\std.h" />
+    <ClInclude Include="..\..\gen\temp\std_prototype.h" />
     <ClInclude Include="..\..\gen\temp\sys.h" />
     <ClInclude Include="..\..\gen\temp\sys_prototype.h" />
   </ItemGroup>

@@ -297,7 +297,7 @@ void Env::gc() {
 FObj * Env::box(fr_Value &value, fr_ValueType vtype) {
     return podManager->objFactory.box(this, value, vtype);
 }
-bool Env::unbox(FObj * obj, fr_Value &value){
+fr_ValueType Env::unbox(FObj * obj, fr_Value &value){
     return podManager->objFactory.unbox(this, obj, value);
 }
 
@@ -344,6 +344,17 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     bool isStatic = (method->flags & FFlags::Static) != 0;
     if (!isStatic) {
         paramCountWithSelf++;
+    }
+
+    //unbox for value type: Bool.toStr
+    if (!isStatic && podManager->isPrimitiveType(this, method->c_parent)) {
+        fr_TagValue *entry;
+        int pos = -method->paramCount - 1;
+        entry = this->peek(pos);
+        if (entry->type == fr_vtObj) {
+            fr_ValueType vt = this->unbox((FObj*)entry->any.o, entry->any);
+            entry->type = vt;
+        }
     }
  
     //push frame

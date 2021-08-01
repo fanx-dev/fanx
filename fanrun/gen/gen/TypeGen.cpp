@@ -100,7 +100,7 @@ void TypeGen::genImple(Printer *printer) {
             gmethod.genImplesToVal(printer);
         }
         
-        gmethod.genVarArgsFunc(printer);
+        gmethod.genVarArgsFunc(printer, false);
         printer->newLine();
     }
     genTypeInit(printer);

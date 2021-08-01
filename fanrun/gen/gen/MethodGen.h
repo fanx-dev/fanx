@@ -25,7 +25,7 @@ struct MethodGen {
     
     void genDeclares(Printer *printer, bool funcPtr, bool isValType);
     void genNativePrototype(Printer *printer, bool funcPtr, bool isValType);
-    void genVarArgsFunc(Printer *printer);
+    void genVarArgsFunc(Printer *printer, bool onlyDeclare);
     void genImples(Printer *printer);
     void genImplesToVal(Printer *printer);
     void genStub(Printer *printer);

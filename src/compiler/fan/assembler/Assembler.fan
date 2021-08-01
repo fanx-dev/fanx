@@ -110,6 +110,10 @@ class Assembler : CompilerSupport, FConst
     m.paramCount   = def.params.size
     m.localCount   = def.vars.size - def.params.size
 
+    if (m.localCount < 0) {
+      throw Err("localCount is $m.localCount, method:$def.qname, params:$m.paramCount, vars:$def.vars.size")
+    }
+
     m.vars = def.vars.map |MethodVar v->FMethodVar|
     {
       f := FMethodVar(m)

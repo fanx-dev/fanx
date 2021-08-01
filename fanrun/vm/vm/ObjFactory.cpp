@@ -214,7 +214,7 @@ FObj * ObjFactory::box(Env *env, fr_Value &any, fr_ValueType vtype) {
     return obj;
 }
 
-bool ObjFactory::unbox(Env *env, FObj * &obj, fr_Value &value) {
+fr_ValueType ObjFactory::unbox(Env *env, FObj * &obj, fr_Value &value) {
     fr_ValueType type = env->podManager->getValueTypeByType(env, fr_getFType((fr_Env)env, obj));
     if (type == fr_vtInt) {
         value.i = sys_Int_unbox__((fr_Env)env, obj);
@@ -224,10 +224,9 @@ bool ObjFactory::unbox(Env *env, FObj * &obj, fr_Value &value) {
         value.b = sys_Bool_unbox__((fr_Env)env, obj);
     } else {
         value.o = obj;
-        return false;
     }
     //value.type = type;
-    return true;
+    return type;
 }
 
 FObj *ObjFactory::getString(Env *env, FPod *curPod, uint16_t sid) {

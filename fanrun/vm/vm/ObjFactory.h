@@ -28,7 +28,7 @@ public:
     FObj * allocObj(Env *env, FType * type, int addRef, int size = 0);
 
     FObj * box(Env *env, fr_Value &value, fr_ValueType vtype);
-    bool unbox(Env *env, FObj * &obj, fr_Value &value);
+    fr_ValueType unbox(Env *env, FObj * &obj, fr_Value &value);
     
     FObj * getString(Env *env, FPod *curPod, uint16_t sid);
     

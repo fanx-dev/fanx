@@ -12,6 +12,7 @@
 #include "Vm.h"
 #include <string.h>
 
+//-pD:/workspace/fanx-dev/fanx/env/ -gD:/workspace/fanx-dev/fanx/fanrun/fni/sys/ sys
 int main(int argc, const char * argv[]) {
     char buf[256] = {0};
     const char *libPath = NULL;
@@ -62,10 +63,10 @@ int main(int argc, const char * argv[]) {
     
     const char *name = argv[i];
     if (name == NULL || nativeOutPath == NULL) {
-        printf("Usage:\n  fan [options] <pod>::<type>.<method> [args]*\n");
+        printf("Usage:\n  fan -pFanHome -gOutputDir podName\n");
         printf("Options:\n");
-        printf("  -g\tgenCode\n");
-        printf("  -p\tfanHome\n");
+        printf("  -d\tdebug\n");
+        printf("  -c\tgen prototype code\n");
         return -1;
     }
     

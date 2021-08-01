@@ -155,7 +155,8 @@ void MethodGen::printParam(Printer *printer, int printType) {
         else if (printType == 1) {
             //print box and unbox
             //printer->println("fr_getParam(env, param, &value_%d, %d, &vtype_%d);", rIndex, rIndex, rIndex);
-            printer->println("value_%d = ((fr_Value*)param)[%d];", rIndex, rIndex);
+            printer->println("fr_getParam(env, param, &value_%d, %d, NULL);", rIndex, rIndex);
+            //printer->println("value_%d = ((fr_Value*)param)[%d];", rIndex, rIndex);
 //            if (selfUnbox) {
 //                printer->println("if (vtype_%d == fr_vtHandle) fr_unbox(env, value_%d.h, &value_%d);", rIndex, rIndex, rIndex);
 //            }
@@ -177,14 +178,19 @@ void MethodGen::printParam(Printer *printer, int printType) {
     }
 }
 
-void MethodGen::genVarArgsFunc(Printer *printer) {
+void MethodGen::genVarArgsFunc(Printer *printer, bool onlyDeclare) {
     
     //bool isVal = !isStatic && parent->isValueType;
     if ((method->flags & FFlags::Abstract) != 0) {
         return;
     }
     
-    printer->println("void %s_%s_v(fr_Env env, void *param, void *ret) {", parent->name.c_str(), name.c_str());
+    printer->println("void %s_%s_v(fr_Env env, void *param, void *ret)%s", parent->name.c_str(), name.c_str(), onlyDeclare ? ";" : " {");
+
+    if (onlyDeclare) {
+        return;
+    }
+
     printer->indent();
     printParam(printer, 0);
     

@@ -41,11 +41,9 @@ fr_Obj fr_toHandle(fr_Env self, FObj *obj) {
 bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *vtype) {
     //Env *e = (Env*)env;
     //e->lock();
-    fr_TagValue *tval = (fr_TagValue *)param;
-    tval += pos;
-    
-    *val = tval->any;
-    *vtype = tval->type;
+    fr_Value* tval = (fr_Value*)param;    
+    *val = tval[pos];
+    if (vtype) *vtype = fr_vtOther;
     return true;
 }
 
@@ -266,24 +264,27 @@ fr_Obj fr_box(fr_Env env, fr_Value *value, fr_ValueType vtype) {
     }
     return res;
 }
-bool fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value) {
+fr_ValueType fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value) {
     
     fr_Type type = fr_getObjType(env, obj);
     if (strcmp(type->name, "sys::Bool") == 0) {
         fr_Bool *v = (fr_Bool*)fr_getPtr(env, obj);
         value->b = *v;
+        return fr_vtBool;
     }
     else if (strcmp(type->name, "sys::Int") == 0) {
         fr_Int *v = (fr_Int*)fr_getPtr(env, obj);
         value->i = *v;
+        return fr_vtInt;
     }
     else if (strcmp(type->name, "sys::Float") == 0) {
         fr_Float *v = (fr_Float*)fr_getPtr(env, obj);
         value->f = *v;
+        return fr_vtFloat;
     }
     else {
-        return false;
+        value->h = obj;
+        return fr_vtHandle;
     }
-    return true;
 }
 

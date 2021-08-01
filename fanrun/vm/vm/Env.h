@@ -91,7 +91,7 @@ public:
     ////////////////////////////
     
     FObj * box(fr_Value &value, fr_ValueType vtype);
-    bool unbox(FObj * obj, fr_Value &value);
+    fr_ValueType unbox(FObj * obj, fr_Value &value);
     
     ////////////////////////////
     // type

@@ -134,12 +134,12 @@ class MethodDef : SlotDef, CMethod
   **
   ** Why maintain register
   **
-  Void resetVarRegister() {
+  Void resetVarRegister(Bool warn := true) {
     reg := 0
     if (!isStatic) reg++
     vars.each |v| {
       if (v.register != reg) {
-        echo("ERROR:register err: $v.register != $reg in vars:$vars")
+        if (warn) echo("ERROR:register err: $v.register != $reg ($v) in $qname, vars:$vars")
         v.register = reg
       }
       ++reg

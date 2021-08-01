@@ -20,7 +20,7 @@ CF_BEGIN
  * fr_Value union type
  */
 typedef enum fr_ValueType_ {
-    fr_vtOther, //unsed
+    fr_vtOther, //unknow
     fr_vtObj,   //internal ref
     fr_vtInt,   //int64
     fr_vtFloat, //float64
@@ -233,7 +233,7 @@ fr_Obj fr_box(fr_Env env, fr_Value *value, fr_ValueType vtype);
 /**
  * fatch primitive type from obj
  */
-bool fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value);
+fr_ValueType fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value);
 
 ////////////////////////////////////////////////////////////////////
 // Str
