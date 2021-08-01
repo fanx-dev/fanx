@@ -266,6 +266,9 @@ void TypeGen::genVTableInit(Printer *printer) {
             ++pos;
         }
     }
+
+    printer->newLine();
+    printer->println("memset(type, 0, sizeof(struct fr_Class_));");
     printer->println("type->interfaceVTableIndex[%d].type = NULL;", i-1);
     printer->println("type->interfaceVTableIndex[%d].vtableOffset = 0;", i-1);
 }

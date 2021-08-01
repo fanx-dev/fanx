@@ -124,7 +124,7 @@ native final rtconst class Pod
     _name = name
     _version = Version(version)
     if (depends.isEmpty) _depends = Depend[,]
-    else _depends = depends.split(',').map { Depend(it) }
+    else _depends = depends.split(';').map { Depend(it) }
     _uri = Uri.fromStr("fan://" + name);
     _meta = [:]
     _types = Type[,]

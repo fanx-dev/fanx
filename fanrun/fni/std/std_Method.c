@@ -68,7 +68,7 @@ fr_Obj std_Method_invoke(fr_Env env, fr_Obj self, fr_Int argCount, ...) {
         }
     }
     ret.i = 0;
-    fr_callMethodA(self, method, (int)argCount, valueArgs, &ret);
+    fr_callMethodA(env, method, (int)argCount, valueArgs, &ret);
     
     va_end(args);
     

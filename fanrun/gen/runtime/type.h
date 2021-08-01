@@ -18,7 +18,7 @@
 extern  "C" {
 #endif
 
-void fr_VTable_init(fr_Env env, fr_Type type);
+//void fr_VTable_init(fr_Env env, fr_Type type);
 
 bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type);
 

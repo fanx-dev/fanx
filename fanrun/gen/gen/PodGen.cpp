@@ -288,21 +288,6 @@ void PodGen::genStub(Printer *printer) {
 //////////////////////////////////////////////////
 // sort
 
-static TypeGen *exitsBase(PodGen *pod, std::string &typeName) {
-    for (size_t i=0,n=pod->allTypes.size(); i<n; ++i) {
-        TypeGen &type = pod->allTypes[i];
-        
-        if (type.c_sortFlag != 0 ) {
-            continue;
-        }
-        
-        if (type.name == typeName) {
-            return &type;
-        }
-    }
-    return NULL;
-}
-
 static TypeGen *getOne(PodGen *pod) {
     for (size_t i=0,n=pod->allTypes.size(); i<n; ++i) {
         TypeGen &type = pod->allTypes[i];
@@ -314,58 +299,51 @@ static TypeGen *getOne(PodGen *pod) {
     return NULL;
 }
 
+void PodGen::accType(const std::string &name) {
+    TypeGen* type = findType(name);
+    if (type == NULL) return;
+
+    if (type->c_sortFlag != 0) {
+        return;
+    }
+    type->c_sortFlag = 1;
+
+    if (type->name == "sys_Obj") {
+        sortedTypes.push_back(type);    
+        return;
+    }
+
+    std::string baseName = FCodeUtil::getTypeNsName(pod, type->type->meta.base);
+    accType(baseName);
+
+    for (int i = 0; i < type->type->meta.mixin.size(); ++i) {
+        std::string baseName = FCodeUtil::getTypeNsName(pod, type->type->meta.mixin[i]);
+        accType(baseName);
+    }
+
+    for (FField& field : type->type->fields) {
+        if (FCodeUtil::isValueTypeRef(pod, field.type)) {
+            std::string fieldTypeName = FCodeUtil::getTypeNsName(pod, field.type);
+            accType(fieldTypeName);
+        }
+    }
+
+    sortedTypes.push_back(type);
+}
+
 void PodGen::topoSortType() {
     sortedTypes.clear();
     
     TypeGen *type = getOne(this);
     while (type) {
-        
-        if (type->name == "sys_Obj") {
-            sortedTypes.push_back(type);
-            type->c_sortFlag = 1;
-            type = getOne(this);
-            continue;
-        }
-        
-        std::string baseName = FCodeUtil::getTypeNsName(pod, type->type->meta.base);
-        
-        TypeGen *base = exitsBase(this, baseName);
-        if (base) {
-            type = base;
-            continue;
-        }
-        
-        for (int i=0; i<type->type->meta.mixin.size(); ++i) {
-            std::string baseName = FCodeUtil::getTypeNsName(pod, type->type->meta.mixin[i]);
-            base = exitsBase(this, baseName);
-            if (base) break;
-        }
-        
-        if (base) {
-            type = base;
-            continue;
-        }
-        
-        for (FField &field : type->type->fields) {
-            if (FCodeUtil::isValueTypeRef(pod, field.type)) {
-                std::string fieldTypeName = FCodeUtil::getTypeNsName(pod, field.type);
-                TypeGen *fieldType = exitsBase(this, fieldTypeName);
-                if (fieldType) {
-                    type = fieldType;
-                    continue;
-                }
-            }
-        }
-
-        sortedTypes.push_back(type);
-        type->c_sortFlag = 1;
+        accType(type->name);
         type = getOne(this);
     }
 }
 
 ////////////////////////////////////////////////////////////
 
-TypeGen* PodGen::findType(std::string &name) {
+TypeGen* PodGen::findType(const std::string &name) {
     auto it = typeMap.find(name);
     if (it == typeMap.end()) {
         return NULL;

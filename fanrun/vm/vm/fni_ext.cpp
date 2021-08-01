@@ -223,7 +223,7 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
 static int pushArg(fr_Env self, fr_Method method, int argCount, fr_Value *arg) {
     Env *e = (Env*)self;
     FMethod *fmethod = (FMethod*)method->internalSlot;
-    bool isInstanceM = (fmethod->flags & FFlags::Static) == 0 && (fmethod->flags & FFlags::Ctor) == 0;
+    bool isInstanceM = (fmethod->flags & FFlags::Static) == 0;// && (fmethod->flags & FFlags::Ctor) == 0;
     
     for (int i=0; i<argCount; ++i) {
         fr_Value *param = arg + i;

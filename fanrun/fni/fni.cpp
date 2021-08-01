@@ -15,6 +15,8 @@
 //#include "system.h"
 #include <string.h>
 
+static_assert(sizeof(void*) == 8, "must 64-bit");
+
 
 GcObj *fr_toGcObj(FObj *obj) {
     if (obj == nullptr) return nullptr;
@@ -194,7 +196,7 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
             --paramIndex;
         }
         if (paramIndex == -1) {
-            valueArgs[i].i = va_arg(args, int64_t);
+            valueArgs[i].h = va_arg(args, fr_Obj);
             continue;
         }
         
@@ -202,7 +204,7 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
             valueArgs[i].b = va_arg(args, int);
         }
         else {
-            valueArgs[i].i = va_arg(args, int64_t);
+            valueArgs[i].h = va_arg(args, fr_Obj);
         }
     }
     ret.i = 0;
@@ -229,19 +231,12 @@ fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, v
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
-        if ((method->flags & FFlags_Static) == 0) {
-            --paramIndex;
-        }
-        if (paramIndex == -1) {
-            valueArgs[i].i = va_arg(args, int64_t);
-            continue;
-        }
         
         if (strcmp(method->paramsList[paramIndex].type, "sys_Bool") == 0) {
             valueArgs[i].b = va_arg(args, int);
         }
         else {
-            valueArgs[i].i = va_arg(args, int64_t);
+            valueArgs[i].h = va_arg(args, fr_Obj);
         }
     }
     ret.i = 0;

@@ -50,25 +50,8 @@ FMethod *PodManager::getMethod(Env *env, FPod *curPod, FMethodRef &methodRef) {
     if (!methodRef.c_method) {
         std::string methodName = curPod->names[methodRef.name];
         FType *type = getType(env, curPod, methodRef.parent);
-        
-        auto itr = type->c_methodMap.find(methodName);
-        if (itr == type->c_methodMap.end()) {
-            printf("ERROR: method not found %s\n", methodName.c_str());
-            return NULL;
-        }
-        FMethod *method = itr->second;
-        
-        //getter or setter/overload
-        if (method->paramCount != methodRef.paramCount) {
-            itr = type->c_methodMap.find(methodName +"$"+ std::to_string(methodRef.paramCount));
-            if (itr == type->c_methodMap.end()) {
-                printf("ERROR: method not found %s %d\n", methodName.c_str(), methodRef.paramCount);
-                return NULL;
-            }
-            method = itr->second;
-        }
-        
-        loadNativeMethod(method);
+
+        FMethod* method = findMethodInType(env, type, methodName, methodRef.paramCount);
         methodRef.c_method = method;
     }
     //*paramCount = methodRef.paramCount;
@@ -132,9 +115,18 @@ FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &
         }
     }
     
-    
-    assert(method);
-    
+    if (method == NULL) {
+        if (!isRootType(env, type)) {
+            FType* base = getType(env, type->c_pod, type->meta.base);
+            method = findMethodInType(env, base, name, paramCount);
+        }
+    }
+
+    if (method == NULL) {
+        printf("Not found method:%s.%s.$d\n", type->c_mangledName.c_str(), name.c_str(), paramCount);
+        abort();
+    }
+
     loadNativeMethod(method);
     return method;
 }

@@ -329,11 +329,19 @@ bool Env::fitType(FType * a, FType * b) {
 void Env::call(FMethod *method, int paramCount/*without self*/) {
     assert(method);
     //assert(curFrame->operandStack.size() >= paramCount);
+    if (method->paramCount != paramCount) {
+        printf("ERROR: %s paramCount %d != %d\n", method->c_mangledName.c_str() ,method->paramCount, paramCount);
+        abort();
+    }
     
     if (trace) {
         printf("before call:");
         printOperandStack();
         printf("\n");
+
+        /*if (method->c_mangledName == "std_PodList_findPod") {
+            printf("XX");
+        }*/
     }
     
 //    if (getError()) {
@@ -604,7 +612,7 @@ void Env::printError(FObj * err) {
     printf("error: %s\n", name.c_str());
     //TODO call Err.trace
     
-    FMethod *method = podManager->findMethodInType(this, ftype, "trace", 0);
+    FMethod *method = podManager->findMethod(this, "sys", "Err", "trace", 0);
     fr_TagValue val;
     val.any.o = err;
     val.type = fr_vtObj;

@@ -35,16 +35,16 @@ bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type) {
     return false;
 }
 
-void fr_VTable_init(fr_Env env, fr_Type type) {
-    type->name = "";
-    type->base = NULL;
-    type->mixinCount = 0;
-    type->fieldCount = 0;
-    type->methodCount = 0;
-    type->allocSize = 0;
-    type->reflectObj = NULL;
-    type->staticInited = false;
-}
+//void fr_VTable_init(fr_Env env, fr_Type type) {
+//    type->name = "";
+//    type->base = NULL;
+//    type->mixinCount = 0;
+//    type->fieldCount = 0;
+//    type->methodCount = 0;
+//    type->allocSize = 0;
+//    type->reflectObj = NULL;
+//    type->staticInited = false;
+//}
 
 fr_Type fr_getClass(fr_Env env, fr_Obj obj) {
     if (!obj) {

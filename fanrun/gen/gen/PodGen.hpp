@@ -42,9 +42,10 @@ private:
     //void genStub(Printer *printer);
     void genStaticInit(Printer *printer);
 public:
-    TypeGen* findType(std::string &name);
+    TypeGen* findType(const std::string &name);
 private:
     void topoSortType();
+    void accType(const std::string& name);
 };
 
 #endif /* Generator_hpp */

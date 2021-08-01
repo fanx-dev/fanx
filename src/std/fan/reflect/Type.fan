@@ -628,7 +628,7 @@ native internal rtconst class BaseType : Type
     if (_baseName != null) _base = Type.find(_baseName)
     
     if (_mixinsName.isEmpty) _mixins = [,]
-    else _mixins = _mixinsName.split('/').map { Type.find(it) }
+    else _mixins = _mixinsName.split(',').map { Type.find(it) }
 
     //make inheritance
     [Type:Obj?] inher := [:]
