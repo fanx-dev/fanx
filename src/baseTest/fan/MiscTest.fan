@@ -3,6 +3,10 @@ class MiscTest {
 	static Void main() {
 		testCast
 		testBoxing
+		testMap
+		testStrBuf
+		testStrBuf2
+		testStackTrace
 	}
 
 	static Void testCast() {
@@ -29,5 +33,37 @@ class MiscTest {
 
 		d := b + a
 		echo(d)
+	}
+
+	static Void testMap() {
+		map := [:]
+		map["a"] = 1
+		//map["b"] = 2
+
+		echo(map)
+	}
+
+	static Void testStrBuf() {
+		buf := StrBuf()
+		buf.addChar('a')
+		buf.addChar('b')
+
+		i1 := buf[0]
+		assert(i1 == 'a')
+		i2 := buf[1]
+		assert(i2 == 'b')
+
+		str := buf.toStr
+		assert(str == "ab")
+	}
+
+	static Void testStrBuf2() {
+		a := "sys"
+		b := [,]
+		echo("addPod:$a $b")
+	}
+
+	static Void testStackTrace() {
+		Err().trace
 	}
 }

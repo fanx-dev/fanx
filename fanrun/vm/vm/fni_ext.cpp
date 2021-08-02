@@ -216,7 +216,8 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size) {
 
 fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramCount) {
     Env *e = (Env*)self;
-    FMethod *m = e->podManager->findMethodInType(e, (FType*)type->internalType, name, paramCount);
+    FMethod *m = e->podManager->findMethodInType(e, (FType*)type->internalType, name, paramCount, false);
+    if (!m) return NULL;
     return (fr_Method)m->c_reflectSlot;
 }
 
@@ -307,10 +308,11 @@ void fr_callNonVirtual(fr_Env self, fr_Method method
 fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
     Env *e = (Env*)self;
     FField *ff = e->podManager->findFieldInType(e, (FType*)type->internalType, name);
+    if (!ff) return NULL;
     return (fr_Field)ff->c_reflectSlot;
 }
 
-void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg) {
+void fr_setStaticField(fr_Env self, fr_Field field, fr_Value *arg) {
     Env *e = (Env*)self;
     FField *ff = (FField*)field->internalSlot;
     //e->lock();
@@ -324,7 +326,7 @@ void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg)
     e->setStaticField(ff, &val);
     //e->unlock();
 }
-bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val) {
+bool fr_getStaticField(fr_Env self, fr_Field field, fr_Value *val) {
     Env *e = (Env*)self;
     //e->lock();
     FField *ffield = (FField*)field->internalSlot;
@@ -336,7 +338,7 @@ bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val)
     //e->unlock();
     return rc;
 }
-void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *arg) {
+void fr_setInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *arg) {
     Env *e = (Env*)self;
     FField *ff = (FField*)field->internalSlot;
     //e->lock();
@@ -347,14 +349,14 @@ void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value
     } else {
         val = *arg;
     }
-    e->setInstanceField(*bottom, ff, &val);
+    e->setInstanceField(fr_getPtr(self, bottom), ff, &val);
     //e->unlock();
 }
-bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *val) {
+bool fr_getInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *val) {
     Env *e = (Env*)self;
     //e->lock();
     FField *ffield = (FField*)field->internalSlot;
-    bool rc = e->getInstanceField(*bottom, (FField *)field, val);
+    bool rc = e->getInstanceField(fr_getPtr(self, bottom), ffield, val);
     fr_ValueType vtype = e->podManager->getValueType(e, ffield->c_parent->c_pod, ffield->type);
     if (val && vtype == fr_vtObj) {
         val->h = fr_toHandle(self, (FObj*)val->o);

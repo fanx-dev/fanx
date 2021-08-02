@@ -45,7 +45,6 @@ native internal rtconst class PodList {
   internal static Void addPod(Pod pod) {
     cur.podList.add(pod)
     cur.podMap[pod.name] = pod
-    echo("addPod:$pod.name, $cur.podMap")
   }
 
   override Bool isImmutable() {

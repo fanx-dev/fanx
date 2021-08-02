@@ -345,7 +345,7 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
             printf("XX");
         }
 
-        if (method->c_mangledName == "std_Map_toStr") {
+        if (method->c_mangledName == "std_MapEntryList_setByKey") {
             printf("XX");
         }
     }
@@ -553,9 +553,9 @@ bool Env::getStaticField(FField *field, fr_Value *val) {
     return false;
 }
 
-void Env::setInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
+void Env::setInstanceField(FObj *obj, FField *field, fr_Value *val) {
     if ((field->flags & FFlags::Static)==0) {
-        fr_Value *sfield = podManager->getInstanceFieldValue((FObj*)bottom.o, field);
+        fr_Value *sfield = podManager->getInstanceFieldValue(obj, field);
         fr_ValueType vtype = podManager->getValueType(this, field->c_parent->c_pod, field->type);
         //assert(vtype == val->type);
         
@@ -570,9 +570,9 @@ void Env::setInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
         }
     }
 }
-bool Env::getInstanceField(fr_Value &bottom, FField *field, fr_Value *val) {
+bool Env::getInstanceField(FObj* obj, FField *field, fr_Value *val) {
     if ((field->flags & FFlags::Static)==0) {
-        fr_Value *sfield = podManager->getInstanceFieldValue((FObj*)bottom.o, field);
+        fr_Value *sfield = podManager->getInstanceFieldValue(obj, field);
         //fr_ValueType vtype = podManager->getValueType(this, field->c_parent->c_pod, field->type);
         *val = *sfield;
         //val->type = vtype;

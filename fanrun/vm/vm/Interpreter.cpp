@@ -324,7 +324,7 @@ bool Interpreter::exeStep() {
             context->pop(&val);
             FField *f = context->podManager->getField(context, frame()->curPod, i1);
             
-            context->getInstanceField(val.any, f, &val.any);
+            context->getInstanceField((FObj*)val.any.o, f, &val.any);
             val.type = context->podManager->getValueType(context, frame()->curPod, f->type);
             context->push(&val);
             break;
@@ -336,7 +336,7 @@ bool Interpreter::exeStep() {
             context->pop(&obj);
             
             FField *f = context->podManager->getField(context, frame()->curPod, i1);
-            context->setInstanceField(obj.any, f, &var.any);
+            context->setInstanceField((FObj*)obj.any.o, f, &var.any);
             break;
         }
         case FOp::LoadStatic:
@@ -749,10 +749,10 @@ bool Interpreter::compareSame() {
         return false;
     }
     else if (p1.type == fr_vtObj) {
-        return (p1.any.o == p1.any.o);
+        return (p1.any.o == p2.any.o);
     }
     else {
-        return (p1.any.i == p1.any.i);
+        return (p1.any.i == p2.any.i);
     }
 }
 

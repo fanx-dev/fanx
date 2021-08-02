@@ -20,13 +20,17 @@ bool isBuildValueType(const char *name, fr_ValueType *vt) {
     return false;
 }
 
-fr_Obj std_Method_invoke(fr_Env env, fr_Obj self, fr_Int argCount, ...) {
+static fr_Method getReflectMethod(fr_Env env, fr_Obj self) {
     fr_Type type = fr_getObjType(env, self);
     fr_Field field = fr_findField(env, type, "_id");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Method method = (fr_Method)fargs[1].i;
+    fr_Value fargs;
+    fr_getInstanceField(env, self, field, &fargs);
+    fr_Method method = (fr_Method)fargs.i;
+    return method;
+}
+
+fr_Obj std_Method_invoke(fr_Env env, fr_Obj self, fr_Int argCount, ...) {
+    fr_Method method = getReflectMethod(env, self);
     
     bool unboxSelf = false;
     if ((method->flags & FFlags_Static) == 0) {
@@ -108,93 +112,57 @@ fr_Obj std_Method_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr
 }
 
 
-fr_Obj std_MethodFunc_call__0(fr_Env env, fr_Obj self) {
+static fr_Obj std_MethodFunc_getMethod(fr_Env env, fr_Obj self) {
     fr_Type type = fr_getObjType(env, self);
     fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Value fargs;
+    fr_getInstanceField(env, self, field, &fargs);
+    fr_Obj method = fargs.h;
+    return method;
+}
+
+fr_Obj std_MethodFunc_call__0(fr_Env env, fr_Obj self) {
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 0);
 }
 fr_Obj std_MethodFunc_call__1(fr_Env env, fr_Obj self, fr_Obj a) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 1, a);
 }
 fr_Obj std_MethodFunc_call__2(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 2, a, b);
 }
 fr_Obj std_MethodFunc_call__3(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 3, a, b, c);
 }
 fr_Obj std_MethodFunc_call__4(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 4, a, b, c, d);
 }
 fr_Obj std_MethodFunc_call__5(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 5, a, b, c, d, e);
 }
 fr_Obj std_MethodFunc_call__6(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 6, a, b, c, d, e, f);
 }
 fr_Obj std_MethodFunc_call__7(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 7, a, b, c, d, e, f, g);
 }
 fr_Obj std_MethodFunc_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g, fr_Obj h) {
-    fr_Type type = fr_getObjType(env, self);
-    fr_Field field = fr_findField(env, type, "method");
-    fr_Value fargs[2];
-    fargs[0].h = self;
-    fr_getInstanceField(env, fargs, field, fargs+1);
-    fr_Obj method = fargs[1].h;
+    fr_Method method = std_MethodFunc_getMethod(env, self);
     
     return std_Method_invoke(env, method, 8, a, b, c, d, e, f, g, h);
 }

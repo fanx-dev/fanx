@@ -308,12 +308,10 @@ bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val) {
     if (field == NULL) return false;
     
     if ((field->flags & FFlags_Static) != 0) {
-        fr_setStaticField(env, type, field, &val);
+        fr_setStaticField(env, field, &val);
     }
     else {
-        fr_Value self;
-        self.h = obj;
-        fr_setInstanceField(env, &self, field, &val);
+        fr_setInstanceField(env, obj, field, &val);
     }
     return true;
 }
@@ -327,12 +325,10 @@ fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
     if (field == NULL) return ret;
     
     if ((field->flags & FFlags_Static) != 0) {
-        fr_getStaticField(env, type, field, &ret);
+        fr_getStaticField(env, field, &ret);
     }
     else {
-        fr_Value self;
-        self.h = obj;
-        fr_getInstanceField(env, &self, field, &ret);
+        fr_getInstanceField(env, obj, field, &ret);
     }
     return ret;
 }

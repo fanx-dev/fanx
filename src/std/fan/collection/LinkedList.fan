@@ -72,5 +72,18 @@ virtual class LinkedList {
   }
 
   Bool isEmpty() { head.next == head }
+
+
+  override Str toStr() {
+    buf := StrBuf().add("LinkList[")
+    itr := first
+    while (itr != end) {
+      if (itr != first) buf.addChar(',')
+      buf.add(itr)
+      itr = itr.next
+    }
+    buf.addChar(']')
+    return buf.toStr
+  }
 }
 

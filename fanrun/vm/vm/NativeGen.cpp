@@ -205,16 +205,24 @@ void NativeGen::genNativeType(FPod *pod, FType *type, std::string &preName, Prin
     std::string name;
     for (int i=0; i<type->methods.size(); ++i) {
         FMethod *method = &type->methods[i];
-        
-        if ((type->meta.flags & FFlags::Native)==0
-            && (method->flags & FFlags::Native)==0) {
-            continue;
+
+        //special call method
+        if ((preName == "sys_BindFunc_" || preName == "sys_Func_" ||
+            preName == "std_Method_" || preName == "std_MethodFunc_")
+            && pod->names[method->name] == "call") {
+            //pass
         }
-        if (!method->code.isEmpty()) {
-            continue;
-        }
-        if (method->flags & FFlags::Abstract) {
-            continue;
+        else {
+            if ((type->meta.flags & FFlags::Native) == 0
+                && (method->flags & FFlags::Native) == 0) {
+                continue;
+            }
+            if (!method->code.isEmpty()) {
+                continue;
+            }
+            if (method->flags & FFlags::Abstract) {
+                continue;
+            }
         }
         
 //        std::string &methodName = pod->names[method->name];

@@ -75,12 +75,6 @@
     <ClCompile Include="..\..\fni\fni.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\sys\pod_sys_native.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\pod_sys_register.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\sys\sys_Array.c">
       <Filter>源文件</Filter>
     </ClCompile>

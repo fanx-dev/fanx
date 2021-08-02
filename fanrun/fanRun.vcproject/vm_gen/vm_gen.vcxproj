@@ -39,8 +39,6 @@
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
     <ClCompile Include="..\..\fni\fni.cpp" />
-    <ClCompile Include="..\..\fni\sys\pod_sys_native.c" />
-    <ClCompile Include="..\..\fni\sys\pod_sys_register.c" />
     <ClCompile Include="..\..\fni\sys\sys_Array.c" />
     <ClCompile Include="..\..\fni\sys\sys_Bool.c" />
     <ClCompile Include="..\..\fni\sys\sys_Enum.c" />

@@ -48,10 +48,9 @@ static std::string getPodName(fr_Env env, fr_Obj pod) {
     //get pod name
     fr_Type podType = fr_getObjType(env, pod);
     fr_Field field = fr_findField(env, podType, "_name");
-    fr_Value args[2];
-    args[0].h = pod;
-    fr_getInstanceField(env, args, field, args + 1);
-    std::string podName = fr_getStrUtf8(env, args[1].h);
+    fr_Value args;
+    fr_getInstanceField(env, pod, field, &args);
+    std::string podName = fr_getStrUtf8(env, args.h);
     return podName;
 }
 

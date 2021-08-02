@@ -10,8 +10,7 @@ void std_BaseType_doInit(fr_Env env, fr_Obj self) {
     fr_Type typeType = fr_getObjType(env, self);
     fr_Field field = fr_findField(env, typeType, "_qname");
     fr_Value args[2];
-    args[0].h = self;
-    fr_getInstanceField(env, args, field, args+1);
+    fr_getInstanceField(env, self, field, args+1);
     std::string qname = fr_getStrUtf8(env, args[1].h);
     std::string::size_type p = qname.find("::");
     if (p == std::string::npos) abort();

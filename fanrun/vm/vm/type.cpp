@@ -17,7 +17,7 @@ void convertFromFType(Env* env, FType* ftype, fr_Type type) {
     }
 
     type->fieldCount = ftype->fields.size();
-    type->fieldList = (struct fr_Field_*)malloc(sizeof(struct fr_Field_) * ftype->fields.size());
+    type->fieldList = (struct fr_Field_*)calloc(1, sizeof(struct fr_Field_) * ftype->fields.size());
     for (int i = 0; i < ftype->fields.size(); ++i) {
         FField& field = ftype->fields[i];
         fr_Field f = type->fieldList+i;
@@ -48,7 +48,7 @@ void convertFromFType(Env* env, FType* ftype, fr_Type type) {
     }
     
     type->methodCount = ftype->methods.size();
-    type->methodList = (struct fr_Method_*)malloc(sizeof(struct fr_Method_) * ftype->methods.size());
+    type->methodList = (struct fr_Method_*)calloc(1, sizeof(struct fr_Method_) * ftype->methods.size());
     for (int i = 0; i < ftype->methods.size(); ++i) {
         FMethod& method = ftype->methods[i];
         fr_Method f = type->methodList + i;
@@ -61,7 +61,7 @@ void convertFromFType(Env* env, FType* ftype, fr_Type type) {
         f->func = NULL;
         f->parent = type;
         f->paramsCount = method.paramCount;
-        f->paramsList = (struct fr_MethodParam_*)malloc(sizeof(struct fr_MethodParam_) * method.paramCount);
+        f->paramsList = (struct fr_MethodParam_*)calloc(1, sizeof(struct fr_MethodParam_) * method.paramCount);
 
         for (int j = 0; j < method.paramCount; ++j) {
             FMethodVar& var = method.vars[j];

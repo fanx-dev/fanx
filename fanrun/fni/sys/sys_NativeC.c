@@ -114,7 +114,7 @@ char *getTraceString(fr_Env env)
 
 
 fr_Int sys_NativeC_toId(fr_Env env, fr_Obj self) {
-    return (fr_Int)self;
+    return (fr_Int)fr_getPtr(env, self);
 }
 fr_Obj sys_NativeC_typeName(fr_Env env, fr_Obj self) {
     const char *name = fr_getTypeName(env, self);

@@ -49,7 +49,7 @@ public:
     FMethod *getVirtualMethod(Env *env, FType *instanceType, FPod *curPod, FMethodRef *methodRef);
 
     FMethod *findMethod(Env *env, const std::string &pod, const std::string &type, const std::string &name, int paramCount);
-    FMethod *findMethodInType(Env *env, FType *type, const std::string &name, int paramCount);
+    FMethod *findMethodInType(Env *env, FType *type, const std::string &name, int paramCount, bool checked = true);
     FMethod *toVirtualMethod(Env *env, FType *type, FMethod *method);
     FMethod *findVirtualMethod(Env *env, FType *type, const std::string &name, int paramCount);
     

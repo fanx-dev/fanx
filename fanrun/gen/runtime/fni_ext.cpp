@@ -150,7 +150,12 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
             return method;
         }
     }
-    //TODO find in base type
+
+    //find in base class
+    fr_Type base = type->base;
+    if (base) {
+        return fr_findMethodN(self, base, name, paramCount);
+    }
     return NULL;
 }
 
@@ -202,7 +207,7 @@ fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
     return NULL;
 }
 
-void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg) {
+void fr_setStaticField(fr_Env self, fr_Field field, fr_Value *arg) {
     if (strcmp(field->type, "sys::Bool") == 0) {
         fr_Bool *addr = ((fr_Bool*)field->pointer);
         *addr = arg->b;
@@ -212,7 +217,7 @@ void fr_setStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *arg)
     *addr = arg->i;
 }
 
-bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val) {
+bool fr_getStaticField(fr_Env self, fr_Field field, fr_Value *val) {
     if (strcmp(field->type, "sys::Bool") == 0) {
         fr_Bool *addr = ((fr_Bool*)field->pointer);
         val->b = *addr;
@@ -221,14 +226,14 @@ bool fr_getStaticField(fr_Env self, fr_Type type, fr_Field field, fr_Value *val)
     val->i = *((fr_Int*)field->pointer);
     return true;
 }
-void fr_setInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *arg) {
+void fr_setInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *arg) {
     //Env *e = (Env*)self;
-    char *v = ((char*)bottom->p) + field->offset;
+    char *v = ((char*)fr_getPtr(self, bottom)) + field->offset;
     *((uint64_t*)v) = arg->i;
 }
-bool fr_getInstanceField(fr_Env self, fr_Value *bottom, fr_Field field, fr_Value *val) {
+bool fr_getInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *val) {
     //Env *e = (Env*)self;
-    char *v = ((char*)bottom->p) + field->offset;
+    char *v = ((char*)fr_getPtr(self, bottom)) + field->offset;
     val->i = *((uint64_t*)v);
     return true;
 }

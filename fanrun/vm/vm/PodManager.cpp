@@ -26,17 +26,12 @@ void PodManager::loadNativeMethod(FMethod *method) {
     }
     FType *type = method->c_parent;
     FPod *pod = type->c_pod;
-    std::string &methodName = pod->names[method->name];
     if (!method->c_native
         && ((method->flags & FFlags::Native) || (method->c_parent->meta.flags & FFlags::Native))) {
-        std::string fullName = pod->name + "_" + type->c_name + "_"+methodName;
+        std::string fullName = pod->name + "_" + type->c_name + "_"+ method->c_stdName;
         method->c_native = (FNativeFunc)nativeFuncMap[fullName];
-        if (method->c_native == NULL) {
-            fullName += std::to_string(method->paramCount);
-            method->c_native = (FNativeFunc)nativeFuncMap[fullName];
-        }
         
-        if (method->c_native == NULL && method->code.isEmpty()) {
+        if (method->c_native == NULL && method->code.isEmpty() && (method->flags & FFlags::Native)) {
             printf("ERROR: not found native func %s\n", fullName.c_str());
             if ((method->flags & FFlags::Native) != 0) {
                 abort();
@@ -93,7 +88,7 @@ FMethod *PodManager::getVirtualMethod(Env *env, FType *instanceType, FPod *curPo
     return fr->second;
 }
 
-FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &name, int paramCount) {
+FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &name, int paramCount, bool checked) {
     initTypeAllocSize(env, type);
     
     FMethod *method = NULL;
@@ -123,8 +118,13 @@ FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &
     }
 
     if (method == NULL) {
-        printf("Not found method:%s.%s.$d\n", type->c_mangledName.c_str(), name.c_str(), paramCount);
-        abort();
+        if (checked) {
+            printf("Not found method:%s.%s.$d\n", type->c_mangledName.c_str(), name.c_str(), paramCount);
+            abort();
+        }
+        else {
+            return NULL;
+        }
     }
 
     loadNativeMethod(method);

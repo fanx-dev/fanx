@@ -120,8 +120,8 @@ public:
     void setStaticField(FField *field, fr_Value *val);
     bool getStaticField(FField *field, fr_Value *val);
     
-    void setInstanceField(fr_Value &bottom, FField *field, fr_Value *val);
-    bool getInstanceField(fr_Value &bottom, FField *field, fr_Value *val);
+    void setInstanceField(FObj* obj, FField *field, fr_Value *val);
+    bool getInstanceField(FObj* obj, FField *field, fr_Value *val);
     
     ////////////////////////////
     // exception
