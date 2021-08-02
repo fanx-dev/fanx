@@ -95,22 +95,14 @@ void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
     fr_Array *array;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
-    memset(array->data, (int64_t)obj, times);
+
+    for (int i = 0; i < times; ++i) {
+        ((FObj**)array->data)[i] = fr_getPtr(env, obj);
+    }
+    //memset(array->data, (int64_t)obj, times);
 }
-//fr_Obj sys_Array_fromJava(fr_Env env, fr_Obj of, fr_Obj array) {
-//    return NULL;
-//}
-//fr_Obj sys_Array_toJava(fr_Env env, fr_Obj self, fr_Obj clz) {
-//    return NULL;
-//}
+
 void sys_Array_finalize(fr_Env env, fr_Obj self) {
-    //fr_Array *array;
-    //fr_lock(env);
-    //array = (fr_Array *)fr_getPtr(env, self);
-    //free(array->data);
-    //array->data = NULL;
-    //array->size = 0;
-    //fr_unlock(env);
 }
 void sys_Array_static__init(fr_Env env) {
     return;

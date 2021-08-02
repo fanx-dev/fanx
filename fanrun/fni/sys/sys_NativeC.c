@@ -135,10 +135,11 @@ fr_Obj sys_NativeC_stackTrace(fr_Env env) {
     return fr_newStrUtf8(env, data);
 }
 
-
+//TODO
 fr_Obj sys_Str_format(fr_Env env, fr_Obj format, fr_Obj args) {
     return 0;
 }
+//TODO
 fr_Obj sys_Str_intern(fr_Env env, fr_Obj self) {
     return self;
 }

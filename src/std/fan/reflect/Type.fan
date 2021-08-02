@@ -514,6 +514,11 @@ native abstract rtconst class Type
 
   internal Bool isObj() { qname == "sys::Obj" }
 
+
+//////////////////////////////////////////////////////////////////////////
+// call by sys pod
+//////////////////////////////////////////////////////////////////////////
+
   internal static Obj? objTrap(Obj self, Str name, Obj?[]? args) {
     type := self.typeof
     slot := type.slot(name)
@@ -541,6 +546,23 @@ native abstract rtconst class Type
     }
     
     throw ArgErr.make("Invalid number of args to get or set field '" + type.qname()+"."+name + "'("+args+")");
+  }
+
+  internal static Enum? enumFromStr(Str type, Str name, Bool checked) {
+    Type t = Type.find(type, checked)
+    if (t.flags.and(ConstFlags.Enum) != 0) {
+      try {
+        f := t.field(name)
+        val := f.get()
+        if (val is Enum) {
+          return (Enum) val;
+        }
+      } catch (Err e) {
+      }
+    }
+    if (!checked)
+      return null;
+    throw ParseErr.make(name);
   }
 }
 

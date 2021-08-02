@@ -121,97 +121,17 @@ fr_Int sys_Int_shiftl_val(fr_Env env, fr_Int self, fr_Int b) {
     return self << b;
 }
 fr_Int sys_Int_shiftr_val(fr_Env env, fr_Int self, fr_Int b) {
-    return self >> b;
+    return ((uint64_t)self) >> b;
 }
-//TODO
+
 fr_Int sys_Int_shifta_val(fr_Env env, fr_Int self, fr_Int b) {
     return self >> b;
 }
-/*
-fr_Int sys_Int_abs_val(fr_Env env, fr_Int self) {
-    if (self < 0) {
-        return -self;
-    }
-    return (self);
-}
-fr_Int sys_Int_min_val(fr_Env env, fr_Int self, fr_Int that) {
-    if (self < that) {
-        return self;
-    }
-    return that;
-}
-fr_Int sys_Int_max_val(fr_Env env, fr_Int self, fr_Int that) {
-    if (self > that) {
-        return self;
-    }
-    return that;
-}
-*/
+
 fr_Int sys_Int_pow_val(fr_Env env, fr_Int self, fr_Int apow) {
     return powl(self, apow);
 }
-/*
-fr_Bool sys_Int_isEven_val(fr_Env env, fr_Int self) {
-    return (1 & self) == 0;
-}
-fr_Bool sys_Int_isOdd_val(fr_Env env, fr_Int self) {
-    return (1 & self) != 0;
-}
-fr_Bool sys_Int_isSpace_val(fr_Env env, fr_Int self) {
-    return iswspace((wchar_t)self);
-}
-fr_Bool sys_Int_isAlpha_val(fr_Env env, fr_Int self) {
-    return iswalpha((wchar_t)self);
-}
-fr_Bool sys_Int_isAlphaNum_val(fr_Env env, fr_Int self) {
-    return iswalnum((wchar_t)self);
-}
-fr_Bool sys_Int_isUpper_val(fr_Env env, fr_Int self) {
-    return iswupper((wchar_t)self);
-}
-fr_Bool sys_Int_isLower_val(fr_Env env, fr_Int self) {
-    return iswlower((wchar_t)self);
-}
-fr_Int sys_Int_upper_val(fr_Env env, fr_Int self) {
-    return towupper((wchar_t)self);
-}
-fr_Int sys_Int_lower_val(fr_Env env, fr_Int self) {
-    return towlower((wchar_t)self);
-}
-fr_Bool sys_Int_isDigit_val(fr_Env env, fr_Int self, fr_Int radix) {
-    if (radix == 16) {
-        return iswxdigit((wchar_t)self);
-    }
-    else if (radix == 10) {
-        return iswdigit((wchar_t)self);
-    }
-    else {
-        //TODO;
-        return false;
-    }
-}
 
-fr_Obj sys_Int_toDigit_val(fr_Env env, fr_Int self, fr_Int radix) {
-    return 0;
-}
-fr_Obj sys_Int_fromDigit_val(fr_Env env, fr_Int self, fr_Int radix) {
-    return 0;
-}
-fr_Bool sys_Int_equalsIgnoreCase_val(fr_Env env, fr_Int self, fr_Int ch) {
-    return 0;
-}
-fr_Bool sys_Int_localeIsUpper_val(fr_Env env, fr_Int self) {
-    return 0;
-}
-fr_Bool sys_Int_localeIsLower_val(fr_Env env, fr_Int self) {
-    return 0;
-}
-fr_Int sys_Int_localeUpper_val(fr_Env env, fr_Int self) {
-    return 0;
-}
-fr_Int sys_Int_localeLower_val(fr_Env env, fr_Int self) {
-    return 0;
-}*/
 fr_Obj sys_Int_toStr_val(fr_Env env, fr_Int self) {
     char buf[128];
     buf[0] = 0;
@@ -281,14 +201,3 @@ fr_Float sys_Int_toFloat_val(fr_Env env, fr_Int self) { return self; }
 void sys_Int_make_val(fr_Env env, fr_Int self) {
     return;
 }
-//void sys_Int_static__init(fr_Env env) {
-//    fr_Value val;
-//    //val.type = fr_vtInt;
-//    val.i = 0;
-//    fr_setStaticFieldS(env, "sys", "Int", "defVal", &val);
-//    val.i = INT64_MAX;
-//    fr_setStaticFieldS(env, "sys", "Int", "maxVal", &val);
-//    val.i = INT64_MIN;
-//    fr_setStaticFieldS(env, "sys", "Int", "minVal", &val);
-//    return;
-//}
