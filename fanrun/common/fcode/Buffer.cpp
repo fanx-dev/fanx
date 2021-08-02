@@ -17,36 +17,17 @@ Buffer::Buffer(uint8_t* data, size_t size, bool owner) :
     data(data), _size(size), owner(owner), pos(0) {
 }
 
-void Buffer::readBuf(Buffer &out, bool copy) {
-    out.pos = 0;
-    size_t size = readUInt16();
-    out._size = size;
-    if (pos + size >= _size) {
-        return;
-    }
-    uint8_t *data = readData((int)size);
-    if (copy) {
-        out.data = (uint8_t*)malloc(size);
-        memcpy(out.data, data, size);
-        out.owner = true;
-    } else {
-        out.data = data;
-        out.owner = false;
-    }
-}
-
-//void Buffer::sub(int pos, int size, Buffer &out) {
-//    if (pos + size > this->size) return;
-//    out.data = data + pos;
-//    out.pos = 0;
-//    out.size = size;
-//    out.owner = false;
-//}
-
 Buffer::~Buffer() {
     if (owner) {
         free(data);
     }
+}
+
+void Buffer::reset(uint8_t* data, size_t size, bool owner) {
+    this->data = data;
+    this->_size = size;
+    this->owner = owner;
+    this->pos = 0;
 }
 
 void Buffer::seek(int pos) {
@@ -179,14 +160,39 @@ std::string Buffer::readString() {
     }
 }
 
-unsigned char * Buffer::readData(int len) {
+unsigned char * Buffer::readData(int len, bool copy) {
     unsigned char *p = data+pos;
     if (pos <= _size - len) {
         pos += len;
-        return p;
     }
     else {
-        pos = _size;
+        return NULL;
+        //len = _size - pos;
+        //pos = _size;
+    }
+
+    if (copy) {
+        uint8_t* res = (uint8_t*)malloc(len);
+        memcpy(res, p, len);
+        return res;
+    }
+    else {
         return p;
     }
+}
+
+unsigned char* Buffer::readBufData(int& len, bool copy) {
+    size_t size = readUInt16();
+    unsigned char* data = readData(size, copy);
+    len = size;
+    return data;
+}
+
+void Buffer::readBuf(Buffer& out, bool copy) {
+    int len;
+    unsigned char* data = readBufData(len, copy);
+    out.pos = 0;
+    out._size = len;
+    out.data = data;
+    out.owner = copy;
 }

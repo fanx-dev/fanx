@@ -46,7 +46,7 @@ FAttr *FAttr::readAttr(FPod *pod, Buffer &buffer) {
     }
     
     uint16_t len = buffer.readInt16();
-    unsigned char *data = buffer.readData(len);
+    unsigned char *data = buffer.readData(len, false);
     return NULL;
 }
 

@@ -383,6 +383,11 @@ void fr_throw(fr_Env self, fr_Obj err) {
     //fr_unlock(self);
 }
 
+void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter) {
+    Env *e = (Env*)self;
+    e->stackTrace(buf, size, delimiter);
+}
+
 ////////////////////////////
 // box
 ////////////////////////////

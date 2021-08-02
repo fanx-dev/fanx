@@ -62,6 +62,8 @@ void Env::start(const char* podName, const char* type, const char* name, FObj *a
     
     FObj * err = getError();
     if (err) {
+        //must clear error before printError.
+        clearError();
         printError(err);
     }
     
@@ -339,9 +341,13 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         printOperandStack();
         printf("\n");
 
-        /*if (method->c_mangledName == "std_PodList_findPod") {
+        if (method->c_mangledName == "std_PodList_addPod") {
             printf("XX");
-        }*/
+        }
+
+        if (method->c_mangledName == "std_Map_toStr") {
+            printf("XX");
+        }
     }
     
 //    if (getError()) {
@@ -609,8 +615,7 @@ void Env::throwError(FObj * err) {
 void Env::printError(FObj * err) {
     FType *ftype = fr_getFType((fr_Env)this, err);
     std::string &name = ftype->c_name;
-    printf("error: %s\n", name.c_str());
-    //TODO call Err.trace
+    printf("uncatch error: %s\n", name.c_str());
     
     FMethod *method = podManager->findMethod(this, "sys", "Err", "trace", 0);
     fr_TagValue val;
@@ -669,7 +674,7 @@ fr_Array* Env::arrayNew(FType *elemType, int32_t elemSize, size_t size) {
     
     size_t allocSize = sizeof(fr_Array)+(elemSize*(size+1));
     fr_Array *a = (fr_Array*)allocObj(arrayType, 2, (int)allocSize);
-    a->elemType = elemType;
+    a->elemType = fr_fromFType((fr_Env)this, elemType);
     a->elemSize = elemSize;
     a->valueType = podManager->getValueTypeByType(this, elemType);
     
@@ -700,16 +705,18 @@ void Env::arrayGet(fr_Array *array, size_t index, fr_Value *val) {
         }
         case 4: {
             int32_t *t = (int32_t*)array->data;
-            val->i = *t;
+            val->i = t[index];
             //resVal.type = fr_vtInt;
             break;
         }
         case 8: {
             int64_t *t = (int64_t*)array->data;
-            val->i = *t;
+            val->i = t[index];
             //resVal.type = fr_vtInt;
             break;
         }
+        default:
+            abort();
     }
     
 }
@@ -743,5 +750,7 @@ void Env::arraySet(fr_Array *array, size_t index, fr_Value *val) {
             t[index] = val->i;
             break;
         }
+        default:
+            abort();
     }
 }

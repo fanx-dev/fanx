@@ -117,13 +117,15 @@ class FMethod;
 
 class Code {
 public:
-    Buffer buf;
+    unsigned char *data;
+    int len;
     std::vector<FOpObj> ops;
 public:
     Code();
     bool read(Buffer &buffer);
     bool initOps();
-    bool isEmpty() { return buf.size() == 0; }
+    bool isEmpty() { return len == 0; }
+
 private:
     void readSwitch(Buffer &buffer, FOpObj &op);
     bool readOp(Buffer &buffer, FOpObj &op);

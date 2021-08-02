@@ -28,7 +28,7 @@ struct FType;
  */
 //FObj *fr_allocObj_internal(fr_Env self, fr_Type type, int size);
 //
-//void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
+void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
 
 
 struct FType *fr_getFType(fr_Env self, FObj *obj);

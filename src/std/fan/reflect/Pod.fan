@@ -33,13 +33,19 @@ native internal rtconst class PodList {
 
   static Pod? findPod(Str name, Bool checked := true) {
     cur.init
-    return cur.podMap.getChecked(name, checked)
+    pod := cur.podMap.getChecked(name, false)
+    if (checked && pod == null) {
+      echo(cur.podMap)
+      throw UnknownPodErr(name)
+    }
+    return pod
   }
 
   ** call in native
   internal static Void addPod(Pod pod) {
     cur.podList.add(pod)
     cur.podMap[pod.name] = pod
+    echo("addPod:$pod.name, $cur.podMap")
   }
 
   override Bool isImmutable() {

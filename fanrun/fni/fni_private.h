@@ -39,7 +39,7 @@ const char *fr_getTypeName(fr_Env self, fr_Obj obj);
 
 
 typedef struct fr_Array_ {
-    struct FType *elemType;
+    fr_Type elemType;
     int32_t valueType;
     int32_t elemSize;
     fr_Int size;

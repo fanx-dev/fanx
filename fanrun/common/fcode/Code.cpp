@@ -162,14 +162,16 @@ void Code::readSwitch(Buffer &buffer, FOpObj &op) {
 }
 
 bool Code::read(Buffer &buffer) {
-    buffer.readBuf(buf, true);
+    data = buffer.readBufData(len, true);
     return true;
 }
 
 bool Code::initOps() {
     bool ok = true;
     FOpObj op;
-    buf.seek(0);
+    Buffer buf;
+    buf.reset(data, len, false);
+
     while(!buf.isEof()) {
         ok = readOp(buf, op);
         if (!ok) {

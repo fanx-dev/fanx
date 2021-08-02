@@ -23,7 +23,9 @@ public:
     Buffer();
     Buffer(uint8_t* data, size_t size, bool owner);
     ~Buffer();
-    void readBuf(Buffer &out, bool copy);
+
+    void reset(uint8_t* data, size_t size, bool owner);
+    
     size_t getPos() { return pos; }
     bool isEof() { return pos >= _size; }
     size_t size() { return _size; }
@@ -40,8 +42,11 @@ public:
     double readDouble();
     std::string readString();
     
-    unsigned char * readData(int len);
+    void readBuf(Buffer& out, bool copy);
+    unsigned char* readData(int len, bool copy);
+    unsigned char* readBufData(int &len, bool copy);
     
     void seek(int pos);
+    void _seek(int p) { pos = p; }
 };
 #endif /* defined(__zip__Buffer__) */

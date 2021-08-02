@@ -16,7 +16,8 @@
 struct InterStackFrame : public StackFrame {
     friend Interpreter;
 private:
-    Buffer *code;
+    unsigned char*code;
+    int codeLen;
     int pc;
     
     FErrTable *_errTable;
@@ -63,8 +64,8 @@ bool Interpreter::run(Env *env) {
         iframe->curPod = nullptr;
     }
     
-    iframe->code = &frame->method->code.buf;
-    iframe->code->seek(0);
+    iframe->code = frame->method->code.data;
+    iframe->codeLen = frame->method->code.len;
     
     //init local vars
     this->initVars();
@@ -132,7 +133,7 @@ bool Interpreter::exception() {
                                     , type, frame()->curPod, trap.type);
             if (fit) {
                 frame()->pc = trap.handler;
-                frame()->code->seek(frame()->pc);
+                //frame()->code->seek(frame()->pc);
                 pushObj(err);
                 context->clearError();
                 return true;
@@ -145,9 +146,9 @@ bool Interpreter::exception() {
 
 void Interpreter::runCode() {
     frame()->pc = 0;
-    frame()->code->seek(0);
+    //frame()->code->seek(0);
     do {
-        if (frame()->pc >= frame()->code->size()) {
+        if (frame()->pc >= frame()->codeLen) {
             break;
         }
         if (!exeStep()) {
@@ -157,8 +158,10 @@ void Interpreter::runCode() {
 }
 
 bool Interpreter::exeStep() {
-    Buffer *code = frame()->code;
-    FOp opcode = (FOp)code->readUInt8();
+    Buffer code(frame()->code, frame()->codeLen, false);
+    code._seek(frame()->pc);
+
+    FOp opcode = (FOp)code.readUInt8();
     
     if (context->trace) {
         const char *opName = OpNames[(int)opcode];
@@ -175,38 +178,38 @@ bool Interpreter::exeStep() {
         case FOpArg::None:
             break;
         case FOpArg::Int:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::Float:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::Str:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::Duration:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::Uri:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::Register:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::TypeRef:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::FieldRef:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::MethodRef:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::JumpA:
-            i1 = code->readUInt16();
+            i1 = code.readUInt16();
             break;
         case FOpArg::TypePair:
-            i1 = code->readUInt16();
-            i2 = code->readUInt16();
+            i1 = code.readUInt16();
+            i2 = code.readUInt16();
             break;
         default:
             break;
@@ -555,10 +558,10 @@ bool Interpreter::exeStep() {
             break;
         }
         case FOp::Switch: {
-            uint16_t count = code->readUInt16();
+            uint16_t count = code.readUInt16();
             uint16_t *table = (uint16_t*)malloc(sizeof(uint16_t)*count);
             for (int i=0; i<count; ++i) {
-                table[i] = code->readUInt16();
+                table[i] = code.readUInt16();
             }
             fr_Int i = popInt();
             
@@ -618,11 +621,11 @@ bool Interpreter::exeStep() {
     }
 
 Step_next:
-    frame()->pc = (int)code->getPos();
+    frame()->pc = (int)code.getPos();
     return true;
     
 Step_jump:
-    code->seek(frame()->pc);
+    code.seek(frame()->pc);
     return true;
     
 Step_return:
