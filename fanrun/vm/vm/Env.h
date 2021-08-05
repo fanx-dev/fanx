@@ -82,25 +82,14 @@ public:
     fr_Obj newGlobalRef(FObj * obj);
     void deleteGlobalRef(fr_Obj obj);
     
-    FObj * allocObj(FType *type, int addRef, int size = 0);
     void walkLocalRoot(Collector *gc);
-    void gc();
-    
-    ////////////////////////////
-    // other
-    ////////////////////////////
-    
-    FObj * box(fr_Value &value, fr_ValueType vtype);
-    fr_ValueType unbox(FObj * obj, fr_Value &value);
     
     ////////////////////////////
     // type
     ////////////////////////////
     
-    FType * findType(std::string pod, std::string type);
-    FType * toType(fr_ValueType vt);
-    FType * getInstanceType(fr_TagValue *obj);
-    bool fitType(FType * a, FType * b);
+    FType * findType(const char *pod, const char *type);
+    FType* toType(fr_ValueType vt);
     
     ////////////////////////////
     // call
@@ -130,17 +119,11 @@ public:
     FObj * getError();
     void throwError(FObj * err);
     void throwNPE();
-    void throwNew(const char* podName, const char* typeName, const char* msg, int addRef);
     void clearError();
-    void printError(FObj * err);
     
     void printOperandStack();
     void stackTrace(char *buf, int size, const char *delimiter);
     void printStackTrace();
-    
-    fr_Array *arrayNew(FType *elemType, int32_t elemSize, size_t size);
-    void arrayGet(fr_Array *array, size_t index, fr_Value *val);
-    void arraySet(fr_Array *array, size_t index, fr_Value *val);
 };
 
 #endif /* defined(__vm__Interpreter__) */

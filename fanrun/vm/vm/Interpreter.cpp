@@ -268,8 +268,7 @@ bool Interpreter::exeStep() {
             break;
         }
         case FOp::LoadStr: {
-            FObj * obj = context->podManager->objFactory.getString(context
-                                                        , frame()->curPod, i1);
+            FObj * obj = fr_getConstString_(context, frame()->curPod, i1);
             //addLocalRef(obj);
             //operandStack.pushObj(obj);
             fr_TagValue entry;
@@ -515,7 +514,7 @@ bool Interpreter::exeStep() {
                         break;
                     }
                     else {
-                        context->throwNew("sys", "CastErr", msg.c_str(), 1);
+                        context->throwError(fr_makeErr_(context, "sys", "CastErr", msg.c_str()));
                         goto Step_throw;
                         break;
                     }
@@ -531,7 +530,7 @@ bool Interpreter::exeStep() {
                 entry = *context->peek();
                 
                 if (entry.type == fr_vtObj && entry.any.o == nullptr) {
-                    context->throwNew("sys", "NullErr", "", 1);
+                    context->throwError(fr_makeErr_(context, "sys", "NullErr", ""));
                     goto Step_throw;
                 }
             }
@@ -543,14 +542,14 @@ bool Interpreter::exeStep() {
             if (fromPrimitive && !toPrimitive) {
                 fr_TagValue *entry;
                 entry = context->peek();
-                entry->any.o = context->box(entry->any, entry->type);
+                entry->any.o = fr_box_(context, entry->any, entry->type);
                 entry->type = fr_vtObj;
             } else if (!fromPrimitive && toPrimitive) {
                 fr_TagValue *entry;
                 entry = context->peek();
                 //fr_ValueType vtype = context->podManager->getValueType(context, curPod, i2);
                 fr_Value out;
-                context->unbox((FObj*)entry->any.o, out);
+                fr_unbox_(context, (FObj*)entry->any.o, out);
                 entry->any = out;
                 entry->type = context->podManager->getValueType(context
                                                         , frame()->curPod, i2);
@@ -653,14 +652,14 @@ void Interpreter::compareEq(int16_t t1, int16_t t2, bool notEq) {
     else if (isPrimitive1) {
         fr_Value any;
         if (p2.any.o != nullptr) {
-            context->unbox((FObj*)p2.any.o, any);
+            fr_unbox_(context, (FObj*)p2.any.o, any);
             ret = p1.any.o == any.o;
         }
     }
     else if (isPrimitive2) {
         fr_Value any;
         if (p1.any.o != nullptr) {
-            context->unbox((FObj*)p1.any.o, any);
+            fr_unbox_(context, (FObj*)p1.any.o, any);
             ret = p2.any.o == any.o;
         }
     }
@@ -704,7 +703,7 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
     else if (isPrimitive1) {
         fr_Value any;
         if (p2.any.o != nullptr) {
-            context->unbox((FObj*)p2.any.o, any);
+            fr_unbox_(context, (FObj*)p2.any.o, any);
             res = (char*)p1.any.o - (char*)any.o;
         } else {
             res = 1;
@@ -713,7 +712,7 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
     else if (isPrimitive2) {
         fr_Value any;
         if (p1.any.o != nullptr) {
-            context->unbox((FObj*)p1.any.o, any);
+            fr_unbox_(context, (FObj*)p1.any.o, any);
             res = (char*)any.o - (char*)p2.any.o;
         } else {
             res = -1;
@@ -807,12 +806,12 @@ void Interpreter::callNew(int16_t mid) {
         fr_ValueType valueType;
         elemType = context->podManager->findElemType(context, extName, &elemSize, &valueType);
         
-        fr_Array *a = context->arrayNew(elemType, elemSize, popInt());
+        fr_Array *a = fr_arrayNew_(context, elemType, elemSize, popInt());
         pushObj((FObj*)a);
         return;
     }
 
-    FObj * obj = context->allocObj(method->c_parent, 1);
+    FObj * obj = fr_allocObj_(context, method->c_parent, 0);
     
     fr_TagValue self;
     self.type = fr_vtObj;
@@ -850,7 +849,7 @@ void Interpreter::callMethod(int16_t mid, bool isVirtual) {
             context->pop(&entry);
             fr_Array *array = (fr_Array*)entry.any.o;
             fr_TagValue retVal;
-            context->arrayGet(array, index, &retVal.any);
+            fr_arrayGet_((fr_Env)context, array, index, &retVal.any);
             retVal.type = (fr_ValueType)array->valueType;
             context->push(&retVal);
             return;
@@ -862,7 +861,7 @@ void Interpreter::callMethod(int16_t mid, bool isVirtual) {
             fr_TagValue entry;
             context->pop(&entry);
             fr_Array *array = (fr_Array*)entry.any.o;
-            context->arraySet(array, index, &val.any);
+            fr_arraySet_((fr_Env)context, array, index, &val.any);
             return;
         }
         else if (method->c_mangledName == "sys_Array_size") {

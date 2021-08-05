@@ -117,6 +117,9 @@ public:
     ~FType();
     
     uint16_t findGenericParamBound(const std::string &name);
+
+
+    bool hasBase() { return meta.base != 0xFFFF; }
   
 private:
     void readMethod(FMethod &method, Buffer &buffer);

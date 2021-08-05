@@ -144,22 +144,15 @@ fr_Obj fr_allocObj(fr_Env self, fr_Type type, int size) {
     Env *e = (Env*)self;
     //e->lock();
     FType *ftype = fr_toFType(self, type);
-    FObj *obj = e->allocObj(ftype, 2, size);
+    FObj *obj = fr_allocObj_(e, ftype, size);
     fr_Obj objRef = fr_toHandle(self, obj);
     //e->unlock();
     return objRef;
 }
 
-FObj *fr_allocObj_internal(fr_Env self, fr_Type type, int size) {
-    Env *e = (Env*)self;
-    FType *ftype = fr_toFType(self, type);
-    FObj *obj = e->allocObj(ftype, 2, size);
-    return obj;
-}
-
 void fr_gc(fr_Env self) {
     Env *e = (Env*)self;
-    e->gc();
+    e->vm->gc->collect();
 }
 
 ////////////////////////////
@@ -205,7 +198,7 @@ fr_Type fr_getObjType(fr_Env self, fr_Obj obj) {
 
 fr_Obj fr_arrayNew(fr_Env self, fr_Type type, int32_t elemSize, size_t size) {
     Env *env = (Env*)self;
-    fr_Array *a = env->arrayNew(fr_toFType(self, type), elemSize, size);
+    fr_Array *a = fr_arrayNew_(env, fr_toFType(self, type), elemSize, size);
     return fr_toHandle(self, (FObj*)a);
 }
 
@@ -397,7 +390,7 @@ void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter) {
 fr_Obj fr_box(fr_Env self, fr_Value *value, fr_ValueType vtype) {
     Env *e = (Env*)self;
     //e->lock();
-    FObj *obj = e->box(*value, vtype);
+    FObj *obj = fr_box_(e, *value, vtype);
     fr_Obj objRef = fr_toHandle(self, obj);
     //e->unlock();
     return objRef;
@@ -406,7 +399,7 @@ fr_ValueType fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
     Env *e = (Env*)self;
     //e->lock();
     FObj *fobj = fr_getPtr(self, obj);
-    fr_ValueType vt = e->unbox(fobj, *value);
+    fr_ValueType vt = fr_unbox_(e, fobj, *value);
     if (vt == fr_vtObj && value->o == fobj) {
         value->h = obj;
     }
@@ -421,7 +414,7 @@ fr_ValueType fr_unbox(fr_Env self, fr_Obj obj, fr_Value *value) {
 fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t len) {
     Env *e = (Env*)self;
     //e->lock();
-    FObj *str = e->podManager->objFactory.newString(e, bytes);
+    FObj *str = fr_newStrUtf8N_(e, bytes, len);
     fr_Obj objRef = fr_toHandle(self, str);
     //e->unlock();
     return objRef;
@@ -430,7 +423,7 @@ fr_Obj fr_newStrUtf8N(fr_Env self, const char *bytes, ssize_t len) {
 const char *fr_getStrUtf8(fr_Env self, fr_Obj str) {
     Env *e = (Env*)self;
     //e->lock();
-    const char *cstr = e->podManager->objFactory.getStrUtf8(e, fr_getPtr(self, str));
+    const char* cstr = fr_getStrUtf8_(e, fr_getPtr(self, str));
     //e->unlock();
 //    if (isCopy) {
 //        *isCopy = false;

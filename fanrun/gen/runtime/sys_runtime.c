@@ -15,10 +15,11 @@
 #include <wchar.h>
 #include <wctype.h>
 
-//////////////////////////////////////////////////////////
 #ifdef  __cplusplus
 extern  "C" {
 #endif
+
+//////////////////////////////////////////////////////////
 
 void fr_finalizeObj(fr_Env __env, fr_Obj _obj) {
     sys_Obj obj = (sys_Obj)_obj;
@@ -39,7 +40,7 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) 
     }
     
     size_t allocSize = sizeof(struct fr_Array_) + (elemSize * len) + 1;
-    fr_Array *array = (fr_Array*)fr_alloc(self, sys_Array_class__, allocSize);
+    fr_Array *array = (fr_Array*)fr_allocObj(self, sys_Array_class__, allocSize);
     array->elemType = elemType;
     array->elemSize = elemSize;
     array->valueType = vtype;
@@ -47,18 +48,14 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) 
     return array;
 }
 
-//sys_Str sys_Str_format(fr_Env __env, sys_Str format, sys_List args) { FR_SET_ERROR_MAKE(sys_UnsupportedErr, ""); return 0; }
+////////////////////////////////////////////////////////////////
+// String
+////////////////////////////////////////////////////////////////
 
-
-//sys_Int strHash(sys_Str str);
-//size_t utf8encode(const wchar_t *us, char *des, size_t n, int *illegal);
-//size_t utf8decode(char const *str, wchar_t *des, size_t n, int *illegal);
 sys_Str sys_Str_fromCStr(fr_Env __env, sys_Ptr utf8, sys_Int byteLen);
 sys_Array sys_Str_toUtf8(fr_Env __env, sys_Str_ref __self);
 
-//fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
-//    return fr_newStrUtf8N(self, bytes, -1);
-//}
+
 fr_Obj fr_newStrUtf8N(fr_Env __env, const char *bytes, ssize_t size) {
     size_t len;
     sys_Str str;
@@ -69,36 +66,8 @@ fr_Obj fr_newStrUtf8N(fr_Env __env, const char *bytes, ssize_t size) {
     str = sys_Str_fromCStr(__env, (sys_Ptr)bytes, len);
     return str;
 }
-//fr_Obj fr_newStr(fr_Env __env, const wchar_t *data, size_t size, bool copy) {
-//    sys_Str str = FR_ALLOC(sys_Str);
-//    if (copy) {
-//        wchar_t *data = (wchar_t*)malloc(sizeof(wchar_t)*(size+1));
-//        wcsncpy(data, data, size);
-//        str->data = data;
-//    }
-//    else {
-//        str->data = data;
-//    }
-//    str->size = size;
-//    str->hashCode = strHash(str);
-//    str->utf8 = NULL;
-//    return str;
-//}
-//fr_Obj fr_newStrNT(fr_Env __env, const wchar_t *data, bool copy) {
-//    size_t size = wcslen(data);
-//    return fr_newStr(__env, data, size, copy);
-//}
+
 const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj) {
-//    size_t size;
-//    size_t realSize;
-//    sys_Str str = (sys_Str)obj;
-//    if (str->utf8) return str->utf8;
-//    size = str->size * 4 + 1;
-//    char *utf8 = (char*)malloc(size);
-//    realSize = utf8encode(str->data, utf8, size, NULL);
-//    utf8[realSize] = 0;
-//    str->utf8 = utf8;
-    
     sys_Str str = (sys_Str)obj;
     sys_Array array = sys_Str_toUtf8(env__, str);
     const char *data = (const char*)((fr_Array*)array)->data;
@@ -107,21 +76,9 @@ const char *fr_getStrUtf8(fr_Env env__, fr_Obj obj) {
 }
 
 ////////////////////////////////////////////////////////////////
-
-//fr_Obj fr_toTypeObj(fr_Env __env, fr_Type clz) {
-//    if (!clz->typeObj) {
-//        sys_Type type = FR_ALLOC(sys_Type);
-//        type->rawClass = clz;
-//        clz->typeObj = type;
-//    }
-//    return clz->typeObj;
-//}
-//
-//fr_Type fr_fromSysType(fr_Env __env, fr_Obj clz) {
-//    return ((sys_Type)clz)->rawClass;
-//}
-
+// Error
 ////////////////////////////////////////////////////////////////
+
 fr_Err fr_makeNPE(fr_Env __env) {
     sys_NullErr npe = FR_ALLOC(sys_NullErr);
     sys_NullErr_make__0(__env, npe);
@@ -148,6 +105,9 @@ void fr_printError(fr_Env __env, fr_Err error) {
 }
 
 ////////////////////////////////////////////////////////////////
+// Boxing
+////////////////////////////////////////////////////////////////
+
 //#include <unordered_map>
 //#include <mutex>
 //
@@ -156,30 +116,23 @@ void fr_printError(fr_Env __env, fr_Err error) {
 fr_Obj fr_box_int(fr_Env __env, sys_Int_val val) {
     fr_Obj obj;
     static fr_Obj map[515];
-    if ((val < 256 && val >= -256)
-        || val == sys_Int_maxVal
-        || val == sys_Int_minVal) {
-        
-//        std::lock_guard<std::mutex> lock(pool_mutex);
-//
-//        auto itr = map.find(val);
-//        if (itr != map.end()) {
-//            return itr->second;
-//        }
-        int index;
-        if (val == sys_Int_maxVal) index = 513;
-        if (val == sys_Int_minVal) index = 514;
-        else index = val + 256;
-        
-        obj = map[index];
-        if (obj) return obj;
-        
+    int index;
+    if (val < 256 && val >= -256) {
+        index = val + 256;
+    }
+    else if (val == sys_Int_maxVal) index = 513;
+    else if (val == sys_Int_minVal) index = 514;
+    else {
         FR_BOXING_VAL(obj, val, sys_Int, sys_Obj);
-        obj = fr_addGlobalRef(__env, obj);
-        map[index] = obj;
         return obj;
     }
+    
+    obj = map[index];
+    if (obj) return obj;
+        
     FR_BOXING_VAL(obj, val, sys_Int, sys_Obj);
+    obj = fr_newGlobalRef(__env, obj);
+    map[index] = obj;
     return obj;
 }
 fr_Obj fr_box_float(fr_Env __env, sys_Float_val val) {
@@ -203,7 +156,7 @@ fr_Obj fr_box_float(fr_Env __env, sys_Float_val val) {
     if (obj) return obj;
     
     FR_BOXING_VAL(obj, val, sys_Float, sys_Obj);
-    obj = fr_addGlobalRef(__env, obj);
+    obj = fr_newGlobalRef(__env, obj);
     map[index] = obj;
     return obj;
 }
@@ -215,11 +168,50 @@ fr_Obj fr_box_bool(fr_Env __env, sys_Bool_val val) {
         //std::lock_guard<std::mutex> lock(pool_mutex);
         FR_BOXING_VAL(trueObj, true, sys_Bool, sys_Obj);
         FR_BOXING_VAL(falseObj, false, sys_Bool, sys_Obj);
-        trueObj = fr_addGlobalRef(__env, trueObj);
-        falseObj = fr_addGlobalRef(__env, falseObj);
+        trueObj = fr_newGlobalRef(__env, trueObj);
+        falseObj = fr_newGlobalRef(__env, falseObj);
     }
     return val ? trueObj : falseObj;
 }
+
+fr_Obj fr_box(fr_Env env, fr_Value* value, fr_ValueType vtype) {
+    fr_Obj res = value->h;
+    if (vtype == fr_vtBool) {
+        res = fr_box_bool(env, value->b);
+    }
+    else if (vtype == fr_vtInt) {
+        res = fr_box_int(env, value->i);
+    }
+    else if (vtype == fr_vtFloat) {
+        res = fr_box_float(env, value->f);
+    }
+    return res;
+}
+
+fr_ValueType fr_unbox(fr_Env env, fr_Obj obj, fr_Value* value) {
+
+    fr_Type type = fr_getObjType(env, obj);
+    if (strcmp(type->name, "sys::Bool") == 0) {
+        fr_Bool* v = (fr_Bool*)fr_getPtr(env, obj);
+        value->b = *v;
+        return fr_vtBool;
+    }
+    else if (strcmp(type->name, "sys::Int") == 0) {
+        fr_Int* v = (fr_Int*)fr_getPtr(env, obj);
+        value->i = *v;
+        return fr_vtInt;
+    }
+    else if (strcmp(type->name, "sys::Float") == 0) {
+        fr_Float* v = (fr_Float*)fr_getPtr(env, obj);
+        value->f = *v;
+        return fr_vtFloat;
+    }
+    else {
+        value->h = obj;
+        return fr_vtHandle;
+    }
+}
+
 
 #ifdef  __cplusplus
 }//extern "C"

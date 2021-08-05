@@ -250,10 +250,6 @@ fr_Obj fr_newStrUtf8N(fr_Env env, const char *bytes, ssize_t size);
  */
 const char *fr_getStrUtf8(fr_Env env, fr_Obj str);
 
-/**
- * call obj.toStr and return result
- */
-//fr_Obj fr_objToStr(fr_Env env, fr_Value obj, fr_ValueType vtype);
 
 
 CF_END

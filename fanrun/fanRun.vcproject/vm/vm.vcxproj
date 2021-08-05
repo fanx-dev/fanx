@@ -110,7 +110,7 @@
     <ClCompile Include="..\..\vm\vm\Interpreter.cpp" />
     <ClCompile Include="..\..\vm\vm\main.cpp" />
     <ClCompile Include="..\..\vm\vm\NativeGen.cpp" />
-    <ClCompile Include="..\..\vm\vm\ObjFactory.cpp" />
+    <ClCompile Include="..\..\vm\vm\sys_runtime.cpp" />
     <ClCompile Include="..\..\vm\vm\PodManager.cpp" />
     <ClCompile Include="..\..\vm\vm\type.cpp" />
     <ClCompile Include="..\..\vm\vm\Vm.cpp" />
@@ -167,7 +167,7 @@
     <ClInclude Include="..\..\vm\vm\fni_ext.h" />
     <ClInclude Include="..\..\vm\vm\Interpreter.h" />
     <ClInclude Include="..\..\vm\vm\NativeGen.h" />
-    <ClInclude Include="..\..\vm\vm\ObjFactory.h" />
+    <ClInclude Include="..\..\vm\vm\sys_runtime.h" />
     <ClInclude Include="..\..\vm\vm\PodManager.h" />
     <ClInclude Include="..\..\vm\vm\Vm.h" />
   </ItemGroup>

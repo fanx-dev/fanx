@@ -23,10 +23,6 @@ struct FType;
 //struct fr_ObjHeader { struct FType * type; bool dirty; int mark;  };
 //typedef GcObj fr_ObjHeader;
 
-/**
- * internal alloc obj
- */
-//FObj *fr_allocObj_internal(fr_Env self, fr_Type type, int size);
 //
 void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
 
@@ -34,6 +30,9 @@ void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
 struct FType *fr_getFType(fr_Env self, FObj *obj);
 struct FType *fr_toFType(fr_Env self, fr_Type otype);
 fr_Type fr_fromFType(fr_Env env, struct FType* ftype);
+
+void fr_arrayGet_(fr_Env self, fr_Array* array, size_t index, fr_Value* val);
+void fr_arraySet_(fr_Env self, fr_Array* array, size_t index, fr_Value* val);
 
 CF_END
 

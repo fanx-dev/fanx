@@ -119,7 +119,7 @@ FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &
 
     if (method == NULL) {
         if (checked) {
-            printf("Not found method:%s.%s.$d\n", type->c_mangledName.c_str(), name.c_str(), paramCount);
+            printf("Not found method:%s.%s.%d\n", type->c_mangledName.c_str(), name.c_str(), paramCount);
             abort();
         }
         else {

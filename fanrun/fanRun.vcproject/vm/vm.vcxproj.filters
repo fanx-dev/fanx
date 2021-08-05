@@ -183,9 +183,6 @@
     <ClCompile Include="..\..\vm\vm\NativeGen.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\vm\vm\ObjFactory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\vm\vm\PodManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -298,6 +295,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Zip.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vm\vm\sys_runtime.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -452,9 +452,6 @@
     <ClInclude Include="..\..\vm\vm\NativeGen.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\vm\vm\ObjFactory.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\vm\vm\PodManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -462,6 +459,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\fni\std\pod_std_native.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vm\vm\sys_runtime.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

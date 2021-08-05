@@ -71,7 +71,7 @@ void fr_endAllowGc(fr_Env self) {
     fr_checkPoint(self);
 }
 
-fr_Obj fr_alloc(fr_Env self, fr_Type vtable, ssize_t size) {
+fr_Obj fr_allocObj(fr_Env self, fr_Type vtable, int size) {
     Env *env = (Env*)self;
     int allocSize = vtable->allocSize;
     if (allocSize < (int)size) allocSize = (int)size;
@@ -90,19 +90,20 @@ void fr_setGcDirty(fr_Env self, fr_Obj obj) {
     env->vm->getGc()->setDirty(fr_toGcObj(obj));
 }
 
-fr_Obj fr_addGlobalRef(fr_Env self, fr_Obj obj) {
-    Env *env = (Env*)self;
+fr_Obj fr_newGlobalRef(fr_Env self, fr_Obj obj) {
+    Env* env = (Env*)self;
     env->vm->getGc()->pinObj(fr_toGcObj(obj));
     return obj;
 }
+
 void fr_deleteGlobalRef(fr_Env self, fr_Obj obj) {
     Env *env = (Env*)self;
     env->vm->getGc()->unpinObj(fr_toGcObj(obj));
 }
-void fr_addStaticRef(fr_Env self, fr_Obj *obj) {
-    Env *env = (Env*)self;
-    env->vm->addStaticRef(obj);
-}
+//void fr_addStaticRef(fr_Env self, fr_Obj *obj) {
+//    Env *env = (Env*)self;
+//    env->vm->addStaticRef(obj);
+//}
 
 void fr_setErr(fr_Env self, fr_Err err) {
     self->error = err;

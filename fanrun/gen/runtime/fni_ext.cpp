@@ -53,64 +53,12 @@ bool fr_getParam(fr_Env env, void *param, fr_Value *val, int pos, fr_ValueType *
 ////////////////////////////
 
 fr_Obj fr_newLocalRef(fr_Env self, fr_Obj obj) {
-    //Env *e = (Env*)self;
-    //fr_lock(self);
-    //obj = e->newLocalRef(fr_getPtr(self, obj));
-    //fr_unlock(self);
-    //fr_new
     return obj;
 }
 
 void fr_deleteLocalRef(fr_Env self, fr_Obj obj) {
-    //Env *e = (Env*)self;
-    //fr_lock(self);
-    //FObj **fobj = reinterpret_cast<FObj **>(obj);
-    //*fobj = nullptr;
-    //e->removeLocalRef(fr_getPtr(self, obj));
-    //fr_unlock(self);
 }
 
-fr_Obj fr_newGlobalRef(fr_Env self, fr_Obj obj) {
-    Env *env = (Env*)self;
-    env->vm->getGc()->pinObj(fr_toGcObj(obj));
-    return obj;
-}
-
-//void fr_deleteGlobalRef(fr_Env self, fr_Obj obj) {
-//    Env *env = (Env*)self;
-//    env->vm->getGc()->unpinObj(fr_toGcObj(obj));
-//}
-
-//FType *fr_toFType(fr_Env self, fr_Type otype) {
-//    //Env *e = (Env*)self;
-//    //FObj *typeObj = fr_getPtr(self, otype);
-//    //FType *ftype = e->podManager->getFType(e, typeObj);
-//    return otype;
-//}
-
-
-fr_Obj fr_allocObj(fr_Env self, fr_Type type, int size) {
-    Env *env = (Env*)self;
-    int allocSize = type->allocSize;
-    if (allocSize < (int)size) allocSize = (int)size;
-    GcObj *gcobj = env->vm->getGc()->alloc(type, allocSize+sizeof(GcObj));
-    fr_Obj obj = fr_fromGcObj(gcobj);
-    return obj;
-}
-
-FObj *fr_allocObj_internal(fr_Env self, fr_Type type, int size) {
-    Env *env = (Env*)self;
-    int allocSize = type->allocSize;
-    if (allocSize < (int)size) allocSize = (int)size;
-    GcObj *gcobj = env->vm->getGc()->alloc(type, allocSize+sizeof(GcObj));
-    fr_Obj obj = fr_fromGcObj(gcobj);
-    return (FObj *)obj;
-}
-
-//void fr_gc(fr_Env self) {
-//    Env *e = (Env*)self;
-//    e->vm->getGc()->collect();
-//}
 
 ////////////////////////////
 // Type
@@ -160,18 +108,6 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
 }
 
 void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
-    //TODO
-//    Env *e = (Env*)self;
-//    int paramCount = pushArg(self, method, argCount, arg);
-//
-//    FMethod *f = (FMethod*)method;
-//    if (f->flags & FFlags::Virtual || f->flags & FFlags::Abstract) {
-//        e->callVirtual(f, paramCount);
-//    }
-//    else {
-//        e->callNonVirtual(f, paramCount);
-//    }
-//    popRet(e, (FMethod*)method, ret);
     
     if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {
         fr_Type type = fr_getObjType(self, arg[0].h);
@@ -251,45 +187,3 @@ fr_Obj fr_getErr(fr_Env self) {
 void fr_throw(fr_Env self, fr_Obj err) {
     fr_setErr(self, err);
 }
-
-////////////////////////////
-// box
-////////////////////////////
-//
-fr_Obj fr_box(fr_Env env, fr_Value *value, fr_ValueType vtype) {
-    fr_Obj res = value->h;
-    if (vtype == fr_vtBool) {
-        res = fr_box_bool(env, value->b);
-    }
-    else if (vtype == fr_vtInt) {
-        res = fr_box_int(env, value->i);
-    }
-    else if (vtype == fr_vtFloat) {
-        res = fr_box_float(env, value->f);
-    }
-    return res;
-}
-fr_ValueType fr_unbox(fr_Env env, fr_Obj obj, fr_Value *value) {
-    
-    fr_Type type = fr_getObjType(env, obj);
-    if (strcmp(type->name, "sys::Bool") == 0) {
-        fr_Bool *v = (fr_Bool*)fr_getPtr(env, obj);
-        value->b = *v;
-        return fr_vtBool;
-    }
-    else if (strcmp(type->name, "sys::Int") == 0) {
-        fr_Int *v = (fr_Int*)fr_getPtr(env, obj);
-        value->i = *v;
-        return fr_vtInt;
-    }
-    else if (strcmp(type->name, "sys::Float") == 0) {
-        fr_Float *v = (fr_Float*)fr_getPtr(env, obj);
-        value->f = *v;
-        return fr_vtFloat;
-    }
-    else {
-        value->h = obj;
-        return fr_vtHandle;
-    }
-}
-

@@ -41,7 +41,7 @@ FObj *makeArgArray(Env *env, int start, int argc, const char * argv[]) {
     
     for (int i=start;i<argc; ++i) {
         const char *cstr = argv[i];
-        FObj *str = env->podManager->objFactory.newString(env, cstr);
+        FObj *str = fr_newStrUtf8_(env, cstr);
         param.any.o = str;
         env->push(&param);
         env->callNonVirtual(listAdd, 1);

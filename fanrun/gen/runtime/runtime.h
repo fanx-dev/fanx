@@ -59,11 +59,10 @@ void fr_setErr(fr_Env self, fr_Err err);
 // GC
 ////////////////////////////
 
-fr_Obj fr_addGlobalRef(fr_Env self, fr_Obj obj);
-void fr_deleteGlobalRef(fr_Env self, fr_Obj obj);
-void fr_addStaticRef(fr_Env self, fr_Obj *obj);
-    
-fr_Obj fr_alloc(fr_Env self, fr_Type vtable, ssize_t size);
+//fr_Obj fr_addGlobalRef(fr_Env self, fr_Obj obj);
+//void fr_deleteGlobalRef(fr_Env self, fr_Obj obj);
+//void fr_addStaticRef(fr_Env self, fr_Obj *obj);
+
 void fr_gc(fr_Env self);
 //GcObj *fr_toGcObj(fr_Obj obj);
 //fr_Obj fr_fromGcObj(GcObj *g);
@@ -143,7 +142,7 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_CAST(pos, ret, obj, type, toType) do{ if (!obj || FR_TYPE_IS(obj, type)) ret = (toType)obj; \
     else FR_THROW(pos, fr_makeCastError(__env)); }while(0)
 
-#define FR_ALLOC(type) ((type##_ref)fr_alloc(__env, type##_class__, -1))
+#define FR_ALLOC(type) ((type##_ref)fr_allocObj(__env, type##_class__, -1))
 #define FR_INIT_VAL(val, type) (memset(&val, 0, sizeof(struct type##_struct)))
 
 #define FR_BEGIN_FUNC int __errOccurAt;

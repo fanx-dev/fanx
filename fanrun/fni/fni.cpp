@@ -15,7 +15,12 @@
 //#include "system.h"
 #include <string.h>
 
+#ifdef  __cplusplus
+extern  "C" {
+#endif
+
 static_assert(sizeof(void*) == 8, "must 64-bit");
+
 
 
 GcObj *fr_toGcObj(FObj *obj) {
@@ -41,9 +46,7 @@ size_t fr_arrayLen(fr_Env self, fr_Obj array) {
     return a->size;
 }
 
-void fr_arrayGet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
-    fr_Array *array = (fr_Array*)fr_getPtr(self, _array);
-
+void fr_arrayGet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
     if (index >= array->size) {
         fr_throwNew(self, "sys", "IndexErr", "out index");
         return;
@@ -65,26 +68,30 @@ void fr_arrayGet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
         }
         case 4: {
             int32_t *t = (int32_t*)array->data;
-            val->i = *t;
+            val->i = t[index];
             //resVal.type = fr_vtInt;
             break;
         }
         case 8: {
             int64_t *t = (int64_t*)array->data;
-            val->i = *t;
+            val->i = t[index];
             //resVal.type = fr_vtInt;
             break;
         }
+        default:
+            assert(false);
     }
+}
+void fr_arrayGet(fr_Env self, fr_Obj _array, size_t index, fr_Value* val) {
+    fr_Array* array = (fr_Array*)fr_getPtr(self, _array);
+    fr_arrayGet_(self, array, index, val);
 
     fr_ValueType vt = (fr_ValueType)array->valueType;
     if (vt == fr_vtObj) {
         val->h = fr_toHandle(self, (FObj*)val->o);
     }
 }
-void fr_arraySet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
-    fr_Array* array = (fr_Array*)fr_getPtr(self, _array);
-
+void fr_arraySet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
     if (index >= array->size) {
         fr_throwNew(self, "sys", "IndexErr", "out index");
         return;
@@ -114,7 +121,18 @@ void fr_arraySet(fr_Env self, fr_Obj _array, size_t index, fr_Value *val) {
             t[index] = val->i;
             break;
         }
+        default:
+            assert(false);
     }
+}
+
+void fr_arraySet(fr_Env self, fr_Obj _array, size_t index, fr_Value* val) {
+    fr_Array* array = (fr_Array*)fr_getPtr(self, _array);
+    fr_ValueType vt = (fr_ValueType)array->valueType;
+    if (vt == fr_vtObj) {
+        val->o = fr_getPtr(self, val->h);
+    }
+    fr_arraySet_(self, array, index, val);
 }
 
 ////////////////////////////
@@ -371,7 +389,7 @@ fr_Obj fr_newStrUtf8(fr_Env self, const char *bytes) {
     return fr_newStrUtf8N(self, bytes, -1);
 }
 
-fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
+fr_Obj fr_objToStr(fr_Env env, fr_Obj x) {
     fr_Obj str;
     if (!x) {
         return fr_newStrUtf8(env, "null");
@@ -379,7 +397,7 @@ fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
     // if it is primitive type must be unbox before call it's method.
     fr_Value val;
     val.h = x;
-    fr_unbox(env, x, &val);
+    //fr_unbox(env, x, &val);
 
     fr_Value rVal;
     fr_Type type = fr_getObjType(env, x);
@@ -391,18 +409,7 @@ fr_Obj fr_handleToStr(fr_Env env, fr_Obj x) {
     str = rVal.h;
     return str;
 }
-//
-//fr_Obj fr_objToStr(fr_Env self, fr_Value obj, fr_ValueType vtype) {
-////    Env *e = (Env*)self;
-//
-//    if (vtype != fr_vtHandle) {
-//        //TODO op
-//        if (vtype == fr_vtObj) {
-//            obj.h = fr_toHandle(self, (FObj*)obj.o);
-//        } else {
-//            obj.h = fr_box(self, &obj, vtype);
-//        }
-//    }
-//    return fr_handleToStr(self, obj.h);
-//}
-//
+
+#ifdef  __cplusplus
+}//extern "C"
+#endif

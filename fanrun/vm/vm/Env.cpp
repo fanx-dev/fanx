@@ -12,6 +12,7 @@
 #include "gc/Gc.h"
 #include <atomic>
 #include "vm.h"
+#include "sys_runtime.h"
 
 Env::Env(Fvm *vm)
     : vm(vm)
@@ -64,7 +65,7 @@ void Env::start(const char* podName, const char* type, const char* name, FObj *a
     if (err) {
         //must clear error before printError.
         clearError();
-        printError(err);
+        fr_printError_(this, err);
     }
     
     //popFrame();
@@ -223,26 +224,16 @@ void Env::insertBack(fr_TagValue *entry, int count) {
 void Env::checkSafePoint() {
     if (vm->gc->isStopTheWorld()) {
         isStoped = true;
-        while (vm->gc->isStopTheWorld()) {
-            System_sleep(5);
-        }
+        do {
+            System_sleep(1);
+        } while (vm->gc->isStopTheWorld());
         isStoped = false;
     }
     //mtx_lock(&mutex);
 }
 
 fr_Obj Env::newLocalRef(FObj * obj) {
-//    assert(curFrame->isNative);
-//    if (curFrame->nativeVarCount >= curFrame->localCount) {
-//        int asize = 32 * sizeof(fr_TagValue);
-//        curFrame->operandStack.expandFrameSize(asize);
-//        curFrame->localCount += 32;
-//    }
-//    curFrame->locals[curFrame->nativeVarCount].type = fr_vtObj;
-//    curFrame->locals[curFrame->nativeVarCount].any.o = obj;
-//    curFrame->nativeVarCount++;
-//    fr_Obj fobj = (fr_Obj)(&curFrame->locals[curFrame->nativeVarCount-1].any.o);
-//    return fobj;
+
     fr_TagValue val;
     val.type = fr_vtObj;
     val.any.o = obj;
@@ -253,6 +244,7 @@ fr_Obj Env::newLocalRef(FObj * obj) {
 }
 
 void Env::deleteLocalRef(fr_Obj objRef) {
+    //TODO reuse
     FObj **obj = reinterpret_cast<FObj**>(objRef);
     *obj = NULL;
 }
@@ -263,10 +255,6 @@ fr_Obj Env::newGlobalRef(FObj * obj) {
 
 void Env::deleteGlobalRef(fr_Obj obj) {
     vm->deleteGlobalRef(obj);
-}
-
-FObj * Env::allocObj(FType *type, int addRef, int size) {
-    return podManager->objFactory.allocObj(this, type, addRef, size);
 }
 
 void Env::walkLocalRoot(Collector *gc) {
@@ -288,40 +276,18 @@ void Env::walkLocalRoot(Collector *gc) {
     }
 }
 
-void Env::gc() {
-    vm->gc->collect();
-}
-
-////////////////////////////
-// other
-////////////////////////////
-
-FObj * Env::box(fr_Value &value, fr_ValueType vtype) {
-    return podManager->objFactory.box(this, value, vtype);
-}
-fr_ValueType Env::unbox(FObj * obj, fr_Value &value){
-    return podManager->objFactory.unbox(this, obj, value);
-}
-
 ////////////////////////////
 // type
 ////////////////////////////
 
-FType * Env::findType(std::string pod, std::string type) {
+FType * Env::findType(const char* pod, const char* type) {
     FType *ftype = podManager->findType(this, pod, type);
     return ftype;
 }
 
-FType * Env::toType(fr_ValueType vt) {
-    FType *ftype = podManager->getSysType(this, vt);
+FType* Env::toType(fr_ValueType vt) {
+    FType* ftype = podManager->getSysType(this, vt);
     return ftype;
-}
-FType * Env::getInstanceType(fr_TagValue *obj) {
-    FType *ftype = podManager->getInstanceType(this, *obj);
-    return ftype;
-}
-bool Env::fitType(FType * a, FType * b) {
-    return podManager->fitTypeByType(this, a, b);
 }
 
 ////////////////////////////
@@ -366,7 +332,7 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         int pos = -method->paramCount - 1;
         entry = this->peek(pos);
         if (entry->type == fr_vtObj) {
-            fr_ValueType vt = this->unbox((FObj*)entry->any.o, entry->any);
+            fr_ValueType vt = fr_unbox_(this, (FObj*)entry->any.o, entry->any);
             entry->type = vt;
         }
     }
@@ -468,7 +434,7 @@ void Env::callNonVirtual(FMethod * method, int paramCount) {
     call(method, paramCount);
 }
 void Env::newObj(FType *type, FMethod * method, int paramCount) {
-    FObj * obj = allocObj(type, 1);
+    FObj * obj = fr_allocObj_(this, type, 0);
     
     fr_TagValue self;
     self.type = fr_vtObj;
@@ -498,7 +464,7 @@ void Env::callVirtualByName(const char *name, int paramCount) {
 void Env::newObjByName(const char * pod, const char * type, const char * name, int paramCount) {
     FMethod *method = nullptr;
     method = podManager->findMethod(this, pod, type, name, paramCount);
-    FObj * obj = allocObj(method->c_parent, 1);
+    FObj * obj = fr_allocObj_(this, method->c_parent, 0);
 
     fr_TagValue self;
     self.type = fr_vtObj;
@@ -612,145 +578,12 @@ void Env::throwError(FObj * err) {
     error = err;
 }
 
-void Env::printError(FObj * err) {
-    FType *ftype = fr_getFType((fr_Env)this, err);
-    std::string &name = ftype->c_name;
-    printf("uncatch error: %s\n", name.c_str());
-    
-    FMethod *method = podManager->findMethod(this, "sys", "Err", "trace", 0);
-    fr_TagValue val;
-    val.any.o = err;
-    val.type = fr_vtObj;
-    push(&val);
-    callVirtual(method, 0);
-    pop(&val);
-}
-
 void Env::throwNPE() {
-    FObj * str = podManager->objFactory.newString(this, "null pointer");
-    fr_TagValue entry;
-    entry.any.o = str;
-    entry.type = fr_vtObj;
-    this->push(&entry);
-    entry.any.o = 0;
-    this->push(&entry);
-    
-    FType *type = podManager->getNpeType(this);
-    //FMethod *ctor = type->c_methodMap["make"];
-    auto itr = type->c_methodMap.find("make");
-    if (itr == type->c_methodMap.end()) {
-        abort();
-    }
-    FMethod *ctor = itr->second;
-
-    newObj(type, ctor, 2);
-    fr_TagValue error = *peek();
-    throwError((FObj*)error.any.o);
-}
-
-void Env::throwNew(const char* podName, const char* typeName, const char* msg, int addRef) {
-    
-    FObj * str = podManager->objFactory.newString(this, msg);
-    fr_TagValue entry;
-    entry.any.o = str;
-    entry.type = fr_vtObj;
-    this->push(&entry);
-    entry.any.o = 0;
-    this->push(&entry);
-    
-    newObjByName(podName, typeName, "make", 2);
-    fr_TagValue error = *peek();
-    throwError((FObj*)error.any.o);
+    FObj* npe = fr_makeNPE_(this);
+    throwError(npe);
 }
 
 void Env::clearError() {
     //removeGlobal(error);
     error = NULL;
-}
-
-fr_Array* Env::arrayNew(FType *elemType, int32_t elemSize, size_t size) {
-    if (elemSize <= 0) elemSize = sizeof(void*);
-    FType *arrayType = findType("sys", "Array");
-    
-    size_t allocSize = sizeof(fr_Array)+(elemSize*(size+1));
-    fr_Array *a = (fr_Array*)allocObj(arrayType, 2, (int)allocSize);
-    a->elemType = fr_fromFType((fr_Env)this, elemType);
-    a->elemSize = elemSize;
-    a->valueType = podManager->getValueTypeByType(this, elemType);
-    
-    a->size = size;
-    return a;
-}
-
-void Env::arrayGet(fr_Array *array, size_t index, fr_Value *val) {
-    if (index >= array->size) {
-        throwNew("sys", "IndexErr", "out index", 2);
-        return;
-    }
-    //val->h = fr_toHandle(self, a->data[index]);
-    
-    size_t elemSize = array->elemSize;
-
-    switch (elemSize) {
-        case 1: {
-            int8_t *t = (int8_t*)array->data;
-            val->i = t[index];
-            break;
-        }
-        case 2: {
-            int16_t *t = (int16_t*)array->data;
-            val->i = t[index];
-            //resVal.type = fr_vtInt;
-            break;
-        }
-        case 4: {
-            int32_t *t = (int32_t*)array->data;
-            val->i = t[index];
-            //resVal.type = fr_vtInt;
-            break;
-        }
-        case 8: {
-            int64_t *t = (int64_t*)array->data;
-            val->i = t[index];
-            //resVal.type = fr_vtInt;
-            break;
-        }
-        default:
-            abort();
-    }
-    
-}
-void Env::arraySet(fr_Array *array, size_t index, fr_Value *val) {
-    if (index >= array->size) {
-        throwNew("sys", "IndexErr", "out index", 2);
-        return;
-    }
-    //a->data[index] = fr_getPtr(self, val->h);
-    
-    size_t elemSize = array->elemSize;
-
-    switch (elemSize) {
-        case 1: {
-            int8_t *t = (int8_t*)array->data;
-            t[index] = val->i;
-            break;
-        }
-        case 2: {
-            int16_t *t = (int16_t*)array->data;
-            t[index] = val->i;
-            break;
-        }
-        case 4: {
-            int32_t *t = (int32_t*)array->data;
-            t[index] = (int32_t)val->i;
-            break;
-        }
-        case 8: {
-            int64_t *t = (int64_t*)array->data;
-            t[index] = val->i;
-            break;
-        }
-        default:
-            abort();
-    }
 }

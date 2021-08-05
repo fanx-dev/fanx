@@ -13,7 +13,7 @@
 #include "fcode/FPod.h"
 #include <unordered_map>
 #include "fni.h"
-#include "ObjFactory.h"
+#include "sys_runtime.h"
 #include "fcode/PodLoader.h"
 
 class Env;
@@ -32,7 +32,6 @@ private:
     //FType *typeType;
     FType *npeType;
 public:
-    ObjFactory objFactory;
     Fvm *vm;
     PodLoader podLoader;
     
