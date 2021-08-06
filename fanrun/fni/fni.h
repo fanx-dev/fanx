@@ -185,7 +185,7 @@ void fr_newObjA(fr_Env env, fr_Type type, fr_Method method
 //short cut
 fr_Obj fr_newObjS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
 fr_Value fr_callMethodS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
-fr_Value fr_callOnObj(fr_Env env, const char *name, int argCount, ...);
+fr_Value fr_callOnObj(fr_Env env, fr_Obj obj, const char *name, int argCount, ...);
 
 ////////////////////////////
 // Field

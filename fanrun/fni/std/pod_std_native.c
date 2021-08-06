@@ -174,89 +174,6 @@ void std_NativeCharset_decode_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_File_os_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_File_os(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_File_osRoots_v(fr_Env env, void *param, void *ret) {
-    fr_Value retValue;
-
-
-    retValue.h = std_File_osRoots(env);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_File_createTemp_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_File_createTemp(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_File_copyTo_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_File_copyTo(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_File_sep_v(fr_Env env, void *param, void *ret) {
-    fr_Value retValue;
-
-
-    retValue.h = std_File_sep(env);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_File_pathSep_v(fr_Env env, void *param, void *ret) {
-    fr_Value retValue;
-
-
-    retValue.h = std_File_pathSep(env);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_FileSystem_exists_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -314,7 +231,7 @@ void std_FileSystem_setModified_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_FileSystem_osPath_v(fr_Env env, void *param, void *ret) {
+void std_FileSystem_uriToPath_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value retValue;
@@ -323,7 +240,20 @@ void std_FileSystem_osPath_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.h = std_FileSystem_osPath(env, arg_0);
+    retValue.h = std_FileSystem_uriToPath(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_pathToUri_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    retValue.h = std_FileSystem_pathToUri(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -353,7 +283,7 @@ void std_FileSystem_normalize_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_FileSystem_create_v(fr_Env env, void *param, void *ret) {
+void std_FileSystem_createDirs_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value retValue;
@@ -362,7 +292,20 @@ void std_FileSystem_create_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.b = std_FileSystem_create(env, arg_0);
+    retValue.b = std_FileSystem_createDirs(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_createFile_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    retValue.b = std_FileSystem_createFile(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -384,6 +327,24 @@ void std_FileSystem_moveTo_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
+void std_FileSystem_copyTo_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    retValue.b = std_FileSystem_copyTo(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
 void std_FileSystem_delete__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -394,19 +355,6 @@ void std_FileSystem_delete__v(fr_Env env, void *param, void *ret) {
 
 
     retValue.b = std_FileSystem_delete_(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_FileSystem_deleteOnExit_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.b = std_FileSystem_deleteOnExit(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -462,16 +410,53 @@ void std_FileSystem_isDir_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_LocalFile_store_v(fr_Env env, void *param, void *ret) {
+void std_FileSystem_tempDir_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.h = std_FileSystem_tempDir(env);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_osRoots_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.h = std_FileSystem_osRoots(env);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_getSpaceInfo_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
     fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    retValue.h = std_LocalFile_store(env, arg_0);
+    retValue.b = std_FileSystem_getSpaceInfo(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_fileSep_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.h = std_FileSystem_fileSep(env);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_FileSystem_pathSep_v(fr_Env env, void *param, void *ret) {
+    fr_Value retValue;
+
+
+    retValue.h = std_FileSystem_pathSep(env);
     *((fr_Value*)ret) = retValue;
 }
 

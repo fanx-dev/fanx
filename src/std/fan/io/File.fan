@@ -35,23 +35,32 @@ abstract const class File
     if (uri.scheme != null && uri.scheme != "file") {
       throw ArgErr("Invalid Uri scheme for local file: " + uri.toStr)
     }
-    return LocalFile(uri, checkSlash)
+    return LocalFile.make(uri, checkSlash)
   }
 
   static File fromPath(Str path, Bool checkSlash := true) {
-    File(path.toUri, checkSlash)
+    File.make(path.toUri, checkSlash)
+  }
+
+  static File fromOsPath(Str path) {
+    File.os(path)
   }
 
   **
   ** Make a File for the specified operating system specific path
   ** on the local file system.
   **
-  native static File os(Str osPath)
+  static File os(Str osPath) {
+    uri := FileSystem.pathToUri(osPath).toUri
+    return File.make(uri, false)
+  }
 
   **
   ** Get the root directories of the operating system's local file system.
   **
-  native static File[] osRoots()
+  static File[] osRoots() {
+    return FileSystem.osRoots.map { File.os(it) }
+  }
 
   **
   ** Create a temporary file which is guaranteed to be a new, empty
@@ -66,7 +75,28 @@ abstract const class File
   **   File.createTemp("x", ".txt") => `/tmp/x67392.txt`
   **   File.createTemp.deleteOnExit => `/tmp/fan5284.tmp`
   **
-  native static File createTemp(Str prefix := "fan", Str suffix := ".tmp", File? dir := null)
+  static File createTemp(Str prefix := "fan", Str suffix := ".tmp", File? dir := null) {
+    Str? d = null
+    if (dir != null) {
+      if (!(dir is LocalFile))
+        throw IOErr("Dir is not on local file system: " + dir)
+        d = dir.osPath
+    }
+    if (dir == null) {
+      dir = File.os(FileSystem.tempDir)
+    }
+
+    File? file
+    while (true) {
+      t := TimePoint.nowUnique
+      name := "$prefix$t$suffix"
+      file = File.fromPath(dir.pathStr+name)
+      if (!file.exists) break
+    }
+    return file
+  }
+
+  //native static Str createTempFile(Str prefix, Str suffix, Str? dir)
 
   **
   ** Protected constructor for subclasses.
@@ -317,7 +347,7 @@ abstract const class File
   ** The options map is used to customize how the copy is performed.
   ** The following summarizes the options:
   **   - exclude:   Regex or |File f->Bool|
-  **   - overwrite: Bool or |File f->Bool|
+  **   - overwrite: Bool or |File f,File f->Bool|
   **
   ** If the "exclude" option is a Regex - each source file's Uri string
   ** is is checked for a match to skip.  If a directory is skipped, then
@@ -341,7 +371,72 @@ abstract const class File
   **
   ** Return the 'to' destination file.
   **
-  native File copyTo(File to, [Str:Obj]? options := null)
+  virtual File copyTo(File to, [Str:Obj]? options := null) {
+    if (this.isDir != to.isDir) {
+      if (this.isDir)
+        throw ArgErr("copyTo must be dir `" + to + "`")
+      else
+        throw ArgErr("copyTo must not be dir `" + to + "`")
+    }
+
+    Obj? exclude = null
+    Obj? overwrite = null
+    if (options != null) {
+      exclude = options.get("exclude");
+      overwrite = options.get("overwrite");
+    }
+    // recurse
+    doCopyTo(this, to, exclude, overwrite);
+    return to;
+  }
+
+  private static Void doCopyTo(File self, File to, Obj? exclude, Obj? overwrite) {
+    // check exclude
+    if (exclude is Regex) {
+      if (((Regex) exclude).matches(self.uri.toStr()))
+        return;
+    }
+    else if (exclude is Func) {
+      |File f->Bool| f = exclude
+      if (f(self)) return;
+    }
+
+    // check for overwrite
+    if (to.exists()) {
+      if (overwrite is Bool) {
+        if (!((Bool) overwrite))
+          return;
+      } else if (overwrite is Func) {
+        |File f, File t->Bool| f = overwrite
+        if (!f(to, self))
+          return;
+      } else {
+        throw IOErr("No overwrite policy for `" + to + "`")
+      }
+    }
+
+    // copy directory
+    if (self.isDir()) {
+      to.create();
+      kids := self.list();
+      for (i := 0; i < kids.size; ++i) {
+        File kid = (File) kids.get(i);
+        doCopyTo(kid, (to.uri.plusName(kid.name)).toFile, exclude, overwrite);
+      }
+    }
+
+    // copy file contents
+    else {
+      OutStream out = to.out();
+      try {
+        self.in().pipe(out);
+      } finally {
+        out.close();
+      }
+      //copyPermissions(self, to);
+      //FileSystem::copyTo(self.osPath, to.osPath)
+    }
+  }
 
 
   **
@@ -511,14 +606,13 @@ abstract const class File
   ** Return the platform's separator for names within
   ** in a path: backslash on Windows, forward slash on Unix.
   **
-  native static Str sep()
+  static Str sep() { FileSystem.fileSep }
 
   **
   ** Return the platform's separator for a list of
   ** paths: semicolon on Windows, colon on Unix.
   **
-  native static Str pathSep()
-
+  static Str pathSep() { FileSystem.pathSep }
 }
 
 @NoDoc internal class FileSystem {
@@ -526,17 +620,26 @@ abstract const class File
   native static Int size(Str path)
   native static Int modified(Str path)
   native static Bool setModified(Str path, Int time)
-  native static Str? osPath(Str path)
+  native static Str uriToPath(Str uri)
+  native static Str pathToUri(Str ospath)
   native static Str[] list(Str path)
   native static Str normalize(Str path)
-  native static Bool create(Str path)
+  native static Bool createDirs(Str path)
+  native static Bool createFile(Str path)
   native static Bool moveTo(Str path, Str to)
+  native static Bool copyTo(Str path, Str to)
   native static Bool delete(Str path)
-  native static Bool deleteOnExit(Str path)
+  //native static Bool deleteOnExit(Str path)
   native static Bool isReadable(Str path)
   native static Bool isWritable(Str path)
   native static Bool isExecutable(Str path)
   native static Bool isDir(Str path)
+  native static Str tempDir()
+  native static Str[] osRoots()
+  native static Bool getSpaceInfo(Str path, Array<Int> out)
+
+  native static Str fileSep()
+  native static Str pathSep()
 }
 
 **************************************************************************
@@ -544,9 +647,12 @@ abstract const class File
 **************************************************************************
 internal native const class LocalFile : File
 {
-  new make(Uri uri, Bool checkSlash := true) {
-    if (FileSystem.exists(uri.toStr)) {
-      if (FileSystem.isDir(uri.toStr)) {
+  private static Str osPathStr(Uri uri) {
+    return FileSystem.uriToPath(uri.pathStr)
+  }
+  static LocalFile make(Uri uri, Bool checkSlash := true) {
+    if (FileSystem.exists(osPathStr(uri))) {
+      if (FileSystem.isDir(osPathStr(uri))) {
         if (!uri.isDir()) {
           if (checkSlash)
             throw IOErr.make("Must use trailing slash for dir: " + uri)
@@ -558,48 +664,68 @@ internal native const class LocalFile : File
           throw IOErr.make("Cannot use trailing slash for file: " + uri)
       }
     }
+    return LocalFile.privateMake(uri)
   }
 
-  native override FileStore? store()
+  private new privateMake(Uri uri) : super.privateMake(uri) {}
 
-  override Bool exists() { FileSystem.exists(uri.toStr) }
-  override Int size() { FileSystem.size(uri.toStr) }
+  override FileStore? store() {
+    Array<Int> info = Array<Int>(3);
+    if (!FileSystem.getSpaceInfo(osPathStr(uri), info)) return null
+    return FileStore {
+      totalSpace = info[0]
+      availSpace = info[1]
+      freeSpace = info[2]
+    }
+  }
+
+  override Bool exists() { FileSystem.exists(osPathStr(uri)) }
+  override Int size() { FileSystem.size(osPathStr(uri)) }
   override TimePoint? modified {
-    get { TimePoint.fromMillis(FileSystem.modified(uri.toStr)) }
-    set { FileSystem.setModified(uri.toStr, it.toMillis) }
+    get { TimePoint.fromMillis(FileSystem.modified(osPathStr(uri))) }
+    set { FileSystem.setModified(osPathStr(uri), it.toMillis) }
   }
-  override Str? osPath() { FileSystem.osPath(uri.toStr) }
+  override Str? osPath() { osPathStr(uri) }
   override File[] list() {
-    res := FileSystem.list(uri.toStr)
-    return res.map { File.fromPath(it, false) }
+    if (!isDir) return [,]
+    res := FileSystem.list(osPathStr(uri))
+    return res.map { File.os(it) }
   }
   override File normalize() {
-    nor := FileSystem.normalize(uri.toStr)
-    return File.fromPath(nor, false)
+    nor := FileSystem.normalize(osPathStr(uri))
+    return File.make(nor.toUri, false)
   }
   override File create() {
-    ok := FileSystem.create(uri.toStr)
+    Bool ok = false
+    if (isDir) {
+      ok = FileSystem.createDirs(osPathStr(uri))
+    }
+    else {
+      ok = FileSystem.createFile(osPathStr(uri))
+    }
     if (!ok) throw IOErr("Can't create file: $uri")
     return this
   }
   override File moveTo(File to) {
-    ok := FileSystem.moveTo(uri.toStr, to.uri.toStr)
+    ok := FileSystem.moveTo(osPathStr(uri), osPathStr(to.uri))
     if (!ok) throw IOErr("Can't moveTo file: $uri to; to.uri")
     return this
   }
   override Void delete() {
-    ok := FileSystem.delete(uri.toStr)
+    ok := FileSystem.delete(osPathStr(uri))
     if (!ok) throw IOErr("Can't delete file: $uri")
   }
   override File deleteOnExit() {
-    ok := FileSystem.deleteOnExit(uri.toStr)
-    if (!ok) throw IOErr("deleteOnExit error: $uri")
+    str := osPathStr(uri)
+    Env.cur.addShutdownHook {
+      FileSystem.delete(str)
+    }
     return this
   }
 
-  override Bool isReadable() { FileSystem.isReadable(uri.toStr) }
-  override Bool isWritable() { FileSystem.isWritable(uri.toStr) }
-  override Bool isExecutable() { FileSystem.isExecutable(uri.toStr) }
+  override Bool isReadable() { FileSystem.isReadable(osPathStr(uri)) }
+  override Bool isWritable() { FileSystem.isWritable(osPathStr(uri)) }
+  override Bool isExecutable() { FileSystem.isExecutable(osPathStr(uri)) }
 
   override Buf open(Str mode := "rw") {
     FileBuf(this, mode)

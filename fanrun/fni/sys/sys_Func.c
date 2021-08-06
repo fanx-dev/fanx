@@ -36,7 +36,7 @@ fr_Obj sys_Func_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_O
 }
 
 fr_Obj sys_BindFunc_call__0(fr_Env env, fr_Obj self) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     //fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     
@@ -45,7 +45,7 @@ fr_Obj sys_BindFunc_call__0(fr_Env env, fr_Obj self) {
 }
 
 fr_Obj sys_BindFunc_call__1(fr_Env env, fr_Obj self, fr_Obj a) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
 
@@ -53,7 +53,7 @@ fr_Obj sys_BindFunc_call__1(fr_Env env, fr_Obj self, fr_Obj a) {
     return res;
 }
 fr_Obj sys_BindFunc_call__2(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -62,7 +62,7 @@ fr_Obj sys_BindFunc_call__2(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b) {
     return res;
 }
 fr_Obj sys_BindFunc_call__3(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -72,7 +72,7 @@ fr_Obj sys_BindFunc_call__3(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj 
     return res;
 }
 fr_Obj sys_BindFunc_call__4(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -83,7 +83,7 @@ fr_Obj sys_BindFunc_call__4(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj 
     return res;
 }
 fr_Obj sys_BindFunc_call__5(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -95,7 +95,7 @@ fr_Obj sys_BindFunc_call__5(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj 
     return res;
 }
 fr_Obj sys_BindFunc_call__6(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -108,7 +108,7 @@ fr_Obj sys_BindFunc_call__6(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj 
     return res;
 }
 fr_Obj sys_BindFunc_call__7(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);
@@ -122,7 +122,7 @@ fr_Obj sys_BindFunc_call__7(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj 
     return res;
 }
 fr_Obj sys_BindFunc_call(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g, fr_Obj h) {
-    fr_Obj list = fr_newObjS(env, "sys", "List", "make", 1, 10);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 10).h;
 
     fr_callMethodS(env, "sys", "List", "add", 2, list, a);
     fr_callMethodS(env, "sys", "List", "add", 2, list, b);

@@ -232,6 +232,12 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
 
 void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
                , int argCount, fr_Value *arg, fr_Value *ret) {
+
+    if (type->flags & FFlags_Abstract) {
+        printf("try new abstract class");
+        assert(false);
+    }
+
     fr_Obj obj = fr_allocObj(self, type, -1);
     
     fr_Value newArgs[10];
@@ -285,18 +291,30 @@ fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *na
     return ret.h;
 }
 
-fr_Value fr_callOnObj(fr_Env self, const char *name
+fr_Value fr_callOnObj(fr_Env self, fr_Obj obj, const char *name
                          , int argCount, ...) {
     va_list args;
     fr_Value ret;
     va_start(args, argCount);
-    fr_Obj obj = va_arg(args, fr_Obj);
-    va_start(args, argCount);
     
     fr_Type ftype = fr_getObjType(self, obj);
-    fr_Method m = fr_findMethod(self, ftype, name);
+    fr_Method method = fr_findMethod(self, ftype, name);
     
-    ret = fr_callMethodV(self, m, argCount, args);
+    //ret = fr_callMethodV(self, m, argCount, args);
+    fr_Value valueArgs[10] = { 0 };
+    valueArgs[0].h = obj;
+    for (int i = 0; i < argCount; i++) {
+        int paramIndex = i;
+
+        if (strcmp(method->paramsList[paramIndex].type, "sys_Bool") == 0) {
+            valueArgs[i+1].b = va_arg(args, int);
+        }
+        else {
+            valueArgs[i+1].h = va_arg(args, fr_Obj);
+        }
+    }
+    ret.i = 0;
+    fr_callMethodA(self, method, argCount+1, valueArgs, &ret);
     va_end(args);
     return ret;
 }
@@ -362,7 +380,7 @@ void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg
 
 
 void fr_printErr(fr_Env self, fr_Obj err) {
-    fr_callOnObj(self, "trace", 1, err);
+    fr_callOnObj(self, err, "trace", 0);
 }
 
 void fr_clearErr(fr_Env self) {

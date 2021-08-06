@@ -228,13 +228,7 @@
     <ClCompile Include="..\..\fni\std\std_Field.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_File.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_FileBuf.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_FileSystem.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Locale.c">
@@ -298,6 +292,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\vm\vm\sys_runtime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_FileSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

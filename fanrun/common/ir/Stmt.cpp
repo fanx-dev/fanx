@@ -231,8 +231,8 @@ void ConstStmt::print(Printer& printer) {
             escapeStr(rawstr, str);
             
             printer.println("%s = (std_Uri)(%s_ConstPoolUris[%d]);", varName.c_str(), curPod->name.c_str(), opObj.i1);
-            printer.printf("if (%s == NULL) { std_Uri_fromStr__1(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d));"
-                           , varName.c_str(), str.c_str(), len);
+            printer.printf("if (%s == NULL) { %s_ConstPoolUris[%d] = std_Uri_fromStr__1(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d));"
+                           , varName.c_str(), curPod->name.c_str(), opObj.i1, str.c_str(), len);
             printer.printf("%s = (std_Uri)(%s_ConstPoolUris[%d]); }", varName.c_str(), curPod->name.c_str(), opObj.i1);
             break;
         }
