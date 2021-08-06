@@ -341,7 +341,10 @@ internal class SysOutStream : OutStream {
   override Endian endian
   override Charset charset
 
-  new make(Endian e, Charset c) {
+  //native peer
+  private Int handle
+
+  new make(Endian e := Endian.big, Charset c := Charset.utf8) {
     endian = e
     charset = c
   }

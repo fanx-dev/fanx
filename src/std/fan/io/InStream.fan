@@ -731,7 +731,10 @@ internal class SysInStream : InStream
   override Endian endian
   override Charset charset
 
-  protected new make(Endian e, Charset c) {
+  //native peer
+  private Int handle
+
+  protected new make(Endian e = Endian.big, Charset c = Charset.utf8) {
     endian = e
     charset = c
   }

@@ -124,6 +124,15 @@ void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, 
 
 void fr_callNonVirtual(fr_Env self, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret) {
+
+    int methodArg = method->paramsCount;
+    if ((method->flags & FFlags_Static) == 0) {
+        ++methodArg;
+    }
+    if (methodArg != argCount) {
+        printf("ERROR: %s args num not match: %d != %d\n", method->name, methodArg, argCount);
+        return;
+    }
     method->func(self, arg, ret);
 }
 

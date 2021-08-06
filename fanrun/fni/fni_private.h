@@ -46,6 +46,8 @@ typedef struct fr_Array_ {
     FObj* data[1];
 } fr_Array;
 
+void* fr_arrayData(fr_Env env, fr_Obj array);
+
 GcObj *fr_toGcObj(FObj *obj);
 FObj *fr_fromGcObj(GcObj *g);
 

@@ -46,6 +46,11 @@ size_t fr_arrayLen(fr_Env self, fr_Obj array) {
     return a->size;
 }
 
+void* fr_arrayData(fr_Env env, fr_Obj array) {
+    fr_Array* a = (fr_Array*)fr_getPtr(env, array);
+    return a->data;
+}
+
 void fr_arrayGet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
     if (index >= array->size) {
         fr_throwNew(self, "sys", "IndexErr", "out index");
@@ -284,7 +289,7 @@ fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *na
     va_start(args, argCount);
     
     fr_Type ftype = fr_findType(self, pod, type);
-    fr_Method m = fr_findMethod(self, ftype, name);
+    fr_Method m = fr_findMethodN(self, ftype, name, argCount);
     
     ret = fr_newObjV(self, ftype, m, argCount, args);
     va_end(args);
@@ -298,7 +303,7 @@ fr_Value fr_callOnObj(fr_Env self, fr_Obj obj, const char *name
     va_start(args, argCount);
     
     fr_Type ftype = fr_getObjType(self, obj);
-    fr_Method method = fr_findMethod(self, ftype, name);
+    fr_Method method = fr_findMethodN(self, ftype, name, argCount);
     
     //ret = fr_callMethodV(self, m, argCount, args);
     fr_Value valueArgs[10] = { 0 };
