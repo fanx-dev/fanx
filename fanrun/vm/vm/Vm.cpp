@@ -80,6 +80,7 @@ void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
     FObj *fobj = fr_fromGcObj(gcobj);
     FType *ftype = fr_getFType((fr_Env)env, fobj);
     FType *objArray = podManager->findType(env, "sys", "Array");
+    FType* objAtomicRef = podManager->findType(env, "std", "AtomicRef");
     if (ftype == objArray) {
         fr_Array *array = (fr_Array *)fobj;
         if (array->valueType == fr_vtObj) {
@@ -88,6 +89,17 @@ void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
                 //list->push_back((FObj*)obj);
                 gc->onVisit(fr_toGcObj((FObj*)elem));
             }
+        }
+        return;
+    }
+
+    if (ftype == objAtomicRef) {
+        FObj** valptr = (FObj**)fobj;
+        FObj* val = *valptr;
+        if (val) {
+            GcObj* gp = fr_toGcObj(val);
+            //list->push_back(gp);
+            gc->onVisit(gp);
         }
         return;
     }

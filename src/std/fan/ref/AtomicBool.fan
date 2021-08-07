@@ -12,11 +12,14 @@
 **
 final const native class AtomicBool
 {
+  private const Int handle0
+  private const Int handle1
 
   **
   ** Construct with initial value
   **
-  new make(Bool val := false)
+  new make(Bool val := false) { init(val) }
+  private native Void init(Bool val)
 
   **
   ** The current boolean value
@@ -38,6 +41,9 @@ final const native class AtomicBool
   **
   ** Return 'val.toStr'
   **
-  override Str toStr()
+  override Str toStr() { val.toStr }
+
+
+  protected native override Void finalize()
 
 }

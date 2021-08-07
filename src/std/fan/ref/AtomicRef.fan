@@ -13,12 +13,15 @@
 **
 final const native class AtomicRef<T>
 {
+  private const Int handle0
+  private const Int handle1
 
   **
   ** Construct with initial value.
   ** Throw NotImmutableErr if initialized to a mutable value.
   **
-  new make(T? val := null)
+  new make(T? val := null) { init(val) }
+  private native Void init(T? val)
 
   **
   ** The current value.
@@ -43,6 +46,9 @@ final const native class AtomicRef<T>
   **
   ** Return 'val.toStr'
   **
-  override Str toStr()
+  override Str toStr() { val.toStr }
+
+
+  protected native override Void finalize()
 
 }

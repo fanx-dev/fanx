@@ -52,6 +52,7 @@ void Vm::releaseEnv(Env *env) {
 extern  "C" {
 #endif
     extern fr_Type sys_Array_class__;
+    extern fr_Type std_AtomicRef_class__;
 #ifdef  __cplusplus
 }
 #endif
@@ -71,6 +72,17 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
                     gc->onVisit(gp);
                 }
             }
+        }
+        return;
+    }
+
+    if (type == std_AtomicRef_class__) {
+        FObj **valptr = (FObj**)obj;
+        FObj *val = *valptr;
+        if (val) {
+            GcObj* gp = fr_toGcObj(val);
+            //list->push_back(gp);
+            gc->onVisit(gp);
         }
         return;
     }

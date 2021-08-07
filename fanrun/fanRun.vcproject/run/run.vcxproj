@@ -26,9 +26,9 @@
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
     <ClCompile Include="..\..\fni\fni.cpp" />
-    <ClCompile Include="..\..\fni\std\std_AtomicBool.c" />
-    <ClCompile Include="..\..\fni\std\std_AtomicInt.c" />
-    <ClCompile Include="..\..\fni\std\std_AtomicRef.c" />
+    <ClCompile Include="..\..\fni\std\std_AtomicBool.cpp" />
+    <ClCompile Include="..\..\fni\std\std_AtomicInt.cpp" />
+    <ClCompile Include="..\..\fni\std\std_AtomicRef.cpp" />
     <ClCompile Include="..\..\fni\std\std_BaseType.cpp" />
     <ClCompile Include="..\..\fni\std\std_BufCrypto.c" />
     <ClCompile Include="..\..\fni\std\std_DateTime.cpp" />
@@ -40,7 +40,7 @@
     <ClCompile Include="..\..\fni\std\std_FileSystem.cpp" />
     <ClCompile Include="..\..\fni\std\std_Locale.c" />
     <ClCompile Include="..\..\fni\std\std_LocalFile.c" />
-    <ClCompile Include="..\..\fni\std\std_Lock.c" />
+    <ClCompile Include="..\..\fni\std\std_Lock.cpp" />
     <ClCompile Include="..\..\fni\std\std_Log.c" />
     <ClCompile Include="..\..\fni\std\std_Math.c" />
     <ClCompile Include="..\..\fni\std\std_Method.c" />
@@ -209,6 +209,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

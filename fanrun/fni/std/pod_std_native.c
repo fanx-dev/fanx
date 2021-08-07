@@ -1207,7 +1207,7 @@ void std_SysOutStream_close_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_AtomicBool_make_v(fr_Env env, void *param, void *ret) {
+void std_AtomicBool_init_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value value_1;
@@ -1220,7 +1220,7 @@ void std_AtomicBool_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_AtomicBool_make(env, arg_0, arg_1);
+    std_AtomicBool_init(env, arg_0, arg_1);
 }
 
 void std_AtomicBool_val_v(fr_Env env, void *param, void *ret) {
@@ -1293,20 +1293,18 @@ void std_AtomicBool_compareAndSet_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_AtomicBool_toStr_v(fr_Env env, void *param, void *ret) {
+void std_AtomicBool_finalize_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
-    fr_Value retValue;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    retValue.h = std_AtomicBool_toStr(env, arg_0);
-    *((fr_Value*)ret) = retValue;
+    std_AtomicBool_finalize(env, arg_0);
 }
 
-void std_AtomicInt_make_v(fr_Env env, void *param, void *ret) {
+void std_AtomicInt_init_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value value_1;
@@ -1319,7 +1317,7 @@ void std_AtomicInt_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_AtomicInt_make(env, arg_0, arg_1);
+    std_AtomicInt_init(env, arg_0, arg_1);
 }
 
 void std_AtomicInt_val_v(fr_Env env, void *param, void *ret) {
@@ -1392,32 +1390,6 @@ void std_AtomicInt_compareAndSet_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_AtomicInt_getAndIncrement_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.i = std_AtomicInt_getAndIncrement(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_AtomicInt_getAndDecrement_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.i = std_AtomicInt_getAndDecrement(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_AtomicInt_getAndAdd_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -1433,32 +1405,6 @@ void std_AtomicInt_getAndAdd_v(fr_Env env, void *param, void *ret) {
 
 
     retValue.i = std_AtomicInt_getAndAdd(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_AtomicInt_incrementAndGet_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.i = std_AtomicInt_incrementAndGet(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_AtomicInt_decrementAndGet_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.i = std_AtomicInt_decrementAndGet(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -1480,7 +1426,7 @@ void std_AtomicInt_addAndGet_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_AtomicInt_increment_v(fr_Env env, void *param, void *ret) {
+void std_AtomicInt_finalize_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
 
@@ -1488,50 +1434,10 @@ void std_AtomicInt_increment_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_AtomicInt_increment(env, arg_0);
+    std_AtomicInt_finalize(env, arg_0);
 }
 
-void std_AtomicInt_decrement_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    std_AtomicInt_decrement(env, arg_0);
-}
-
-void std_AtomicInt_add_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Int arg_1; 
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.i;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    std_AtomicInt_add(env, arg_0, arg_1);
-}
-
-void std_AtomicInt_toStr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_AtomicInt_toStr(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_AtomicRef_make_v(fr_Env env, void *param, void *ret) {
+void std_AtomicRef_init_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value value_1;
@@ -1544,7 +1450,7 @@ void std_AtomicRef_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_AtomicRef_make(env, arg_0, arg_1);
+    std_AtomicRef_init(env, arg_0, arg_1);
 }
 
 void std_AtomicRef_val_v(fr_Env env, void *param, void *ret) {
@@ -1617,17 +1523,26 @@ void std_AtomicRef_compareAndSet_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_AtomicRef_toStr_v(fr_Env env, void *param, void *ret) {
+void std_AtomicRef_finalize_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
-    fr_Value retValue;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    retValue.h = std_AtomicRef_toStr(env, arg_0);
-    *((fr_Value*)ret) = retValue;
+    std_AtomicRef_finalize(env, arg_0);
+}
+
+void std_Lock_init_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    std_Lock_init(env, arg_0);
 }
 
 void std_Lock_tryLock_v(fr_Env env, void *param, void *ret) {
@@ -1668,6 +1583,17 @@ void std_Lock_unlock_v(fr_Env env, void *param, void *ret) {
 
 
     std_Lock_unlock(env, arg_0);
+}
+
+void std_Lock_finalize_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    std_Lock_finalize(env, arg_0);
 }
 
 void std_Field_getDirectly_v(fr_Env env, void *param, void *ret) {

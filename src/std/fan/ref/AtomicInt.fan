@@ -12,11 +12,14 @@
 **
 final const native class AtomicInt
 {
+  private const Int handle0
+  private const Int handle1
 
   **
   ** Construct with initial value
   **
-  new make(Int val := 0)
+  new make(Int val := 0) { init(val) }
+  private native Void init(Int val)
 
   **
   ** The current integer value
@@ -39,13 +42,13 @@ final const native class AtomicInt
   ** Atomically increment the current value by one and
   ** return the previous value.
   **
-  native Int getAndIncrement()
+  Int getAndIncrement() { getAndAdd(1) }
 
   **
   ** Atomically decrement the current value by one and
   ** return the previous value.
   **
-  native Int getAndDecrement()
+  Int getAndDecrement() { getAndAdd(-1) }
 
   **
   ** Atomically add the given value to the current value
@@ -57,13 +60,13 @@ final const native class AtomicInt
   ** Atomically increment the current value by one and
   ** return the updated value.
   **
-  native Int incrementAndGet()
+  Int incrementAndGet() { addAndGet(1) }
 
   **
   ** Atomically decrement the current value by one and
   ** return the updated value.
   **
-  native Int decrementAndGet()
+  Int decrementAndGet() { addAndGet(-1) }
 
   **
   ** Atomically add the given value to the current value and
@@ -74,21 +77,24 @@ final const native class AtomicInt
   **
   ** Atomically increment the value by one
   **
-  native Void increment()
+  Void increment() { incrementAndGet }
 
   **
   ** Atomically decrement the value by one
   **
-  native Void decrement()
+  Void decrement() { decrementAndGet }
 
   **
   ** Atomically add the given value to the current value
   **
-  native Void add(Int delta)
+  Void add(Int delta) { addAndGet(delta) }
 
   **
   ** Return 'val.toStr'
   **
-  override Str toStr()
+  override Str toStr() { val.toStr }
+
+
+  protected native override Void finalize()
 
 }

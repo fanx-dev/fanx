@@ -93,15 +93,6 @@
     <ClCompile Include="..\..\fni\fni.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_AtomicBool.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_AtomicInt.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_AtomicRef.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_BaseType.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -127,9 +118,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_LocalFile.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Lock.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Log.c">
@@ -190,6 +178,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_DateTime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_AtomicBool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_AtomicInt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_AtomicRef.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Lock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
