@@ -22,31 +22,68 @@ void getDepends(PodLoader &podMgr, const std::string &pod, std::map<std::string,
     depends[pod] = fpod;
 }
 
-// /Users/yangjiandong/workspace/code/fanx/env/ baseTest /Users/yangjiandong/workspace/code/fanrun/gen/temp/
+// -p/Users/yangjiandong/workspace/code/fanx/env/ -g/Users/yangjiandong/workspace/code/fanrun/gen/temp/ -r baseTest
 int main(int argc, const char * argv[]) {
-    std::string libPath;
-    std::string pod;
-    std::string outPath;
-    if (argc == 4) {
-        libPath = argv[1];
-        pod = argv[2];
-        outPath = argv[3];
+    char buf[256] = { 0 };
+    const char* libPath = NULL;
+    const char* nativeOutPath = NULL;
+
+    int i = 1;
+    bool recursive = false;
+    while (argc > i && argv[i] && argv[i][0] == '-') {
+        const char* op = argv[i] + 1;
+        switch (op[0]) {
+        case 'g':
+            nativeOutPath = op + 1;
+            break;
+        case 'p':
+            strncpy(buf, op + 1, 256);
+            strncat(buf, "lib/fan/", 256);
+            libPath = buf;
+            break;
+        case 'r':
+            recursive = true;
+            break;
+        default:
+            printf("ignore option:%s\n", argv[i]);
+        }
+        ++i;
     }
-    else {
-        printf("Usage: <envPath> <podName> <outputPath>");
+
+    if (libPath == NULL) {
+        const char* fanHome = getenv("FANX_HOME");
+        if (fanHome == NULL) {
+            printf("required -p for fanHome\n");
+            return -1;
+        }
+        strncpy(buf, fanHome, 256);
+        strncat(buf, "/lib/fan/", 256);
+        libPath = buf;
+    }
+
+    const char* name = argv[i];
+    if (name == NULL || nativeOutPath == NULL) {
+        printf("Usage:\n  gen -pFanHome -gOutputDir podName\n");
+        printf("Options:\n");
+        printf("  -c\trecursive pod\n");
         return -1;
     }
   
     PodLoader podMgr;
-    libPath += "lib/fan/";
-    podMgr.load(libPath, pod);
+    podMgr.load(libPath, name);
     
-    std::map<std::string, FPod*> depends;
-    getDepends(podMgr, pod, depends);
-    
-    for (std::map<std::string, FPod*>::iterator itr = depends.begin(); itr != depends.end(); ++itr) {
-        PodGen gen1(&podMgr, itr->first);
-        gen1.gen(outPath);
+    if (recursive) {
+        std::map<std::string, FPod*> depends;
+        getDepends(podMgr, name, depends);
+
+        for (std::map<std::string, FPod*>::iterator itr = depends.begin(); itr != depends.end(); ++itr) {
+            PodGen gen1(&podMgr, itr->first);
+            gen1.gen(nativeOutPath);
+        }
+    }
+    else {
+        PodGen gen1(&podMgr, name);
+        gen1.gen(nativeOutPath);
     }
     
     puts("DONE!");

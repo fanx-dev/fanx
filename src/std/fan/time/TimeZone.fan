@@ -62,13 +62,14 @@ const class TimeZone
   **   - [TimeZone database]`docLang::DateTime#timeZone`
   **   - [TimeZone aliases]`docLang::DateTime#timeZoneAliases`
   **
-  static new fromStr(Str name, Bool checked := true) {
+  static TimeZone? fromStr(Str name, Bool checked := true) {
     if (name == "UTC") return utc
     if (name == "Rel") return rel
+    if (name == "local") return cur
     tz := fromName(name)
     if (tz == null) {
       if (checked) throw ParseErr(name)
-      tz = make(name, name, 0)
+      //tz = make(name, name, 0)
     }
     return tz
   }
@@ -153,7 +154,12 @@ const class TimeZone
     if (min != 0) throw new RuntimeException("Cannot convert fractional hour to GMT timezone: " + hour + ":" + min);
     */
     s.add(hour)
-    return TimeZone.fromStr(s.toStr)
+    name := s.toStr
+    tz := TimeZone.fromStr(name, false)
+    if (tz == null) {
+      tz = TimeZone.make(name, name, offset)
+    }
+    return tz
   }
 
   **

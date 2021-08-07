@@ -13,6 +13,9 @@ PodGen::PodGen(PodLoader *podMgr, const std::string& podName) : podMgr(podMgr), 
     module = new IRModule();
     
     pod = podMgr->findPod(podName);
+    if (pod == NULL) {
+        printf("not found pod:%s\n", podName.c_str());
+    }
     
     allTypes.clear();
     allTypes.reserve(pod->types.size());

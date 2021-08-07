@@ -213,9 +213,6 @@
     <ClCompile Include="..\..\fni\std\std_BufCrypto.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_DateTime.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Decimal.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -295,6 +292,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_FileSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_DateTime.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

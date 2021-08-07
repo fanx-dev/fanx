@@ -31,7 +31,7 @@
     <ClCompile Include="..\..\fni\std\std_AtomicRef.c" />
     <ClCompile Include="..\..\fni\std\std_BaseType.cpp" />
     <ClCompile Include="..\..\fni\std\std_BufCrypto.c" />
-    <ClCompile Include="..\..\fni\std\std_DateTime.c" />
+    <ClCompile Include="..\..\fni\std\std_DateTime.cpp" />
     <ClCompile Include="..\..\fni\std\std_Decimal.c" />
     <ClCompile Include="..\..\fni\std\std_Env.c" />
     <ClCompile Include="..\..\fni\std\std_Extension.c" />

@@ -7,29 +7,6 @@ import fan.sys.ArgErr;
 import fan.sys.ParseErr;
 
 public class DateTimePeer {
-	private static volatile DateTime cached = DateTime.fromTicks(0, TimeZone.cur());
-	private static volatile DateTime cachedUtc = DateTime.fromTicks(0, TimeZone.utc);
-	  
-	static DateTime now(Duration tolerance) {
-		long now = System.currentTimeMillis();
-
-	    DateTime c = cached;
-	    if (tolerance != null && now - c.ticks <= tolerance.toMillis())
-	        return c;
-
-	    return cached = DateTime.fromTicks(now, TimeZone.cur());
-	}
-
-	static DateTime nowUtc(Duration tolerance) {
-		long now = System.currentTimeMillis();
-
-	    DateTime c = cachedUtc;
-	    if (tolerance != null && now - c.ticks <= tolerance.toMillis())
-	        return c;
-
-	    return cachedUtc = DateTime.fromTicks(now, TimeZone.utc);
-	}
-
 	static DateTime fromTicks(long ticks, TimeZone tz) {
 		java.util.TimeZone jtz = TimeZonePeer.getJtz(tz);
 		Calendar cal = Calendar.getInstance(jtz);

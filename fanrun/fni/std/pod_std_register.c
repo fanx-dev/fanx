@@ -128,8 +128,6 @@ void std_Pod_files_v(fr_Env env, void *param, void *ret);
 void std_Pod_file_v(fr_Env env, void *param, void *ret);
 void std_Type_typeof__v(fr_Env env, void *param, void *ret);
 void std_BaseType_doInit_v(fr_Env env, void *param, void *ret);
-void std_DateTime_now_v(fr_Env env, void *param, void *ret);
-void std_DateTime_nowUtc_v(fr_Env env, void *param, void *ret);
 void std_DateTime_fromTicks_v(fr_Env env, void *param, void *ret);
 void std_DateTime_make_v(fr_Env env, void *param, void *ret);
 void std_DateTime_dayOfYear_v(fr_Env env, void *param, void *ret);
@@ -401,8 +399,6 @@ void std_register(fr_Fvm vm) {
     fr_registerMethod(vm, "std_Pod_file", std_Pod_file_v);
     fr_registerMethod(vm, "std_Type_typeof", std_Type_typeof__v);
     fr_registerMethod(vm, "std_BaseType_doInit", std_BaseType_doInit_v);
-    fr_registerMethod(vm, "std_DateTime_now", std_DateTime_now_v);
-    fr_registerMethod(vm, "std_DateTime_nowUtc", std_DateTime_nowUtc_v);
     fr_registerMethod(vm, "std_DateTime_fromTicks", std_DateTime_fromTicks_v);
     fr_registerMethod(vm, "std_DateTime_make", std_DateTime_make_v);
     fr_registerMethod(vm, "std_DateTime_dayOfYear", std_DateTime_dayOfYear_v);

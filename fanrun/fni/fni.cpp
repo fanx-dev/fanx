@@ -211,7 +211,7 @@ fr_Value fr_callMethod(fr_Env self, fr_Method method, int argCount, ...) {
 }
 
 fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list args) {
-    fr_Value valueArgs[10] = {0};
+    fr_Value valueArgs[50] = {0};
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
@@ -243,9 +243,14 @@ void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
         assert(false);
     }
 
+    if ((method->flags & FFlags_Ctor) == 0) {
+        printf("method is not ctor: %s\n", method->name);
+        assert(false);
+    }
+
     fr_Obj obj = fr_allocObj(self, type, -1);
     
-    fr_Value newArgs[10];
+    fr_Value newArgs[50];
     newArgs[0].h = obj;
     for (int i=0; i<argCount; ++i) {
         newArgs[i+1] = arg[i];
@@ -256,7 +261,7 @@ void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
 }
 
 fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
-    fr_Value valueArgs[10] = {0};
+    fr_Value valueArgs[50] = {0};
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
@@ -306,7 +311,7 @@ fr_Value fr_callOnObj(fr_Env self, fr_Obj obj, const char *name
     fr_Method method = fr_findMethodN(self, ftype, name, argCount);
     
     //ret = fr_callMethodV(self, m, argCount, args);
-    fr_Value valueArgs[10] = { 0 };
+    fr_Value valueArgs[50] = { 0 };
     valueArgs[0].h = obj;
     for (int i = 0; i < argCount; i++) {
         int paramIndex = i;

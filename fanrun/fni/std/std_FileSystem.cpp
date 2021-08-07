@@ -57,7 +57,7 @@ fr_Obj std_FileSystem_pathToUri(fr_Env env, fr_Obj path) {
 fr_Obj std_FileSystem_list(fr_Env env, fr_Obj path) {
     const char* str = fr_getStrUtf8(env, path);
     fs::path dir = fs::u8path(str);
-    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 8).h;
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)8).h;
     for (auto& p : fs::directory_iterator(dir)) {
         std::string pathstr = p.path().string();
         fr_Obj s = fr_newStrUtf8(env, pathstr.c_str());
@@ -146,7 +146,7 @@ fr_Bool std_FileSystem_getSpaceInfo(fr_Env env, fr_Obj path, fr_Obj out) {
     return true;
 }
 fr_Obj std_FileSystem_osRoots(fr_Env env) {
-    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, 8).h;
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)8).h;
     fr_callOnObj(env, list, "add", 1, fr_newStrUtf8(env, "/"));
     return list;
 }

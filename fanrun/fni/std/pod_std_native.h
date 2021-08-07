@@ -129,8 +129,6 @@ fr_Obj std_Pod_files(fr_Env env, fr_Obj self);
 fr_Obj std_Pod_file(fr_Env env, fr_Obj self, fr_Obj uri, fr_Bool checked);
 fr_Obj std_Type_typeof_(fr_Env env, fr_Obj obj);
 void std_BaseType_doInit(fr_Env env, fr_Obj self);
-fr_Obj std_DateTime_now(fr_Env env, fr_Obj tolerance);
-fr_Obj std_DateTime_nowUtc(fr_Env env, fr_Obj tolerance);
 fr_Obj std_DateTime_fromTicks(fr_Env env, fr_Int ticks, fr_Obj tz);
 fr_Obj std_DateTime_make(fr_Env env, fr_Int year, fr_Obj month, fr_Int day, fr_Int hour, fr_Int min, fr_Int sec, fr_Int ns, fr_Obj tz);
 fr_Int std_DateTime_dayOfYear(fr_Env env, fr_Obj self);

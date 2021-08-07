@@ -43,6 +43,9 @@ const struct class DateTime
   private const Int ticks           // millis since 1970
   private const TimeZone timeZone   // timezone used to resolve fields
 
+  private static const AtomicRef<DateTime> nowCache := AtomicRef<DateTime>()
+  private static const AtomicRef<DateTime> utcCache := AtomicRef<DateTime>()
+
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -59,13 +62,33 @@ const struct class DateTime
   ** then use `Duration.now` instead.  Duration is more efficient
   ** and won't cause you grief when the system clock is modified.
   **
-  native static DateTime now(Duration? tolerance := 250ms)
+  static DateTime now(Duration? tolerance := 250ms) {
+      now := TimePoint.nowMillis
+
+      DateTime? c = nowCache.val
+      if (c != null && tolerance != null && now - c.ticks <= tolerance.toMillis())
+          return c
+
+      dt := DateTime.fromTicks(now, TimeZone.cur)
+      nowCache.val = dt
+      return dt
+  }
 
   **
   ** Return the current time using `TimeZone.utc`.
   ** See `now` for a description of the tolerance parameter.
   **
-  native static DateTime nowUtc(Duration? tolerance := 250ms)
+  static DateTime nowUtc(Duration? tolerance := 250ms) {
+      now := TimePoint.nowMillis
+
+      DateTime? c = utcCache.val
+      if (c != null && tolerance != null && now - c.ticks <= tolerance.toMillis())
+          return c
+
+      dt := DateTime.fromTicks(now, TimeZone.utc)
+      utcCache.val = dt
+      return dt
+  }
 
   **
   ** Return the current time as millisecond ticks since 1 Jan 1970 UTC.
@@ -97,7 +120,7 @@ const struct class DateTime
   **
   ** Throw ArgErr is any of the parameters are out of range.
   **
-  native static new make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
+  native static DateTime make(Int year, Month month, Int day, Int hour, Int min, Int sec := 0, Int ns := 0, TimeZone tz := TimeZone.cur)
 
 
   internal new privateMake(Int year, Int month, Int day, Int hour, Int min, Int sec, Int ns
@@ -180,7 +203,9 @@ const struct class DateTime
       if (c != 'Z')
       {
         offHour := num(s, i++)*10 + num(s, i++);
-        if (s.get(i++) != ':') throw Err();
+        if (s.get(i) == ':') {
+          ++i
+        }
         offMin  := num(s, i++)*10 + num(s, i++);
         offset = offHour*3600 + offMin*60;
         if (c == '-') offset = -offset;

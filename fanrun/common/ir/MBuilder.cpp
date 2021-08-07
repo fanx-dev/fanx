@@ -866,7 +866,17 @@ void MBuilder::parseBlock(Block *block, Block *previous) {
             }
             case FOp::Dup: {
                 Expr entry = block->pop();
-                block->push(entry);
+                Var& var = block->newVarAs(entry.getType());
+
+                StoreStmt* stmt = new StoreStmt();
+                stmt->curPod = curPod;
+                stmt->pos = opObj.pos;
+                stmt->block = block;
+                stmt->dst = var.asRef();
+                stmt->src = entry;
+                block->addStmt(stmt);
+
+                block->push(stmt->dst);
                 block->push(entry);
                 break;
             }

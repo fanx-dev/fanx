@@ -2398,32 +2398,6 @@ void std_BaseType_doInit_v(fr_Env env, void *param, void *ret) {
     std_BaseType_doInit(env, arg_0);
 }
 
-void std_DateTime_now_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_DateTime_now(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_DateTime_nowUtc_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_DateTime_nowUtc(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_DateTime_fromTicks_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Int arg_0; 
