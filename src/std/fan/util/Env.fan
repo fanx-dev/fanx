@@ -11,7 +11,7 @@
 ** Env defines a pluggable class used to boot and manage a Fantom
 ** runtime environment.  Use `cur` to access the current Env instance.
 **
-native const class Env
+native rtconst class Env
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,6 +29,10 @@ native const class Env
   **
   protected new make()
 
+  override Bool isImmutable() { true }
+
+  override Env toImmutable() { this }
+
 //////////////////////////////////////////////////////////////////////////
 // Non-Virtuals
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +41,7 @@ native const class Env
   ** Name of the host platform as a string formatted
   ** as "<os>-<arch>".  See `os` and `arch`.
   **
-  Str platform()
+  Str platform() { "${os}-${arch}" }
 
   **
   ** Operating system name as one of the following constants:
@@ -87,7 +91,10 @@ native const class Env
   ** has overridden the 'hash' method.  If null then
   ** return 0.
   **
-  Int idHash(Obj? obj)
+  Int idHash(Obj? obj) {
+    if (obj == null) return 0
+    return NativeC.toId(obj)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Virtuals
@@ -176,17 +183,24 @@ native const class Env
   ** pods and configuration information.  Default implementation
   ** delegates to `parent`.
   **
-  virtual File workDir()
+  virtual File workDir() {
+    File.fromPath(envPaths[0])
+  }
 
   **
   ** Get the temp directory to use for scratch files.
   ** Default implementation delegates to `parent`.
   **
-  virtual File tempDir()
+  virtual File tempDir() {
+    workDir.plus(Uri.fromStr("temp/"), false);
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Resolution
 //////////////////////////////////////////////////////////////////////////
+
+  private Array<Str> envPaths := getEnvPaths
+  private native Array<Str> getEnvPaths()
 
   **
   ** Find a file in the environment using a relative path such
@@ -197,7 +211,21 @@ native const class Env
   ** should always return the file with the highest priority.
   ** Default implementation delegates to `parent`.
   **
-  virtual File? findFile(Uri uri, Bool checked := true)
+  virtual File? findFile(Uri uri, Bool checked := true) {
+    if (uri.isPathAbs())
+      throw ArgErr.make("Uri must be relative: " + uri);
+
+    ps := envPaths
+    for (i:=0; i<ps.size; ++i) {
+      p := ps[i]
+      File f = File.make(p.toUri + uri, false)
+      if (f.exists()) {
+        return f
+      }
+    }
+    if (!checked) return null
+    throw UnresolvedErr("File not found in Env: " + uri);
+  }
 
   **
   ** Find all the files in the environment which match a relative
@@ -209,7 +237,21 @@ native const class Env
   ** Return empty list if the file is not found in environment.
   ** Default implementation delegates to `parent`.
   **
-  virtual File[] findAllFiles(Uri uri)
+  virtual File[] findAllFiles(Uri uri) {
+    if (uri.isPathAbs())
+      throw ArgErr.make("Uri must be relative: " + uri);
+
+    ps := envPaths
+    list := [,]
+    for (i:=0; i<ps.size; ++i) {
+      p := ps[i]
+      File f = File.make(p.toUri + uri, false)
+      if (f.exists()) {
+        list.add(f)
+      }
+    }
+    return list
+  }
 
   **
   ** Resolve the pod file for the given pod name.  If the
@@ -217,7 +259,9 @@ native const class Env
   ** default implementation routes to `findFile` to look
   ** in "lib/fan" directory.
   **
-  virtual File? findPodFile(Str podName)
+  virtual File? findPodFile(Str podName) {
+    return findFile(`lib/fan/${podName}.pod`, false)
+  }
 
   **
   ** Return the list of pod names for all the pods currently installed
@@ -227,7 +271,20 @@ native const class Env
   ** to `findFile` to look in the "lib/fan" directory and assumes a
   ** naming convention of "{name}.pod".
   **
-  virtual Str[] findAllPodNames()
+  virtual Str[] findAllPodNames() {
+    ps := envPaths
+    allPod := [:]
+    for (i:=0; i<ps.size; ++i) {
+      p := ps[i]
+      File fdir = File.make(p.toUri + `lib/fan/`, false)
+      fdir.list.each |f| {
+        if (f.ext == "pod") {
+          allPod[f.basename] = f
+        }
+      }
+    }
+    return allPod.keys
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // State
@@ -248,7 +305,10 @@ native const class Env
   **   - force: pass 'true' to not use caching, always forces
   **     a recompile
   **
-  virtual Type compileScript(File f, [Str:Obj]? options := null)
+  virtual Type compileScript(File f, [Str:Obj]? options := null) {
+    Type t = ScriptCompiler.cur.compile(f, options)
+    return t
+  }
 
   **
   ** Lookup all the matching values for a pod indexed key.  If no
@@ -272,6 +332,8 @@ native const class Env
   **
   virtual Str[] indexPodNames(Str key)
 
+  private EnvProps envProps := EnvProps();
+
   **
   ** Return a merged key/value map of all the prop files found
   ** using the following resolution rules:
@@ -294,7 +356,9 @@ native const class Env
   **
   ** Also see `Pod.props` and `docLang::Env`.
   **
-  virtual Str:Str props(Pod pod, Uri uri, Duration maxAge)
+  virtual Str:Str props(Pod pod, Uri uri, Duration maxAge) {
+    envProps.get(pod, uri, maxAge)
+  }
 
   **
   ** Lookup a configuration property for given pod/key pair.
@@ -305,7 +369,12 @@ native const class Env
   **
   ** Also see `Pod.config` and `docLang::Env`.
   **
-  virtual Str? config(Pod pod, Str key, Str? defV := null)
+  virtual Str? config(Pod pod, Str key, Str? defV := null) {
+    props(pod, `config.props`, 1min).get(key, defV)
+  }
+
+  private static const Uri configProps = Uri.fromStr("config.props");
+  private static const Uri localeEnProps = Uri.fromStr("locale/en.props");
 
   **
   ** Lookup a localized property for the specified pod/key pair.
@@ -319,7 +388,30 @@ native const class Env
   **
   ** Also see `Pod.locale` and `docLang::Localization`.
   **
-  virtual Str? locale(Pod pod, Str key, Str? defV := "_nodef_", Locale locale := Locale.cur)
+  virtual Str? locale(Pod pod, Str key, Str? defV := "_nodef_", Locale locale := Locale.cur) {
+    Str? val;
+    Duration maxAge = Duration.maxVal;
+
+    // 1. 'props(pod, `locale/{locale}.props`)'
+    val = props(pod, Uri.fromStr("locale/" + locale.toStr() + ".props"), maxAge).get(key, null);
+    if (val != null)
+      return val;
+
+    // 2. 'props(pod, `locale/{lang}.props`)'
+    val = props(pod, Uri.fromStr("locale/" + locale.lang + ".props"), maxAge).get(key, null);
+    if (val != null)
+      return val;
+
+    // 3. 'props(pod, `locale/en.props`)'
+    val = props(pod, localeEnProps, maxAge).get(key, null);
+    if (val != null)
+      return val;
+
+    // 4. Fallback to 'pod::key' unless 'def' specified
+    if (defV == "_nodef_")
+      return pod.name + "::" + key;
+    return defV
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Exiting and Shutdown Hooks
@@ -329,14 +421,23 @@ native const class Env
   ** Terminate the current virtual machine.
   ** Default implementation delegates to `parent`.
   **
-  virtual Void exit(Int status := 0)
+  native virtual Void exit(Int status := 0)
+
+  private |->|[] shutdownHooks := [,]
+  internal Void onExit() {
+    shutdownHooks.each {
+      it.call
+    }
+  }
 
   **
   ** Add a function to be called on VM shutdown.  Throw
   ** NotImmutableErr if the function is not immutable.
   ** Default implementation delegates to `parent`.
   **
-  virtual Void addShutdownHook(|->| hook)
+  virtual Void addShutdownHook(|->| hook) {
+    shutdownHooks.add(hook)
+  }
 
   **
   ** Remove a shutdown hook function which was added
@@ -344,7 +445,9 @@ native const class Env
   ** previously added and was unregistered, false otherwise.
   ** Default implementation delegates to `parent`.
   **
-  virtual Bool removeShutdownHook(|->| hook)
+  virtual Bool removeShutdownHook(|->| hook) {
+    shutdownHooks.remove(hook) != null
+  }
 
 }
 

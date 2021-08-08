@@ -30,6 +30,11 @@ void fr_releaseEnv(fr_Fvm vm, fr_Env env) {
     fvm->releaseEnv((Env*)env);
 }
 
+fr_Fvm fr_getVm(fr_Env env) {
+    if (env == NULL) return fvm;
+    return ((Env*)env)->vm;
+}
+
 //////////////////////////////////////////
 // GC
 /*

@@ -20,6 +20,11 @@ fr_Env fr_getEnv(fr_Fvm vm) {
     return (fr_Env)v->getEnv();
 }
 
+fr_Fvm fr_getVm(fr_Env env) {
+    if (env == NULL) Fvm::getCur();
+    return ((Env*)env)->vm;
+}
+
 void fr_releaseEnv(fr_Fvm vm, fr_Env env) {
     Fvm *v = (Fvm*)vm;
     v->releaseEnv((Env*)env);

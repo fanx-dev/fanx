@@ -16,6 +16,8 @@
     #include "SimpleLLVMJIT.hpp"
 #endif
 
+Fvm *fvm = NULL;
+
 Fvm::Fvm(PodManager *podManager)
     : podManager(podManager), executeEngine(nullptr)
 {
@@ -25,11 +27,17 @@ Fvm::Fvm(PodManager *podManager)
 #ifdef FR_LLVM
     executeEngine = new SimpleLLVMJIT();
 #endif
+    fvm = this;
 }
 
 Fvm::~Fvm() {
+    fvm = NULL;
     LinkedList_release(&globalRefList);
     delete executeEngine;
+}
+
+Fvm* Fvm::getCur() {
+    return fvm;
 }
 
 void Fvm::start() {

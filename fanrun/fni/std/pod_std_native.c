@@ -3135,19 +3135,6 @@ void std_Env_make_v(fr_Env env, void *param, void *ret) {
     std_Env_make(env, arg_0);
 }
 
-void std_Env_platform_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_platform(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Env_os_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -3210,24 +3197,6 @@ void std_Env_javaVersion_v(fr_Env env, void *param, void *ret) {
 
 
     retValue.i = std_Env_javaVersion(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_idHash_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.i = std_Env_idHash(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -3377,7 +3346,7 @@ void std_Env_homeDir_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Env_workDir_v(fr_Env env, void *param, void *ret) {
+void std_Env_getEnvPaths_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value retValue;
@@ -3386,115 +3355,7 @@ void std_Env_workDir_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.h = std_Env_workDir(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_tempDir_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_tempDir(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_findFile_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Bool arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.b;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_findFile(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_findAllFiles_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_findAllFiles(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_findPodFile_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_findPodFile(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_findAllPodNames_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_findAllPodNames(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_compileScript_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_compileScript(env, arg_0, arg_1, arg_2);
+    retValue.h = std_Env_getEnvPaths(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -3547,95 +3408,6 @@ void std_Env_indexPodNames_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Env_props_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value value_3;
-    fr_Obj arg_3; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_3, 3, NULL);
-    arg_3 = value_3.h;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_props(env, arg_0, arg_1, arg_2, arg_3);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_config_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value value_3;
-    fr_Obj arg_3; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_3, 3, NULL);
-    arg_3 = value_3.h;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_config(env, arg_0, arg_1, arg_2, arg_3);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_locale_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value value_3;
-    fr_Obj arg_3; 
-    fr_Value value_4;
-    fr_Obj arg_4; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_4, 4, NULL);
-    arg_4 = value_4.h;
-
-    fr_getParam(env, param, &value_3, 3, NULL);
-    arg_3 = value_3.h;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_locale(env, arg_0, arg_1, arg_2, arg_3, arg_4);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Env_exit_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -3650,40 +3422,6 @@ void std_Env_exit_v(fr_Env env, void *param, void *ret) {
 
 
     std_Env_exit(env, arg_0, arg_1);
-}
-
-void std_Env_addShutdownHook_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    std_Env_addShutdownHook(env, arg_0, arg_1);
-}
-
-void std_Env_removeShutdownHook_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.b = std_Env_removeShutdownHook(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
 }
 
 void std_Math_ceil_v(fr_Env env, void *param, void *ret) {

@@ -462,7 +462,7 @@ public class Env extends FanObj {
   }
 
   private synchronized void loadIndex() {
-	EnvIndex eindex = new EnvIndex();
+    EnvIndex eindex = new EnvIndex();
     index = toImuMap(eindex.map);
     keys = (List) index.keys().toImmutable();
     keyToPodNames = toImuMap(eindex.keyToPodNames);

@@ -438,6 +438,16 @@ fr_Obj fr_objToStr(fr_Env env, fr_Obj x) {
     return str;
 }
 
+fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]) {
+    fr_Obj args = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)argc).h;
+    for (int i = start; i < argc; ++i) {
+        const char* cstr = argv[i];
+        fr_Obj str = fr_newStrUtf8(env, cstr);
+        fr_callOnObj(env, args, "add", 1, str);
+    }
+    return args;
+}
+
 #ifdef  __cplusplus
 }//extern "C"
 #endif

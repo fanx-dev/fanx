@@ -34,6 +34,8 @@ public:
 public:
     Fvm(PodManager *podManager);
     ~Fvm();
+
+    static Fvm* getCur();
     
     void start();
     void stop();

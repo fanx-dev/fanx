@@ -17,6 +17,12 @@ CF_BEGIN
 void sys_register(fr_Fvm vm);
 void std_register(fr_Fvm vm);
 
+fr_Obj fr_argsArray = NULL;
+fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]);
+
+const char* fr_homeDir = NULL;
+const char* fr_envPaths[32] = {0};
+
 CF_END
 
 FObj *makeArgArray(Env *env, int start, int argc, const char * argv[]) {
@@ -69,8 +75,7 @@ int main(int argc, const char * argv[]) {
                 break;
             case 'p': {
                 strncpy(buf, op+1, 256);
-                strncat(buf, "lib/fan/", 256);
-                libPath = buf;
+                fr_homeDir = strdup(buf);
             }
                 break;
             case 'd': {
@@ -84,15 +89,30 @@ int main(int argc, const char * argv[]) {
         ++i;
     }
     
-    if (libPath == NULL) {
-        const char *fanHome = getenv("FANX_HOME");
+    //init homeDir
+    if (!fr_homeDir) {
+        const char* fanHome = getenv("FANX_HOME");
         if (fanHome == NULL) {
             printf("required -p for fanHome\n");
             return -1;
         }
-        strncpy(buf, fanHome, 256);
-        strncat(buf, "/lib/fan/", 256);
-        libPath = buf;
+        fr_homeDir = fanHome;
+    }
+    strncpy(buf, fr_homeDir, 256);
+    strncat(buf, "/lib/fan/", 256);
+    libPath = buf;
+
+    //init envPaths
+    const char* fr_workDir;
+    const char* fanEnvPath = getenv("FANX_ENV_PATH");
+    if (fanEnvPath) {
+        fr_workDir = fanEnvPath;
+        fr_envPaths[0] = fr_workDir;
+        fr_envPaths[1] = fr_homeDir;
+    }
+    else {
+        fr_workDir = fr_homeDir;
+        fr_envPaths[0] = fr_homeDir;
     }
     
     const char *name = argv[i];
@@ -142,7 +162,9 @@ int main(int argc, const char * argv[]) {
     vm.start();
     env->trace = debug;
     
-    FObj *args = makeArgArray(env, i+1, argc, argv);
+    fr_Obj argsObj = fr_makeArgArray((fr_Env)env, i + 1, argc, argv);
+    FObj* args = fr_getPtr((fr_Env)env, argsObj);// makeArgArray(env, i + 1, argc, argv);
+    fr_argsArray = fr_newGlobalRef((fr_Env)env, argsObj);
     
     env->start(pod, type, method, args);
     

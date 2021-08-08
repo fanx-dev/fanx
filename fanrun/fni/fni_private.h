@@ -22,6 +22,7 @@ CF_BEGIN
 struct sys_Obj_struct;
 typedef struct sys_Obj_struct FObj;
 
+fr_Fvm fr_getVm(fr_Env env);
 
 /**
  * fatch pointer from handle
@@ -50,6 +51,8 @@ void* fr_arrayData(fr_Env env, fr_Obj array);
 
 GcObj *fr_toGcObj(FObj *obj);
 FObj *fr_fromGcObj(GcObj *g);
+
+void fr_gc(fr_Env self);
 
 
 enum FConstFlags {
