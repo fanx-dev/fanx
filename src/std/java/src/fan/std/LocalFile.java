@@ -189,12 +189,19 @@ public class LocalFile extends fan.std.File {
 				throw IOErr.make("Cannot create dir: " + parent);
 		}
 
+		// try {
+		// 	java.io.FileOutputStream out = new java.io.FileOutputStream(file);
+		// 	out.close();
+		// } catch (java.io.IOException e) {
+		// 	throw IOErr.make(e);
+		// }
 		try {
-			java.io.FileOutputStream out = new java.io.FileOutputStream(file);
-			out.close();
-		} catch (java.io.IOException e) {
-			throw IOErr.make(e);
+			file.createNewFile();
 		}
+	    catch (java.io.IOException err)
+	    {
+	      throw IOErr.make("Cannot create: " + file, err);
+	    }
 	}
 
 	private static void createDir(java.io.File file) {

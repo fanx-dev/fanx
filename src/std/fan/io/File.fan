@@ -76,14 +76,16 @@ abstract const class File
   **   File.createTemp.deleteOnExit => `/tmp/fan5284.tmp`
   **
   static File createTemp(Str prefix := "fan", Str suffix := ".tmp", File? dir := null) {
-    Str? d = null
     if (dir != null) {
       if (!(dir is LocalFile))
         throw IOErr("Dir is not on local file system: " + dir)
-        d = dir.osPath
     }
     if (dir == null) {
       dir = File.os(FileSystem.tempDir)
+    }
+
+    if (!dir.isDir) {
+      throw IOErr("$dir is not directory")
     }
 
     File? file
@@ -93,6 +95,7 @@ abstract const class File
       file = File.fromPath(dir.pathStr+name)
       if (!file.exists) break
     }
+    file.create
     return file
   }
 
@@ -328,7 +331,10 @@ abstract const class File
   ** Throw IOErr is this file is not a directory or if there is a
   ** error creating the new file.  Return the file created.
   **
-  File createFile(Str name) { (this+Uri(name)).create }
+  File createFile(Str name) {
+    if (!isDir) throw IOErr("not directory")
+    return (this+Uri(name)).create
+  }
 
   **
   ** Create a sub-directory under this directory.  Convenience
@@ -337,7 +343,10 @@ abstract const class File
   ** Throw IOErr is this file is not a directory or if there is a
   ** error creating the new directory.  Return the directory created.
   **
-  File createDir(Str name) { (this+`$name/`).create }
+  File createDir(Str name) {
+    if (!isDir) throw IOErr("not directory");
+    return (this+`$name/`).create
+  }
 
   **
   ** Copy this file or directory to the new specified location.
@@ -420,12 +429,16 @@ abstract const class File
       to.create();
       kids := self.list();
       for (i := 0; i < kids.size; ++i) {
-        File kid = (File) kids.get(i);
-        doCopyTo(kid, (to.uri.plusName(kid.name)).toFile, exclude, overwrite);
+        File kid = kids.get(i)
+        dst := to.uri.plusName(kid.name)
+        if (kid.isDir) dst = dst.plusSlash
+        doCopyTo(kid, dst.toFile, exclude, overwrite)
       }
     }
-
     // copy file contents
+    else if (self is LocalFile && to is LocalFile) {
+      FileSystem.copyTo(self.osPath, to.osPath)
+    }
     else {
       OutStream out = to.out();
       try {
@@ -434,7 +447,6 @@ abstract const class File
         out.close();
       }
       //copyPermissions(self, to);
-      //FileSystem::copyTo(self.osPath, to.osPath)
     }
   }
 
@@ -494,7 +506,13 @@ abstract const class File
   ** should use this method will care since each file marked to delete will
   ** consume resources.  Throw IOErr on error.  Return this.
   **
-  abstract File deleteOnExit()
+  virtual File deleteOnExit() {
+    str := FileSystem.uriToPath(uri.pathStr)
+    Env.cur.addShutdownHook {
+      FileSystem.delete(str)
+    }
+    return this
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // IO
@@ -615,7 +633,7 @@ abstract const class File
   static Str pathSep() { FileSystem.pathSep }
 }
 
-@NoDoc internal class FileSystem {
+@NoPeer internal class FileSystem {
   native static Bool exists(Str path)
   native static Int size(Str path)
   native static Int modified(Str path)
@@ -650,6 +668,7 @@ internal native const class LocalFile : File
   private static Str osPathStr(Uri uri) {
     return FileSystem.uriToPath(uri.pathStr)
   }
+  
   static LocalFile make(Uri uri, Bool checkSlash := true) {
     if (FileSystem.exists(osPathStr(uri))) {
       if (FileSystem.isDir(osPathStr(uri))) {
@@ -716,10 +735,7 @@ internal native const class LocalFile : File
     if (!ok) throw IOErr("Can't delete file: $uri")
   }
   override File deleteOnExit() {
-    str := osPathStr(uri)
-    Env.cur.addShutdownHook {
-      FileSystem.delete(str)
-    }
+    super.deleteOnExit()
     return this
   }
 

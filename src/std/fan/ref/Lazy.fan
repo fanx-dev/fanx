@@ -9,10 +9,10 @@
 **
 ** call initial when val is null
 **
-final native rtconst class Lazy<T>
+final rtconst class Lazy<T>
 {
   private Obj? value
-  private const Lock lock
+  private const Lock lock := Lock()
   private const |->T| initial
   
   new make(|->T| initial) {

@@ -4,8 +4,8 @@ fan.std.RegexPeer.make = function(self) {
   return new fan.std.RegexPeer();
 }
 
-fan.std.RegexPeer.prototype.init = function(self) {
-    self.m_regexp = new RegExp(self.m_source);
+fan.std.RegexPeer.prototype.init = function(self, src) {
+    self.m_regexp = new RegExp(src);
 }
 
 fan.std.RegexPeer.prototype.matches = function(self, s)

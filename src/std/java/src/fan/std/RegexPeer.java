@@ -13,8 +13,8 @@ public class RegexPeer {
 		return new RegexPeer();
 	}
 
-	void init(Regex self) {
-		pattern = Pattern.compile(self.source);
+	void init(Regex self, String src) {
+		pattern = Pattern.compile(src);
 	}
 
 	public boolean matches(Regex self, String s) {

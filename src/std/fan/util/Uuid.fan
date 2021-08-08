@@ -154,6 +154,7 @@ const struct class Uuid
 
 }
 
+@NoPeer
 internal class UuidFactory {
     Int lastMillis; // last use of currentTimeMillis
     Int millisCounter; // counter to uniquify currentTimeMillis

@@ -7,6 +7,7 @@ fan.std.FileBufPeer.prototype.init = function(self, file, mode) {
 	var buf = reader.readAsArrayBuffer(file);
 	this.m_fp = new DataView(buf);
 	this.m_pos = 0;
+	return true;
 }
 
 fan.std.FileBufPeer.prototype.size = function(self) {
