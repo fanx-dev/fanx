@@ -8,11 +8,15 @@
 
 internal class FileBuf : Buf
 {
+  private Int handle
+
   new make(File file, Str mode) : super.privateMake() {
-    init(file, mode)
+    if (!init(file, mode)) {
+      throw IOErr("open file error: $file, $mode")
+    }
   }
 
-  protected native Void init(File file, Str mode)
+  protected native Bool init(File file, Str mode)
 
   native override Int size
   native override Int capacity

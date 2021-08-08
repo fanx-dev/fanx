@@ -12,7 +12,8 @@
 const final class Regex
 {
   private const Str source
-  private native Void init()
+  private const Int handle
+  private native Void init(Str source)
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ const final class Regex
   **
   private new make(Str source) {
     this.source = source
-    init()
+    init(source)
   }
 
   **
@@ -128,5 +129,5 @@ const final class Regex
 
   // TODO: flags support
   // TODO: examples in fandoc
-
+  protected native override Void finalize()
 }

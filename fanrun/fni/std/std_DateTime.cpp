@@ -3,6 +3,10 @@
 #include <time.h>
 #include <string>
 
+#include <mutex>
+
+std::recursive_mutex g_datetime_mutex;
+
 static void string_replace(std::string &self, const std::string& src, const std::string& dst) {
     int pos = (int)self.find(src);
     if (pos >= 0) {
@@ -15,6 +19,7 @@ static void string_replace(std::string &self, const std::string& src, const std:
 static struct tm* decomposeTicks(fr_Int ticks) {
     time_t timer = ticks / 1000;
     struct tm* info;
+
     info = localtime(&timer);
     return info;
 }
@@ -27,6 +32,7 @@ static struct tm* decomposeObj(fr_Env env, fr_Obj dt) {
 fr_Obj std_DateTime_fromTicks(fr_Env env, fr_Int ticks, fr_Obj tz) {
     time_t timer = ticks / 1000;
     struct tm* info;
+    std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
     info = localtime(&timer);
 
     fr_Obj dt = fr_newObjS(env, "std", "DateTime", "privateMake", 11, 
@@ -42,6 +48,7 @@ fr_Obj std_DateTime_make(fr_Env env, fr_Int year, fr_Obj month, fr_Int day, fr_I
     time_t ticks;
     struct tm tm_info;
     struct tm* info;
+    std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
 
     int imonth = fr_getFieldS(env, month, "ordinal").i;
     tm_info.tm_year = year - 1900;
@@ -66,6 +73,8 @@ fr_Obj std_DateTime_make(fr_Env env, fr_Int year, fr_Obj month, fr_Int day, fr_I
 }
 fr_Int std_DateTime_dayOfYear(fr_Env env, fr_Obj self) {
     struct tm* info;
+    std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
+
     info = decomposeObj(env, self);
     return ((fr_Int)info->tm_yday)+1;
 }
@@ -130,10 +139,13 @@ static void convertToCPattern(std::string & patter) {
 fr_Obj std_DateTime_toLocale(fr_Env env, fr_Obj self, fr_Obj pattern, fr_Obj locale) {
     char buf[1024];
     struct tm* info;
-    info = decomposeObj(env, self);
 
     std::string format = fr_getStrUtf8(env, pattern);
     convertToCPattern(format);
+
+    std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
+    info = decomposeObj(env, self);
+
     strftime(buf, 1024, format.c_str(), info);
 
     return fr_newStrUtf8(env, buf);
@@ -141,8 +153,9 @@ fr_Obj std_DateTime_toLocale(fr_Env env, fr_Obj self, fr_Obj pattern, fr_Obj loc
 fr_Obj std_DateTime_fromLocale(fr_Env env, fr_Obj astr, fr_Obj pattern, fr_Obj tz, fr_Bool checked) {
  
     const char* str = fr_getStrUtf8(env, astr);
-    std::string format = fr_getStrUtf8(env, pattern);
-    convertToCPattern(format);
+
+    //std::string format = fr_getStrUtf8(env, pattern);
+    //convertToCPattern(format);
 
 #if _WIN64
     int year, month, day, hour, min, sec;
@@ -174,6 +187,7 @@ fr_Obj std_DateTime_fromLocale(fr_Env env, fr_Obj astr, fr_Obj pattern, fr_Obj t
 
 #else
     struct tm info;
+    std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
     strptime(str, format.c_str(), &info);
     time_t ticks = mktime(&info);
 

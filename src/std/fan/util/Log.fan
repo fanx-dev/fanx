@@ -247,5 +247,8 @@ rtconst class Log
   static Void removeHandler(|LogRec rec| handler) { logMgr.handlers.remove(handler) }
 
 
-  internal native static Void printLogRec(LogRec rec, OutStream out)
+  internal static Void printLogRec(LogRec rec, OutStream out) {
+    out.printLine(rec.toStr)
+    if (rec.err != null) rec.err.traceTo(out)
+  }
 }

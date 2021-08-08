@@ -177,12 +177,16 @@ native mixin Math
   **
   ** Convert this angle in radians to an angle in degrees.
   **
-  static extension Float toDegrees(Float self)
+  static extension Float toDegrees(Float radians) {
+    radians * (180.0/Math.pi)
+  }
 
   **
   ** Convert this angle in degrees to an angle in radians.
   **
-  static extension Float toRadians(Float self)
+  static extension Float toRadians(Float degrees) {
+    degrees * Math.pi / 180.0
+  }
 
 }
 

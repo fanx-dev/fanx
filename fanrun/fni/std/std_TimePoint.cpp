@@ -2,6 +2,7 @@
 #include "pod_std_native.h"
 
 #include "util/miss.h"
+#include <mutex>
 
 const int64_t NanoPerSecond = 1000000000L;
 
@@ -123,8 +124,13 @@ fr_Int std_TimePoint_nanoTicks(fr_Env env) {
 }
 fr_Int std_TimePoint_nowUnique(fr_Env env) {
     static fr_Int nowUniqueLast;
+    static std::mutex lock;
     fr_Int now = nanoTicks();
+
+    lock.lock();
     if (now <= nowUniqueLast) now = nowUniqueLast + 1;
     nowUniqueLast = now;
+    lock.unlock();
+
     return now;
 }

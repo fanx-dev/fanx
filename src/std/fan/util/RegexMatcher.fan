@@ -12,7 +12,7 @@
 **
 native final class RegexMatcher
 {
-
+  private const Int handle
 //////////////////////////////////////////////////////////////////////////
 // Constructor
 //////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ native final class RegexMatcher
   **
   ** Private constructor.
   **
-  private new make()
+  private new make() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Matching
@@ -32,7 +32,7 @@ native final class RegexMatcher
   ** via the `group`, `start`, and `end` methods.  Return false
   ** if a match cannot be made.
   **
-  Bool matches()
+  native Bool matches()
 
   **
   ** Attempt to find the next match .  If a match is made
@@ -40,7 +40,7 @@ native final class RegexMatcher
   ** the `group`, `start`, and `end` methods.  Return false
   ** if a match cannot be made.
   **
-  Bool find()
+  native Bool find()
 
 //////////////////////////////////////////////////////////////////////////
 // Replace
@@ -50,13 +50,13 @@ native final class RegexMatcher
   ** Replace the first sequence which matches the pattern with
   ** the given replacment string.
   **
-  Str replaceFirst(Str replacement)
+  native Str replaceFirst(Str replacement)
 
   **
   ** Replace every sequence which matches the pattern with the
   ** given replacment string.
   **
-  Str replaceAll(Str replacement)
+  native Str replaceAll(Str replacement)
 
 //////////////////////////////////////////////////////////////////////////
 // Group
@@ -66,7 +66,7 @@ native final class RegexMatcher
   ** Return the number of capturing groups or zero if no match.
   ** Group zero is is not included.
   **
-  Int groupCount()
+  native Int groupCount()
 
   **
   ** Return the substring captured by the matching operation.
@@ -75,21 +75,21 @@ native final class RegexMatcher
   ** null if group failed to match part of the input.  Throw exception
   ** if failed to match input or group index is invalid.
   **
-  Str? group(Int group := 0)
+  native Str? group(Int group := 0)
 
   **
   ** Return the start index of the given `group`.
   ** Throw exception if failed to match input or group
   ** index is invalid.
   **
-  Int start(Int group := 0)
+  native Int start(Int group := 0)
 
   **
   ** Return end index+1 one of the given `group`.
   ** Throw exception if failed to match input or group
   ** index is invalid.
   **
-  Int end(Int group := 0)
+  native Int end(Int group := 0)
 
   native protected override Void finalize()
 }

@@ -210,31 +210,19 @@
     <ClCompile Include="..\..\fni\std\std_Env.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Extension.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Field.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_FileBuf.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Locale.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_LocalFile.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Log.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Math.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Method.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_NativeCharset.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_NioBuf.c">
@@ -249,28 +237,16 @@
     <ClCompile Include="..\..\fni\std\std_Process.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Regex.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_RegexMatcher.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_SysInStream.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_SysOutStream.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_TimePoint.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_TimeZone.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Type.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Uuid.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Zip.c">
@@ -295,6 +271,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Lock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Locale.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_NativeCharset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Regex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_RegexMatcher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_UuidFactory.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_TimePoint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

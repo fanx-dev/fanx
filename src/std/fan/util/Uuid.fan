@@ -34,6 +34,8 @@ const struct class Uuid
 {
   private const Int hi
   private const Int lo
+  private static const Unsafe<UuidFactory> facotry := Unsafe<UuidFactory>(UuidFactory())
+
 //////////////////////////////////////////////////////////////////////////
 // Construction
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +43,9 @@ const struct class Uuid
   **
   ** Generate a new UUID globally unique in space and time.
   **
-  native static new make()
+  static Uuid make() {
+    facotry.val.genUuid
+  }
 
   **
   ** Create a 128-bit UUID from two 64-bit integers.
@@ -148,4 +152,41 @@ const struct class Uuid
     s.add(str)
   }
 
+}
+
+internal class UuidFactory {
+    Int lastMillis; // last use of currentTimeMillis
+    Int millisCounter; // counter to uniquify currentTimeMillis
+    Int seq; // 16 byte sequence to protect against clock changes
+    Int nodeAddr; // 6 bytes for this node's address
+
+    new make() {
+      nodeAddr = resolveNodeAddr
+      seq = Int.random
+    }
+
+    private Int resolveNodeAddr() {
+      mac := resolveMacAddr
+      if (mac == 0) return Int.random
+      return mac
+    }
+
+    private native static Int resolveMacAddr()
+
+    Uuid genUuid() {
+      return Uuid.makeBits(makeHi(), makeLo());
+    }
+
+    private Int makeHi() {
+      now := TimePoint.nowMillis  //nowUnique
+      if (lastMillis != now) {
+        millisCounter = 0
+        lastMillis = now
+      }
+      return (now * 1000000) + millisCounter++
+    }
+
+    private Int makeLo() {
+      ((seq++).and(0xFFFF)).shiftl(48).or(nodeAddr)
+    }
 }

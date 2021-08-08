@@ -508,6 +508,7 @@ void std_FileBuf_init_v(fr_Env env, void *param, void *ret) {
     fr_Obj arg_1; 
     fr_Value value_2;
     fr_Obj arg_2; 
+    fr_Value retValue;
 
     fr_getParam(env, param, &value_2, 2, NULL);
     arg_2 = value_2.h;
@@ -519,7 +520,8 @@ void std_FileBuf_init_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_FileBuf_init(env, arg_0, arg_1, arg_2);
+    retValue.b = std_FileBuf_init(env, arg_0, arg_1, arg_2);
+    *((fr_Value*)ret) = retValue;
 }
 
 void std_FileBuf_size_v(fr_Env env, void *param, void *ret) {
@@ -3684,45 +3686,6 @@ void std_Env_removeShutdownHook_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Extension_traceTo_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Obj arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.h;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Extension_traceTo(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Log_printLogRec_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    std_Log_printLogRec(env, arg_0, arg_1);
-}
-
 void std_Math_ceil_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Float arg_0; 
@@ -3967,32 +3930,6 @@ void std_Math_tanh_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Math_toDegrees_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.f;
-
-
-    retValue.f = std_Math_toDegrees(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Math_toRadians_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Float arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.f;
-
-
-    retValue.f = std_Math_toRadians(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Process_env_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -4061,12 +3998,17 @@ void std_Process_kill_v(fr_Env env, void *param, void *ret) {
 void std_Regex_init_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    std_Regex_init(env, arg_0);
+    std_Regex_init(env, arg_0, arg_1);
 }
 
 void std_Regex_matches_v(fr_Env env, void *param, void *ret) {
@@ -4128,7 +4070,7 @@ void std_Regex_split_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_RegexMatcher_make_v(fr_Env env, void *param, void *ret) {
+void std_Regex_finalize_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
 
@@ -4136,7 +4078,7 @@ void std_RegexMatcher_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_RegexMatcher_make(env, arg_0);
+    std_Regex_finalize(env, arg_0);
 }
 
 void std_RegexMatcher_matches_v(fr_Env env, void *param, void *ret) {
@@ -4279,11 +4221,11 @@ void std_RegexMatcher_finalize_v(fr_Env env, void *param, void *ret) {
     std_RegexMatcher_finalize(env, arg_0);
 }
 
-void std_Uuid_make_v(fr_Env env, void *param, void *ret) {
+void std_UuidFactory_resolveMacAddr_v(fr_Env env, void *param, void *ret) {
     fr_Value retValue;
 
 
-    retValue.h = std_Uuid_make(env);
+    retValue.i = std_UuidFactory_resolveMacAddr(env);
     *((fr_Value*)ret) = retValue;
 }
 

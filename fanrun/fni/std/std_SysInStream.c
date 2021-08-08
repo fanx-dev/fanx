@@ -1,6 +1,8 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
 
+#include <stdio.h>
+
 FILE* std_SysInStream_getNativePeer(fr_Env env, fr_Obj obj) {
     static fr_Field field = NULL;
     if (field == NULL) field = fr_findField(env, fr_getObjType(env, obj), "handle");

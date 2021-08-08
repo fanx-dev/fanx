@@ -49,6 +49,20 @@ class Extension {
     return out
   }
 
-  native static extension Err traceTo(Err self, OutStream out := Env.cur.out, [Str:Obj]? options := null)
+  **
+  ** Dump the stack trace of this exception to the specified
+  ** output stream (or 'Env.cur.err' by default).  Return this.
+  **
+  ** The options may be used to specify the format of the output:
+  **   - "indent": Int for initial number of indentation spaces
+  **   - "maxDepth": Int specifies how many methods in each
+  **        exception of chain to include.  If unspecified the
+  **        default is configured from the "errTraceMaxDepth" prop
+  **        in etc/sys/config.props.
+  **
+  static extension Err traceTo(Err self, OutStream out := Env.cur.out, [Str:Obj]? options := null) {
+    out.printLine(self.traceToStr)
+    return self
+  }
 
 }

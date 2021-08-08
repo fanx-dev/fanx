@@ -49,29 +49,27 @@
     <ClCompile Include="..\..\fni\std\std_DateTime.cpp" />
     <ClCompile Include="..\..\fni\std\std_Decimal.c" />
     <ClCompile Include="..\..\fni\std\std_Env.c" />
-    <ClCompile Include="..\..\fni\std\std_Extension.c" />
     <ClCompile Include="..\..\fni\std\std_Field.c" />
     <ClCompile Include="..\..\fni\std\std_FileBuf.c" />
     <ClCompile Include="..\..\fni\std\std_FileSystem.cpp" />
-    <ClCompile Include="..\..\fni\std\std_Locale.c" />
+    <ClCompile Include="..\..\fni\std\std_Locale.cpp" />
     <ClCompile Include="..\..\fni\std\std_LocalFile.c" />
     <ClCompile Include="..\..\fni\std\std_Lock.cpp" />
-    <ClCompile Include="..\..\fni\std\std_Log.c" />
     <ClCompile Include="..\..\fni\std\std_Math.c" />
     <ClCompile Include="..\..\fni\std\std_Method.c" />
-    <ClCompile Include="..\..\fni\std\std_NativeCharset.c" />
+    <ClCompile Include="..\..\fni\std\std_NativeCharset.cpp" />
     <ClCompile Include="..\..\fni\std\std_NioBuf.c" />
     <ClCompile Include="..\..\fni\std\std_Pod.cpp" />
     <ClCompile Include="..\..\fni\std\std_PodList.cpp" />
     <ClCompile Include="..\..\fni\std\std_Process.c" />
-    <ClCompile Include="..\..\fni\std\std_Regex.c" />
-    <ClCompile Include="..\..\fni\std\std_RegexMatcher.c" />
+    <ClCompile Include="..\..\fni\std\std_Regex.cpp" />
+    <ClCompile Include="..\..\fni\std\std_RegexMatcher.cpp" />
     <ClCompile Include="..\..\fni\std\std_SysInStream.c" />
     <ClCompile Include="..\..\fni\std\std_SysOutStream.c" />
-    <ClCompile Include="..\..\fni\std\std_TimePoint.c" />
+    <ClCompile Include="..\..\fni\std\std_TimePoint.cpp" />
     <ClCompile Include="..\..\fni\std\std_TimeZone.c" />
     <ClCompile Include="..\..\fni\std\std_Type.c" />
-    <ClCompile Include="..\..\fni\std\std_Uuid.c" />
+    <ClCompile Include="..\..\fni\std\std_UuidFactory.c" />
     <ClCompile Include="..\..\fni\std\std_Zip.c" />
     <ClCompile Include="..\..\fni\sys\pod_sys_native.c" />
     <ClCompile Include="..\..\fni\sys\pod_sys_register.c" />
@@ -282,6 +280,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
