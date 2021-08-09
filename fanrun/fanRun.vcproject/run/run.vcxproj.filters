@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\zip">
+      <UniqueIdentifier>{d652167c-9b13-4ecf-ad11-19b41c92adf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\lib">
+      <UniqueIdentifier>{de22afca-a993-4f56-b32d-9d68a857181b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\gen\runtime\main.c">
@@ -42,42 +48,6 @@
     <ClCompile Include="..\..\common\util\utf8.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Array.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Bool.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Enum.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Float.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Func.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Int.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_NativeC.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Num.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Obj.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\sys\sys_Ptr.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\temp\baseTest.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gen\temp\sys.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\gen\runtime\sys_runtime.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -93,98 +63,203 @@
     <ClCompile Include="..\..\fni\fni.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_BaseType.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\adler32.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_BufCrypto.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zipper\CDirEntry.cpp">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Decimal.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\compress.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Env.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\crc32.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Field.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\deflate.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_FileBuf.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_LocalFile.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\iowin32.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Method.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_NioBuf.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Pod.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\inftrees.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_PodList.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\inflate.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Process.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\inffast.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_SysInStream.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\zlib\infback.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_SysOutStream.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\minizip.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_TimeZone.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Type.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Zip.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\thirdparty\minizip\miniunz.c">
+      <Filter>源文件\zip</Filter>
     </ClCompile>
     <ClCompile Include="..\..\gen\temp\std.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_FileSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_DateTime.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_AtomicBool.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_AtomicInt.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_AtomicRef.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_Lock.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\fni\std\std_BaseType.cpp">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_NativeCharset.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\fni\std\std_BufCrypto.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_DateTime.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Decimal.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Env.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Field.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_FileBuf.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_FileSystem.cpp">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Locale.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_LocalFile.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Lock.cpp">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Math.c">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Method.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_NativeCharset.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_NioBuf.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Pod.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_PodList.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Process.c">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Regex.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_RegexMatcher.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fni\std\std_UuidFactory.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="..\..\fni\std\std_SysInStream.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_SysOutStream.c">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\fni\std\std_TimePoint.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_TimeZone.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Type.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_UuidFactory.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\sys.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Array.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Bool.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Enum.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Float.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Func.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Int.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_NativeC.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Num.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Obj.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\sys\sys_Ptr.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\baseTest.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zipper\tools.cpp">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zlib\uncompr.c">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\minizip\unzip.c">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zipper\unzipper.cpp">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\minizip\zip.c">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zipper\zipper.cpp">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zlib\zutil.c">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\zlib\trees.c">
+      <Filter>源文件\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\std\std_Zip.cpp">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -227,18 +302,6 @@
     <ClInclude Include="..\..\common\util\utf8.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gen\temp\baseTest.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\baseTest_prototype.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\sys.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gen\temp\sys_prototype.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\fni\fni_private.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -260,5 +323,91 @@
     <ClInclude Include="..\..\gen\temp\std_prototype.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\iowin32.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zipper\CDirEntry.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\crc32.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\crypt.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\deflate.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zipper\defs.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi_mem.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi_buf.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\ioapi.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\inftrees.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\inflate.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\inffixed.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\inffast.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\sys.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\sys_prototype.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\baseTest.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\baseTest_prototype.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zipper\tools.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zipper\unzipper.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\unzip.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\zconf.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\zconf.in.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\minizip\zip.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zipper\zipper.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\zlib.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\zutil.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\zlib\trees.h">
+      <Filter>源文件\zip</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\thirdparty\zlib\README">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

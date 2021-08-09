@@ -111,7 +111,7 @@ void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, 
     
     if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {
         fr_Type type = fr_getObjType(self, arg[0].h);
-        fr_Method realMethod = fr_findMethod(self, type, method->name);
+        fr_Method realMethod = fr_findMethodN(self, type, method->name, method->paramsCount);
         if (!realMethod) {
             return;
         }

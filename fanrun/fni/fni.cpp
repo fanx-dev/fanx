@@ -295,6 +295,10 @@ fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *na
     
     fr_Type ftype = fr_findType(self, pod, type);
     fr_Method m = fr_findMethodN(self, ftype, name, argCount);
+    if (m == NULL) {
+        printf("method not found:%s,%d\n", name, argCount);
+        return NULL;
+    }
     
     ret = fr_newObjV(self, ftype, m, argCount, args);
     va_end(args);
@@ -309,6 +313,12 @@ fr_Value fr_callOnObj(fr_Env self, fr_Obj obj, const char *name
     
     fr_Type ftype = fr_getObjType(self, obj);
     fr_Method method = fr_findMethodN(self, ftype, name, argCount);
+
+    if (method == NULL) {
+        printf("method not found:%s,%d\n", name, argCount);
+        ret.h = NULL;
+        return ret;
+    }
     
     //ret = fr_callMethodV(self, m, argCount, args);
     fr_Value valueArgs[50] = { 0 };
@@ -337,6 +347,21 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
     
     fr_Type ftype = fr_findType(self, pod, type);
     fr_Method m = fr_findMethod(self, ftype, name);
+
+    int paramCount = argCount;
+    if ((m->flags & FFlags_Static) == 0) {
+        --paramCount;
+    }
+
+    if (paramCount != m->paramsCount) {
+        m = fr_findMethodN(self, ftype, name, paramCount);
+    }
+
+    if (m == NULL) {
+        printf("method not found: %s\n", name);
+        ret.h = NULL;
+        return ret;
+    }
     
     ret = fr_callMethodV(self, m, argCount, args);
     va_end(args);

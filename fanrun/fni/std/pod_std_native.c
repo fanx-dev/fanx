@@ -3359,55 +3359,6 @@ void std_Env_getEnvPaths_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Env_index_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_index(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_indexKeys_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_indexKeys(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Env_indexPodNames_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Env_indexPodNames(env, arg_0, arg_1);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Env_exit_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -4006,35 +3957,6 @@ void std_Zip_write_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Zip_init_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    std_Zip_init(env, arg_0, arg_1);
-}
-
-void std_Zip_file_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Zip_file(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Zip_contents_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -4061,7 +3983,25 @@ void std_Zip_readNext_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Zip_writeNext_v(fr_Env env, void *param, void *ret) {
+void std_Zip_readEntry_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    retValue.h = std_Zip_readEntry(env, arg_0, arg_1);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_Zip_writeEntry_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value value_1;
@@ -4070,7 +4010,11 @@ void std_Zip_writeNext_v(fr_Env env, void *param, void *ret) {
     fr_Obj arg_2; 
     fr_Value value_3;
     fr_Obj arg_3; 
-    fr_Value retValue;
+    fr_Value value_4;
+    fr_Obj arg_4; 
+
+    fr_getParam(env, param, &value_4, 4, NULL);
+    arg_4 = value_4.h;
 
     fr_getParam(env, param, &value_3, 3, NULL);
     arg_3 = value_3.h;
@@ -4085,8 +4029,7 @@ void std_Zip_writeNext_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.h = std_Zip_writeNext(env, arg_0, arg_1, arg_2, arg_3);
-    *((fr_Value*)ret) = retValue;
+    std_Zip_writeEntry(env, arg_0, arg_1, arg_2, arg_3, arg_4);
 }
 
 void std_Zip_finish_v(fr_Env env, void *param, void *ret) {
@@ -4102,30 +4045,15 @@ void std_Zip_finish_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Zip_close_v(fr_Env env, void *param, void *ret) {
+void std_Zip_finalize_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
-    fr_Value retValue;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    retValue.b = std_Zip_close(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Zip_toStr_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Zip_toStr(env, arg_0);
-    *((fr_Value*)ret) = retValue;
+    std_Zip_finalize(env, arg_0);
 }
 
 void std_Zip_gzipOutStream_v(fr_Env env, void *param, void *ret) {

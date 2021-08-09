@@ -83,7 +83,7 @@ char *getTraceString(fr_Env env)
     SYMBOL_INFO* symbol;
     HANDLE         process;
 
-    char *str = (char*)malloc(256);
+    char *str = (char*)malloc(1024);
     if (str == NULL) {
         abort();
     }
@@ -102,7 +102,7 @@ char *getTraceString(fr_Env env)
     {
         SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
 
-        pos += snprintf(str+ pos, 256-pos, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+        pos += snprintf(str+ pos, 1024 -pos, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
     }
 
     free(symbol);

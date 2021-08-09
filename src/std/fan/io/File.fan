@@ -754,29 +754,4 @@ internal native const class LocalFile : File
   native override OutStream out(Bool append := false, Int bufferSize := 4096)
 }
 
-**************************************************************************
-** ZipEntryFile
-**************************************************************************
-/*
-internal const class ZipEntryFile : File
-{
-  native private Void init()
-  new make(Uri uri) : super.privateMake(uri) { init }
-
-  native override Bool exists()
-  native override Int size()
-  native override TimePoint? modified
-  native override Str? osPath()
-  native override File[] list()
-  native override File normalize()
-  native override File create()
-  native override File moveTo(File to)
-  native override Void delete()
-  native override File deleteOnExit()
-  native override Buf open(Str mode := "rw")
-  native override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size)
-  native override InStream in(Int bufferSize := 4096)
-  native override OutStream out(Bool append := false, Int bufferSize := 4096)
-}
-*/
 

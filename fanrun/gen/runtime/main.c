@@ -24,6 +24,9 @@ const char* fr_envPaths[32] = {0};
 CF_END
 
 int main(int argc, const char* argv[]) {
+    fr_homeDir = "./";
+    fr_envPaths[0] = fr_homeDir;
+
     fr_Env env = fr_getEnv(NULL);
     baseTest_init__(env);
 
@@ -32,9 +35,6 @@ int main(int argc, const char* argv[]) {
     FObj* args = fr_getPtr((fr_Env)env, argsObj);// makeArgArray(env, i + 1, argc, argv);
     fr_argsArray = fr_newGlobalRef((fr_Env)env, argsObj);
 
-    fr_homeDir = ".";
-    fr_envPaths[0] = fr_homeDir;
-    
     baseTest_Main_main(env);
     if (env->error) {
         sys_Err_trace(env, env->error);

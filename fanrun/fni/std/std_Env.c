@@ -196,11 +196,13 @@ fr_Obj std_Env_homeDir(fr_Env env, fr_Obj self) {
     return fr_newStrUtf8(env, fr_homeDir);
 }
 fr_Obj std_Env_getEnvPaths(fr_Env env, fr_Obj self) {
-    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)4).h;
+    fr_Obj list = fr_arrayNew(env, fr_findType(env, "sys", "Str"), sizeof(fr_Obj), 64);
     for (int i = 0; fr_envPaths[i] != NULL; ++i) {
         const char* cstr = fr_envPaths[i];
         fr_Obj str = fr_newStrUtf8(env, cstr);
-        fr_callOnObj(env, list, "add", 1, str);
+        fr_Value val;
+        val.h = str;
+        fr_arraySet(env, list, i, &val);
     }
     return list;
 }

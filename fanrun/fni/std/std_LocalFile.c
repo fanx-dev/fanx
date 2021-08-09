@@ -24,7 +24,7 @@ fr_Obj std_LocalFile_out(fr_Env env, fr_Obj self, fr_Bool append, fr_Int bufferS
     
     fr_Obj path = fr_callOnObj(env, self, "osPath", 0).h;
     const char* pathStr = fr_getStrUtf8(env, path);
-    FILE* file = fopen(pathStr, append?"a":"w");
+    FILE* file = fopen(pathStr, append?"ab":"wb");
 
     if (file == NULL) {
         fr_throwNew(env, "sys", "IOErr", "can not open file");

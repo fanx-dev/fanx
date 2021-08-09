@@ -58,7 +58,15 @@ fr_Int std_SysInStream_readBytes(fr_Env env, fr_Obj self, fr_Obj ba, fr_Int off,
 
     char* buf = (char*)fr_arrayData(env, ba);
 
-    int realReadNum = fread(buf+off, len, 1, file);
+    int realReadNum = fread(buf+off, 1, len, file);
+    if (realReadNum <= 0) {
+        if (feof(file))
+            return -1;
+        else if (ferror(file)) {
+            fr_throwNew(env, "sys", "IOErr", "read file error");
+        }
+        return -1;
+    }
     return realReadNum;
 }
 fr_Obj std_SysInStream_unread(fr_Env env, fr_Obj self, fr_Int n) {

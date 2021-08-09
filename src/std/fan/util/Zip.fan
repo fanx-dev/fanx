@@ -21,6 +21,11 @@
 @NoJs
 native final class Zip
 {
+  private Int handle
+
+  private File? _file
+  private InStream? _in
+  private OutStream? _out
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
@@ -68,7 +73,7 @@ native final class Zip
   **
   ** Private constructor
   **
-  private new init(Uri uri)
+  private new make() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Methods
@@ -77,14 +82,14 @@ native final class Zip
   **
   ** Get the underlying file or null if using streams.
   **
-  File? file()
+  File? file() { _file }
 
   **
   ** Return the contents of this zip as a map of Files.  The Uri
   ** keys will start with a slash and be relative to this zip file.
   ** Return null if using streams.
   **
-  [Uri:File]? contents()
+  native [Uri:File]? contents()
 
   **
   ** Read the next entry in the zip.  Use the File's input stream to read the
@@ -92,7 +97,9 @@ native final class Zip
   ** Return null if at end of zip file.  Throw UnsupportedErr if not reading
   ** from an input stream.
   **
-  File? readNext()
+  native File? readNext()
+
+  native Array<Int8>? readEntry(Uri path)
 
   **
   ** Append a new file to the end of this zip file and return an OutStream
@@ -117,7 +124,11 @@ native final class Zip
   **   out.writeLine("test")
   **   out.close
   **
-  OutStream writeNext(Uri path, TimePoint modifyTime := TimePoint.now,  [Str:Obj?]? opts := null)
+  OutStream writeNext(Uri path, TimePoint modifyTime := TimePoint.now,  [Str:Obj?]? opts := null) {
+    return ZipEntryOutStream(this, path, modifyTime, opts)
+  }
+
+  native Void writeEntry(Buf buf, Uri path, TimePoint modifyTime := TimePoint.now,  [Str:Obj?]? opts := null)
 
   **
   ** Finish writing the contents of this zip file, but leave the underlying
@@ -126,7 +137,7 @@ native final class Zip
   ** an error occurred.  Throw UnsupportedErr if zip is not not writing to
   ** an output stream.
   **
-  Bool finish()
+  native Bool finish()
 
   **
   ** Close this zip file for reading and writing.  If this zip file is
@@ -134,13 +145,27 @@ native final class Zip
   ** closed.  This method is guaranteed to never throw an IOErr.  Return
   ** true if the close was successful or false if the an error occurred.
   **
-  Bool close()
+  Bool close() {
+    ok := finish()
+    if (_out != null) {
+      if (!_out.close) ok = false
+    }
+    if (_in != null) {
+      if (!_in.close) ok = false
+    }
+    return ok
+  }
 
   **
   ** If file is not null then return file.toStr, otherwise return
   ** a suitable string representation.
   **
-  override Str toStr()
+  override Str toStr() {
+    if (file != null) return file.toStr
+    return super.toStr
+  }
+
+  protected native override Void finalize()
 
 //////////////////////////////////////////////////////////////////////////
 // GZIP
@@ -175,4 +200,67 @@ native final class Zip
   **
   static InStream deflateInStream(InStream in, [Str:Obj?]? opts := null)
 
+}
+
+**************************************************************************
+** ZipEntry File and Stream
+**************************************************************************
+
+internal const class ZipEntryFile : File
+{
+  private const Unsafe<Zip> _parent
+  private const Int _time
+  private const Int _size
+
+  new make(Str uri, Int time, Int size, Zip parent) : super.privateMake(("/"+uri).toUri) {
+    _time = time
+    _size = size
+    _parent = Unsafe<Zip>(parent)
+  }
+
+  override Bool exists() { true }
+  override Int size() { _size }
+  override TimePoint? modified {
+    get { TimePoint.fromMillis(_time) }
+    set { throw IOErr.make("ZipEntryFile is readonly") }
+  }
+  override Str? osPath() { null }
+  override File[] list() { List.defVal }
+  override File normalize() { this }
+  override File create() { throw IOErr.make("ZipEntryFile is readonly") }
+  override File moveTo(File to) { throw IOErr.make("ZipEntryFile is readonly") }
+  override Void delete() { throw IOErr.make("ZipEntryFile is readonly") }
+  override File deleteOnExit() { throw IOErr.make("ZipEntryFile is readonly") }
+  override Buf open(Str mode := "rw") { throw UnsupportedErr.make("ZipEntryFile.open"); }
+  override Buf mmap(Str mode := "rw", Int pos := 0, Int size := this.size) { throw UnsupportedErr.make("ZipEntryFile.mmap"); }
+  
+  override OutStream out(Bool append := false, Int bufferSize := 4096) {
+    throw IOErr.make("ZipEntryFile is readonly");
+  }
+
+  //lazy load
+  override InStream in(Int bufferSize := 4096) {
+    data := _parent.val.readEntry(uri)
+    buf := MemBuf.makeBuf(data)
+    return buf.in
+  }
+}
+
+internal class ZipEntryOutStream : BufOutStream {
+  private Zip parent
+  private Uri path
+  private TimePoint modifyTime
+  private [Str:Obj?]? opts
+
+  new make(Zip parent, Uri path, TimePoint modifyTime, [Str:Obj?]? opts) : super(MemBuf.make(1024)) {
+    this.parent = parent
+    this.path = path
+    this.modifyTime = modifyTime
+    this.opts = opts
+  }
+
+  override Bool close() {
+    parent.writeEntry(buf, path, modifyTime, opts)
+    return true
+  }
 }

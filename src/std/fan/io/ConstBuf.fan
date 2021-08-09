@@ -137,6 +137,11 @@ internal const class MemFile : File {
     const ConstBuf buf
     const TimePoint ts
 
+    new makeBuf(Array<Int8> buf, Str uri) : super.privateMake(uri.toUri) {
+      this.buf = ConstBuf.makeBuf(buf, buf.size, Endian.big, Charset.utf8)
+      this.ts = TimePoint.now
+    }
+
     new make(ConstBuf buf, Uri uri) : super.privateMake(uri) {
       this.buf = buf
       this.ts = TimePoint.now
