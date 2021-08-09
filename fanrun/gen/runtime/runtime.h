@@ -173,22 +173,28 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_SCALL(type, method, ...)  type##_##method(__env, ## __VA_ARGS__)
 
 
+#ifdef STRUCT_VALUE
 #define FR_BOXING_STRUCT(target, value, fromType, toType) {\
     fromType##_ref tmp__ = FR_ALLOC(fromType);\
     memcpy(tmp__, &value, sizeof(struct fromType##_struct));\
     target = (toType)tmp__;}
-    
+#define FR_UNBOXING_STRUCT(target, obj, toType) (memcpy(&target, (toType##_null)obj, sizeof(struct toType##_struct)), target)
+#else
+#define FR_BOXING_STRUCT(target, value, fromType, toType) (target = value)
+#define FR_UNBOXING_STRUCT(target, obj, toType) (target = obj)
+#endif
+
 #define FR_BOXING_VAL(target, value, fromType, toType) {\
     fromType##_ref tmp__ = FR_ALLOC(fromType);\
     tmp__->_val = value;\
     target = (toType)tmp__;}
+#define FR_UNBOXING_VAL(obj, toType) (((toType##_null)obj)->_val)
 
 #define FR_BOX_INT(value) ((sys_Int_ref)fr_box_int(__env, value))
 #define FR_BOX_FLOAT(value) ((sys_Float_ref)fr_box_float(__env, value))
 #define FR_BOX_BOOL(value) ((sys_Bool_ref)fr_box_bool(__env, value))
 
-#define FR_UNBOXING_STRUCT(target, obj, toType) (memcpy(&target, (toType##_null)obj, sizeof(struct toType##_struct)), target)
-#define FR_UNBOXING_VAL(obj, toType) (((toType##_null)obj)->_val)
+
 #define FR_NOT_NULL(pos, ret, obj, toType) do{if (obj) ret = (toType)obj; else FR_THROW_NPE(pos); }while(0)
 
 #define FR_CHECK_POINT() fr_checkPoint(__env)
