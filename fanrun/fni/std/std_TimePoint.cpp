@@ -94,8 +94,10 @@ int64_t currentTimeMillis() {
 int64_t nanoTicks() {
   
    LARGE_INTEGER m_nBeginTime;
-   LARGE_INTEGER m_nFreq;
-   QueryPerformanceFrequency(&m_nFreq);
+   static LARGE_INTEGER m_nFreq = {0};
+   if (!m_nFreq.QuadPart) {
+       QueryPerformanceFrequency(&m_nFreq);
+   }
    QueryPerformanceCounter(&m_nBeginTime);
    return (m_nBeginTime.QuadPart*NanoPerSecond)/m_nFreq.QuadPart;
    
@@ -125,7 +127,7 @@ fr_Int std_TimePoint_nanoTicks(fr_Env env) {
 fr_Int std_TimePoint_nowUnique(fr_Env env) {
     static fr_Int nowUniqueLast;
     static std::mutex lock;
-    fr_Int now = nanoTicks();
+    fr_Int now = currentTimeMillis();
 
     lock.lock();
     if (now <= nowUniqueLast) now = nowUniqueLast + 1;

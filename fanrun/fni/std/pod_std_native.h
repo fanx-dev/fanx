@@ -173,7 +173,7 @@ fr_Obj std_Decimal_toCode(fr_Env env, fr_Obj self);
 fr_Int std_Decimal_toInt(fr_Env env, fr_Obj self);
 fr_Float std_Decimal_toFloat(fr_Env env, fr_Obj self);
 fr_Obj std_Decimal_toLocale(fr_Env env, fr_Obj self, fr_Obj pattern);
-void std_Env_make(fr_Env env, fr_Obj self);
+void std_Env_init(fr_Env env, fr_Obj self);
 fr_Obj std_Env_os(fr_Env env, fr_Obj self);
 fr_Obj std_Env_arch(fr_Env env, fr_Obj self);
 fr_Obj std_Env_runtime(fr_Env env, fr_Obj self);

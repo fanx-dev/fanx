@@ -438,6 +438,10 @@ fr_Obj fr_objToStr(fr_Env env, fr_Obj x) {
     return str;
 }
 
+////////////////////////////
+// Util
+////////////////////////////
+
 fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]) {
     fr_Obj args = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)argc).h;
     for (int i = start; i < argc; ++i) {
@@ -446,6 +450,17 @@ fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]) {
         fr_callOnObj(env, args, "add", 1, str);
     }
     return args;
+}
+
+void fr_onExit() {
+    static int flag = 0;
+    if (flag != 0) return;
+    flag = 1;
+    fr_Fvm vm = fr_getVm(NULL);
+    if (vm == NULL) return;
+    fr_Env env = fr_getEnv(vm);
+    fr_Obj envObj = fr_callMethodS(env, "std", "Env", "cur", 0).h;
+    fr_callOnObj(env, envObj, "onExit", 0);
 }
 
 #ifdef  __cplusplus

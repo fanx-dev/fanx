@@ -16,6 +16,7 @@ CF_BEGIN
 
 fr_Obj fr_argsArray = NULL;
 fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]);
+void fr_onExit();
 
 const char* fr_homeDir = NULL;
 const char* fr_envPaths[32] = {0};
@@ -38,6 +39,8 @@ int main(int argc, const char* argv[]) {
     if (env->error) {
         sys_Err_trace(env, env->error);
     }
+
+    fr_onExit();
     
     //test gc
     System_sleep(1000);

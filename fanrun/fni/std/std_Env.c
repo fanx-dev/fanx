@@ -17,22 +17,13 @@ extern fr_Obj fr_argsArray;
 extern const char* fr_homeDir;
 extern const char* fr_envPaths[];
 extern char** environ;
+void fr_onExit();
 
 CF_END
 
-void atexit_handler() {
-    static int flag = 0;
-    if (flag != 0) return;
-    flag = 1;
-    fr_Fvm vm = fr_getVm(NULL);
-    if (vm == NULL) return;
-    fr_Env env = fr_getEnv(vm);
-    fr_Obj envObj = fr_callMethodS(env, "std", "Env", "cur", 0).h;
-    fr_callOnObj(env, envObj, "onExit", 0);
-}
 
-void std_Env_make(fr_Env env, fr_Obj self) {
-    //atexit(atexit_handler);
+void std_Env_init(fr_Env env, fr_Obj self) {
+    atexit(fr_onExit);
     return;
 }
 
@@ -214,18 +205,8 @@ fr_Obj std_Env_getEnvPaths(fr_Env env, fr_Obj self) {
     return list;
 }
 
-fr_Obj std_Env_index(fr_Env env, fr_Obj self, fr_Obj key) {
-    return 0;
-}
-fr_Obj std_Env_indexKeys(fr_Env env, fr_Obj self) {
-    return 0;
-}
-fr_Obj std_Env_indexPodNames(fr_Env env, fr_Obj self, fr_Obj key) {
-    return 0;
-}
-
 void std_Env_exit(fr_Env env, fr_Obj self, fr_Int status) {
-    atexit_handler();
+    fr_onExit();
     exit((int)status);
 }
 

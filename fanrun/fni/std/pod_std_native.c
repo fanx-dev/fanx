@@ -3124,7 +3124,7 @@ void std_Decimal_toLocale_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Env_make_v(fr_Env env, void *param, void *ret) {
+void std_Env_init_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
 
@@ -3132,7 +3132,7 @@ void std_Env_make_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    std_Env_make(env, arg_0);
+    std_Env_init(env, arg_0);
 }
 
 void std_Env_os_v(fr_Env env, void *param, void *ret) {

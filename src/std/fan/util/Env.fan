@@ -27,7 +27,8 @@ native rtconst class Env
   **
   ** Subclasses are constructed from a parent environment.
   **
-  protected new make()
+  protected new make() { init }
+  protected native Void init()
 
   override Bool isImmutable() { true }
 
@@ -124,7 +125,7 @@ native rtconst class Env
   ** key values from the 'java.lang.management' interface.
   ** Default implementation delegates to `parent`.
   **
-  virtual Str:Obj diagnostics()
+  virtual [Str:Obj]? diagnostics()
 
   **
   ** Run the garbage collector.  No guarantee is made
@@ -196,7 +197,7 @@ native rtconst class Env
   }
 
 //////////////////////////////////////////////////////////////////////////
-// Resolution
+// Resolution : pod file and config file
 //////////////////////////////////////////////////////////////////////////
 
   private Array<Str> envPaths := getEnvPaths
@@ -287,7 +288,7 @@ native rtconst class Env
   }
 
 //////////////////////////////////////////////////////////////////////////
-// State
+// compile script
 //////////////////////////////////////////////////////////////////////////
 
   **
@@ -310,6 +311,46 @@ native rtconst class Env
     return t
   }
 
+//////////////////////////////////////////////////////////////////////////
+// index props
+//////////////////////////////////////////////////////////////////////////
+
+  private [Str:Str[]]? indexMap
+  private [Str:Str[]]? keyToPodName
+
+  private Void loadIndex() {
+    if (this.indexMap != null) return
+
+    indexMap := [:]
+    keyToPodName := [:]
+
+    podNames := findAllPodNames
+    podNames.each |name|{
+      podFile := findPodFile(name)
+      addProps(podFile, name, indexMap, keyToPodName)
+    }
+
+    this.indexMap = indexMap.toImmutable
+    this.keyToPodName = keyToPodName.toImmutable
+  }
+
+  private Void addProps(File podFile, Str podName, [Str:Str[]]? indexMap, [Str:Str[]]? keyToPodName) {
+    zip := Zip.open(podFile)
+    props := zip.contents[`/index.props`].in.readProps
+    props.each |v,k| {
+      res := indexMap.getOrAdd(k) { [,] }
+      vals := v.split(',')
+      vals.each |val| {
+        val = val.trim
+        if (val.size > 0) res.add(val)
+      }
+    }
+
+    pods := keyToPodName.getOrAdd(podName) { [,] }
+    pods.add(podName)
+    zip.close
+  }
+
   **
   ** Lookup all the matching values for a pod indexed key.  If no
   ** matches are found return the empty list.  Indexed props are
@@ -317,20 +358,33 @@ native rtconst class Env
   ** index by the current environment.  See [docLang]`docLang::Env#index`
   ** for details.
   **
-  virtual Str[] index(Str key)
+  virtual Str[] index(Str key) {
+    loadIndex()
+    return indexMap.get(key, List.defVal)
+  }
 
   **
   ** Get listing of all keys mapped by indexed props.  The
   ** values of each key may be resolved by the `index` method.
   ** See [docLang]`docLang::Env#index` for details.
   **
-  virtual Str[] indexKeys()
+  virtual Str[] indexKeys() {
+    loadIndex
+    return indexMap.keys
+  }
 
   **
   ** Return list of all pod names that define the given key.
   ** NOTE: Java runtime only
   **
-  virtual Str[] indexPodNames(Str key)
+  virtual Str[] indexPodNames(Str key) {
+    loadIndex
+    return keyToPodName.get(key, List.defVal)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// config props
+//////////////////////////////////////////////////////////////////////////
 
   private EnvProps envProps := EnvProps();
 

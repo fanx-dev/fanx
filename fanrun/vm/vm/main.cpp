@@ -19,6 +19,7 @@ void std_register(fr_Fvm vm);
 
 fr_Obj fr_argsArray = NULL;
 fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]);
+void fr_onExit();
 
 const char* fr_homeDir = NULL;
 const char* fr_envPaths[32] = {0};
@@ -167,6 +168,8 @@ int main(int argc, const char * argv[]) {
     fr_argsArray = fr_newGlobalRef((fr_Env)env, argsObj);
     
     env->start(pod, type, method, args);
+
+    fr_onExit();
     
     vm.releaseEnv(env);
     env = nullptr;

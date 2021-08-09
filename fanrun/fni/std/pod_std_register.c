@@ -172,7 +172,7 @@ void std_Decimal_toCode_v(fr_Env env, void *param, void *ret);
 void std_Decimal_toInt_v(fr_Env env, void *param, void *ret);
 void std_Decimal_toFloat_v(fr_Env env, void *param, void *ret);
 void std_Decimal_toLocale_v(fr_Env env, void *param, void *ret);
-void std_Env_make_v(fr_Env env, void *param, void *ret);
+void std_Env_init_v(fr_Env env, void *param, void *ret);
 void std_Env_os_v(fr_Env env, void *param, void *ret);
 void std_Env_arch_v(fr_Env env, void *param, void *ret);
 void std_Env_runtime_v(fr_Env env, void *param, void *ret);
@@ -421,7 +421,7 @@ void std_register(fr_Fvm vm) {
     fr_registerMethod(vm, "std_Decimal_toInt", std_Decimal_toInt_v);
     fr_registerMethod(vm, "std_Decimal_toFloat", std_Decimal_toFloat_v);
     fr_registerMethod(vm, "std_Decimal_toLocale", std_Decimal_toLocale_v);
-    fr_registerMethod(vm, "std_Env_make", std_Env_make_v);
+    fr_registerMethod(vm, "std_Env_init", std_Env_init_v);
     fr_registerMethod(vm, "std_Env_os", std_Env_os_v);
     fr_registerMethod(vm, "std_Env_arch", std_Env_arch_v);
     fr_registerMethod(vm, "std_Env_runtime", std_Env_runtime_v);
