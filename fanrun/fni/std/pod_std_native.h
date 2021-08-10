@@ -236,7 +236,7 @@ fr_Obj std_Zip_write(fr_Env env, fr_Obj out);
 fr_Obj std_Zip_contents(fr_Env env, fr_Obj self);
 fr_Obj std_Zip_readNext(fr_Env env, fr_Obj self);
 fr_Obj std_Zip_readEntry(fr_Env env, fr_Obj self, fr_Obj path);
-void std_Zip_writeEntry(fr_Env env, fr_Obj self, fr_Obj data, fr_Obj path, fr_Obj modifyTime, fr_Obj opts);
+void std_Zip_writeEntry(fr_Env env, fr_Obj self, fr_Obj buf, fr_Obj path, fr_Obj modifyTime, fr_Obj opts);
 fr_Bool std_Zip_finish(fr_Env env, fr_Obj self);
 void std_Zip_finalize(fr_Env env, fr_Obj self);
 fr_Obj std_Zip_gzipOutStream(fr_Env env, fr_Obj out);

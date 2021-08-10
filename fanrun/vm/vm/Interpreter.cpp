@@ -159,14 +159,20 @@ void Interpreter::runCode() {
 
 bool Interpreter::exeStep() {
     Buffer code(frame()->code, frame()->codeLen, false);
-    code._seek(frame()->pc);
+
+    int pc = frame()->pc;
+    code._seek(pc);
 
     FOp opcode = (FOp)code.readUInt8();
     
     if (context->trace) {
-        const char *opName = OpNames[(int)opcode];
-        int pc = frame()->pc;
-        printf("%d:%s\n", pc, opName);
+        if (context->trace > 2) {
+            const char* opName = OpNames[(int)opcode];
+            printf("%d:%s\n", pc, opName);
+        }
+        if (frame()->method->c_mangledName == "std_Duration_static__init" && pc == 15) {
+            printf("debug\n");
+        }
     }
     
     int16_t i1 = 0;
@@ -262,9 +268,14 @@ bool Interpreter::exeStep() {
             break;
         }
         case FOp::LoadDecimal: {
-            double i = frame()->curPod->constantas.reals[i1];
-            //operandStack.pushFloat(i);
-            //TODO
+            std::string &d = frame()->curPod->constantas.decimals[i1];
+            FObj *str = fr_newStrUtf8_(context, d.c_str());
+            fr_TagValue val;
+            val.any.o = str;
+            val.type = fr_vtObj;
+            context->push(&val);
+            static FMethod *m = context->findMethod("std", "Decimal", "fromStr", 1);
+            context->call(m, 1);
             break;
         }
         case FOp::LoadStr: {
@@ -278,21 +289,30 @@ bool Interpreter::exeStep() {
             break;
         }
         case FOp::LoadDuration: {
-            //TODO
+            int64_t d = frame()->curPod->constantas.durations[i1];
+            fr_TagValue val;
+            val.any.i = d;
+            val.type = fr_vtInt;
+            context->push(&val);
+            static FMethod* m = context->findMethod("std", "Duration", "fromTicks", 1);
+            context->call(m, 1);
             break;
         }
         case FOp::LoadUri: {
-            //TODO
+            FObj* obj = fr_getConstUri_(context, frame()->curPod, i1);
+            //addLocalRef(obj);
+            //operandStack.pushObj(obj);
+            fr_TagValue entry;
+            entry.any.o = obj;
+            entry.type = fr_vtObj;
+            context->push(&entry);
             break;
         }
         case FOp::LoadType: {
-            FType *type = context->podManager->getType(context, frame()->curPod, i1);
-//          FObj * wtype = context->podManager->getWrappedType(context, type);
-            //operandStack.pushObj(wtype);
-            
+            FObj* type = fr_getTypeLiteral_(context, frame()->curPod, i1);
             fr_TagValue entry;
             entry.any.p = type;
-            entry.type = fr_vtOther;
+            entry.type = fr_vtObj;
             context->push(&entry);
             break;
         }
@@ -321,10 +341,11 @@ bool Interpreter::exeStep() {
         case FOp::LoadInstance: {
             fr_TagValue val;
             context->pop(&val);
-            FField *f = context->podManager->getField(context, frame()->curPod, i1);
+            FFieldRef& fieldRef = frame()->curPod->fieldRefs[i1];
+            FField * fieldDef = context->podManager->getField(context, frame()->curPod, &fieldRef);
             
-            context->getInstanceField((FObj*)val.any.o, f, &val.any);
-            val.type = context->podManager->getValueType(context, frame()->curPod, f->type);
+            context->getInstanceField((FObj*)val.any.o, fieldDef, &val.any);
+            val.type = context->podManager->getValueType(context, frame()->curPod, fieldRef.type);
             context->push(&val);
             break;
         }
@@ -333,23 +354,25 @@ bool Interpreter::exeStep() {
             context->pop(&var);
             fr_TagValue obj;
             context->pop(&obj);
-            
-            FField *f = context->podManager->getField(context, frame()->curPod, i1);
+            FFieldRef& fieldRef = frame()->curPod->fieldRefs[i1];
+            FField *f = context->podManager->getField(context, frame()->curPod, &fieldRef);
             context->setInstanceField((FObj*)obj.any.o, f, &var.any);
             break;
         }
         case FOp::LoadStatic:
         case FOp::LoadMixinStatic: {
-            FField *f = context->podManager->getField(context, frame()->curPod, i1);
+            FFieldRef &fieldRef = frame()->curPod->fieldRefs[i1];
+            FField *fieldDef = context->podManager->getField(context, frame()->curPod, &fieldRef);
             fr_TagValue val;
-            context->getStaticField(f, &val.any);
-            val.type = context->podManager->getValueType(context, frame()->curPod, f->type);
+            context->getStaticField(fieldDef, &val.any);
+            val.type = context->podManager->getValueType(context, frame()->curPod, fieldRef.type);
             context->push(&val);
             break;
         }
         case FOp::StoreStatic:
         case FOp::StoreMixinStatic:{
-            FField *f = context->podManager->getField(context, frame()->curPod, i1);
+            FFieldRef& fieldRef = frame()->curPod->fieldRefs[i1];
+            FField *f = context->podManager->getField(context, frame()->curPod, &fieldRef);
             fr_TagValue var;
             context->pop(&var);
             context->setStaticField(f, &var.any);
@@ -524,7 +547,6 @@ bool Interpreter::exeStep() {
                                                     , frame()->curPod, i1);
             bool toNullable = context->podManager->isNullableType(context
                                                     , frame()->curPod, i2);
-            //TODO
             if (fromNullable && !toNullable) {
                 fr_TagValue entry;
                 entry = *context->peek();
@@ -605,13 +627,24 @@ bool Interpreter::exeStep() {
             
         case FOp::FinallyEnd:
             break;
-        case FOp::LoadFieldLiteral:
-            //TODO
+        case FOp::LoadFieldLiteral: {
+            FObj* obj = fr_getFieldLiteral_(context, frame()->curPod, i1);
+            fr_TagValue entry;
+            entry.any.p = obj;
+            entry.type = fr_vtObj;
+            context->push(&entry);
             break;
-        case FOp::LoadMethodLiteral:
-            //TODO
+        }
+        case FOp::LoadMethodLiteral: {
+            FObj* obj = fr_getMethodLiteral_(context, frame()->curPod, i1);
+            fr_TagValue entry;
+            entry.any.p = obj;
+            entry.type = fr_vtObj;
+            context->push(&entry);
             break;
+        }
         default:
+            abort();
             break;
     }
     
@@ -662,6 +695,10 @@ void Interpreter::compareEq(int16_t t1, int16_t t2, bool notEq) {
             fr_unbox_(context, (FObj*)p1.any.o, any);
             ret = p2.any.o == any.o;
         }
+    }
+    else if (p1.any.o == nullptr) {
+        if (p2.any.o == nullptr) ret = true;
+        else ret = false;
     }
     else {
         context->push(&p1);
@@ -717,6 +754,10 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
         } else {
             res = -1;
         }
+    }
+    else if (p1.any.o == nullptr) {
+        if (p2.any.o == nullptr) res = 0;
+        else res = -1;
     }
     else {
         context->push(&p1);

@@ -52,7 +52,7 @@ fr_Obj std_DateTime_make(fr_Env env, fr_Int year, fr_Obj month, fr_Int day, fr_I
 
     int imonth = fr_getFieldS(env, month, "ordinal").i;
     tm_info.tm_year = year - 1900;
-    tm_info.tm_mon = imonth;//TODO: FR_CALL(std_Month, ordinal, month) - 1;
+    tm_info.tm_mon = imonth;
     tm_info.tm_mday = day;
     tm_info.tm_hour = hour;
     tm_info.tm_min = min;

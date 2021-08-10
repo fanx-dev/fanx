@@ -31,21 +31,22 @@ public:
     std::atomic<bool> isStoped;
     
     PodManager *podManager;
-//private:
-    StackFrame *blockingFrame;
+private:
+    //StackFrame *blockingFrame;
     
     FObj *error;
     FObj *thread;
-    
+public:
     char *stackBottom;
     char *stackTop;
     char *stackMemEnd;
     int stackMemSize;
     
-public:
     StackFrame *curFrame;
+
+public:
     Fvm *vm;
-    bool trace;
+    int trace;
     
 public:
     Env(Fvm *vm);
@@ -56,13 +57,14 @@ public:
     ////////////////////////////
     // frame
     ////////////////////////////
-    
+private:
     bool popFrame();
+    bool pushFrame(FMethod* method, int paramCountWithSelf);
     
     ////////////////////////////
     // Param
     ////////////////////////////
-    
+public:
     void push(fr_TagValue *val);
     bool pop(fr_TagValue *val);
     bool popAll(int count);
@@ -98,7 +100,7 @@ public:
 
     void call(FMethod *method, int paramCount);
     
-    FMethod * findMethod(const char *pod, const char *type, const char *name);
+    FMethod * findMethod(const char *pod, const char *type, const char *name, int paramCount = -1);
     void callNonVirtual(FMethod * method, int paramCount);
     void newObj(FType *type, FMethod * method, int paramCount);
     void callVirtual(FMethod * method, int paramCount);

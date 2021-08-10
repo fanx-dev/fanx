@@ -133,9 +133,6 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 
 //NullTerminated Str
 #define FR_STR(bytes) fr_newStrUtf8(env__, bytes, -1)
-
-#define FR_TYPE(type) (std_Type)0;
-    //TODO fr_toTypeObj(__env, type##_class__)
     
 #define FR_TYPE_IS(obj, type) fr_isClass(__env, obj, type##_class__)
 #define FR_TYPE_AS(obj, type) (type)(FR_TYPE_IS(obj, type)?obj:NULL)

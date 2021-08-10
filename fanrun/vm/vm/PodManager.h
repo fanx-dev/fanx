@@ -53,7 +53,7 @@ public:
     FMethod *findVirtualMethod(Env *env, FType *type, const std::string &name, int paramCount);
     
 public:
-    FField *getField(Env *env, FPod *curPod, uint16_t fid);
+    FField *getField(Env *env, FPod *curPod, FFieldRef *fieldRef);
     FField *findFieldByName(Env *env, const std::string &podName, const std::string &typeName, const std::string &fieldName);
     FField *findFieldInType(Env *env, FType *type, const std::string &fieldName);
     //FField *findFieldByType(FType *type, std::string &fieldName);

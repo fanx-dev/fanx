@@ -1042,11 +1042,29 @@ void MBuilder::parseBlock(Block *block, Block *previous) {
             }
                 break;
             case FOp::LoadFieldLiteral: {
-                //TODO
+                ConstStmt* stmt = new ConstStmt();
+                stmt->curPod = curPod;
+                stmt->pos = opObj.pos;
+                stmt->block = block;
+                stmt->opObj = opObj;
+                Var& var = block->newVarAs(stmt->getType());
+                stmt->dst = var.asRef();
+
+                block->addStmt(stmt);
+                block->push(stmt->dst);
             }
                 break;
             case FOp::LoadMethodLiteral: {
-                //TODO
+                ConstStmt* stmt = new ConstStmt();
+                stmt->curPod = curPod;
+                stmt->pos = opObj.pos;
+                stmt->block = block;
+                stmt->opObj = opObj;
+                Var& var = block->newVarAs(stmt->getType());
+                stmt->dst = var.asRef();
+
+                block->addStmt(stmt);
+                block->push(stmt->dst);
             }
                 break;
             default:

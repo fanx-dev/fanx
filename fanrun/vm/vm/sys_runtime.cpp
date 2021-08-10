@@ -185,6 +185,107 @@ FObj* fr_getConstString_(Env* env, FPod* curPod, uint16_t sid) {
     return obj;
 }
 
+FObj* fr_getConstUri_(Env* env, FPod* curPod, uint16_t sid) {
+    if (curPod->constantas.c_uris.size() != curPod->constantas.uris.size()) {
+        curPod->constantas.c_uris.resize(curPod->constantas.uris.size());
+    }
+
+    FObj* objRef = (FObj*)curPod->constantas.c_uris[sid];
+    if (objRef) {
+        return objRef;
+    }
+
+    const std::string& utf8 = curPod->constantas.uris[sid];
+    FObj* str = (FObj*)fr_newStrUtf8_(env, utf8.c_str());
+  
+    static FMethod* m = NULL;
+    if (!m) {
+        m = env->findMethod("std", "Uri", "fromStr", 1);
+    }
+    fr_TagValue args[2];
+    args[0].type = fr_vtObj;
+    args[0].any.o = str;
+    env->push(&args[0]);
+    env->call(m, 1);
+    fr_TagValue ret;
+    env->pop(&ret);
+
+    FObj* obj = (FObj*)ret.any.o;
+    env->vm->gc->pinObj(fr_toGcObj(obj));
+    curPod->constantas.c_uris[sid] = (void*)obj;
+
+    return obj;
+}
+
+FObj* fr_getTypeLiteral_(Env* e, FPod* curPod, uint16_t sid) {
+    FTypeRef &typeRef = curPod->typeRefs[sid];
+    std::string qname = curPod->names[typeRef.podName] + "::" + curPod->names[typeRef.typeName];
+
+    FObj *qnameObj = fr_newStrUtf8_(e, qname.c_str());
+
+    static FMethod* m = NULL;
+    if (!m) {
+        m = e->findMethod("std", "Type", "find", 1);
+    }
+    fr_TagValue args[2];
+    args[0].type = fr_vtObj;
+    args[0].any.o = qnameObj;
+    e->push(&args[0]);
+    e->call(m, 1);
+
+    fr_TagValue ret;
+    e->pop(&ret);
+    return (FObj*)ret.any.o;
+}
+
+FObj* fr_getFieldLiteral_(Env* e, FPod* curPod, uint16_t sid) {
+    FFieldRef& f = curPod->fieldRefs[sid];
+    FObj* type = fr_getTypeLiteral_(e, curPod, f.parent);
+
+    FObj* nameObj = fr_newStrUtf8_(e, curPod->names[f.name].c_str());
+
+    static FMethod* m = NULL;
+    if (!m) {
+        m = e->findMethod("std", "Type", "field", 1);
+    }
+    fr_TagValue args[2];
+    args[0].type = fr_vtObj;
+    args[0].any.o = type;
+    args[1].type = fr_vtObj;
+    args[1].any.o = nameObj;
+    e->push(&args[0]);
+    e->push(&args[1]);
+    e->call(m, 1);
+
+    fr_TagValue ret;
+    e->pop(&ret);
+    return (FObj*)ret.any.o;
+}
+
+FObj* fr_getMethodLiteral_(Env* e, FPod* curPod, uint16_t sid) {
+    FMethodRef& f = curPod->methodRefs[sid];
+    FObj* type = fr_getTypeLiteral_(e, curPod, f.parent);
+
+    FObj* nameObj = fr_newStrUtf8_(e, curPod->names[f.name].c_str());
+
+    static FMethod* m = NULL;
+    if (!m) {
+        m = e->findMethod("std", "Type", "method", 1);
+    }
+    fr_TagValue args[2];
+    args[0].type = fr_vtObj;
+    args[0].any.o = type;
+    args[1].type = fr_vtObj;
+    args[1].any.o = nameObj;
+    e->push(&args[0]);
+    e->push(&args[1]);
+    e->call(m, 1);
+
+    fr_TagValue ret;
+    e->pop(&ret);
+    return (FObj*)ret.any.o;
+}
+
 ////////////////////////////////////////////////////////////////
 // Boxing
 ////////////////////////////////////////////////////////////////

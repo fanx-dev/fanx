@@ -261,6 +261,9 @@
     <ClCompile Include="..\..\fni\std\std_Zip.cpp">
       <Filter>源文件\lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\thirdparty\md5.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\gen\runtime\runtime.h">

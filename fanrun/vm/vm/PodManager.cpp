@@ -212,15 +212,15 @@ FMethod *PodManager::findVirtualMethod(Env *env, FType *instanceType, const std:
 ////////////////////////////////////////////////////////////////
 // field
 
-FField *PodManager::getField(Env *env, FPod *curPod, uint16_t fid) {
-    FFieldRef &fieldRef = curPod->fieldRefs[fid];
-    if (!fieldRef.c_field) {
-        std::string fieldName = curPod->names[fieldRef.name];
-        FType *type = getType(env, curPod, fieldRef.parent);
+FField *PodManager::getField(Env *env, FPod *curPod, FFieldRef* fieldRef) {
+    //FFieldRef &fieldRef = curPod->fieldRefs[fid];
+    if (!fieldRef->c_field) {
+        std::string fieldName = curPod->names[fieldRef->name];
+        FType *type = getType(env, curPod, fieldRef->parent);
         FField *field = type->c_fieldMap[fieldName];
-        fieldRef.c_field = field;
+        fieldRef->c_field = field;
     }
-    return fieldRef.c_field;
+    return fieldRef->c_field;
 }
 
 FField *PodManager::findFieldInType(Env *env, FType *type, const std::string &fieldName) {

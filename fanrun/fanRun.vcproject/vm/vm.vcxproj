@@ -70,7 +70,7 @@
     <ClCompile Include="..\..\fni\std\std_TimeZone.c" />
     <ClCompile Include="..\..\fni\std\std_Type.c" />
     <ClCompile Include="..\..\fni\std\std_UuidFactory.c" />
-    <ClCompile Include="..\..\fni\std\std_Zip.c" />
+    <ClCompile Include="..\..\fni\std\std_Zip.cpp" />
     <ClCompile Include="..\..\fni\sys\pod_sys_native.c" />
     <ClCompile Include="..\..\fni\sys\pod_sys_register.c" />
     <ClCompile Include="..\..\fni\sys\sys_Array.c" />
@@ -83,6 +83,7 @@
     <ClCompile Include="..\..\fni\sys\sys_Num.c" />
     <ClCompile Include="..\..\fni\sys\sys_Obj.cpp" />
     <ClCompile Include="..\..\fni\sys\sys_Ptr.c" />
+    <ClCompile Include="..\..\thirdparty\md5.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c" />
@@ -91,6 +92,10 @@
     <ClCompile Include="..\..\thirdparty\minizip\minizip.c" />
     <ClCompile Include="..\..\thirdparty\minizip\unzip.c" />
     <ClCompile Include="..\..\thirdparty\minizip\zip.c" />
+    <ClCompile Include="..\..\thirdparty\zipper\CDirEntry.cpp" />
+    <ClCompile Include="..\..\thirdparty\zipper\tools.cpp" />
+    <ClCompile Include="..\..\thirdparty\zipper\unzipper.cpp" />
+    <ClCompile Include="..\..\thirdparty\zipper\zipper.cpp" />
     <ClCompile Include="..\..\thirdparty\zlib\adler32.c" />
     <ClCompile Include="..\..\thirdparty\zlib\compress.c" />
     <ClCompile Include="..\..\thirdparty\zlib\crc32.c" />
@@ -148,6 +153,11 @@
     <ClInclude Include="..\..\thirdparty\minizip\iowin32.h" />
     <ClInclude Include="..\..\thirdparty\minizip\unzip.h" />
     <ClInclude Include="..\..\thirdparty\minizip\zip.h" />
+    <ClInclude Include="..\..\thirdparty\zipper\CDirEntry.h" />
+    <ClInclude Include="..\..\thirdparty\zipper\defs.h" />
+    <ClInclude Include="..\..\thirdparty\zipper\tools.h" />
+    <ClInclude Include="..\..\thirdparty\zipper\unzipper.h" />
+    <ClInclude Include="..\..\thirdparty\zipper\zipper.h" />
     <ClInclude Include="..\..\thirdparty\zlib\crc32.h" />
     <ClInclude Include="..\..\thirdparty\zlib\deflate.h" />
     <ClInclude Include="..\..\thirdparty\zlib\inffast.h" />
@@ -199,7 +209,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -272,9 +282,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;FR_VM</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;FR_VM;WIN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\vm\vm;$(ProjectDir)..\..\fni;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\vm\vm;$(ProjectDir)..\..\fni;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

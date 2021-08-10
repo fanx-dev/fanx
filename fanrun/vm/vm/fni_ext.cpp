@@ -21,7 +21,7 @@ fr_Env fr_getEnv(fr_Fvm vm) {
 }
 
 fr_Fvm fr_getVm(fr_Env env) {
-    if (env == NULL) Fvm::getCur();
+    if (env == NULL) return Fvm::getCur();
     return ((Env*)env)->vm;
 }
 
@@ -54,7 +54,8 @@ fr_Obj fr_toHandle(fr_Env self, FObj *obj) {
         objRef = e->newLocalRef(obj);
     } else {
         //objRef = reinterpret_cast<fr_Obj>(obj);
-        assert("ERROR: get handle from no native method");
+        printf("ERROR: get handle from no native method\n");
+        abort();
     }
     //fr_unlock(self);
     return objRef;
@@ -96,7 +97,6 @@ void fr_checkPoint(fr_Env self) {
 }
 void fr_allowGc(fr_Env self) {
     Env *env = (Env*)self;
-    //TODO fr_allowGc GC
     env->isStoped = true;
 }
 void fr_endAllowGc(fr_Env self) {
@@ -275,7 +275,6 @@ static void popRet(Env *context, FMethod *method, fr_Value *ret) {
 }
 
 void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
-    //TODO
     Env *e = (Env*)self;
     int paramCount = pushArg(self, method, argCount, arg);
     

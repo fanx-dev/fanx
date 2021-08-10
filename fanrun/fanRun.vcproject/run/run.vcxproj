@@ -76,6 +76,7 @@
     <ClCompile Include="..\..\gen\temp\baseTest.c" />
     <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
+    <ClCompile Include="..\..\thirdparty\md5.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c" />
@@ -254,7 +255,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>

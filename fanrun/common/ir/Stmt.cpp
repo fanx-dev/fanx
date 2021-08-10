@@ -202,8 +202,12 @@ void ConstStmt::print(Printer& printer) {
             break;
         }
         case FOp::LoadDecimal: {
-            const std::string &i = curPod->constantas.decimals[opObj.i1];
-            printer.printf("%s = %s;", varName.c_str(), i.c_str());
+            const std::string & rawstr = curPod->constantas.decimals[opObj.i1];
+            std::string str;
+            size_t len = rawstr.size();
+            escapeStr(rawstr, str);
+
+            printer.printf("%s = std_Decimal_fromStr(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d));", varName.c_str(), str.c_str(), len);
             break;
         }
         case FOp::LoadStr: {
@@ -221,7 +225,7 @@ void ConstStmt::print(Printer& printer) {
         }
         case FOp::LoadDuration: {
             int64_t i = curPod->constantas.durations[opObj.i1];
-            printer.printf("%s = std_Duration_fromTicks(__env, %lld);", varName.c_str(), i);
+            printer.printf("%s = std_Duration_fromTicks(__env, %lldLL);", varName.c_str(), i);
             break;
         }
         case FOp::LoadUri: {
@@ -237,8 +241,38 @@ void ConstStmt::print(Printer& printer) {
             break;
         }
         case FOp::LoadType: {
-            std::string typeName = FCodeUtil::getTypeNsName(curPod, opObj.i1);
-            printer.printf("%s = FR_TYPE(%s);", varName.c_str(), typeName.c_str());
+            //std::string typeName = FCodeUtil::getTypeNsName(curPod, opObj.i1);
+            //printer.printf("%s = FR_TYPE(%s);", varName.c_str(), typeName.c_str());
+
+            FTypeRef& type = curPod->typeRefs[opObj.i1];
+            std::string tName = curPod->names[type.typeName];
+            std::string podName = curPod->names[type.podName];
+            std::string typeName = podName + "::" + tName;
+            printer.printf("%s = std_Type_find(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d), true);",
+                varName.c_str(), typeName.c_str(), typeName.size());
+
+            break;
+        }
+        case FOp::LoadFieldLiteral: {
+            FFieldRef &f = curPod->fieldRefs[opObj.i1];
+            FTypeRef& type = curPod->typeRefs[f.parent];
+            std::string tName = curPod->names[type.typeName];
+            std::string podName = curPod->names[type.podName];
+            std::string typeName = podName + "::" + tName;
+            std::string& name = curPod->names[f.name];
+            printer.printf("%s = FR_CALL(std_Type, field, std_Type_find(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d), true), fr_newStrUtf8N(__env, \"%s\", %d), true);", 
+                varName.c_str(), typeName.c_str(), typeName.size(), name.c_str(), name.size());
+            break;
+        }
+        case FOp::LoadMethodLiteral: {
+            FMethodRef& f = curPod->methodRefs[opObj.i1];
+            FTypeRef& type = curPod->typeRefs[f.parent];
+            std::string tName = curPod->names[type.typeName];
+            std::string podName = curPod->names[type.podName];
+            std::string typeName = podName + "::" + tName;
+            std::string& name = curPod->names[f.name];
+            printer.printf("%s = FR_CALL(std_Type, method, std_Type_find(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d), true), fr_newStrUtf8N(__env, \"%s\", %d), true);",
+                varName.c_str(), typeName.c_str(), typeName.size(), name.c_str(), name.size());
             break;
         }
         default: {

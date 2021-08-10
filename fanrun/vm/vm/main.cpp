@@ -63,7 +63,7 @@ int main(int argc, const char * argv[]) {
     const char *libPath = NULL;
     const char *nativeOutPath = NULL;
     int i = 1;
-    bool debug = false;
+    int debug = 0;
     
     puts(argv[0]);
     
@@ -80,7 +80,7 @@ int main(int argc, const char * argv[]) {
             }
                 break;
             case 'd': {
-                debug = true;
+                debug = atoi(op+1);
             }
                 break;
             default: {
@@ -121,6 +121,7 @@ int main(int argc, const char * argv[]) {
         printf("Usage:\n  fan [options] <pod>::<type>.<method> [args]*\n");
         printf("Options:\n");
         printf("  -p\tfanHome\n");
+        printf("  -d1\tdebug\n");
         return -1;
     }
     

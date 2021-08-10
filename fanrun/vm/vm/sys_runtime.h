@@ -60,6 +60,12 @@ char* fr_getStrUtf8_(Env* e, FObj* self__);
 
 FObj* fr_getConstString_(Env* env, FPod* curPod, uint16_t sid);
 
+FObj* fr_getConstUri_(Env* env, FPod* curPod, uint16_t sid);
+
+FObj* fr_getTypeLiteral_(Env* e, FPod* curPod, uint16_t sid);
+FObj* fr_getFieldLiteral_(Env* e, FPod* curPod, uint16_t sid);
+FObj* fr_getMethodLiteral_(Env* e, FPod* curPod, uint16_t sid);
+
 ////////////////////////////////////////////////////////////////
 // Boxing
 ////////////////////////////////////////////////////////////////

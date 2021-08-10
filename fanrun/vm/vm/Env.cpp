@@ -20,7 +20,7 @@ Env::Env(Fvm *vm)
     , thread(nullptr)
     , trace(false)
     , curFrame(nullptr)
-    , blockingFrame(nullptr)
+    //, blockingFrame(nullptr)
 {
     isStoped = (false);
     //needStop = (false);
@@ -34,6 +34,8 @@ Env::Env(Fvm *vm)
     stackBottom = (char*)malloc(stackMemSize);
     stackTop = stackBottom;
     stackMemEnd = ((char*)stackBottom) + stackMemSize;
+
+    pushFrame(nullptr, 0);
 }
 
 Env::~Env() {
@@ -45,7 +47,6 @@ Env::~Env() {
 }
 
 void Env::start(const char* podName, const char* type, const char* name, FObj *args) {
-    //pushFrame(nullptr, nullptr);
     FMethod *method = findMethod(podName, type, name);
     
     fr_TagValue val;
@@ -110,7 +111,9 @@ void Env::printOperandStack() {
     }
     else {
         val = (fr_TagValue*)(((char*)(curFrame+1)) + curFrame->paddingSize);
-        val = val + curFrame->method->localCount;
+        if (curFrame->method != nullptr) {
+            val = val + curFrame->method->localCount;
+        }
     }
     
     printf("operand[");
@@ -133,6 +136,26 @@ static void printParam(fr_TagValue *paramEnd, int count) {
     printf("]");
 }
 
+bool Env::pushFrame(FMethod *method, int paramCountWithSelf) {
+
+    /*if ((char*)((StackFrame*)(stackTop)+1) >= stackMemEnd) {
+        printf("ERROR: out of stack\n");
+        abort();
+        return;
+    }*/
+
+    StackFrame* frameInfo = (StackFrame*)(stackTop);
+    frameInfo->method = method;
+    //frameInfo->paramDefault = paramDefault;
+    frameInfo->preFrame = curFrame;
+    frameInfo->paddingSize = 0;
+    frameInfo->paramCount = paramCountWithSelf;
+    curFrame = frameInfo;
+    stackTop = (char*)((StackFrame*)(stackTop)+1);
+
+    return true;
+}
+
 bool Env::popFrame() {
     if (curFrame == nullptr) {
         return false;
@@ -147,11 +170,11 @@ bool Env::popFrame() {
     
     if (this->trace) {
         //int frameSize = sizeof(StackFrame) + (curFrame->localCount * sizeof(fr_TagValue));
-        FMethod *method = nextFrame->method;
+        /*FMethod *method = nextFrame->method;
         std::string &name = method->c_parent->c_pod->names[method->name];
         std::string &typeName = method->c_parent->c_name;
-        printf("<<<<<<<<< end %s#%s ", typeName.c_str(), name.c_str());
-        printf("\n");
+        printf("<<<<<<<<< end %s.%s ", typeName.c_str(), name.c_str());
+        printf("\n");*/
     }
     return true;
 }
@@ -294,6 +317,16 @@ FType* Env::toType(fr_ValueType vt) {
 // call
 ////////////////////////////
 
+void printIndent(StackFrame * curFrame) {
+    StackFrame* frame = curFrame;
+    while (frame != nullptr) {
+        if (frame->method != nullptr) {
+            printf("  ");
+        }
+        frame = frame->preFrame;
+    }
+}
+
 void Env::call(FMethod *method, int paramCount/*without self*/) {
     assert(method);
     //assert(curFrame->operandStack.size() >= paramCount);
@@ -302,18 +335,10 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         abort();
     }
     
-    if (trace) {
-        printf("before call:");
+    if (trace > 1) {
+        printIndent(curFrame);
+        printf("before call %s: ", method->c_mangledName.c_str());
         printOperandStack();
-        printf("\n");
-
-        if (method->c_mangledName == "std_PodList_addPod") {
-            printf("XX");
-        }
-
-        if (method->c_mangledName == "std_MapEntryList_setByKey") {
-            printf("XX");
-        }
     }
     
 //    if (getError()) {
@@ -338,20 +363,14 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     }
  
     //push frame
-    StackFrame *frameInfo = (StackFrame*)(stackTop);
-    frameInfo->method = method;
-    //frameInfo->paramDefault = paramDefault;
-    frameInfo->preFrame = curFrame;
-    frameInfo->paddingSize = 0;
-    frameInfo->paramCount = paramCountWithSelf;
-    curFrame = frameInfo;
-    stackTop = (char*)((StackFrame*)(stackTop) + 1);
+    pushFrame(method, paramCountWithSelf);
     
     //print opstack info
-    if (trace) {
-        std::string &name = method->c_parent->c_pod->names[method->name];
-        std::string &typeName = method->c_parent->c_name;
-        printf(">>>>>>>>>call %s#%s,isNative:%d, ", typeName.c_str(), name.c_str(), method->c_native?1:0);
+    if (trace > 1) {
+        //std::string &name = method->c_parent->c_pod->names[method->name];
+        //std::string &typeName = method->c_parent->c_name;
+        //printf(">>>>>>>>> call %s.%s,isNative:%d, ", typeName.c_str(), name.c_str(), method->c_native?1:0);
+        printf(", ");
         printParam((fr_TagValue*)curFrame, paramCountWithSelf);
         printStackTrace();
         printf("\n");
@@ -419,16 +438,17 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         }
     }
     
-    if (trace) {
-        printf("end call:");
+    if (trace > 1) {
+        printIndent(curFrame);
+        printf("end call %s: ", method->c_mangledName.c_str());
         printOperandStack();
         printStackTrace();
         printf("\n");
     }
 }
 
-FMethod * Env::findMethod(const char *pod, const char *type, const char *name) {
-    return podManager->findMethod(this, pod, type, name, -1);
+FMethod * Env::findMethod(const char *pod, const char *type, const char *name, int paramCount) {
+    return podManager->findMethod(this, pod, type, name, paramCount);
 }
 void Env::callNonVirtual(FMethod * method, int paramCount) {
     call(method, paramCount);
@@ -560,9 +580,11 @@ FObj * Env::getError() {
 void Env::stackTrace(char *buf, int size, const char *delimiter) {
     StackFrame *frame = curFrame;
     while (frame != nullptr) {
-        std::string &name = frame->method->c_parent->c_pod->names[frame->method->name];
-        std::string &typeName = frame->method->c_parent->c_name;
-        buf += snprintf(buf, size, "%s#%s%s", typeName.c_str(), name.c_str(), delimiter);
+        if (frame->method != nullptr) {
+            std::string& name = frame->method->c_stdName;
+            std::string& typeName = frame->method->c_parent->c_name;
+            buf += snprintf(buf, size, "%s.%s%s", typeName.c_str(), name.c_str(), delimiter);
+        }
         frame = frame->preFrame;
     }
 }

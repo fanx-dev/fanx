@@ -66,6 +66,7 @@ struct FConstantas {
     std::vector<std::string> decimals;
     
     std::vector<void*> c_strings;
+    std::vector<void*> c_uris;
 };
 
 struct FTypeRef {
