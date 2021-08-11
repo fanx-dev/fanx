@@ -113,7 +113,7 @@ FMethod *PodManager::findMethodInType(Env *env, FType *type, const std::string &
     if (method == NULL) {
         if (!isRootType(env, type)) {
             FType* base = getType(env, type->c_pod, type->meta.base);
-            method = findMethodInType(env, base, name, paramCount);
+            method = findMethodInType(env, base, name, paramCount, false);
         }
     }
 
@@ -504,6 +504,23 @@ bool PodManager::isVoidType(Env *env, FType *type) {
     return type == voidType;
 }
 
+bool PodManager::isVoidTypeRef(Env* env, FPod* curPod, uint16_t tid) {
+    /*FType *ftype = getType(env, curPod, tid);
+    return isVoidType(env, ftype);*/
+    FTypeRef& typeRef = curPod->typeRefs[tid];
+    if (typeRef.c_isVoid == -1) {
+        std::string& podName = curPod->names[typeRef.podName];
+        std::string& typeName = curPod->names[typeRef.typeName];
+        if (podName == "sys" && typeName == "Void") {
+            typeRef.c_isVoid = 1;
+        }
+        else {
+            typeRef.c_isVoid = 0;
+        }
+    }
+    return typeRef.c_isVoid;
+}
+
 bool PodManager::isRootType(Env *env, FType *type) {
     if (!objType) initSysType(env);
     return type == objType;
@@ -709,9 +726,5 @@ PodManager::PodManager()
 }
 
 PodManager::~PodManager() {
-}
-
-bool PodManager::load(const std::string &path, const std::string &name) {
-    return podLoader.load(path, name);
 }
 

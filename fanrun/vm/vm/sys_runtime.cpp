@@ -106,6 +106,11 @@ void fr_printError_(Env* env, FObj * err) {
 ////////////////////////////////////////////////////////////////
 
 fr_Array* fr_arrayNew_(Env *env, FType* elemType, int32_t elemSize, size_t size) {
+    if (size > INT32_MAX) {
+        fr_throwNew((fr_Env)env, "sys", "ArgErr", "alloc size < 0");
+        return NULL;
+    }
+
     if (elemSize <= 0) elemSize = sizeof(void*);
     FType* arrayType = env->findType("sys", "Array");
 

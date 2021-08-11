@@ -18,6 +18,10 @@ void sys_Array_make(fr_Env env, fr_Obj self, fr_Int size) {
     memset(array->data, 0, len*array->elemSize);
     
     //fr_unlock(env);
+    if (size < 0) {
+        fr_throwNew(self, "sys", "ArgErr", "alloc size < 0");
+        return NULL;
+    }
     return;
 }
 fr_Obj sys_Array_get(fr_Env env, fr_Obj self, fr_Int pos) {
@@ -25,6 +29,10 @@ fr_Obj sys_Array_get(fr_Env env, fr_Obj self, fr_Int pos) {
     fr_Obj result;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
+    if (pos >= array->size) {
+        fr_throwNew(self, "sys", "IndexErr", "out index");
+        return NULL;
+    }
     result = fr_toHandle(env, ((FObj**)array->data)[pos]);
     //fr_unlock(env);
     return result;
@@ -34,6 +42,10 @@ void sys_Array_set(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
     //fr_Obj result;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
+    if (pos >= array->size) {
+        fr_throwNew(self, "sys", "IndexErr", "out index");
+        return;
+    }
     ((FObj**)array->data)[pos] = fr_getPtr(env, val);
     //fr_unlock(env);
     return;
@@ -51,6 +63,10 @@ fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
     fr_Array *array;
     fr_Array *narray;
     //FObj **p;
+    if (newSize < 0) {
+        fr_throwNew(self, "sys", "ArgErr", "realloc size < 0");
+        return NULL;
+    }
     
     //bool result;
     //fr_lock(env);
@@ -80,14 +96,21 @@ fr_Obj sys_Array_realloc(fr_Env env, fr_Obj self, fr_Int newSize) {
 }
 
 void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, fr_Int destOffset, fr_Int length) {
-    fr_Array *array;
-    fr_Array *other;
-    
+
     //fr_lock(env);
-    array = (fr_Array *)fr_getPtr(env, dest);
-    other = (fr_Array *)fr_getPtr(env, src);
+    fr_Array* destArray = (fr_Array *)fr_getPtr(env, dest);
+    fr_Array* srcArray = (fr_Array *)fr_getPtr(env, src);
+
+    if (destOffset + length > destArray->size) {
+        fr_throwNew(env, "sys", "IndexErr", "out index");
+        return;
+    }
+    if (srcOffset + length > srcArray->size) {
+        fr_throwNew(env, "sys", "IndexErr", "out index");
+        return;
+    }
     
-    memcpy(((char*)array->data)+destOffset, ((char*)other->data) + srcOffset, length);
+    memcpy(((char*)destArray->data)+destOffset, ((char*)srcArray->data) + srcOffset, length);
     
     //fr_unlock(env);
 }
@@ -95,6 +118,11 @@ void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
     fr_Array *array;
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
+
+    if (times > array->size) {
+        fr_throwNew(self, "sys", "IndexErr", "out index");
+        return;
+    }
 
     for (int i = 0; i < times; ++i) {
         ((FObj**)array->data)[i] = fr_getPtr(env, obj);

@@ -35,7 +35,6 @@ int main(int argc, const char * argv[]) {
                 break;
             case 'p': {
                 strncpy(buf, op+1, 256);
-                strncat(buf, "lib/fan/", 256);
                 libPath = buf;
             }
                 break;
@@ -57,7 +56,6 @@ int main(int argc, const char * argv[]) {
             return -1;
         }
         strncpy(buf, fanHome, 256);
-        strncat(buf, "/lib/fan/", 256);
         libPath = buf;
     }
     
@@ -72,10 +70,13 @@ int main(int argc, const char * argv[]) {
     
     const char *pod = name;
     PodManager podMgr;
+    const char* envPaths[2] = {0};
+    envPaths[0] = libPath;
+    podMgr.podLoader.setEnvPath(envPaths);
     Fvm vm(&podMgr);
     podMgr.vm = &vm;
     //Env *env = vm.getEnv();
-    bool r = podMgr.load(libPath, pod);
+    bool r = podMgr.podLoader.loadAll(pod);
     if (!r) {
         return -1;
     }

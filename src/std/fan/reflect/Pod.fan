@@ -6,15 +6,19 @@
 //   4 Jan 06  Brian Frank  Creation
 //
 
-native internal rtconst class PodList {
-  private Pod[] podList := [,]
+internal rtconst class PodList {
   private [Str:Pod] podMap := [:]
-  private Bool inited := false
   private Lock lock := Lock()
+  private Bool inited := false
 
-  private const static PodList cur := PodList()
+  internal const static PodList cur := PodList()
 
-  new make() {}
+  private new make() {}
+
+  Pod[] listPod() {
+    names := Env.cur.findAllPodNames
+    return names.map { findPod(it) }
+  }
 
   private native Void doInit()
   private Void init() {
@@ -26,25 +30,29 @@ native internal rtconst class PodList {
     lock.unlock
   }
 
-  static Pod[] listPod() {
-    cur.init
-    return cur.podList
+  //call in native
+  internal static Void addPod(Pod pod) {
+    cur.podMap[pod.name] = pod
   }
 
-  static Pod? findPod(Str name, Bool checked := true) {
-    cur.init
-    pod := cur.podMap.getChecked(name, false)
+  Pod? findPod(Str name, Bool checked := true) {
+    init
+    lock.lock
+    pod := podMap.getChecked(name, false)
+    if (pod == null) {
+      podFile := Env.cur.findPodFile(name)
+      if (podFile != null) {
+        pod = Pod.makeZip(Zip.open(podFile))
+        if (!name.equals(pod.name))
+            throw IOErr("Pod name mismatch " + name + " != " + pod.name);
+        cur.podMap[name] = pod
+      }
+    }
+    lock.unlock
     if (checked && pod == null) {
-      echo(cur.podMap)
-      throw UnknownPodErr(name)
+        throw UnknownPodErr(name)
     }
     return pod
-  }
-
-  ** call in native
-  internal static Void addPod(Pod pod) {
-    cur.podList.add(pod)
-    cur.podMap[pod.name] = pod
   }
 
   override Bool isImmutable() {
@@ -74,6 +82,8 @@ native final rtconst class Pod
   private Bool inited := false
   private Lock lock := Lock()
 
+  private Zip? _file
+
 //////////////////////////////////////////////////////////////////////////
 // Management
 //////////////////////////////////////////////////////////////////////////
@@ -99,14 +109,14 @@ native final rtconst class Pod
   ** method will load all of the pods into memory, so it is an expensive
   ** operation.
   **
-  static Pod[] list() { PodList.listPod }
+  static Pod[] list() { PodList.cur.listPod }
 
   **
   ** Find a pod by name.  If the pod doesn't exist and checked
   ** is false then return null, otherwise throw UnknownPodErr.
   **
   static Pod? find(Str name, Bool checked := true) {
-    PodList.findPod(name, checked)
+    PodList.cur.findPod(name, checked)
   }
 
   **
@@ -116,7 +126,10 @@ native final rtconst class Pod
   ** closed.  The pod cannot have resources.  The pod name as defined
   ** by '/pod.def' must be uniquely named or Err is thrown.
   **
-  native static Pod load(InStream in)
+  static Pod load(InStream in) {
+    zip := Zip.read(in)
+    return Pod(zip)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -125,19 +138,33 @@ native final rtconst class Pod
   **
   ** Private constructor.
   **
-  private new make(Str name, Str version, Str depends) {
-    _name = name
+  internal new makeZip(Zip zip) {
+    props := zip.contents("fcode")[`/meta.props`].in.readProps
+
+    metaName := props.get("pod.name")
+    version := props.get("pod.version")
+    depends := props.get("pod.depends")
+
     _version = Version(version)
     if (depends.isEmpty) _depends = Depend[,]
     else _depends = depends.split(';').map { Depend(it) }
-    _uri = Uri.fromStr("fan://" + name);
+    _name = metaName
+    _uri = Uri.fromStr("fan://" + _name);
+    _meta = props
+    _types = Type[,]
+    _typeMap = [Str:Type][:]
+    _file = zip
+  }
+
+  internal new make(Str name, Str version, Str depends) {
+    _version = Version(version)
+    if (depends.isEmpty) _depends = Depend[,]
+    else _depends = depends.split(';').map { Depend(it) }
+    _name = name
+    _uri = Uri.fromStr("fan://" + _name);
     _meta = [:]
     _types = Type[,]
     _typeMap = [Str:Type][:]
-  }
-
-  internal Void addMeta(Str k, Str v) {
-    _meta[k] = v
   }
 
   internal Void addType(Type t) {
@@ -208,7 +235,9 @@ native final rtconst class Pod
   ** files.  The URI of these files is rooted by `uri`.  Use `file`
   ** or `Uri.get` to lookup a resource file.
   **
-  native File[] files()
+  File[] files() {
+    _file.contents("fcode").vals.findAll { it.ext != "fcode" && it.ext != "class" }
+  }
 
   **
   ** Look up a resource file in this pod.  The URI must start
@@ -221,7 +250,16 @@ native final rtconst class Pod
   **   Pod.find("icons").file(`fan://icons/x16/cut.png`)
   **   `fan://icons/x16/cut.png`.get
   **
-  native File? file(Uri uri, Bool checked := true)
+  File? file(Uri uri, Bool checked := true) {
+    f := _file.contents("fcode")[uri]
+    if (f.ext == "fcode" || f.ext == "class") {
+      f = null
+    }
+    if (checked && f == null) {
+      throw UnresolvedErr("$name, $uri")
+    }
+    return f
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Doc
@@ -232,7 +270,7 @@ native final rtconst class Pod
   ** To get the summary string for the pod use:
   **   pod.meta["pod.summary"]
   **
-  Str? doc() { null }
+  Str? doc() { meta["pod.summary"] }
 
 //////////////////////////////////////////////////////////////////////////
 // Utils

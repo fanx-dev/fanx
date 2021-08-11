@@ -84,12 +84,3 @@ void std_Pod_doInit(fr_Env env, fr_Obj self) {
 
 #endif
 
-fr_Obj std_Pod_load(fr_Env env, fr_Obj in) {
-    return 0;
-}
-fr_Obj std_Pod_files(fr_Env env, fr_Obj self) {
-    return 0;
-}
-fr_Obj std_Pod_file(fr_Env env, fr_Obj self, fr_Obj uri, fr_Bool checked) {
-    return 0;
-}

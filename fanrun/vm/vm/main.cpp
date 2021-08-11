@@ -144,25 +144,17 @@ int main(int argc, const char * argv[]) {
     }
     
     PodManager podMgr;
+    podMgr.podLoader.setEnvPath(fr_envPaths);
+
     Fvm vm(&podMgr);
     podMgr.vm = &vm;
     Env *env = vm.getEnv();
-    
-    podMgr.load(libPath, pod);
-    
-    //run test
-    if (strcmp(pod, "sys") == 0 && strcmp(type, "Test") == 0 && strcmp(method, "main") == 0) {
-        if (i+1 < argc) {
-            const char *testPos = argv[i+1];
-            podMgr.load(libPath, testPos);
-        }
-    }
     
     sys_register(&vm);
     std_register(&vm);
     
     vm.start();
-    env->trace = debug;
+    env->debug = debug;
     
     fr_Obj argsObj = fr_makeArgArray((fr_Env)env, i + 1, argc, argv);
     FObj* args = fr_getPtr((fr_Env)env, argsObj);// makeArgArray(env, i + 1, argc, argv);

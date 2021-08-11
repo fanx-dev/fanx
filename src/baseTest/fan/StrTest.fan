@@ -168,6 +168,9 @@ virtual class MyTest {
 **
 class StrTest : MyTest
 {
+  static Void main() {
+    StrTest().run
+  }
 
   Void run() {
     testDefVal

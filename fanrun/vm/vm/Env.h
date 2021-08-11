@@ -21,7 +21,7 @@ struct StackFrame {
     StackFrame *preFrame;
     FMethod *method;
     int paddingSize;
-    int paramCount;
+    int argCount;
 };
 
 class Env {
@@ -46,7 +46,7 @@ public:
 
 public:
     Fvm *vm;
-    int trace;
+    int debug;
     
 public:
     Env(Fvm *vm);
@@ -123,9 +123,13 @@ public:
     void throwNPE();
     void clearError();
     
-    void printOperandStack();
+    int curOperandStackSize();
+    int printOperandStack();
     void stackTrace(char *buf, int size, const char *delimiter);
     void printStackTrace();
+    
+private:
+    void checkArgType(fr_TagValue* value, FType* expectedType);
 };
 
 #endif /* defined(__vm__Interpreter__) */

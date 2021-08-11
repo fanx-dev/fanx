@@ -18,7 +18,7 @@ Env::Env(Fvm *vm)
     : vm(vm)
     , error(nullptr)
     , thread(nullptr)
-    , trace(false)
+    , debug(0)
     , curFrame(nullptr)
     //, blockingFrame(nullptr)
 {
@@ -104,7 +104,27 @@ void printValue(fr_TagValue *val) {
     }
 }
 
-void Env::printOperandStack() {
+int Env::curOperandStackSize() {
+    fr_TagValue* val;
+    if (curFrame == nullptr) {
+        val = (fr_TagValue*)stackBottom;
+    }
+    else {
+        val = (fr_TagValue*)(((char*)(curFrame + 1)) + curFrame->paddingSize);
+        if (curFrame->method != nullptr) {
+            val = val + curFrame->method->localCount;
+        }
+    }
+
+    int count = 0;
+    while (val < (fr_TagValue*)stackTop) {
+        ++val;
+        ++count;
+    }
+    return count;
+}
+
+int Env::printOperandStack() {
     fr_TagValue *val;
     if (curFrame == nullptr) {
         val = (fr_TagValue *)stackBottom;
@@ -116,13 +136,16 @@ void Env::printOperandStack() {
         }
     }
     
+    int count = 0;
     printf("operand[");
     while (val < (fr_TagValue *)stackTop) {
         printValue(val);
         printf(", ");
         ++val;
+        ++count;
     }
     printf("]");
+    return count;
 }
 
 static void printParam(fr_TagValue *paramEnd, int count) {
@@ -136,7 +159,7 @@ static void printParam(fr_TagValue *paramEnd, int count) {
     printf("]");
 }
 
-bool Env::pushFrame(FMethod *method, int paramCountWithSelf) {
+bool Env::pushFrame(FMethod *method, int argCount) {
 
     /*if ((char*)((StackFrame*)(stackTop)+1) >= stackMemEnd) {
         printf("ERROR: out of stack\n");
@@ -149,7 +172,7 @@ bool Env::pushFrame(FMethod *method, int paramCountWithSelf) {
     //frameInfo->paramDefault = paramDefault;
     frameInfo->preFrame = curFrame;
     frameInfo->paddingSize = 0;
-    frameInfo->paramCount = paramCountWithSelf;
+    frameInfo->argCount = argCount;
     curFrame = frameInfo;
     stackTop = (char*)((StackFrame*)(stackTop)+1);
 
@@ -166,9 +189,9 @@ bool Env::popFrame() {
     
     stackTop = (char*)nextFrame;
     
-    this->popAll(nextFrame->paramCount);
+    this->popAll(nextFrame->argCount);
     
-    if (this->trace) {
+    if (this->debug) {
         //int frameSize = sizeof(StackFrame) + (curFrame->localCount * sizeof(fr_TagValue));
         /*FMethod *method = nextFrame->method;
         std::string &name = method->c_parent->c_pod->names[method->name];
@@ -190,7 +213,7 @@ void Env::push(fr_TagValue *val) {
         return;
     }
 #ifndef NODEBUG
-    if (val->type == fr_vtObj) {
+    if (debug && val->type == fr_vtObj) {
         if (val->any.o != NULL && !vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
@@ -210,7 +233,7 @@ bool Env::pop(fr_TagValue *val) {
         *val = *((fr_TagValue*)stackTop);
     }
 #ifndef NODEBUG
-    if (val->type == fr_vtObj) {
+    if (debug && val->type == fr_vtObj) {
         if (val->any.o != NULL && !vm->gc->isRef(fr_toGcObj((FObj*)val->any.o))) {
             abort();
         }
@@ -327,28 +350,89 @@ void printIndent(StackFrame * curFrame) {
     }
 }
 
+void Env::checkArgType(fr_TagValue* value, FType* expectedType) {
+    if (value->type == fr_vtObj && value->any.o == nullptr) {
+        return;
+    }
+
+    FType* type = this->podManager->getInstanceType(this, *value);
+    bool fit = this->podManager->fitTypeByType(this, type, expectedType);
+    if (!fit) {
+        if (expectedType->c_mangledName != "sys_This") {
+            printf("arg type error:%s != %s\n", type->c_mangledName.c_str(), expectedType->c_mangledName.c_str());
+            abort();
+        }
+    }
+}
+
 void Env::call(FMethod *method, int paramCount/*without self*/) {
     assert(method);
-    //assert(curFrame->operandStack.size() >= paramCount);
+    /*if (method->c_mangledName.find("sys_Str_toCode") != std::string::npos) {
+        debug = 5;
+    }*/
     if (method->paramCount != paramCount) {
         printf("ERROR: %s paramCount %d != %d\n", method->c_mangledName.c_str() ,method->paramCount, paramCount);
         abort();
     }
+    FPod* curPod = method->c_parent->c_pod;
+    int argCount = method->paramCount;
+    bool isStatic = (method->flags & FFlags::Static) != 0;
+    if (!isStatic) {
+        argCount++;
+    }
     
-    if (trace > 1) {
+    int beforeOperandStackSize;
+    if (debug) {
+        beforeOperandStackSize = curOperandStackSize();
+        if (beforeOperandStackSize < argCount) {
+            printf("OperandStackSize error: %d != %d\n", beforeOperandStackSize, argCount);
+            abort();
+        }
+
+        //check args type
+        for (int i = 0; i < method->paramCount; ++i) {
+            fr_TagValue* value = this->peek(-paramCount+i);
+            FType* expectedType = this->podManager->getType(this, curPod, method->vars[i].type);
+
+            checkArgType(value, expectedType);
+        }
+
+        //check this arg type
+        if (!isStatic) {
+            fr_TagValue* value = this->peek(-paramCount - 1);
+            FType* expectedType = method->c_parent;
+            checkArgType(value, expectedType);
+        }
+    }
+    if (debug > 1) {
         printIndent(curFrame);
         printf("before call %s: ", method->c_mangledName.c_str());
         printOperandStack();
     }
     
-//    if (getError()) {
-//        return;
-//    }
     
-    int paramCountWithSelf = method->paramCount;
-    bool isStatic = (method->flags & FFlags::Static) != 0;
+    bool isVoid = this->podManager->isVoidTypeRef(this, curPod, method->returnType);
+    
+    //check NullPointerException
     if (!isStatic) {
-        paramCountWithSelf++;
+        fr_TagValue *val = this->peek(-paramCount-1);
+        if (val->type == fr_vtObj) {
+            if (val->any.o == NULL) {
+                if (debug > 1) {
+                    printf(", NPE END\n");
+                }
+                throwNPE();
+                popAll(paramCount);
+                if (!isVoid) {
+                    fr_TagValue val;
+                    val.any.o = NULL;
+                    val.type = this->podManager->getValueType(this
+                        , curPod, method->returnType);
+                    push(&val);
+                }
+                return;
+            }
+        }
     }
 
     //unbox for value type: Bool.toStr
@@ -363,15 +447,12 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     }
  
     //push frame
-    pushFrame(method, paramCountWithSelf);
+    pushFrame(method, argCount);
     
     //print opstack info
-    if (trace > 1) {
-        //std::string &name = method->c_parent->c_pod->names[method->name];
-        //std::string &typeName = method->c_parent->c_name;
-        //printf(">>>>>>>>> call %s.%s,isNative:%d, ", typeName.c_str(), name.c_str(), method->c_native?1:0);
+    if (debug > 1) {
         printf(", ");
-        printParam((fr_TagValue*)curFrame, paramCountWithSelf);
+        printParam((fr_TagValue*)curFrame, argCount);
         printStackTrace();
         printf("\n");
     }
@@ -379,17 +460,14 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
     //call native
     if (method->c_native) {
         fr_Value ret;
-        fr_TagValue *param = ((fr_TagValue*)curFrame) - paramCountWithSelf;
+        fr_TagValue *param = ((fr_TagValue*)curFrame) - argCount;
         method->c_native(this, param, &ret);
         
         //context->lock();
         
         this->popFrame();
         
-        FPod *curPod = method->c_parent->c_pod;
-        FType *reType = this->podManager->getType(this
-                                                     , curPod, method->returnType);
-        if (!this->podManager->isVoidType(this, reType)) {
+        if (!isVoid) {
             fr_TagValue val;
             val.any = ret;
             val.type = this->podManager->getValueType(this
@@ -422,11 +500,15 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
             interpreter->run(this);
             if (getError()) {
                 this->popFrame();
+                if (!isVoid) {
+                    fr_TagValue val;
+                    val.any.o = NULL;
+                    val.type = this->podManager->getValueType(this
+                        , curPod, method->returnType);
+                    this->push(&val);
+                }
             } else {
-                FPod *curPod = method->c_parent->c_pod;
-                FType *reType = this->podManager->getType(this
-                                                          , curPod, method->returnType);
-                if (!this->podManager->isVoidType(this, reType)) {
+                if (!isVoid) {
                     fr_TagValue entry;
                     this->pop(&entry);
                     this->popFrame();
@@ -438,12 +520,29 @@ void Env::call(FMethod *method, int paramCount/*without self*/) {
         }
     }
     
-    if (trace > 1) {
+    if (debug > 1) {
         printIndent(curFrame);
         printf("end call %s: ", method->c_mangledName.c_str());
         printOperandStack();
         printStackTrace();
         printf("\n");
+    }
+
+    if (debug) {
+        int operandStackSize = beforeOperandStackSize - argCount;
+        if (!isVoid) ++operandStackSize;
+        int after = curOperandStackSize();
+        if (operandStackSize != after) {
+            printf("operandStackSize error: before:%d, after:%d, args:%d\n", beforeOperandStackSize, after, argCount);
+            abort();
+        }
+
+        //verify return value type
+        if (!isVoid) {
+            fr_TagValue *value = peek();
+            FType* expectedType = this->podManager->getType(this, curPod, method->returnType);
+            checkArgType(value, expectedType);
+        }
     }
 }
 
@@ -461,8 +560,9 @@ void Env::newObj(FType *type, FMethod * method, int paramCount) {
     self.any.o = obj;
     insertBack(&self, paramCount);
     
-    callVirtual(method, paramCount);
+    callNonVirtual(method, paramCount);
     
+    //cotr is Void
     push(&self);
 }
 void Env::callVirtual(FMethod * method, int paramCount) {
@@ -578,13 +678,22 @@ FObj * Env::getError() {
 }
 
 void Env::stackTrace(char *buf, int size, const char *delimiter) {
+    int count = 0;
+    int pos = 0;
     StackFrame *frame = curFrame;
     while (frame != nullptr) {
-        if (frame->method != nullptr) {
+        if (count > 2 && frame->method != nullptr) {
             std::string& name = frame->method->c_stdName;
             std::string& typeName = frame->method->c_parent->c_name;
-            buf += snprintf(buf, size, "%s.%s%s", typeName.c_str(), name.c_str(), delimiter);
+            int n = snprintf(buf+pos, size, "%s.%s%s", typeName.c_str(), name.c_str(), delimiter);
+            if (n < size-pos) {
+                pos += n;
+            }
+            else {
+                return;
+            }
         }
+        ++count;
         frame = frame->preFrame;
     }
 }

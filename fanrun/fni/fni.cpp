@@ -14,6 +14,7 @@
 //#include "type.h"
 //#include "system.h"
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef  __cplusplus
 extern  "C" {
@@ -84,7 +85,7 @@ void fr_arrayGet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
             break;
         }
         default:
-            assert(false);
+            abort();
     }
 }
 void fr_arrayGet(fr_Env self, fr_Obj _array, size_t index, fr_Value* val) {
@@ -127,7 +128,7 @@ void fr_arraySet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
             break;
         }
         default:
-            assert(false);
+            abort();
     }
 }
 
@@ -215,7 +216,7 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
     fr_Value ret;
     for(int i=0; i<argCount; i++) {
         int paramIndex = i;
-        if ((method->flags & FFlags_Static) == 0) {
+        if ((method->flags & FFlags_Static) == 0 && (method->flags & FFlags_Ctor) == 0) {
             --paramIndex;
         }
         if (paramIndex == -1) {
@@ -235,75 +236,104 @@ fr_Value fr_callMethodV(fr_Env self, fr_Method method, int argCount, va_list arg
     return ret;
 }
 
-void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
-               , int argCount, fr_Value *arg, fr_Value *ret) {
+void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value* arg, fr_Value* ret) {
 
-    if (type->flags & FFlags_Abstract) {
-        printf("try new abstract class");
-        assert(false);
-    }
-
-    if ((method->flags & FFlags_Ctor) == 0) {
-        printf("method is not ctor: %s\n", method->name);
-        assert(false);
-    }
-
-    fr_Obj obj = fr_allocObj(self, type, -1);
-    
-    fr_Value newArgs[50];
-    newArgs[0].h = obj;
-    for (int i=0; i<argCount; ++i) {
-        newArgs[i+1] = arg[i];
-    }
-    
-    fr_callMethodA(self, method, argCount+1, newArgs, ret);
-    ret->h = obj;
-}
-
-fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
-    fr_Value valueArgs[50] = {0};
-    fr_Value ret;
-    for(int i=0; i<argCount; i++) {
-        int paramIndex = i;
-        
-        if (strcmp(method->paramsList[paramIndex].type, "sys_Bool") == 0) {
-            valueArgs[i].b = va_arg(args, int);
+    if ((method->flags & FFlags_Ctor) != 0 && (method->flags & FFlags_Static) == 0) {
+        if (method->parent->flags & FFlags_Abstract) {
+            printf("try new abstract class, please use callNonVirtual");
+            abort();
         }
-        else {
-            valueArgs[i].h = va_arg(args, fr_Obj);
+
+        fr_Obj obj = fr_allocObj(env, method->parent, -1);
+
+        fr_Value newArgs[50];
+        newArgs[0].h = obj;
+        for (int i = 0; i < argCount; ++i) {
+            newArgs[i + 1] = arg[i];
         }
+        fr_callNonVirtual(env, method, argCount+1, newArgs, ret);
+        //ctor is Void
+        ret->h = obj;
+        return;
     }
-    ret.i = 0;
-    fr_newObjA(self, type, method, argCount, valueArgs, &ret);
-    return ret;
-}
 
-fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ...) {
-    va_list args;
-    fr_Value ret;
-    va_start(args, argCount);
-    ret = fr_newObjV(self, type, method, argCount, args);
-    va_end(args);
-    return ret;
-}
-
-fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
-                     , int argCount, ...) {
-    va_list args;
-    fr_Value ret;
-    va_start(args, argCount);
-    
-    fr_Type ftype = fr_findType(self, pod, type);
-    fr_Method m = fr_findMethodN(self, ftype, name, argCount);
-    if (m == NULL) {
-        printf("method not found:%s,%d\n", name, argCount);
-        return NULL;
+    if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {
+        fr_callVirtual(env, method, argCount, arg, ret);
     }
-    
-    ret = fr_newObjV(self, ftype, m, argCount, args);
-    va_end(args);
-    return ret.h;
+    else {
+        fr_callNonVirtual(env, method, argCount, arg, ret);
+    }
 }
+//
+//void fr_newObjA(fr_Env self, fr_Type type, fr_Method method
+//               , int argCount, fr_Value *arg, fr_Value *ret) {
+//
+//    if (type->flags & FFlags_Abstract) {
+//        printf("try new abstract class");
+//        abort();
+//    }
+//
+//    if ((method->flags & FFlags_Ctor) == 0) {
+//        printf("method is not ctor: %s\n", method->name);
+//        abort();
+//    }
+//
+//    fr_Obj obj = fr_allocObj(self, type, -1);
+//    
+//    fr_Value newArgs[50];
+//    newArgs[0].h = obj;
+//    for (int i=0; i<argCount; ++i) {
+//        newArgs[i+1] = arg[i];
+//    }
+//    
+//    fr_callMethodA(self, method, argCount+1, newArgs, ret);
+//    ret->h = obj;
+//}
+//
+//fr_Value fr_newObjV(fr_Env self, fr_Type type, fr_Method method, int argCount, va_list args) {
+//    fr_Value valueArgs[50] = {0};
+//    fr_Value ret;
+//    for(int i=0; i<argCount; i++) {
+//        int paramIndex = i;
+//        
+//        if (strcmp(method->paramsList[paramIndex].type, "sys_Bool") == 0) {
+//            valueArgs[i].b = va_arg(args, int);
+//        }
+//        else {
+//            valueArgs[i].h = va_arg(args, fr_Obj);
+//        }
+//    }
+//    ret.i = 0;
+//    fr_newObjA(self, type, method, argCount, valueArgs, &ret);
+//    return ret;
+//}
+//
+//fr_Value fr_newObj(fr_Env self, fr_Type type, fr_Method method, int argCount, ...) {
+//    va_list args;
+//    fr_Value ret;
+//    va_start(args, argCount);
+//    ret = fr_newObjV(self, type, method, argCount, args);
+//    va_end(args);
+//    return ret;
+//}
+//
+//fr_Obj fr_newObjS(fr_Env self, const char *pod, const char *type, const char *name
+//                     , int argCount, ...) {
+//    va_list args;
+//    fr_Value ret;
+//    va_start(args, argCount);
+//    
+//    fr_Type ftype = fr_findType(self, pod, type);
+//    fr_Method m = fr_findMethodN(self, ftype, name, argCount);
+//    if (m == NULL) {
+//        printf("method not found:%s,%d\n", name, argCount);
+//        return NULL;
+//    }
+//    
+//    ret = fr_newObjV(self, ftype, m, argCount, args);
+//    va_end(args);
+//    return ret.h;
+//}
 
 fr_Value fr_callOnObj(fr_Env self, fr_Obj obj, const char *name
                          , int argCount, ...) {
@@ -349,7 +379,7 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
     fr_Method m = fr_findMethod(self, ftype, name);
 
     int paramCount = argCount;
-    if ((m->flags & FFlags_Static) == 0) {
+    if ((m->flags & FFlags_Static) == 0 && (m->flags & FFlags_Ctor) == 0) {
         --paramCount;
     }
 
@@ -409,7 +439,8 @@ fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
 ////////////////////////////
 
 void fr_throwNew(fr_Env self, const char *pod, const char *type, const char *msg) {
-    fr_Obj err = fr_newObjS(self, pod, type, "make", 1, msg);
+    fr_Obj msgObj = fr_newStrUtf8(self, msg);
+    fr_Obj err = fr_newObjS(self, pod, type, "make", 1, msgObj);
     fr_throw(self, err);
 }
 

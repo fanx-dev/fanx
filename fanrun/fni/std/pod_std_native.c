@@ -2253,55 +2253,6 @@ void std_Pod_doInit_v(fr_Env env, void *param, void *ret) {
     std_Pod_doInit(env, arg_0);
 }
 
-void std_Pod_load_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Pod_load(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Pod_files_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Pod_files(env, arg_0);
-    *((fr_Value*)ret) = retValue;
-}
-
-void std_Pod_file_v(fr_Env env, void *param, void *ret) {
-    fr_Value value_0;
-    fr_Obj arg_0; 
-    fr_Value value_1;
-    fr_Obj arg_1; 
-    fr_Value value_2;
-    fr_Bool arg_2; 
-    fr_Value retValue;
-
-    fr_getParam(env, param, &value_2, 2, NULL);
-    arg_2 = value_2.b;
-
-    fr_getParam(env, param, &value_1, 1, NULL);
-    arg_1 = value_1.h;
-
-    fr_getParam(env, param, &value_0, 0, NULL);
-    arg_0 = value_0.h;
-
-
-    retValue.h = std_Pod_file(env, arg_0, arg_1, arg_2);
-    *((fr_Value*)ret) = retValue;
-}
-
 void std_Type_typeof__v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
@@ -3333,7 +3284,7 @@ void std_Env_promptPassword_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_Env_homeDir_v(fr_Env env, void *param, void *ret) {
+void std_Env_homeDirPath_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
     fr_Value retValue;
@@ -3342,7 +3293,7 @@ void std_Env_homeDir_v(fr_Env env, void *param, void *ret) {
     arg_0 = value_0.h;
 
 
-    retValue.h = std_Env_homeDir(env, arg_0);
+    retValue.h = std_Env_homeDirPath(env, arg_0);
     *((fr_Value*)ret) = retValue;
 }
 
@@ -3960,13 +3911,18 @@ void std_Zip_write_v(fr_Env env, void *param, void *ret) {
 void std_Zip_contents_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
     fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    retValue.h = std_Zip_contents(env, arg_0);
+    retValue.h = std_Zip_contents(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 

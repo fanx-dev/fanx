@@ -5,9 +5,9 @@
 
 #if FR_VM
 char* getTraceString(fr_Env env) {
-    char *str = malloc(256);
+    char *str = malloc(1024);
     str[0] = 0;
-    fr_stackTrace(env, str, 256, "\n");
+    fr_stackTrace(env, str, 1024, "\n");
     return str;
 }
 
@@ -102,7 +102,13 @@ char *getTraceString(fr_Env env)
     {
         SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
 
-        pos += snprintf(str+ pos, 1024 -pos, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+        int n = snprintf(str+ pos, 1024 -pos, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+        if (n < 1024-pos) {
+            pos += n;
+        }
+        else {
+            break;
+        }
     }
 
     free(symbol);
@@ -132,7 +138,9 @@ void sys_NativeC_printErr(fr_Env env, fr_Obj utf8) {
 }
 fr_Obj sys_NativeC_stackTrace(fr_Env env) {
     char *data = getTraceString(env);
-    return fr_newStrUtf8(env, data);
+    fr_Obj str = fr_newStrUtf8(env, data);
+    free(data);
+    return str;
 }
 
 //TODO

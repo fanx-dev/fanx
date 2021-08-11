@@ -93,12 +93,18 @@ static void setZipFileHandle(fr_Env env, fr_Obj self, ZipFileHandle* zh) {
 }
 
 static fr_Obj makeZipEntryFile(fr_Env env, ZipEntry &entry, fr_Obj self) {
-    fr_Obj entryObj = fr_newObjS(env, "std", "ZipEntryFile", "make", 4,
+    static fr_Method m = NULL;
+    static fr_Type type = NULL;
+    if (!m) {
+        type = fr_findType(env, "std", "ZipEntryFile");
+        m = fr_findMethod(env, type, "make");
+    }
+    fr_Obj entryObj = fr_newObj(env, type, m, 4,
         fr_newStrUtf8(env, entry.name.c_str()),
         0,
         entry.uncompressedSize,
         self
-    );
+    ).h;
     return entryObj;
 }
 
@@ -171,7 +177,7 @@ static void removeDir(std::vector<ZipEntry> &entrys) {
     }*/
 }
 
-fr_Obj std_Zip_contents(fr_Env env, fr_Obj self) {
+fr_Obj std_Zip_contents(fr_Env env, fr_Obj self, fr_Obj exclude) {
     ZipFileHandle* zh = getZipFileHandle(env, self);
     if (zh->unzipper == NULL) {
         fr_throwUnsupported(env);
@@ -182,12 +188,21 @@ fr_Obj std_Zip_contents(fr_Env env, fr_Obj self) {
 
     std::vector<ZipEntry> entrys = zh->unzipper->entries();
     removeDir(entrys);
+
+    fr_Method getUri = fr_findMethod(env, fr_findType(env, "std", "File"), "uri");
+    fr_Method mapSet = fr_findMethod(env, fr_findType(env, "std", "Map"), "set");
     for (ZipEntry &entry : entrys) {
-
+        if (exclude != NULL) {
+            const char* excludeStr = fr_getStrUtf8(env, exclude);
+            if (entry.name.find(excludeStr) == 0) continue;
+            if (strcmp(excludeStr, "fcode") == 0) {
+                if (entry.name.find(".class") != std::string::npos) continue;
+            }
+        }
         fr_Obj val = makeZipEntryFile(env, entry, self);
-        fr_Obj key = fr_callOnObj(env, val, "uri", 0).h;
+        fr_Obj key = fr_callMethod(env, getUri, 1, val).h;
 
-        fr_callOnObj(env, list, "set", 2, key, val);
+        fr_callMethod(env, mapSet, 3, list, key, val);
     }
     return list;
 }

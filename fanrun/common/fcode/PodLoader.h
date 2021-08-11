@@ -15,18 +15,20 @@
 
 class PodLoader {
     std::unordered_map<std::string, FPod*> podMap;
+    std::vector<std::string> libPaths;
     
 public:
-    bool load(const std::string &path, const std::string &name);
+    void setEnvPath(const char *envPaths[]);
   
-    FPod *findPod(const std::string &podName) { return podMap[podName]; }
+    FPod* findPod(const std::string& podName);
     
+    bool loadAll(const std::string& name);
     
     PodLoader();
     ~PodLoader();
-
+private:
+    FPod* doLoad(const std::string& path, const std::string& name);
     std::unordered_map<std::string, FPod*>& allPods() { return podMap; }
-
 private:
 };
 

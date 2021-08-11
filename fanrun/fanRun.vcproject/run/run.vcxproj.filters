@@ -231,9 +231,6 @@
     <ClCompile Include="..\..\fni\sys\sys_Ptr.c">
       <Filter>源文件\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gen\temp\baseTest.c">
-      <Filter>源文件\lib</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\thirdparty\zipper\tools.cpp">
       <Filter>源文件\zip</Filter>
     </ClCompile>
@@ -263,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="..\..\thirdparty\md5.c">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\baseTest.c">
+      <Filter>源文件\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

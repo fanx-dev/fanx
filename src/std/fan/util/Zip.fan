@@ -89,7 +89,7 @@ native final class Zip
   ** keys will start with a slash and be relative to this zip file.
   ** Return null if using streams.
   **
-  native [Uri:File]? contents()
+  native [Uri:File]? contents(Str? exclude := null)
 
   **
   ** Read the next entry in the zip.  Use the File's input stream to read the

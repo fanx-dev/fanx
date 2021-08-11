@@ -38,7 +38,6 @@ int main(int argc, const char * argv[]) {
             break;
         case 'p':
             strncpy(buf, op + 1, 256);
-            strncat(buf, "lib/fan/", 256);
             libPath = buf;
             break;
         case 'r':
@@ -57,7 +56,6 @@ int main(int argc, const char * argv[]) {
             return -1;
         }
         strncpy(buf, fanHome, 256);
-        strncat(buf, "/lib/fan/", 256);
         libPath = buf;
     }
 
@@ -70,7 +68,10 @@ int main(int argc, const char * argv[]) {
     }
   
     PodLoader podMgr;
-    podMgr.load(libPath, name);
+    const char* envPaths[2] = { 0 };
+    envPaths[0] = libPath;
+    podMgr.setEnvPath(envPaths);
+    //podMgr.loadAll(name);
     
     if (recursive) {
         std::map<std::string, FPod*> depends;

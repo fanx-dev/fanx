@@ -24,12 +24,10 @@
 #include <atomic>
 
 
-#define GC_USE_BITMAP 0
-
 class Gc : public Collector {
     std::list<GcObj*> pinObjs;
 
-#if GC_USE_BITMAP
+#ifndef GC_NO_BITMAP
     Bitmap allRefs;
 #else
     std::map<void *, bool> allRefs;

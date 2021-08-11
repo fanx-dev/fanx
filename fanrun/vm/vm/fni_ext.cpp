@@ -41,12 +41,26 @@ void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func) {
 
 FObj *fr_getPtr(fr_Env self, fr_Obj obj) {
     if (obj == 0) return NULL;
-    return *reinterpret_cast<FObj**>(obj);
+    FObj *fobj = *reinterpret_cast<FObj**>(obj);
+#ifndef NODEBUG
+    Env* e = (Env*)self;
+    if (!e->vm->gc->isRef(fr_toGcObj(fobj))) {
+        abort();
+    }
+#endif
+    return fobj;
 }
 
 fr_Obj fr_toHandle(fr_Env self, FObj *obj) {
     if (obj == NULL) return NULL;
     Env *e = (Env*)self;
+
+#ifndef NODEBUG
+    if (!e->vm->gc->isRef(fr_toGcObj(obj))) {
+        abort();
+    }
+#endif
+
     fr_Obj objRef = NULL;
     
     //fr_lock(self);
@@ -168,6 +182,10 @@ fr_Type fr_findType(fr_Env self, const char *pod, const char *type) {
     Env *e = (Env*)self;
     //e->lock();
     FType *t = e->findType(pod, type);
+    if (t == NULL) {
+        printf("type not found: %s::%s\n", pod, type);
+        return NULL;
+    }
     //e->unlock();
     //return fr_getTypeObj(self, t);
     return fr_fromFType(self, t);
@@ -222,14 +240,14 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
 static int pushArg(fr_Env self, fr_Method method, int argCount, fr_Value *arg) {
     Env *e = (Env*)self;
     FMethod *fmethod = (FMethod*)method->internalSlot;
-    bool isInstanceM = (fmethod->flags & FFlags::Static) == 0;// && (fmethod->flags & FFlags::Ctor) == 0;
+    bool isStatic = (fmethod->flags & FFlags::Static) != 0;
     
     for (int i=0; i<argCount; ++i) {
         fr_Value *param = arg + i;
         fr_TagValue val;
         val.any = *param;
         
-        if (isInstanceM) {
+        if (!isStatic) {
             if (i == 0) {
                 val.type = e->podManager->getValueTypeByType(e, fmethod->c_parent);
             } else {
@@ -250,8 +268,11 @@ static int pushArg(fr_Env self, fr_Method method, int argCount, fr_Value *arg) {
         e->push(&val);
     }
     
-    if (method && isInstanceM) {
+    if (method && (!isStatic)) {
         --argCount;
+        if (argCount < 0) {
+            abort();
+        }
     }
     return argCount;
 }
@@ -274,17 +295,12 @@ static void popRet(Env *context, FMethod *method, fr_Value *ret) {
     //context->unlock();
 }
 
-void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
+void fr_callVirtual(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
     Env *e = (Env*)self;
     int paramCount = pushArg(self, method, argCount, arg);
     
     FMethod *f = (FMethod*)method->internalSlot;
-    if (f->flags & FFlags::Virtual || f->flags & FFlags::Abstract) {
-        e->callVirtual(f, paramCount);
-    }
-    else {
-        e->callNonVirtual(f, paramCount);
-    }
+    e->callVirtual(f, paramCount);
     popRet(e, f, ret);
 }
 
@@ -292,8 +308,8 @@ void fr_callNonVirtual(fr_Env self, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret) {
     Env *e = (Env*)self;
     FMethod *f = (FMethod*)method->internalSlot;
-    argCount = pushArg(self, method, argCount, arg);
-    e->callNonVirtual(f, argCount);
+    int paramCount = pushArg(self, method, argCount, arg);
+    e->callNonVirtual(f, paramCount);
     
     popRet(e, f, ret);
 }

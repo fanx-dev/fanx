@@ -107,19 +107,13 @@ fr_Method fr_findMethodN(fr_Env self, fr_Type type, const char *name, int paramC
     return NULL;
 }
 
-void fr_callMethodA(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
-    
-    if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {
-        fr_Type type = fr_getObjType(self, arg[0].h);
-        fr_Method realMethod = fr_findMethodN(self, type, method->name, method->paramsCount);
-        if (!realMethod) {
-            return;
-        }
-        fr_callNonVirtual(self, realMethod, argCount, arg, ret);
+void fr_callVirtual(fr_Env self, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret) {
+    fr_Type type = fr_getObjType(self, arg[0].h);
+    fr_Method realMethod = fr_findMethodN(self, type, method->name, method->paramsCount);
+    if (!realMethod) {
+        return;
     }
-    else {
-        fr_callNonVirtual(self, method, argCount, arg, ret);
-    }
+    fr_callNonVirtual(self, realMethod, argCount, arg, ret);
 }
 
 void fr_callNonVirtual(fr_Env self, fr_Method method

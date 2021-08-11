@@ -177,7 +177,8 @@ native rtconst class Env
   ** Get the home directory of Fantom installation.
   ** Default implementation delegates to `parent`.
   **
-  virtual File homeDir()
+  virtual File homeDir() { File.os(homeDirPath) }
+  private native Str homeDirPath()
 
   **
   ** Get the working directory to use for saving compiled
@@ -185,7 +186,7 @@ native rtconst class Env
   ** delegates to `parent`.
   **
   virtual File workDir() {
-    File.fromPath(envPaths[0])
+    File.os(envPaths[0])
   }
 
   **
@@ -219,7 +220,7 @@ native rtconst class Env
     ps := envPaths
     for (i:=0; i<ps.size; ++i) {
       p := ps[i]
-      File f = File.make(p.toUri + uri, false)
+      File f = File.os(p +"/"+ uri.toStr)
       if (f.exists()) {
         return f
       }
@@ -246,7 +247,7 @@ native rtconst class Env
     list := [,]
     for (i:=0; i<ps.size; ++i) {
       p := ps[i]
-      File f = File.make(p.toUri + uri, false)
+      File f = File.os(p +"/"+ uri.toStr)
       if (f.exists()) {
         list.add(f)
       }
@@ -277,7 +278,7 @@ native rtconst class Env
     allPod := [:]
     for (i:=0; i<ps.size; ++i) {
       p := ps[i]
-      File fdir = File.make(p.toUri + `lib/fan/`, false)
+      File fdir = File.os(p + "/lib/fan/")
       fdir.list.each |f| {
         if (f.ext == "pod") {
           allPod[f.basename] = f
@@ -336,7 +337,7 @@ native rtconst class Env
 
   private Void addProps(File podFile, Str podName, [Str:Str[]]? indexMap, [Str:Str[]]? keyToPodName) {
     zip := Zip.open(podFile)
-    props := zip.contents[`/index.props`].in.readProps
+    props := zip.contents("fcode")[`/index.props`].in.readProps
     props.each |v,k| {
       res := indexMap.getOrAdd(k) { [,] }
       vals := v.split(',')

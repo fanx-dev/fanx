@@ -75,6 +75,7 @@ struct FTypeRef {
     std::string extName;//("" if not parameterized, "?" if nullable)
     
     FType *c_type;
+    int c_isVoid;
 };
 
 struct FFieldRef {

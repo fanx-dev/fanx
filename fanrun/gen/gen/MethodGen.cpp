@@ -161,8 +161,8 @@ void MethodGen::printParam(Printer *printer, int printType) {
 //                printer->println("if (vtype_%d == fr_vtHandle) fr_unbox(env, value_%d.h, &value_%d);", rIndex, rIndex, rIndex);
 //            }
             
-            printer->println("arg_%d = value_%d.%s;"
-                             , rIndex, rIndex , tagName.c_str());
+            printer->println("arg_%d = (%s)value_%d.%s;"
+                             , rIndex, typeName.c_str(), rIndex , tagName.c_str());
             
             printer->newLine();
         }

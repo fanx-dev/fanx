@@ -192,7 +192,7 @@ fr_Obj std_Env_promptPassword(fr_Env env, fr_Obj self, fr_Obj msg) {
     const char *str = gets_s(buf, 256);
     return fr_newStrUtf8(env, str);
 }
-fr_Obj std_Env_homeDir(fr_Env env, fr_Obj self) {
+fr_Obj std_Env_homeDirPath(fr_Env env, fr_Obj self) {
     return fr_newStrUtf8(env, fr_homeDir);
 }
 fr_Obj std_Env_getEnvPaths(fr_Env env, fr_Obj self) {

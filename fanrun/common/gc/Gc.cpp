@@ -36,7 +36,7 @@ Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
 {
     lastAllocSize = 29;
     collectLimit = 100000;
-#if GC_USE_BITMAP
+#ifndef GC_NO_BITMAP
     //pass
 #else
     //allRefs = NULL;
@@ -51,7 +51,7 @@ Gc::~Gc() {
     delete gcThread;
 }
 
-#if GC_USE_BITMAP
+#ifndef GC_NO_BITMAP
 bool Gc::isRef(void *p) {
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     bool found = allRefs.getPtr(p);
@@ -118,7 +118,7 @@ GcObj* Gc::alloc(void *type, int asize) {
     
     {
         std::lock_guard<std::recursive_mutex> lock_guard(lock);
-    #if GC_USE_BITMAP
+    #ifndef GC_NO_BITMAP
         allRefs.putPtr(obj, true);
         //assert(allRefs.getPtr(obj));
     #else
@@ -261,7 +261,7 @@ bool Gc::mark() {
 }
 
 void Gc::sweep() {
-#if GC_USE_BITMAP
+#ifndef GC_NO_BITMAP
     uint64_t pos = 0;
     while (true) {
         lock.lock();
@@ -325,7 +325,7 @@ void Gc::remove(GcObj* obj) {
     
     lock.lock();
     allocSize -= size;
-#if GC_USE_BITMAP
+#ifndef GC_NO_BITMAP
     allRefs.putPtr(obj, false);
 #else
     //

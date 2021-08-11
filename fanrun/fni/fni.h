@@ -174,18 +174,28 @@ fr_Value fr_callMethodV(fr_Env env, fr_Method method, int argCount, va_list args
 fr_Value fr_callMethod(fr_Env env, fr_Method method, int argCount, ...);
 void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
 
+//lower level
+void fr_callVirtual(fr_Env env, fr_Method method
+                        , int argCount, fr_Value* arg, fr_Value* ret);
 void fr_callNonVirtual(fr_Env env, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret);
 
-fr_Value fr_newObjV(fr_Env env, fr_Type type, fr_Method method, int argCount, va_list args);
-fr_Value fr_newObj(fr_Env env, fr_Type type, fr_Method method, int argCount, ...);
-void fr_newObjA(fr_Env env, fr_Type type, fr_Method method
-               , int argCount, fr_Value *arg, fr_Value *ret);
-
 //short cut
-fr_Obj fr_newObjS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
-fr_Value fr_callMethodS(fr_Env env, const char *pod, const char *type, const char *name, int argCount, ...);
-fr_Value fr_callOnObj(fr_Env env, fr_Obj obj, const char *name, int argCount, ...);
+fr_Value fr_callMethodS(fr_Env env, const char* pod, const char* type, const char* name, int argCount, ...);
+fr_Value fr_callOnObj(fr_Env env, fr_Obj obj, const char* name, int argCount, ...);
+
+
+//fr_Value fr_newObjV(fr_Env env, fr_Type type, fr_Method method, int argCount, va_list args);
+//fr_Value fr_newObj(fr_Env env, fr_Type type, fr_Method method, int argCount, ...);
+//void fr_newObjA(fr_Env env, fr_Type type, fr_Method method
+//               , int argCount, fr_Value *arg, fr_Value *ret);
+//fr_Obj fr_newObjS(fr_Env env, const char* pod, const char* type, const char* name, int argCount, ...);
+
+#define fr_newObjV(env, type, method, argCount, args) fr_callMethodV(env, method, argCount, args)
+#define fr_newObj(env, type, method, argCount, ...) fr_callMethod(env, method, argCount, ## __VA_ARGS__)
+#define fr_newObjA(env, type, method, argCount, arg, ret) fr_callMethodA(env, method, argCount, arg, ret)
+#define fr_newObjS(env, pod, type, method, argCount, ...) fr_callMethodS(env, pod, type, method, argCount, ## __VA_ARGS__).h
+
 
 ////////////////////////////
 // Field

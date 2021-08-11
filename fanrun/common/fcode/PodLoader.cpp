@@ -34,49 +34,77 @@ static void string_split(std::string& s, std::string delim,std::vector< std::str
     }
 }
 
-bool PodLoader::load(const std::string &path, const std::string &name) {
-    
+void PodLoader::setEnvPath(const char* envPaths[]) {
+    for (int i = 0; envPaths[i] != NULL; ++i) {
+        std::string cstr = envPaths[i];
+        cstr += "/lib/fan/";
+        this->libPaths.push_back(cstr);
+    }
+}
+
+FPod* PodLoader::findPod(const std::string& podName) {
+    if (podMap.find(podName) != podMap.end()) {
+        return podMap[podName];
+    }
+
+    for (const std::string &path : libPaths) {
+        FPod* fpod = doLoad(path, podName);
+        if (fpod) {
+            return fpod;
+        }
+    }
+}
+
+FPod* PodLoader::doLoad(const std::string& path, const std::string& name) {
     if (podMap.find(name) != podMap.end()) {
-        return true;
+        return podMap[name];
     }
     std::string file = path + name + ".pod";
-    ZipFile *zip = ZipFile::createWithFile(file);
-    
+    ZipFile* zip = ZipFile::createWithFile(file);
+
     if (zip == NULL) {
         printf("ERROR: file not found: %s\n", file.c_str());
-        return false;
+        return NULL;
     }
-    
-//    std::vector<std::string> nameList;
-//    zip.getNameList(nameList);
-//    for (int i=0; i<nameList.size(); ++i) {
-//        std::string fname = nameList[i];
-//        printf("%s\n", fname.c_str());
-//    }
-    
-    FPod *fpod = new FPod();
+
+    FPod* fpod = new FPod();
     fpod->c_loader = this;
-    
+
     fpod->load(*zip);
     podMap[fpod->name] = fpod;
-    
+
     delete zip;
-    
-    //----------------------------------------
-    // load all depends
+
     //parse depends
     std::string depends = fpod->depends;
     std::vector< std::string > dependList;
     string_split(depends, ";", &dependList);
-    
-    //load depends
-    for (int i=0; i<dependList.size(); ++i) {
+    //depends
+    for (int i = 0; i < dependList.size(); ++i) {
         std::string depend = dependList[i];
         std::string::size_type pos = depend.find(" ");
         if (pos != std::string::npos) {
             std::string dependPod = depend.substr(0, pos);
             fpod->c_dependPods.push_back(dependPod);
-            load(path, dependPod);
+        }
+    }
+
+    return fpod;
+}
+
+bool PodLoader::loadAll(const std::string &name) {
+  
+    FPod *fpod = findPod(name);
+    if (fpod == NULL) return false;
+    
+    //----------------------------------------
+    // load all depends
+    for (int i=0; i< fpod->c_dependPods.size(); ++i) {
+        const std::string &depend = fpod->c_dependPods[i];
+        std::string::size_type pos = depend.find(" ");
+        if (pos != std::string::npos) {
+            std::string dependPod = depend.substr(0, pos);
+            findPod(dependPod);
         }
     }
     

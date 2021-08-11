@@ -103,7 +103,7 @@ void FType::read(FPod *pod, FTypeMeta &meta, Buffer &buffer) {
             fields[i].c_offset = -1;
             fields[i].c_parent = this;
             fields[i].c_reflectSlot = NULL;
-            for (int i=0; i<attrCount; ++i) {
+            for (int j=0; j<attrCount; ++j) {
                 FAttr *attr = FAttr::readAttr(pod, buffer);
                 if (attr) {
                     fields[i].attrs.push_back(attr);

@@ -9,6 +9,7 @@
 #include "Interpreter.h"
 #include <assert.h>
 #include "Env.h"
+#include "util/Endian.h"
 
 #define F_STR_BUF_SIZE 256
 
@@ -52,7 +53,7 @@ bool Interpreter::run(Env *env) {
     InterStackFrame *iframe = (InterStackFrame*)frame;
     
     iframe->locals = ((fr_TagValue*)(iframe+1));
-    fr_TagValue *param = ((fr_TagValue*)frame) - frame->paramCount;
+    fr_TagValue *param = ((fr_TagValue*)frame) - frame->argCount;
     iframe->param = param;
     
     iframe->_errTable = nullptr;
@@ -165,13 +166,13 @@ bool Interpreter::exeStep() {
 
     FOp opcode = (FOp)code.readUInt8();
     
-    if (context->trace) {
-        if (context->trace > 2) {
+    if (context->debug) {
+        if (context->debug > 2) {
             const char* opName = OpNames[(int)opcode];
             printf("%d:%s\n", pc, opName);
         }
-        if (frame()->method->c_mangledName == "std_Duration_static__init" && pc == 15) {
-            printf("debug\n");
+        if (frame()->method->c_mangledName == "sys_Str_toCode" && pc == 150) {
+            //printf("debug\n");
         }
     }
     
@@ -318,8 +319,8 @@ bool Interpreter::exeStep() {
         }
         case FOp::LoadVar: {
             fr_TagValue *entry;
-            if (i1 >= frame()->paramCount) {
-                entry = frame()->locals + i1 - frame()->paramCount;
+            if (i1 >= frame()->argCount) {
+                entry = frame()->locals + i1 - frame()->argCount;
             } else {
                 entry = frame()->param + i1;
             }
@@ -330,8 +331,8 @@ bool Interpreter::exeStep() {
             fr_TagValue val;
             context->pop(&val);
             fr_TagValue *entry;
-            if (i1 >= frame()->paramCount) {
-                entry = frame()->locals + i1 - frame()->paramCount;
+            if (i1 >= frame()->argCount) {
+                entry = frame()->locals + i1 - frame()->argCount;
             } else {
                 entry = frame()->param + i1;
             }
@@ -580,14 +581,18 @@ bool Interpreter::exeStep() {
         }
         case FOp::Switch: {
             uint16_t count = code.readUInt16();
-            uint16_t *table = (uint16_t*)malloc(sizeof(uint16_t)*count);
-            for (int i=0; i<count; ++i) {
-                table[i] = code.readUInt16();
-            }
-            fr_Int i = popInt();
+            uint16_t* table = (uint16_t*)code.readData(sizeof(uint16_t) * count, false);
             
-            frame()->pc = table[i];
-            goto Step_jump;
+            fr_Int i = popInt();
+            if (i >= 0 && i < count) {
+                int val = table[i];
+                if (!isBigEndian()) {
+                    swap16p(&val);
+                }
+
+                frame()->pc = val;
+                goto Step_jump;
+            }
             break;
         }
         case FOp::Throw: {
@@ -874,6 +879,10 @@ void Interpreter::callMethod(int16_t mid, bool isVirtual) {
         
         int pos = -paramCount-1;
         entry = *context->peek(pos);
+        if (entry.type == fr_vtObj && entry.any.o == nullptr) {
+            context->throwNPE();
+            return;
+        }
         FType *type = context->podManager->getInstanceType(context, entry);
         //bool isSetter = method->flags & FFlags::Setter;
         method = context->podManager->getVirtualMethod(context, type, frame()->curPod, &methodRef);

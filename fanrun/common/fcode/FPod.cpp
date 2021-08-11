@@ -205,7 +205,8 @@ void FPod::read(ZipFile &zip) {
                 typeRef.podName = buf.readUInt16();
                 typeRef.typeName = buf.readUInt16();
                 typeRef.extName = buf.readString();
-                typeRef.c_type= NULL;
+                typeRef.c_type = NULL;
+                typeRef.c_isVoid = -1;
                 typeRefs.push_back(typeRef);
             }
         }

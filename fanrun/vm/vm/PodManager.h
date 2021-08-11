@@ -36,7 +36,6 @@ public:
     PodLoader podLoader;
     
 public:
-    bool load(const std::string &path, const std::string &name);
     
     PodManager();
     ~PodManager();
@@ -75,6 +74,7 @@ public:
     //FType *getTypeType(Env *env);
     FType *getNpeType(Env *env);
     bool isVoidType(Env *env, FType *type);
+    bool isVoidTypeRef(Env* env, FPod* curPod, uint16_t tid);
     bool isNullableType(Env *env, FPod *curPod, uint16_t tid);
     bool isPrimitiveType(Env *env, FPod *curPod, uint16_t tid);
     bool isPrimitiveType(Env *env, FType *type);
