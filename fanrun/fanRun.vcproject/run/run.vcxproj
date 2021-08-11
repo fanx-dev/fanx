@@ -258,6 +258,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -395,14 +395,14 @@ native abstract rtconst class Type
   ** Convenience for (Field)slot(name, checked)
   **
   Field? field(Str name, Bool checked := true) {
-    (Field)slot(name, checked)
+    slot(name, checked)
   }
 
   **
   ** Convenience for (Method)slot(name, checked)
   **
   Method? method(Str name, Bool checked := true) {
-    (Method)slot(name, checked)
+    slot(name, checked)
   }
 
   **

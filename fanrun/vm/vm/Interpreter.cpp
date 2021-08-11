@@ -171,8 +171,8 @@ bool Interpreter::exeStep() {
             const char* opName = OpNames[(int)opcode];
             printf("%d:%s\n", pc, opName);
         }
-        if (frame()->method->c_mangledName == "sys_Str_toCode" && pc == 150) {
-            //printf("debug\n");
+        if (frame()->method->c_mangledName == "baseTest_Main_testCompare" && pc == 6) {
+            printf("debug\n");
         }
     }
     
@@ -701,9 +701,8 @@ void Interpreter::compareEq(int16_t t1, int16_t t2, bool notEq) {
             ret = p2.any.o == any.o;
         }
     }
-    else if (p1.any.o == nullptr) {
-        if (p2.any.o == nullptr) ret = true;
-        else ret = false;
+    else if (p1.any.o == nullptr || p2.any.o == nullptr) {
+        ret = (p1.any.o == p2.any.o);
     }
     else {
         context->push(&p1);
@@ -760,18 +759,16 @@ void Interpreter::compare(int16_t t1, int16_t t2, fr_Int *ret) {
             res = -1;
         }
     }
-    else if (p1.any.o == nullptr) {
-        if (p2.any.o == nullptr) res = 0;
-        else res = -1;
+    else if (p1.any.o == nullptr || p2.any.o == nullptr) {
+        if (p1.any.o == p2.any.o) res = 0;
+        else if (p1.any.o == nullptr) res = -1;
+        else res = 1;
     }
     else {
         context->push(&p1);
         context->push(&p2);
         context->callVirtualByName("compare", 1);
-        if (ret) {
-            res = popInt();
-        }
-        return;
+        res = popInt();
     }
 
     if (ret) {

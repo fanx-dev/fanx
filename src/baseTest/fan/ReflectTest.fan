@@ -19,7 +19,7 @@ class ReflectTest {
 	}
 
 	static Void testInvoke() {
-		m := Main()
+		m := ReflectTest()
 		m->foo(3)
 		m->a = 10
 		m.foo(3)

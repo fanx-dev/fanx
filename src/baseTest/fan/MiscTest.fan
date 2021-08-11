@@ -1,5 +1,7 @@
 
 class MiscTest {
+	Int a
+
 	static Void main() {
 		testCast
 		testBoxing
@@ -27,9 +29,9 @@ class MiscTest {
 
 	static Void testLiteral() {
 		echo(0.1)
-		echo(Main#)
-		echo(Main#foo)
-		echo(Main#a)
+		echo(MiscTest#)
+		echo(MiscTest#main)
+		echo(MiscTest#a)
 		echo(10sec)
 	}
 
