@@ -19,7 +19,7 @@ struct InterStackFrame : public StackFrame {
 private:
     unsigned char*code;
     int codeLen;
-    int pc;
+    //int pc;
     
     FErrTable *_errTable;
     bool errTableInited;

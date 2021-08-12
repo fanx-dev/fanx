@@ -174,7 +174,7 @@ bool Env::pushFrame(FMethod *method, int argCount) {
     frameInfo->paddingSize = 0;
     frameInfo->argCount = argCount;
     curFrame = frameInfo;
-    stackTop = (char*)((StackFrame*)(stackTop)+1);
+    stackTop = (char*)(((StackFrame*)stackTop)+1);
 
     return true;
 }
@@ -269,11 +269,13 @@ void Env::insertBack(fr_TagValue *entry, int count) {
 
 void Env::checkSafePoint() {
     if (vm->gc->isStopTheWorld()) {
+        //printf("thread stop\n");
         isStoped = true;
         do {
             System_sleep(1);
         } while (vm->gc->isStopTheWorld());
         isStoped = false;
+        //printf("thread run\n");
     }
     //mtx_lock(&mutex);
 }
@@ -305,13 +307,15 @@ void Env::deleteGlobalRef(fr_Obj obj) {
 
 void Env::walkLocalRoot(Collector *gc) {
     StackFrame *frame;
+    fr_TagValue* end = (fr_TagValue*)stackTop;
     for (frame = curFrame; frame != nullptr; frame = frame->preFrame) {
         fr_TagValue *val = (fr_TagValue*)(((char*)(frame+1)) + frame->paddingSize);
-        for (; val<(fr_TagValue*)stackTop; ++val) {
+        for (; val < end; ++val) {
             if (val->type == fr_vtObj && val->any.o) {
                 gc->onVisit(fr_toGcObj((FObj*)val->any.o));
             }
         }
+        end = (fr_TagValue*)frame;
     }
     
     if (getError()) {
@@ -677,15 +681,15 @@ FObj * Env::getError() {
     return error;
 }
 
-void Env::stackTrace(char *buf, int size, const char *delimiter) {
+void Env::stackTrace(char *buf, int size, const char *delimiter, int skip) {
     int count = 0;
     int pos = 0;
     StackFrame *frame = curFrame;
     while (frame != nullptr) {
-        if (count > 2 && frame->method != nullptr) {
+        if (count >= skip && frame->method != nullptr) {
             std::string& name = frame->method->c_stdName;
             std::string& typeName = frame->method->c_parent->c_name;
-            int n = snprintf(buf+pos, size, "%s.%s%s", typeName.c_str(), name.c_str(), delimiter);
+            int n = snprintf(buf+pos, size, "%s.%s %d%s", typeName.c_str(), name.c_str(), frame->pc, delimiter);
             if (n < size-pos) {
                 pos += n;
             }
@@ -700,7 +704,7 @@ void Env::stackTrace(char *buf, int size, const char *delimiter) {
 
 void Env::printStackTrace() {
     char buf[1024] = {0};
-    stackTrace(buf, 1024, "<-");
+    stackTrace(buf, 1024, "<-", 0);
     printf("stackTrace:(%s)", buf);
 }
 

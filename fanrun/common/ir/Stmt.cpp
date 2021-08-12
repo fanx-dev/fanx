@@ -218,7 +218,7 @@ void ConstStmt::print(Printer& printer) {
             
             
             printer.println("%s = (sys_Str)(%s_ConstPoolStrs[%d]);", varName.c_str(), curPod->name.c_str(), opObj.i1);
-            printer.printf("if (%s == NULL) { %s_ConstPoolStrs[%d] = (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d);"
+            printer.printf("if (%s == NULL) { %s_ConstPoolStrs[%d] = (sys_Str)fr_newGlobalRef(__env, fr_newStrUtf8N(__env, \"%s\", %d));"
                            , varName.c_str(), curPod->name.c_str(), opObj.i1, str.c_str(), len);
             printer.printf("%s = (sys_Str)(%s_ConstPoolStrs[%d]); }", varName.c_str(), curPod->name.c_str(), opObj.i1);
             break;
@@ -235,7 +235,7 @@ void ConstStmt::print(Printer& printer) {
             escapeStr(rawstr, str);
             
             printer.println("%s = (std_Uri)(%s_ConstPoolUris[%d]);", varName.c_str(), curPod->name.c_str(), opObj.i1);
-            printer.printf("if (%s == NULL) { %s_ConstPoolUris[%d] = std_Uri_fromStr__1(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d));"
+            printer.printf("if (%s == NULL) { %s_ConstPoolUris[%d] = (std_Uri)fr_newGlobalRef(__env, std_Uri_fromStr__1(__env, (sys_Str)fr_newStrUtf8N(__env, \"%s\", %d)));"
                            , varName.c_str(), curPod->name.c_str(), opObj.i1, str.c_str(), len);
             printer.printf("%s = (std_Uri)(%s_ConstPoolUris[%d]); }", varName.c_str(), curPod->name.c_str(), opObj.i1);
             break;
@@ -391,6 +391,9 @@ void CallStmt::print(Printer& printer) {
         else if (mthName == "set") {
             printer.printf("((%s*)(((fr_Array*)%s)->data))[%s] = %s;", extName.c_str(),
                            params[0].getName().c_str(), params[1].getName().c_str(), params[2].getName().c_str());
+            if (!params[2].isValueType()) {
+                printer.printf(" FR_SET_DIRTY(%s);", params[2].getName().c_str());
+            }
             return;
         }
         else if (mthName == "make") {

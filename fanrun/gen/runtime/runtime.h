@@ -71,7 +71,7 @@ void fr_gc(fr_Env self);
 void fr_checkPoint(fr_Env self);
 void fr_allowGc(fr_Env self);
 void fr_endAllowGc(fr_Env self);
-void fr_setGcDirty(fr_Env self, fr_Obj obj);
+void fr_setGcDirty(fr_Env self, FObj* obj);
 
 ////////////////////////////
 // Util

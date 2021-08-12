@@ -174,6 +174,10 @@ void fr_gc(fr_Env self) {
     e->vm->gc->collect();
 }
 
+void fr_setGcDirty(fr_Env self, FObj *obj) {
+    Env* e = (Env*)self;
+    e->vm->gc->setDirty(fr_toGcObj((FObj*)obj));
+}
 ////////////////////////////
 // Type
 ////////////////////////////
@@ -398,9 +402,9 @@ void fr_throw(fr_Env self, fr_Obj err) {
     //fr_unlock(self);
 }
 
-void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter) {
+void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter, int skip) {
     Env *e = (Env*)self;
-    e->stackTrace(buf, size, delimiter);
+    e->stackTrace(buf, size, delimiter, skip);
 }
 
 ////////////////////////////

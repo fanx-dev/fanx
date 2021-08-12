@@ -53,7 +53,7 @@ GcObj *fr_toGcObj(FObj *obj);
 FObj *fr_fromGcObj(GcObj *g);
 
 void fr_gc(fr_Env self);
-
+void fr_setGcDirty(fr_Env self, FObj *obj);
 
 enum FConstFlags {
     FFlags_Abstract   = 0x00000001,

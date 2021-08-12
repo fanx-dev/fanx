@@ -76,11 +76,20 @@ void Fvm::onStartGc() {
 }
 
 void Fvm::printObj(GcObj *obj) {
-    printf("%p", obj);
+    FType* type = (FType*)gc_getType(obj);
+    printf("%p(%s)", obj, type->c_mangledName.c_str());
 }
 
-int Fvm::allocSize(void *type) {
-    return ((FType *)(type))->c_allocSize;
+int Fvm::allocSize(GcObj* gcobj) {
+    Env* env = nullptr;
+    FObj *fobj = fr_fromGcObj(gcobj);
+    FType *ftype = fr_getFType((fr_Env)env, fobj);
+    FType *objArray = podManager->findType(env, "sys", "Array");
+    if (ftype == objArray) {
+        fr_Array* array = (fr_Array*)fobj;
+        return sizeof(array) + (array->elemSize * array->size) + sizeof(struct GcObj_);
+    }
+    return ftype->c_allocSize + sizeof(struct GcObj_);
 }
 
 void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
@@ -93,7 +102,7 @@ void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
         fr_Array *array = (fr_Array *)fobj;
         if (array->valueType == fr_vtObj) {
             for (size_t i=0; i<array->size; ++i) {
-                FObj * elem = array->data[i];
+                FObj * elem = ((FObj**)(array->data))[i];
                 //list->push_back((FObj*)obj);
                 gc->onVisit(fr_toGcObj((FObj*)elem));
             }
@@ -158,27 +167,25 @@ void Fvm::finalizeObj(GcObj* obj) {
     env->push(&val);
     
     FMethod *m = env->findMethod("sys", "Obj", "finalize");
-    env->callVirtual(m, -1);
+    env->callVirtual(m, 0);
     //env->callVirtualMethod("finalize", 0);
 }
 void Fvm::puaseWorld(bool bloking) {
-    std::lock_guard<std::recursive_mutex> lock_guard(lock);
-//    for (auto it = threads.begin(); it != threads.end(); ++it) {
-//        Env *env = it->second;
-//        env->needStop = true;
-//    }
-//    std::atomic_thread_fence(std::memory_order_release);
-    
-    if (bloking) {
-      std::thread::id tid = std::this_thread::get_id();
-      for (auto it = threads.begin(); it != threads.end(); ++it) {
-        if (it->first ==  tid) continue;
-        Env *env = it->second;
-        while (!env->isStoped) {
-            System_sleep(5);
-            std::atomic_thread_fence(std::memory_order_acquire);
+    while (true) {
+        bool isAllStoped = true;
+        lock.lock();
+        std::thread::id tid = std::this_thread::get_id();
+        for (auto it = threads.begin(); it != threads.end(); ++it) {
+            if (it->first == tid) continue;
+            Env* env = it->second;
+            if (!env->isStoped.load()) {
+                isAllStoped = false;
+                //std::atomic_thread_fence(std::memory_order_acquire);
+            }
         }
-      }
+        lock.unlock();
+        if (isAllStoped) return;
+        System_sleep(5);
     }
 }
 

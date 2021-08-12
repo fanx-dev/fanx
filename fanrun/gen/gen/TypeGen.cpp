@@ -179,7 +179,8 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         printer->println("type->fieldList[%d].type = \"%s\";", i, typeName.c_str());
         printer->println("type->fieldList[%d].flags = %d;", i, field.flags);
     
-        bool isValType = FCodeUtil::isBuildinVal(typeName);
+        std::string typeNsName = FCodeUtil::getTypeNsName(type->c_pod, field.type);
+        bool isValType = FCodeUtil::isBuildinVal(typeNsName);
         printer->println("type->fieldList[%d].isValType = %s;", i, isValType ? "true" : "false");
         
         if (field.flags & FFlags::Static) {
@@ -388,7 +389,7 @@ void TypeGen::genStaticField(Printer *printer, bool isExtern) {
             if (FCodeUtil::isBuildinVal(typeName)) {
                 printer->println("%s %s_%s = 0;", typeName.c_str(), this->name.c_str(), name.c_str());
             } else {
-                printer->println("%s %s_%s;", typeName.c_str(), this->name.c_str(), name.c_str());
+                printer->println("%s %s_%s = NULL;", typeName.c_str(), this->name.c_str(), name.c_str());
             }
         }
     }

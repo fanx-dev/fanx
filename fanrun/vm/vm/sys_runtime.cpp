@@ -33,6 +33,8 @@ FObj* fr_allocObj_(Env* env, FType* type, int size) {
 
     GcObj* obj = (GcObj*)env->vm->gc->alloc(ftype, size + sizeof(struct GcObj_));
 
+    //env->printStackTrace(); printf("\n");
+
     return fr_fromGcObj(obj);
 }
 

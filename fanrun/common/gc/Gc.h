@@ -23,6 +23,7 @@
 #include <thread>
 #include <atomic>
 
+//#define GC_NO_BITMAP
 
 class Gc : public Collector {
     std::list<GcObj*> pinObjs;

@@ -46,7 +46,9 @@ void sys_Array_set(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj val) {
         fr_throwNew(self, "sys", "IndexErr", "out index");
         return;
     }
-    ((FObj**)array->data)[pos] = fr_getPtr(env, val);
+    FObj* obj = fr_getPtr(env, val);
+    ((FObj**)array->data)[pos] = obj;
+    fr_setGcDirty(env, obj);
     //fr_unlock(env);
     return;
 }
@@ -112,6 +114,7 @@ void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, 
     
     memcpy(((char*)destArray->data)+destOffset, ((char*)srcArray->data) + srcOffset, length);
     
+    fr_setGcDirty(env, destArray);
     //fr_unlock(env);
 }
 void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
@@ -128,6 +131,8 @@ void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
         ((FObj**)array->data)[i] = fr_getPtr(env, obj);
     }
     //memset(array->data, (int64_t)obj, times);
+
+    fr_setGcDirty(env, array);
 }
 
 void sys_Array_finalize(fr_Env env, fr_Obj self) {

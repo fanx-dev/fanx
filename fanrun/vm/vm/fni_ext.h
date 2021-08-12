@@ -24,7 +24,7 @@ struct FType;
 //typedef GcObj fr_ObjHeader;
 
 //
-void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter);
+void fr_stackTrace(fr_Env self, char *buf, int size, const char *delimiter, int skip);
 
 
 struct FType *fr_getFType(fr_Env self, FObj *obj);

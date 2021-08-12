@@ -32,10 +32,10 @@ void Gc::gcThreadRun() {
 }
 
 Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
-    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(false)
+    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(true)
 {
     lastAllocSize = 29;
-    collectLimit = 100000;
+    collectLimit = 1000000;
 #ifndef GC_NO_BITMAP
     //pass
 #else
@@ -99,7 +99,7 @@ void Gc::setDirty(GcObj *obj) {
 GcObj* Gc::alloc(void *type, int asize) {
     //int size = asize + sizeof(GcObj);
     int size = asize;
-    if (allocSize > collectLimit && allocSize + size > lastAllocSize * 2) {
+    if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 2) ) {
         collect();
     } else {
         lastAllocSize -= 1;
@@ -232,7 +232,7 @@ void Gc::getRoot() {
     gcSupport->walkRoot(this);
     
     if (trace > 1) {
-        printf("ROOT:\n");
+        printf("GC ROOT:\n");
         for (auto it = markStack.begin(); it != markStack.end(); ++it) {
             gcSupport->printObj(*it);
             printf(", ");
@@ -313,7 +313,7 @@ void Gc::sweep() {
 
 void Gc::remove(GcObj* obj) {
     
-    int size = gcSupport->allocSize(gc_getType(obj));
+    int size = gcSupport->allocSize(obj);
     
     gcSupport->finalizeObj(obj);
     

@@ -90,7 +90,7 @@ void fr_gc(fr_Env self) {
     env->vm->getGc()->collect();
 }
 
-void fr_setGcDirty(fr_Env self, fr_Obj obj) {
+void fr_setGcDirty(fr_Env self, FObj* obj) {
     Env *env = (Env*)self;
     env->vm->getGc()->setDirty(fr_toGcObj(obj));
 }

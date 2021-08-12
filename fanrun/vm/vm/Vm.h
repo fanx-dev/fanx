@@ -53,7 +53,7 @@ public:
     virtual void puaseWorld(bool bloking);
     virtual void resumeWorld();
     virtual void printObj(GcObj *obj);
-    virtual int allocSize(void *type);
+    virtual int allocSize(GcObj* gcobj);
     
     fr_Obj newGlobalRef(FObj * obj);
     void deleteGlobalRef(fr_Obj obj);

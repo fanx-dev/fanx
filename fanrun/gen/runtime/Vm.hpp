@@ -62,7 +62,7 @@ public:
     virtual void puaseWorld(bool bloking) override;
     virtual void resumeWorld() override;
     virtual void printObj(GcObj *obj) override;
-    virtual int allocSize(void *type) override;
+    virtual int allocSize(GcObj* obj) override;
 };
 
 #endif /* Vm_hpp */

@@ -8,31 +8,47 @@ class GcNode {
 class GcTest
 {
   Int t := 0
+  GcNode? root
 
-  static Void test1() {
-    GcNode? root := GcNode()
+  Void doST() {
+    sum := 0
+    for (i := 0; i<100;++i) {
+      sum += i;
+    }
+  }
+
+  Void test2() {
+    root = GcNode()
+    echo("======root:$root")
     GcNode cur := root
-    for (i := 0; i<10000; ++i) {
+    for (i := 0; i<100000; ++i) {
       m := GcNode()
       m.i = i
       cur.next = m
       cur = m
+      doST
     }
   }
 
-  static Void test2() {
+  Void test1() {
     GcNode? cur := GcNode()
-    for (i := 0; i<10000; ++i) {
+    for (i := 0; i<100000; ++i) {
       m := GcNode()
       m.i = i
       cur.next = m
       cur = m
+      doST
     }
   }
 
-  static Void main() {
+  Void main() {
+    echo("======run1")
     test1
+    Env.cur.gc
+    echo("======run2")
     test2
+    Env.cur.gc
+    echo("======end:$root.next")
   }
 }
 

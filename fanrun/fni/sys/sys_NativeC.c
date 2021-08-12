@@ -7,7 +7,7 @@
 char* getTraceString(fr_Env env) {
     char *str = malloc(1024);
     str[0] = 0;
-    fr_stackTrace(env, str, 1024, "\n");
+    fr_stackTrace(env, str, 1024, "\n", 3);
     return str;
 }
 

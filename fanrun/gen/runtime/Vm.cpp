@@ -100,6 +100,7 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
 }
 
 void Vm::walkRoot(Collector *gc) {
+    std::lock_guard<std::recursive_mutex> lock_guard(lock);
     //static field
     for (auto it = staticFieldRef.begin(); it != staticFieldRef.end(); ++it) {
         fr_Obj *obj = *it;
@@ -152,29 +153,27 @@ void Vm::onStartGc() {
 }
 
 void Vm::puaseWorld(bool bloking) {
-    std::lock_guard<std::recursive_mutex> lock_guard(lock);
     void *statckVar = 0;
-    
-//    for (auto it = threads.begin(); it != threads.end(); ++it) {
-//        Env *env = it->second;
-//        env->needStop = true;
-//    }
-    
-    if (bloking) {
+
+    while (true) {
+        bool isAllStoped = true;
+        lock.lock();
         std::thread::id tid = std::this_thread::get_id();
         for (auto it = threads.begin(); it != threads.end(); ++it) {
-            Env *env = it->second;
-            //is current thread
+            Env* env = it->second;
             if (it->first == tid) {
                 env->statckEnd = &statckVar;
                 continue;
             }
             
-            while (!env->isStoped) {
-                System_sleep(1);
-                std::atomic_thread_fence(std::memory_order_acquire);
+            if (!env->isStoped.load()) {
+                isAllStoped = false;
+                //std::atomic_thread_fence(std::memory_order_acquire);
             }
         }
+        lock.unlock();
+        if (isAllStoped) return;
+        System_sleep(5);
     }
 }
 
@@ -191,9 +190,15 @@ void Vm::printObj(GcObj *gcobj) {
     printf("%s %p", type->name, obj);
 }
 
-int Vm::allocSize(void *type) {
-    fr_Type t = (fr_Type)type;
-    return t->allocSize;
+int Vm::allocSize(GcObj* gcobj) {
+    FObj* obj = fr_fromGcObj(gcobj);
+    fr_Type type = (fr_Type)gc_getType(gcobj);
+
+    if (type == sys_Array_class__) {
+        fr_Array* array = (fr_Array*)obj;
+        return sizeof(fr_Array_) + (array->elemSize * array->size) + sizeof(GcObj);
+    }
+    return type->allocSize + sizeof(GcObj);
 }
 
 void Vm::addStaticRef(fr_Obj *objAddress) {

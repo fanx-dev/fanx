@@ -13,6 +13,7 @@
 //#include "runtime.h"
 //#include "type.h"
 //#include "system.h"
+#include "fni_ext.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -129,6 +130,10 @@ void fr_arraySet_(fr_Env self, fr_Array* array, size_t index, fr_Value *val) {
         }
         default:
             abort();
+    }
+
+    if (array->valueType == fr_vtObj) {
+        fr_setGcDirty(self, (FObj*)val->o);
     }
 }
 

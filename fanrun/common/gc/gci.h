@@ -24,7 +24,7 @@ public:
     virtual void puaseWorld(bool bloking) = 0;
     virtual void resumeWorld() = 0;
     virtual void printObj(GcObj *obj) = 0;
-    virtual int allocSize(void *type) = 0;
+    virtual int allocSize(GcObj* gcobj) = 0;
     
     virtual ~GcSupport() {}
 };

@@ -22,6 +22,7 @@ struct StackFrame {
     FMethod *method;
     int paddingSize;
     int argCount;
+    int pc;
 };
 
 class Env {
@@ -125,7 +126,7 @@ public:
     
     int curOperandStackSize();
     int printOperandStack();
-    void stackTrace(char *buf, int size, const char *delimiter);
+    void stackTrace(char *buf, int size, const char *delimiter, int skip);
     void printStackTrace();
     
 private:
