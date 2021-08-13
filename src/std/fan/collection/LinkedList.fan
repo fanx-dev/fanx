@@ -12,78 +12,148 @@ virtual class LinkedElem {
 
   new make(Obj? v:=null) { val = v }
 
-  internal Void remove() {
-    previous.next = next
-    next.previous = previous
-
-    next = null
-    previous = null
-  }
-
   override Str toStr() {
     "-$val"
   }
 }
 
+**
+** Doubly-linked list implementation
+**
 virtual class LinkedList {
-  protected LinkedElem head := LinkedElem("LinkedList.head")
+  protected LinkedElem? head
+  protected LinkedElem? tail
+  protected Int _size := 0
 
   new make() {
-    head.previous = head
-    head.next = head
   }
 
+  ** Remove all items from the list and set size to 0
   Void clear() {
-    head.previous = head
-    head.next = head
+    head = null
+    head = null
+    _size = 0
   }
 
-  Void remove(LinkedElem e) {
-    if (e === head) throw ArgErr("Try remove a invalide LinkedElem: $e.val")
-    e.remove
+  ** Remove the item in list
+  ** if item is null do nothing.
+  Void remove(LinkedElem? e) {
+    if (e == null) return
+    
+    prev := e.previous
+    next := e.next
+
+    if (prev != null) {
+      prev.next = next
+      e.previous = null
+    }
+    else {
+      head = next
+    }
+
+    if (next != null) {
+      next.previous = prev
+      e.next = null
+    }
+    else {
+      tail = prev
+    }
+
+    --_size
   }
 
-  LinkedElem first() { head.next }
+  ** Return the first item, or if empty return null.
+  LinkedElem? first() {
+    head
+  }
 
-  LinkedElem last() { head.previous }
+  ** Return the last item, or if empty return null.
+  LinkedElem? last() {
+    tail
+  }
 
-  **
-  ** Returns an element following the last element of the container.
-  ** This element acts as a placeholder
-  **
-  LinkedElem end() { head }
+  ** Remove the first item
+  LinkedElem? poll() {
+    removeFirst
+  }
 
+  ** Remove the first item
+  LinkedElem? removeFirst() {
+    e := head
+    remove(e)
+    return e
+  }
+
+  ** Remove the last item
+  LinkedElem? pop() {
+    e := last
+    remove(e)
+    return e
+  }
+
+  ** Add the specified item to the end of the list
   Void add(LinkedElem e) {
-    last := head.previous
-
-    last.next = e
-    e.previous = last
-
-    e.next = head
-    head.previous = e
+    if (tail == null) {
+      head = e
+      tail = e
+      e.next = null
+      e.previous = null
+    }
+    else {
+      tail.next = e
+      e.previous = tail
+      e.next = null
+      tail = e
+    }
+    ++_size
   }
 
-  Void insertBefore(LinkedElem e, LinkedElem other := first) {
-    e.next = other
-    other.previous = e
-
-    head.next = e
-    e.previous = head
+  **
+  ** Insert the item before specified item
+  **
+  Void insertBefore(LinkedElem e, LinkedElem? other := null) {
+    if (head == null) {
+      head = e
+      tail = e
+      e.next = null
+      e.previous = null
+    }
+    else {
+      if (other == null) {
+        other = head
+      }
+      e.next = other
+      e.previous = other.previous
+      other.previous = e
+      if (other.previous != null) {
+        other.previous.next = e
+      }
+      if (other == head) head = other
+    }
+    ++_size
   }
 
-  Bool isEmpty() { head.next == head }
+  ** size is 0
+  Bool isEmpty() { head == null }
 
 
+  ** The number of items in the list.
+  Int size() { _size }
+
+  **
+  ** Return a string representation the list.
+  **
   override Str toStr() {
     buf := StrBuf().add("LinkList[")
     itr := first
-    while (itr != end) {
-      if (itr != first) buf.addChar(',')
+    while (itr !== null) {
+      if (itr !== first) buf.addChar(',')
       buf.add(itr)
       itr = itr.next
     }
     buf.addChar(']')
     return buf.toStr
   }
+
 }
 

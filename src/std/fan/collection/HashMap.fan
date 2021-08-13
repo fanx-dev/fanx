@@ -16,16 +16,13 @@ internal class MapEntry : LinkedElem {
 internal class MapEntryList : LinkedList {
 
   new make() {
-    head = MapEntry("MapEntryList.head")
-    head.previous = head
-    head.next = head
   }
 
-  MapEntry begin() { first }
+  MapEntry? begin() { first }
 
   MapEntry? findByKey(Obj? key) {
-    MapEntry entry := begin
-    while (entry != end) {
+    MapEntry? entry := begin
+    while (entry != null) {
       if (entry.key == key) {
         return entry
       }
@@ -143,7 +140,7 @@ rtconst class HashMap<K,V> : Map<K,V>
       if (l == null) continue
 
       itr := l.begin
-      while (itr != l.end) {
+      while (itr != null) {
         list.add(itr.key)
         itr = itr.next
       }
@@ -158,7 +155,7 @@ rtconst class HashMap<K,V> : Map<K,V>
       if (l == null) continue
 
       itr := l.begin
-      while (itr != l.end) {
+      while (itr != null) {
         list.add(itr.value)
         itr = itr.next
       }
@@ -186,7 +183,7 @@ rtconst class HashMap<K,V> : Map<K,V>
       if (l == null) continue
 
       itr := l.begin
-      while (itr != l.end) {
+      while (itr != null) {
         rawSet(itr.key, itr.value)
         itr = itr.next
       }
@@ -267,7 +264,7 @@ rtconst class HashMap<K,V> : Map<K,V>
       if (l == null) continue
 
       itr := l.begin
-      while (itr != l.end) {
+      while (itr != null) {
         c(itr.value, itr.key)
         itr = itr.next
       }
@@ -280,7 +277,7 @@ rtconst class HashMap<K,V> : Map<K,V>
       if (l == null) continue
 
       itr := l.begin
-      while (itr != l.end) {
+      while (itr != null) {
         result := c(itr.value, itr.key)
         if (result != null) return result
         itr = itr.next

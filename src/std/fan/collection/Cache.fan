@@ -38,7 +38,7 @@ class Cache {
 
   Void each(|Obj| f) {
     item := list.first
-    while (item != list.end) {
+    while (item != null) {
       if (item.val != null) {
         f(item.val)
       }
@@ -64,7 +64,7 @@ class Cache {
       if (item.cacheCount < maxCount) {
         item.cacheCount++
       }
-      item.remove
+      list.remove(item)
     }
 
     list.insertBefore(item)
@@ -73,12 +73,12 @@ class Cache {
   private CacheItem? clean() {
     if (map.size <= max) return null
     item := list.last
-    while (item != list.end) {
+    while (item != null) {
       pre := item.previous
       CacheItem citem := item
       if (citem.cacheCount > 0) {
         citem.cacheCount = citem.cacheCount - 1
-        item.remove
+        list.remove(item)
         list.insertBefore(item)
       } else {
         canRemove := true
@@ -87,7 +87,7 @@ class Cache {
         }
         if (canRemove) {
           map.remove(citem.key)
-          item.remove
+          list.remove(item)
           onReomove(item)
           citem.cacheCount = 0
           return item
@@ -100,9 +100,9 @@ class Cache {
 
   Void clear() {
     item := list.last
-    while (item != list.end) {
+    while (item != null) {
       pre := item.previous
-      item.remove
+      list.remove(item)
       onReomove(item)
       item = pre
     }
@@ -129,7 +129,7 @@ class Cache {
   Void remove(Obj key) {
     item := map.remove(key)
     if (item == null) {
-      item.remove
+      list.remove(item)
       onReomove(item)
     }
   }

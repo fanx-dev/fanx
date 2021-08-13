@@ -52,7 +52,7 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
 
   override Void each(|V val, K key| c) {
     itr := list.first
-    end := list.end
+    end := null
     while (itr !== end) {
       MapEntry entry := itr
       c(entry.val, entry.key)
@@ -62,7 +62,7 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
 
   override Obj? eachWhile(|V val, K key->Obj?| c) {
     itr := list.first
-    end := list.end
+    end := null
     while (itr !== end) {
       MapEntry entry := itr
       result := c(entry.val, entry.key)
@@ -75,7 +75,7 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
   override K[] keys() {
     list := List.make(size)
     itr := this.list.first
-    end := this.list.end
+    end := null
 
     while (itr !== end) {
       MapEntry entry := itr
@@ -88,7 +88,7 @@ rtconst class OrderedMap<K,V> : HashMap<K,V> {
   override V[] vals() {
     list := List.make(size)
     itr := this.list.first
-    end := this.list.end
+    end := null
 
     while (itr !== end) {
       MapEntry entry := itr
