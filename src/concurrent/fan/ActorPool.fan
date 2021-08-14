@@ -12,12 +12,12 @@
 **
 ** See [docLang::Actors]`docLang::Actors`
 **
-@Js
-rtconst class ActorPool
+@Js @JsNative
+const class ActorPool
 {
-  private ThreadPool threadPool;
-  private Timer scheduler;
-  Bool killed := false { private set }
+  private const ThreadPool threadPool;
+  private const Timer scheduler;
+  const AtomicBool _killed := AtomicBool(false)
 
   private static const ActorPool _defPool := make()
   static ActorPool defVal() { _defPool }
@@ -76,11 +76,13 @@ rtconst class ActorPool
   ** then do nothing.
   **
   This kill() {
-    killed = true;
+    _killed.val = true;
     scheduler.stop();
     threadPool.kill();
     return this;
   }
+
+  Bool killed() { _killed.val }
 
   **
   ** Wait for this pool's actors to fully terminate or until the

@@ -188,7 +188,7 @@ class IntArrayTest : Test
 */
   Void verifyMake(IntArray a, Int size)
   {
-    verifySame(a.typeof, IntArray#)
+    verifyIsType(a, IntArray#)
     verifyEq(a.size, size)
     for (i:=0; i<a.size; ++i) verifyEq(a[i], 0)
   }

@@ -64,6 +64,7 @@ facet class Transient {}
 //@Deprecated { msg = "use NoJs" }
 facet class Js {}
 facet class NoJs {}
+facet class JsNative {}
 
 **************************************************************************
 ** NoDoc

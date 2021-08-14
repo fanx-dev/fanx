@@ -12,7 +12,7 @@
 ** See [docLang::Actors]`docLang::Actors` and
 ** [examples]`examples::concurrent-actors`.
 **
-@Js
+@Js @JsNative
 const class Actor
 {
   static const Unsafe<Obj?> idleMsg = Unsafe<Obj?>("_idle_");

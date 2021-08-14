@@ -131,7 +131,7 @@ class FloatArrayTest : Test
 */
   Void verifyMake(FloatArray a, Int size)
   {
-    verifySame(a.typeof, FloatArray#)
+    verifyIsType(a, FloatArray#)
     verifyEq(a.size, size)
     for (i:=0; i<a.size; ++i) verifyEq(a[i], 0f)
   }
