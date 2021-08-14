@@ -124,11 +124,11 @@ virtual class LinkedList {
       }
       e.next = other
       e.previous = other.previous
-      other.previous = e
       if (other.previous != null) {
         other.previous.next = e
       }
-      if (other == head) head = other
+      other.previous = e
+      if (other === head) head = e
     }
     ++_size
   }

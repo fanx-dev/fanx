@@ -16,6 +16,10 @@ public class Lock extends FanObj {
 		l.lock = new ReentrantLock();
 		return l;
 	}
+
+	public java.util.concurrent.locks.Lock toJava() {
+		return lock;
+	}
 	
 	private static Type type = null;
 	public Type typeof() { if (type == null) { type = Sys.findType("std::Lock"); } return type;  }

@@ -1,4 +1,10 @@
-
+//
+// Copyright (c) 2021, chunquedong
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   2021-8-13 Jed Young Creation
+//
 
 mixin Promise<T> {
   abstract Bool isDone()
@@ -179,7 +185,13 @@ abstract class Async<T> : Promise<T>  {
     return true
   }
 
-  static native Promise sleep(Duration d)
+  static Promise sleep(Duration d) {
+    p := Promise()
+    Timer.defVal.schedule(d.toNanos) |->| {
+      p.complete(null, true);
+    }
+    return p;
+  }
 }
 
 mixin AsyncRunner {

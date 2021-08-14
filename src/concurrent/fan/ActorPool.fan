@@ -13,14 +13,26 @@
 ** See [docLang::Actors]`docLang::Actors`
 **
 @Js
-native const class ActorPool
+rtconst class ActorPool
 {
-  static ActorPool defVal()
+  private ThreadPool threadPool;
+  private Timer scheduler;
+  Bool killed := false { private set }
+
+  private static const ActorPool _defPool := make()
+  static ActorPool defVal() { _defPool }
 
   **
   ** It-block constructor
   **
-  new make(|This|? f := null)
+  new make(|This|? f := null) {
+    f?.call(this)
+    if (maxThreads < 1) throw ArgErr.make("ActorPool.maxThreads must be >= 1, not " + maxThreads);
+    threadPool = ThreadPool(name, maxThreads)
+    scheduler = Timer(name+"-Timer")
+  }
+
+  override Bool isImmutable() { true }
 
   **
   ** Return true if this pool has been stopped or killed.  Once a
@@ -28,7 +40,7 @@ native const class ActorPool
   ** actors.  A stopped pool is not necessarily done until all its
   ** actors have finished processing.  Also see `isDone` and `join`.
   **
-  Bool isStopped()
+  Bool isStopped() { threadPool.isStopped }
 
   **
   ** Return true if this pool has been stopped or killed and all
@@ -38,7 +50,7 @@ native const class ActorPool
   ** then this method returns true once all actors have exited their
   ** thread.  See `join` to block until done.
   **
-  Bool isDone()
+  Bool isDone() { threadPool.isDone }
 
   **
   ** Perform an orderly shutdown.  Once stopped, no new messages may
@@ -50,7 +62,11 @@ native const class ActorPool
   ** To perform an immediate shutdown use `kill`.  If the pool has
   ** already been stopped, then do nothing.  Return this.
   **
-  This stop()
+  This stop() {
+    threadPool.stop
+    scheduler.stop
+    return this
+  }
 
   **
   ** Perform an unorderly shutdown.  Any pending messages which have
@@ -59,7 +75,12 @@ native const class ActorPool
   ** an orderly shutdown.  If the pool has already been killed,
   ** then do nothing.
   **
-  This kill()
+  This kill() {
+    killed = true;
+    scheduler.stop();
+    threadPool.kill();
+    return this;
+  }
 
   **
   ** Wait for this pool's actors to fully terminate or until the
@@ -67,7 +88,12 @@ native const class ActorPool
   ** method times out, then TimeoutErr is thrown.  Throw Err if the
   ** pool is not stopped.  Return this.
   **
-  This join(Duration? timeout := null)
+  This join(Duration? timeout := null) {
+    if (!isStopped()) throw Err.make("ActorPool is not stopped");
+    Int ms = timeout == null ? Int.maxVal : timeout.toMillis();
+    threadPool.join(ms)
+    return this
+  }
 
   **
   ** Given a list of one or more actors, return the next actor to use
@@ -76,7 +102,50 @@ native const class ActorPool
   **
   ** NOTE: this is an experimental feature which is subject to change
   **
-  @NoDoc virtual Actor balance(Actor[] actors)
+  @NoDoc virtual Actor balance(Actor[] actors) {
+    Actor best = (Actor)actors.get(0);
+    Int bestSize = best.queueSize();
+    if (bestSize == 0) return best;
+
+    for (i:=1; i<actors.size; ++i)
+    {
+      Actor x = (Actor)actors.get(i);
+      Int xSize = x.queueSize();
+      if (xSize < bestSize)
+      {
+        best = x;
+        bestSize = xSize;
+        if (bestSize == 0) return best;
+      }
+    }
+    return best;
+  }
+
+
+  internal Bool hasPending()
+  {
+    return threadPool.hasPending();
+  }
+
+  internal Void submit(Actor actor)
+  {
+    threadPool.submit |->| { actor._work }
+  }
+
+  internal Void schedule(Actor actor, Duration d, ActorFuture future)
+  {
+    //echo("schedule: $actor, $d, $future")
+    scheduler.schedule(d.toNanos) |->| {
+      if (!future.isCancelled()) {
+        if (isStopped) {
+          future.cancel()
+        }
+        else {
+          actor._enqueue(future, false);
+        }
+      }
+    }
+  }
 
   **
   ** Name to use for the pool and associated threads.
@@ -103,6 +172,6 @@ native const class ActorPool
   ** NOTE: this method is marked as NoDoc, it is provided for low level
   ** access to tune the actor pool, but it is subject to change.
   **
-  @NoDoc const Duration maxTimeBeforeYield := 5sec
+  @NoDoc const Duration maxTimeBeforeYield := 1sec
 
 }

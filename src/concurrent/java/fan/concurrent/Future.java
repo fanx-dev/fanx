@@ -28,7 +28,7 @@ public abstract class Future
 // Construction
 //////////////////////////////////////////////////////////////////////////
 
-  public static Future makeCompletable() { return new ActorFuture(null); }
+  public static Future makeCompletable() { return ActorFuture.make(null); }
 
   public static void make$(Future self) {}
 
@@ -65,24 +65,7 @@ public abstract class Future
   public static final void waitForAll(List list) { waitForAll(list, null); }
   public static final void waitForAll(List list, Duration timeout)
   {
-    if (timeout == null)
-    {
-      for (int i=0; i<list.sz(); ++i)
-      {
-        Future f = (Future)list.get(i);
-        f.waitFor(null);
-      }
-    }
-    else
-    {
-      long deadline = TimePoint.nowMillis() + timeout.toMillis();
-      for (int i=0; i<list.sz(); ++i)
-      {
-        Future f = (Future)list.get(i);
-        long left = deadline - TimePoint.nowMillis();
-        f.waitFor(Duration.fromMillis(left));
-      }
-    }
+    ActorFuture.waitForAll(list, timeout);
   }
 
   // java Future version
