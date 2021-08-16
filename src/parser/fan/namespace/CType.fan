@@ -284,11 +284,17 @@ class CType : CNode, TypeMixin
   GenericParamDef? attachedGenericParam
   
   virtual CType physicalType() {
-    if (!isTypeErasure) return this
-    if (attachedGenericParam != null) return attachedGenericParam.bound
+    CType? t
     def := typeDef
-    if (def is GenericParamDef) return ((GenericParamDef)def).bound
-    if (def is ParameterizedType) return ((ParameterizedType)def).root.asRef
+    if (!isTypeErasure) {}
+    else if (attachedGenericParam != null) t = attachedGenericParam.bound
+    else if (def is GenericParamDef) t = ((GenericParamDef)def).bound
+    else if (def is ParameterizedType) t = ((ParameterizedType)def).root.asRef
+    
+    if (t != null) {
+        if (this.isNullable) t = t.toNullable
+        return t
+    }
     return this
   }
   
@@ -413,6 +419,9 @@ class CType : CNode, TypeMixin
   **
   virtual Bool fits(CType ty)
   {
+    if (this.isFunc && ty.isFunc) {
+        return Coerce.isFuncAutoCoerce(this, ty)
+    }
     //unparameterized generic parameters
     // don't take nullable in consideration
     t := ty.realType

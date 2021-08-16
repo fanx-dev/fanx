@@ -33,20 +33,21 @@ class ResolveExpr : CompilerStep
 
   override Void run()
   {
-    //debug("ResolveExpr")
-    walkUnits(VisitDepth.expr)
+    //log.debug("ResolveExpr")
+    walk(compiler.cunits, VisitDepth.expr)
+    //bombIfErr
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Method
 //////////////////////////////////////////////////////////////////////////
 
-//  override Void enterMethodDef(MethodDef m)
-//  {
-//    super.enterMethodDef(m)
-////    this.inClosure = (curType.isClosure && curType.closure.doCall === m)
-////    initMethodVars
-//  }
+  override Void enterMethodDef(MethodDef m)
+  {
+    super.enterMethodDef(m)
+    this.inClosure = (curType.isClosure && curType.closure.doCall === m)
+    initMethodVars
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Stmt
@@ -79,10 +80,6 @@ class ResolveExpr : CompilerStep
     // check for type inference
     if (def.ctype == null)
       def.var_v.ctype = def.init.ctype//.inferredAs
-    
-    conflict := curUnit.importedTypes[def.name]
-    if (conflict != null && conflict.size > 0)
-      err("Variable name conflicts with imported type '$conflict.first'", def.loc)
 
     // bind to scope as a method variable
     bindToMethodVar(def)
@@ -94,13 +91,8 @@ class ResolveExpr : CompilerStep
       def.init = LiteralExpr.makeDefaultLiteral(def.loc, def.ctype)
 
     // turn init into full assignment
-    if (def.init != null) {
-      loc := def.init.loc
-      varExpr := LocalVarExpr(def.var_v.loc, def.var_v)
-      varExpr.len = def.var_v.len
-      def.init = BinaryExpr.makeAssign(varExpr, def.init)
-      def.init.loc = loc
-    }
+    if (def.init != null)
+      def.init = BinaryExpr.makeAssign(LocalVarExpr(def.loc, def.var_v), def.init)
   }
 
   private Void resolveFor(ForStmt stmt)
@@ -131,12 +123,9 @@ class ResolveExpr : CompilerStep
     expr = resolveExpr(expr)
 
     // expr type must be resolved at this point
-    if ((Obj?)expr.ctype == null) {
-      if (expr.id == ExprId.closure) return expr
-      err("Expr type not resolved: ${expr.id}: ${expr}", expr.loc)
-      expr.ctype = ns.error
-    }
-    
+    if ((Obj?)expr.ctype == null)
+      throw err("Expr type not resolved: ${expr.id}: ${expr}", expr.loc)
+      
     if (!expr.ctype.isResolved)
       ResolveType.doResolveType(this, expr.ctype)
 
@@ -152,7 +141,6 @@ class ResolveExpr : CompilerStep
     if (assignTarget != null && assignTarget.var_v != null)
       assignTarget.var_v.reassigned
 
-    reResolveClosure
     return expr
   }
 
@@ -262,6 +250,7 @@ class ResolveExpr : CompilerStep
     return expr
   }
   
+  
   private Expr resolveTypeCheck(TypeCheckExpr expr) {
     ResolveType.doResolveType(this, expr.check)
     switch (expr.id) {
@@ -362,7 +351,6 @@ class ResolveExpr : CompilerStep
       err("Locale literal cannot specify both qualified pod and default value", loc)
 
     // cannot specify using current pod if output is not pod
-//    outputMode := compiler.input.output
     if (expr.podName == null && compiler.input.isScript)
       err("Scripts cannot define non-qualified locale literals", loc)
 
@@ -370,11 +358,11 @@ class ResolveExpr : CompilerStep
     if (expr.def != null) compiler.localeDefs.add(expr)
 
     // Pod.find(podName) or inType#.pod
-//    inType := this.curType
-    //if (inType.isClosure) inType = inType.closure.enclosingType
+    inType := this.curType
+    if (inType.isClosure) inType = inType.closure.enclosingType
     podTarget := expr.podName != null ?
       CallExpr.makeWithMethod(loc, null, ns.podFind, [LiteralExpr.makeStr(loc, expr.podName)]) :
-      CallExpr.makeWithMethod(loc, LiteralExpr(loc, ExprId.typeLiteral, CType("std", "Type")), ns.typePod)
+      CallExpr.makeWithMethod(loc, LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, inType), ns.typePod)
 
     // podTarget.locale(key [, def])
     args := [LiteralExpr.makeStr(loc, expr.key)]
@@ -442,22 +430,22 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveThis(ThisExpr expr)
   {
-//    if (inClosure)
-//    {
-//      loc := expr.loc
-//      closure := curType.closure
-//
-//      // if the closure is in a static slot, report an error
-//      if (closure.enclosingSlot.isStatic)
-//      {
-//        expr.ctype = ns.error
-//        err("Cannot access 'this' within closure of static context", loc)
-//        return expr
-//      }
-//
-//      // otherwise replace this with $this field access
-//      return FieldExpr(loc, ThisExpr(loc), "\$this")
-//    }
+    if (inClosure)
+    {
+      loc := expr.loc
+      closure := curType.closure
+
+      // if the closure is in a static slot, report an error
+      if (closure.enclosingSlot.isStatic)
+      {
+        expr.ctype = ns.error
+        err("Cannot access 'this' within closure of static context", loc)
+        return expr
+      }
+
+      // otherwise replace this with $this field access
+      return FieldExpr(loc, ThisExpr(loc), closure.outerThisField)
+    }
 
     expr.ctype = curType.asRef
     return expr
@@ -468,7 +456,7 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveSuper(SuperExpr expr)
   {
-    if (closureStack.size > 0)
+    if (inClosure)
     {
       // it would be nice to support super from within a closure,
       // but the Java VM has the stupid restriction that invokespecial
@@ -498,7 +486,7 @@ class ResolveExpr : CompilerStep
       return LocalVarExpr(expr.loc, curMethod.paramDefs.first)
 
     // can't use it keyword outside of an it-block
-    if (closureStack.size == 0 || !closureStack.peek.isItBlock)
+    if (!inClosure || !curType.closure.isItBlock)
     {
       err("Invalid use of 'it' outside of it-block", expr.loc)
       expr.ctype = ns.error
@@ -506,8 +494,7 @@ class ResolveExpr : CompilerStep
     }
 
     // closure's itType should be defined at this point
-    expr.ctype = closureStack.peek.signature.params.first//curType.closure.signature.params[0]
-    expr.enclosingClosure = closureStack.peek
+    expr.ctype = curType.closure.itType
     return expr
   }
 
@@ -581,7 +568,7 @@ class ResolveExpr : CompilerStep
 
     // at this point it can't be a local variable, so it must be
     // a slot on either myself or the variable's target
-    return CallResolver(compiler, curType, curMethod, var_v, closureStack.peek).resolve
+    return CallResolver(compiler, curType, curMethod, var_v, curType.closure).resolve
   }
 
   **
@@ -596,7 +583,7 @@ class ResolveExpr : CompilerStep
     // field since the *x is assumed to be this.*x
     if (resolved.id === ExprId.localVar)
     {
-      field := curType.slots.get(var_v.name) as CField
+      field := curType.fieldDef(var_v.name)
       if (field != null) {
         fieldExpr := FieldExpr(var_v.loc, ThisExpr(var_v.loc), field.name)
         fieldExpr.len = var_v.len
@@ -680,7 +667,7 @@ class ResolveExpr : CompilerStep
       return this.resolveConstruction(ctor)
     }
 
-    res := CallResolver(compiler, curType, curMethod, call, closureStack.peek).resolve
+    res := CallResolver(compiler, curType, curMethod, call, curType.closure).resolve
     if (call.isDynamic) {
       res.ctype = ns.objType.toNullable
     }
@@ -740,7 +727,7 @@ class ResolveExpr : CompilerStep
 
     // route FFI constructors to bridge
     if (base.typeDef.isForeign) return base.typeDef.bridge.resolveConstruction(call)
-    
+
     // get all constructors that might match this call
     matches := Str:CMethod[:]
     findCtorMatches(matches, base, call.args)
@@ -970,51 +957,19 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveClosure(ClosureExpr expr)
   {
-    //delay closure resolve for inferr
-    if (expr.signature.inferredSignature) {
-        pendingClosure = expr
-        return expr
+    // save away current locals in scope
+    expr.enclosingVars = localsInScope
+
+    // make sure none of the closure's parameters
+    // conflict with the locals in scope
+    expr.doCall.paramDefs.each |ParamDef p|
+    {
+      if (expr.enclosingVars.containsKey(p.name) && p.name != "it")
+        err("Closure parameter '$p.name' is already defined in current block", p.loc)
     }
+    
     expr.ctype = expr.signature.typeRef
-    ns.resolveTypeRef(expr.ctype, expr.loc)
-    
-    expr.closureCount = closureStack.size
-    closureStack.push(expr)
-    expr.signature.getParamDefs.each |p| { p.closureCount = closureStack.size }
-    expr.code.parentClosure = expr
-    expr.code.walk(this, VisitDepth.expr)
-    closureStack.pop
-    
     return expr
-//    // save away current locals in scope
-//    expr.enclosingVars = localsInScope
-//
-//    // make sure none of the closure's parameters
-//    // conflict with the locals in scope
-//    expr.doCall.paramDefs.each |ParamDef p|
-//    {
-//      if (expr.enclosingVars.containsKey(p.name) && p.name != "it")
-//        err("Closure parameter '$p.name' is already defined in current block", p.loc)
-//    }
-  }
-  
-  private Bool reResolveClosure()
-  {
-    if (pendingClosure == null) return false
-    if (pendingClosure.ctype == null) return false
-    expr := pendingClosure
-    pendingClosure = null
-    
-    ns.resolveTypeRef(expr.ctype, expr.loc)
-    
-    expr.closureCount = closureStack.size
-    closureStack.push(expr)
-    expr.signature.getParamDefs.each |p| { p.closureCount = closureStack.size }
-    expr.code.parentClosure = expr
-    expr.code.walk(this, VisitDepth.expr)
-    closureStack.pop
-    
-    return true
   }
 
   **
@@ -1055,20 +1010,21 @@ class ResolveExpr : CompilerStep
 // Scope
 //////////////////////////////////////////////////////////////////////////
 
-//  **
-//  ** Setup the MethodVars for the parameters.
-//  **
-//  private Void initMethodVars()
-//  {
-//    m := curMethod
-//    reg := m.isStatic ?  0 : 1
-//
-//    m.paramDefs.each |ParamDef p|
-//    {
-//      var_v := MethodVar.makeForParam(m, reg++, p, p.paramType)
-//      m.vars.add(var_v)
-//    }
-//  }
+  **
+  ** Setup the MethodVars for the parameters.
+  **
+  private Void initMethodVars()
+  {
+    m := curMethod
+    //reg := m.isStatic ?  0 : 1
+
+    m.paramDefs.each |ParamDef p|
+    {
+      //var_v := MethodVar.makeForParam(m, reg++, p, p.paramType.parameterizeThis(curType))
+      //m.vars.add(var_v)
+      p.method = m
+    }
+  }
 
   **
   ** Bind the specified local variable definition to a
@@ -1086,8 +1042,6 @@ class ResolveExpr : CompilerStep
     if (def.var_v.ctype != null) {
       ResolveType.doResolveType(this, def.var_v.ctype)
     }
-    
-    def.var_v.closureCount = closureStack.size
   }
 
   **
@@ -1098,7 +1052,7 @@ class ResolveExpr : CompilerStep
   {
     // if not in method, then we can't have a local
     if (curMethod == null) return null
-    
+
     MethodVar? binding
     
     if (stmtStack.peek is ForStmt) {
@@ -1114,12 +1068,6 @@ class ResolveExpr : CompilerStep
           binding = b.vars.find |MethodVar var_v->Bool| {
             return var_v.name == name
           }
-          if (binding == null && b.parentClosure != null) {
-            params := b.parentClosure.signature.getParamDefs
-            binding = params.find |MethodVar var_v->Bool| {
-                return var_v.name == name
-            }
-          }
           if (binding != null) break
         }
     }
@@ -1130,11 +1078,15 @@ class ResolveExpr : CompilerStep
         }
     }
     
-    //if a closure, check parent scope
-    if (binding != null && binding.closureCount != closureStack.size)
+    if (binding != null) return binding
+
+    // if a closure, check parent scope
+    if (inClosure)
     {
-        closure := closureStack.peek
-      
+      closure := curType.closure
+      binding = closure.enclosingVars[name]
+      if (binding != null)
+      {
         // mark the enclosing method and var as being used in a closure
         binding.method.usesCvars = true
         binding.usedInClosure = true
@@ -1153,7 +1105,7 @@ class ResolveExpr : CompilerStep
         for (p := closure.enclosingClosure; p != null; p = p.enclosingClosure)
         {
           if (binding.method === p.doCall) break
-          passThru := curMethod.addLocalVar(binding.loc, binding.ctype, binding.name, p.code)
+          passThru := p.doCall.addLocalVar(binding.loc, binding.ctype, binding.name, p.doCall.code)
           passThru.usedInClosure = true
           passThru.shadows = binding
           passThru.usedInClosure = true
@@ -1162,45 +1114,45 @@ class ResolveExpr : CompilerStep
         }
 
         return shadow
-      
+      }
     }
 
-    return binding
+    // not found
+    return null
   }
 
-//  **
-//  ** Get a list of all the local method variables that
-//  ** are currently in scope.
-//  **
-//  private Str:MethodVar localsInScope()
-//  {
-//    Str:MethodVar acc := inClosure ?
-//      curType.closure.enclosingVars.dup :
-//      Str:MethodVar[:]
-//
-//    if (curMethod == null) return acc
-//    
-//    
-//    if (stmtStack.peek is ForStmt) {
-//      block := ((ForStmt)stmtStack.peek).block
-//      block.vars.each |MethodVar var_v| {
-//        acc[var_v.name] = name
-//      }
-//    }
-//    
-//    for (i:=this.blockStack.size -1; i >=0 ; --i) {
-//      b := blockStack[i]
-//      b.vars.each |MethodVar var_v| {
-//        acc[var_v.name] = name
-//      }
-//    }
-//    
-//    curMethod.paramDefs.each |MethodVar var_v| {
-//        acc[var_v.name] = name
-//    }
-//
-//    return acc
-//  }
+  **
+  ** Get a list of all the local method variables that
+  ** are currently in scope.
+  **
+  private Str:MethodVar localsInScope()
+  {
+    Str:MethodVar acc := inClosure ?
+      curType.closure.enclosingVars.dup :
+      Str:MethodVar[:]
+
+    if (curMethod == null) return acc
+
+    if (stmtStack.peek is ForStmt) {
+      block := ((ForStmt)stmtStack.peek).block
+      block.vars.each |MethodVar var_v| {
+        acc[var_v.name] = var_v
+      }
+    }
+    
+    for (i:=this.blockStack.size -1; i >=0 ; --i) {
+      b := blockStack[i]
+      b.vars.each |MethodVar var_v| {
+        acc[var_v.name] = var_v
+      }
+    }
+    
+    curMethod.paramDefs.each |MethodVar var_v| {
+        acc[var_v.name] = var_v
+    }
+
+    return acc
+  }
 
   **
   ** Get the current block which defines our scope.  We make
@@ -1262,6 +1214,5 @@ class ResolveExpr : CompilerStep
 
   Stmt[] stmtStack  := Stmt[,]    // statement stack
   Block[] blockStack := Block[,]  // block stack used for scoping
-  ClosureExpr[] closureStack := ClosureExpr[,]  // are we inside a closure's block
-  ClosureExpr? pendingClosure     // delay closure resolve
+  Bool inClosure := false         // are we inside a closure's block
 }

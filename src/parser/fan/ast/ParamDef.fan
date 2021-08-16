@@ -45,6 +45,8 @@ class ParamDef : MethodVar, CParam
     out.w(name).w(" : ").w(paramType)
     if (def != null) { out.w(" = "); def.print(out) }
   }
+  
+  override ParamDef? paramDef() { this }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

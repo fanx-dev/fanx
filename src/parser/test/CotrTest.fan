@@ -20,6 +20,6 @@ class CtorTest : Test {
     
     m.resolveAll
     
-    m.compiler.pod.dump
+    m.context.pod.dump
   }
 }

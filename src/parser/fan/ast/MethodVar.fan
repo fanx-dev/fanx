@@ -62,12 +62,15 @@ class MethodVar : Node
   Int flags           // Param
   Bool isCatchVar     // is this auto-generated var for "catch (Err x)"
   Block? scope        // block which scopes this variable
-  ParamDef? paramDef  // if param
+  
+  // if param
+  virtual ParamDef? paramDef() { null }
+  
+  //used by closure
   Bool usedInClosure  // local used by closure within containing method
   MethodVar? shadows  // if closure var, this is the variable in parent scope we shadow
   FieldDef? wrapField   // if wrapped onto heap this is 'Wrapper.val' field
   Bool isReassigned   // keeps track of reassigment assignment (we don't count initial local assign)
   MethodVar? paramWrapper  // wrapper local var if param has to be wrapped
 
-  Int closureCount := 0
 }

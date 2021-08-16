@@ -113,7 +113,7 @@ class InitClosures : CompilerStep
     doCall.flags = FConst.Internal + FConst.Synthetic
     doCall.code  = closure.code
     doCall.ret = signature.ret
-    doCall.paramDefs = signature.getParamDefs()
+    doCall.paramDefs = signature.toParamDefs()
     closure.doCall = doCall
     cls.addSlot(doCall)
   }
@@ -209,8 +209,8 @@ class InitClosures : CompilerStep
     }
     else
     {
-      res := TypeCheckExpr.coerce(c, ns.objType.toNullable)
-      m.code.add(ReturnStmt.makeSynthetic(loc, res))
+      //res := TypeCheckExpr.coerce(c, ns.objType.toNullable)
+      m.code.add(ReturnStmt.makeSynthetic(loc, c))
     }
 
     // add to our synthetic parent class

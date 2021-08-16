@@ -87,6 +87,7 @@ class FPrinter : FConst
     {
       printLine("  mixin " + t.fmixins.join(", ") |Int m->Str| { typeRef(m) });
     }
+    printLine("<"+t.genericParameters.join(",")+">")
     attrs(t.fattrs)
     printLine
     t.ffields.each |FField f| { field(f) }

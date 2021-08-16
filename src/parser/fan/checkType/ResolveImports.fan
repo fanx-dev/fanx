@@ -155,7 +155,7 @@ class ResolveImports : CompilerStep
     if (podName != "sys") {
       //std and reflect is imported implicitly
       if (podName != "std") {
-        if (compiler.pod.resolvedDepends.containsKey("std")) {
+        if (compiler.pod.resolvedDepends.containsKey("std") || compiler.input.isScript) {
           pod := ns.resolvePod("std", compiler.pod.loc)
           res.addAll(pod.types)
         }

@@ -34,6 +34,48 @@ class Fanp
     }
   }
 
+  Void executeFile(Str? target)
+  {
+    scriptFile := File.os(file)
+    input := CompilerInput()
+    {
+      //podName        = "script"
+      //summary        = "script"
+      //version        = Version("0")
+      //log.level      = LogLevel.warn
+      includeDoc     = true
+      isScript       = true
+      srcStr         = scriptFile.readAllStr
+      srcStrLoc      = scriptFile.toStr
+      //mode           = CompilerInputMode.str
+      //output         = CompilerOutputMode.transientPod
+    }
+    
+    astpod := PodDef(Loc.makeUninit, "script")
+    compiler = IncCompiler(astpod, input)
+    compiler.enableAllPipelines.run
+
+    pod := compiler.context.transientPod
+
+    if (target == null)
+    {
+      printPod(pod.name)
+      return
+    }
+
+    dot := target.index(".")
+    if (dot < 0)
+    {
+      printType(pod.name, pod.type(target).name)
+    }
+    else
+    {
+      typeName := target[0..<dot]
+      slotName := target[dot+1..-1]
+      printSlot(pod.name, typeName, slotName)
+    }
+  }
+
   Void printPod(Str podName)
   {
     p := printer(podName)
@@ -72,10 +114,17 @@ class Fanp
 
   FPod fpod(Str podName)
   {
-    ns := FPodNamespace(namespace == null ? null : namespace.toUri.toFile)
-    FPod fpod := ns.resolvePod(podName, null)
-    fpod.readFully
-    return fpod
+    if (file == null)
+    {
+      ns := FPodNamespace(namespace == null ? null : namespace.toUri.toFile)
+      FPod fpod := ns.resolvePod(podName, null)
+      fpod.readFully
+      return fpod
+    }
+    else
+    {
+      return compiler.context.fpod
+    }
   }
 
   FType ftype(FPod pod, Str typeName)
@@ -117,7 +166,6 @@ class Fanp
     if (args.isEmpty) { help; return }
 
     Str? target := null
-    Str? file := null
 
     // process args
     for (i:=0; i<args.size; ++i)
@@ -155,9 +203,7 @@ class Fanp
 
     if (target == null && file == null) { help; return }
     if (file == null) execute(target)
-    else {
-      throw Err("TODO")
-    }
+    else executeFile(target)
   }
 
   Void help()
@@ -190,10 +236,12 @@ class Fanp
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
+  IncCompiler? compiler
   Bool showTables := false
   Bool showCode   := false
   Bool showLines  := false
   Bool showIndex  := false
+  Str? file
   Str? namespace
 
 }

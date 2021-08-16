@@ -19,6 +19,6 @@ class DebugTest : Test {
     
     m.resolveAll
     
-    m.compiler.pod.dump
+    m.context.pod.dump
   }
 }

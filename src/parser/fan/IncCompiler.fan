@@ -1,39 +1,98 @@
-
+//
+// Copyright (c) 2006, chunquedong
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   2021-8-15 Jed Young Creation
+//
+**
 ** Compiler manages the top level process of the compiler pipeline.
+** There are a couple different "pipelines" used to accomplish
+** various twists on compiling Fantom code (from memory, files, etc).
+** The pipelines are implemented as discrete CompilerSteps.
+** As the steps are executed, the Compiler instance itself stores
+** the state as we move from files -> ast -> resolved ast -> code.
+**
 class IncCompiler {
   
   ** compiler context
-  CompilerContext compiler
+  CompilerContext context
   
   ** compiler pipeline
   CompilerStep[] pipelines := [,]
+  
   
   ** make from empty pod obj
   new make(PodDef pod, CompilerInput? input = null, CNamespace? ns := null) {
     if (input == null) input = CompilerInput()
     if (ns == null) ns = FPodNamespace(null)
-    compiler = CompilerContext(pod, input, ns)
+    context = CompilerContext(pod, input, ns)
+    ctx := context
     
     pipelines = [
-      BasicInit(compiler),
-      InitDataClass(compiler),
-      DefaultCtor(compiler),
-      InitEnum(compiler),
-      InitFacet(compiler),
-      SlotNormalize(compiler),
-      
-      ResolveDepends(compiler),
-      ResolveImports(compiler),
-      ResolveType(compiler),
-      
-      StmtNormalize(compiler),
-      CheckInheritance(compiler),
-      CheckInheritSlot(compiler),
-      
-      ResolveExpr(compiler),
-      CheckErrors(compiler),
-      CheckParamDefs(compiler),
+        BasicInit(ctx),
+        InitDataClass(ctx),
+        DefaultCtor(ctx),
+        InitEnum(ctx),
+        InitFacet(ctx),
+        InitClosures(ctx),
+        SlotNormalize(ctx),
+
+        ResolveDepends(ctx),
+        ResolveImports(ctx),
+        ResolveType(ctx),
+
+        StmtNormalize(ctx),
+        CheckInheritance(ctx),
+        CheckInheritSlot(ctx),
+
+        ResolveExpr(ctx),
+        
+        CheckErrors(ctx),
+        CheckParamDefs(ctx),
     ]
+  }
+  
+  This enableAllPipelines() {
+    ctx := context
+    pipelines = [
+        BasicInit(ctx),
+        InitDataClass(ctx),
+        DefaultCtor(ctx),
+        InitEnum(ctx),
+        InitFacet(ctx),
+        InitClosures(ctx),
+        SlotNormalize(ctx),
+
+        ResolveDepends(ctx),
+        ResolveImports(ctx),
+        ResolveType(ctx),
+
+        StmtNormalize(ctx),
+        CheckInheritance(ctx),
+        CheckInheritSlot(ctx),
+
+        ResolveExpr(ctx),
+        
+        CheckErrors(ctx),
+        CheckParamDefs(ctx),
+        
+        LocaleProps(ctx),
+        CompileJs(ctx),
+        ClosureVars(ctx),
+        ClosureToImmutable(ctx),
+        ConstChecks(ctx),
+        GenParamDefault(ctx),
+
+        StmtFlat(ctx),
+        ExprFlat(ctx),
+        GenAsync(ctx),
+        
+        //backend
+        Assemble(ctx),
+        GenerateOutput(ctx),
+    ]
+    return this
   }
   
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,17 +112,22 @@ class IncCompiler {
 
   ** do parse code
   This parseAll() {
-    files := compiler.input.srcFiles
-    files.each |f| {
-       this.updateSourceFile(f)
+    files := context.input.srcFiles
+    if (files != null) {
+        files.each |f| {
+           this.updateSourceFile(f)
+        }
+    }
+    if (context.input.srcStr != null) {
+        this.updateSource(context.input.srcStrLoc, context.input.srcStr)
     }
     return this
   }
   
   ** parse souce code
   private CompilationUnit parseCode(Str file, Str code) {
-    unit := CompilationUnit(Loc.make(file), compiler.pod, file.toStr)
-    parser := DeepParser(compiler.log, code, unit)
+    unit := CompilationUnit(Loc.make(file), context.pod, file.toStr)
+    parser := DeepParser(context.log, code, unit)
     //echo(parser.tokens.join("\n")|t|{ t.loc.toStr + "\t\t" + t.kind + "\t\t" + t.val })
     parser.parse
     return unit
@@ -76,23 +140,23 @@ class IncCompiler {
   
   ** update compiler result by source str
   CompilationUnit? updateSource(Str file, Str code, Bool isDelete := false) {
-    old := compiler.cunitsMap[file]
+    old := context.cunitsMap[file]
     if (old != null) {
-      compiler.cunitsMap.remove(file)
-      compiler.cunits.removeSame(old)
-      compiler.log.clearByFile(file)
+      context.cunitsMap.remove(file)
+      context.cunits.removeSame(old)
+      context.log.clearByFile(file)
     }
     
     if (isDelete) {
-      compiler.pod.updateCompilationUnit(null, old)
+      context.pod.updateCompilationUnit(null, old, context.log)
       return old
     }
     
     unit := parseCode(file, code)
-    compiler.pod.updateCompilationUnit(unit, old)
+    context.pod.updateCompilationUnit(unit, old, context.log)
     
-    compiler.cunitsMap[file] = unit
-    compiler.cunits.add(unit)
+    context.cunitsMap[file] = unit
+    context.cunits.add(unit)
     return unit
   }
   

@@ -43,14 +43,14 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   
   once CType asRef() {
     tr := CType.makeRef(loc, pod.name, name)
-    if (this.isGeneric) {
-      if (this.qname != "sys::Func") {
-        tr.genericArgs = [,]
-        this.genericParameters.each |p| {
-          tr.genericArgs.add(p.asRef)
-        }
-      }
-    }
+//    if (this.isGeneric) {
+//      if (this.qname != "sys::Func") {
+//        tr.genericArgs = [,]
+//        this.genericParameters.each |p| {
+//          tr.genericArgs.add(p.bound)
+//        }
+//      }
+//    }
     tr.resolveTo(this)
     return tr
   }

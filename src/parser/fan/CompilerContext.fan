@@ -1,4 +1,14 @@
-
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   15 Sep 05  Brian Frank  Creation
+//    2 Jun 06  Brian Frank  Ported from Java to Fan
+//
+**
+** shared data in compiler step
+**
 class CompilerContext {
   
   CompilerInput input

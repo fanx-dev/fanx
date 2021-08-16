@@ -75,8 +75,8 @@ mixin Coerce {
     // have to treat function auto-casting a little specially here
     if (actual.isFunc && expected.isFunc)
     {
-      if (isFuncAutoCoerce(actual, expected))
-         return TypeCheckExpr.coerce(expr, expected)
+//      if (isFuncAutoCoerce(actual, expected))
+//         return TypeCheckExpr.coerce(expr, expected)
     }
     else
     {
@@ -115,7 +115,7 @@ mixin Coerce {
     return true
   }
 
-  static Bool isFuncAutoCoerceMatch(CType actual, CType expected)
+  private static Bool isFuncAutoCoerceMatch(CType actual, CType expected)
   {
     if (actual.fits(expected)) return true
     if (expected.fits(actual)) return true

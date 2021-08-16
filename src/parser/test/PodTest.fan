@@ -13,10 +13,10 @@ class PodTest : Test {
     file := `../${name}/pod.props`
     compiler := IncCompiler.fromProps(file.toFile).parseAll
     
-    echo("podName: ${compiler.compiler.pod.name}")
+    echo("podName: ${compiler.context.pod.name}")
     compiler.resolveAll
     //compiler.compiler.pod.dump
     
-    verify(compiler.compiler.log.errs.size == 0)
+    verify(compiler.context.log.errs.size == 0)
   }
 }

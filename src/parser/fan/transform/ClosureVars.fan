@@ -376,9 +376,6 @@ class ClosureVars : CompilerStep
     {
       // if this is a nested closure, then we have to get $this
       // from it's own $this field\
-      if (closure.enclosingClosure.outerThisField == null) {
-        closure.enclosingClosure.outerThisField = makeOuterThisField(closure.enclosingClosure)
-      }
       outerThis := closure.enclosingClosure.outerThisField
       subArg = fieldExpr(loc, ThisExpr(loc), outerThis)
     }

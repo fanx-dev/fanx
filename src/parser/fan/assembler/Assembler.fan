@@ -77,9 +77,8 @@ class Assembler : FConst
     t.ffields  = def.fieldDefs.map |FieldDef f->FField| { assembleField(t, f) }
     t.fmethods = def.methodDefs.map |MethodDef m->FMethod| { assembleMethod(t, m) }
     def.genericParameters.each |p| {
-      //t.genericParamNames.add(name(p.paramName))
-      //t.genericParamBounds.add(typeRef(p.bound))
-      t.genericParameters.add(p)
+      t.genericParamNames.add(name(p.paramName))
+      t.genericParamBounds.add(typeRef(p.bound))
     }
 
     attrs := AttrAsm(compiler, fpod)
@@ -139,9 +138,12 @@ class Assembler : FConst
       f.flags     = v.flags
       if (v.paramDef != null)
       {
+        
         f.defNameIndex = name(ParamDefaultAttr)
         f.def = assembleExpr(v.paramDef.def)
-        assert((f.def != null) == f.hasDefault)
+        if (f.def != null) {
+           f.flags = v.flags.or(FConst.ParamDefault)
+        }
       }
       return f
     }

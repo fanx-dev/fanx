@@ -63,7 +63,7 @@ class PodDef : Node, CPod
     typesCache = null
   }
   
-  Void updateCompilationUnit(CompilationUnit? unit, CompilationUnit? old) {
+  Void updateCompilationUnit(CompilationUnit? unit, CompilationUnit? old, CompilerLog log) {
     if (old != null) {
       old.types.each |t| {
         this.typeDefs.remove(t.name)
@@ -73,6 +73,9 @@ class PodDef : Node, CPod
     typesCache = null
     if (unit == null) return
     unit.types.each |t| {
+      if (this.typeDefs.containsKey(t.name)) {
+        log.err("Duplicate type name '$t.name'", unit.loc)
+      }
       this.typeDefs[t.name] = t
       this.closures.addAll(t.closures)
     }

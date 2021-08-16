@@ -1,8 +1,9 @@
-// To change this License template, choose Tools / Templates
-// and edit Licenses / FanDefaultLicense.txt
+//
+// Copyright (c) 2006, chunquedong
+// Licensed under the Academic Free License version 3.0
 //
 // History:
-//   2021Äê8ÔÂ15ÈÕ yangjiandong Creation
+//   2021-8-15 Jed Young Creation
 //
 
 **

@@ -31,10 +31,10 @@ class SemanticTest : GoldenTest {
     s := StrBuf()
 //    s.add(code)
 //    s.add(separator)
-    s.add(m.compiler.log.toStr)
+    s.add(m.context.log.toStr)
     
     s.add(separator)
-    m.compiler.cunits[0].print(AstWriter(s.out))
+    m.context.cunits[0].print(AstWriter(s.out))
     
     
     verifyGolden(s.toStr, name)

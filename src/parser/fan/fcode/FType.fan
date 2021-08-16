@@ -124,8 +124,8 @@ class FType : CTypeDef
     fmixins.each |Int m| { out.writeI2(m) }
     out.writeI4(flags.and(FConst.FlagsMask))
     out.write(genericParameters.size)
-    genericParameters.each |param| { out.writeI2(fpod.addName(param.paramName)) }
-    genericParameters.each |param| { out.writeI2(fpod.addTypeRef(param.bound)) }
+    genericParamNames.each |param| { out.writeI2(param) }
+    genericParamBounds.each |t| { out.writeI2(t) }
   }
 
   This readMeta(InStream in)
@@ -149,8 +149,8 @@ class FType : CTypeDef
   }
   
   
-  private Int[] genericParamNames := [,]
-  private Int[] genericParamBounds := [,]
+  internal Int[] genericParamNames := [,]
+  internal Int[] genericParamBounds := [,]
   override once GenericParamDef[] genericParameters() {
     res := GenericParamDef[,]
     genericParamNames.size.times |i| {

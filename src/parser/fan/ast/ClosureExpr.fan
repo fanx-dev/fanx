@@ -25,6 +25,7 @@ class FuncTypeDef : Node {
   {
     // sanity check
     if (itType.isThis) throw Err("Invalid it-block func signature: $this")
+    inferredSignature = true
   }
   
   override Void print(AstWriter out)
@@ -50,16 +51,37 @@ class FuncTypeDef : Node {
     return s.toStr
   }
   
-  ParamDef[] getParamDefs()
+  CType mostSpecific(CType b, Bool inferredSignature)
   {
-    if (paramDefs != null) return paramDefs
+    a := this.typeRef
+    if (a.funcArity > b.funcArity) throw Err("Different arities: $a / $b")
+    for (i:=1; i<b.genericArgs.size; ++i) {
+        if (i < a.genericArgs.size) {
+            a.genericArgs[i] = toMostSpecific(a.genericArgs[i], b.genericArgs[i])
+        }
+        else {
+            a.genericArgs.add(b.genericArgs[i])
+        }
+    }
+    a.genericArgs[0] = inferredSignature ? toMostSpecific(a.funcRet, b.funcRet) : a.funcRet
+    return a
+  }
+
+  private static CType toMostSpecific(CType a, CType b)
+  {
+    if (b.hasGenericParameter) return a
+    if (a.isObj || a.isVoid || a.hasGenericParameter) return b
+    return a
+  }
+  
+  ParamDef[] toParamDefs()
+  {
     p := ParamDef[,]
     p.capacity = params.size
     for (i:=0; i<params.size; ++i)
     {
       p.add(ParamDef(loc, params[i], names.getSafe(i, "\$$i")))
     }
-    paramDefs = p;
     return p
   }
   
@@ -70,8 +92,6 @@ class FuncTypeDef : Node {
   CType ret // return type
   Bool unnamed                   // were any names auto-generated
   Bool inferredSignature   // were one or more parameters inferred
-  
-  private ParamDef[]?  paramDefs
 }
 
 
@@ -106,13 +126,12 @@ class ClosureExpr : Expr
     this.name             = name
   }
 
-  CField? outerThisField
-//  {
-//    if (enclosingSlot.isStatic) throw Err("Internal error: $loc.toLocStr")
-//    //TODO
-//    throw Err("TODO")
-//    //return ClosureVars.makeOuterThisField(this)
-//  }
+  //'this' ref field
+  once CField outerThisField()
+  {
+    if (enclosingSlot.isStatic) throw Err("Internal error: $loc.toLocStr")
+    return ClosureVars.makeOuterThisField(this)
+  }
 
   override Str toStr()
   {
@@ -129,25 +148,25 @@ class ClosureExpr : Expr
   override Void print(AstWriter out)
   {
     out.w(signature.toStr)
-//    if (substitute != null)
-//    {
-//      out.w(" { substitute: ")
-//      substitute.print(out)
-//      out.w(" }").nl
-//    }
-//    else
-//    {
+    if (substitute != null)
+    {
+      out.w(" { substitute: ")
+      substitute.print(out)
+      out.w(" }").nl
+    }
+    else
+    {
       out.nl
       code.print(out)
-//    }
+    }
   }
 
-//  override Bool isDefiniteAssign(|Expr lhs->Bool| f)
-//  {
-//    // at this point, we have moved code into doCall method
-//    if (doCall == null) return false
-//    return doCall.code.isDefiniteAssign(f)
-//  }
+  override Bool isDefiniteAssign(|Expr lhs->Bool| f)
+  {
+    // at this point, we have moved code into doCall method
+    if (doCall == null) return false
+    return doCall.code.isDefiniteAssign(f)
+  }
 
   Expr toWith(Expr target, CMethod with)
   {
@@ -164,88 +183,86 @@ class ClosureExpr : Expr
   {
     // bail if we didn't expect an inferred the signature
     // or haven't gotten to InitClosures yet
-//    if (cls == null) return
+    if (cls == null) return
+    
     if (t.genericArgs == null) {
       return
     }
 
-    delArity := signature.params.size-1
+    delArity := signature.arity
     inferredArity := t.genericArgs.size-1
     if (!signature.inferredSignature && delArity == inferredArity) {
       return
     }
     
-    //TODO check error
-    signature.params = t.genericArgs[1..-1]
-    signature.ret = t.genericArgs[0]
-    signature.typeRef = CType.funcType(signature.loc, signature.params, signature.ret)
-    ctype = signature.typeRef
-
     // between the explicit signature and the inferred
     // signature, take the most specific types; this is where
     // we take care of functions with generic parameters like V
-//    if (delArity <= inferredArity) {
-//      if (delArity < inferredArity) {
-//        addParams := CType[,]
-//        for (i:=delArity; i<inferredArity; ++i) {
-//          ptype := t.params[i]
-//          addParams.add(ptype)
-//          //echo(doCall.params)
-//          doCall.paramDefs.add(ParamDef(loc, ptype, "ignoreparam\$$i"))
-//        }
-//        collapseExprAndParams(call, addParams)
-//      }
-//      t = t.toArity(((FuncType)cls.base).arity)
-//      t = signature.mostSpecific(t, signature.inferredSignature)
-//    }
-//    else if (isItBlock && t.arity == 0) {
-//      call.paramDefs.clear
-//      c := CallExpr.makeWithMethod(loc, ThisExpr(loc), doCall, [LiteralExpr.makeNull(loc)])
-//      call.code.stmts.clear
-//      if (t.ret.isVoid) {
-//         call.code.add(c.toStmt)
-//         call.code.add(ReturnStmt.makeSynthetic(loc, LiteralExpr.makeNull(loc)))
-//      }
-//      else {
-//         call.code.add(ReturnStmt.makeSynthetic(loc, c))
-//      }
-//    }
-//    else {
-//      return
-//    }
-//
-//    // sanity check
-//    if (t.usesThis)
-//      throw Err("Inferring signature with un-parameterized this type: $t")
-//
-//    // update my signature and the doCall signature
-//    signature = t
-//    ctype = t
-//    if (doCall != null)
-//    {
-//      // update parameter types
-//      doCall.paramDefs.each |ParamDef p, Int i|
-//      {
-//        if (i < signature.params.size)
-//          p.paramType = signature.params[i]
-//      }
-//
-//      // update return, we might have to translate an single
-//      // expression statement into a return statement
-//      if (doCall.ret.isVoid && !t.ret.isVoid)
-//      {
-//        doCall.ret = t.ret
-//        collapseExprAndReturn(doCall)
-//        collapseExprAndReturn(call)
-//      }
-//    }
-//
-//    // if an itBlock, set type of it
-//    if (isItBlock) itType = t.params.first
-//
-//    // update base type of Func subclass
-//    cls.base = t
-//    ctype = t
+    if (delArity <= inferredArity) {
+      if (delArity < inferredArity) {
+        addParams := CType[,]
+        for (i:=delArity; i<inferredArity; ++i) {
+          ptype := t.genericArgs[i+1]
+          addParams.add(ptype)
+          //echo(doCall.params)
+          doCall.paramDefs.add(ParamDef(loc, ptype, "ignoreparam\$$i"))
+        }
+        collapseExprAndParams(call, addParams)
+      }
+      t = signature.mostSpecific(t, signature.inferredSignature)
+    }
+    else if (isItBlock && inferredArity == 0) {
+      call.paramDefs.clear
+      c := CallExpr.makeWithMethod(loc, ThisExpr(loc), doCall, [LiteralExpr.makeNull(loc)])
+      call.code.stmts.clear
+      if (t.funcRet.isVoid) {
+         call.code.add(c.toStmt)
+         call.code.add(ReturnStmt.makeSynthetic(loc, LiteralExpr.makeNull(loc)))
+      }
+      else {
+         call.code.add(ReturnStmt.makeSynthetic(loc, c))
+      }
+    }
+    else {
+      return
+    }
+
+    // sanity check
+    //if (t.usesThis)
+    //  throw Err("Inferring signature with un-parameterized this type: $t")
+
+    // update my signature and the doCall signature
+    //signature = t
+    ctype = t
+    if (doCall != null)
+    {
+      // update parameter types
+      doCall.paramDefs.each |ParamDef p, Int i|
+      {
+        if (i+1 < t.genericArgs.size)
+          p.ctype = t.genericArgs[i+1]
+      }
+
+      // update return, we might have to translate an single
+      // expression statement into a return statement
+      if (doCall.ret.isVoid && !t.funcRet.isVoid)
+      {
+        doCall.ret = t.funcRet
+        collapseExprAndReturn(doCall)
+        collapseExprAndReturn(call)
+      }
+    }
+
+    // if an itBlock, set type of it
+    if (isItBlock) {
+        if (t.genericArgs.size > 1) {
+            itType = t.genericArgs[1]
+        }
+    }
+
+    // update base type of Func subclass
+    cls.setBase(t)
+    ctype = t
   }
 
   Void collapseExprAndParams(MethodDef m, CType[] addParams)
@@ -299,12 +316,11 @@ class ClosureExpr : Expr
   MethodDef? doCall             // anonymous class's doCall() with code
 
   // ResolveExpr
-  //[Str:MethodVar]? enclosingVars // my parent methods vars in scope
+  [Str:MethodVar]? enclosingVars // my parent methods vars in scope
   //Bool setsConst                 // sets one or more const fields (CheckErrors)
-//  CType? itType                  // type of implicit it
+  CType? itType                  // type of implicit it
 
   
   CType? followCtorType          // follow make a new Type
   
-  Int closureCount := 0
 }

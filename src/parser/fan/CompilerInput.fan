@@ -1,4 +1,11 @@
-
+//
+// Copyright (c) 2006, Brian Frank and Andy Frank
+// Licensed under the Academic Free License version 3.0
+//
+// History:
+//   15 Sep 05  Brian Frank  Creation
+//    2 Jun 06  Brian Frank  Ported from Java to Fan
+//
 **
 ** CompilerInput encapsulates all the input needed run the compiler.
 ** The compiler can be run in one of two modes - file or str.  In
@@ -47,6 +54,11 @@ class CompilerInput
   ** Fantom source code to compile (str mode only)
   **
   Str? srcStr
+  
+  **
+  ** Location to use for SourceFile facet (str mode only)
+  **
+  Str? srcStrLoc
   
   **
   ** compile to javascript

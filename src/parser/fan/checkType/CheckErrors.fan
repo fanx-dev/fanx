@@ -1176,7 +1176,7 @@ class CheckErrors : CompilerStep, Coerce
     // it-block, otherwise dive in for further checking
     itExpr := lhs.target as ItExpr
     if (itExpr != null && itExpr.enclosingClosure != null && itExpr.enclosingClosure.isItBlock && 
-      itExpr.enclosingClosure.followCtorType == itExpr.enclosingClosure.signature.params[0] &&
+      itExpr.enclosingClosure.followCtorType == itExpr.enclosingClosure.itType &&
       itExpr.enclosingClosure.followCtorType.fits(field.parent.asRef)) {
       //pass
     }

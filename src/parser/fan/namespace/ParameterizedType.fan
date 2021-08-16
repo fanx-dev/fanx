@@ -30,7 +30,8 @@ class ParameterizedType : CTypeDef {
     
     if (defaultParameterized) {
       params = CType[,]
-      baseType.genericParameters.each |p| {
+      for (i:=0; i<baseType.genericParameters.size; ++i) {
+        p := baseType.genericParameters[i]
         params.add(p.bound)
       }
     }

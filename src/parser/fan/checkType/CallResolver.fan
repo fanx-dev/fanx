@@ -83,6 +83,7 @@ class CallResolver
 // Static Literal
 //////////////////////////////////////////////////////////////////////////
 
+    //move to ResolveExpr.resolveStaticTypeTarget
   **
   ** If this is a standalone name without a base target
   ** such as "Foo" and the name maps to a type name, then
@@ -140,7 +141,7 @@ class CallResolver
       if (curClosure != null)
       {
         base = curType.asRef
-        if (curClosure.isItBlock) baseIt = curClosure.signature.params[0]
+        if (curClosure.isItBlock) baseIt = curClosure.itType
       }
       else
       {
@@ -355,12 +356,12 @@ class CallResolver
       target = ItExpr(loc) { enclosingClosure = curClosure }
       target.ctype = baseIt
     }
-//    else if (curClosure != null)
-//    {
-//      closure := curClosure
-//      if (!closure.enclosingSlot.isStatic)
-//        target = FieldExpr(loc, ThisExpr(loc), "\$this")
-//    }
+    else if (curClosure != null)
+    {
+      closure := curClosure
+      if (!closure.enclosingSlot.isStatic)
+        target = FieldExpr(loc, ThisExpr.makeType(loc, closure.enclosingType.asRef), closure.outerThisField)
+    }
     else
     {
       target = ThisExpr(loc)
