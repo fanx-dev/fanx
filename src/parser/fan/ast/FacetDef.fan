@@ -39,35 +39,35 @@ class FacetDef : Node, CFacet
     return literal.val
   }
 
-//  Str serialize()
-//  {
-//    if (names.isEmpty) return ""
-//    s := StrBuf()
-//
-//    // serialized FFI types as name/value map for easy parsing
-//    if (type.isForeign)
-//    {
-//      s.addChar('[')
-//      names.each |n, i|
-//      {
-//        s.add(n.toCode).addChar(':').add(vals[i].serialize).addChar(',')
-//      }
-//      s.addChar(']')
-//    }
-//
-//    // serialize normal Fantom types as a complex
-//    else
-//    {
-//      s.add(type.qname).addChar('{')
-//      names.each |n, i|
-//      {
-//        s.add(n).addChar('=').add(vals[i].serialize).addChar(';')
-//      }
-//      s.addChar('}')
-//    }
-//
-//    return s.toStr
-//  }
+  Str serialize()
+  {
+    if (names.isEmpty) return ""
+    s := StrBuf()
+
+    // serialized FFI types as name/value map for easy parsing
+    if (type.typeDef.isForeign)
+    {
+      s.addChar('[')
+      names.each |n, i|
+      {
+        s.add(n.toCode).addChar(':').add(vals[i].serialize).addChar(',')
+      }
+      s.addChar(']')
+    }
+
+    // serialize normal Fantom types as a complex
+    else
+    {
+      s.add(type.qname).addChar('{')
+      names.each |n, i|
+      {
+        s.add(n).addChar('=').add(vals[i].serialize).addChar(';')
+      }
+      s.addChar('}')
+    }
+
+    return s.toStr
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Tree

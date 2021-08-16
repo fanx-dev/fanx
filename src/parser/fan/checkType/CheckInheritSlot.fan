@@ -42,7 +42,7 @@ class CheckInheritSlot : CompilerStep
     inheriSlots := [Str:CSlot[]][:]
     t.inheritances.each |bt| {
       bt.slots.each |v,k| {
-        if (v.isAccessor || v.isOverload) return
+        if (v.isAccessor || v.isOverload || v.isStatic || v.isCtor) return
         list := inheriSlots[k]
         if (list == null) {
           inheriSlots[k] = [v]
@@ -236,6 +236,12 @@ class CheckInheritSlot : CompilerStep
 
   private Void checkMethodMethodOverride(TypeDef t, CMethod base, MethodDef def)
   {
+    //skip check for Closure class call.
+    // the isParameterized is Void call(Int a); call is Obj? call(Obj?,Obj?,Obj?,Obj?,Obj?,...)
+    if (t.isClosure && def.name == "call" && base.isParameterized) {
+        return
+    }
+    
     loc := def.loc
 
     defRet := def.returnType
@@ -255,7 +261,7 @@ class CheckInheritSlot : CompilerStep
         // check if new return type is a subtype of original
         // return type (we allow covariant return types)
         if (!defRet.fits(baseRet) || (defRet.isVoid && !baseRet.isVoid) || defRet.isNullable != baseRet.isNullable)
-          err("Return type mismatch in override of '$base.qname' - '$baseRet' != '$defRet'", loc)
+          err("Return type mismatch in override of '$base.qname' - '$baseRet' != '$defRet', type:$t", loc)
 
         // can't use covariance with value types
         //TODO check

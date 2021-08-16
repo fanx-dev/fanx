@@ -29,9 +29,12 @@ class MethodVar : Node
     else out.w(" :")
   }
 
-//  new makeForParam(MethodDef method, Int register, ParamDef p, TypeRef paramType)
-//    : this.make(method, register, paramType, p.name, FConst.Param)
+//  new makeForParam(MethodDef method, Int register, ParamDef p, CType paramType)
+//    : this.make(p.loc, paramType, p.name)
 //  {
+//    this.method = method
+//    this.register = register
+//    this.flags = FConst.Param
 //    this.paramDef = p
 //    if (p.def != null) this.flags = this.flags.or(FConst.ParamDefault)
 //  }
@@ -66,4 +69,5 @@ class MethodVar : Node
   Bool isReassigned   // keeps track of reassigment assignment (we don't count initial local assign)
   MethodVar? paramWrapper  // wrapper local var if param has to be wrapped
 
+  Int closureCount := 0
 }

@@ -66,8 +66,7 @@ class CallResolver
       resolveToExpr
       inferClosureType
       resolveForeign
-      //TODO ConstantFolder
-//      constantFolding
+      constantFolding
       castForThisType
       safeToNullable
       ffiCoercion
@@ -489,6 +488,7 @@ class CallResolver
           paramType = FuncTypeDef.makeItBlock(call.loc, base).typeRef
         else
           paramType = paramType.parameterizeThis(base)
+          
         c.setInferredSignature(paramType)
         
         //re resolve after modify
@@ -519,7 +519,7 @@ class CallResolver
       expr := lastC.toWith(call, support.ns.objWith)
       
       //re resolve after modify
-      support.ns.resolveTypeRef(lastC.ctype, lastC.loc)
+      //
       
       return expr
     }
@@ -553,17 +553,17 @@ class CallResolver
   **
   ** If the epxression is a call, check for constant folding.
   **
-//  private Void constantFolding()
-//  {
-//    // only do const folding on method calls (which inculdes shortcut ops)
-//    call := result as CallExpr
-//    if (call == null) return
-//
-//    // skip constant folding for testSys
-//    if (curType != null && compiler.pod.name == "testSys") return
-//
-//    result = ConstantFolder(compiler).fold(call)
-//  }
+  private Void constantFolding()
+  {
+    // only do const folding on method calls (which inculdes shortcut ops)
+    call := result as CallExpr
+    if (call == null) return
+
+    // skip constant folding for testSys
+    if (curType != null && compiler.pod.name == "testSys") return
+
+    result = ConstantFolder(compiler).fold(call)
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Cast for This Type

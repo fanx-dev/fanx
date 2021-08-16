@@ -44,7 +44,7 @@ mixin CDefNode : CNode
   ** we still generate the docs to make it available for
   ** reflection
   **
-  internal Bool isDocumented()
+  Bool isDocumented()
   {
     if (flags.and(FConst.Synthetic) != 0) return false
     if (flags.and(FConst.Public) == 0 && flags.and(FConst.Protected) == 0) return false

@@ -50,22 +50,28 @@ class FuncTypeDef : Node {
     return s.toStr
   }
   
-  ParamDef[] toParamDefs(Loc loc)
+  ParamDef[] getParamDefs()
   {
+    if (paramDefs != null) return paramDefs
     p := ParamDef[,]
     p.capacity = params.size
     for (i:=0; i<params.size; ++i)
     {
-      p.add(ParamDef(loc, params[i], names[i]))
+      p.add(ParamDef(loc, params[i], names.getSafe(i, "\$$i")))
     }
+    paramDefs = p;
     return p
   }
+  
+  Int arity() { params.size }
   
   CType[] params // a, b, c ...
   Str[] names    { private set } // parameter names
   CType ret // return type
   Bool unnamed                   // were any names auto-generated
   Bool inferredSignature   // were one or more parameters inferred
+  
+  private ParamDef[]?  paramDefs
 }
 
 
@@ -100,7 +106,7 @@ class ClosureExpr : Expr
     this.name             = name
   }
 
-//  once CField outerThisField()
+  CField? outerThisField
 //  {
 //    if (enclosingSlot.isStatic) throw Err("Internal error: $loc.toLocStr")
 //    //TODO
@@ -169,8 +175,11 @@ class ClosureExpr : Expr
       return
     }
     
+    //TODO check error
     signature.params = t.genericArgs[1..-1]
-    ctype = t
+    signature.ret = t.genericArgs[0]
+    signature.typeRef = CType.funcType(signature.loc, signature.params, signature.ret)
+    ctype = signature.typeRef
 
     // between the explicit signature and the inferred
     // signature, take the most specific types; this is where
@@ -272,7 +281,7 @@ class ClosureExpr : Expr
     code.set(0, ReturnStmt.makeSynthetic(expr.loc, expr))
     code.removeAt(1)
   }
-
+  
   // Parse
   TypeDef enclosingType         // enclosing class
   SlotDef enclosingSlot         // enclosing method or field initializer
@@ -282,7 +291,7 @@ class ClosureExpr : Expr
   Str name                      // anonymous class name
   Bool isItBlock                // does closure have implicit it scope
 
-  /*
+  
   // InitClosures
   Expr? substitute          // expression to substitute during assembly
   TypeDef? cls                  // anonymous class which implements the closure
@@ -290,10 +299,12 @@ class ClosureExpr : Expr
   MethodDef? doCall             // anonymous class's doCall() with code
 
   // ResolveExpr
-  [Str:MethodVar]? enclosingVars // my parent methods vars in scope
+  //[Str:MethodVar]? enclosingVars // my parent methods vars in scope
   //Bool setsConst                 // sets one or more const fields (CheckErrors)
 //  CType? itType                  // type of implicit it
-  */
+
   
   CType? followCtorType          // follow make a new Type
+  
+  Int closureCount := 0
 }

@@ -133,7 +133,7 @@ class FMethodVar : FConst, CParam
     out.writeI2(nameIndex)
     out.writeI2(typeRef)
     out.write(flags)
-
+    
     // we currently only support the DefaultParam attr
     if (def == null) out.writeI2(0)
     else
@@ -149,7 +149,7 @@ class FMethodVar : FConst, CParam
     nameIndex = in.readU2
     typeRef   = in.readU2
     flags     = in.readU1
-
+    
     // we currently only support the DefaultParam attr
     in.readU2.times
     {

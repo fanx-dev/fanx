@@ -234,6 +234,9 @@ class CType : CNode, TypeMixin
     d.resolvedType = resolvedType
     d._isNullable = true
     d.genericArgs = genericArgs
+    d.loc = loc
+    d.len = len
+    d.attachedGenericParam = attachedGenericParam
     return d
   }
 
@@ -246,6 +249,9 @@ class CType : CNode, TypeMixin
     d.resolvedType = resolvedType
     d._isNullable = false
     d.genericArgs = genericArgs
+    d.loc = loc
+    d.len = len
+    d.attachedGenericParam = attachedGenericParam
     return d
   }
   
@@ -273,28 +279,25 @@ class CType : CNode, TypeMixin
   
   **
   ** A single generic parameter replaced by generic argument
+  ** This information is lost during replacement
   ** 
   GenericParamDef? attachedGenericParam
   
   virtual CType physicalType() {
-    if (attachedGenericParam == null) return this
-    if (isTypeErasure) return this
-    return attachedGenericParam.bound
+    if (!isTypeErasure) return this
+    if (attachedGenericParam != null) return attachedGenericParam.bound
+    def := typeDef
+    if (def is GenericParamDef) return ((GenericParamDef)def).bound
+    if (def is ParameterizedType) return ((ParameterizedType)def).root.asRef
+    return this
   }
   
-  CType realType() {
+  private CType realType() {
     CType t := this
-    if (t.attachedGenericParam != null)
-      t = t.typeDef.asRef
-    
-    if (t.typeDef is ParameterizedType)
-      t = t.typeDef.asRef
-    
-    if (t.typeDef is GenericParamDef)
-      t = (t.typeDef as GenericParamDef).bound
+    def := typeDef
     
     if (t.isThis || t.podName.isEmpty)
-      t = t.typeDef.asRef
+      t = def.asRef
     return t
   }
 
@@ -502,28 +505,6 @@ class CType : CNode, TypeMixin
   **
 //  abstract COperators operators()
 
-//////////////////////////////////////////////////////////////////////////
-// Facets
-//////////////////////////////////////////////////////////////////////////
-
-  **
-  ** Get the facet keyed by given type, or null if not defined.
-  **
-  CFacet? facetAnno(Str qname) {
-    facets := typeDef.facets
-    if (facets == null) return null
-    return facets.find { it.qname == qname }
-  }
-
-  **
-  ** Return if the given facet is defined.
-  **
-  Bool hasFacet(Str qname) { facetAnno(qname) != null }
-
-  **
-  ** Return if type has NoDoc facet
-  **
-  Bool isNoDoc() { hasFacet("sys::NoDoc") }
 }
 
 

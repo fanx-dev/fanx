@@ -143,10 +143,10 @@ class FindTest : Test
     m.resolveAll
     //m.compiler.pod.dump
     
-    m.compiler.pod.units.each |u| {
+    m.compiler.cunits.each |u| {
       u.printTree()
     }
-    unit := m.compiler.pod.units.vals.first
+    unit := m.compiler.cunits.first
     node := unit.findAt(Loc.make("", 0, 0, pos))
     return node
   }

@@ -7,7 +7,7 @@ class IncTest : Test
   Void test() {
     name := "compiler"
     file := `../${name}/pod.props`
-    compiler := IncCompiler.fromProps(file.toFile)
+    compiler := IncCompiler.fromProps(file.toFile).parseAll
     
     echo("podName: ${compiler.compiler.pod.name}")
     //echo(compiler.compiler.cunits)

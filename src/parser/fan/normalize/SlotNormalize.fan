@@ -34,7 +34,7 @@ class SlotNormalize : CompilerStep
 
   override Void run()
   {
-    //debug("Normalize")
+    //debug("Normalize Slot")
     walkUnits(VisitDepth.typeDef)
   }
 

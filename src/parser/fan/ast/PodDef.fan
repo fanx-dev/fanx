@@ -27,7 +27,7 @@ class PodDef : Node, CPod
 // CPod
 //////////////////////////////////////////////////////////////////////////
 
-  override Version version() { throw UnsupportedErr("PodDef.version") }
+  override Version version = Version("1.0")
 
   override Depend[] depends := [,]
   
@@ -48,7 +48,34 @@ class PodDef : Node, CPod
 
   override CTypeDef[] types()
   {
-    return typeDefs.vals
+    if (typesCache != null) return typesCache
+    typesCache = typeDefs.vals
+    return typesCache
+  }
+  
+  **
+  ** Add a synthetic type
+  **
+  Void addTypeDef(TypeDef t)
+  {
+    t.unit.addTypeDef(t)
+    this.typeDefs.add(t.name, t)
+    typesCache = null
+  }
+  
+  Void updateCompilationUnit(CompilationUnit? unit, CompilationUnit? old) {
+    if (old != null) {
+      old.types.each |t| {
+        this.typeDefs.remove(t.name)
+        this.closures.removeAll(t.closures)
+      }
+    }
+    typesCache = null
+    if (unit == null) return
+    unit.types.each |t| {
+      this.typeDefs[t.name] = t
+      this.closures.addAll(t.closures)
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,7 +88,7 @@ class PodDef : Node, CPod
     out.w("======================================").nl
     out.w("pod $name").nl
     out.w("======================================").nl
-    units.each |CompilationUnit unit| { unit.print(out) }
+    //units.each |CompilationUnit unit| { unit.print(out) }
     out.nl
   }
 
@@ -73,8 +100,9 @@ class PodDef : Node, CPod
   override const Str name           // simple pod name
   Str:Str meta := Str:Str[:]        // pod meta-data props
   Str:Obj index := Str:Obj[:]       // pod index props (vals are Str or Str[])
-  [Str:CompilationUnit] units := [:]           // Tokenize
+  //[Str:CompilationUnit] units := [:]           // Tokenize
   [Str:TypeDef] typeDefs           // ScanForUsingsAndTypes
-  ClosureExpr[]? closures           // Parse
+  ClosureExpr[]? closures := [,]           // Parse
 //  TypeDef[]? orderedTypeDefs
+  private TypeDef[]? typesCache
 }

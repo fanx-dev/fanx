@@ -31,7 +31,7 @@ class StmtNormalize : CompilerStep
 
   override Void run()
   {
-    //debug("Normalize")
+    //debug("Normalize Stmt")
     walkUnits(VisitDepth.slotDef)
   }
 

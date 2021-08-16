@@ -34,7 +34,7 @@ class SemanticTest : GoldenTest {
     s.add(m.compiler.log.toStr)
     
     s.add(separator)
-    m.compiler.pod.units.vals[0].print(AstWriter(s.out))
+    m.compiler.cunits[0].print(AstWriter(s.out))
     
     
     verifyGolden(s.toStr, name)

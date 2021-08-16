@@ -192,10 +192,10 @@ abstract class Expr : Node
   ** Return this expression as serialization text or
   ** throw exception if not serializable.
   **
-//  virtual Str serialize()
-//  {
-//    throw CompilerErr("'$id' not serializable", loc)
-//  }
+  virtual Str serialize()
+  {
+    throw CompilerErr("'$id' not serializable", loc)
+  }
 
   **
   ** Make an Expr which will serialize the given literal.

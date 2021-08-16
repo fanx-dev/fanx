@@ -30,11 +30,11 @@ class ResolveType : CompilerStep {
     }
     
     genericParams := t.genericParameters
-    if (genericParams != null) {
+    //if (genericParams != null) {
       genericParams.each |p| {
         resolveType(p.bound)
       }
-    }
+    //}
     
     if (t.facets != null) {
       t.facets.each |FacetDef c| {

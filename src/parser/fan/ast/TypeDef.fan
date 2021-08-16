@@ -59,13 +59,13 @@ class TypeDef : CTypeDef
 // Access
 //////////////////////////////////////////////////////////////////////////
 
-//  **
-//  ** Return if this type is the anonymous class of a closure
-//  **
-//  Bool isClosure()
-//  {
-//    return closure != null
-//  }
+  **
+  ** Return if this type is the anonymous class of a closure
+  **
+  Bool isClosure()
+  {
+    return closure != null
+  }
 
 //////////////////////////////////////////////////////////////////////////
 // Slots
@@ -291,7 +291,12 @@ class TypeDef : CTypeDef
     out.w("}").nl
   }
   
-  override GenericParamDef[]? genericParameters
+  override GenericParamDef[] genericParameters := [,]
+  
+  Void setBase(CType base) {
+    if (inheritances.size > 0) inheritances[0] = base
+    else inheritances.add(base)
+  }
   
 //////////////////////////////////////////////////////////////////////////
 // Fields
@@ -311,7 +316,7 @@ class TypeDef : CTypeDef
   
   EnumDef[] enumDefs               // declared enumerated pairs (only if enum)
   ClosureExpr[] closures           // closures where I am enclosing type (Parse)
-//  ClosureExpr? closure             // if I am a closure anonymous class
+  ClosureExpr? closure             // if I am a closure anonymous class
   private SlotDef[] slotDefList    // declared slot definitions
   FacetDef[]? indexedFacets        // used by WritePod
 }

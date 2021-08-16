@@ -132,6 +132,7 @@ class ResolveExpr : CompilerStep
 
     // expr type must be resolved at this point
     if ((Obj?)expr.ctype == null) {
+      if (expr.id == ExprId.closure) return expr
       err("Expr type not resolved: ${expr.id}: ${expr}", expr.loc)
       expr.ctype = ns.error
     }
@@ -151,6 +152,7 @@ class ResolveExpr : CompilerStep
     if (assignTarget != null && assignTarget.var_v != null)
       assignTarget.var_v.reassigned
 
+    reResolveClosure
     return expr
   }
 
@@ -361,7 +363,7 @@ class ResolveExpr : CompilerStep
 
     // cannot specify using current pod if output is not pod
 //    outputMode := compiler.input.output
-    if (expr.podName == null && compiler.isScript)
+    if (expr.podName == null && compiler.input.isScript)
       err("Scripts cannot define non-qualified locale literals", loc)
 
     // if we have a def, then add to compiler to merge into locale/en.props
@@ -840,9 +842,7 @@ class ResolveExpr : CompilerStep
     {
       expr.ctype  = ns.strType
       expr.method = ns.strPlus
-      //TODO ConstantFolder
-      //return expr
-//      return ConstantFolder(compiler).fold(expr)
+      return ConstantFolder(compiler).fold(expr)
     }
 
     // if a binary operation
@@ -962,18 +962,6 @@ class ResolveExpr : CompilerStep
     // return the new IndexedAssignExpr
     return expr
   }
-  
-  private Void resoveBlock(Block block) {
-    this.enterBlock(block)
-    
-    block.stmts.each |s|{
-      this.enterStmt(s)
-      this.visitStmt(s)
-      this.exitStmt(s)
-    }
-    
-    this.exitBlock(block)
-  }
 
   **
   ** ClosureExpr will just output its substitute expression.  But we take
@@ -982,6 +970,22 @@ class ResolveExpr : CompilerStep
   **
   private Expr resolveClosure(ClosureExpr expr)
   {
+    //delay closure resolve for inferr
+    if (expr.signature.inferredSignature) {
+        pendingClosure = expr
+        return expr
+    }
+    expr.ctype = expr.signature.typeRef
+    ns.resolveTypeRef(expr.ctype, expr.loc)
+    
+    expr.closureCount = closureStack.size
+    closureStack.push(expr)
+    expr.signature.getParamDefs.each |p| { p.closureCount = closureStack.size }
+    expr.code.parentClosure = expr
+    expr.code.walk(this, VisitDepth.expr)
+    closureStack.pop
+    
+    return expr
 //    // save away current locals in scope
 //    expr.enclosingVars = localsInScope
 //
@@ -992,14 +996,25 @@ class ResolveExpr : CompilerStep
 //      if (expr.enclosingVars.containsKey(p.name) && p.name != "it")
 //        err("Closure parameter '$p.name' is already defined in current block", p.loc)
 //    }
+  }
+  
+  private Bool reResolveClosure()
+  {
+    if (pendingClosure == null) return false
+    if (pendingClosure.ctype == null) return false
+    expr := pendingClosure
+    pendingClosure = null
     
+    ns.resolveTypeRef(expr.ctype, expr.loc)
+    
+    expr.closureCount = closureStack.size
     closureStack.push(expr)
-    
-    resoveBlock(expr.code)
+    expr.signature.getParamDefs.each |p| { p.closureCount = closureStack.size }
+    expr.code.parentClosure = expr
+    expr.code.walk(this, VisitDepth.expr)
     closureStack.pop
     
-    expr.ctype = expr.signature.typeRef
-    return expr
+    return true
   }
 
   **
@@ -1071,6 +1086,8 @@ class ResolveExpr : CompilerStep
     if (def.var_v.ctype != null) {
       ResolveType.doResolveType(this, def.var_v.ctype)
     }
+    
+    def.var_v.closureCount = closureStack.size
   }
 
   **
@@ -1089,62 +1106,66 @@ class ResolveExpr : CompilerStep
       binding = block.vars.find |MethodVar var_v->Bool| {
         return var_v.name == name
       }
-      if (binding != null) return binding
     }
     
-    for (i:=this.blockStack.size -1; i >=0 ; --i) {
-      b := blockStack[i]
-      binding = b.vars.find |MethodVar var_v->Bool| {
-        return var_v.name == name
-      }
-      if (binding != null) return binding
+    if (binding == null) {
+        for (i:=this.blockStack.size -1; i >=0 ; --i) {
+          b := blockStack[i]
+          binding = b.vars.find |MethodVar var_v->Bool| {
+            return var_v.name == name
+          }
+          if (binding == null && b.parentClosure != null) {
+            params := b.parentClosure.signature.getParamDefs
+            binding = params.find |MethodVar var_v->Bool| {
+                return var_v.name == name
+            }
+          }
+          if (binding != null) break
+        }
     }
     
-    binding = curMethod.paramDefs.find |MethodVar var_v->Bool| {
-        return var_v.name == name
+    if (binding == null) {
+        binding = curMethod.paramDefs.find |MethodVar var_v->Bool| {
+            return var_v.name == name
+        }
     }
     
+    //if a closure, check parent scope
+    if (binding != null && binding.closureCount != closureStack.size)
+    {
+        closure := closureStack.peek
+      
+        // mark the enclosing method and var as being used in a closure
+        binding.method.usesCvars = true
+        binding.usedInClosure = true
+
+        // create new "shadow" local var in closure body which
+        // shadows the enclosed variable from parent scope,
+        // we'll do further processing in ClosureVars
+        shadow := curMethod.addLocalVar(binding.loc, binding.ctype, binding.name, currentBlock)
+        shadow.usedInClosure = true
+        shadow.shadows = binding
+
+        // if there are intervening closure scopes between
+        // the original scope and current scope, then we need to
+        // add a pass-thru variable in each scope
+        last := shadow
+        for (p := closure.enclosingClosure; p != null; p = p.enclosingClosure)
+        {
+          if (binding.method === p.doCall) break
+          passThru := curMethod.addLocalVar(binding.loc, binding.ctype, binding.name, p.code)
+          passThru.usedInClosure = true
+          passThru.shadows = binding
+          passThru.usedInClosure = true
+          last.shadows = passThru
+          last = passThru
+        }
+
+        return shadow
+      
+    }
+
     return binding
-
-    // if a closure, check parent scope
-//    if (inClosure)
-//    {
-//      closure := curType.closure
-//      binding = closure.enclosingVars[name]
-//      if (binding != null)
-//      {
-//        // mark the enclosing method and var as being used in a closure
-//        binding.method.usesCvars = true
-//        binding.usedInClosure = true
-//
-//        // create new "shadow" local var in closure body which
-//        // shadows the enclosed variable from parent scope,
-//        // we'll do further processing in ClosureVars
-//        shadow := curMethod.addLocalVar(binding.ctype, binding.name, currentBlock)
-//        shadow.usedInClosure = true
-//        shadow.shadows = binding
-//
-//        // if there are intervening closure scopes between
-//        // the original scope and current scope, then we need to
-//        // add a pass-thru variable in each scope
-//        last := shadow
-//        for (p := closure.enclosingClosure; p != null; p = p.enclosingClosure)
-//        {
-//          if (binding.method === p.doCall) break
-//          passThru := p.doCall.addLocalVar(binding.ctype, binding.name, p.doCall.code)
-//          passThru.usedInClosure = true
-//          passThru.shadows = binding
-//          passThru.usedInClosure = true
-//          last.shadows = passThru
-//          last = passThru
-//        }
-//
-//        return shadow
-//      }
-//    }
-
-    // not found
-    return null
   }
 
 //  **
@@ -1158,11 +1179,24 @@ class ResolveExpr : CompilerStep
 //      Str:MethodVar[:]
 //
 //    if (curMethod == null) return acc
-//
-//    curMethod.vars.each |MethodVar var_v|
-//    {
-//      if (isBlockInScope(var_v.scope))
-//        acc[var_v.name] = var_v
+//    
+//    
+//    if (stmtStack.peek is ForStmt) {
+//      block := ((ForStmt)stmtStack.peek).block
+//      block.vars.each |MethodVar var_v| {
+//        acc[var_v.name] = name
+//      }
+//    }
+//    
+//    for (i:=this.blockStack.size -1; i >=0 ; --i) {
+//      b := blockStack[i]
+//      b.vars.each |MethodVar var_v| {
+//        acc[var_v.name] = name
+//      }
+//    }
+//    
+//    curMethod.paramDefs.each |MethodVar var_v| {
+//        acc[var_v.name] = name
 //    }
 //
 //    return acc
@@ -1229,4 +1263,5 @@ class ResolveExpr : CompilerStep
   Stmt[] stmtStack  := Stmt[,]    // statement stack
   Block[] blockStack := Block[,]  // block stack used for scoping
   ClosureExpr[] closureStack := ClosureExpr[,]  // are we inside a closure's block
+  ClosureExpr? pendingClosure     // delay closure resolve
 }

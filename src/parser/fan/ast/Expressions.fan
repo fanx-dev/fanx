@@ -96,13 +96,13 @@ class BinaryExpr : Expr
     list.add(rhs)
   }
 
-//  override Str serialize()
-//  {
-//    if (id === ExprId.assign)
-//      return "${lhs.serialize}=${rhs.serialize}"
-//    else
-//      return super.serialize
-//  }
+  override Str serialize()
+  {
+    if (id === ExprId.assign)
+      return "${lhs.serialize}=${rhs.serialize}"
+    else
+      return super.serialize
+  }
 
   override Str toStr()
   {
@@ -240,7 +240,7 @@ class CallExpr : NameExpr
     : this.make(loc, target, method.name, ExprId.call)
   {
     this.method = method
-    this.ctype = method.isCtor ? method.parent : method.returnType
+    this.ctype = method.isCtor ? method.parent.asRef : method.returnType
     if (args != null) this.args = args
   }
 
@@ -285,15 +285,15 @@ class CallExpr : NameExpr
     }
   }
 
-//  override Str serialize()
-//  {
-//    // only serialize a true Type("xx") expr which maps to Type.fromStr
-//    if (id != ExprId.construction || method.name != "fromStr")
-//      return super.serialize
-//
-//    argSer := args.join(",") |Expr e->Str| { e.serialize }
-//    return "$method.parent($argSer)"
-//  }
+  override Str serialize()
+  {
+    // only serialize a true Type("xx") expr which maps to Type.fromStr
+    if (id != ExprId.construction || method.name != "fromStr")
+      return super.serialize
+
+    argSer := args.join(",") |Expr e->Str| { e.serialize }
+    return "$method.parent($argSer)"
+  }
 
   override Void print(AstWriter out)
   {
@@ -481,6 +481,16 @@ class FieldExpr : NameExpr
     this.isSafe = false
     this.name = name
   }
+  
+  new makeField(Loc loc, Expr? target, CField field, Bool useAccessor := true)
+    : super.make(loc, ExprId.field, target, null)
+  {
+    this.useAccessor = useAccessor
+    this.isSafe = false
+    this.name = field.name
+    this.field = field
+    this.ctype = field.fieldType
+  }
 
   override Bool isAssignable() { true }
 
@@ -507,27 +517,27 @@ class FieldExpr : NameExpr
     }
     return null
   }
-//
-//  override Str serialize()
-//  {
-//    if (field.isStatic)
-//    {
-//      if (field.parent.isFloat)
-//      {
-//        switch (name)
-//        {
-//          case "nan":    return "sys::Float(\"NaN\")"
-//          case "posInf": return "sys::Float(\"INF\")"
-//          case "negInf": return "sys::Float(\"-INF\")"
-//        }
-//      }
-//
-//      if (field.isEnum)
-//        return "${field.parent.qname}(\"$name\")"
-//    }
-//
-//    return super.serialize
-//  }
+
+  override Str serialize()
+  {
+    if (field.isStatic)
+    {
+      if (field.parent.isFloat)
+      {
+        switch (name)
+        {
+          case "nan":    return "sys::Float(\"NaN\")"
+          case "posInf": return "sys::Float(\"INF\")"
+          case "negInf": return "sys::Float(\"-INF\")"
+        }
+      }
+
+      if (field.isEnum)
+        return "${field.parent.qname}(\"$name\")"
+    }
+
+    return super.serialize
+  }
 
   override Str toStr()
   {
@@ -609,6 +619,12 @@ class ThisExpr : LocalVarExpr
     : super(loc, null, ExprId.thisExpr)
   {
 //    this.ctype = ctype
+  }
+  
+  new makeType(Loc loc, CType ctype)
+    : super.make(loc, null, ExprId.thisExpr)
+  {
+    this.ctype = ctype
   }
 
   override Bool isAssignable() { false }
@@ -757,13 +773,13 @@ class TypeCheckExpr : Expr
 
   override Bool isDefiniteAssign(|Expr lhs->Bool| f) { target.isDefiniteAssign(f) }
 
-//  override Str serialize()
-//  {
-//    if (id == ExprId.coerce)
-//      return target.serialize
-//    else
-//      return super.serialize
-//  }
+  override Str serialize()
+  {
+    if (id == ExprId.coerce)
+      return target.serialize
+    else
+      return super.serialize
+  }
 
   Str opStr()
   {
@@ -869,7 +885,7 @@ class ComplexLiteral : Expr
 
   override Str toStr() { doToStr |expr| { expr.toStr } }
 
-//  override Str serialize() { doToStr |expr| { expr.serialize } }
+  override Str serialize() { doToStr |expr| { expr.serialize } }
 
   Str doToStr(|Expr->Str| f)
   {

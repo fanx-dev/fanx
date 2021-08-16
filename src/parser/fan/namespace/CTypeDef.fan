@@ -94,7 +94,7 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   ** is NOT a generic type (all of its generic parameters have been filled in).
   ** User defined generic types are not supported in Fan.
   **
-  virtual Bool isGeneric() { genericParameters != null && genericParameters.size > 0 }
+  virtual Bool isGeneric() { genericParameters.size > 0 }
   
   **
   ** find GenericParameter by name
@@ -104,7 +104,7 @@ abstract class CTypeDef : CDefNode, TypeMixin {
     return ps.find { it.paramName == name }
   }
   
-  protected virtual GenericParamDef[]? genericParameters() { null }
+  protected virtual GenericParamDef[] genericParameters() { List.defVal }
   
   internal once Str:CTypeDef parameterizedTypeCache() { [Str:CTypeDef][:] }
   
@@ -135,6 +135,25 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   }
   
   override abstract CFacet[]? facets()
+  
+  
+  **
+  ** Get the facet keyed by given type, or null if not defined.
+  **
+  CFacet? facetAnno(Str qname) {
+    if (facets == null) return null
+    return facets.find { it.qname == qname }
+  }
+
+  **
+  ** Return if the given facet is defined.
+  **
+  Bool hasFacet(Str qname) { facetAnno(qname) != null }
+
+  **
+  ** Return if type has NoDoc facet
+  **
+  Bool isNoDoc() { hasFacet("sys::NoDoc") }
   
   **
   ** Get operators lookup structure

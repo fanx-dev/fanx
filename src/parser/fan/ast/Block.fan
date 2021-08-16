@@ -133,4 +133,6 @@ class Block : Node
   Stmt[] stmts
   
   MethodVar[] vars
+  
+  ClosureExpr? parentClosure
 }

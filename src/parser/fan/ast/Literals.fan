@@ -16,6 +16,15 @@ class LiteralExpr : Expr
 //    if (val == null && !ctype.isNullable)
 //      throw Err("null literal must typed as nullable!")
   }
+  
+  new makeType(Loc loc, ExprId id, CType ctype, Obj? val)
+    : super.make(loc, id)
+  {
+    this.ctype = ctype
+    this.val   = val
+    if (val == null && !ctype.isNullable)
+      throw Err("null literal must typed as nullable!")
+  }
 
   new makeNull(Loc loc)
     : this.make(loc, ExprId.nullLiteral, null) {}
@@ -55,23 +64,23 @@ class LiteralExpr : Expr
     return val as Int
   }
 
-//  override Str serialize()
-//  {
-//    switch (id)
-//    {
-//      case ExprId.nullLiteral:     return "null"
-//      case ExprId.falseLiteral:    return "false"
-//      case ExprId.trueLiteral:     return "true"
-//      case ExprId.intLiteral:      return val.toStr
-//      case ExprId.floatLiteral:    return val.toStr + "f"
-//      case ExprId.decimalLiteral:  return val.toStr + "d"
-//      case ExprId.strLiteral:      return val.toStr.toCode
-//      case ExprId.uriLiteral:      return val.toStr.toCode('`')
-//      case ExprId.typeLiteral:     return "${val->signature}#"
-//      case ExprId.durationLiteral: return val.toStr
-//      default:                     return super.serialize
-//    }
-//  }
+  override Str serialize()
+  {
+    switch (id)
+    {
+      case ExprId.nullLiteral:     return "null"
+      case ExprId.falseLiteral:    return "false"
+      case ExprId.trueLiteral:     return "true"
+      case ExprId.intLiteral:      return val.toStr
+      case ExprId.floatLiteral:    return val.toStr + "f"
+      case ExprId.decimalLiteral:  return val.toStr + "d"
+      case ExprId.strLiteral:      return val.toStr.toCode
+      case ExprId.uriLiteral:      return val.toStr.toCode('`')
+      case ExprId.typeLiteral:     return "${val->signature}#"
+      case ExprId.durationLiteral: return val.toStr
+      default:                     return super.serialize
+    }
+  }
 
   override Str toStr()
   {
@@ -141,7 +150,7 @@ class SlotLiteralExpr : Expr
     this.name = name
   }
 
-//  override Str serialize() { "$parent.signature#${name}" }
+  override Str serialize() { "$parent.signature#${name}" }
 
   override Str toStr() { "$parent#${name}" }
 
@@ -214,10 +223,10 @@ class ListLiteralExpr : Expr
     vals = walkExprs(v, vals)
   }
 
-//  override Str serialize()
-//  {
-//    return format |Expr e->Str| { e.serialize }
-//  }
+  override Str serialize()
+  {
+    return format |Expr e->Str| { e.serialize }
+  }
 
   override Str toStr()
   {
@@ -264,10 +273,10 @@ class MapLiteralExpr : Expr
     vals = walkExprs(v, vals)
   }
 
-//  override Str serialize()
-//  {
-//    return format |Expr e->Str| { e.serialize }
-//  }
+  override Str serialize()
+  {
+    return format |Expr e->Str| { e.serialize }
+  }
 
   override Str toStr()
   {

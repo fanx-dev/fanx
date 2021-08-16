@@ -11,7 +11,7 @@ class PodTest : Test {
   
   private Void parserPod(Str name) {
     file := `../${name}/pod.props`
-    compiler := IncCompiler.fromProps(file.toFile)
+    compiler := IncCompiler.fromProps(file.toFile).parseAll
     
     echo("podName: ${compiler.compiler.pod.name}")
     compiler.resolveAll

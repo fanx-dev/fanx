@@ -81,8 +81,9 @@ class MethodDef : SlotDef, CMethod
     if (!isCtor || params.isEmpty) return false
     if (!params.last.paramType.isFunc) return false
     lastArg := params.last.paramType
-    if (lastArg.genericArgs.size <= 2) return false
-    return true
+    if (lastArg.genericArgs.size != 2) return false
+    if (lastArg.genericArgs[1].isThis) return true
+    return false
   }
 
   **
@@ -94,6 +95,7 @@ class MethodDef : SlotDef, CMethod
 //    var_v.isCatchVar = def.isCatchVar
     if (scope == null) scope = code
     scope.vars.add(var_v)
+    var_v.method = this
     return var_v
   }
 
@@ -115,27 +117,31 @@ class MethodDef : SlotDef, CMethod
     var_v := MethodVar(loc, ctype, name)
     var_v.scope = scope
     var_v.method = this;
-    code.vars.add(var_v)
+    scope.vars.add(var_v)
     return var_v
   }
 
-//  **
-//  ** Add a parameter to the end of the method signature and
-//  ** initialize the param MethodVar.
-//  ** Note: currently this only works if no locals are defined.
-//  **
-//  MethodVar addParamVar(TypeRef ctype, Str name)
-//  {
-//    if (vars.size > 0 && !vars[vars.size-1].isParam) throw Err("Add param with locals $qname")
-//    param := ParamDef(loc, ctype, name)
-//    params.add(param)
-//
+  **
+  ** Add a parameter to the end of the method signature and
+  ** initialize the param MethodVar.
+  ** Note: currently this only works if no locals are defined.
+  **
+  MethodVar addParamVar(CType ctype, Str name)
+  {
+    //if (code.vars.size > 0 && !code.vars[code.vars.size-1].isParam) throw Err("Add param with locals $qname")
+    param := ParamDef(loc, ctype, name)
+    params.add(param)
+
 //    reg := params.size-1
 //    if (!isStatic) reg++
 //    var_v := MethodVar.makeForParam(this, reg, param, ctype)
-//    vars.add(var_v)
+//    code.vars.add(var_v)
 //    return var_v
-//  }
+    param.method = this
+    return param
+  }
+  
+//  MethodVar[] vars() { code.vars }
 
   **
   ** Why maintain register

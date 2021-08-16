@@ -1,13 +1,18 @@
 
+** Compiler manages the top level process of the compiler pipeline.
 class IncCompiler {
   
+  ** compiler context
   CompilerContext compiler
-  CompilerStep[] pipelines := [,]
-  Uri[]? srcDirs
   
-  new make(PodDef pod) {
-    compiler = CompilerContext(pod)
-    compiler.ns = FPodNamespace(null)
+  ** compiler pipeline
+  CompilerStep[] pipelines := [,]
+  
+  ** make from empty pod obj
+  new make(PodDef pod, CompilerInput? input = null, CNamespace? ns := null) {
+    if (input == null) input = CompilerInput()
+    if (ns == null) ns = FPodNamespace(null)
+    compiler = CompilerContext(pod, input, ns)
     
     pipelines = [
       BasicInit(compiler),
@@ -27,65 +32,36 @@ class IncCompiler {
       
       ResolveExpr(compiler),
       CheckErrors(compiler),
+      CheckParamDefs(compiler),
     ]
   }
   
-  static IncCompiler fromProps(File file, CNamespace? ns := null) {
-    props := file.in.readProps
-    podName := props["podName"]
-    srcDirs := props["srcDirs"]
-    
-    loc := Loc.makeFile(file)
-    pod := PodDef(loc, podName)
-    
-    icom := IncCompiler(pod)
-    if (ns != null) icom.compiler.ns = ns
-    baseDir := file.uri.parent
-    
-    dirs := parseDirs(baseDir, srcDirs)
-    icom.srcDirs = dirs
-    dirs?.each |dir| {
-      fdir := (baseDir + dir).toFile
-      fdir.listFiles.each |f|{
-        if (f.ext == "fan") {
-          icom.updateSourceFile(f)
-        }
-      }
-    }
+////////////////////////////////////////////////////////////////////////////////
+// init from .props file
+////////////////////////////////////////////////////////////////////////////////
+
+  ** make from pod build file, and parse all srouce code
+  static IncCompiler fromProps(File file) {
+    input := PodProps.parseProps(file)
+    icom := IncCompiler(input.podDef, input, input.ns)
     return icom
   }
   
-  static Uri[] allDir(Uri base, Uri dir)
-  {
-    Uri[] subs := [,]
-    (base + dir).toFile.walk |File f|
-    {
-      if(f.isDir)
-      {
-        rel := f.uri.relTo(base)
-        subs.add(rel)
-      }
+////////////////////////////////////////////////////////////////////////////////
+// parse
+////////////////////////////////////////////////////////////////////////////////
+
+  ** do parse code
+  This parseAll() {
+    files := compiler.input.srcFiles
+    files.each |f| {
+       this.updateSourceFile(f)
     }
-    return subs
+    return this
   }
   
-  static private Uri[]? parseDirs(Uri baseDir, Str? str) {
-    if (str == null) return null
-    srcDirs := Uri[,]
-    str.split(',').each |d| {
-      if (d.endsWith("*")) {
-        srcUri := d[0..<-1].toUri
-        dirs := allDir(baseDir, srcUri)
-        srcDirs.addAll(dirs)
-      }
-      else {
-        srcDirs.add(d.toUri)
-      }
-    }
-    return srcDirs
-  }
-  
-  private CompilationUnit parse(Str file, Str code) {
+  ** parse souce code
+  private CompilationUnit parseCode(Str file, Str code) {
     unit := CompilationUnit(Loc.make(file), compiler.pod, file.toStr)
     parser := DeepParser(compiler.log, code, unit)
     //echo(parser.tokens.join("\n")|t|{ t.loc.toStr + "\t\t" + t.kind + "\t\t" + t.val })
@@ -93,36 +69,46 @@ class IncCompiler {
     return unit
   }
   
+  ** update compiler result by source file
   CompilationUnit? updateSourceFile(File file, Bool isDelete := false) {
     updateSource(file.osPath, file.readAllStr)
   }
   
+  ** update compiler result by source str
   CompilationUnit? updateSource(Str file, Str code, Bool isDelete := false) {
-    old := compiler.pod.units[file]
+    old := compiler.cunitsMap[file]
     if (old != null) {
-      old.types.each |t| {
-        compiler.pod.typeDefs.remove(t.name)
-      }
-      compiler.pod.units.remove(file)
+      compiler.cunitsMap.remove(file)
+      compiler.cunits.removeSame(old)
       compiler.log.clearByFile(file)
     }
     
     if (isDelete) {
+      compiler.pod.updateCompilationUnit(null, old)
       return old
     }
     
-    unit := parse(file, code)
-    compiler.pod.units[file] = unit
-    unit.types.each |t| {
-      compiler.pod.typeDefs[t.name] = t
-    }
+    unit := parseCode(file, code)
+    compiler.pod.updateCompilationUnit(unit, old)
+    
+    compiler.cunitsMap[file] = unit
     compiler.cunits.add(unit)
     return unit
   }
   
-  Void resolveAll() {
+////////////////////////////////////////////////////////////////////////////////
+// resolve
+////////////////////////////////////////////////////////////////////////////////
+
+  ** run pipelines, do expression resolve and type check
+  This resolveAll() {
     pipelines.each |pass| { pass.run }
-    compiler.cunits.clear
+    return this
+  }
+  
+  Void run() {
+    parseAll
+    pipelines.each |pass| { pass.run }
   }
 
   static Void main() {

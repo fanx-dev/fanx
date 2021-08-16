@@ -73,7 +73,7 @@ class InitDataClass : CompilerStep
     pvar := UnknownVarExpr(loc, null, "func\$")
 
     m.code = Block(curType.loc)
-
+    
     //func.call(this)
     callExpr := CallExpr(loc, pvar, "call")
     callExpr.args = [ThisExpr(loc)]
@@ -110,7 +110,7 @@ class InitDataClass : CompilerStep
 
       s := ExprStmt(
          BinaryExpr.makeAssign(
-           FieldExpr(loc, ThisExpr(loc), "name"),
+           FieldExpr(loc, ThisExpr(loc), field.name),
            pvar
          )
       )

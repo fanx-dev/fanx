@@ -151,7 +151,7 @@ class FType : CTypeDef
   
   private Int[] genericParamNames := [,]
   private Int[] genericParamBounds := [,]
-  override once GenericParamDef[]? genericParameters() {
+  override once GenericParamDef[] genericParameters() {
     res := GenericParamDef[,]
     genericParamNames.size.times |i| {
       n := fpod.n(genericParamNames[i])

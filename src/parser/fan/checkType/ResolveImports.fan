@@ -61,7 +61,7 @@ class ResolveImports : CompilerStep
     }
 
     // if this is a script, make our using imports the depends
-    if (compiler.isScript)
+    if (compiler.input.isScript)
     {
       resolved.each |pod|
       {
@@ -155,7 +155,7 @@ class ResolveImports : CompilerStep
     if (podName != "sys") {
       //std and reflect is imported implicitly
       if (podName != "std") {
-        if (!compiler.pod.resolvedDepends.containsKey("std")) {
+        if (compiler.pod.resolvedDepends.containsKey("std")) {
           pod := ns.resolvePod("std", compiler.pod.loc)
           res.addAll(pod.types)
         }
@@ -331,7 +331,7 @@ class ResolveImports : CompilerStep
   private static Void checkUsingPod(CompilerContext cs, Str podName, Loc loc)
   {
     // scripts don't need dependencies
-    if (cs.isScript) return
+    if (cs.input.isScript) return
 
     // if we have a declared dependency that is ok
     if (cs.pod.resolvedDepends.containsKey(podName)) return

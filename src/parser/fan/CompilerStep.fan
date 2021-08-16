@@ -50,6 +50,11 @@ abstract class CompilerStep : Visitor
 //////////////////////////////////////////////////////////////////////////
 
   **
+  ** Convenience for compiler.log
+  **
+  CompilerLog log() { compiler.log }
+  
+  **
   ** Create, log, and return a CompilerErr.
   **
   CompilerErr err(Str msg, Loc? loc := null)
@@ -74,8 +79,14 @@ abstract class CompilerStep : Visitor
     compiler.log.debug(msg, loc)
   }
   
-  CNamespace ns() { compiler.ns }
+  Void bombIfErr()
+  {
+    if (!compiler.log.errs.isEmpty)
+      throw compiler.log.errs.first
+  }
   
+  CNamespace ns() { compiler.ns }
+
 
 //////////////////////////////////////////////////////////////////////////
 // Visitor

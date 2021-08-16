@@ -188,7 +188,7 @@ enum class VisitDepth { typeDef, slotDef, block, stmt, expr }
 ** ExprVisitor implements a Visitor which visits
 ** each expr using a closure.
 **
-internal class ExprVisitor : Visitor
+class ExprVisitor : Visitor
 {
   new make(|Expr expr->Expr| func)
   {

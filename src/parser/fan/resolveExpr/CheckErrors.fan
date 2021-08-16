@@ -1158,12 +1158,12 @@ class CheckErrors : CompilerStep, Coerce
     // inside a constructor or static initializer to be ok
     inType := curType
     inMethod := curMethod
-//    if (inType.isClosure)
-//    {
-//      //curType.closure.setsConst = true
-//      inType = inType.closure.enclosingType
-//      inMethod = (curType.closure.enclosingSlot as MethodDef) ?: curMethod
-//    }
+    if (inType.isClosure)
+    {
+      //curType.closure.setsConst = true
+      inType = inType.closure.enclosingType
+      inMethod = (curType.closure.enclosingSlot as MethodDef) ?: curMethod
+    }
 
     // check attempt to set static field outside of static initializer
     if (field.isStatic && !inMethod.isStaticInit)
@@ -1811,7 +1811,7 @@ class CheckErrors : CompilerStep, Coerce
       f = slot.facetAnno("sys::Deprecated")
       if (f == null) target = slot.parent.asRef
     }
-    if (f == null) f = ((CType)target).facetAnno("sys::Deprecated")
+    if (f == null) f = ((CType)target).typeDef.facetAnno("sys::Deprecated")
     if (f == null) return
 
     // we got a deprecration warning - log it
