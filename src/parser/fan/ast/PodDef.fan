@@ -46,12 +46,6 @@ class PodDef : Node, CPod
     return null
   }
 
-  override CTypeDef[] types()
-  {
-    if (typesCache != null) return typesCache
-    typesCache = typeDefs.vals
-    return typesCache
-  }
   
   **
   ** Add a synthetic type
@@ -60,23 +54,25 @@ class PodDef : Node, CPod
   {
     t.unit.addTypeDef(t)
     this.typeDefs.add(t.name, t)
-    typesCache = null
+    this.types.add(t)
   }
   
   Void updateCompilationUnit(CompilationUnit? unit, CompilationUnit? old, CompilerLog log) {
     if (old != null) {
       old.types.each |t| {
         this.typeDefs.remove(t.name)
+        this.types.remove(t)
         this.closures.removeAll(t.closures)
       }
     }
-    typesCache = null
+    
     if (unit == null) return
     unit.types.each |t| {
       if (this.typeDefs.containsKey(t.name)) {
         log.err("Duplicate type name '$t.name'", unit.loc)
       }
       this.typeDefs[t.name] = t
+      this.types.add(t)
       this.closures.addAll(t.closures)
     }
   }
@@ -107,5 +103,5 @@ class PodDef : Node, CPod
   [Str:TypeDef] typeDefs           // ScanForUsingsAndTypes
   ClosureExpr[]? closures := [,]           // Parse
 //  TypeDef[]? orderedTypeDefs
-  private TypeDef[]? typesCache
+  override CTypeDef[] types := [,] { private set }
 }

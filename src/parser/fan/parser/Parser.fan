@@ -858,7 +858,7 @@ public class Parser
     return field
   }
 
-  static Void defGet(FieldDef f)
+  static MethodDef defGet(FieldDef f)
   {
     // getter MethodDef
     loc := f.loc
@@ -868,9 +868,10 @@ public class Parser
     get.name  = f.name
     get.ret   = f.fieldType
     f.get = get
+    return get
   }
 
-  static Void defSet(FieldDef f)
+  static MethodDef defSet(FieldDef f)
   {
     // setter MethodDef
     loc := f.loc
@@ -881,6 +882,7 @@ public class Parser
     set.ret   = CType.voidType(loc)
     set.params.add(ParamDef(loc, f.fieldType, "it"))
     f.set = set
+    return set
   }
 
   private Void getOrSet(FieldDef f)

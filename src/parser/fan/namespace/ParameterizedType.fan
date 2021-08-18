@@ -97,14 +97,14 @@ class ParameterizedType : CTypeDef {
     if (slot is CMethod)
     {
       CMethod m := slot
-      if (!m.isGeneric) return slot
+      if (!m.isGeneric && isTypeErasure) return slot
       p := ParameterizedMethod(this, m)
       return p
     }
     else
     {
       f := (CField)slot
-      if (!f.isGeneric) return slot
+      if (!f.isGeneric && isTypeErasure) return slot
       p := ParameterizedField(this, f)
       return p
     }
@@ -120,7 +120,9 @@ class ParameterizedType : CTypeDef {
       real := doParameterize(gp.paramName)
       //clone a new CType
       nt := CType.makeResolvedType(real.typeDef)
-      nt.attachedGenericParam = gp
+      if (this.isTypeErasure) {
+        nt.attachedGenericParam = gp
+      }
       //generic param's nullable is very special
       nt._isNullable = real.isNullable || t._isNullable
       t = nt

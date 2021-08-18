@@ -134,7 +134,7 @@ final class FPod : CPod, FConst
 
   Int addFieldRef(CField field)
   {
-    if (field.genericTypeErasure) field = field.generic
+    //if (field.genericTypeErasure) field = field.generic
 
     p := addTypeRef(field.parent.asRef)
     n := addName(field.name)
@@ -148,7 +148,7 @@ final class FPod : CPod, FConst
     // against the original generic method using it's raw
     // types, since that is how the system library will
     // implement the type
-    if (method.genericTypeErasure) method = method.generic
+    //if (method.genericTypeErasure) method = method.generic
 
     p := addTypeRef(method.parent.asRef)
     n := addName(method.name)

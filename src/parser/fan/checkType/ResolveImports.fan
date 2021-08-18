@@ -245,7 +245,9 @@ class ResolveImports : CompilerStep
         list = CType[,]
         types.set(t.name, list)
       }
-      list.add(t.asRef)
+      tr := CType.makeRef(t.loc, t.pod.name, t.name)
+      tr.resolveTo(t)
+      list.add(tr)
     }
   }
 

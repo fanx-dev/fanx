@@ -51,7 +51,10 @@ abstract class CTypeDef : CDefNode, TypeMixin {
 //        }
 //      }
 //    }
-    tr.resolveTo(this)
+    if (this is ParameterizedType) {
+        tr.genericArgs = ((ParameterizedType)this).genericArgs.dup
+    }
+    tr.resolveTo(this, false)
     return tr
   }
   

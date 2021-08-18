@@ -729,8 +729,8 @@ class CodeAsm
       }
 
       // if parameterized or covariant, then coerce
-      if (field.genericTypeErasure)
-        coerceOp(ns.objType.toNullable, field.fieldType)
+      if (field.isTypeErasure)
+        coerceOp(field.fieldType.physicalType, field.fieldType)
       else if (field.isCovariant)
         coerceOp(field.inheritedReturnType, field.fieldType)
     }
@@ -753,8 +753,8 @@ class CodeAsm
           op(FOp.LoadInstance, index)
       }
 
-      if (field.genericTypeErasure)
-        coerceOp(ns.objType.toNullable, field.fieldType)
+      if (field.isTypeErasure)
+        coerceOp(field.fieldType.physicalType, field.fieldType)
     }
 
     // if safe, handle null case
@@ -793,8 +793,8 @@ class CodeAsm
   {
     field := fexpr.field
 
-    if (field.genericTypeErasure)
-        coerceOp(field.fieldType, ns.objType.toNullable)
+    if (field.isTypeErasure)
+        coerceOp(field.fieldType, field.fieldType.physicalType)
 
     if (fexpr.useAccessor)
     {
@@ -851,7 +851,7 @@ class CodeAsm
     method := call.method
 
     isFuncCall := false
-    if (method.name == "call" && method.parent.asRef.isParameterized && !method.genericTypeErasure && method.parent.qname == "sys::Func") {
+    if (method.name == "call" && method.parent.asRef.isParameterized && !method.parent.isTypeErasure && method.parent.qname == "sys::Func") {
       isFuncCall = true
     }
 
@@ -953,7 +953,7 @@ class CodeAsm
     // note that if a constructor call has a target (this or super), then it
     // is a CallCtor instance call because we don't want to allocate
     // a new instance
-    if (m.name == "call" && m.parent.asRef.isParameterized && !m.genericTypeErasure && m.parent.qname == "sys::Func") {
+    if (m.name == "call" && m.parent.asRef.isParameterized && !m.parent.isTypeErasure && m.parent.qname == "sys::Func") {
       op(FOp.CallFunc, index)
     }
     else if (m.parent.isMixin)
@@ -1011,16 +1011,15 @@ class CodeAsm
     //   covariant    => actual call is against inheritedReturnType
     if (leave)
     {
-      if (m.genericTypeErasure)
+      if (m.isTypeErasure)
       {
-        ret := m.generic.returnType
-        if (ret.hasGenericParameter)
-          coerceOp(ret.physicalType, m.returnType)
+        ret := m.returnType
+        coerceOp(ret.physicalType, m.returnType)
       }
       else if (m.isCovariant)
       {
         //Fix: sys::List^V => sys::ArrayList^V
-        coerceOp(m.inheritedReturnType.physicalType, m.returnType.physicalType)
+        coerceOp(m.inheritedReturnType.physicalType, m.returnType)
       }
     }
 
@@ -1029,8 +1028,8 @@ class CodeAsm
     if (!leave)
     {
       // note we need to use the actual method signature (not parameterized)
-      x := m.genericTypeErasure ? m.generic : m
-      if (!x.returnType.isVoid || x.isInstanceCtor)
+      x := m;//.parent.isTypeErasure ? m.generic : m
+      if (!x.returnType.physicalType.isVoid || x.isInstanceCtor)
         opType(FOp.Pop, x.returnType.physicalType)
     }
   }
@@ -1181,7 +1180,7 @@ class CodeAsm
         storeField((FieldExpr)var_v)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
-        setParam := (set.genericTypeErasure ? set.generic : set).params[1].paramType.physicalType
+        setParam := set.params[1].paramType.physicalType
         //setParam := (set).params[1].paramType
         // if calling setter check if we need to boxed
         if (c.ctype.isVal && !setParam.isVal && coerce == null) coerceOp(c.ctype, setParam)

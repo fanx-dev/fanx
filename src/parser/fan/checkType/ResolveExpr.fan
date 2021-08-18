@@ -131,8 +131,8 @@ class ResolveExpr : CompilerStep
 
     // if we resolved to a generic parameter like V or K,
     // then use its real underlying type
-    if (expr.ctype.hasGenericParameter)
-      expr.ctype = expr.ctype.physicalType
+    //if (expr.ctype.typeDef is GenericParamDef)
+    //  expr.ctype = expr.ctype.physicalType
 
     // if this expression performs assignment against a local
     // variable, then note the reassignment so that we know it

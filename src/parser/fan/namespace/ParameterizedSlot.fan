@@ -37,7 +37,12 @@ class ParameterizedField : CField
   override Bool isParameterized() { true }
 
   override CTypeDef parent { private set }
-  override CField? generic { private set }
+  private CField? generic { private set }
+  
+  override Bool isTypeErasure() {
+    if (parent.isTypeErasure && fieldType.attachedGenericParam != null && !fieldType.hasGenericParameter) return true
+    return false
+  }
 }
 
 **************************************************************************
@@ -81,9 +86,14 @@ class ParameterizedMethod : CMethod
 
   override CTypeDef parent     { private set }
   override Str signature    { private set }
-  override CMethod? generic { private set }
+  private CMethod? generic { private set }
   override CType returnType { private set }
   override CParam[] params  { private set }
+  
+  override Bool isTypeErasure() {
+    if (parent.isTypeErasure && returnType.attachedGenericParam != null && !returnType.hasGenericParameter) return true
+    return false
+  }
 }
 
 **************************************************************************
@@ -94,6 +104,7 @@ class ParameterizedMethodParam : CParam
 {
   new make(ParameterizedType parent, CParam generic)
   {
+    this.parent = parent
     this.generic = generic
     this.paramType = parent.parameterize(generic.paramType)
   }
@@ -104,4 +115,11 @@ class ParameterizedMethodParam : CParam
 
   override CType paramType { private set }
   private CParam generic { private set }
+  
+  private ParameterizedType parent
+  
+  override Bool isTypeErasure() {
+    if (parent.isTypeErasure && paramType.attachedGenericParam != null && !paramType.hasGenericParameter) return true
+    return false
+  }
 }

@@ -35,20 +35,32 @@ class BasicInit : CompilerStep {
     
     def.flags = normalizeFlags(def.flags, loc)
     initVirtualFlags(def)
+    
+    // walk thru all the slots
+    def.slotDefs.dup.each |SlotDef s|
+    {
+      if (s is FieldDef)
+      {
+        f := (FieldDef)s
+        normalizeFieldDef(f)
+      }
+    }
   }
   
-  override Void visitFieldDef(FieldDef field) {
+  private Void normalizeFieldDef(FieldDef field) {
     field.flags = normalizeFlags(field.flags, field.loc)
     
     if ((field.isConst || field.isReadonly)) {
       if (field.get == null && field.isOverride) {
-        Parser.defGet(field)
+        get := Parser.defGet(field)
+        curType.addSlot(get)
         genSyntheticGet(field)
       }
       return
     }
     if (field.get == null) {
-      Parser.defGet(field)
+      get := Parser.defGet(field)
+      curType.addSlot(get)
       genSyntheticGet(field)
     }
     else if (field.get.code == null) {
@@ -56,7 +68,8 @@ class BasicInit : CompilerStep {
     }
     
     if (field.set == null) {
-      Parser.defSet(field)
+      set := Parser.defSet(field)
+      curType.addSlot(set)
       genSyntheticSet(field)
     }
     else if (field.set.code == null) {

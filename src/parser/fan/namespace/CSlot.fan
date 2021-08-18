@@ -95,10 +95,7 @@ mixin CSlot
   **
   ** generic type erasure
   **
-  Bool genericTypeErasure() {
-    if (isParameterized && parent.qname != "sys::Array" && 
-      //parent.qname != "sys::Func" &&
-      parent.qname != "sys::Ptr") return true
+  virtual Bool isTypeErasure() {
     return false
   }
 
@@ -136,7 +133,7 @@ mixin CField : CSlot
   **
   Bool isGeneric() { fieldType.hasGenericParameter }
 
-  virtual CField? generic() { null }
+  //virtual CField? generic() { null }
 
   **
   ** Is this field the parameterization of a generic field,
@@ -215,7 +212,7 @@ mixin CMethod : CSlot
   ** If isParameterized is true, then return the generic
   ** method which this method parameterizes, otherwise null
   **
-  virtual CMethod? generic() { null }
+  //virtual CMethod? generic() { null }
 
   internal static Bool calcGeneric(CMethod m)
   {
@@ -286,6 +283,13 @@ mixin CParam
   abstract Str name()
   abstract CType paramType()
   abstract Bool hasDefault()
+  
+  **
+  ** generic type erasure
+  **
+  virtual Bool isTypeErasure() {
+    return false
+  }
 }
 
 **************************************************************************

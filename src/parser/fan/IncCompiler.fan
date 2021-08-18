@@ -42,9 +42,9 @@ class IncCompiler {
         ResolveImports(ctx),
         ResolveType(ctx),
 
-        StmtNormalize(ctx),
         CheckInheritance(ctx),
         CheckInheritSlot(ctx),
+        StmtNormalize(ctx),
 
         ResolveExpr(ctx),
         
@@ -68,9 +68,9 @@ class IncCompiler {
         ResolveImports(ctx),
         ResolveType(ctx),
 
-        StmtNormalize(ctx),
         CheckInheritance(ctx),
         CheckInheritSlot(ctx),
+        StmtNormalize(ctx),
 
         ResolveExpr(ctx),
         

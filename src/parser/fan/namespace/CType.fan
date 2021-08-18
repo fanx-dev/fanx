@@ -140,8 +140,12 @@ class CType : CNode, TypeMixin
     return true
   }
   
-  Void resolveTo(CTypeDef typeDef) {
+  Void resolveTo(CTypeDef typeDef, Bool defaultParameterized := true) {
     if (typeDef.isGeneric) {
+      if (genericArgs == null && !defaultParameterized) {
+        resolvedType = typeDef
+        return
+      }
       c := typeDef.parameterizedTypeCache[extName]
       if (c == null) {
         c = ParameterizedType.create(typeDef, genericArgs)
@@ -285,14 +289,13 @@ class CType : CNode, TypeMixin
   
   virtual CType physicalType() {
     CType? t
-    def := typeDef
-    if (!isTypeErasure) {}
-    else if (attachedGenericParam != null) t = attachedGenericParam.bound
-    else if (def is GenericParamDef) t = ((GenericParamDef)def).bound
-    else if (def is ParameterizedType) t = ((ParameterizedType)def).root.asRef
+    if (attachedGenericParam != null)
+        t = attachedGenericParam.bound
+    else if (typeDef is GenericParamDef)
+        t = ((GenericParamDef)typeDef).bound
     
     if (t != null) {
-        if (this.isNullable) t = t.toNullable
+        if (this.isNullable && !t.isNullable) t = t.toNullable
         return t
     }
     return this
@@ -300,10 +303,8 @@ class CType : CNode, TypeMixin
   
   private CType realType() {
     CType t := this
-    def := typeDef
-    
     if (t.isThis || t.podName.isEmpty)
-      t = def.asRef
+      t = typeDef.asRef
     return t
   }
 
