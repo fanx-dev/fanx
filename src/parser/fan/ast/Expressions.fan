@@ -687,7 +687,7 @@ class ItExpr : LocalVarExpr
 
   override Str toStr() { "it" }
   
-  ClosureExpr? enclosingClosure //for check setting an const field in ctor + it-block
+  //ClosureExpr? enclosingClosure //for check setting an const field in ctor + it-block
 }
 
 **************************************************************************

@@ -319,7 +319,7 @@ class ReturnStmt : Stmt
   MethodVar? leaveVar  // to stash result for leave from protected region
   Bool isSynthetic     // was return inserted by compiler
   Bool isLocal := false
-  Bool inClosure := false
+  //Bool inClosure := false
 }
 
 **************************************************************************

@@ -140,7 +140,7 @@ class CallResolver
       // if closure is it-block when we need to keep track of it too
       if (curClosure != null)
       {
-        base = curType.asRef
+        base = curClosure.enclosingType.asRef
         if (curClosure.isItBlock) baseIt = curClosure.itType
       }
       else
@@ -353,7 +353,7 @@ class CallResolver
 
     if (foundOnIt)
     {
-      target = ItExpr(loc) { enclosingClosure = curClosure }
+      target = ItExpr(loc)
       target.ctype = baseIt
     }
     else if (curClosure != null)
@@ -490,10 +490,8 @@ class CallResolver
         else
           paramType = paramType.parameterizeThis(base)
           
-        c.setInferredSignature(paramType)
+        c.setInferredSignature(paramType, support.ns)
         
-        //re resolve after modify
-        support.ns.resolveTypeRef(c.ctype, c.loc)
         if (lastC != null) lastOk = true
       }
     }
@@ -517,10 +515,7 @@ class CallResolver
       // remove the function parameter and turn this into:
       //  call(args).toWith(c)
       call.args.removeAt(-1)
-      expr := lastC.toWith(call, support.ns.objWith)
-      
-      //re resolve after modify
-      //
+      expr := lastC.toWith(call, support.ns.objWith, support.ns)
       
       return expr
     }

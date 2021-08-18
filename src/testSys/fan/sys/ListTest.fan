@@ -120,7 +120,7 @@ class ListTest : Test
     verify([null] is Obj?[])
     verify([2,null] is Obj?[])
     verify([null,"2"] is Obj?[])
-    verifyFalse((Obj)[Type.of(this),8f] is Str)
+    verifyFalse(([Type.of(this),8f] as Obj) is Str)
     //verifyFalse((Obj)["a",this] is Str[])
 
     // Int[]
@@ -130,7 +130,7 @@ class ListTest : Test
     verify([4,3] is Int[])
     verify([4,null] is Int[])  // null doesn't count
     verify([null, null, 9] is Int[])  // null doesn't count
-    verifyFalse((Obj)[-1,9] is Int)
+    verifyFalse(([-1,9] as Obj) is Int)
     //verifyFalse((Obj)[4,6,9] is Str[])
   }
 

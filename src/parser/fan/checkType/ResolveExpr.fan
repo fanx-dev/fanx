@@ -361,12 +361,12 @@ class ResolveExpr : CompilerStep
     inType := this.curType
     if (inType.isClosure) inType = inType.closure.enclosingType
     podTarget := expr.podName != null ?
-      CallExpr.makeWithMethod(loc, null, ns.podFind, [LiteralExpr.makeStr(loc, expr.podName)]) :
-      CallExpr.makeWithMethod(loc, LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, inType), ns.typePod)
+      CallExpr.makeWithMethod(loc, null, ns.podFind, [LiteralExpr.makeType(loc, ExprId.strLiteral, ns.strType, expr.podName)]) :
+      CallExpr.makeWithMethod(loc, LiteralExpr(loc, ExprId.typeLiteral, ns.typeType, inType.asRef), ns.typePod)
 
     // podTarget.locale(key [, def])
-    args := [LiteralExpr.makeStr(loc, expr.key)]
-    if (expr.def != null) args.add(LiteralExpr.makeStr(loc, expr.def))
+    args := [LiteralExpr.makeType(loc, ExprId.strLiteral, ns.strType, expr.key)]
+    if (expr.def != null) args.add(LiteralExpr.makeType(loc, ExprId.strLiteral, ns.strType, expr.def))
     return CallExpr.makeWithMethod(loc, podTarget, ns.podLocale, args)
   }
 
@@ -685,8 +685,8 @@ class ResolveExpr : CompilerStep
     {
       closure:= call.args.last as ClosureExpr
       if (closure != null && closure.isItBlock) {
-        expr := closure.toWith(binding, ns.objWith)
-        ns.resolveTypeRef(closure.ctype, closure.loc)
+        expr := closure.toWith(binding, ns.objWith, ns)
+        //ns.resolveTypeRef(closure.ctype, closure.loc)
         return expr
       }
     }
@@ -967,6 +967,8 @@ class ResolveExpr : CompilerStep
       if (expr.enclosingVars.containsKey(p.name) && p.name != "it")
         err("Closure parameter '$p.name' is already defined in current block", p.loc)
     }
+    
+    expr.signature.params.each |p| { ResolveType.doResolveType(this, p) }
     
     expr.ctype = expr.signature.typeRef
     return expr

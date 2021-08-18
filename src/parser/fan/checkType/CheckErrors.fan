@@ -78,7 +78,7 @@ class CheckErrors : CompilerStep, Coerce
       err("Type name '$t.name' is restricted", t.loc)
 
     // verify type name doesn't conflict with resource name
-    //checkResConflicts(t)
+    checkResConflicts(t)
 
     // if type extends from any FFI types then give bridge a hook
     foreign := foreignInheritance(t)//.foreignInheritance
@@ -118,14 +118,14 @@ class CheckErrors : CompilerStep, Coerce
     return name == "pod" || name == "index"
   }
 
-//  private Void checkResConflicts(TypeDef t)
-//  {
-//    compiler.input.resFiles?.each |uri|
-//    {
-//      if (uri.path.first == t.name)
-//        err("Resource `$uri` conflicts with type name '$t.name'", t.loc)
-//    }
-//  }
+  private Void checkResConflicts(TypeDef t)
+  {
+    compiler.input.resFiles?.each |uri|
+    {
+      if (uri.path.first == t.name)
+        err("Resource `$uri` conflicts with type name '$t.name'", t.loc)
+    }
+  }
 
   private Void checkTypeFlags(TypeDef t)
   {
@@ -173,9 +173,9 @@ class CheckErrors : CompilerStep, Coerce
       }
     }
 
-//    if (compiler.input.isTest)
-//      t.slots.vals.sort.each(closure)
-//    else
+    if (compiler.input.isTest)
+      t.slots.vals.sort.each(closure)
+    else
       t.slots.each(closure)
   }
 
@@ -479,7 +479,7 @@ class CheckErrors : CompilerStep, Coerce
     // check parameter default type
     if (p.def != null)// && !p.paramType.isGenericParameter)
     {
-      p.def = coerce(p.def, p.paramType) |->|
+      p.def = coerce(p.def, p.paramType.physicalType) |->|
       {
         err("'$p.def.toTypeStr' is not assignable to '$p.paramType'", p.def.loc)
       }
@@ -808,7 +808,7 @@ class CheckErrors : CompilerStep, Coerce
     }
 
     // can't use return inside an it-block (might be confusing)
-    if (!stmt.isSynthetic && stmt.inClosure && !stmt.isLocal)
+    if (!stmt.isSynthetic && curType.isClosure && curType.closure.isItBlock && !stmt.isLocal)
       warn("Cannot use return inside it-block", stmt.loc)
 
     // can't leave control of a finally block
@@ -924,7 +924,6 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkSlotLiteral(SlotLiteralExpr expr)
   {
-    if (expr.slot == null) return
     checkSlotProtection(expr.slot, expr.loc)
   }
 
@@ -1085,8 +1084,6 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkShortcut(ShortcutExpr shortcut)
   {
-    if (shortcut.method == null) return
-    
     switch (shortcut.opToken)
     {
       // comparable
@@ -1144,7 +1141,6 @@ class CheckErrors : CompilerStep, Coerce
   private Expr? checkAssignField(FieldExpr lhs, Expr? rhs)
   {
     field := ((FieldExpr)lhs).field
-    if (field == null) return rhs
 
     // check protection scope (which might be more narrow than the scope
     // of the entire field as checked in checkProtection by checkField)
@@ -1174,10 +1170,10 @@ class CheckErrors : CompilerStep, Coerce
 
     // we allow setting an instance ctor field in an
     // it-block, otherwise dive in for further checking
-    itExpr := lhs.target as ItExpr
-    if (itExpr != null && itExpr.enclosingClosure != null && itExpr.enclosingClosure.isItBlock && 
-      itExpr.enclosingClosure.followCtorType == itExpr.enclosingClosure.itType &&
-      itExpr.enclosingClosure.followCtorType.fits(field.parent.asRef)) {
+    if (curType.isClosure && curType.closure.isItBlock && 
+      lhs.target is ItExpr &&
+      curType.closure.followCtorType == curType.closure.itType &&
+      curType.closure.followCtorType.fits(field.parent.asRef)) {
       //pass
     }
     else
@@ -1220,7 +1216,7 @@ class CheckErrors : CompilerStep, Coerce
     if (rhs.id == ExprId.nullLiteral) return rhs
 
     // wrap existing assigned with call toImmutable
-    call := CallExpr(rhs.loc, rhs, "toImmutable") { isSafe = true }
+    call := CallExpr.makeWithMethod(rhs.loc, rhs, ns.objToImmutable) { isSafe = true }
     if (fieldType.toNonNullable.isObj) return call
     return TypeCheckExpr.coerce(call, fieldType)
 
@@ -1228,7 +1224,7 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkConstruction(CallExpr call)
   {
-    if (call.method != null && !call.method.isCtor)
+    if (!call.method.isCtor)
     {
       warn("Using static method '$call.method.qname' as constructor", call.loc)
 
@@ -1376,7 +1372,6 @@ class CheckErrors : CompilerStep, Coerce
   private Void checkField(FieldExpr f)
   {
     field := f.field
-    if (field == null) return
 
     // check protection scope
     checkSlotProtection(field, f.loc)
@@ -1439,8 +1434,7 @@ class CheckErrors : CompilerStep, Coerce
       // check that the current class gets access to direct
       // field storage (only defining class gets it); allow closures
       // same scope priviledges as enclosing class
-//      enclosing := curType.isClosure ? curType.closure.enclosingType : curType
-      enclosing := curType
+      enclosing := curType.isClosure ? curType.closure.enclosingType : curType
       if (!field.isConst && !field.isReadonly && field.parent.qname != curType.qname &&
          field.parent.qname != enclosing.qname)
       {
@@ -1454,7 +1448,6 @@ class CheckErrors : CompilerStep, Coerce
         if (field is FieldDef && ((FieldDef)field).concreteBase != null)
           err("Field storage of inherited field '${field->concreteBase->qname}' not accessible (might try super)", f.loc)
         else {
-          echo(field.qname + "," + field.typeof + ", " + f.loc)
           err("Invalid storage access of field '$field.qname' which doesn't have storage", f.loc)
         }
         return
@@ -1586,8 +1579,8 @@ class CheckErrors : CompilerStep, Coerce
       if (base.genericArgs == null || base.genericArgs.size-1 != args.size)
       {
         //ignore on sig.defaultParameterized
-        if (base.genericArgs == null) {
-          objType := ns.objType
+        if (base.typeDef is ParameterizedType && ((ParameterizedType)base.typeDef).defaultParameterized) {
+          objType := ns.objType.toNullable
           args.size.times |i| {
             newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }
           }
@@ -1648,10 +1641,7 @@ class CheckErrors : CompilerStep, Coerce
     }
 
     msg := "Invalid args "
-    if (base.isFunc && name == "call")
-      msg +=  base.toStr + ".$name"
-    else
-      msg += "$name(" + params.join(", ", |p| { paramTypeStr(base, p) }) + ")"
+    msg += "$name(" + params.join(", ", |p| { paramTypeStr(base, p) }) + ")"
     msg += ", not (" + args.join(", ", |Expr e->Str| { "$e.toTypeStr" }) + ")"
     err(msg, call.loc)
   }
@@ -1659,7 +1649,7 @@ class CheckErrors : CompilerStep, Coerce
   internal static Str paramTypeStr(CType base, CParam param)
   {
     //return param.paramType.parameterizeThis(base).inferredAs.signature
-    return param.paramType.toStr
+    return param.paramType.parameterizeThis(base).toStr
   }
 
   private Void checkNamedParam(CallExpr call)
@@ -1764,7 +1754,7 @@ class CheckErrors : CompilerStep, Coerce
       return null
 
     // allow closures same scope priviledges as enclosing class
-//    if (curType.isClosure) curType = curType.closure.enclosingType
+    if (curType.isClosure) curType = curType.closure.enclosingType
 
     // consider the slot internal if its parent is internal
     isInternal := slot.isInternal || (slot.parent.isInternal && !(slot.parent is ParameterizedType))
@@ -1802,7 +1792,7 @@ class CheckErrors : CompilerStep, Coerce
       if (curMethod.isFieldAccessor) return
       if (slot != null && slot.parent == curType) return
     }
-    if (curType.facets != null && curType.facets.any { it.qname == "sys::Deprecated" }) return
+    if (curType.facetAnno("sys::Deprecated") != null) return
 
     // check both slot and its parent type
     CFacet? f := null
@@ -1830,7 +1820,7 @@ class CheckErrors : CompilerStep, Coerce
   private Expr box(Expr expr)
   {
     if (expr.ctype.isVal)
-      return TypeCheckExpr.coerce(expr, ns.objType)
+      return TypeCheckExpr.coerce(expr, ns.objType.toNullable)
     else
       return expr
   }

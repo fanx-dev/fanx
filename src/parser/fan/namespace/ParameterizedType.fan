@@ -26,7 +26,7 @@ class ParameterizedType : CTypeDef {
   static new create(CTypeDef baseType, CType[]? params) {
     if (!baseType.isGeneric) throw Err("base must generic type")
     
-    defaultParameterized := params == null
+    defaultParameterized := params == null || params.size == 0
     
     if (defaultParameterized) {
       params = CType[,]

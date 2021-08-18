@@ -264,7 +264,7 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   virtual Str:CSlot slots() {
     if (slotsMapCache != null) return slotsMapCache
     
-    slotsMap := [Str:CSlot][:]
+    [Str:CSlot] slotsMap := OrderedMap(64)
     slotsMapCache = slotsMap
     
     slotDefs.each |s| {
@@ -273,7 +273,7 @@ abstract class CTypeDef : CDefNode, TypeMixin {
     }
     
     this.inheritances.each |t| {
-      inherit(slotsMap, t)
+      inherit(slotsMap, this, t)
     }
     
     return slotsMapCache
@@ -284,18 +284,28 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   **
   virtual CSlot? slot(Str name) { slots[name] }
   
-  private static Void inherit([Str:CSlot] slotsCached, CType t)
+  private static Void inherit([Str:CSlot] slotsCached, CTypeDef def, CType inheritance)
   {
-    t.slots.each |CSlot newSlot|
+    closure := |CSlot newSlot|
     {
+      //already inherit by base
+      if (inheritance.isMixin && newSlot.parent.isObj) return
+      
       // we never inherit constructors, private slots,
       // or internal slots outside of the pod
       if (newSlot.isCtor || newSlot.isPrivate || newSlot.isStatic ||
-          (newSlot.isInternal && newSlot.parent.podName != t.typeDef.podName))
+          (newSlot.isInternal && newSlot.parent.podName != inheritance.typeDef.podName))
         return
       
       oldSlot := slotsCached[newSlot.name]
       if (oldSlot != null) {
+        // if we've inherited the exact same slot from two different
+        // class hiearchies, then no need to continue
+        if (newSlot === oldSlot) return
+        
+        // if this is one of the type's slot definitions
+        if (oldSlot.parent === def) return
+        
         kp := keep(oldSlot, newSlot)
         if (kp != newSlot) return
       }
@@ -303,6 +313,8 @@ abstract class CTypeDef : CDefNode, TypeMixin {
       // inherit it
       slotsCached[newSlot.name] = newSlot
     }
+    //inheritance.slots.vals.sort(|CSlot a, CSlot b->Int| {return a.name <=> b.name}).each(closure)
+    inheritance.slots.each(closure)
   }
   
   **

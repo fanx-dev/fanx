@@ -268,7 +268,7 @@ class SlotNormalize : CompilerStep
 
   private static ExprStmt fieldInitStmt(FieldDef f)
   {
-    useAccessor := f.concreteBase != null
+    useAccessor := f.isAbstract || f.isOverride;//f.concreteBase != null
     lhs := f.makeAccessorExpr(f.loc, useAccessor)
     rhs := f.init
     return BinaryExpr.makeAssign(lhs, rhs).toStmt

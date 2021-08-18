@@ -165,6 +165,12 @@ class ResolveType : CompilerStep {
         type.podName = type.typeDef.podName
       }
       
+      if (type.typeDef.isGeneric) {
+        type.typeDef.genericParameters.each |g| {
+          doResolveType(step, g.bound)
+        }
+      }
+      
       if (type.genericArgs != null) {
         if (type.typeDef is ParameterizedType || type.typeDef.isGeneric) {}
         else

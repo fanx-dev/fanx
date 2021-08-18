@@ -69,8 +69,8 @@ class FuncTypeDef : Node {
 
   private static CType toMostSpecific(CType a, CType b)
   {
-    if (b.hasGenericParameter) return a
-    if (a.isObj || a.isVoid || a.hasGenericParameter) return b
+    //if (b.hasGenericParameter) return a
+    if (a.isObj || a.isVoid) return b
     return a
   }
   
@@ -168,9 +168,11 @@ class ClosureExpr : Expr
     return doCall.code.isDefiniteAssign(f)
   }
 
-  Expr toWith(Expr target, CMethod with)
+  Expr toWith(Expr target, CMethod with, CNamespace ns)
   {
-    if (target.ctype != null) setInferredSignature(FuncTypeDef.makeItBlock(target.loc, target.ctype).typeRef)
+    if (target.ctype != null) {
+        setInferredSignature(FuncTypeDef.makeItBlock(target.loc, target.ctype).typeRef, ns)
+    }
     x := CallExpr(loc, target, "with") { args = Expr[this] }
     x.method = with
     x.ctype = with.returnType
@@ -179,7 +181,7 @@ class ClosureExpr : Expr
     return TypeCheckExpr.coerce(x, target.ctype)
   }
 
-  Void setInferredSignature(CType t)
+  Void setInferredSignature(CType t, CNamespace ns)
   {
     // bail if we didn't expect an inferred the signature
     // or haven't gotten to InitClosures yet
@@ -226,6 +228,10 @@ class ClosureExpr : Expr
     else {
       return
     }
+    
+    //genericArgs is changed
+    ns.resolveTypeRef(t, this.loc)
+    t.genericArgs.each |p|{ ns.resolveTypeRef(p, p.loc) }
 
     // sanity check
     //if (t.usesThis)

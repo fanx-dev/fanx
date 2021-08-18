@@ -101,9 +101,12 @@ mixin Coerce {
     // we are expecting, then this cannot be a match
     if (actual.genericArgs.size > expected.genericArgs.size) return false
 
-    // check return type
-    if (!isFuncAutoCoerceMatch(actual.funcRet, expected.funcRet))
-      return false
+    // match return type (if void is needed, anything matches)
+    if (!expected.funcRet.isVoid) {
+        // check return type
+        if (!isFuncAutoCoerceMatch(actual.funcRet, expected.funcRet))
+            return false
+    }
 
     // check that each parameter is auto-castable
     return actual.funcParams.all |CType actualParam, Int i->Bool|
