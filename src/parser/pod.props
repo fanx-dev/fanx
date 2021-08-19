@@ -1,7 +1,0 @@
-
-podName = parser
-summary = Fantom code parser for compiler and IDE
-version = 1.0
-srcDirs = fan/*, test/*
-depends = sys 2.0, std 1.0
-

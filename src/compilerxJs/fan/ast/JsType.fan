@@ -6,7 +6,7 @@
 //   9 Jul 09  Andy Frank  Creation
 //
 
-using compiler
+using compilerx
 
 **
 ** JsType
@@ -17,12 +17,12 @@ class JsType : JsNode
   {
     this.def         = def
     this.base        = def.base == null ? null : JsTypeRef(s, def.base, def.loc)
-    this.qname       = qnameToJs(def)
+    this.qname       = qnameToJs(def.asRef)
     this.pod         = def.pod.name
     this.name        = def.name
     this.sig         = def.signature
     this.flags       = def.flags
-    this.peer        = findPeer(s, def)
+    this.peer        = findPeer(s, def.asRef)
     this.isNative    = def.isNative || def.hasFacet("sys::JsNative")
     this.hasNatives  = null != def.slots.find |n| { n.isNative && n.parent.qname == def.qname }
     this.isMixin     = def.isMixin
@@ -40,7 +40,7 @@ class JsType : JsNode
     }
   }
 
-  override TypeDef? node() { super.node }
+  override CTypeDef? node() { super.node }
 
   static JsTypeRef? findPeer(JsCompilerSupport cs, CType def)
   {
@@ -49,7 +49,7 @@ class JsType : JsNode
     {
       slot := t.slots.find |s| { s.isNative && s.parent.qname == t.qname }
       if (slot != null)
-        return JsTypeRef(cs, slot.parent, def is Node ? ((Node)def).loc : null)
+        return JsTypeRef(cs, slot.parent.asRef, def is CNode ? ((CNode)def).loc : null)
       t = t.base
     }
     return null
@@ -119,9 +119,9 @@ class JsType : JsNode
   ** Return true if type is javascript safe
   static Bool isJsSafe(CType ctype)
   {
-    if (ctype.facet("sys::NoJs") != null) return false
-    if (ctype.pod.name == "sys" || ctype.isSynthetic || ctype.facet("sys::Js") != null) return true
-    if (ctype.pod.compileJs) return true
+    if (ctype.typeDef.facetAnno("sys::NoJs") != null) return false
+    if (ctype.podName == "sys" || ctype.isSynthetic || ctype.typeDef.facetAnno("sys::Js") != null) return true
+    if (ctype.typeDef.pod.compileJs) return true
     return false
   }
 
@@ -165,7 +165,7 @@ class JsTypeRef : JsNode
   private new makePriv(JsCompilerSupport cs, CType ref, Loc? loc) : super.make(cs)
   {
     this.qname = qnameToJs(ref)
-    this.pod   = ref.pod.name
+    this.pod   = ref.podName
     this.name  = ref.name
     this.sig   = ref.signature
     this.slots = ref.slots.vals.map |CSlot s->JsSlotRef| { JsSlotRef(cs, s) }
@@ -176,12 +176,12 @@ class JsTypeRef : JsNode
     this.isFunc = ref.isFunc
     this.loc = loc
 
-    deref := ref.deref
-    if (deref is ListType) v = JsTypeRef.make(cs, deref->v, loc)
-    if (deref is MapType)
+    deref := ref
+    if (deref.isList) v = JsTypeRef.make(cs, deref.genericArgs[0], loc)
+    if (deref.isMap)
     {
-      k = JsTypeRef.make(cs, deref->k, loc)
-      v = JsTypeRef.make(cs, deref->v, loc)
+      k = JsTypeRef.make(cs, deref.genericArgs[0], loc)
+      v = JsTypeRef.make(cs, deref.genericArgs[1], loc)
     }
 
     if (!JsType.isJsSafe(ref))
