@@ -25,6 +25,7 @@ class StmtFlat : CompilerStep
   private Stmt[] stmts := [,]
   private StmtFlatLoop[] loopStack := [,]
   private Exception[]? protectedRegions // stack of protection regions
+  private Block? codeBlock
   
   new make(CompilerContext compiler)
     : super(compiler)
@@ -43,6 +44,8 @@ class StmtFlat : CompilerStep
     stmts.clear
     loopStack.clear
     protectedRegions = null
+    
+    codeBlock = def.code
     block(def.code)
 
     def.code.stmts = stmts.dup
@@ -50,6 +53,11 @@ class StmtFlat : CompilerStep
 
   private Void block(Block block)
   {
+    //move vers to global block before delete block
+    if (block !== codeBlock) {
+        codeBlock.vars.addAll(block.vars)
+    }
+    
     block.stmts.each |Stmt s| { stmt(s) }
   }
 

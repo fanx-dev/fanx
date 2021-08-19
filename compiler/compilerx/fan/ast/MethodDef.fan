@@ -81,6 +81,9 @@ class MethodDef : SlotDef, CMethod
     if (!isCtor || params.isEmpty) return false
     if (!params.last.paramType.isFunc) return false
     lastArg := params.last.paramType
+    if (lastArg.genericArgs == null) {
+        return false
+    }
     if (lastArg.genericArgs.size != 2) return false
     if (lastArg.genericArgs[1].isThis) return true
     return false
@@ -153,7 +156,7 @@ class MethodDef : SlotDef, CMethod
     visitor := BlockVisitor {
       vars.addAll(it.vars)
     }
-    code.walk(visitor, VisitDepth.block)
+    code?.walk(visitor, VisitDepth.block)
     
     reg := 0
     if (!isStatic) reg++

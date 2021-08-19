@@ -54,7 +54,7 @@ class Tokenizer : CompilerSupport
       }
     }
 
-    p := Pod.find("parser", false)
+    p := Pod.find("compilerx", false)
     if (p != null) {
       alias = Env.cur.props(p, `alias.props`, 30sec)
     }

@@ -102,7 +102,7 @@ First class support immutable class.
 
   const p: Str       //deep immutable
   const p: StrBuf    //compile error
-  readonly p: StrBuf //shallow immutable
+  let p: StrBuf //shallow immutable
 ```
 
 ### Thread Safe Concurrency

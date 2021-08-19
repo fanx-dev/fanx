@@ -212,6 +212,7 @@ class CodeAsm
       }
 
       // store back to local register
+      assert(var_v.register >= 0)
       op(FOp.StoreVar, var_v.register)
     }
     else if (stmt.init != null)
