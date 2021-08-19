@@ -1,5 +1,5 @@
 
-## Differences from Fantom ##
+## Fantom Compatibility ##
 
 ### Overview ###
 

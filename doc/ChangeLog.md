@@ -1,5 +1,12 @@
 ## ChangeLog
 
+### Build 4.0 (working)
+- new fanx compiler
+- fix fanrun vm and genc
+- std pod jni like code
+- rewrite concurrent pod
+
+
 ### Build 3.4 (2021-05-30)
 - JS support NoPeer facet
 - ObjDecoder support static const

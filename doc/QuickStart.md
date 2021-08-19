@@ -20,7 +20,7 @@ For further information see [Setup](Setup.md)
 The hello.fan file:
 ```
   class Hello {
-  	Void main() { echo("Hello World") }
+  	fun main() { echo("Hello World") }
   }
 ```
 
@@ -35,7 +35,7 @@ using vaseGui
 
 class HelloTest
 {
-  static Void main() {
+  static fun main() {
     root := Frame {
       Button {
         text = "Press Me"
@@ -57,7 +57,7 @@ using slanWeb
 
 class Hello : SlanWeblet
 {
-  Void hi()
+  fun hi()
   {
     setContentType("html")
     res.out.print("<h2>Hello World!</h2>")
@@ -69,7 +69,6 @@ run server:
 fan slanWeb -resPath public/
 ```
 You should be able to hit http://localhost:8080/ with your browser!
-
 
 
 ### API Docs ###

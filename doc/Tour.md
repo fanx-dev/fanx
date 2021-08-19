@@ -6,14 +6,14 @@ Familiar C-like syntax
 ```
   class Person
   {
-    Str name
-    Int age
+    var name: Str
+    var age: Int
 
     //method with default parameter
-    Void say(Str a = "default") { echo("Hi $a") }
+    fun say(a:Str = "default") { echo("Hi $a") }
 
     //named constructor
-    new make(Str name, Int age) {
+    new make(name: Str, age: Int) {
       this.name = name
       this.age = age
     }
@@ -27,36 +27,13 @@ Familiar C-like syntax
 
 ```
 
-### Modern Style
-Support both modern style (type after name) and traditional style
-```
-  class Person {
-    var age: Int
-    let name: Str
-
-    new make(n: Str) {
-      name = n
-    }
-
-    fun foo() : Str {
-      return name
-    }
-
-    static fun main() {
-      p : Person = Person("pick")
-      s := p.foo
-      echo(s)
-    }
-  }
-```
-
 ### Field Accessors
 No more boiler plate getters and setters.
 ```
   class Person
   {
-    Str name
-    Int age {
+    var name: Str
+    var age: Int {
       set { checkAge(val); &age = it }
     }
   }
@@ -97,11 +74,11 @@ the "->" operator to call a method dynamically.
 ### Non-Nullable Types
 A non-nullable type is guaranteed to never store the null value.
 ```
-  Str? a := null //might stores null
-  Str b //never stores null
+  var a: Str? = null //might stores null
+  var b: Str  //never stores null
 
   //Nullable is a part of API
-  Str foo(Str? arg)
+  fun foo(arg: Str?): Str
 ```
 
 ### Functional and Closures
@@ -123,9 +100,9 @@ First class support immutable class.
   //immutable class
   const class Str { ... }
 
-  const Str p       //deep immutable
-  const StrBuf p    //compile error
-  readonly StrBuf p //shallow immutable
+  const p: Str       //deep immutable
+  const p: StrBuf    //compile error
+  readonly p: StrBuf //shallow immutable
 ```
 
 ### Thread Safe Concurrency
@@ -175,22 +152,22 @@ The interface with implementations
 ```
   mixin Audio
   {
-    abstract Int volume
-    Void incrementVolume() { volume += 1 }
-    Void decrementVolume() { volume -= 1 }
+    abstract var volume: Int
+    fun incrementVolume() { volume += 1 }
+    fun decrementVolume() { volume -= 1 }
   }
 
   class Television : Audio
   {
-    override Int volume := 0
+    override var volume: Int  = 0
   }
 ```
 
 ### Generics
 ```
   class Foo<T> {
-    T? t
-    T get() { return t }
+    var t: T? 
+    fun get(): T { return t }
   }
 
   foo := Foo<Str>()
@@ -201,7 +178,7 @@ The interface with implementations
 To add methods out side the class
 ```
   class Whatever {
-    extension static Void foo(Str str) {
+    extension static fun foo(str: Str) {
       ...
     }
   }
@@ -219,7 +196,7 @@ To add methods out side the class
 ### Async/Await Coroutine
 The C#/Javascript like async/await pattern.
 ```
-  async Void foo(Int id) {
+  async fun foo(id: Int) {
     user := await getUser(id)
     image := await getImage(user.image)
     imageView.image = image

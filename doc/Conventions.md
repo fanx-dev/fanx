@@ -27,14 +27,14 @@ don't include the "com" in your pod names.
 ```
   //Prefer:
   class Person {
-    private Str name
-    Void say() {}
+    private var name: Str
+    fun say() {}
   }
 
   //Never do:
   class Person {
-    Void say() {}
-    private Str name
+    fun say() {}
+    private var name: Str
   }
 ```
 

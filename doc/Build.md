@@ -13,7 +13,7 @@
      env/
        bin/
        ...
-     src/
+     compiler/
        ...
      release/
        fanx-*.*/
@@ -30,14 +30,13 @@ release/fanx-*.*/etc/build/config.pros
 ```
 4. Run build:
 ```
-  cd src
   sh build_all.sh
 ```
 
 ### Build Ext Librarys ###
 clone hg repo
 ```
-  hg clone http://bitbucket.org/chunquedong/fan-1.0
+  hg clone https://github.com/fanx-dev/fantom.git
 ```
 build:
 ```

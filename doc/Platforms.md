@@ -4,6 +4,6 @@
 - Java runtime are solid.
 - JavaScript support is beta quality.
 - The .NET runtime is unmaintained.
-- [The C backend is WIP](https://github.com/chunquedong/fanrun/tree/master/gen)
-- [Standalone VM](https://github.com/chunquedong/fanrun)
-- [LLVM Compiler is WIP](https://github.com/chunquedong/fanrun/tree/master/llvm)
+- Compile to C is experimental.
+- Standalone VM is experimental.
+- [LLVM Compiler is WIP](https://github.com/chunquedong/runtime/tree/master/llvm)

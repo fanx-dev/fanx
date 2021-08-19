@@ -499,7 +499,7 @@ public class Parser : CompilerSupport
     }
 
     //modern field
-    if (curt === Token.varKeyword || curt === Token.letKeyword || tokens[pos-1].kind === Token.constKeyword) {
+    if (curt === Token.varKeyword || curt === Token.readonlyKeyword || tokens[pos-1].kind === Token.constKeyword) {
       modernStyle := false
       if (curt === Token.varKeyword) {
         consume
@@ -508,7 +508,7 @@ public class Parser : CompilerSupport
           err("var must not const", loc)
         }
       }
-      if (curt === Token.letKeyword) {
+      if (curt === Token.readonlyKeyword) {
         consume
         flags = flags.or(FConst.Readonly)
         modernStyle = true
