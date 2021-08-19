@@ -232,6 +232,9 @@ class ClosureExpr : Expr
     //genericArgs is changed
     ns.resolveTypeRef(t, this.loc)
     t.genericArgs.each |p|{ ns.resolveTypeRef(p, p.loc) }
+    
+
+    nt := t
 
     // sanity check
     //if (t.usesThis)
@@ -239,21 +242,21 @@ class ClosureExpr : Expr
 
     // update my signature and the doCall signature
     //signature = t
-    ctype = t
     if (doCall != null)
     {
       // update parameter types
       doCall.paramDefs.each |ParamDef p, Int i|
       {
-        if (i+1 < t.genericArgs.size)
-          p.ctype = t.genericArgs[i+1]
+        if (i+1 < nt.genericArgs.size) {
+          p.ctype = nt.genericArgs[i+1]
+        }
       }
 
       // update return, we might have to translate an single
       // expression statement into a return statement
       if (doCall.ret.isVoid && !t.funcRet.isVoid)
       {
-        doCall.ret = t.funcRet
+        doCall.ret = nt.funcRet
         collapseExprAndReturn(doCall)
         collapseExprAndReturn(call)
       }
@@ -261,14 +264,14 @@ class ClosureExpr : Expr
 
     // if an itBlock, set type of it
     if (isItBlock) {
-        if (t.genericArgs.size > 1) {
-            itType = t.genericArgs[1]
+        if (nt.genericArgs.size > 1) {
+            itType = nt.genericArgs[1]
         }
     }
 
     // update base type of Func subclass
-    cls.setBase(t)
-    ctype = t
+    cls.setBase(nt)
+    ctype = nt
   }
 
   Void collapseExprAndParams(MethodDef m, CType[] addParams)

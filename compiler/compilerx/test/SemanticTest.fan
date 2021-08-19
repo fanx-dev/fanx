@@ -20,7 +20,7 @@ class SemanticTest : GoldenTest {
   
   Void runParse(Str code, Str name) {
     
-    pod := PodDef(Loc.makeUninit, "testPod")
+    pod := PodDef(Loc.makeUnknow, "testPod")
     m := IncCompiler(pod)
     
     file := name

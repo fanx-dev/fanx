@@ -71,7 +71,8 @@ class ResolveType : CompilerStep {
       resolveType(p.paramType)
     }
     
-    if (m.inheritedRet != null) resolveType(m.inheritedRet)
+    if (m.ret.isThis) m.inheritedRet = m.parent.asRef
+    else if (m.inheritedRet != null) resolveType(m.inheritedRet)
     
     if (m.facets != null) {
       m.facets.each |FacetDef c| {

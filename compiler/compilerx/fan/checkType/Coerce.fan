@@ -33,6 +33,8 @@ mixin Coerce {
   **
   static Expr doCoerce(Expr expr, CType expected, |->| onErr)
   {
+    expected = expected.raw
+    
     // sanity check that expression has been typed
     CType actual := expr.ctype
     if ((Obj?)actual == null) throw NullErr("null ctype: ${expr}")

@@ -133,7 +133,7 @@ mixin CField : CSlot
   **
   Bool isGeneric() { fieldType.hasGenericParameter }
 
-  //virtual CField? generic() { null }
+  virtual CField? generic() { null }
 
   **
   ** Is this field the parameterization of a generic field,
@@ -212,7 +212,7 @@ mixin CMethod : CSlot
   ** If isParameterized is true, then return the generic
   ** method which this method parameterizes, otherwise null
   **
-  //virtual CMethod? generic() { null }
+  virtual CMethod? generic() { null }
 
   internal static Bool calcGeneric(CMethod m)
   {

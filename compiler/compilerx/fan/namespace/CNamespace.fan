@@ -34,7 +34,7 @@ abstract class CNamespace
 
   private CType makeTypeRef(Str podName, Str name) {
     t := CType(podName, name)
-    resolveTypeRef(t, Loc.makeUninit)
+    resolveTypeRef(t, Loc.makeUnknow)
     return t
   }
 

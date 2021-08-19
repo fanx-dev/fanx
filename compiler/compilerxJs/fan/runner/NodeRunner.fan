@@ -219,7 +219,7 @@ class NodeRunner
     input.onlyJs    = true
 
     // compile the source
-    astpod := PodDef(Loc.makeUninit, tempPod)
+    astpod := PodDef(Loc.makeUnknow, tempPod)
     compiler := FanCompiler(astpod, input)
     compiler.enableAllPipelines.run
     //pod := compiler.context.transientPod

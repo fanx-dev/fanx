@@ -21,7 +21,7 @@ const class CompilerErr : Err
       this.loc = loc
     }
     else {
-      this.loc = Loc.makeUninit
+      this.loc = Loc.makeUnknow
     }
   }
 

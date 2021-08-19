@@ -16,7 +16,7 @@ class TokenVal
   {
     this.kind = kind
     this.val  = val
-    this.loc = Loc.makeUninit()
+    this.loc = Loc.makeUnknow()
   }
 
   override Int hash()

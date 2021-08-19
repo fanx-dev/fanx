@@ -18,7 +18,7 @@ class LexerTest : GoldenTest {
   
   Void runLexer(Str code, Str name) {
     support := CompilerLog()
-    tokenizer := Tokenizer(support, Loc.makeUninit, code, true, false)
+    tokenizer := Tokenizer(support, Loc.makeUnknow, code, true, false)
     result := tokenizer.tokenize
     
     s := StrBuf()

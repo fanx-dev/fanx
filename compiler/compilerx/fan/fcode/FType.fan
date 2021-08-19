@@ -156,7 +156,7 @@ class FType : CTypeDef
     genericParamNames.size.times |i| {
       n := fpod.n(genericParamNames[i])
       t := fpod.toType(genericParamBounds[i])
-      gt := GenericParamDef(Loc.makeUninit, n, this, i, t)
+      gt := GenericParamDef(Loc.makeUnknow, n, this, i, t)
       res.add(gt)
     }
     return res

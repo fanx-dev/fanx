@@ -51,7 +51,7 @@ class Fanp
       //output         = CompilerOutputMode.transientPod
     }
     
-    astpod := PodDef(Loc.makeUninit, "script")
+    astpod := PodDef(Loc.makeUnknow, "script")
     compiler = IncCompiler(astpod, input)
     compiler.enableAllPipelines.run
 

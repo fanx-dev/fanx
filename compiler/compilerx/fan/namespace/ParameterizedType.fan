@@ -119,10 +119,7 @@ class ParameterizedType : CTypeDef {
       gp := (GenericParamDef)nn
       real := doParameterize(gp.paramName)
       //clone a new CType
-      nt := CType.makeResolvedType(real.typeDef)
-      if (this.isTypeErasure) {
-        nt.attachedGenericParam = gp
-      }
+      nt := real.dup
       //generic param's nullable is very special
       nt._isNullable = real.isNullable || t._isNullable
       t = nt

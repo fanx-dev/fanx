@@ -203,7 +203,7 @@ class TypeParser
     c := CType("sys", "Func")
     c.genericArgs = params
     return c
-//    return FuncType(Loc.makeUninit params, names, ret)
+//    return FuncType(Loc.makeUnknow params, names, ret)
   }
 
   private CType loadFFI()

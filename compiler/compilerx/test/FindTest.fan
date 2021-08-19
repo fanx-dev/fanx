@@ -134,7 +134,7 @@ class FindTest : Test
   }
   
   private CNode findAt(Str code, Int pos) {
-    pod := PodDef(Loc.makeUninit, "testPod")
+    pod := PodDef(Loc.makeUnknow, "testPod")
     m := IncCompiler(pod)
     
     file := "testFile"

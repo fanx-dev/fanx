@@ -731,7 +731,7 @@ class CodeAsm
 
       // if parameterized or covariant, then coerce
       if (field.isTypeErasure)
-        coerceOp(field.fieldType.physicalType, field.fieldType)
+        coerceOp(field.generic.fieldType.raw, field.fieldType)
       else if (field.isCovariant)
         coerceOp(field.inheritedReturnType, field.fieldType)
     }
@@ -755,7 +755,7 @@ class CodeAsm
       }
 
       if (field.isTypeErasure)
-        coerceOp(field.fieldType.physicalType, field.fieldType)
+        coerceOp(field.generic.fieldType.raw, field.fieldType)
     }
 
     // if safe, handle null case
@@ -795,7 +795,7 @@ class CodeAsm
     field := fexpr.field
 
     if (field.isTypeErasure)
-        coerceOp(field.fieldType, field.fieldType.physicalType)
+        coerceOp(field.fieldType, field.generic.fieldType.raw)
 
     if (fexpr.useAccessor)
     {
@@ -1012,15 +1012,14 @@ class CodeAsm
     //   covariant    => actual call is against inheritedReturnType
     if (leave)
     {
-      if (m.isTypeErasure)
+      if (m.isTypeErasure && m.generic.returnType.isGenericParameter)
       {
-        ret := m.returnType
-        coerceOp(ret.physicalType, m.returnType)
+        coerceOp(m.generic.returnType.raw, m.returnType)
       }
       else if (m.isCovariant)
       {
         //Fix: sys::List^V => sys::ArrayList^V
-        coerceOp(m.inheritedReturnType.physicalType, m.returnType)
+        coerceOp(m.inheritedReturnType.raw, m.returnType.raw)
       }
     }
 
@@ -1029,9 +1028,9 @@ class CodeAsm
     if (!leave)
     {
       // note we need to use the actual method signature (not parameterized)
-      x := m;//.parent.isTypeErasure ? m.generic : m
-      if (!x.returnType.physicalType.isVoid || x.isInstanceCtor)
-        opType(FOp.Pop, x.returnType.physicalType)
+      x := m.isTypeErasure ? m.generic : m
+      if (!x.returnType.raw.isVoid || x.isInstanceCtor)
+        opType(FOp.Pop, x.returnType.raw)
     }
   }
 
@@ -1181,7 +1180,7 @@ class CodeAsm
         storeField((FieldExpr)var_v)
       case ExprId.shortcut:
         set := (CMethod)c->setMethod
-        setParam := set.params[1].paramType.physicalType
+        setParam := (set.isTypeErasure ? set.generic : set).params[1].paramType.raw
         //setParam := (set).params[1].paramType
         // if calling setter check if we need to boxed
         if (c.ctype.isVal && !setParam.isVal && coerce == null) coerceOp(c.ctype, setParam)

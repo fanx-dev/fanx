@@ -29,9 +29,12 @@ class CType : CNode, TypeMixin
   **
   protected Bool _isNullable := false
   
-  CTypeDef? resolvedType
+  protected CTypeDef? resolvedType
   
+  ** location in source file
   override Loc loc
+  
+  ** end loc is loc.offset + len
   override Int len := 0
   
 //////////////////////////////////////////////////////////////////////////
@@ -43,7 +46,7 @@ class CType : CNode, TypeMixin
     return t
   }
   
-  new make(Str pod, Str name, Loc loc := Loc.makeUninit) {
+  new make(Str pod, Str name, Loc loc := Loc.makeUnknow) {
     this.podName = pod
     this.loc = loc
     
@@ -228,19 +231,26 @@ class CType : CNode, TypeMixin
     n := qname
     return n == "sys::Bool" || n == "sys::Float" || n == "sys::Int"
   }
+  
+  CType dup() {
+    d := CType(podName, name)
+    d.resolvedType = resolvedType
+    d._isNullable = _isNullable
+    d.genericArgs = genericArgs
+    d.loc = loc
+    d.len = len
+    //d.attachedGenericParam = attachedGenericParam
+    d.sized = sized
+    return d
+  }
 
   **
   ** Get this type as a nullable type (marked with trailing ?)
   **
   virtual CType toNullable() {
     if (isNullable) return this
-    d := CType(podName, name)
-    d.resolvedType = resolvedType
+    d := dup
     d._isNullable = true
-    d.genericArgs = genericArgs
-    d.loc = loc
-    d.len = len
-    d.attachedGenericParam = attachedGenericParam
     return d
   }
 
@@ -249,13 +259,8 @@ class CType : CNode, TypeMixin
   **
   virtual CType toNonNullable() {
     if (!isNullable) return this
-    d := CType(podName, name)
-    d.resolvedType = resolvedType
+    d := dup
     d._isNullable = false
-    d.genericArgs = genericArgs
-    d.loc = loc
-    d.len = len
-    d.attachedGenericParam = attachedGenericParam
     return d
   }
   
@@ -281,20 +286,10 @@ class CType : CNode, TypeMixin
     return false
   }
   
-  **
-  ** A single generic parameter replaced by generic argument
-  ** This information is lost during replacement
-  ** 
-  GenericParamDef? attachedGenericParam
-  
-  virtual CType physicalType() {
-    CType? t
-    if (attachedGenericParam != null)
-        t = attachedGenericParam.bound
-    else if (typeDef is GenericParamDef)
-        t = ((GenericParamDef)typeDef).bound
-    
-    if (t != null) {
+  ** after generic type erasure
+  virtual CType raw() {
+    if (typeDef is GenericParamDef) {
+        t := ((GenericParamDef)typeDef).bound
         if (this.isNullable && !t.isNullable) t = t.toNullable
         return t
     }
@@ -306,6 +301,10 @@ class CType : CNode, TypeMixin
     if (t.isThis || t.podName.isEmpty)
       t = typeDef.asRef
     return t
+  }
+  
+  Bool isGenericParameter() {
+    return typeDef is GenericParamDef
   }
 
   **

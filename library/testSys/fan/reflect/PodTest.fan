@@ -66,7 +66,7 @@ class PodTest : Test
     testSys := Pod.find("testSys")
     verifyEq(testSys.meta["testSys.foo"], "got it")
     verifyEq(testSys.meta["pod.docApi"], "false")
-    verifyEq(testSys.meta["pod.docSrc"], "false")
+    verifyNotEq(testSys.meta["pod.docSrc"], "true")
     verifyEq(testSys.name, "testSys")
     //verifyEq(testSys.depends.size, 2)
     verifyEq(testSys.depends[0].name, "sys")

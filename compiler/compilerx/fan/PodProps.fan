@@ -39,6 +39,9 @@ class PodProps
     pod.meta["pod.summary"] = summary
     docApi := props.get("docApi", "true") == "true"
     pod.meta["pod.docApi"] = docApi.toStr
+    
+    pod.meta["pod.native.java"]   = (props.get("jsDirs") != null).toStr
+    pod.meta["pod.native.js"]     = (input.jsFiles     != null && !input.jsFiles.isEmpty).toStr
 
     //get matadata
     getStartsWith("meta.", props, pod.meta)

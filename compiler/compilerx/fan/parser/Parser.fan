@@ -38,7 +38,7 @@ public class Parser
   }
   
   static Parser makeSimple(Str code, Str name, Bool deep := true) {
-    loc := Loc.makeUninit
+    loc := Loc.makeUnknow
     log := CompilerLog()
     pod := PodDef(loc, name)
     unit := CompilationUnit(loc, pod, name)
@@ -997,7 +997,7 @@ public class Parser
 
     // if This is returned, then we configure inheritedRet
     // right off the bat (this is actual signature we will use)
-    if (ret.isThis) method.inheritedRet = parent.asRef
+    //if (ret.isThis) method.inheritedRet = parent.asRef
 
     // if no body expected
     //if (parent.isNative) flags = flags.or(FConst.Native)

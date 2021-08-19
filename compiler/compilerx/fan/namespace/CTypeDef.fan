@@ -344,10 +344,10 @@ class PlaceHolderTypeDef : CTypeDef {
   new make(Str name)
   {
     this.name = name
-    this.loc = Loc.makeUninit
+    this.loc = Loc.makeUnknow
   }
   
-  override once CPod pod() { PodDef(Loc.makeUninit, "sys") }
+  override once CPod pod() { PodDef(Loc.makeUnknow, "sys") }
 
   override Int flags() { FConst.Public }
   override CType[] inheritances() { CType#.emptyList }

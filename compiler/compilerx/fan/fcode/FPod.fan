@@ -134,11 +134,11 @@ final class FPod : CPod, FConst
 
   Int addFieldRef(CField field)
   {
-    //if (field.genericTypeErasure) field = field.generic
+    if (field.isTypeErasure) field = field.generic
 
     p := addTypeRef(field.parent.asRef)
     n := addName(field.name)
-    t := addTypeRef(field.fieldType.physicalType)
+    t := addTypeRef(field.fieldType.raw)
     return fieldRefs.add(FFieldRef(p, n, t))
   }
 
@@ -148,12 +148,12 @@ final class FPod : CPod, FConst
     // against the original generic method using it's raw
     // types, since that is how the system library will
     // implement the type
-    //if (method.genericTypeErasure) method = method.generic
+    if (method.isTypeErasure) method = method.generic
 
     p := addTypeRef(method.parent.asRef)
     n := addName(method.name)
-    r := addTypeRef(method.inheritedReturnType.physicalType)  // CLR can't deal with covariance
-    Int[] params := method.params.map |CParam x->Int| { addTypeRef(x.paramType.physicalType) }
+    r := addTypeRef(method.inheritedReturnType.raw)  // CLR can't deal with covariance
+    Int[] params := method.params.map |CParam x->Int| { addTypeRef(x.paramType.raw) }
     if (argCount != null && argCount < params.size)
       params = params[0..<argCount]
 

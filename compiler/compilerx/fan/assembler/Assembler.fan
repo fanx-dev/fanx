@@ -50,11 +50,10 @@ class Assembler : FConst
   {
     ts := DateTime.now.floor(1sec)
     pod := compiler.pod
-    meta := pod.meta
+    meta := OrderedMap<Str,Str>()
     meta["pod.name"]       = pod.name
     meta["pod.version"]    = pod.version.toStr
     meta["pod.depends"]    = pod.depends.join(";")
-    assert(meta["pod.summary"] != null)
     meta["pod.isScript"]   = compiler.input.isScript.toStr
     meta["pod.compileJs"]  = pod.compileJs.toStr
     meta["pod.fcode"] = (!compiler.pod.types.isEmpty).toStr
@@ -65,6 +64,7 @@ class Assembler : FConst
     meta["build.tsKey"]    = ts.toLocale("YYMMDDhhmmss")
     meta["build.compiler"] = this.typeof.pod.version.toStr
     meta["build.platform"] = Env.cur.platform
+    meta.addAll(pod.meta)
     return meta
   }
 

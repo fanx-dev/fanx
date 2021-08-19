@@ -11,7 +11,7 @@ class DebugTest : Test {
         |>
     
     
-    pod := PodDef(Loc.makeUninit, "testPod")
+    pod := PodDef(Loc.makeUnknow, "testPod")
     m := IncCompiler(pod)
     
     file := "testFile"

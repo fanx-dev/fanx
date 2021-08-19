@@ -39,7 +39,7 @@ const class Loc
   
   const static Loc invalidLoc := make("Unknown")
 
-  static Loc makeUninit() { invalidLoc }
+  static Loc makeUnknow() { invalidLoc }
   
   Str? filename()
   {
