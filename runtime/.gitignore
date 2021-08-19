@@ -1,0 +1,20 @@
+syntax: glob
+.DS_Store
+xcuserdata
+test/
+*.user
+temp
+
+fanRun.vcproject/.vs/
+fanRun.vcproject/gen/Debug/
+fanRun.vcproject/run/Debug/
+fanRun.vcproject/Debug/
+.vs/
+thirdparty/libffi-3.4.2
+fanRun.vcproject/vm_gen/Debug/
+fanRun.vcproject/vm/Debug/
+fanRun.vcproject/gen/x64/Debug/
+fanRun.vcproject/run/x64/Debug/
+fanRun.vcproject/vm/x64/Debug/
+fanRun.vcproject/vm_gen/x64/Debug
+fanRun.vcproject/x64/Debug/
