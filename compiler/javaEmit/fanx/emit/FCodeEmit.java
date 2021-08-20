@@ -1016,8 +1016,21 @@ public class FCodeEmit
 //    }
 //    else
     {
-      int cls = emit.cls(typeRef.jnameBoxed());
-      code.op2(INSTANCEOF, cls);
+      // if (typeRef.isNullable()) {
+      //   code.op(DUP);
+      //   int nullbranch = code.branch(IFNULL);
+      //   int cls = emit.cls(typeRef.jnameBoxed());
+      //   code.op2(INSTANCEOF, cls);
+      //   int end = code.branch(GOTO);
+      //   code.mark(nullbranch);
+      //   code.op(POP);
+      //   code.op(ICONST_1);
+      //   code.mark(end);
+      // }
+      // else {
+        int cls = emit.cls(typeRef.jnameBoxed());
+        code.op2(INSTANCEOF, cls);
+      // }
     }
   }
 

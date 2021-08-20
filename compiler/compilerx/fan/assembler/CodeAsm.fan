@@ -574,7 +574,12 @@ class CodeAsm
   private Void asExpr(TypeCheckExpr tc)
   {
     expr(tc.target)
-    op(FOp.As, fpod.addTypeRef(tc.check))
+    if (!tc.check.isNullable) {
+        coerceOp(tc.target.ctype, tc.check)
+    }
+    else {
+        op(FOp.As, fpod.addTypeRef(tc.check))
+    }
   }
 
   private Void coerce(TypeCheckExpr tc)

@@ -3,9 +3,10 @@
 ### Build 4.0 (working)
 - new fanx compiler
 - fix fanrun vm and genc
-- std pod jni like code
+- std pod JNI like code
 - rewrite concurrent pod
 - support new .fanx file
+- allow 'as' Nullable; forbid 'is' Nullable
 
 ### Build 3.4 (2021-05-30)
 - JS support NoPeer facet

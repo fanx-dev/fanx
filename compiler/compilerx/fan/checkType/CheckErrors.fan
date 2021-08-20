@@ -1537,6 +1537,9 @@ class CheckErrors : CompilerStep, Coerce
     // don't allow as with nullable
     if (!curUnit.isFanx && expr.id === ExprId.asExpr && check.isNullable)
       err("Cannot use 'as' operator with nullable type '$check'", expr.loc)
+      
+    if (curUnit.isFanx && expr.id === ExprId.isExpr && check.isNullable)
+      err("Cannot use 'is' operator with nullable type '$check'", expr.loc)
   }
 
   private Void checkTernary(TernaryExpr expr)
