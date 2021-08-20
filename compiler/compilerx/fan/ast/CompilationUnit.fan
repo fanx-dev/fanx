@@ -84,4 +84,5 @@ class CompilationUnit : Node
   TypeDef[] types               // ScanForUsingsAndTypes + CompilerSupport.addTypeDef
   [Str:CType[]]? importedTypes  // ResolveImports (includes my pod)
   Str file
+  Bool isFanx := true           //is fanx syntax
 }

@@ -10,4 +10,33 @@ class Main
     compiler.run
   }
 
+//////////////////////////////////////////////////////////////////////////
+
+  **
+  ** Compile the script file into a transient pod.
+  ** See `sys::Env.compileScript` for option definitions.
+  **
+  static Pod compileScript(Str podName, File file, [Str:Obj]? options := null)
+  {
+    loc := Loc.makeFile(file)
+    pod := PodDef(loc, podName)
+    pod.meta["pod.summary"] = "script"
+    pod.version        = Version("0")
+
+    input := CompilerInput.make
+    input.includeDoc     = true
+    input.isScript       = true
+    input.srcStr         = file.readAllStr
+    input.srcStrLoc      = file.toStr
+
+    if (options != null)
+    {
+      fcodeDump := options["fcodeDump"]
+      if (fcodeDump == true) input.fcodeDump = true
+    }
+
+    compiler := IncCompiler(pod, input).enableAllPipelines.run
+
+    return compiler.context.transientPod
+  }
 }

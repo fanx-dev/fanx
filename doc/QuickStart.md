@@ -17,7 +17,7 @@
 For further information see [Setup](Setup.md)
 
 ### Hello World
-The hello.fan file:
+The hello.fanx file:
 ```
   class Hello {
   	fun main() { echo("Hello World") }
@@ -26,7 +26,7 @@ The hello.fan file:
 
 Run:
 ```
-  fan hello.fan
+  fan hello.fanx
 ```
 
 ### Hello World GUI
@@ -50,7 +50,7 @@ class HelloTest
 ```
 
 ### Hello World Web
-File './public/hello.fan':
+File './public/hello.fanx':
 ```
 
 using slanWeb

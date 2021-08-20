@@ -2,6 +2,6 @@
 podName = compilerx
 summary = Fanx compiler
 version = 1.0
-srcDirs = fan/*, test/*
+srcDirs = fan/*
 depends = sys 2.0, std 1.0
 

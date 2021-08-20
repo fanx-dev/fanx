@@ -26,12 +26,12 @@ If your path is configured properly, you should be able to run
 
 Run as script:
 ```
-  fan scriptFile.fan
+  fan scriptFile.fanx
 ```
 Run pod:
 ```
 Build pod:
-  fanb dir/pod.props
+  fanxb dir/pod.props
 
 Run pod:
   fan Main::main

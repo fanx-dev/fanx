@@ -1,3 +1,4 @@
+using compilerx
 
 class LexerTest : GoldenTest {
   

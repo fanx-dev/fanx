@@ -1535,7 +1535,7 @@ class CheckErrors : CompilerStep, Coerce
       expr.target = box(expr.target)
 
     // don't allow as with nullable
-    if (expr.id === ExprId.asExpr && check.isNullable)
+    if (!curUnit.isFanx && expr.id === ExprId.asExpr && check.isNullable)
       err("Cannot use 'as' operator with nullable type '$check'", expr.loc)
   }
 

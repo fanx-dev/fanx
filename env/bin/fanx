@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# fan: launcher for Fan programs
+#
+
+# Operating system
+cygwin=false;
+darwin=false;
+linux=false;
+case "`uname`" in
+    CYGWIN*)
+      cygwin=true
+      ;;
+    Darwin*)
+      darwin=true
+      ;;
+    Linux*)
+      linux=true
+      ;;
+esac
+
+FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
+FAN_CLASSPATH=$FAN_HOME/lib/java/fanx.jar
+
+# On Cygwin, convert paths to Windows-style (as expected by a JVM running on Windows)
+if $cygwin; then
+  FAN_CLASSPATH=`cygpath --windows --path $FAN_CLASSPATH`
+  FAN_HOME=`cygpath --windows $FAN_HOME`
+fi
+
+java -cp $FAN_CLASSPATH -Dfan.home="$FAN_HOME/" fanx.tools.Fan "$@"

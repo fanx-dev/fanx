@@ -31,7 +31,8 @@ class PodProps
     input.podDef = pod
     baseDir := file.uri.parent.toFile
     input.baseDir = baseDir
-    input.srcFiles = findAllFiles(baseDir, props.get("srcDirs"), "fan")
+    
+    input.srcFiles = findAllFiles(baseDir, props.get("srcDirs"), "fanx")
     input.resFiles = findAllFiles(baseDir, props.get("resDirs"), null)
     input.jsFiles = findAllFiles(baseDir, props.get("jsDirs"), null)
     
@@ -113,6 +114,7 @@ class PodProps
         {
           if (kid.isDir) return
           if (ext == null || kid.ext == ext) acc.add(kid)
+          else if (ext == "fanx" && kid.ext == "fan") acc.add(kid)
         }
       }
       else

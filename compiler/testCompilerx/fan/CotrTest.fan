@@ -1,4 +1,4 @@
-
+using compilerx
 
 class CtorTest : Test {
   Void test() {

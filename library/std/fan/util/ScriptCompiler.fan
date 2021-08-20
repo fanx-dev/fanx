@@ -48,7 +48,12 @@ internal const class ScriptCompiler {
 
   private Pod compileFile(File file, [Str:Obj]? options) {
     podName := file.basename + TimePoint.nowUnique
-    m := Slot.findMethod("compiler::Main.compileScript", true)
+    Method? m
+    if (file.ext == "fan")
+      m = Slot.findMethod("compiler::Main.compileScript", true)
+    else
+      m = Slot.findMethod("compilerx::Main.compileScript", true)
+
     pod := m.call(podName, file, options)
     return pod
   }

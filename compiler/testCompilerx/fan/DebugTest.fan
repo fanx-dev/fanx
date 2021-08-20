@@ -1,3 +1,4 @@
+using compilerx
 
 class DebugTest : Test {
   Void test() {
@@ -20,5 +21,6 @@ class DebugTest : Test {
     m.resolveAll
     
     m.context.pod.dump
+
   }
 }

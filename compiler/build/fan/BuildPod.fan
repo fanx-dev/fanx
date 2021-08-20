@@ -132,6 +132,8 @@ class BuildPod : BuildScript
 
   Bool compileJs := false
 
+  Bool fanxCompiler := false
+
 //////////////////////////////////////////////////////////////////////////
 // Validate
 //////////////////////////////////////////////////////////////////////////
@@ -166,7 +168,9 @@ class BuildPod : BuildScript
     log.info("compile [$podName]")
     log.indent
 
-    compileFan
+    if (fanxCompiler) compileFanx
+    else compileFan
+
     compileJava
     compileJni
 // TODO-FACET
@@ -177,6 +181,114 @@ class BuildPod : BuildScript
 //////////////////////////////////////////////////////////////////////////
 // Compile Fan
 //////////////////////////////////////////////////////////////////////////
+
+  private static File[] findFiles(File baseDir, Uri[]? uris, Str? ext)
+  {
+    base := baseDir
+    acc := File[,]
+    uris?.each |uri|
+    {
+      f := base + uri
+      if (!f.exists) throw ArgErr("Invalid file or directory: $f")
+      if (f.isDir)
+      {
+        f.list.each |kid|
+        {
+          if (kid.isDir) return
+          if (ext == null || kid.ext == ext) acc.add(kid)
+          else if (ext == "fanx" && kid.ext == "fan") acc.add(kid)
+        }
+      }
+      else
+      {
+        acc.add(f)
+      }
+    }
+    return acc
+  }
+
+  virtual Void compileFanx()
+  {
+    loc := compilerx::Loc.makeFile(scriptFile)
+    pod := compilerx::PodDef(loc, podName)
+    pod.version = version
+    pod.depends = depends.map |s->Depend| { Depend(applyMacros(s)) }
+
+    // add my own meta
+    meta := this.meta.dup
+    meta["summary"] = summary
+    meta["pod.docApi"] = docApi.toStr
+    meta["pod.docSrc"] = docSrc.toStr
+    meta["pod.native.java"]   = (javaDirs   != null && !javaDirs.isEmpty).toStr
+    meta["pod.native.jni"]    = (jniDirs    != null && !jniDirs.isEmpty).toStr
+    meta["pod.native.dotnet"] = (dotnetDirs != null && !dotnetDirs.isEmpty).toStr
+    meta["pod.native.js"]     = (jsDirs     != null && !jsDirs.isEmpty).toStr
+    meta["pod.docApi"] = docApi.toStr
+
+    // TODO: add additinal meta props defined by config file/env var
+    // this behavior is not guaranteed in future versions, rather we
+    // need to potentially overhaul how build data is defined
+    // See topic http://fantom.org/sidewalk/topic/1584
+    config("meta", "").split(',').each |pair|
+    {
+      if (pair.isEmpty) return
+      tuples := pair.split('=')
+      if (tuples.size != 2) throw Err("Invalid config meta: $pair")
+      meta[tuples[0]] = tuples[1]
+    }
+
+    // if stripTest config property is set to true then don't
+    // compile any Fantom code under test/ or include any res files
+    srcDirs := this.srcDirs
+    resDirs := this.resDirs
+    if (config("stripTest", "false") == "true")
+    {
+      if (srcDirs != null) srcDirs = srcDirs.dup.findAll |uri| { uri.path.first != "test" }
+      if (resDirs != null) resDirs = resDirs.dup.findAll |uri| { uri.path.first != "test" }
+    }
+
+    // map my config to CompilerInput structure
+    ci := compilerx::CompilerInput()
+    ci.podDef  = pod
+    ci.baseDir = scriptDir
+
+    pod.meta       = meta
+    pod.index      = index
+
+    ci.baseDir     = scriptDir
+    ci.srcFiles    = findFiles(scriptDir, srcDirs, "fanx")
+    ci.resFiles    = findFiles(scriptDir, resDirs, null)
+    ci.jsFiles     = findFiles(scriptDir, jsDirs, null)
+    ci.outDir      = outPodDir.toFile
+    ci.compileJs   = compileJs
+    ci.isScript    = false
+
+    if (dependsDir != null)
+    {
+      f := dependsDir.toFile
+      if (!f.exists) throw fatal("Invalid dependsDir: $f")
+      ci.ns = compilerx::FPodNamespace(f)
+    }
+
+    // subclass hook
+    //onCompileFan(ci)
+
+    try
+    {
+      compilerx::IncCompiler(pod, ci, ci.ns).enableAllPipelines.run
+    }
+    catch (compilerx::CompilerErr err)
+    {
+      // all errors should already be logged by Compiler
+      throw FatalBuildErr()
+    }
+    catch (Err err)
+    {
+      log.err("Internal compiler error")
+      err.trace
+      throw FatalBuildErr.make
+    }
+  }
 
   **
   ** Compile Fan code into pod file

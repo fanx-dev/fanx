@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#
+# fanb: build tools
+#
+
+${0%/*}/fan "build::Main" "-fanx" "$@"

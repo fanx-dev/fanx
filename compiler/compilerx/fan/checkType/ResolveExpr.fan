@@ -259,7 +259,7 @@ class ResolveExpr : CompilerStep
         expr.ctype = ns.boolType
 
       case ExprId.asExpr:
-        expr.ctype = ((TypeCheckExpr)expr).check.toNullable
+        expr.ctype = ((TypeCheckExpr)expr).check
       case ExprId.coerce:
         expr.ctype = ((TypeCheckExpr)expr).check
     }
@@ -859,6 +859,11 @@ class ResolveExpr : CompilerStep
       case Token.gt:
       case Token.gtEq:
         expr.ctype = ns.boolType
+    }
+    
+    //assignment is void except '=' 
+    if (curUnit.isFanx && expr.isAssign && expr.opToken != Token.assign) {
+        expr.ctype = ns.voidType
     }
 
     return expr

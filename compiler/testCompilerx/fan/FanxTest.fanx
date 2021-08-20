@@ -1,0 +1,35 @@
+
+
+class FanxStyle {
+  var age: Int
+  let name: Str
+  const time: Int = 0
+
+  new make(n: Str) {
+    name = n
+  }
+
+  fun foo() : Str {
+    return name
+  }
+
+  fun bar(f:|Str->Void|) {
+    f("x")
+  }
+
+  static fun main() {
+    a := "x"
+    b: Int = 0
+    c: Str?
+
+    echo(c as Str?)
+    echo(c as Str)
+    echo(c is Str?)
+    echo(c is Str)
+
+    //echo(b+=1)
+    echo(++b)
+    //echo(b = 5)
+  }
+}
+

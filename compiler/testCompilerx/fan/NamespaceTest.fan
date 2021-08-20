@@ -1,3 +1,4 @@
+using compilerx
 
 class NamespaceTest : Test
 {

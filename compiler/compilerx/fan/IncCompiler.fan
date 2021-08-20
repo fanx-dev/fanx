@@ -128,9 +128,16 @@ class IncCompiler {
   ** parse souce code
   private CompilationUnit parseCode(Str file, Str code) {
     unit := CompilationUnit(Loc.make(file), context.pod, file.toStr)
-    parser := DeepParser(context.log, code, unit)
-    //echo(parser.tokens.join("\n")|t|{ t.loc.toStr + "\t\t" + t.kind + "\t\t" + t.val })
-    parser.parse
+    if (file.toUri.ext == "fan") unit.isFanx = false
+    if (unit.isFanx) {
+        parser := DeepParserX(context.log, code, unit)
+        parser.parse
+    }
+    else {
+        parser := DeepParser(context.log, code, unit)
+        //echo(parser.tokens.join("\n")|t|{ t.loc.toStr + "\t\t" + t.kind + "\t\t" + t.val })
+        parser.parse
+    }
     return unit
   }
   
@@ -171,9 +178,10 @@ class IncCompiler {
     return this
   }
   
-  Void run() {
+  This run() {
     parseAll
     pipelines.each |pass| { pass.run }
+    return this
   }
 
   static Void main() {

@@ -2,7 +2,7 @@
 podName = build
 summary = Fantom build utility
 version = 1.0
-depends = sys 2.0, std 1.0, compiler 1.1
+depends = sys 2.0, std 1.0, compiler 1.1, compilerx 1.0
 srcDirs = fan/*
 
 

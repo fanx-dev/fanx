@@ -4,4 +4,4 @@
 # fanp: fcode disassembler
 #
 
-${0%/*}/fan "compiler::Fanp" "$@"
+${0%/*}/fan "compilerx::Fanp" "$@"

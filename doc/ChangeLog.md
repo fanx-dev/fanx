@@ -5,7 +5,7 @@
 - fix fanrun vm and genc
 - std pod jni like code
 - rewrite concurrent pod
-
+- support new .fanx file
 
 ### Build 3.4 (2021-05-30)
 - JS support NoPeer facet

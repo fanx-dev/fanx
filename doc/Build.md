@@ -34,9 +34,9 @@ release/fanx-*.*/etc/build/config.pros
 ```
 
 ### Build Ext Librarys ###
-clone hg repo
+clone git repo
 ```
-  hg clone https://github.com/fanx-dev/fantom.git
+  git clone https://github.com/fanx-dev/fantom.git
 ```
 build:
 ```

@@ -84,6 +84,8 @@ class Main
     //get index
     getStartsWith("index.", props, build.index)
     //echo("meta: $meta, index: $index")
+
+    build.fanxCompiler = props.get("compiler") == "fanx"
   }
 
   **
@@ -97,6 +99,10 @@ class Main
     parse(props)
     nargs := args.dup
     nargs.pop
+    if (nargs.first == "-fanx") {
+      build.fanxCompiler = true
+      nargs.removeAt(0)
+    }
     return build.main(nargs)
   }
 
