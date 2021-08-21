@@ -11,7 +11,7 @@ class FuncTypeDef : Node {
   
   CType typeRef
   
-  new make(Loc loc, CType[] params, Str[] names, CType ret, Bool defaultParameterized := false)
+  new make(Loc loc, CType[] params, Str[] names, CType ret)
    : super(loc)
   {
     typeRef = CType.funcType(loc, params, ret)

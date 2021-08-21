@@ -13,7 +13,7 @@ using compilerx
 **
 class JsMethod : JsSlot
 {
-  new make(JsCompilerSupport s, MethodDef m) : super(s, m)
+  new make(JsCompilerSupport s, MethodDef m, Bool jsNative = false) : super(s, m)
   {
     this.parentPeer = JsType.findPeer(s, m.parent.asRef)
     this.isInstanceCtor = m.isInstanceCtor
@@ -25,7 +25,7 @@ class JsMethod : JsSlot
     this.ret        = JsTypeRef(s, m.ret, m.loc)
     this.hasClosure = ClosureFinder(m).exists
     if (m.ctorChain != null) this.ctorChain = JsExpr.makeFor(s, m.ctorChain)
-    if (!m.isNative && !m.parent.isNative && m.code != null) this.code = JsBlock(s, m.code)
+    if (!m.isNative && !m.parent.isNative && !jsNative && m.code != null) this.code = JsBlock(s, m.code)
     this.isNoPeer = m.parent.hasFacet("sys::NoPeer")
   }
 

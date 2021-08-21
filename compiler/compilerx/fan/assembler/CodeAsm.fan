@@ -1091,6 +1091,8 @@ class CodeAsm
 
     fromRef := fpod.addTypeRef(lhsType)
     toRef   := fpod.addTypeRef(rhs.ctype)
+    
+    assert(!rhs.ctype.isVoid)
 
     op(opCode)
     code.writeI2(fromRef)

@@ -146,7 +146,7 @@ class ConstChecks : CompilerStep
   {
     // find any fields which were marked as requiring a
     // runtime check during the CheckErrors step
-    checkedFields := t.fieldDefs.findAll |f| { f.requiresNullCheck  }
+    checkedFields := t.fieldDefs.findAll |f| { ((FieldDef)f).requiresNullCheck  }
     if (checkedFields.isEmpty) return null
 
     // add check for each field which requires runtime null check

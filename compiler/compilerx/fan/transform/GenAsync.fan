@@ -142,7 +142,7 @@ class GenAsync : CompilerStep {
 
   private Void genCtx()
   {
-    asyncCls = ParameterizedType.create(ns.asyncType.typeDef, [curMethod.returnType]).asRef
+    asyncCls = ParameterizedType.create(ns.asyncType.generic, [curMethod.returnType]).asRef
     ctxCls = TypeDef(loc, curUnit, "Async\$"+curType.name+"\$"+name)
     ctxCls.flags   = FConst.Internal + FConst.Final + FConst.Synthetic
     ctxCls.setBase(asyncCls)
@@ -277,7 +277,7 @@ class GenAsync : CompilerStep {
   }
 
   private Void genAbstractMethod() {
-    asyncCls = ParameterizedType.create(ns.asyncType.typeDef, [curMethod.returnType]).asRef
+    asyncCls = ParameterizedType.create(ns.asyncType.generic, [curMethod.returnType]).asRef
     curMethod.ret = asyncCls
     curMethod.inheritedRet = null
   }
@@ -338,6 +338,7 @@ class GenAsync : CompilerStep {
     if (stmt.init == null) {
       if (stmt.isCatchVar) {
         stmt.var_v = implMethod.addLocalVar(stmt.loc, stmt.ctype, stmt.name, null)
+        stmt.var_v.isCatchVar = true
         return stmt
       }
       return NopStmt(stmt.loc)
@@ -434,7 +435,8 @@ class GenAsync : CompilerStep {
       else if (stmt.id === StmtId.localDef) {
         //catch var
         LocalDefStmt defStmt := stmt
-        if (!defStmt.isCatchVar) throw Err("Must catch var")
+        if (!defStmt.isCatchVar)
+            throw Err("Must be catch var: $defStmt")
         stmts.add(stmt)
         lvar := LocalVarExpr(stmt.loc, defStmt.var_v)
         store := BinaryExpr.makeAssign(fieldExpr(stmt.loc, "var_"+defStmt.name), lvar)
@@ -453,7 +455,7 @@ class GenAsync : CompilerStep {
     cmp := ShortcutExpr.makeBinary(
             err,
             Token.notEq,
-            LiteralExpr.makeNull(loc)
+            LiteralExpr.makeType(loc, ExprId.nullLiteral, ns.objType.toNullable, null)
           )
     cmp.ctype = ns.boolType
     jump := JumpStmt(loc, cmp)

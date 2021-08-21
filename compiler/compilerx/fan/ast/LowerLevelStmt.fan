@@ -73,7 +73,9 @@ class JumpStmt : LowerLevelStmt {
   
   override Void print(AstWriter out)
   {
-    out.w("if ($condition) goto ")
+    if (condition == null) out.w("if (true) goto ")
+    else if (ifFalse) out.w("if (!$condition) goto ")
+    else out.w("if ($condition) goto ")
     target.print(out)
   }
 }

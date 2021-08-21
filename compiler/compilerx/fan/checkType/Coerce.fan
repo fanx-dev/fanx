@@ -98,6 +98,8 @@ mixin Coerce {
 
     // auto-cast to or from unparameterized 'sys::Func'
     if (actual.genericArgs == null || expected.genericArgs == null) return true
+    
+    if (actual.defaultParameterized || expected.defaultParameterized) return true
 
     // if actual function requires more parameters than
     // we are expecting, then this cannot be a match

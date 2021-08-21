@@ -184,7 +184,7 @@ abstract class CNamespace
   internal Str:CType typeCache := Str:CType[:]   // keyed by signature
   
   Void resolveTypeRef(CType typeRef, Loc? loc, Bool recursive := true) {
-    if (typeRef.resolvedType != null) return
+    if (typeRef.isResolved) return
     if (typeRef.podName.isEmpty)
       throw Err("Invalid typeRef: $typeRef, ${loc?.toLocStr}")
     

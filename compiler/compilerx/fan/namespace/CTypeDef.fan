@@ -202,57 +202,57 @@ abstract class CTypeDef : CDefNode, TypeMixin {
   **
   ** Return FieldDef for specified name or null.
   **
-  FieldDef? fieldDef (Str name)
+  CField? fieldDef (Str name)
   {
-    return (FieldDef)slotDefMap[name]
+    return slotDefMap[name] as FieldDef
   }
 
   **
   ** Return MethodDef for specified name or null.
   **
-  MethodDef? methodDef(Str name)
+  CMethod? methodDef(Str name)
   {
-    return (MethodDef)slotDefMap[name]
+    return slotDefMap[name] as MethodDef
   }
 
   **
   ** Get the FieldDefs declared within this TypeDef.
   **
-  FieldDef[] fieldDefs()
+  CField[] fieldDefs()
   {
-    return (FieldDef[])slotDefs.findType(FieldDef#)
+    return (CField[])slotDefs.findType(CField#)
   }
 
   **
   ** Get the static FieldDefs declared within this TypeDef.
   **
-  FieldDef[] staticFieldDefs()
+  CField[] staticFieldDefs()
   {
-    return fieldDefs.findAll |FieldDef f->Bool| { f.isStatic }
+    return fieldDefs.findAll |CField f->Bool| { f.isStatic }
   }
 
   **
   ** Get the instance FieldDefs declared within this TypeDef.
   **
-  FieldDef[] instanceFieldDefs()
+  CField[] instanceFieldDefs()
   {
-    return fieldDefs.findAll |FieldDef f->Bool| { !f.isStatic }
+    return fieldDefs.findAll |CField f->Bool| { !f.isStatic }
   }
 
   **
   ** Get the MethodDefs declared within this TypeDef.
   **
-  MethodDef[] methodDefs()
+  CMethod[] methodDefs()
   {
-    return (MethodDef[])slotDefs.findType(MethodDef#)
+    return (MethodDef[])slotDefs.findType(CMethod#)
   }
 
   **
   ** Get the constructor MethodDefs declared within this TypeDef.
   **
-  MethodDef[] ctorDefs()
+  CMethod[] ctorDefs()
   {
-    return methodDefs.findAll |MethodDef m->Bool| { m.isCtor }
+    return methodDefs.findAll |CMethod m->Bool| { m.isCtor }
   }
   
   **

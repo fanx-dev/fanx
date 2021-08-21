@@ -24,7 +24,8 @@ class ParameterizedType : CTypeDef {
   override DocDef? doc() { root.doc }
 
   static new create(CTypeDef baseType, CType[]? params) {
-    if (!baseType.isGeneric) throw Err("base must generic type")
+    if (!baseType.isGeneric)
+        throw Err("base must generic type: $baseType, $baseType.typeof")
     
     defaultParameterized := params == null || params.size == 0
     
@@ -119,15 +120,18 @@ class ParameterizedType : CTypeDef {
       gp := (GenericParamDef)nn
       real := doParameterize(gp.paramName)
       //clone a new CType
-      nt := real.dup
       //generic param's nullable is very special
-      nt._isNullable = real.isNullable || t._isNullable
-      t = nt
+      if (t.isNullable)
+        real = real.toNullable
+      t = real
     }
     else {
       nt := CType.makeResolvedType(nn)
-      nt.genericArgs = t.genericArgs.map |p|{ parameterize(p) }
-      nt._isNullable = t._isNullable
+      if (t.genericArgs != null) {
+        nt.genericArgs = t.genericArgs.map |p|{ parameterize(p) }
+      }
+      if (t.isNullable)
+        nt = nt.toNullable
       //redo parameterized
       if (nn is ParameterizedType) {
         nt.resolveTo((nn as ParameterizedType).root)

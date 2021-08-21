@@ -88,7 +88,10 @@ class ClosureVars : CompilerStep
   private Void scanType(TypeDef t)
   {
     // only process methods which use closure variables
-    t.methodDefs.each |m| { if (m.usesCvars) processMethod(m) }
+    t.methodDefs.each |m| {
+      mdef := m as MethodDef
+      if (mdef.usesCvars) processMethod(mdef)
+    }
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -411,7 +414,7 @@ class ClosureVars : CompilerStep
     ((CallExpr)closure.substitute).args.add(subtituteArg)
 
     // add parameter to constructor
-    ctor := implType.methodDef("make")
+    ctor := implType.methodDef("make") as MethodDef
     pvar := ctor.addParamVar(ctype, name)
 
     // set field in constructor

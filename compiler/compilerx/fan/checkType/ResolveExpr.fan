@@ -260,6 +260,7 @@ class ResolveExpr : CompilerStep
 
       case ExprId.asExpr:
         expr.ctype = ((TypeCheckExpr)expr).check
+        if (!curUnit.isFanx) expr.ctype = expr.ctype.toNullable
       case ExprId.coerce:
         expr.ctype = ((TypeCheckExpr)expr).check
     }

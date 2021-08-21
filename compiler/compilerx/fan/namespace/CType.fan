@@ -27,9 +27,10 @@ class CType : CNode, TypeMixin
   **
   ** Is this is a nullable type (marked with trailing ?)
   **
-  protected Bool _isNullable := false
+  private const Bool _isNullable := false
+  private CType? nullabelePeer = null
   
-  protected CTypeDef? resolvedType
+  private CTypeDef? resolvedType
   
   ** location in source file
   override Loc loc
@@ -143,21 +144,41 @@ class CType : CNode, TypeMixin
     return true
   }
   
+    
+  ** generic genericArgs is absent
+  Bool defaultParameterized() {
+    if (resolvedType is ParameterizedType) {
+       return ((ParameterizedType)resolvedType).defaultParameterized
+    }
+    return false
+  }
+  
   Void resolveTo(CTypeDef typeDef, Bool defaultParameterized := true) {
     if (typeDef.isGeneric) {
       if (genericArgs == null && !defaultParameterized) {
         resolvedType = typeDef
-        return
       }
-      c := typeDef.parameterizedTypeCache[extName]
-      if (c == null) {
-        c = ParameterizedType.create(typeDef, genericArgs)
-        typeDef.parameterizedTypeCache[extName] = c
+      else {
+        c := typeDef.parameterizedTypeCache[extName]
+        if (c == null) {
+          c = ParameterizedType.create(typeDef, genericArgs)
+          typeDef.parameterizedTypeCache[extName] = c
+        }
+        resolvedType = c
+
+        if ((resolvedType as ParameterizedType).defaultParameterized) {
+          genericArgs = (resolvedType as ParameterizedType).genericArgs
+        }
       }
-      resolvedType = c
     }
     else {
       resolvedType = typeDef
+    }
+    
+    if (podName.isEmpty) podName = this.resolvedType.podName
+    if (nullabelePeer != null) {
+        nullabelePeer.resolvedType = this.resolvedType
+        if (nullabelePeer.podName.isEmpty) nullabelePeer.podName = this.resolvedType.podName
     }
   }
 
@@ -232,36 +253,35 @@ class CType : CNode, TypeMixin
     return n == "sys::Bool" || n == "sys::Float" || n == "sys::Int"
   }
   
-  CType dup() {
-    d := CType(podName, name)
-    d.resolvedType = resolvedType
-    d._isNullable = _isNullable
-    d.genericArgs = genericArgs
-    d.loc = loc
-    d.len = len
+  private new makeNullable(CType type) {
+    this.name = type.name
+    this.podName = type.podName
+    this.resolvedType = type.resolvedType
+    this._isNullable = true
+    this.genericArgs = type.genericArgs
+    this.loc = type.loc
+    this.len = type.len
     //d.attachedGenericParam = attachedGenericParam
-    d.sized = sized
-    return d
+    this.sized = type.sized
   }
 
   **
   ** Get this type as a nullable type (marked with trailing ?)
   **
   virtual CType toNullable() {
-    if (isNullable) return this
-    d := dup
-    d._isNullable = true
-    return d
+    if (_isNullable) return this
+    if (nullabelePeer != null) return nullabelePeer
+    nullabelePeer := makeNullable(this)
+    nullabelePeer.nullabelePeer = this
+    return nullabelePeer
   }
 
   **
   ** Get this type as a non-nullable (if nullable)
   **
   virtual CType toNonNullable() {
-    if (!isNullable) return this
-    d := dup
-    d._isNullable = false
-    return d
+    if (!_isNullable) return this
+    return nullabelePeer
   }
   
   **
@@ -306,6 +326,12 @@ class CType : CNode, TypeMixin
   Bool isGenericParameter() {
     return typeDef is GenericParamDef
   }
+  
+  CTypeDef? generic() {
+    if (typeDef.isGeneric) return typeDef
+    if (typeDef is ParameterizedType) return ((ParameterizedType)typeDef).root
+    return null
+  }
 
   **
   ** Return if this type is a generic parameter (such as V or K) in a
@@ -340,7 +366,8 @@ class CType : CNode, TypeMixin
       if (!hasThis) return this
       
       nt := CType.makeResolvedType(this.resolvedType)
-      nt._isNullable = this._isNullable
+      if (this.isNullable)
+        nt = nt.toNullable
       nt.genericArgs = this.genericArgs.map |a|{ a.parameterizeThis(thisType) }
       return nt
     }
@@ -348,12 +375,12 @@ class CType : CNode, TypeMixin
   }
   
   CType funcRet() {
-    if (genericArgs == null) return CType.make("sys", "Obj").toNullable
+    if (genericArgs == null || genericArgs.size == 0) return CType.make("sys", "Obj").toNullable
     return this.genericArgs.first
   }
   
   CType[] funcParams() {
-    if (genericArgs == null) {
+    if (genericArgs == null || genericArgs.size == 0) {
       t := CType.make("sys", "Obj").toNullable
       return [t, t, t, t, t, t, t, t]
     }
@@ -361,12 +388,12 @@ class CType : CNode, TypeMixin
   }
   
   Int funcArity() {
-    if (genericArgs == null) return 8
+    if (genericArgs == null || genericArgs.size == 0) return 8
     return this.genericArgs.size - 1
   }
   
   CType arrayOf() {
-    if (genericArgs == null) return CType.make("sys", "Obj").toNullable
+    if (genericArgs == null|| genericArgs.size == 0) return CType.make("sys", "Obj").toNullable
     return this.genericArgs[0]
   }
   

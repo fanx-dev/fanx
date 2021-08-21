@@ -116,6 +116,7 @@ class Assembler : FConst
   {
     //TODO
     //def.resetVarRegister
+    //echo("assembleMethod:$def.qname")
     
     attrs := AttrAsm(compiler, fpod)
 

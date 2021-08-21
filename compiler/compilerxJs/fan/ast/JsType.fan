@@ -33,10 +33,10 @@ class JsType : JsNode
     if (def.staticInit != null) this.staticInit = def.staticInit.name
 
     this.methods = JsMethod[,]
-    def.methodDefs.each |m|
+    def.methodDefs.each |MethodDef m|
     {
       if (m.isInstanceInit) instanceInit = JsBlock(s, m.code)
-      else this.methods.add(JsMethod(s, m))
+      else this.methods.add(JsMethod(s, m, this.isNative))
     }
   }
 
@@ -177,11 +177,14 @@ class JsTypeRef : JsNode
     this.loc = loc
 
     deref := ref
-    if (deref.isList) v = JsTypeRef.make(cs, deref.genericArgs[0], loc)
-    if (deref.isMap)
-    {
-      k = JsTypeRef.make(cs, deref.genericArgs[0], loc)
-      v = JsTypeRef.make(cs, deref.genericArgs[1], loc)
+    if (deref.isParameterized) {
+        if (deref.isList) 
+            v = JsTypeRef.make(cs, deref.genericArgs[0], loc)
+        if (deref.isMap)
+        {
+          k = JsTypeRef.make(cs, deref.genericArgs[0], loc)
+          v = JsTypeRef.make(cs, deref.genericArgs[1], loc)
+        }
     }
 
     if (!JsType.isJsSafe(ref))
