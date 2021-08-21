@@ -187,7 +187,7 @@ class ClosureExpr : Expr
     // or haven't gotten to InitClosures yet
     if (cls == null) return
     
-    if (t.genericArgs == null) {
+    if (t.genericArgs == null || t.defaultParameterized) {
       return
     }
 

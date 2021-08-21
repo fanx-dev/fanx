@@ -12,3 +12,4 @@ config.props
 release
 .vs/
 compiler/testCompilerx/goldenFile
+*.properties

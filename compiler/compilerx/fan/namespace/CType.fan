@@ -289,6 +289,8 @@ class CType : CNode, TypeMixin
   **
   Bool isNullable() { _isNullable || (resolvedType != null && resolvedType is GenericParamDef) }
   
+  Bool isExplicitNullable() { _isNullable }
+  
 
 //////////////////////////////////////////////////////////////////////////
 // Generics

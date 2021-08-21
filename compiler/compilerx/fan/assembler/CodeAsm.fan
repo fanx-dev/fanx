@@ -574,7 +574,7 @@ class CodeAsm
   private Void asExpr(TypeCheckExpr tc)
   {
     expr(tc.target)
-    if (!tc.check.isNullable) {
+    if (!tc.ctype.isNullable) {
         coerceOp(tc.target.ctype, tc.check)
     }
     else {

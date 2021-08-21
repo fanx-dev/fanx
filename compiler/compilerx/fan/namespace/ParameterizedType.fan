@@ -114,29 +114,29 @@ class ParameterizedType : CTypeDef {
   internal CType parameterize(CType t)
   {
     if (!t.hasGenericParameter) return t
-    nn := t.typeDef
+    typeDef := t.typeDef
     
-    if (nn is GenericParamDef) {
-      gp := (GenericParamDef)nn
+    if (typeDef is GenericParamDef) {
+      gp := (GenericParamDef)typeDef
       real := doParameterize(gp.paramName)
       //clone a new CType
       //generic param's nullable is very special
-      if (t.isNullable)
+      if (t.isExplicitNullable)
         real = real.toNullable
       t = real
     }
     else {
-      nt := CType.makeResolvedType(nn)
+      nt := CType.makeResolvedType(typeDef)
       if (t.genericArgs != null) {
         nt.genericArgs = t.genericArgs.map |p|{ parameterize(p) }
       }
-      if (t.isNullable)
+      if (t.isExplicitNullable)
         nt = nt.toNullable
       //redo parameterized
-      if (nn is ParameterizedType) {
-        nt.resolveTo((nn as ParameterizedType).root)
+      if (typeDef is ParameterizedType) {
+        nt.resolveTo((typeDef as ParameterizedType).root)
       }
-      else nt.resolveTo(nn)
+      else nt.resolveTo(typeDef)
       t = nt
     }
 
