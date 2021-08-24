@@ -48,6 +48,15 @@ Env::~Env() {
 
 void Env::start(const char* podName, const char* type, const char* name, FObj *args) {
     FMethod *method = findMethod(podName, type, name);
+
+    if (method == nullptr) {
+        printf("ERROR: method not found: %s::%s.%s\n", podName, type, name);
+        return;
+    }
+
+    if (!method->isStatic()) {
+        newObjByName(podName, type, "make", 0);
+    }
     
     fr_TagValue val;
     val.type = fr_vtObj;
@@ -59,6 +68,8 @@ void Env::start(const char* podName, const char* type, const char* name, FObj *a
         printf("ERROR:start method arg error\n");
         return;
     }
+
+    
     
     callNonVirtual(method, method->paramCount);
     
@@ -588,6 +599,10 @@ void Env::callVirtualByName(const char *name, int paramCount) {
 void Env::newObjByName(const char * pod, const char * type, const char * name, int paramCount) {
     FMethod *method = nullptr;
     method = podManager->findMethod(this, pod, type, name, paramCount);
+    if (method == nullptr) {
+        printf("ERROR: method not found: %s::%s.%s\n", pod, type, name);
+        return;
+    }
     FObj * obj = fr_allocObj_(this, method->c_parent, 0);
 
     fr_TagValue self;

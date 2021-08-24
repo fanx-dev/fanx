@@ -264,6 +264,15 @@
     <ClCompile Include="..\..\gen\temp\baseTest.c">
       <Filter>源文件\lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\gen\temp\concurrent.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\concurrent_ConditionVar.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\concurrent_Thread.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\gen\runtime\runtime.h">
@@ -406,6 +415,12 @@
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\zlib\trees.h">
       <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\concurrent.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\concurrent_prototype.h">
+      <Filter>源文件\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

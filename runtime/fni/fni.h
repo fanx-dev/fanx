@@ -97,7 +97,7 @@ typedef void (*fr_NativeFunc)(fr_Env env, void *param, void *ret);
 ////////////////////////////
 
 fr_Env fr_getEnv(fr_Fvm vm);
-void fr_releaseEnv(fr_Fvm vm, fr_Env env);
+void fr_releaseEnv(fr_Env env);
 
 void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func);
 

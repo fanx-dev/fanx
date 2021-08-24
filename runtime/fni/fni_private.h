@@ -22,7 +22,8 @@ CF_BEGIN
 struct sys_Obj_struct;
 typedef struct sys_Obj_struct FObj;
 
-fr_Fvm fr_getVm(fr_Env env);
+fr_Fvm fr_getVm();
+void fr_gcQuit();
 
 /**
  * fatch pointer from handle

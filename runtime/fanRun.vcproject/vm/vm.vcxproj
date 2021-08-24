@@ -38,6 +38,10 @@
     <ClCompile Include="..\..\common\util\system.c" />
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
+    <ClCompile Include="..\..\fni\concurrent\concurrent_ConditionVar.cpp" />
+    <ClCompile Include="..\..\fni\concurrent\concurrent_Thread.cpp" />
+    <ClCompile Include="..\..\fni\concurrent\pod_concurrent_native.c" />
+    <ClCompile Include="..\..\fni\concurrent\pod_concurrent_register.c" />
     <ClCompile Include="..\..\fni\fni.cpp" />
     <ClCompile Include="..\..\fni\std\pod_std_native.c" />
     <ClCompile Include="..\..\fni\std\pod_std_register.c" />
@@ -142,6 +146,7 @@
     <ClInclude Include="..\..\common\util\system.h" />
     <ClInclude Include="..\..\common\util\tinycthread.h" />
     <ClInclude Include="..\..\common\util\utf8.h" />
+    <ClInclude Include="..\..\fni\concurrent\pod_concurrent_native.h" />
     <ClInclude Include="..\..\fni\fni.h" />
     <ClInclude Include="..\..\fni\fni_private.h" />
     <ClInclude Include="..\..\fni\std\pod_std_native.h" />
@@ -190,6 +195,7 @@
     <ProjectGuid>{A801BEFC-1B57-4AC1-A6A2-1C4C1112EF96}</ProjectGuid>
     <RootNamespace>vm</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>fanvm</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

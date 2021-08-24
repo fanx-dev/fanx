@@ -16,7 +16,7 @@
 #include "util/system.h"
 
 void Gc::gcThreadRun() {
-    while (true) {
+    while (!isQuit) {
         bool runGc = false;
         {
             std::unique_lock<std::mutex> lck(cdLock);
@@ -25,6 +25,7 @@ void Gc::gcThreadRun() {
                 runGc = true;
             }
         }
+        if (isQuit) return;
         if (runGc) {
             doCollect();
         }
@@ -32,7 +33,7 @@ void Gc::gcThreadRun() {
 }
 
 Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
-    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(true)
+    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(true), isQuit(false)
 {
     lastAllocSize = 29;
     collectLimit = 1000000;
@@ -49,6 +50,12 @@ Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
 Gc::~Gc() {
     //gcThread->join();
     delete gcThread;
+}
+
+void Gc::quit() {
+    std::lock_guard<std::recursive_mutex> lock_guard(lock);
+    isQuit = true;
+    condition.notify_all();
 }
 
 #ifndef GC_NO_BITMAP

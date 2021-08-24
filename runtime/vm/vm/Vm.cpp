@@ -28,6 +28,7 @@ Fvm::Fvm(PodManager *podManager)
     executeEngine = new SimpleLLVMJIT();
 #endif
     fvm = this;
+    podManager->vm = this;
 }
 
 Fvm::~Fvm() {

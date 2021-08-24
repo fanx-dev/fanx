@@ -138,7 +138,7 @@ FMethod *PodManager::findMethod(Env *env, const std::string &podName, const std:
     FType *type = pod->c_typeMap[typeName];
     if (!type) return nullptr;
     
-    return findMethodInType(env, type, methodName, paramCount);
+    return findMethodInType(env, type, methodName, paramCount, false);
 }
 
 FMethod *PodManager::findVirtualMethod(Env *env, FType *instanceType, const std::string &name, int paramCount) {

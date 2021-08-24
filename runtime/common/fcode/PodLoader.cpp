@@ -53,6 +53,7 @@ FPod* PodLoader::findPod(const std::string& podName) {
             return fpod;
         }
     }
+    return nullptr;
 }
 
 FPod* PodLoader::doLoad(const std::string& path, const std::string& name) {

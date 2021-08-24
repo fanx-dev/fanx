@@ -16,6 +16,7 @@ CF_BEGIN
 
 void sys_register(fr_Fvm vm);
 void std_register(fr_Fvm vm);
+void concurrent_register(fr_Fvm vm);
 
 fr_Obj fr_argsArray = NULL;
 fr_Obj fr_makeArgArray(fr_Env env, int start, int argc, const char* argv[]);
@@ -65,7 +66,7 @@ int main(int argc, const char * argv[]) {
     int i = 1;
     int debug = 0;
     
-    puts(argv[0]);
+    //puts(argv[0]);
     
     while (argc > i && argv[i] && argv[i][0] == '-') {
         const char *op = argv[i] + 1;
@@ -143,17 +144,17 @@ int main(int argc, const char * argv[]) {
         method = method + 1;
     }
     
-    PodManager podMgr;
-    podMgr.podLoader.setEnvPath(fr_envPaths);
+    PodManager *podMgr = new PodManager();
+    podMgr->podLoader.setEnvPath(fr_envPaths);
 
-    Fvm vm(&podMgr);
-    podMgr.vm = &vm;
-    Env *env = vm.getEnv();
+    Fvm *vm = new Fvm(podMgr);
+    Env *env = vm->getEnv();
     
-    sys_register(&vm);
-    std_register(&vm);
+    sys_register(vm);
+    std_register(vm);
+    concurrent_register(vm);
     
-    vm.start();
+    vm->start();
     env->debug = debug;
     
     fr_Obj argsObj = fr_makeArgArray((fr_Env)env, i + 1, argc, argv);
@@ -164,14 +165,15 @@ int main(int argc, const char * argv[]) {
 
     fr_onExit();
     
-    vm.releaseEnv(env);
+    /*vm->releaseEnv(env);
     env = nullptr;
-    vm.stop();
+    vm->stop();
 
     puts("DONE!");
     System_sleep(1000);
     vm.gc->collect();
     System_sleep(1000);
+    fr_gcQuit();*/
     //exit(0);
     return 0;
 }

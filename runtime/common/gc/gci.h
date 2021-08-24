@@ -36,6 +36,8 @@ public:
     Collector(GcSupport *support) : gcSupport(support) {}
     
     virtual ~Collector() {}
+
+    virtual void quit() = 0;
     
     virtual bool isRef(void *p) = 0;
     

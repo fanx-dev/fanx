@@ -41,6 +41,7 @@ class Gc : public Collector {
     std::atomic<bool> isStopWorld;
     int marker;
     bool running;
+    bool isQuit;
     std::atomic<bool> isMarking;
     std::thread *gcThread;
     std::mutex cdLock;
@@ -58,6 +59,8 @@ public:
 
     Gc(GcSupport *support);
     ~Gc();
+
+    void quit();
     
     bool isRef(void *p);
     

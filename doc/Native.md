@@ -62,6 +62,6 @@ FNI just like JNI, Fanx supports write native code by C/C++.
 
 Generate the C/C++ Header File:
 ```
-vmgen -pD:/workspace/fanx-dev/fanx/env/ -gD:/workspace/fanx-dev/fanx/fanrun/fni/mypod/ mypod
+vmgen podname
 ```
 

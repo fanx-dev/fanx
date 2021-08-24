@@ -15,9 +15,10 @@ Vm *fvm = nullptr;
 
 fr_Env fr_getEnv(fr_Fvm vm) {
     void *statckVar = 0;
-    if (fvm == nullptr) {
-        fvm = new Vm();
+    if (vm == nullptr) {
+        vm = fr_getVm();
     }
+    Vm* fvm = (Vm*)vm;
     Env *env = fvm->getEnv();
     if (env->statckStart == NULL) {
         env->statckStart = &statckVar;
@@ -25,14 +26,21 @@ fr_Env fr_getEnv(fr_Fvm vm) {
     return env;
 }
 
-void fr_releaseEnv(fr_Fvm vm, fr_Env env) {
-    if (!env || !fvm) return;
-    fvm->releaseEnv((Env*)env);
+void fr_releaseEnv(fr_Env env) {
+    if (!env) return;
+    Env *e = (Env*)env;
+    e->vm->releaseEnv(e);
 }
 
-fr_Fvm fr_getVm(fr_Env env) {
-    if (env == NULL) return fvm;
-    return ((Env*)env)->vm;
+fr_Fvm fr_getVm() {
+    if (fvm == nullptr) {
+        fvm = new Vm();
+    }
+    return fvm;
+}
+
+void fr_gcQuit() {
+    fvm->getGc()->quit();
 }
 
 //////////////////////////////////////////

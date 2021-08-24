@@ -517,7 +517,7 @@ void fr_onExit() {
     static int flag = 0;
     if (flag != 0) return;
     flag = 1;
-    fr_Fvm vm = fr_getVm(NULL);
+    fr_Fvm vm = fr_getVm();
     if (vm == NULL) return;
     fr_Env env = fr_getEnv(vm);
     fr_Obj envObj = fr_callMethodS(env, "std", "Env", "cur", 0).h;

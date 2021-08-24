@@ -43,12 +43,13 @@ int main(int argc, const char* argv[]) {
     fr_onExit();
     
     //test gc
-    System_sleep(1000);
+    /*System_sleep(1000);
     fr_allowGc(env);
     fr_gc(env);
-    System_sleep(2000);
-    
-    fr_releaseEnv(NULL, env);
+    System_sleep(2000);*/
+
+    //fr_gcQuit();
+    //fr_releaseEnv(NULL, env);
 }
 
 //#endif

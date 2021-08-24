@@ -312,6 +312,18 @@
     <ClCompile Include="..\..\fni\std\std_Zip.cpp">
       <Filter>源文件\lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\concurrent_ConditionVar.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\concurrent_Thread.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\pod_concurrent_native.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\concurrent\pod_concurrent_register.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\fcode\Buffer.h">
@@ -490,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\zipper\zipper.h">
       <Filter>源文件\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fni\concurrent\pod_concurrent_native.h">
+      <Filter>源文件\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,7 +39,7 @@ typedef void *fr_Fvm;
 ////////////////////////////
 
 fr_Env fr_getEnv(fr_Fvm vm);
-void fr_releaseEnv(fr_Fvm vm, fr_Env env);
+void fr_releaseEnv(fr_Env env);
 
 ////////////////////////////
 // Exception

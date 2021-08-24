@@ -11,5 +11,7 @@ fanvm podName[::TypeName][.methodName]
 
 Compile to C:
 ```
-fangen -g../temp/ -r podName
+fangen podName
 ```
+
+

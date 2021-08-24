@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
+
+fanvm.exe -p$FAN_HOME -d1 "$@"

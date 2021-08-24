@@ -25,6 +25,8 @@
     <ClCompile Include="..\..\common\util\system.c" />
     <ClCompile Include="..\..\common\util\tinycthread.c" />
     <ClCompile Include="..\..\common\util\utf8.c" />
+    <ClCompile Include="..\..\fni\concurrent\concurrent_ConditionVar.cpp" />
+    <ClCompile Include="..\..\fni\concurrent\concurrent_Thread.cpp" />
     <ClCompile Include="..\..\fni\fni.cpp" />
     <ClCompile Include="..\..\fni\std\std_AtomicBool.cpp" />
     <ClCompile Include="..\..\fni\std\std_AtomicInt.cpp" />
@@ -74,6 +76,7 @@
     <ClCompile Include="..\..\gen\runtime\type.cpp" />
     <ClCompile Include="..\..\gen\runtime\Vm.cpp" />
     <ClCompile Include="..\..\gen\temp\baseTest.c" />
+    <ClCompile Include="..\..\gen\temp\concurrent.c" />
     <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
     <ClCompile Include="..\..\thirdparty\md5.c" />
@@ -122,6 +125,8 @@
     <ClInclude Include="..\..\gen\runtime\Vm.hpp" />
     <ClInclude Include="..\..\gen\temp\baseTest.h" />
     <ClInclude Include="..\..\gen\temp\baseTest_prototype.h" />
+    <ClInclude Include="..\..\gen\temp\concurrent.h" />
+    <ClInclude Include="..\..\gen\temp\concurrent_prototype.h" />
     <ClInclude Include="..\..\gen\temp\std.h" />
     <ClInclude Include="..\..\gen\temp\std_prototype.h" />
     <ClInclude Include="..\..\gen\temp\sys.h" />
@@ -159,6 +164,7 @@
     <ProjectGuid>{40ab281e-4072-4111-9510-5a59464d201e}</ProjectGuid>
     <RootNamespace>run</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>fanrun</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

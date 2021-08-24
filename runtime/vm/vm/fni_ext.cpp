@@ -17,17 +17,21 @@
 
 fr_Env fr_getEnv(fr_Fvm vm) {
     Fvm *v = (Fvm*)vm;
+    if (vm == NULL) v = Fvm::getCur();
     return (fr_Env)v->getEnv();
 }
 
-fr_Fvm fr_getVm(fr_Env env) {
-    if (env == NULL) return Fvm::getCur();
-    return ((Env*)env)->vm;
+fr_Fvm fr_getVm() {
+    return Fvm::getCur();
 }
 
-void fr_releaseEnv(fr_Fvm vm, fr_Env env) {
-    Fvm *v = (Fvm*)vm;
-    v->releaseEnv((Env*)env);
+void fr_gcQuit() {
+    Fvm::getCur()->gc->quit();
+}
+
+void fr_releaseEnv(fr_Env env) {
+    Env* e = (Env*)env;
+    e->vm->releaseEnv(e);
 }
 
 void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func) {

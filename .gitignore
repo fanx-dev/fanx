@@ -12,3 +12,4 @@ release
 .vs/
 *.properties
 compiler/compilerx/compilerx.jar
+*.exe
