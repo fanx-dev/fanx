@@ -113,14 +113,23 @@ class BasicInit : CompilerStep {
     if (t.flags.and(FConst.Virtual) != 0 ||
         t.flags.and(FConst.Abstract) != 0 ||
         t.flags.and(FConst.Final) != 0) return
-    
-    vir := t.slotDefs.any |s| {
-      if (s.flags.and(FConst.Virtual) != 0 || t.flags.and(FConst.Abstract) != 0) {
-        return true
-      }
-      return false
+        
+    if (curUnit.isFanx) {
+        if (t.flags.and(FConst.Virtual) == 0 && t.flags.and(FConst.Abstract) == 0 &&
+            t.flags.and(FConst.Mixin) == 0) {
+            t.flags = t.flags.or(FConst.Final)
+        }
     }
-    if (vir) t.flags = t.flags.or(FConst.Virtual)
+    
+    if (!curUnit.isFanx) {
+        vir := t.slotDefs.any |s| {
+          if (s.flags.and(FConst.Virtual) != 0 || t.flags.and(FConst.Abstract) != 0) {
+            return true
+          }
+          return false
+        }
+        if (vir) t.flags = t.flags.or(FConst.Virtual)
+    }
   }
   
   

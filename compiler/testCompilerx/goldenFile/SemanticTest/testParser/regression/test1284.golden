@@ -1,0 +1,2 @@
+regression/test1284(2,27): ERR Expected '|', not '?'
+regression/test1284(5,3): ERR Expected '}', not 'eof'

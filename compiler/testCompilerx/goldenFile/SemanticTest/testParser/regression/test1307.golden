@@ -1,0 +1,1 @@
+regression/test1307(1,28): ERR No operator method found: sys::Int + sys::Int?

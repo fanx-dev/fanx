@@ -1,0 +1,8 @@
+checkErrors/testAlwaysNullable(3,22): ERR Cannot return 'null' as 'sys::Int'
+checkErrors/testAlwaysNullable(4,25): ERR 'null' is not assignable to 'sys::Obj'
+checkErrors/testAlwaysNullable(5,25): ERR 'null' is not assignable to 'sys::Int'
+checkErrors/testAlwaysNullable(6,16): ERR Invalid args m01(sys::Obj), not (null)
+checkErrors/testAlwaysNullable(7,21): ERR Cannot return 'sys::Str?' as 'sys::Str'
+checkErrors/testAlwaysNullable(8,25): ERR Cannot return 'sys::Obj?' as 'sys::Str'
+checkErrors/testAlwaysNullable(9,21): ERR Cannot return 'sys::Str?' as 'sys::Str'
+checkErrors/testAlwaysNullable(10,21): ERR Cannot return 'sys::Int?' as 'sys::Int'

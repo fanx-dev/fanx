@@ -1,0 +1,6 @@
+inherit/testNamedSuperErrors(9,22): ERR Must use named 'super' inside mixin
+inherit/testNamedSuperErrors(10,22): ERR Cannot use 'Obj.super' inside mixin (yeah I know - take it up with Sun)
+inherit/testNamedSuperErrors(10,22): ERR Cannot use named super on class type 'sys::Obj'
+inherit/testNamedSuperErrors(25,22): ERR Cannot use named super on class type 'testPod::Foo'
+inherit/testNamedSuperErrors(25,22): ERR Named super 'testPod::Foo' not a super class of 'B'
+inherit/testNamedSuperErrors(26,22): ERR Cannot use named super on class type 'testPod::A'

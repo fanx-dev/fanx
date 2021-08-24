@@ -1,0 +1,7 @@
+checkErrors/testTypeFlags2(1,9): ERR Cannot use 'private' modifier on type
+checkErrors/testTypeFlags2(2,11): ERR Cannot use 'protected' modifier on type
+checkErrors/testTypeFlags2(3,16): ERR Cannot use 'static' modifier on type
+checkErrors/testTypeFlags2(4,6): ERR Cannot use 'once' modifier on type
+checkErrors/testTypeFlags2(5,17): ERR Invalid combination of 'public' and 'internal' modifiers
+checkErrors/testTypeFlags2(6,16): ERR Invalid combination of 'abstract' and 'final' modifiers
+checkErrors/testTypeFlags2(6,16): ERR Invalid combination of 'virtual' and 'final' modifiers

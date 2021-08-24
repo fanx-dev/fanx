@@ -1,0 +1,22 @@
+checkErrors/testConst2(3,3): ERR Static field 'a' must be const
+checkErrors/testConst2(7,24): ERR Cannot set const static field 'b' outside of static initializer
+checkErrors/testConst2(7,31): ERR Cannot set const static field 'b' outside of static initializer
+checkErrors/testConst2(7,39): ERR Cannot set const static field 'b' outside of static initializer
+checkErrors/testConst2(15,16): ERR Cannot set const field 'f' outside of constructor
+checkErrors/testConst2(15,23): ERR Cannot set const field 'f' outside of constructor
+checkErrors/testConst2(16,28): ERR Cannot set const field 'f' outside of constructor
+checkErrors/testConst2(16,37): ERR Cannot set const field 'f' outside of constructor
+checkErrors/testConst2(23,3): ERR Const field 'k' has non-const type 'sys::StrBuf?'
+checkErrors/testConst2(1,15): ERR Const type 'Foo' cannot subclass non-const class 'Bar'
+checkErrors/testConst2(22,3): ERR Const type 'Foo' cannot contain non-const field 'j'
+checkErrors/testConst2(34,1): ERR Non-const type 'Roo' cannot subclass const class 'Foo'
+checkErrors/testConst2(35,25): ERR Const type 'Boo' cannot contain non-const field 'x'
+checkErrors/testConst2(39,22): ERR Cannot set const field 'testPod::Foo.f'
+checkErrors/testConst2(40,12): ERR Cannot set const field 'testPod::Foo.b'
+checkErrors/testConst2(57,12): ERR Cannot set const field 'testPod::Foo.b'
+checkErrors/testConst2(51,33): ERR Cannot set const field 'testPod::Foo.f'
+checkErrors/testConst2(52,34): ERR Cannot set const field 'xxx' outside of constructor
+checkErrors/testConst2(54,30): ERR Cannot set const field 'xxx' outside of constructor
+checkErrors/testConst2(55,27): ERR Cannot set const field 'xxx' outside of constructor
+checkErrors/testConst2(56,27): ERR Cannot access static field 'goop' on instance
+checkErrors/testConst2(56,27): ERR Cannot set const static field 'goop' outside of static initializer

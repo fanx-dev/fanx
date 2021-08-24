@@ -18,7 +18,7 @@ class DebugTest : Test {
     file := "testFile"
     m.updateSource(file, code)
     
-    m.resolveAll
+    m.checkError
     
     m.context.pod.dump
 

@@ -1,0 +1,2 @@
+checkErrors/testMixinNatives(2,3): ERR Mixins cannot have native methods
+checkErrors/testMixinNatives(3,3): ERR Mixins cannot have native methods

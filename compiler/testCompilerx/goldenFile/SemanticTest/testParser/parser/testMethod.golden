@@ -1,0 +1,2 @@
+parser/testMethod(5,15): ERR Unknown method 'sys::Obj.makeB'
+parser/testMethod(6,15): ERR Unknown method 'sys::Obj.makeX'

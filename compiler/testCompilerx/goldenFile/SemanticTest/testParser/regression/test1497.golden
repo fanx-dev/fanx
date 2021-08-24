@@ -1,0 +1,1 @@
+regression/test1497(2,25): ERR Cannot override virtual method with static field 'name'

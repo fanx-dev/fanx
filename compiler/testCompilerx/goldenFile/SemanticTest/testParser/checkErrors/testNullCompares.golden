@@ -1,0 +1,6 @@
+checkErrors/testNullCompares(7,10): ERR Comparison of non-nullable type 'sys::Int' to null
+checkErrors/testNullCompares(8,10): ERR Comparison of non-nullable type 'sys::Float' to null
+checkErrors/testNullCompares(9,10): ERR Comparison of non-nullable type 'sys::Str' to null
+checkErrors/testNullCompares(10,10): ERR Comparison of non-nullable type 'std::File' to null
+checkErrors/testNullCompares(12,10): ERR Comparison of non-nullable type 'sys::Str' to null
+checkErrors/testNullCompares(17,10): ERR Comparison of non-nullable type 'sys::Str' to null

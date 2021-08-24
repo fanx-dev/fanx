@@ -99,7 +99,7 @@ abstract class CNamespace
     bridgeCache[name] = bridge
     return bridge
   }
-  private Str:CBridge bridgeCache := Str:CBridge[:]  // keyed by pod name
+  private Str:CBridge bridgeCache := [Str:CBridge][:]  // keyed by pod name
 
   **
   ** Subclass hook to resolve a FFI name to a CBridge implementation.
@@ -153,7 +153,7 @@ abstract class CNamespace
     podCache[podName] = pod
     return pod
   }
-  private Str:CPod podCache := Str:CPod[:]  // keyed by pod name
+  private Str:CPod podCache := [Str:CPod][:]  // keyed by pod name
   Void addCurPod(Str name, CPod pod) { podCache[name] = pod }
 
   **
@@ -181,7 +181,7 @@ abstract class CNamespace
       typeCache[sig] = t
     return t
   }
-  internal Str:CType typeCache := Str:CType[:]   // keyed by signature
+  internal Str:CType typeCache := [Str:CType][:]   // keyed by signature
   
   Void resolveTypeRef(CType typeRef, Loc? loc, Bool recursive := true) {
     if (typeRef.isResolved) return

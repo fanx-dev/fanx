@@ -24,8 +24,6 @@ class LexerTest : GoldenTest {
     
     s := StrBuf()
     s.add(result.join("\n")|t|{ t.loc.toStr + "\t\t" + t.toStr })
-    s.add(ParserGoldenTest.separator)
-    s.add(support.toStr)
     
     verifyGolden(s.toStr, name)
   }

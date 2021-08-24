@@ -122,7 +122,7 @@ class CheckInheritance : CompilerStep
   }
   
   private Void checkCyclicInheritance(TypeDef t) {
-    allInheritances := Str:CType[:]
+    allInheritances := [Str:CType][:]
     getInheritances(allInheritances, t.asRef())
     if (allInheritances.containsKey(t.qname)) {
       err("Cyclic inheritance for '$t.name'", t.loc)

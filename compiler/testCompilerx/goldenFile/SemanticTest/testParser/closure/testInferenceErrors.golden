@@ -1,0 +1,4 @@
+closure/testInferenceErrors(4,14): ERR Invalid args f0(sys::Func<sys::Void>), not (sys::Func<sys::Void,sys::Obj?>)
+closure/testInferenceErrors(6,14): ERR Invalid args f1(sys::Func<sys::Void,sys::Str>), not (sys::Func<sys::Void,sys::Obj?,sys::Obj?>)
+closure/testInferenceErrors(8,14): ERR Invalid args f2(sys::Func<sys::Void,sys::Str,sys::Str>), not (sys::Func<sys::Void,sys::Obj?,sys::Obj?,sys::Obj?>)
+closure/testInferenceErrors(9,14): ERR Invalid args f2(sys::Func<sys::Void,sys::Str,sys::Str>), not (sys::Func<sys::Void,sys::Obj?,sys::Obj?,sys::Obj?,sys::Obj?>)

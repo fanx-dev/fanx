@@ -69,6 +69,7 @@ class CheckErrors : CompilerStep, Coerce
 
     // check for abstract slots in concrete class
     checkAbstractSlots(t)
+    checkVirtualSlots(t)
 
     // check for const slots in const class
     checkConstType(t)
@@ -177,6 +178,26 @@ class CheckErrors : CompilerStep, Coerce
       t.slots.vals.sort.each(closure)
     else
       t.slots.each(closure)
+  }
+  
+  private Void checkVirtualSlots(TypeDef t)
+  {
+    if (!t.isFinal || t.isMixin) return
+
+    errForDef := false
+    closure := |CSlot slot|
+    {
+      if (slot.isVirtual && !slot.isOverride && !slot.isAbstract)
+      {
+        if (!errForDef)
+        {
+          err("Class '$t.name' must be virtual since it contains virtual slot: $slot.qname", t.loc)
+          errForDef = true
+        }
+      }
+    }
+
+    t.slotDefs.each(closure)
   }
 
   private Void checkConstType(TypeDef t)
@@ -710,6 +731,11 @@ class CheckErrors : CompilerStep, Coerce
     t := stmt.ctype
     if (t.isVoid) { err("Cannot use Void as local variable type", stmt.loc); return }
     if (t.isThis) { err("Cannot use This as local variable type", stmt.loc); return }
+    
+    conflict := curUnit.importedTypes[stmt.var_v.name]
+    if (conflict != null && conflict.size > 0)
+      err("Variable name conflicts with imported type '$conflict.first'", stmt.loc)
+    
     checkValidType(stmt.loc, t)
   }
 
@@ -849,7 +875,7 @@ class CheckErrors : CompilerStep, Coerce
 
   private Void checkSwitch(SwitchStmt stmt)
   {
-    dups := Int:Int[:]
+    dups := [Int:Int][:]
 
     stmt.cases.each |Case c|
     {
@@ -1582,7 +1608,8 @@ class CheckErrors : CompilerStep, Coerce
       if (base.genericArgs == null || base.genericArgs.size-1 != args.size)
       {
         //ignore on sig.defaultParameterized
-        if (base.typeDef is ParameterizedType && ((ParameterizedType)base.typeDef).defaultParameterized) {
+        //echo("$base.genericArgs, $base.defaultParameterized, $base.typeDef.typeof")
+        if (base.defaultParameterized || base.typeDef.isGeneric) {
           objType := ns.objType.toNullable
           args.size.times |i| {
             newArgs[i] = coerceBoxed(args[i], objType) |->| { isErr = true }

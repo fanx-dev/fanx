@@ -385,7 +385,7 @@ public class ParserX
 
   private CType inheritType()
   {
-    t := simpleType(false)
+    t := simpleType()
     return t
   }
   
@@ -1111,20 +1111,37 @@ public class ParserX
     loc := cur.loc
 
     // Types can begin with:
-    //   - id
-    //   - [k:v]
-    //   - |a, b -> r|
+    //   - id<,,>
     if (curt === Token.identifier)
     {
       t = simpleType
     }
+    //collection type: [Int] or [Str:Int]
     else if (curt === Token.lbracket)
     {
       loc = consume(Token.lbracket).loc
       t = ctype
-      consume(Token.rbracket)
-      //if (!(t is MapType)) err("Invalid map type", loc)
+      // check for type?:type map (illegal)
+      if (curt === Token.elvis && !cur.whitespace)
+      {
+          err("Map type cannot have nullable key type")
+      }
+      if (curt === Token.colon)
+      {
+          if (t.isNullable) err("Map type cannot have nullable key type")
+          consume(Token.colon)
+          key := t
+          val := ctype
+          t = CType.mapType(loc, key, val)
+          consume(Token.rbracket)
+      }
+      else {
+        valT := t
+        t = CType.listType(loc, valT)
+        consume(Token.rbracket)
+      }
     }
+    //|Obj->Void|
     else if (curt === Token.pipe)
     {
       t = funcType(isTypeRef).typeRef
@@ -1147,45 +1164,6 @@ public class ParserX
         throw err("Type cannot have multiple '?'")
     }
 
-    // trailing [] for lists
-    while (curt === Token.lbracket && peekt === Token.rbracket)
-    {
-      consume(Token.lbracket)
-      consume(Token.rbracket)
-      valT := t
-      t = CType.listType(loc, valT)
-      if (curt === Token.question && !cur.whitespace)
-      {
-        consume(Token.question)
-        t = t.toNullable
-      }
-    }
-
-    // check for type?:type map (illegal)
-    if (curt === Token.elvis && !cur.whitespace)
-    {
-      err("Map type cannot have nullable key type")
-    }
-
-    // check for ":" for map type
-    if (curt === Token.colon)
-    {
-      if (t.isNullable) err("Map type cannot have nullable key type")
-      consume(Token.colon)
-      key := t
-      val := ctype
-      //throw err("temp test")
-//      t = MapType(key, val)
-      t = CType.mapType(loc, key, val)
-    }
-
-    // check for ? nullable
-    if (curt === Token.question && !cur.whitespace)
-    {
-      consume(Token.question)
-      t = t.toNullable
-    }
-
     endLoc(t)
     return t
   }
@@ -1194,7 +1172,7 @@ public class ParserX
   ** Simple type signature:
   **   <simpleType>  :=  <id> ["::" <id>]
   **
-  private CType simpleType(Bool allowDefaultParameterized := true)
+  private CType simpleType()
   {
     loc := cur.loc
     id := consumeId

@@ -1,0 +1,3 @@
+expr/testCallOperatorErrors2(4,24): ERR Cannot use () call operator on non-func type 'testPod::Foo'
+expr/testCallOperatorErrors2(5,24): ERR Cannot use () call operator on non-func type 'testPod::Foo'
+expr/testCallOperatorErrors2(6,24): ERR Cannot use () call operator on non-func type 'testPod::Foo'

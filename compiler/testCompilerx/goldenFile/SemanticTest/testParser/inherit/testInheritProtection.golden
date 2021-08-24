@@ -1,0 +1,8 @@
+inherit/testInheritProtection(4,1): ERR Override narrows protection scope of 'testPod::A.a2'
+inherit/testInheritProtection(5,1): ERR Override narrows protection scope of 'testPod::A.a3'
+inherit/testInheritProtection(6,1): ERR Override narrows protection scope of 'testPod::A.a4'
+inherit/testInheritProtection(10,1): ERR Override narrows protection scope of 'testPod::A.b3'
+inherit/testInheritProtection(11,1): ERR Override narrows protection scope of 'testPod::A.b4'
+inherit/testInheritProtection(14,1): ERR Override narrows protection scope of 'testPod::A.c2'
+inherit/testInheritProtection(16,1): ERR Override narrows protection scope of 'testPod::A.c4'
+inherit/testInheritProtection(18,1): ERR Cannot override non-virtual slot 'testPod::A.d'

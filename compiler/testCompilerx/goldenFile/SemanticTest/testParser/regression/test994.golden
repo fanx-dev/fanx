@@ -1,0 +1,3 @@
+regression/test994(2,13): ERR Cannot call method on Void
+regression/test994(3,13): ERR Cannot call method on Void
+regression/test994(4,22): ERR Cannot call method on Void

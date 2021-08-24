@@ -44,7 +44,7 @@ class CompilationUnit : Node
 
   // get all imported extendsion methods
   once Str:CMethod[] extensionMethods() {
-    meths := Str:CMethod[][:]
+    meths := [Str:CMethod[]][:]
     importedTypes.each |types|{
       types.each |type| {
         type.methods.each |m| {

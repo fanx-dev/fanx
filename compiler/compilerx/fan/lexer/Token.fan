@@ -213,7 +213,7 @@ enum class Token
   const static Str:Token keywords
   static
   {
-    map := Str:Token[:]
+    map := [Str:Token][:]
     vals.each |Token t|
     {
       if (t.keyword) map[t.symbol] = t

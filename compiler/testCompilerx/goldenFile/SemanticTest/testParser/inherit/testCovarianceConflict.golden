@@ -1,0 +1,3 @@
+inherit/testCovarianceConflict(24,3): ERR Conflicting covariant returns: 'testPod::A' and 'testPod::M'
+inherit/testCovarianceConflict(25,3): ERR Conflicting covariant returns: 'sys::Obj' and 'testPod::A'
+inherit/testCovarianceConflict(26,3): ERR Conflicting covariant returns: 'testPod::A' and 'sys::Obj'

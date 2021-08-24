@@ -1,0 +1,1 @@
+regression/test1482(2,2): ERR Non-nullable field 'x' must be assigned in constructor 'make'

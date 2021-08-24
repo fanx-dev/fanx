@@ -1,0 +1,8 @@
+checkErrors/testConst1(3,24): ERR Const field 'a' cannot have getter
+checkErrors/testConst1(4,24): ERR Const field 'b' cannot have setter
+checkErrors/testConst1(5,24): ERR Const field 'c' cannot have getter
+checkErrors/testConst1(5,41): ERR Const field 'c' cannot have setter
+checkErrors/testConst1(7,17): ERR Const field 'd' cannot have getter
+checkErrors/testConst1(8,17): ERR Const field 'e' cannot have setter
+checkErrors/testConst1(9,17): ERR Const field 'f' cannot have getter
+checkErrors/testConst1(9,34): ERR Const field 'f' cannot have setter

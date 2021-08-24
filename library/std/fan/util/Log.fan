@@ -9,7 +9,7 @@
 
 
 internal class LogMgr {
-  private Str:Log map := [:]
+  private [Str:Log] map := [:]
   |LogRec rec|[] handlers := [,]
   Lock lock := Lock()
 

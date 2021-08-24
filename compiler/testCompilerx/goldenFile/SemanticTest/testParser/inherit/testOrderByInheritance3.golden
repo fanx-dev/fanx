@@ -1,0 +1,3 @@
+inherit/testOrderByInheritance3(1,9): ERR Cyclic inheritance for 'A'
+inherit/testOrderByInheritance3(2,9): ERR Cyclic inheritance for 'B'
+inherit/testOrderByInheritance3(5,1): ERR Cyclic inheritance for 'X'

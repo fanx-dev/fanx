@@ -42,7 +42,7 @@ class B : A, M, P
   static P nP(P p) { return p.n }
   static B nB(B b) { return b.n }
 
-  override Str[] e() { return [\"hello\"] }
+  override Str[] e() { return ["hello"] }
   static Obj[] eQ(Q q) { return q.e }
   static Str[] eB(B b) { return b.e }
 

@@ -691,10 +691,10 @@ abstract class InStream
   **
   ** Also see `Env.props`.
   **
-  Str:Str readProps() { Props.readProps(this) }
+  [Str:Str] readProps() { Props.readProps(this) }
 
   @NoDoc
-  Str:Str[] readPropsListVals() { Props.readPropsListVals(this) }
+  [Str:Str[]] readPropsListVals() { Props.readPropsListVals(this) }
 }
 
 **************************************************************************

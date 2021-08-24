@@ -1,0 +1,2 @@
+expr/verifyExpr(8,13): ERR Expecting type name not $
+expr/verifyExpr(8,24): ERR Expected expression, not '$'

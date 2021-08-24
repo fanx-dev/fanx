@@ -1,0 +1,21 @@
+checkErrors/testMethodFlags2(3,3): ERR Cannot use 'final' modifier on method
+checkErrors/testMethodFlags2(4,3): ERR Cannot use 'const' modifier on method
+checkErrors/testMethodFlags2(7,3): ERR Invalid combination of 'public' and 'protected' modifiers
+checkErrors/testMethodFlags2(8,3): ERR Invalid combination of 'public' and 'private' modifiers
+checkErrors/testMethodFlags2(9,3): ERR Invalid combination of 'public' and 'internal' modifiers
+checkErrors/testMethodFlags2(10,3): ERR Invalid combination of 'protected' and 'private' modifiers
+checkErrors/testMethodFlags2(11,3): ERR Invalid combination of 'protected' and 'internal' modifiers
+checkErrors/testMethodFlags2(12,3): ERR Invalid combination of 'private' and 'internal' modifiers
+checkErrors/testMethodFlags2(14,3): ERR Invalid combination of 'new' and 'override' modifiers
+checkErrors/testMethodFlags2(15,3): ERR Invalid combination of 'new' and 'virtual' modifiers
+checkErrors/testMethodFlags2(16,3): ERR Invalid combination of 'abstract' and 'native' modifiers
+checkErrors/testMethodFlags2(17,3): ERR Invalid combination of 'static' and 'abstract' modifiers
+checkErrors/testMethodFlags2(18,3): ERR Invalid combination of 'static' and 'override' modifiers
+checkErrors/testMethodFlags2(19,3): ERR Invalid combination of 'static' and 'virtual' modifiers
+checkErrors/testMethodFlags2(21,3): ERR Invalid combination of 'private' and 'virtual' modifiers
+checkErrors/testMethodFlags2(26,3): ERR Invalid combination of 'new' and 'abstract' modifiers
+checkErrors/testMethodFlags2(27,3): ERR Invalid combination of 'new' and 'native' modifiers
+checkErrors/testMethodFlags2(29,3): ERR Invalid combination of 'new' and 'once' modifiers
+checkErrors/testMethodFlags2(30,3): ERR Invalid combination of 'static' and 'once' modifiers
+checkErrors/testMethodFlags2(31,3): ERR Invalid combination of 'abstract' and 'once' modifiers
+checkErrors/testMethodFlags2(42,3): ERR Mixins cannot have once methods

@@ -1,0 +1,5 @@
+checkErrors/testDefiniteAssign(3,4): ERR Non-nullable field 'bad01' must be assigned in constructor 'make'
+checkErrors/testDefiniteAssign(3,4): ERR Non-nullable field 'bad02' must be assigned in constructor 'make'
+checkErrors/testDefiniteAssign(8,4): ERR Non-nullable field 'bad02' must be assigned in constructor 'make2'
+checkErrors/testDefiniteAssign(28,4): ERR Non-nullable field 'sBad01' must be assigned in static initializer
+checkErrors/testDefiniteAssign(29,4): ERR Non-nullable field 'sBad02' must be assigned in static initializer

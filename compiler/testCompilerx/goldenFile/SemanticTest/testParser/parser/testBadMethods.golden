@@ -1,0 +1,9 @@
+parser/testBadMethods(3,1): ERR Invalid constructor syntax - use new keyword
+parser/testBadMethods(5,1): ERR Expecting method body
+parser/testBadMethods(5,18): ERR Abstract or native methods cannot have method body
+parser/testBadMethods(6,16): ERR Abstract or native methods cannot have method body
+parser/testBadMethods(11,14): ERR Expecting this or super for constructor chaining
+parser/testBadMethods(12,2): ERR Expected '}', not 'eof'
+parser/testBadMethods(5,1): ERR Duplicate slot name 'b'
+parser/testBadMethods(7,1): ERR Duplicate slot name 'd'
+parser/testBadMethods(8,1): ERR Duplicate slot name 'b'

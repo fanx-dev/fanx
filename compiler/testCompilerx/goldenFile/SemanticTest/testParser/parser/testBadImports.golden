@@ -1,0 +1,1 @@
+parser/testBadImports(2,7): ERR Type not found 'Yuck'

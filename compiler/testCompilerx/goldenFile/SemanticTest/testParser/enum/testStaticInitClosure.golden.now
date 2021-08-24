@@ -1,0 +1,3 @@
+enum/testStaticInitClosure(8,13): ERR Expected end of statement: semicolon, newline, or end of block; not ':'
+enum/testStaticInitClosure(8,13): ERR Expected expression, not ':'
+enum/testStaticInitClosure(12,2): ERR Expected '}', not 'eof'

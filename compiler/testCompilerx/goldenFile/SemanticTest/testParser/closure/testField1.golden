@@ -1,0 +1,5 @@
+closure/testField1(4,24): ERR Unexpected symbol: \ (0x5c)
+closure/testField1(5,3): ERR Leading space in multi-line Str must be 24 spaces
+closure/testField1(12,2): ERR Unexpected end of Str literal
+closure/testField1(12,2): ERR Expected expression, not 'eof'
+closure/testField1(12,2): ERR Expected '}', not 'eof'

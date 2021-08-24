@@ -1,0 +1,2 @@
+checkErrors/testValueTypes(5,23): ERR Cannot use '===' operator with value types
+checkErrors/testValueTypes(6,23): ERR Cannot use '!==' operator with value types

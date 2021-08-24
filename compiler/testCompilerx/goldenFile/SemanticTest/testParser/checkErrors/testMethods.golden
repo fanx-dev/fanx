@@ -1,0 +1,6 @@
+checkErrors/testMethods(3,1): ERR Must call super class constructor in 'make'
+checkErrors/testMethods(4,1): ERR Must call super class constructor in 'make'
+checkErrors/testMethods(5,15): ERR Must call super class constructor in 'makeIt'
+checkErrors/testMethods(6,15): ERR Must call super class constructor in 'makeIt'
+checkErrors/testMethods(7,11): ERR Mixins cannot have instance constructors
+checkErrors/testMethods(8,30): ERR Parameter 'b' must have default

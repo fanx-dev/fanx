@@ -1,0 +1,1 @@
+inherit/testThisReturnErrors2(8,3): ERR Return in override of 'testPod::A.x' must be This

@@ -50,7 +50,7 @@ class ResolveDepends : CompilerStep
 
     // we initialize the CNamespace.depends map
     // as we process each dependency
-    compiler.pod.resolvedDepends = Str:CPod[:]
+    compiler.pod.resolvedDepends = [Str:CPod][:]
 
     // process each dependency
     resolvePodDepend(pod)

@@ -1,0 +1,4 @@
+checkErrors/testAbstractSupers(3,33): ERR Cannot use super to access abstract field 'testPod::Base.x'
+checkErrors/testAbstractSupers(3,49): ERR Cannot use super to access abstract field 'testPod::A.x'
+checkErrors/testAbstractSupers(4,23): ERR Cannot use super to call abstract method 'testPod::Base.n'
+checkErrors/testAbstractSupers(5,23): ERR Cannot use super to call abstract method 'testPod::A.m'

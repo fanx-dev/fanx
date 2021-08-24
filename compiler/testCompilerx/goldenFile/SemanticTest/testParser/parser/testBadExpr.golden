@@ -1,0 +1,4 @@
+parser/testBadExpr(3,20): ERR Invalid list literal; use '[,]' for empty Obj[] list
+parser/testBadExpr(5,20): ERR Invalid map type 'Str' for map literal
+parser/testBadExpr(6,25): ERR Unknown type 'GooGoo'
+parser/testBadExpr(7,25): ERR Unknown type 'Kaggle'

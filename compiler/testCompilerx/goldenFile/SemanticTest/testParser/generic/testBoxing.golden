@@ -1,0 +1,1 @@
+generic/testBoxing(2,3): ERR Const field 'a' has non-const type 'testPod::Bar^V'

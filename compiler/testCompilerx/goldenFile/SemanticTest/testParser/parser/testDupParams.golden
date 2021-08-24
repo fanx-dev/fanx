@@ -1,0 +1,3 @@
+parser/testDupParams(3,19): ERR Duplicate parameter name 'a'
+parser/testDupParams(4,28): ERR Duplicate parameter name 'xxx'
+parser/testDupParams(4,46): ERR Duplicate parameter name 'xxx'

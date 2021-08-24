@@ -1,0 +1,2 @@
+regression/test731(1,31): ERR Expected expression statement
+regression/test731(1,47): ERR Expected '}', not 'eof'

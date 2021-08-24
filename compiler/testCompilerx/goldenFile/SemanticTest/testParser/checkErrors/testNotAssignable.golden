@@ -1,0 +1,9 @@
+checkErrors/testNotAssignable(4,19): ERR Left hand side is not assignable
+checkErrors/testNotAssignable(5,19): ERR Target is not assignable
+checkErrors/testNotAssignable(6,19): ERR Left hand side is not assignable
+checkErrors/testNotAssignable(7,19): ERR Target is not assignable
+checkErrors/testNotAssignable(8,19): ERR Target is not assignable
+checkErrors/testNotAssignable(9,19): ERR Left hand side is not assignable
+checkErrors/testNotAssignable(11,19): ERR Target is not assignable
+checkErrors/testNotAssignable(12,19): ERR Target is not assignable
+checkErrors/testNotAssignable(12,19): ERR 'sys::Int' is not assignable to 'testPod::Foo'

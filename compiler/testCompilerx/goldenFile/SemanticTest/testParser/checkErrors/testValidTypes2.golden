@@ -1,0 +1,7 @@
+checkErrors/testValidTypes2(5,11): ERR Cannot use Void as parameter type
+checkErrors/testValidTypes2(6,11): ERR Cannot use This as parameter type
+checkErrors/testValidTypes2(7,11): ERR Cannot use Void as parameter type
+checkErrors/testValidTypes2(8,11): ERR Cannot use This as parameter type
+checkErrors/testValidTypes2(10,14): ERR Cannot use Void as local variable type
+checkErrors/testValidTypes2(10,30): ERR Cannot call method on Void
+checkErrors/testValidTypes2(11,14): ERR Cannot use This as local variable type

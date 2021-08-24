@@ -51,32 +51,6 @@ class IncCompiler {
         
         CheckErrors(ctx),
         CheckParamDefs(ctx),
-    ]
-  }
-  
-  This enableAllPipelines() {
-    ctx := context
-    pipelines = [
-        BasicInit(ctx),
-        InitDataClass(ctx),
-        DefaultCtor(ctx),
-        InitEnum(ctx),
-        InitFacet(ctx),
-        InitClosures(ctx),
-        SlotNormalize(ctx),
-
-        ResolveDepends(ctx),
-        ResolveImports(ctx),
-        ResolveType(ctx),
-
-        CheckInheritance(ctx),
-        CheckInheritSlot(ctx),
-        StmtNormalize(ctx),
-
-        ResolveExpr(ctx),
-        
-        CheckErrors(ctx),
-        CheckParamDefs(ctx),
         
         LocaleProps(ctx),
         CompileJs(ctx),
@@ -93,7 +67,6 @@ class IncCompiler {
         Assemble(ctx),
         GenerateOutput(ctx),
     ]
-    return this
   }
   
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +101,7 @@ class IncCompiler {
   ** parse souce code
   private CompilationUnit parseCode(Str file, Str code) {
     unit := CompilationUnit(Loc.make(file), context.pod, file.toStr)
-    if (file.toUri.ext == "fan") unit.isFanx = false
+    if (file.toUri.ext == "fan" || file.toUri.ext == null) unit.isFanx = false
     if (unit.isFanx) {
         parser := DeepParserX(context.log, code, unit)
         parser.parse
@@ -173,8 +146,20 @@ class IncCompiler {
 ////////////////////////////////////////////////////////////////////////////////
 
   ** run pipelines, do expression resolve and type check
-  This resolveAll() {
-    pipelines.each |pass| { pass.run }
+  This checkError() {
+    try {
+      for (i:=0; i<pipelines.size; ++i) {
+         pass := pipelines[i]
+         pass.run
+         if (pass.typeof == CheckParamDefs#) break
+      }
+    }
+    catch (CompilerErr e) {
+    }
+    finally {
+      context.cunits.clear
+      context.pod.closures.clear
+    }
     return this
   }
   

@@ -32,7 +32,7 @@ class LocaleProps : CompilerStep
     if (compiler.localeDefs.isEmpty) return
 
     // check for duplicate key=def pairs
-    dups := Str:LocaleLiteralExpr[:]
+    dups := [Str:LocaleLiteralExpr][:]
     compiler.localeDefs.each |expr|
     {
       dup := dups[expr.key]
@@ -42,7 +42,7 @@ class LocaleProps : CompilerStep
     }
 
     // load any props defined in default locale/en.props
-    baseProps := Str:Str[:]
+    baseProps := [Str:Str][:]
     baseUri := compiler.input.baseDir.uri
     baseFileStr := ""
     defFile := compiler.input.resFiles.find |f| { f.uri.relTo(baseUri) == `locale/en.props` }

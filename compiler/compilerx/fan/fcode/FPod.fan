@@ -36,8 +36,8 @@ final class FPod : CPod, FConst
     this.strs       = FTable.makeStrs(this)
     this.durations  = FTable.makeDurations(this)
     this.uris       = FTable.makeStrs(this)
-    this.meta       = Str:Str[:]
-    this.index      = Str:Str[:]
+    this.meta       = [Str:Str][:]
+    this.index      = [Str:Str][:]
     this.apiDoc     = FApiDoc(this)
     if (zip != null && zip.file != null) {
       timestamp = zip.file.modified.toMillis
@@ -207,7 +207,7 @@ final class FPod : CPod, FConst
     // read type meta-data
     tin := this.in(`/fcode/types.def`)
     ftypes = FType[,]
-    ftypesByName = Str:CTypeDef[:]
+    ftypesByName = [Str:CTypeDef][:]
     if (tin != null)
     {
       tin.readU2.times
@@ -263,7 +263,7 @@ final class FPod : CPod, FConst
   **
   Void readStream() {
     ftypes = FType[,]
-    ftypesByName = Str:FType[:]
+    ftypesByName = [Str:FType][:]
     entry := zip.readNext
     while (entry != null)
     {

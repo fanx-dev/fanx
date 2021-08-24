@@ -1,0 +1,1 @@
+misc/testIndexedAssign2(4,26): ERR No matching 'set' method for 'testPod::Foo.get'

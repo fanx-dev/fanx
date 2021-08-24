@@ -1,0 +1,10 @@
+checkErrors/testTypeFlags1(1,10): ERR The 'abstract' modifier is implied on mixin
+checkErrors/testTypeFlags1(2,7): ERR Cannot use 'final' modifier on mixin
+checkErrors/testTypeFlags1(3,10): ERR Cannot use 'abstract' modifier on enum
+checkErrors/testTypeFlags1(4,13): ERR The 'const' modifier is implied on enum
+checkErrors/testTypeFlags1(4,13): ERR The 'final' modifier is implied on enum
+checkErrors/testTypeFlags1(5,10): ERR Cannot use 'abstract' modifier on facet
+checkErrors/testTypeFlags1(6,13): ERR The 'const' modifier is implied on facet
+checkErrors/testTypeFlags1(6,13): ERR The 'final' modifier is implied on facet
+checkErrors/testTypeFlags1(7,8): ERR Repeated modifier
+checkErrors/testTypeFlags1(8,19): ERR Repeated modifier

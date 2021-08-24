@@ -1,0 +1,2 @@
+misc/testStrDslErrors(5,7): ERR Leading space in Str DSL must be 7 spaces
+misc/testStrDslErrors(14,10): ERR Leading space in Str DSL must be 10 spaces

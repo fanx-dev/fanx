@@ -275,7 +275,7 @@ class BuildPod : BuildScript
 
     try
     {
-      compilerx::IncCompiler(pod, ci, ci.ns).enableAllPipelines.run
+      compilerx::IncCompiler(pod, ci, ci.ns).run
     }
     catch (compilerx::CompilerErr err)
     {

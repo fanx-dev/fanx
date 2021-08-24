@@ -121,6 +121,7 @@ class StmtNormalize : CompilerStep
   private Void genSyntheticOverrideGet(FieldDef f)
   {
     loc := f.loc
+    if (f.get == null) return
     f.get.code.stmts.clear
     f.get.code.add(ReturnStmt.makeSynthetic(loc, FieldExpr(loc, SuperExpr(loc), f.name) { it.field = f.concreteBase } ))
   }
@@ -130,7 +131,7 @@ class StmtNormalize : CompilerStep
     loc := f.loc
     lhs := FieldExpr(loc, SuperExpr(loc), f.name) { it.field = f.concreteBase }
     rhs := UnknownVarExpr(loc, null, "it")
-    code := f.get.code
+    if (f.set == null) return
     f.set.code.stmts.clear
     f.set.code.add(BinaryExpr.makeAssign(lhs, rhs).toStmt)
     f.set.code.add(ReturnStmt.makeSynthetic(loc))

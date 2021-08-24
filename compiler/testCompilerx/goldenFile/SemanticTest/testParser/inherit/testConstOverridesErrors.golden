@@ -1,0 +1,10 @@
+inherit/testConstOverridesErrors(3,26): ERR Const field 'a' cannot have getter
+inherit/testConstOverridesErrors(4,26): ERR Const field 'b' cannot have setter
+inherit/testConstOverridesErrors(5,26): ERR Const field 'c' cannot have getter
+inherit/testConstOverridesErrors(5,43): ERR Const field 'c' cannot have setter
+inherit/testConstOverridesErrors(3,3): ERR Type mismatch in override of 'testPod::A.a' - 'sys::Int' != 'sys::Str'
+inherit/testConstOverridesErrors(3,3): ERR Const field 'a' cannot override field 'testPod::A.a'
+inherit/testConstOverridesErrors(4,3): ERR Type mismatch in override of 'testPod::A.b' - 'sys::Int' != 'sys::Str'
+inherit/testConstOverridesErrors(4,3): ERR Const field 'b' cannot override field 'testPod::A.b'
+inherit/testConstOverridesErrors(5,3): ERR Type mismatch in override of 'testPod::A.c' - 'sys::Int' != 'sys::Str'
+inherit/testConstOverridesErrors(5,3): ERR Const field 'c' cannot override field 'testPod::A.c'

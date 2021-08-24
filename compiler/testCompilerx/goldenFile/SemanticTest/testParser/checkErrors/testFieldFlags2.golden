@@ -1,0 +1,27 @@
+checkErrors/testFieldFlags2(4,1): ERR Cannot use 'final' modifier on field
+checkErrors/testFieldFlags2(6,1): ERR Cannot use 'once' modifier on field
+checkErrors/testFieldFlags2(8,1): ERR Invalid combination of 'public' and 'protected' modifiers
+checkErrors/testFieldFlags2(9,1): ERR Invalid combination of 'public' and 'private' modifiers
+checkErrors/testFieldFlags2(10,1): ERR Invalid combination of 'public' and 'internal' modifiers
+checkErrors/testFieldFlags2(11,1): ERR Invalid combination of 'protected' and 'private' modifiers
+checkErrors/testFieldFlags2(12,1): ERR Invalid combination of 'protected' and 'internal' modifiers
+checkErrors/testFieldFlags2(13,1): ERR Invalid combination of 'private' and 'internal' modifiers
+checkErrors/testFieldFlags2(15,1): ERR Invalid combination of 'public' and 'protected' modifiers
+checkErrors/testFieldFlags2(16,1): ERR Invalid combination of 'public' and 'private' modifiers
+checkErrors/testFieldFlags2(17,1): ERR Invalid combination of 'public' and 'internal' modifiers
+checkErrors/testFieldFlags2(18,1): ERR Invalid combination of 'protected' and 'private' modifiers
+checkErrors/testFieldFlags2(19,1): ERR Invalid combination of 'protected' and 'internal' modifiers
+checkErrors/testFieldFlags2(20,1): ERR Invalid combination of 'private' and 'internal' modifiers
+checkErrors/testFieldFlags2(22,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(23,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(24,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(25,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(26,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(27,1): ERR Setter cannot have wider visibility than the field
+checkErrors/testFieldFlags2(30,1): ERR Invalid combination of 'const' and 'abstract' modifiers
+checkErrors/testFieldFlags2(32,1): ERR Invalid combination of 'const' and 'virtual' modifiers
+checkErrors/testFieldFlags2(34,1): ERR Invalid combination of 'private' and 'virtual' modifiers
+checkErrors/testFieldFlags2(36,1): ERR Invalid combination of 'native' and 'abstract' modifiers
+checkErrors/testFieldFlags2(37,1): ERR Invalid combination of 'native' and 'const' modifiers
+checkErrors/testFieldFlags2(38,1): ERR Invalid combination of 'native' and 'static' modifiers
+checkErrors/testFieldFlags2(38,1): ERR Static field 'f37' must be const

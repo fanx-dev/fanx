@@ -1,0 +1,2 @@
+inherit/testConstOverridesErrors3(3,3): ERR Invalid combination of 'const' and 'abstract' modifiers
+inherit/testConstOverridesErrors3(4,3): ERR Invalid combination of 'const' and 'virtual' modifiers

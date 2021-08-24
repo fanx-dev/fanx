@@ -1,0 +1,11 @@
+misc/testFieldTypeInference(4,1): ERR Type inference not supported for fields
+misc/testFieldTypeInference(5,1): ERR Type inference not supported for fields
+misc/testFieldTypeInference(6,1): ERR Type inference not supported for fields
+misc/testFieldTypeInference(7,1): ERR Type inference not supported for fields
+misc/testFieldTypeInference(8,1): ERR Type inference not supported for fields
+misc/testFieldTypeInference(4,1): ERR Unknow type 'sys::Error'
+misc/testFieldTypeInference(5,1): ERR Unknow type 'sys::Error'
+misc/testFieldTypeInference(6,1): ERR Unknow type 'sys::Error'
+misc/testFieldTypeInference(7,1): ERR Unknow type 'sys::Error'
+misc/testFieldTypeInference(8,1): ERR Unknow type 'sys::Error'
+misc/testFieldTypeInference(7,6): ERR No operator method found: sys::Error + sys::Int

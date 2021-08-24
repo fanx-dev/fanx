@@ -1,0 +1,2 @@
+regression/test1066(1,17): ERR Type cannot have multiple '?'
+regression/test1066(1,25): ERR Expected '}', not 'eof'

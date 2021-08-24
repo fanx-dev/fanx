@@ -1,0 +1,8 @@
+field/testErrors(3,19): ERR Invalid use of field storage operator '&'
+field/testErrors(4,25): ERR Invalid use of field storage operator '&'
+field/testErrors(5,25): ERR Unknown variable 'whereAreYou'
+field/testErrors(6,20): ERR Expected method, not field 'testPod::Foo.f'
+field/testErrors(7,20): ERR Expected method, not field 'testPod::Foo.f'
+field/testErrors(8,14): ERR Expected method, not field 'testPod::Foo.f'
+field/testErrors(9,21): ERR Expected method, not field 'testPod::Foo.f'
+field/testErrors(10,14): ERR Expected method, not field 'testPod::Foo.f'

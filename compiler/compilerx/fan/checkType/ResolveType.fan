@@ -110,7 +110,7 @@ class ResolveType : CompilerStep {
       if (types == null || types.isEmpty)
       {
         step.err("Unknown type '$type.name'", type.loc)
-        type.resolveTo(step.ns.error.typeDef)
+        type.resolveTo(step.ns.objType.typeDef)
       }
       else {
         // if more then one, first try to exclude those internal to other pods
@@ -133,18 +133,28 @@ class ResolveType : CompilerStep {
           type.resolveTo(impoortedType.typeDef)
       }
     }
+    else if (type.podName == step.podName) {
+        typeDef := step.compiler.pod.resolveType(type.name, false)
+        if (typeDef == null) {
+           step.err("Unknow type '${type}'", type.loc)
+           type.resolveTo(step.ns.objType.typeDef)
+        }
+        else {
+            type.resolveTo(typeDef)
+        }
+    }
     else {
       //find by qname
       try {
         step.ns.resolveTypeRef(type, type.loc, false)
         if (!type.isResolved) {
           step.err("Unknow type '${type}'", type.loc)
-          type.resolveTo(step.ns.error.typeDef)
+          type.resolveTo(step.ns.objType.typeDef)
         }
       }
       catch (Err e) {
         step.err("Unknow type '${type}'", type.loc)
-        type.resolveTo(step.ns.error.typeDef)
+        type.resolveTo(step.ns.objType.typeDef)
       }
     }
     

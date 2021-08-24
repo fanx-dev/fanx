@@ -1,0 +1,8 @@
+checkErrors/testConstInheritance(6,1): ERR Non-const type 'A' cannot subclass const class 'Q'
+checkErrors/testConstInheritance(7,1): ERR Non-const type 'B' cannot implement const mixin 'X'
+checkErrors/testConstInheritance(8,1): ERR Non-const type 'C' cannot subclass const class 'Q'
+checkErrors/testConstInheritance(8,1): ERR Non-const type 'C' cannot implement const mixin 'X'
+checkErrors/testConstInheritance(8,1): ERR Non-const type 'C' cannot implement const mixin 'Y'
+checkErrors/testConstInheritance(9,1): ERR Non-const type 'D' cannot implement const mixin 'X'
+checkErrors/testConstInheritance(10,1): ERR Non-const type 'E' cannot implement const mixin 'X'
+checkErrors/testConstInheritance(11,1): ERR Non-const type 'F' cannot implement const mixin 'Y'

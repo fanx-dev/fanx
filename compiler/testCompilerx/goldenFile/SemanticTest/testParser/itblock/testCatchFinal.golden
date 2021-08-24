@@ -1,0 +1,5 @@
+itblock/testCatchFinal(7,17): ERR Unexpected symbol: \ (0x5c)
+itblock/testCatchFinal(8,7): ERR Leading space in multi-line Str must be 17 spaces
+itblock/testCatchFinal(17,2): ERR Unexpected end of Str literal
+itblock/testCatchFinal(17,2): ERR Expected expression, not 'eof'
+itblock/testCatchFinal(17,2): ERR Expected '}', not 'eof'

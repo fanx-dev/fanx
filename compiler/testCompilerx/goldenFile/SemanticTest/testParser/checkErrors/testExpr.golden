@@ -1,0 +1,36 @@
+checkErrors/testExpr(4,27): ERR Range must be Int..Int, not 'sys::Float..sys::Int'
+checkErrors/testExpr(5,27): ERR Range must be Int..Int, not 'sys::Int..sys::List<sys::Obj?>'
+checkErrors/testExpr(6,27): ERR Cannot apply '!' operator to 'sys::Int'
+checkErrors/testExpr(7,27): ERR Cannot apply '&&' operator to 'sys::Int'
+checkErrors/testExpr(8,27): ERR Cannot apply '||' operator to 'std::Duration'
+checkErrors/testExpr(8,34): ERR Cannot apply '||' operator to 'sys::List<sys::Obj?>'
+checkErrors/testExpr(9,30): ERR 'sys::Bool' is not assignable to 'sys::Str'
+checkErrors/testExpr(10,13): ERR Cannot call constructor 'make' on instance
+checkErrors/testExpr(11,13): ERR Cannot call static method 'm00' on instance
+checkErrors/testExpr(12,26): ERR Cannot call instance method 'm07' in static context
+checkErrors/testExpr(12,31): ERR Cannot call instance method 'm07' in static context
+checkErrors/testExpr(13,19): ERR Cannot access static field 'sf' on instance
+checkErrors/testExpr(14,26): ERR Cannot access instance field 'f' in static context
+checkErrors/testExpr(14,34): ERR Cannot access instance field 'f' in static context
+checkErrors/testExpr(15,26): ERR Cannot access 'this' in static context
+checkErrors/testExpr(15,36): ERR Cannot access 'super' in static context
+checkErrors/testExpr(16,32): ERR Ternary condition must be Bool, not 'sys::Int'
+checkErrors/testExpr(17,45): ERR Incomparable types 'sys::Str' and 'std::Duration'
+checkErrors/testExpr(17,45): ERR Cannot use '===' operator with value types
+checkErrors/testExpr(18,45): ERR Incomparable types 'sys::Str' and 'std::Duration'
+checkErrors/testExpr(18,45): ERR Cannot use '!==' operator with value types
+checkErrors/testExpr(19,33): ERR Incomparable types 'sys::Str' and 'sys::Void'
+checkErrors/testExpr(20,33): ERR Incomparable types 'sys::Str' and 'sys::Int'
+checkErrors/testExpr(21,33): ERR Incomparable types 'sys::Int' and 'sys::Float'
+checkErrors/testExpr(22,33): ERR Incomparable types 'sys::Int' and 'std::Weekday'
+checkErrors/testExpr(23,33): ERR Incomparable types 'sys::Int' and 'sys::Str'
+checkErrors/testExpr(24,33): ERR Incomparable types 'sys::Int' and 'sys::Void'
+checkErrors/testExpr(25,32): ERR Incomparable types 'sys::Int' and 'sys::Float'
+checkErrors/testExpr(26,32): ERR Inconvertible types 'sys::Str' and 'sys::Num'
+checkErrors/testExpr(27,32): ERR Inconvertible types 'sys::Str' and 'sys::Num'
+checkErrors/testExpr(28,32): ERR Inconvertible types 'sys::Str' and 'std::Type'
+checkErrors/testExpr(29,33): ERR Inconvertible types 'sys::Str' and 'sys::Num'
+checkErrors/testExpr(30,27): ERR Calling constructor on abstract class
+checkErrors/testExpr(31,27): ERR Invalid args plus(sys::Obj?), not (sys::Void)
+checkErrors/testExpr(32,33): ERR Cannot use 'as' operator with nullable type 'testPod::Foo?'
+checkErrors/testExpr(33,33): ERR Cannot use 'as' operator with nullable type 'sys::List<sys::Str>?'

@@ -96,7 +96,7 @@ class FTable
     this.writer  = writer
     this.reader  = reader
     this.table   = [,]
-    this.reverse = Obj:Int[:]
+    this.reverse = [Obj:Int][:]
   }
 
 //////////////////////////////////////////////////////////////////////////

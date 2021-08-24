@@ -1,0 +1,4 @@
+checkErrors/testListLiterals(5,26): ERR Invalid value type 'sys::Str' for list of 'sys::Num'
+checkErrors/testListLiterals(5,31): ERR Invalid value type 'std::Duration' for list of 'sys::Num'
+checkErrors/testListLiterals(6,26): ERR Invalid value type 'null' for list of 'sys::Num'
+checkErrors/testListLiterals(7,34): ERR Invalid value type 'sys::List<std::Decimal>' for list of 'sys::List<sys::Int>'

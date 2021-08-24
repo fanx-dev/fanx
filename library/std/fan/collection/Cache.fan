@@ -16,7 +16,7 @@ internal class CacheItem : LinkedElem {
 ** The Least Recently Used Cache
 **
 class Cache {
-  private Obj:CacheItem map := Obj:CacheItem[:]
+  private [Obj:CacheItem] map := [Obj:CacheItem][:]
   private LinkedList list := LinkedList()
 
   private Int max

@@ -1,0 +1,7 @@
+checkErrors/testFuncAutoCasting2(5,30): ERR Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Str,sys::Num,sys::Num>)
+checkErrors/testFuncAutoCasting2(7,30): ERR Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Num,sys::Num,sys::Num>)
+checkErrors/testFuncAutoCasting2(9,30): ERR Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Str,sys::Num,sys::Num>)
+checkErrors/testFuncAutoCasting2(10,30): ERR Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Num,sys::Str?,sys::Num>)
+checkErrors/testFuncAutoCasting2(11,30): ERR Invalid args a(sys::Func<sys::Num,sys::Num,sys::Num>), not (sys::Func<sys::Num,sys::Str,sys::Str,sys::Str>)
+checkErrors/testFuncAutoCasting2(19,24): ERR Invalid args b(sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>>?), not (sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Str>>>)
+checkErrors/testFuncAutoCasting2(20,24): ERR Invalid args b(sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>>?), not (sys::Func<sys::Void,sys::Func<sys::Void,sys::List<sys::Num>>,sys::Obj>)

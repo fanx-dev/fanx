@@ -1,0 +1,2 @@
+parser/testBadTypes(5,10): ERR Unknow type 'yuckeee::Foo'
+parser/testBadTypes(6,10): ERR Unknow type 'sys::NoWay'

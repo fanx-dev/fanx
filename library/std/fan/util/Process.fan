@@ -43,7 +43,7 @@ final class Process
   ** map of string key/value pairs.  This map is initialized
   ** with the current process environment.
   **
-  native Str:Str env()
+  native [Str:Str] env()
 
   **
   ** Working directory of process.

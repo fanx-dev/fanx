@@ -1,0 +1,8 @@
+inherit/testCovariantNullable(3,3): ERR Return type mismatch in override of 'testPod::Base.a' - 'sys::Obj?' != 'sys::Obj', type:testPod::Foo
+inherit/testCovariantNullable(4,3): ERR Return type mismatch in override of 'testPod::Base.b' - 'sys::Obj' != 'sys::Obj?', type:testPod::Foo
+inherit/testCovariantNullable(5,3): ERR Type mismatch in override of 'testPod::Base.c' - 'sys::List<sys::Str>' != 'sys::List<sys::Str>?'
+inherit/testCovariantNullable(6,3): ERR Type mismatch in override of 'testPod::Base.d' - 'std::Map<sys::Str,sys::Int>?' != 'std::Map<sys::Str,sys::Int>'
+inherit/testCovariantNullable(7,3): ERR Type mismatch in override of 'testPod::Base.e' - 'sys::Int?' != 'sys::Int'
+inherit/testCovariantNullable(7,3): ERR Cannot use covariance with value types 'testPod::Base.e' - 'sys::Int?' != 'sys::Int'
+inherit/testCovariantNullable(8,3): ERR Type mismatch in override of 'testPod::Base.f' - 'sys::Int' != 'sys::Int?'
+inherit/testCovariantNullable(8,3): ERR Cannot use covariance with value types 'testPod::Base.f' - 'sys::Int' != 'sys::Int?'

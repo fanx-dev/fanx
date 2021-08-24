@@ -1,0 +1,7 @@
+itblock/testThisFuncs(3,34): ERR Invalid args a(sys::Func<sys::Void,testPod::Bar>), not (sys::Func<sys::Void,sys::Str>)
+itblock/testThisFuncs(4,34): ERR Invalid args b(sys::Func<sys::Void,testPod::Bar>?), not (sys::Func<sys::Void,sys::Str>)
+itblock/testThisFuncs(7,30): ERR Invalid args a(sys::Func<sys::Void,testPod::Bar>), not (null)
+itblock/testThisFuncs(9,24): ERR Invalid args a(sys::Func<sys::Void,testPod::Bar>), not (sys::Func<sys::Void,sys::This>)
+itblock/testThisFuncs(10,31): ERR Invalid args a(sys::Func<sys::Void,testPod::Bar>), not (sys::Func<sys::Void,sys::This>)
+itblock/testThisFuncs(19,37): ERR Invalid args a(sys::Func<sys::Void,testPod::SubBar>), not (sys::Func<sys::Void,sys::Int>)
+itblock/testThisFuncs(20,37): ERR Invalid args b(sys::Func<sys::Void,testPod::SubBar>?), not (sys::Func<sys::Void,sys::Int>)

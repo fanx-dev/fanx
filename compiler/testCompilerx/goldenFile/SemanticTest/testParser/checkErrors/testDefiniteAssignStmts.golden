@@ -1,0 +1,7 @@
+checkErrors/testDefiniteAssignStmts(8,4): ERR Non-nullable field 'x' must be assigned in constructor 'm02'
+checkErrors/testDefiniteAssignStmts(13,4): ERR Non-nullable field 'x' must be assigned in constructor 'm03'
+checkErrors/testDefiniteAssignStmts(20,4): ERR Non-nullable field 'x' must be assigned in constructor 'm05'
+checkErrors/testDefiniteAssignStmts(24,4): ERR Non-nullable field 'x' must be assigned in constructor 'm07'
+checkErrors/testDefiniteAssignStmts(33,4): ERR Non-nullable field 'x' must be assigned in constructor 'm10'
+checkErrors/testDefiniteAssignStmts(38,4): ERR Non-nullable field 'x' must be assigned in constructor 'm11'
+checkErrors/testDefiniteAssignStmts(43,4): ERR Non-nullable field 'x' must be assigned in constructor 'm12'

@@ -90,6 +90,7 @@ class PodDef : Node, CPod
     out.w("pod $name").nl
     out.w("======================================").nl
     //units.each |CompilationUnit unit| { unit.print(out) }
+    types.each |t| { t.print(out) }
     out.nl
   }
 
@@ -99,8 +100,8 @@ class PodDef : Node, CPod
 
 //  override CNamespace? ns            // compiler's namespace
   override const Str name           // simple pod name
-  Str:Str meta := Str:Str[:]        // pod meta-data props
-  Str:Obj index := Str:Obj[:]       // pod index props (vals are Str or Str[])
+  Str:Str meta := [Str:Str][:]        // pod meta-data props
+  Str:Obj index := [Str:Obj][:]       // pod index props (vals are Str or Str[])
   //[Str:CompilationUnit] units := [:]           // Tokenize
   [Str:TypeDef] typeDefs           // ScanForUsingsAndTypes
   ClosureExpr[]? closures := [,]           // Parse

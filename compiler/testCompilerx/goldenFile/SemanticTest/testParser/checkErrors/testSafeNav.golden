@@ -1,0 +1,12 @@
+checkErrors/testSafeNav(5,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(6,5): ERR Non-null safe field access chained after null safe call
+checkErrors/testSafeNav(6,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(7,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(7,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(8,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(9,5): ERR Null-safe operator on left hand side of assignment
+checkErrors/testSafeNav(9,5): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNav(10,5): ERR Cannot use null-safe call on non-nullable type 'testPod::Foo'
+checkErrors/testSafeNav(11,13): ERR Cannot use null-safe access on non-nullable type 'testPod::Foo'
+checkErrors/testSafeNav(13,13): ERR Cannot use '?:' operator on non-nullable type 'testPod::Foo'
+checkErrors/testSafeNav(14,24): ERR Cannot use '?:' operator on non-nullable type 'sys::Int'

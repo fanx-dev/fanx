@@ -1,0 +1,4 @@
+parser/testBadFields(4,3): ERR Type inference not supported for fields
+parser/testBadFields(5,11): ERR Expected 'get' or 'set', not 'Set'
+parser/testBadFields(6,15): ERR Expected end of statement: semicolon, newline, or end of block; not 'private'
+parser/testBadFields(4,3): ERR Unknow type 'sys::Error'

@@ -175,10 +175,10 @@ class CType : CNode, TypeMixin
       resolvedType = typeDef
     }
     
-    if (podName.isEmpty) podName = this.resolvedType.podName
+    if (podName.isEmpty && !typeDef.isError) podName = this.resolvedType.podName
     if (nullabelePeer != null) {
         nullabelePeer.resolvedType = this.resolvedType
-        if (nullabelePeer.podName.isEmpty) nullabelePeer.podName = this.resolvedType.podName
+        if (nullabelePeer.podName.isEmpty && !typeDef.isError) nullabelePeer.podName = this.resolvedType.podName
     }
   }
 
@@ -318,13 +318,6 @@ class CType : CNode, TypeMixin
     return this
   }
   
-  private CType realType() {
-    CType t := this
-    if (t.isThis || t.podName.isEmpty)
-      t = typeDef.asRef
-    return t
-  }
-  
   Bool isGenericParameter() {
     return typeDef is GenericParamDef
   }
@@ -444,6 +437,18 @@ class CType : CNode, TypeMixin
     if (that == null) return false
     return signature == that.signature
   }
+    
+  private CType typeForMatch() {
+    t := this
+    if (typeDef is GenericParamDef) {
+        t = ((GenericParamDef)typeDef).bound
+    }
+    else if (t.isThis || t.podName.isEmpty || t.name != typeDef.name) {
+        t = typeDef.asRef
+    }
+    t = t.toNonNullable
+    return t
+  }
 
   **
   ** Does this type implement the specified type.  If true, then
@@ -453,19 +458,34 @@ class CType : CNode, TypeMixin
   **
   virtual Bool fits(CType ty)
   {
+    if (ty.isObj) return true
+    if (this == ty) return true
+    
     if (this.isFunc && ty.isFunc) {
         return Coerce.isFuncAutoCoerce(this, ty)
     }
+    
     //unparameterized generic parameters
     // don't take nullable in consideration
-    t := ty.realType
-    m := this.realType
-
-    // everything fits Obj
-    if (t.isObj) return true
+    t := ty.typeForMatch
+    m := this.typeForMatch
 
     // short circuit if myself
-    if (m.qname == t.qname) return true
+    if (m.qname == t.qname) {
+        if (t.genericArgs == null || m.genericArgs == null) return true
+        if (t.defaultParameterized || m.defaultParameterized) return true
+        if (t.genericArgs.size != m.genericArgs.size) {
+            //echo("fits1: m != $t: size: ${m.genericArgs.size}!=${t.genericArgs.size}")
+            return false
+        }
+        for (i:=0; i<genericArgs.size; ++i) {
+          if (!t.genericArgs[i].fits(m.genericArgs[i]) && !m.genericArgs[i].fits(t.genericArgs[i])) {
+            //echo("fits2: $m != $t; param:$i; $t.genericArgs[i] != m.genericArgs[i]")
+            return false
+          }
+        }
+        return true
+    }
 
     // recurse extends
     if (base != null && base.fits(t)) return true

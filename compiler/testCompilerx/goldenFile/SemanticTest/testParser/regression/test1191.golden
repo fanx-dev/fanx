@@ -1,0 +1,2 @@
+regression/test1191(2,17): ERR Param default 'a' cannot access itself
+regression/test1191(3,24): ERR Param default 'b' cannot access itself

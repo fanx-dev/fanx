@@ -1,0 +1,4 @@
+parser/testDupEnums(5,3): ERR Duplicate enum name 'a'
+parser/testDupEnums(7,3): ERR Duplicate enum name 'b'
+parser/testDupEnums(3,3): ERR Duplicate slot name 'a'
+parser/testDupEnums(4,3): ERR Duplicate slot name 'b'

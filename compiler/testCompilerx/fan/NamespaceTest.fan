@@ -8,11 +8,11 @@ class NamespaceTest : Test
     pod := ns.resolvePod("std", null)
     type := pod.resolveType("File", true)
 
-    echo(type)
-    echo(type.doc)
+    verify(type.name == "File")
+    verify(type.doc != null)
 
     slot := type.slot("uri")
-    echo(slot)
-    echo(slot.doc)
+    verify(slot != null)
+    verify(slot.doc != null)
   }
 }

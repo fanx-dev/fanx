@@ -35,7 +35,7 @@ class ResolveExpr : CompilerStep
   {
     //log.debug("ResolveExpr")
     walk(compiler.cunits, VisitDepth.expr)
-    //bombIfErr
+    bombIfErr
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -730,7 +730,7 @@ class ResolveExpr : CompilerStep
     if (base.typeDef.isForeign) return base.typeDef.bridge.resolveConstruction(call)
 
     // get all constructors that might match this call
-    matches := Str:CMethod[:]
+    matches := [Str:CMethod][:]
     findCtorMatches(matches, base, call.args)
 
     // check if our last argument is an it-block, then check
@@ -1135,9 +1135,9 @@ class ResolveExpr : CompilerStep
   **
   private Str:MethodVar localsInScope()
   {
-    Str:MethodVar acc := inClosure ?
+    [Str:MethodVar] acc := inClosure ?
       curType.closure.enclosingVars.dup :
-      Str:MethodVar[:]
+      [Str:MethodVar][:]
 
     if (curMethod == null) return acc
 

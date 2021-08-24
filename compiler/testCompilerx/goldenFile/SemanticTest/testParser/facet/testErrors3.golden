@@ -1,0 +1,8 @@
+facet/testErrors3(1,1): ERR Duplicate facet 'sys::Js'
+facet/testErrors3(1,14): ERR Duplicate facet 'sys::NoDoc'
+facet/testErrors3(4,3): ERR Duplicate facet 'sys::Transient'
+facet/testErrors3(5,3): ERR Not a facet type 'sys::List<sys::Str>'
+facet/testErrors3(6,3): ERR Not a facet type 'testPod::Foo'
+facet/testErrors3(7,12): ERR Invalid type for facet field 'a': expected 'sys::Str' not 'sys::Int'
+facet/testErrors3(7,21): ERR Unknown facet field 'testPod::A.xyz'
+facet/testErrors3(8,12): ERR Cannot assign null to non-nullable facet field 'b': 'sys::Obj'

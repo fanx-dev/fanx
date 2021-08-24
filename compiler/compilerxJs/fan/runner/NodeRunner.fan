@@ -221,10 +221,10 @@ class NodeRunner
     // compile the source
     astpod := PodDef(Loc.makeUnknow, tempPod)
     compiler := FanCompiler(astpod, input)
-    compiler.enableAllPipelines.run
+    compiler.run
     //pod := compiler.context.transientPod
 
-    try compiler.enableAllPipelines.run; catch {}
+    try compiler.run; catch {}
     if (true)
     {
       buf := StrBuf()

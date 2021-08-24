@@ -1,0 +1,8 @@
+regression/test1639(2,26): ERR Expected identifier after dot
+regression/test1639(3,11): ERR Leading space in multi-line Str must be 27 spaces
+regression/test1639(7,11): ERR Leading space in multi-line Str must be 28 spaces
+regression/test1639(11,11): ERR Leading space in multi-line Str must be 30 spaces
+regression/test1639(11,26): ERR Unexpected end of Str literal
+regression/test1639(2,27): ERR Expected identifier, not 'Str literal'
+regression/test1639(2,27): ERR Expected ')', not 'Str literal'
+regression/test1639(11,26): ERR Expected '}', not 'eof'

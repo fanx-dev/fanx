@@ -1,0 +1,1 @@
+enum/testErrors(1,7): ERR Cannot inherit 'Enum' explicitly

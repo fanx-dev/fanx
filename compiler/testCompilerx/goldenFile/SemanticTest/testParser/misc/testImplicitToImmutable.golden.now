@@ -1,0 +1,8 @@
+misc/testImplicitToImmutable(52,13): ERR Expected end of statement: semicolon, newline, or end of block; not ':'
+misc/testImplicitToImmutable(52,13): ERR Expected expression, not ':'
+misc/testImplicitToImmutable(57,2): ERR Expected '}', not 'eof'
+misc/testImplicitToImmutable(28,9): ERR Unknown method 'testPod::Foo.map'
+misc/testImplicitToImmutable(12,25): ERR Unknown method 'testPod::Foo.map'
+misc/testImplicitToImmutable(13,24): ERR Unknown method 'testPod::Foo.map'
+misc/testImplicitToImmutable(14,24): ERR Unknown method 'testPod::Foo.map'
+misc/testImplicitToImmutable(40,14): ERR Unknown method 'testPod::Foo.map'

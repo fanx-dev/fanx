@@ -1,0 +1,1 @@
+checkErrors/testStruct(2,3): ERR Struct type 'Bar' cannot contain non-readonly field 'x'

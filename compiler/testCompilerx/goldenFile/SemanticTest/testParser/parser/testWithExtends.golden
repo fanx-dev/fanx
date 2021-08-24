@@ -1,0 +1,4 @@
+parser/testWithExtends(1,1): ERR Enum 'Foo1' cannot extend class 'std::Test'
+parser/testWithExtends(3,1): ERR Facet 'Foo2' cannot extend class 'std::Test'
+parser/testWithExtends(5,1): ERR Mixin 'Foo3' cannot extend class 'sys::Obj'
+parser/testWithExtends(1,1): ERR Unknown method 'testPod::Foo1.doFromStr'

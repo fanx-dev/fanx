@@ -1,0 +1,2 @@
+parser/testDuplicateClasses: ERR Duplicate type name 'A'
+parser/testDuplicateClasses: ERR Duplicate type name 'Foo'

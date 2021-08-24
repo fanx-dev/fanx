@@ -1,0 +1,25 @@
+inherit/testInheritErrors(22,4): ERR Return type mismatch in override of 'testPod::A.c' - 'sys::Bool' != 'sys::Int', type:testPod::B
+inherit/testInheritErrors(23,4): ERR Parameter mismatch in override of 'testPod::A.d' - 'd(sys::Bool)' != 'd(sys::Bool, sys::Int)'
+inherit/testInheritErrors(25,4): ERR Type mismatch in override of 'testPod::A.f' - 'sys::Int' != 'sys::Str'
+inherit/testInheritErrors(25,4): ERR Cannot use covariance with value types 'testPod::A.f' - 'sys::Int' != 'sys::Str'
+inherit/testInheritErrors(26,4): ERR Cannot override non-virtual slot 'testPod::A.g'
+inherit/testInheritErrors(26,4): ERR Type mismatch in override of 'testPod::A.g' - 'sys::Bool' != 'sys::Str'
+inherit/testInheritErrors(28,4): ERR Type mismatch in override of 'testPod::A.i' - 'sys::Bool' != 'sys::Str'
+inherit/testInheritErrors(35,4): ERR Cannot override non-virtual slot 'testPod::B.j'
+inherit/testInheritErrors(36,4): ERR Cannot override non-virtual slot 'testPod::B.k'
+inherit/testInheritErrors(41,4): ERR Return type mismatch in override of 'std::OutStream.close' - 'sys::Bool' != 'sys::Void', type:testPod::SubOut
+inherit/testInheritErrors(43,4): ERR Parameter mismatch in override of 'std::OutStream.write' - 'write(sys::Int)' != 'write()'
+inherit/testInheritErrors(44,4): ERR Cannot override non-virtual slot 'std::OutStream.writeBool'
+inherit/testInheritErrors(39,2): ERR Must override abstract slot 'std::OutStream.charset'
+inherit/testInheritErrors(39,2): ERR Must override abstract slot 'std::OutStream.endian'
+inherit/testInheritErrors(61,2): ERR Must override ambiguous inheritance 'testPod::ConflictX.d' and 'testPod::ConflictY.d'
+inherit/testInheritErrors(61,2): ERR Inherited slots have conflicting signatures 'testPod::ConflictX.d' and 'testPod::ConflictY.d'
+inherit/testInheritErrors(61,2): ERR Must override ambiguous inheritance 'testPod::ConflictX.b' and 'testPod::ConflictY.b'
+inherit/testInheritErrors(61,2): ERR Inherited slots have conflicting signatures 'testPod::ConflictX.b' and 'testPod::ConflictY.b'
+inherit/testInheritErrors(61,2): ERR Must override ambiguous inheritance 'testPod::ConflictX.c' and 'testPod::ConflictY.c'
+inherit/testInheritErrors(61,2): ERR Inherited slots have conflicting signatures 'testPod::ConflictX.c' and 'testPod::ConflictY.c'
+inherit/testInheritErrors(65,2): ERR Must override ambiguous inheritance 'testPod::WhichX.name' and 'testPod::WhichY.name'
+inherit/testInheritErrors(70,4): ERR Invalid override
+inherit/testInheritErrors(71,4): ERR Invalid override
+inherit/testInheritErrors(78,4): ERR Return type mismatch in override of 'testPod::Ouch.returnObj' - 'sys::Obj' != 'sys::Void', type:testPod::SubOuch
+inherit/testInheritErrors(79,4): ERR Return type mismatch in override of 'testPod::Ouch.returnVoid' - 'sys::Void' != 'sys::Obj', type:testPod::SubOuch

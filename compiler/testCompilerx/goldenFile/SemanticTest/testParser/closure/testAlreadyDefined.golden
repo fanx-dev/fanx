@@ -1,0 +1,6 @@
+closure/testAlreadyDefined(6,5): ERR Variable 'a' is already defined in current block
+closure/testAlreadyDefined(7,5): ERR Variable 'b' is already defined in current block
+closure/testAlreadyDefined(9,13): ERR Closure parameter 'a' is already defined in current block
+closure/testAlreadyDefined(10,20): ERR Closure parameter 'b' is already defined in current block
+closure/testAlreadyDefined(12,12): ERR Variable 'a' is already defined in current block
+closure/testAlreadyDefined(13,19): ERR Variable 'b' is already defined in current block

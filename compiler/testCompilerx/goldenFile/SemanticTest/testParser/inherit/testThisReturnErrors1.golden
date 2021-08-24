@@ -1,0 +1,2 @@
+inherit/testThisReturnErrors1(3,3): ERR Cannot use This as parameter type
+inherit/testThisReturnErrors1(1,1): ERR Non-nullable field 'field' must be assigned in constructor 'make'

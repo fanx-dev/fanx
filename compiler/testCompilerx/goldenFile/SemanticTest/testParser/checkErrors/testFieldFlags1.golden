@@ -1,0 +1,4 @@
+checkErrors/testFieldFlags1(3,11): ERR Repeated modifier
+checkErrors/testFieldFlags1(4,13): ERR Cannot use modifiers on field getter
+checkErrors/testFieldFlags1(5,13): ERR Cannot use modifiers on field getter
+checkErrors/testFieldFlags1(6,13): ERR Cannot use modifiers on field setter except to narrow protection

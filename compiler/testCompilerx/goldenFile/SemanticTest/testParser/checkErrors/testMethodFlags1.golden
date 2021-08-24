@@ -1,0 +1,4 @@
+checkErrors/testMethodFlags1(3,21): ERR Repeated modifier
+checkErrors/testMethodFlags1(4,3): ERR Abstract implies virtual
+checkErrors/testMethodFlags1(5,3): ERR Override implies virtual
+checkErrors/testMethodFlags1(5,3): ERR Invalid override

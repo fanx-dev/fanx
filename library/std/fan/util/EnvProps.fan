@@ -7,16 +7,16 @@
 //
 
 internal class EnvProps {
-  Uri:FileProps cache := [:]
+  [Uri:FileProps] cache := [:]
   Lock lock := Lock()
 
-  Str:Str get(Pod pod, Uri path, Duration maxAge) {
+  [Str:Str] get(Pod pod, Uri path, Duration maxAge) {
     lock.sync |->Obj| {
       return getUnSafe(pod, path, maxAge)
     }
   }
 
-  internal Str:Str getUnSafe(Pod pod, Uri path, Duration maxAge) {
+  internal [Str:Str] getUnSafe(Pod pod, Uri path, Duration maxAge) {
     uri := `etc/$pod.name/$path`
     FileProps? props := cache.get(uri)
 
@@ -75,7 +75,7 @@ internal class FileProps {
 
   internal static Void load([Str:Str] props, File f) {
     try {
-      Str:Str t := Props.readProps(f.in)
+      [Str:Str] t := Props.readProps(f.in)
       //echo(t)
       //echo(f.readAllStr)
       t.each |v,k| {

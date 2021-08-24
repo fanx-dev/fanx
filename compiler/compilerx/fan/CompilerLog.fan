@@ -49,6 +49,9 @@ class CompilerLog {
   
   OutStream out
   
+  ** Max severity of log entries to report
+  LogLevel level := LogLevel.info
+  
   Bool suppressErr := false    // throw SuppressedErr instead of CompilerErr
   
   new make(OutStream out := Env.cur.out)
@@ -90,11 +93,13 @@ class CompilerLog {
     locs := e.loc.toLocStr
     if (e.isWarn) {
       warns.add(e)
-      out.printLine("$locs: WARN $e.msg").flush
     }
-    else {
+    else if (e.isErr) {
       errs.add(e)
-      out.printLine("$locs: ERROR $e.msg").flush
+    }
+    
+    if (e.level >= this.level) {
+      out.printLine(e.toStr).flush
     }
     return e
   }
@@ -103,6 +108,7 @@ class CompilerLog {
   ** Log an debug level message.
   **
   Void debug(Str msg, Loc? loc := null) {
+    if (LogLevel.debug < this.level) return
     locs := loc == null ? "" : loc.toLocStr
     out.printLine("$locs: DEBUG $msg").flush
   }
@@ -111,6 +117,7 @@ class CompilerLog {
   ** Log an info level message.
   **
   Void info(Str msg, Loc? loc := null) {
+    if (LogLevel.debug < this.level) return
     locs := loc == null ? "" : loc.toLocStr
     out.printLine("$locs: INFO $msg").flush
   }

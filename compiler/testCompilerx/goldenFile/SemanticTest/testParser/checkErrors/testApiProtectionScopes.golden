@@ -1,0 +1,8 @@
+checkErrors/testApiProtectionScopes(3,3): ERR Public method 'Bar.a' cannot use internal type 'testPod::Foo?'
+checkErrors/testApiProtectionScopes(4,3): ERR Public method 'Bar.b' cannot use internal type 'std::Map<sys::Str,testPod::Foo>'
+checkErrors/testApiProtectionScopes(5,3): ERR Public field 'Bar.f' cannot use internal type 'testPod::Foo?'
+checkErrors/testApiProtectionScopes(6,3): ERR Public field 'Bar.g' cannot use internal type 'sys::List<testPod::Foo>?'
+checkErrors/testApiProtectionScopes(7,3): ERR Public field 'Bar.h' cannot use internal type 'sys::Func<sys::Void,testPod::Foo>?'
+checkErrors/testApiProtectionScopes(8,3): ERR Public field 'Bar.i' cannot use internal type 'sys::Func<testPod::Foo,sys::Str>?'
+checkErrors/testApiProtectionScopes(1,1): ERR Public type 'Bar' cannot extend from internal class 'Foo'
+checkErrors/testApiProtectionScopes(1,1): ERR Public type 'Bar' cannot implement internal mixin 'Goo'

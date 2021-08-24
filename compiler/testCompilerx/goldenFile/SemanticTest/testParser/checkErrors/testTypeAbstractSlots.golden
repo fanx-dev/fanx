@@ -1,0 +1,5 @@
+checkErrors/testTypeAbstractSlots(3,1): ERR Must override abstract slot 'testPod::B.x'
+checkErrors/testTypeAbstractSlots(3,1): ERR Must override abstract slot 'testPod::B.y'
+checkErrors/testTypeAbstractSlots(4,1): ERR Must override abstract slot 'testPod::A.x'
+checkErrors/testTypeAbstractSlots(5,1): ERR Must override abstract slot 'testPod::B.y'
+checkErrors/testTypeAbstractSlots(5,1): ERR Must override abstract slot 'testPod::X.b'

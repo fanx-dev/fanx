@@ -1,0 +1,9 @@
+inherit/testThisReturnErrors3(3,10): ERR Cannot use This as parameter type
+inherit/testThisReturnErrors3(4,10): ERR Cannot use Void as parameter type
+inherit/testThisReturnErrors3(5,14): ERR Cannot use This as local variable type
+inherit/testThisReturnErrors3(6,25): ERR 'null' is not assignable to 'sys::Void?'
+inherit/testThisReturnErrors3(6,14): ERR Cannot use Void as local variable type
+inherit/testThisReturnErrors3(7,1): ERR Cannot return This from static method
+inherit/testThisReturnErrors3(8,21): ERR Cannot return 'sys::Int' as testPod::Foo This
+inherit/testThisReturnErrors3(9,1): ERR This type cannot be nullable
+inherit/testThisReturnErrors3(10,21): ERR Cannot return 'null' as testPod::Foo This

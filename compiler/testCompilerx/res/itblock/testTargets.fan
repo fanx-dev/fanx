@@ -8,7 +8,7 @@ class Acme
   Obj f() { fooi(Foo { x ='f' }) }
   Obj g() { foos(Foo()) { x ='g' } }
   Obj h() { fooi(Foo()) { x ='h' } }
-  Obj i() { Foo.fromStr(\"ignore\") { x = 'i' } } // we don't support short form
+  Obj i() { Foo.fromStr("ignore") { x = 'i' } } // we don't support short form
 
   Foo s := Foo { x = 's' }
   Foo t := Foo() { x = 't' }

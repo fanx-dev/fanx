@@ -1030,7 +1030,7 @@ enum class ShortcutOp
   private static const [Str:ShortcutOp] prefixes
   static
   {
-    m := Str:ShortcutOp[:]
+    m := [Str:ShortcutOp][:]
     vals.each |val| { m[val.methodName] = val }
     prefixes = m
   }

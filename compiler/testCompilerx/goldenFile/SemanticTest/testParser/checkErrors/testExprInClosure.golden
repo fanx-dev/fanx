@@ -1,0 +1,14 @@
+checkErrors/testExprInClosure(3,27): ERR Cannot call constructor 'make' on instance
+checkErrors/testExprInClosure(4,34): ERR Cannot call constructor 'make' on instance
+checkErrors/testExprInClosure(5,22): ERR Cannot call static method 'm02a' on instance
+checkErrors/testExprInClosure(6,29): ERR Cannot call static method 'm02a' on instance
+checkErrors/testExprInClosure(7,29): ERR Cannot call instance method 'm00a' in static context
+checkErrors/testExprInClosure(7,35): ERR Cannot call instance method 'm00a' in static context
+checkErrors/testExprInClosure(8,36): ERR Cannot call instance method 'm00a' in static context
+checkErrors/testExprInClosure(8,42): ERR Cannot call instance method 'm00a' in static context
+checkErrors/testExprInClosure(9,27): ERR Cannot access static field 'sf' on instance
+checkErrors/testExprInClosure(10,34): ERR Cannot access static field 'sf' on instance
+checkErrors/testExprInClosure(11,34): ERR Cannot access instance field 'f' in static context
+checkErrors/testExprInClosure(11,42): ERR Cannot access instance field 'f' in static context
+checkErrors/testExprInClosure(12,41): ERR Cannot access instance field 'f' in static context
+checkErrors/testExprInClosure(12,49): ERR Cannot access instance field 'f' in static context

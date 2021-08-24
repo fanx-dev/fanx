@@ -1,0 +1,6 @@
+parser/testField(5,3): ERR Static field 'c' must be const
+parser/testField(6,20): ERR Must return a value from non-Void method
+parser/testField(9,20): ERR Must return a value from non-Void method
+parser/testField(6,3): ERR Invalid storage access of field 'testPod::Foo.d' which doesn't have storage
+parser/testField(1,1): ERR Class 'Foo' must be abstract since it contains abstract slots
+parser/testField(5,3): ERR Non-nullable field 'c' must be assigned in static initializer

@@ -3,7 +3,7 @@
 class FanxStyle {
   var age: Int
   let name: Str
-  const time: Int = 0
+  const time : Int = 0
 
   new make(n: Str) {
     name = n
@@ -18,18 +18,6 @@ class FanxStyle {
   }
 
   static fun main() {
-    a := "x"
-    b: Int = 0
-    c: Str?
-
-    echo(c as Str?)
-    echo(c as Str)
-    echo(c is Str?)
-    echo(c is Str)
-
-    //echo(b+=1)
-    echo(++b)
-    //echo(b = 5)
   }
 }
 

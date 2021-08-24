@@ -1,0 +1,3 @@
+expr/testCallOperatorErrors(3,26): ERR Cannot use () call operator on non-func type 'sys::Str'
+expr/testCallOperatorErrors(4,28): ERR Cannot use () call operator on non-func type 'sys::Str'
+expr/testCallOperatorErrors(5,30): ERR Cannot use () call operator on non-func type 'sys::Int'

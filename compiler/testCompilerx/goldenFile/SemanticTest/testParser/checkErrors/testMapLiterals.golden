@@ -1,0 +1,6 @@
+checkErrors/testMapLiterals(3,32): ERR Invalid value type 'std::Duration' for map type 'std::Map<sys::Int,sys::Num>'
+checkErrors/testMapLiterals(3,37): ERR Invalid key type 'std::Duration' for map type 'std::Map<sys::Int,sys::Num>'
+checkErrors/testMapLiterals(3,44): ERR Invalid key type 'std::Duration' for map type 'std::Map<sys::Int,sys::Num>'
+checkErrors/testMapLiterals(3,48): ERR Invalid value type 'std::Duration' for map type 'std::Map<sys::Int,sys::Num>'
+checkErrors/testMapLiterals(4,30): ERR Invalid key type 'null' for map type 'std::Map<sys::Int,sys::Int>'
+checkErrors/testMapLiterals(4,40): ERR Invalid value type 'null' for map type 'std::Map<sys::Int,sys::Int>'

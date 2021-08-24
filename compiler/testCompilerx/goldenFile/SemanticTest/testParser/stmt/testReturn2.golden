@@ -1,0 +1,5 @@
+stmt/testReturn2(3,29): ERR Not a statement
+stmt/testReturn2(3,12): ERR Must return a value from non-Void method
+stmt/testReturn2(4,15): ERR Not a statement
+stmt/testReturn2(5,66): ERR Not a statement
+stmt/testReturn2(5,49): ERR Must return a value from non-Void method

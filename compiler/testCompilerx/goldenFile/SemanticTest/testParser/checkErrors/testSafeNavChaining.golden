@@ -1,0 +1,9 @@
+checkErrors/testSafeNavChaining(5,5): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(6,14): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(7,9): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(8,15): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(10,5): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(11,5): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(12,10): ERR Non-null safe field access chained after null safe call
+checkErrors/testSafeNavChaining(13,5): ERR Non-null safe call chained after null safe call
+checkErrors/testSafeNavChaining(16,20): ERR Non-null safe call chained after null safe call

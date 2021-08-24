@@ -1,0 +1,5 @@
+misc/testSpecialErrors(1,33): ERR Unknown variable 'Bar'
+misc/testSpecialErrors(1,24): ERR Unknown type 'Bar'
+misc/testSpecialErrors(3,33): ERR Unknown variable 'dkdkdkd'
+misc/testSpecialErrors(3,25): ERR Unknown type 'Bar'
+misc/testSpecialErrors(5,25): ERR Unknown type 'Bar'

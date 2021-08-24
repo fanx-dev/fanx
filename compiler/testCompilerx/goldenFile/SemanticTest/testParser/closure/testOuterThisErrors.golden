@@ -1,0 +1,4 @@
+closure/testOuterThisErrors(9,45): ERR Cannot access 'this' within closure of static context
+closure/testOuterThisErrors(10,35): ERR Cannot access 'this' within closure of static context
+closure/testOuterThisErrors(11,38): ERR Invalid use of 'super' within closure
+closure/testOuterThisErrors(12,28): ERR Invalid use of 'super' within closure

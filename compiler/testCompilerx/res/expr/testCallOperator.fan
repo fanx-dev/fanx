@@ -59,7 +59,7 @@ class Foo
 
   Obj o(Int p)
   {
-    return (funcField)(0, 1, 2, p)
+    return funcField(0, 1, 2, p)
   }
 
   Obj q(Int p)

@@ -1162,6 +1162,13 @@ public class Parser
         //Int<X>
         type = atype
       }
+      else if (atype.podName != "") {
+        //sys::Int
+        type = atype
+      }
+      else {
+        //echo("is type? $atype")
+      }
     }
     catch (CompilerErr e)
     {
@@ -1192,10 +1199,27 @@ public class Parser
     }
     else if (curt === Token.lbracket)
     {
-      loc = consume(Token.lbracket).loc
-      t = ctype
-      consume(Token.rbracket)
-      //if (!(t is MapType)) err("Invalid map type", loc)
+        loc = consume(Token.lbracket).loc
+        t = ctype(isTypeRef)
+        // check for type?:type map (illegal)
+        if (curt === Token.elvis && !cur.whitespace)
+        {
+          err("Map type cannot have nullable key type")
+        }
+
+        // check for ":" for map type
+        if (curt === Token.colon)
+        {
+          if (t.isNullable) err("Map type cannot have nullable key type")
+          consume(Token.colon)
+          key := t
+          val := ctype(isTypeRef)
+          //throw err("temp test")
+        //      t = MapType(key, val)
+          t = CType.mapType(loc, key, val)
+        }
+        consume(Token.rbracket)
+        //if (!(t is MapType)) err("Invalid map type", loc)
     }
     else if (curt === Token.pipe)
     {
@@ -1232,23 +1256,25 @@ public class Parser
         t = t.toNullable
       }
     }
+    
+    if (isTypeRef || t.name[0].isUpper) {
+        // check for type?:type map (illegal)
+        if (curt === Token.elvis && !cur.whitespace)
+        {
+          err("Map type cannot have nullable key type")
+        }
 
-    // check for type?:type map (illegal)
-    if (curt === Token.elvis && !cur.whitespace)
-    {
-      err("Map type cannot have nullable key type")
-    }
-
-    // check for ":" for map type
-    if (curt === Token.colon)
-    {
-      if (t.isNullable) err("Map type cannot have nullable key type")
-      consume(Token.colon)
-      key := t
-      val := ctype
-      //throw err("temp test")
-//      t = MapType(key, val)
-      t = CType.mapType(loc, key, val)
+        // check for ":" for map type
+        if (curt === Token.colon)
+        {
+          if (t.isNullable) err("Map type cannot have nullable key type")
+          consume(Token.colon)
+          key := t
+          val := ctype(isTypeRef)
+          //throw err("temp test")
+    //      t = MapType(key, val)
+          t = CType.mapType(loc, key, val)
+        }
     }
 
     // check for ? nullable
@@ -1256,6 +1282,8 @@ public class Parser
     {
       consume(Token.question)
       t = t.toNullable
+      if (curt === Token.question && !cur.whitespace)
+        throw err("Type cannot have multiple '?'")
     }
 
     endLoc(t)

@@ -1,0 +1,5 @@
+expr/testConstruction2(3,15): ERR Ambiguous constructor: Foo(sys::Str) [make1, make2]
+expr/testConstruction2(4,15): ERR Ambiguous constructor: Foo(sys::Str, sys::Bool) [make2, make3]
+expr/testConstruction2(5,15): ERR No constructor found: Foo(sys::Str, sys::Int)
+expr/testConstruction2(7,15): ERR No constructor found: Foo()
+expr/testConstruction2(8,15): ERR No constructor found: Foo(sys::Float)

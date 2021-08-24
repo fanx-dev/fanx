@@ -205,7 +205,7 @@ native final rtconst class Pod
   ** Get the meta name/value pairs for this pod.
   ** See [docLang]`docLang::Pods#meta`.
   **
-  Str:Str meta() { _meta }
+  [Str:Str] meta() { _meta }
 
 //////////////////////////////////////////////////////////////////////////
 // Types
@@ -285,7 +285,7 @@ native final rtconst class Pod
   **
   ** Convenience for `Env.props`.
   **
-  Str:Str props(Uri uri, Duration maxAge) {
+  [Str:Str] props(Uri uri, Duration maxAge) {
     Env.cur.props(this, uri, maxAge)
   }
 

@@ -1,0 +1,2 @@
+checkErrors/testSupersWithDef(3,44): ERR Must call super method 'testPod::Base.b' with exactly 2 arguments
+checkErrors/testSupersWithDef(4,44): ERR Must call super method 'testPod::A.a' with exactly 2 arguments

@@ -79,7 +79,7 @@ class ResolveImports : CompilerStep
   {
     // map to keep track of duplicate imports
     // within this compilation unit
-    dups := Str:Using[:]
+    dups := [Str:Using][:]
 
     // process each import statement (remember the
     // first one is an implicit import of sys)
@@ -352,6 +352,6 @@ class ResolveImports : CompilerStep
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
-  Str:CPod resolved := Str:CPod[:]  // reuse CPods across units
+  Str:CPod resolved := [Str:CPod][:]  // reuse CPods across units
 
 }

@@ -1,0 +1,15 @@
+checkErrors/testNotStmt2(5,5): ERR Not a statement
+checkErrors/testNotStmt2(6,5): ERR Not a statement
+checkErrors/testNotStmt2(7,5): ERR Not a statement
+checkErrors/testNotStmt2(8,5): ERR Not a statement
+checkErrors/testNotStmt2(9,5): ERR Not a statement
+checkErrors/testNotStmt2(10,5): ERR Not a statement
+checkErrors/testNotStmt2(11,5): ERR Not a statement
+checkErrors/testNotStmt2(12,5): ERR Not a statement
+checkErrors/testNotStmt2(13,5): ERR Not a statement
+checkErrors/testNotStmt2(14,5): ERR Not a statement
+checkErrors/testNotStmt2(15,5): ERR Not a statement
+checkErrors/testNotStmt2(16,5): ERR Not a statement
+checkErrors/testNotStmt2(17,5): ERR Not a statement
+checkErrors/testNotStmt2(18,5): ERR Not a statement
+checkErrors/testNotStmt2(19,5): ERR Not a statement

@@ -1,0 +1,1 @@
+regression/testAssignCast(1,34): ERR 'sys::Float' is not assignable to 'sys::Int'

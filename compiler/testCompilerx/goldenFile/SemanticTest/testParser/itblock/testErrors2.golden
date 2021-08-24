@@ -1,0 +1,11 @@
+itblock/testErrors2(3,31): ERR Not a statement
+itblock/testErrors2(4,31): ERR Invalid args add(testPod::A), not (sys::Int)
+itblock/testErrors2(5,31): ERR Invalid args add(testPod::A), not (sys::Int)
+itblock/testErrors2(8,31): ERR Not a statement
+itblock/testErrors2(9,31): ERR Not a statement
+itblock/testErrors2(10,31): ERR Not a statement
+itblock/testErrors2(11,29): ERR Left hand side is not assignable
+itblock/testErrors2(13,35): ERR Cannot set const field 'testPod::C.x'
+itblock/testErrors2(14,44): ERR Cannot set const field 'testPod::C.x'
+itblock/testErrors2(15,31): ERR Missing Operator facet: testPod::D.add
+itblock/testErrors2(16,31): ERR Missing Operator facet: testPod::D.add

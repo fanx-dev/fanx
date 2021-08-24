@@ -1,0 +1,1 @@
+inherit/testCovariantValueTypes(6,3): ERR Cannot use covariance with value types 'testPod::Base.d' - 'sys::Num' != 'sys::Int'

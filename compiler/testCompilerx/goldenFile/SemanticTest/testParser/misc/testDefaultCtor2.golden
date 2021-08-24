@@ -1,0 +1,2 @@
+misc/testDefaultCtor2(1,1): ERR Default constructor 'make' conflicts with slot at misc/testDefaultCtor2(1,11)
+misc/testDefaultCtor2(2,2): ERR Default constructor 'make' conflicts with slot at misc/testDefaultCtor2(2,12)

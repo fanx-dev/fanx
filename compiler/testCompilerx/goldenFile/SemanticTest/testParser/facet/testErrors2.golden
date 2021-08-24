@@ -1,0 +1,2 @@
+facet/testErrors2(1,17): ERR Facet cannot declare constructors
+facet/testErrors2(1,17): ERR Duplicate slot name 'make'

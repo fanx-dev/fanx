@@ -137,16 +137,13 @@ class FindTest : Test
     pod := PodDef(Loc.makeUnknow, "testPod")
     m := IncCompiler(pod)
     
-    file := "testFile"
-    m.updateSource(file, code)
+    file := "testFile.fan"
+    unit := m.updateSource(file, code)
     
-    m.resolveAll
+    m.checkError
     //m.compiler.pod.dump
     
-    m.context.cunits.each |u| {
-      u.printTree()
-    }
-    unit := m.context.cunits.first
+    unit.printTree()
     node := unit.findAt(Loc.make("", 0, 0, pos))
     return node
   }

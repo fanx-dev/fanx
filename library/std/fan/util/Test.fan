@@ -337,7 +337,8 @@ internal class TestRunner {
 ** TestErr
 **************************************************************************
 
-internal const class TestErr : Err
+@NoDoc
+const class TestErr : Err
 {
   new make(Str? msg := null, Err? cause := null) : super(msg, cause) {}
 }

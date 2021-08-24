@@ -833,6 +833,10 @@ class DeepParserX : ParserX {
         //Int<X>
         type = atype
       }
+      else if (atype.podName != "") {
+        //sys::Int
+        type = atype
+      }
     }
     catch (CompilerErr e)
     {

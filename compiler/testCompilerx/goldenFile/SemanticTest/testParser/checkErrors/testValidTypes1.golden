@@ -1,0 +1,10 @@
+checkErrors/testValidTypes1(3,2): ERR Cannot use Void as parameter type
+checkErrors/testValidTypes1(4,2): ERR Cannot use This as parameter type
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f03' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f04' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f05' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f07' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f10' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f11' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f12' must be assigned in constructor 'make'
+checkErrors/testValidTypes1(1,1): ERR Non-nullable field 'f13' must be assigned in constructor 'make'

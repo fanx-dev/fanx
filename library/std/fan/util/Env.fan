@@ -117,7 +117,7 @@ native rtconst class Env
   **
   ** Default implementation delegates to `parent`.
   **
-  virtual Str:Str vars()
+  virtual [Str:Str] vars()
 
   **
   ** Poll for a platform dependent map of diagnostics name/value
@@ -411,7 +411,7 @@ native rtconst class Env
   **
   ** Also see `Pod.props` and `docLang::Env`.
   **
-  virtual Str:Str props(Pod pod, Uri uri, Duration maxAge) {
+  virtual [Str:Str] props(Pod pod, Uri uri, Duration maxAge) {
     envProps.get(pod, uri, maxAge)
   }
 

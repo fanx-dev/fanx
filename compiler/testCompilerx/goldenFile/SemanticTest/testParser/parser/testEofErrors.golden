@@ -1,0 +1,3 @@
+parser/testEofErrors(1,23): ERR Unexpected end of Str literal
+parser/testEofErrors(1,23): ERR Expected expression, not 'eof'
+parser/testEofErrors(1,23): ERR Expected '}', not 'eof'

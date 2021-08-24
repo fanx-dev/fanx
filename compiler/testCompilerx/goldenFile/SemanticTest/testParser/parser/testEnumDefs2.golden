@@ -1,0 +1,2 @@
+parser/testEnumDefs2(3,3): ERR Invalid args make(sys::Int, sys::Str), not (sys::Int, sys::Str, sys::Bool)
+parser/testEnumDefs2(4,3): ERR Invalid args make(sys::Int, sys::Str), not (sys::Int, sys::Str, sys::Bool)

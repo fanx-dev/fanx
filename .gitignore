@@ -5,11 +5,9 @@ env/lib/java/ext
 env/lib
 env/doc
 compiler/javaEmit/bin
-compiler/compilerx/goldenFile
 library/baseTest/test
 *.pod
 config.props
 release
 .vs/
-compiler/testCompilerx/goldenFile
 *.properties

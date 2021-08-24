@@ -34,7 +34,7 @@ internal class UriParser {
     }
   }
 
-  static Str:Str parseQuery(Str s, Bool decode) {
+  static [Str:Str] parseQuery(Str s, Bool decode) {
     query := OrderedMap<Str,Str>()
     start := 0
     eq := 0
@@ -546,7 +546,7 @@ const final class Uri
   ** are parsed into map using the same semantics as `Uri.query`.  Throw
   ** ArgErr is the string is malformed.  See `encodeQuery`.
   **
-  static Str:Str decodeQuery(Str s) {
+  static [Str:Str] decodeQuery(Str s) {
     return UriParser.parseQuery(s, true)
   }
 

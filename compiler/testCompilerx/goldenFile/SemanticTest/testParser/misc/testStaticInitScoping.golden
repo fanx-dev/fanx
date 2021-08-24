@@ -1,0 +1,5 @@
+misc/testStaticInitScoping(13,11): ERR Unexpected symbol: \ (0x5c)
+misc/testStaticInitScoping(14,5): ERR Leading space in multi-line Str must be 11 spaces
+misc/testStaticInitScoping(16,2): ERR Unexpected end of Str literal
+misc/testStaticInitScoping(16,2): ERR Expected expression, not 'eof'
+misc/testStaticInitScoping(16,2): ERR Expected '}', not 'eof'

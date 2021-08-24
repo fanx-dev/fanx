@@ -1,0 +1,4 @@
+inherit/testConstOverridesErrors2(3,3): ERR Const field 'a' cannot override field 'testPod::A.a'
+inherit/testConstOverridesErrors2(4,3): ERR Field 'b' cannot override method with params 'testPod::X.b'
+inherit/testConstOverridesErrors2(5,3): ERR Field 'c' cannot override method with params 'testPod::X.c'
+inherit/testConstOverridesErrors2(6,3): ERR Const field 'd' cannot override field 'testPod::X.d'

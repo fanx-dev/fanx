@@ -26,7 +26,7 @@ abstract class GoldenTest : Test {
     content := file.readAllStr
     if (data != content) {
       now := (file.uri + `${file.name}.now`).toFile
-      now.open { it.writeChars(data) }.close
+      now.out { it.writeChars(data) }.close
     }
     verify(data == content, file.toStr)
   }

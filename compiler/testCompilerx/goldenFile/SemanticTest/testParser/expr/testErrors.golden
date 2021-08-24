@@ -1,0 +1,23 @@
+expr/testErrors(3,25): ERR Unknown variable 'foobar'
+expr/testErrors(4,25): ERR Unknown slot 'sys::Int.foobar'
+expr/testErrors(5,25): ERR Unknown method 'sys::Int.noway'
+expr/testErrors(6,25): ERR Unknown method 'sys::Int.nope'
+expr/testErrors(7,25): ERR Unknown slot 'sys::Str.foo'
+expr/testErrors(8,25): ERR Unknown method 'sys::Str.foo'
+expr/testErrors(9,23): ERR Variable 'x' is already defined in current block
+expr/testErrors(10,23): ERR Variable 'y' is already defined in current block
+expr/testErrors(11,26): ERR Variable 'z' is already defined in current block
+expr/testErrors(12,25): ERR Unknown variable 'foobar'
+expr/testErrors(13,25): ERR Unknown method 'sys::Float.foobar'
+expr/testErrors(14,25): ERR Unknown variable 'foo'
+expr/testErrors(14,31): ERR Unknown variable 'bar'
+expr/testErrors(15,26): ERR Unknown slot 'sys::Int.foo'
+expr/testErrors(15,39): ERR Unknown method 'testPod::Foo.bar'
+expr/testErrors(16,30): ERR Unknown method 'sys::Str.increment'
+expr/testErrors(17,30): ERR Unknown method 'sys::Str.decrement'
+expr/testErrors(18,30): ERR No operator method found: sys::Str / sys::Int
+expr/testErrors(19,30): ERR No operator method found: sys::Str - sys::Int
+expr/testErrors(20,30): ERR Unknown slot 'sys::Str.foo'
+expr/testErrors(21,30): ERR Unknown method 'sys::Str.foo'
+expr/testErrors(22,25): ERR Unknown slot literal 'sys::Str.bad'
+expr/testErrors(23,25): ERR Unknown slot literal 'testPod::Foo.bad'

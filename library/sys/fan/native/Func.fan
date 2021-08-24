@@ -88,7 +88,7 @@ rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** parameters - the additional arguments are ignored.  If no arguments are
   ** required, you may pass null for args.
   **
-  virtual R callList(Obj?[]? args) {
+  virtual Obj? callList(Obj?[]? args) {
     size := (args == null) ? 0 : args.size
     switch (size) {
     case 0:
@@ -121,7 +121,7 @@ rtconst native class Func<R,A,B,C,D,E,F,G,H>
   ** 'callList([target, args[0], args[1] ...])'.  Throw UnsupportedErr
   ** if called on a function which is not an instance method.
   **
-  virtual R callOn(Obj? target, Obj?[]? args) {
+  virtual Obj? callOn(Obj? target, Obj?[]? args) {
     size := (args == null) ? 1 : args.size + 1;
     switch (size) {
     case 0:

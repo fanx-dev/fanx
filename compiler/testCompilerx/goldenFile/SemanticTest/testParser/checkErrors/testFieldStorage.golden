@@ -1,0 +1,9 @@
+checkErrors/testFieldStorage(3,22): ERR Field storage for 'testPod::Root.r00' not accessible
+checkErrors/testFieldStorage(4,22): ERR Field storage for 'testPod::Root.r00' not accessible
+checkErrors/testFieldStorage(6,26): ERR Cannot use field accessor inside accessor itself - use '&' operator
+checkErrors/testFieldStorage(7,19): ERR Cannot use field accessor inside accessor itself - use '&' operator
+checkErrors/testFieldStorage(8,26): ERR Cannot use field accessor inside accessor itself - use '&' operator
+checkErrors/testFieldStorage(8,38): ERR Cannot use field accessor inside accessor itself - use '&' operator
+checkErrors/testFieldStorage(12,28): ERR Field storage of inherited field 'testPod::Root.r01' not accessible (might try super)
+checkErrors/testFieldStorage(19,16): ERR Field storage not accessible in mixin 'testPod::M.x'
+checkErrors/testFieldStorage(20,15): ERR Field storage not accessible in mixin 'testPod::M.x'

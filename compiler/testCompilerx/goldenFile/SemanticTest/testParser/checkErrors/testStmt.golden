@@ -1,0 +1,32 @@
+checkErrors/testStmt(3,24): ERR If condition must be Bool, not 'sys::Int'
+checkErrors/testStmt(4,26): ERR Must throw Err, not 'sys::Int'
+checkErrors/testStmt(5,27): ERR Cannot return 'sys::Int' as 'sys::Str'
+checkErrors/testStmt(6,26): ERR For condition must be Bool, not 'sys::Str'
+checkErrors/testStmt(7,27): ERR While condition must be Bool, not 'sys::Str'
+checkErrors/testStmt(8,21): ERR Break outside of loop (break is implicit in switch)
+checkErrors/testStmt(8,28): ERR Continue outside of loop
+checkErrors/testStmt(9,30): ERR 'sys::Float' is not assignable to 'sys::Str'
+checkErrors/testStmt(10,40): ERR Must catch Err, not 'sys::Str'
+checkErrors/testStmt(11,52): ERR Already caught 'sys::IOErr'
+checkErrors/testStmt(12,50): ERR Already caught 'sys::IOErr'
+checkErrors/testStmt(13,50): ERR Already caught 'sys::Err'
+checkErrors/testStmt(14,42): ERR Already caught 'sys::Err'
+checkErrors/testStmt(15,49): ERR Incomparable types 'sys::Int' and 'std::Weekday'
+checkErrors/testStmt(16,47): ERR Duplicate case label
+checkErrors/testStmt(17,75): ERR Duplicate case label
+checkErrors/testStmt(19,46): ERR Cannot leave finally block
+checkErrors/testStmt(20,47): ERR Cannot leave finally block
+checkErrors/testStmt(21,55): ERR Cannot leave finally block
+checkErrors/testStmt(21,78): ERR Cannot leave finally block
+checkErrors/testStmt(22,55): ERR Cannot leave finally block
+checkErrors/testStmt(23,69): ERR Cannot leave finally block
+checkErrors/testStmt(24,62): ERR Cannot leave finally block
+checkErrors/testStmt(25,62): ERR Cannot leave finally block
+checkErrors/testStmt(26,60): ERR Cannot leave finally block
+checkErrors/testStmt(26,80): ERR Cannot leave finally block
+checkErrors/testStmt(28,21): ERR Try block cannot be empty
+checkErrors/testStmt(30,14): ERR Cannot return a value from Void method
+checkErrors/testStmt(31,13): ERR Must return a value from non-Void method
+checkErrors/testStmt(32,26): ERR Must return a value from non-Void method
+checkErrors/testStmt(32,39): ERR Must return a value from non-Void method
+checkErrors/testStmt(34,30): ERR Must throw Err, not 'sys::Str'

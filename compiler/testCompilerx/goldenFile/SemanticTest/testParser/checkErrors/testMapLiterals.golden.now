@@ -1,0 +1,3 @@
+checkErrors/testMapLiterals(3,25): ERR Expected end of statement: semicolon, newline, or end of block; not ':'
+checkErrors/testMapLiterals(3,25): ERR Expected expression, not ':'
+checkErrors/testMapLiterals(5,2): ERR Expected '}', not 'eof'

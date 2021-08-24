@@ -1,0 +1,4 @@
+regression/test1474(2,27): ERR Expected '.' dot after 'super' keyword
+regression/test1474(3,31): ERR Expected '.' dot after 'super' keyword
+regression/test1474(4,28): ERR Expected '.' dot after 'super' keyword
+regression/test1474(5,32): ERR Expected '.' dot after 'super' keyword

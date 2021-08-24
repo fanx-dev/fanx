@@ -29,7 +29,7 @@ class PodProps
     
     input := CompilerInput()
     input.podDef = pod
-    baseDir := file.uri.parent.toFile
+    baseDir := file.normalize.uri.parent.toFile
     input.baseDir = baseDir
     
     input.srcFiles = findAllFiles(baseDir, props.get("srcDirs"), "fanx")

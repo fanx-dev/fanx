@@ -1,0 +1,9 @@
+checkErrors/testOperators(3,2): ERR Operator method 'plu03' has invalid name
+checkErrors/testOperators(4,2): ERR Operator method 'plusFoo' cannot return Void
+checkErrors/testOperators(5,2): ERR Operator method 'negate' has wrong number of parameters
+checkErrors/testOperators(6,2): ERR Operator method 'plus06' has wrong number of parameters
+checkErrors/testOperators(7,2): ERR Operator method 'minus07' has wrong number of parameters
+checkErrors/testOperators(8,2): ERR Operator method 'get08' has wrong number of parameters
+checkErrors/testOperators(9,2): ERR Operator method 'set' has wrong number of parameters
+checkErrors/testOperators(10,2): ERR Operator method 'setFoo' has invalid name
+checkErrors/testOperators(12,2): ERR Operator method 'add' must return This

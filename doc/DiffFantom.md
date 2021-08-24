@@ -236,9 +236,9 @@ const name: Str
 #### Collection Literals  ####
 not support explicit type collection literals:
 ```
-   //old way       new way
-   Int[,]       -->  []
-   [Str:Int][:] -->  [:]
+   //old way                             new way
+   Str[] names := Str[,]          --->  names: [Str] = []
+   [Str:Int] map := [Str:Int][:]  --->  map: [Str:Int] = [:]
 ```
 
 #### Type Cast ####
@@ -255,7 +255,6 @@ The compound assignment exper resolved type now is 'Void'.
     foo(a++)     //error
     foo(a = 1)   //ok
 ```
-
 
 
 ### Little Things ###

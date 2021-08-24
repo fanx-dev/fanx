@@ -1,0 +1,12 @@
+enum/testErrors2(2,19): ERR Enum 'vals' conflicts with slot
+enum/testErrors2(4,22): ERR Enum 'foo' conflicts with slot
+enum/testErrors2(6,23): ERR Enum constructor must be named 'make'
+enum/testErrors2(7,38): ERR Enum constructor must be named 'make'
+enum/testErrors2(7,23): ERR Enum constructor must be private
+enum/testErrors2(8,23): ERR Enum constructor must be private
+enum/testErrors2(9,23): ERR Enum constructor cannot call super constructor
+enum/testErrors2(2,19): ERR Duplicate slot name 'vals'
+enum/testErrors2(3,1): ERR Must override abstract slot 'testPod::X.foo'
+enum/testErrors2(4,22): ERR Duplicate slot name 'foo'
+enum/testErrors2(3,1): ERR Unknown method 'testPod::B.doFromStr'
+enum/testErrors2(5,1): ERR Unknown method 'testPod::D.doFromStr'

@@ -1,0 +1,5 @@
+regression/test1718(2,4): ERR Unknown type 'x'
+regression/test1718(3,4): ERR Unknown type 'y'
+regression/test1718(3,11): ERR Unknown type 'z'
+regression/test1718(4,17): ERR Unknown type 'Bar'
+regression/test1718(4,22): ERR Unknown type 'Bar'

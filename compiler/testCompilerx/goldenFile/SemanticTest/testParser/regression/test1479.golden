@@ -1,0 +1,5 @@
+regression/test1479(1,35): ERR Cannot nest Str literal within interpolation
+regression/test1479(3,1): ERR Leading space in multi-line Str must be 39 spaces
+regression/test1479(3,45): ERR Unexpected end of Str literal
+regression/test1479(1,38): ERR Expected expression, not '}'
+regression/test1479(3,45): ERR Expected '}', not 'eof'

@@ -1,0 +1,15 @@
+checkErrors/testFields(3,3): ERR Mixin field 'a' must be abstract
+checkErrors/testFields(4,3): ERR Mixin field 'b' must be abstract
+checkErrors/testFields(5,3): ERR Abstract field 'c' cannot have getter or setter
+checkErrors/testFields(5,33): ERR Field storage not accessible in mixin 'testPod::MixIt.c'
+checkErrors/testFields(6,3): ERR Abstract field 'd' cannot have getter or setter
+checkErrors/testFields(6,26): ERR Field storage not accessible in mixin 'testPod::MixIt.d'
+checkErrors/testFields(7,3): ERR Abstract field 'e' cannot have getter or setter
+checkErrors/testFields(7,33): ERR Field storage not accessible in mixin 'testPod::MixIt.e'
+checkErrors/testFields(7,44): ERR Field storage not accessible in mixin 'testPod::MixIt.e'
+checkErrors/testFields(8,3): ERR Mixin field 'f' must be abstract
+checkErrors/testFields(9,21): ERR Abstract field 'g' cannot have initializer
+checkErrors/testFields(14,3): ERR Abstract field 'c' cannot have getter or setter
+checkErrors/testFields(15,3): ERR Abstract field 'd' cannot have getter or setter
+checkErrors/testFields(16,3): ERR Abstract field 'e' cannot have getter or setter
+checkErrors/testFields(17,21): ERR Abstract field 'f' cannot have initializer
