@@ -256,6 +256,13 @@ The compound assignment exper resolved type now is 'Void'.
     foo(a = 1)   //ok
 ```
 
+#### Final Class ####
+class is final by default.
+```
+virtual Bar {
+  virtual fun foo() {}
+}
+```
 
 ### Little Things ###
 

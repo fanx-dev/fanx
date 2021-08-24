@@ -1,5 +1,7 @@
 fanb pod.props
-fant compilerx
+#fant compilerx
 
-fan build::JarDistMain compilerx compilerx::IncCompiler.main
-cp ./compilerx.jar ../../../fantomIDE/module/release/modules/ext/
+fan build::Jar compilerx compilerx::IncCompiler.main
+
+mkdir -p ../../../fanIDE/module/release/modules/ext/
+cp ./compilerx.jar ../../../fanIDE/module/release/modules/ext/

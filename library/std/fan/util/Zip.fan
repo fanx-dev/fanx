@@ -206,7 +206,7 @@ native final class Zip
 ** ZipEntry File and Stream
 **************************************************************************
 
-internal const class ZipEntryFile : File
+native internal const class ZipEntryFile : File
 {
   private const Unsafe<Zip> _parent
   private const Int _time

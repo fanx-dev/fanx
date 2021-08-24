@@ -11,3 +11,4 @@ config.props
 release
 .vs/
 *.properties
+compiler/compilerx/compilerx.jar

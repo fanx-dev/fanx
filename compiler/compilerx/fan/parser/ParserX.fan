@@ -37,13 +37,13 @@ public class ParserX
     reset(0)
   }
   
-  static Parser makeSimple(Str code, Str name, Bool deep := true) {
+  static ParserX makeSimple(Str code, Str name, Bool deep := true) {
     loc := Loc.makeUnknow
     log := CompilerLog()
     pod := PodDef(loc, name)
     unit := CompilationUnit(loc, pod, name)
-    if (deep) return DeepParser(log, code, unit)
-    return Parser(log, code, unit)
+    if (deep) return DeepParserX(log, code, unit)
+    return ParserX(log, code, unit)
   }
 
 //////////////////////////////////////////////////////////////////////////

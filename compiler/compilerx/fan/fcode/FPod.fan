@@ -406,7 +406,7 @@ final class FPod : CPod, FConst
   
   override Bool fileDirty() {
     podFile := file
-    if (podFile == null) return false
+    if (podFile == null) return true
     if (podFile.modified.toMillis > timestamp) return true
     return false
   }

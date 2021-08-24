@@ -60,14 +60,14 @@ abstract class CNamespace
     }
   }
   
-  Void checkUpdate() {
+  Bool checkUpdate() {
     dirtyPods := Str[,]
     podCache.each |v,k| {
       if (v.fileDirty) {
         dirtyPods.add(k)
       }
     }
-    if (dirtyPods.size == 0) return
+    if (dirtyPods.size == 0) return false
     
     echo("Reload pod: $dirtyPods")
     
@@ -76,6 +76,7 @@ abstract class CNamespace
     }
     typeCache.clear
     cleanup
+    return true
   }
 
 //////////////////////////////////////////////////////////////////////////
