@@ -19,7 +19,7 @@ fan.std.Param = fan.sys.Obj.$extend(fan.sys.Obj);
 fan.std.Param.prototype.$ctor = function(name, type, hasDefault)
 {
   this.m_name = name;
-  this.m_type = (type instanceof fan.std.Type) ? type : fan.std.Type.find(type);
+  this.m_type = (type instanceof fan.std.Type) ? type : fan.std.Type.find(type, false);
   this.m_hasDefault = hasDefault;
 }
 

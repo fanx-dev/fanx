@@ -2,38 +2,6 @@
 fan.std.DateTimePeer = function(){}
 
 
-fan.std.DateTimePeer.now = function(tolerance) {
-	var d = new Date();
-	var now = d.getTime();
-
-	if (fan.std.DateTimePeer.cached === undefined) {
-		fan.std.DateTimePeer.cached = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.cur());
-	}
-
-    var c = fan.std.DateTimePeer.cached;
-    if (tolerance != null && now - c.m_ticks <= tolerance.toMillis())
-        return c;
-
-    fan.std.DateTimePeer.cached = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.cur());
-    return fan.std.DateTimePeer.cached;
-}
-
-fan.std.DateTimePeer.nowUtc = function(tolerance) {
-	var d = new Date();
-	var now = d.getTime();
-
-	if (fan.std.DateTimePeer.cachedUtc === undefined) {
-		fan.std.DateTimePeer.cachedUtc = fan.std.DateTime.fromTicks(0, fan.std.TimeZone.utc());
-	}
-
-    var c = fan.std.DateTimePeer.cachedUtc;
-    if (tolerance != null && now - c.m_ticks <= tolerance.toMillis())
-        return c;
-
-    fan.std.DateTimePeer.cachedUtc = fan.std.DateTime.fromTicks(now, fan.std.TimeZone.utc());
-    return fan.std.DateTimePeer.cachedUtc;
-}
-
 fan.std.DateTimePeer.fromTicks = function(ticks, tz) {
 	var d = new Date(ticks);
 	var year = d.getFullYear();

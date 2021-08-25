@@ -5,7 +5,7 @@
 // History:
 //   4 Jan 06  Brian Frank  Creation
 //
-
+@NoJs
 internal rtconst class PodList {
   private [Str:Pod] podMap := [:]
   private Lock lock := Lock()

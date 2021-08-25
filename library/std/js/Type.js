@@ -288,7 +288,7 @@ fan.std.Type.prototype.field = function(name, checked)
 // addMethod
 fan.std.Type.prototype.$am = function(name, flags, returns, params, facets)
 {
-  var r = fan.std.Type.find(returns);
+  var r = fan.std.Type.find(returns, false);
   var m = new fan.std.Method(this, name, flags, r, params, facets);
   this.m_slotsInfo.push(m);
   return this;
@@ -297,7 +297,7 @@ fan.std.Type.prototype.$am = function(name, flags, returns, params, facets)
 // addField
 fan.std.Type.prototype.$af = function(name, flags, of, facets)
 {
-  var t = fan.std.Type.find(of);
+  var t = fan.std.Type.find(of, false);
   var f = new fan.std.Field(this, name, flags, t, facets);
   this.m_slotsInfo.push(f);
   return this;

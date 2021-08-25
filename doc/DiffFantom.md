@@ -269,6 +269,11 @@ switch (x) {
 }
 ```
 
+#### Literals ####
+
+Unsupport decimal and uri literals.
+
+
 ### Little Things ###
 
 #### Return From Void ####

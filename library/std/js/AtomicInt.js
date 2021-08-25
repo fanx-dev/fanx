@@ -5,7 +5,7 @@ fan.std.AtomicInt.prototype.$typeof = function() { return fan.std.AtomicInt.$typ
 
 fan.std.AtomicInt.make = function(v) {
 	self = new fan.std.AtomicInt();
-	if (v === undefined) v = false;
+	if (v === undefined) v = 0;
 	self.m_val = v;
 	return self;
 }

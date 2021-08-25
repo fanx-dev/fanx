@@ -5,7 +5,7 @@ fan.std.AtomicRef.prototype.$typeof = function() { return fan.std.AtomicRef.$typ
 
 fan.std.AtomicRef.make = function(v) {
 	self = new fan.std.AtomicRef();
-	if (v === undefined) v = false;
+	if (v === undefined) v = null;
 	self.m_val = v;
 	return self;
 }
