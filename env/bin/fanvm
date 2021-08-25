@@ -3,4 +3,4 @@
 
 FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
-fanvm.exe -p$FAN_HOME -d1 "$@"
+$FAN_HOME/bin/win-x86_64-debug/fanvm.exe -p$FAN_HOME -d1 "$@"

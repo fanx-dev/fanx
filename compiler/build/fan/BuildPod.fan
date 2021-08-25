@@ -216,7 +216,7 @@ class BuildPod : BuildScript
 
     // add my own meta
     meta := this.meta.dup
-    meta["summary"] = summary
+    pod.summary = summary
     meta["pod.docApi"] = docApi.toStr
     meta["pod.docSrc"] = docSrc.toStr
     meta["pod.native.java"]   = (javaDirs   != null && !javaDirs.isEmpty).toStr

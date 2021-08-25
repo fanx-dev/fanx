@@ -37,7 +37,7 @@ class PodProps
     input.jsFiles = findAllFiles(baseDir, props.get("jsDirs"), null)
     
     
-    pod.meta["pod.summary"] = summary
+    pod.summary = summary
     docApi := props.get("docApi", "true") == "true"
     pod.meta["pod.docApi"] = docApi.toStr
     
@@ -49,7 +49,7 @@ class PodProps
 
     //get index
     getStartsWith("index.", props, pod.index)
-    
+
     return input
   }
   

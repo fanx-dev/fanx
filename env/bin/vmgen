@@ -5,4 +5,4 @@ FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
 mkdir $FAN_HOME/../runtime/fni/$1/
 
-vmgen.exe -p$FAN_HOME -g$FAN_HOME/../runtime/fni/$1/ $1
+$FAN_HOME/bin/win-x86_64-debug/vmgen.exe -p$FAN_HOME -g$FAN_HOME/../runtime/fni/$1/ $1

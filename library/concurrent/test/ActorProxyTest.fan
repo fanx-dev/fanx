@@ -4,7 +4,7 @@
 // History:
 //   2017-08-12  Jed Young  Creation
 //
-
+@NoDoc
 class Act {
   Str say(Str str) {
     return str+"2"

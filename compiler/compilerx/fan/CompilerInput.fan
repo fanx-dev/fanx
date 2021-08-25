@@ -78,7 +78,7 @@ class CompilerInput
   **
   ** Include fandoc in output pod, default is false
   **
-  Bool includeDoc := false
+  Bool includeDoc := true
 
   **
   ** Include source code in output pod, default is false

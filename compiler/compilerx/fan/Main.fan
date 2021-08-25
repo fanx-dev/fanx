@@ -19,7 +19,7 @@ class Main
   {
     loc := Loc.makeFile(file)
     pod := PodDef(loc, podName)
-    pod.meta["pod.summary"] = "script"
+    pod.summary = "script"
     pod.version        = Version("0")
 
     input := CompilerInput.make

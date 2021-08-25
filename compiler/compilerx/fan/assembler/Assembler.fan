@@ -54,6 +54,7 @@ class Assembler : FConst
     meta["pod.name"]       = pod.name
     meta["pod.version"]    = pod.version.toStr
     meta["pod.depends"]    = pod.depends.join(";")
+    meta["pod.summary"]    = pod.summary ?: ""
     meta["pod.isScript"]   = compiler.input.isScript.toStr
     meta["pod.compileJs"]  = pod.compileJs.toStr
     meta["pod.fcode"] = (!compiler.pod.types.isEmpty).toStr

@@ -1,6 +1,6 @@
 //using concurrent
 
-
+@NoDoc
 class TestAsyncRunner : AsyncRunner {}
 
 class AsyncTest : Test {
