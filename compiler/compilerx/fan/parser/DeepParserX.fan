@@ -401,19 +401,19 @@ class DeepParserX : ParserX {
     {
       if (curt === Token.caseKeyword)
       {
+        consume
         c := Case(cur.loc)
-        while (curt === Token.caseKeyword)
+        c.cases.add(expr)
+        while (curt === Token.comma)
         {
           consume
           c.cases.add(expr)
-          consume(Token.colon)
         }
-        if (curt !== Token.defaultKeyword) // optimize away case fall-thru to default
-        {
-          c.block = switchBlock
-          endLoc(c)
-          stmt.cases.add(c)
-        }
+        consume(Token.colon)
+        
+        c.block = switchBlock
+        endLoc(c)
+        stmt.cases.add(c)
       }
       else if (curt === Token.defaultKeyword)
       {
@@ -751,13 +751,13 @@ class DeepParserX : ParserX {
       return e
     }
 
-    if (tokt.isIncrementOrDecrement)
-    {
-      consume
-      e := ShortcutExpr.makeUnary(loc, tokt, parenExpr)
-      endLoc(e)
-      return e
-    }
+    // if (tokt.isIncrementOrDecrement)
+    // {
+    //   consume
+    //   e := ShortcutExpr.makeUnary(loc, tokt, parenExpr)
+    //   endLoc(e)
+    //   return e
+    // }
 
     expr := termExpr
 

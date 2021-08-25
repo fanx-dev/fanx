@@ -14,7 +14,6 @@
 - Initialization Assignment
 - Closure Inference
 - Local Return
-- Modern Style
 - Static Namespace
 - Primitive and Array type
 - Named Param
@@ -23,7 +22,7 @@
 - Float Literals Enhance
 - Build Script Enhance
 - Portable Library
-- Break Changes
+- .Fanx File
 - Little Things
 
 
@@ -129,29 +128,6 @@ The return keyword will be deprecated in closures.
   }
 ```
 
-### Modern Style
-Written type after name
-```
-  class Person {
-    var age: Int
-    let name: Str
-
-    new make(n: Str) {
-      name = n
-    }
-
-    fun foo() : Str {
-      return name
-    }
-
-    static fun main() {
-      p : Person = Person("pick")
-      s := p.foo
-      echo(s)
-    }
-  }
-```
-
 ### Static Namespace ###
 fanx allow same name static slots in inheritance.
 ```
@@ -224,15 +200,28 @@ It's more portable to write a new backend platforms.
 Future targets might include C, LLVM, WebAssembly.
 
 
-### Break Changes ###
+### .Fanx File ###
 The '.fan' file is almost like Fantom. The '.fanx' file have some break changes:
 
 #### variable declaration ####
 ```
-var age: Int
-let name: Str?
-const name: Str
+  class Person {
+    var age: Int
+    let name: Str
+    const size: Int
+
+    new make(n: Str) {
+      name = n
+      size = 0
+    }
+
+    fun foo(): Person {
+      p : Person = Person("pick")
+      return p
+    }
+  }
 ```
+
 #### Collection Literals  ####
 not support explicit type collection literals:
 ```
@@ -254,6 +243,8 @@ The compound assignment exper resolved type now is 'Void'.
     foo(a += 1)  //error
     foo(a++)     //error
     foo(a = 1)   //ok
+    a++          //ok
+    ++a          //not support
 ```
 
 #### Final Class ####
@@ -261,6 +252,20 @@ class is final by default.
 ```
 virtual Bar {
   virtual fun foo() {}
+}
+```
+
+#### Switch Fall-through ####
+```
+switch (x) {
+  case 1: case 2:
+  ...
+}
+
+//fanx way
+switch (x) {
+  case 1,2:
+  ...
 }
 ```
 

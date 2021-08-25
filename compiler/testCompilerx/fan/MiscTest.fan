@@ -1,26 +1,29 @@
 using compilerx
 
 class MiscTest : Test {
+
+  IncCompiler compile(Str code) {
+    pod := PodDef(Loc.makeUnknow, "testPod")
+    m := IncCompiler(pod)
+    
+    file := "testFile.fanx"
+    m.updateSource(file, code)
+    
+    m.checkError
+    return m
+  }
+
   Void test() {
     code := 
     Str<| 
             class Main {
                 new make() 
 
-                Str s := ""
+                var s :Str = ""
             }
         |>
     
-    
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fan"
-    m.updateSource(file, code)
-    
-    m.checkError
-    
-    //m.context.pod.dump
+    m := compile(code)
 
     verify(m.context.log.errs.size > 0)
     verify(m.context.pod.resolveType("Main", true).slotDef("make") != null)
@@ -37,14 +40,7 @@ class MiscTest : Test {
         |>
     
     
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fanx"
-    m.updateSource(file, code)
-    
-    m.checkError
-    //m.context.pod.dump
+    m := compile(code)
     verify(m.context.log.errs.size == 1)
   }
 
@@ -60,14 +56,7 @@ class MiscTest : Test {
         |>
     
     
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fanx"
-    m.updateSource(file, code)
-    
-    m.checkError
-    //m.context.pod.dump
+    m := compile(code)
     verify(m.context.log.errs.size == 0)
   }
 
@@ -86,21 +75,14 @@ class MiscTest : Test {
                 echo(c is Str)
 
                 echo(b+=1)//error
-                echo(++b)//error
+                echo(b++)//error
                 echo(b = 5)
               }
             }
         |>
     
     
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fanx"
-    m.updateSource(file, code)
-    
-    m.checkError
-    //m.context.pod.dump
+    m := compile(code)
     verify(m.context.log.errs.size == 3)
   }
 
@@ -119,14 +101,7 @@ class MiscTest : Test {
         |>
     
     
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fanx"
-    m.updateSource(file, code)
-    
-    m.checkError
-    //m.context.pod.dump
+    m := compile(code)
     verify(m.context.log.errs.size == 2)
   }
 
@@ -141,14 +116,47 @@ class MiscTest : Test {
         |>
     
     
-    pod := PodDef(Loc.makeUnknow, "testPod")
-    m := IncCompiler(pod)
-    
-    file := "testFile.fanx"
-    m.updateSource(file, code)
-    
-    m.checkError
-    //m.context.pod.dump
+    m := compile(code)
     verify(m.context.log.errs.size == 1)
+  }
+
+  Void testSwitch() {
+    code := 
+    Str<| 
+            class Main {
+              fun main() {
+                x := 0
+                switch (x) {
+                  case 1:
+                      echo("1")
+                  case 2,4,6:
+                      echo("2")
+                  default:
+                      echo("0")
+                }
+              }
+            }
+        |>
+    
+    
+    m := compile(code)
+    verify(m.context.log.errs.size == 0)
+  }
+
+  Void testIncrement() {
+    code := 
+    Str<| 
+            class Main {
+              fun main() {
+                x := 0
+                ++x
+                x++
+              }
+            }
+        |>
+    
+    
+    m := compile(code)
+    verify(m.context.log.errs.size > 0)
   }
 }
