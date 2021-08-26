@@ -34,6 +34,8 @@ fr_Int std_UuidFactory_resolveMacAddr(fr_Env env) {
 
     return arrayToInt((unsigned char*)AdapterInfo->Address);
     
+#elif __APPLE__
+    return 0;
 #else
     struct ifreq ifreq;
     int sock;

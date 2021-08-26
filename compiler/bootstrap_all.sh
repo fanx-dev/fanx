@@ -13,12 +13,10 @@ sh build_javaEmit.sh
 
 echo 'build compiler self'
 sh bootstrap_build.sh compiler
+sh bootstrap_build.sh compilerx
 sh bootstrap_build.sh build
 sh bootstrap_build.sh compilerJava
 sh bootstrap_build.sh compilerJs
-
-echo 'build fanx compiler'
-sh bootstrap_build.sh compilerx
 sh bootstrap_build.sh compilerxJs
 
 export FAN_ENV_PATH=""

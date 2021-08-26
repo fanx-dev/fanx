@@ -1,6 +1,7 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
 #include <atomic>
+#include <new>
 
 #define TYPE int64_t
 static_assert(sizeof(std::atomic<TYPE>) <= (sizeof(fr_Int) * 2));

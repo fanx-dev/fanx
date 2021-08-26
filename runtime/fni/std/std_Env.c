@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef _WIN64
 #include <Windows.h>
@@ -189,7 +190,12 @@ fr_Obj std_Env_err(fr_Env env, fr_Obj self) {
 fr_Obj std_Env_promptPassword(fr_Env env, fr_Obj self, fr_Obj msg) {
     char buf[256];
     printf("%s\n", fr_getStrUtf8(env, msg));
+    
+#if (__STDC_VERSION__ >= 201101L)
     const char *str = gets_s(buf, 256);
+#else
+    const char *str = gets(buf);
+#endif
     return fr_newStrUtf8(env, str);
 }
 fr_Obj std_Env_homeDirPath(fr_Env env, fr_Obj self) {

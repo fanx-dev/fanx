@@ -1,6 +1,29 @@
 #!/bin/bash
 
+# Operating system
+cygwin=false;
+darwin=false;
+linux=false;
+case "`uname`" in
+    CYGWIN*)
+      cygwin=true
+      ;;
+    Darwin*)
+      darwin=true
+      ;;
+    Linux*)
+      linux=true
+      ;;
+esac
+
 
 FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
-$FAN_HOME/bin/win-x86_64-debug/fanvm.exe -p$FAN_HOME -d1 "$@"
+
+if $darwin; then
+  EXE=$FAN_HOME/bin/macos-arm64/fanvm
+elif $cygwin; then
+  EXE=$FAN_HOME/bin/win-x86_64-debug/fanvm.exe
+fi
+
+$EXE -p$FAN_HOME -d1 "$@"

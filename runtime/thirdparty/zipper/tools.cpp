@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include <CDirEntry.h>
+#include "CDirEntry.h"
 
 #include <cstdio>
 #include <iostream>
@@ -102,7 +102,11 @@ std::string parentDirectory(const std::string& filepath)
 std::string currentPath()
 {
     char buffer[1024u];
+#ifdef USE_WINDOWS
     return (_getcwd(buffer, sizeof(buffer)) ? std::string(buffer) : std::string(""));
+#else
+    return (getcwd(buffer, sizeof(buffer)) ? std::string(buffer) : std::string(""));
+#endif
 }
 
 // -----------------------------------------------------------------------------

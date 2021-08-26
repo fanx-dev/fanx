@@ -18,12 +18,12 @@ esac
 
 FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
-mkdir $FAN_HOME/../runtime/gen/temp/
+mkdir $FAN_HOME/../runtime/fni/$1/
 
 if $darwin; then
-  EXE=$FAN_HOME/bin/macos-arm64/fangen
+  EXE=$FAN_HOME/bin/macos-arm64/fni
 elif $cygwin; then
-  EXE=$FAN_HOME/bin/win-x86_64-debug/fangen.exe
+  EXE=$FAN_HOME/bin/win-x86_64-debug/fni.exe
 fi
 
-$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/gen/temp/ -r $1
+$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/fni/$1/ $1

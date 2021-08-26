@@ -53,7 +53,7 @@ fr_Int std_SysInStream_readBytes(fr_Env env, fr_Obj self, fr_Obj ba, fr_Int off,
 
     if (fr_arrayLen(env, ba) > off + len) {
         fr_throwNew(env, "sys", "IOErr", "readBytes out buffer");
-        return;
+        return -1;
     }
 
     char* buf = (char*)fr_arrayData(env, ba);
@@ -74,7 +74,7 @@ fr_Obj std_SysInStream_unread(fr_Env env, fr_Obj self, fr_Int n) {
     int res = ungetc(n, file);
     if (res == EOF) {
         fr_throwNew(env, "sys", "IOErr", "unread failure");
-        return;
+        return self;
     }
     return self;
 }

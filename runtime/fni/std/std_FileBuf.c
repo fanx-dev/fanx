@@ -90,7 +90,7 @@ fr_Int std_FileBuf_getBytes(fr_Env env, fr_Obj self, fr_Int pos, fr_Obj dst, fr_
 
     if (fr_arrayLen(env, dst) > off + len) {
         fr_throwNew(env, "sys", "IOErr", "readBytes out buffer");
-        return;
+        return -1;
     }
 
     fr_Int oldPos = ftell(file);

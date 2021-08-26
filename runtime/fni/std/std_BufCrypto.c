@@ -3,6 +3,9 @@
 
 #include "zip.h"
 #include "md5.h"
+#include <string.h>
+
+#define MIN(a, b)  ((a) < (b) ? (a) : (b))
 
 fr_Obj std_BufCrypto_toDigest(fr_Env env, fr_Obj buf, fr_Obj algorithm) {
     const char* name = fr_getStrUtf8(env, algorithm);
@@ -20,7 +23,8 @@ fr_Obj std_BufCrypto_toDigest(fr_Env env, fr_Obj buf, fr_Obj algorithm) {
 
         fr_Method readBytes = fr_findMethod(env, fr_getObjType(env, input), "readBytes");
         while (total < size) {
-            fr_Int n = fr_callMethod(env, readBytes, 4, input, array, (fr_Int)0, (fr_Int)min(1024, size - total)).i;
+            fr_Int n = fr_callMethod(env, readBytes, 4, input, array, (fr_Int)0,
+                                     (fr_Int)MIN(1024, size - total)).i;
             if (n < 0) break;
             unsigned char* c = fr_arrayData(env, array);
             MD5Update(&md5_calc, c, n);

@@ -20,7 +20,7 @@ void sys_Array_make(fr_Env env, fr_Obj self, fr_Int size) {
     //fr_unlock(env);
     if (size < 0) {
         fr_throwNew(self, "sys", "ArgErr", "alloc size < 0");
-        return NULL;
+        return;
     }
     return;
 }

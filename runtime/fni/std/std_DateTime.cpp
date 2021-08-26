@@ -154,9 +154,6 @@ fr_Obj std_DateTime_fromLocale(fr_Env env, fr_Obj astr, fr_Obj pattern, fr_Obj t
  
     const char* str = fr_getStrUtf8(env, astr);
 
-    //std::string format = fr_getStrUtf8(env, pattern);
-    //convertToCPattern(format);
-
 #if _WIN64
     int year, month, day, hour, min, sec;
     sscanf(str, "%d/%d/%dT%d:%d:%d", &year, &month, &day, &hour, &min, &sec);
@@ -186,6 +183,9 @@ fr_Obj std_DateTime_fromLocale(fr_Env env, fr_Obj astr, fr_Obj pattern, fr_Obj t
     return dt;
 
 #else
+    std::string format = fr_getStrUtf8(env, pattern);
+    convertToCPattern(format);
+    
     struct tm info;
     std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
     strptime(str, format.c_str(), &info);

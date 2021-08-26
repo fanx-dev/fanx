@@ -1,5 +1,6 @@
 #include "fni_ext.h"
 #include "pod_concurrent_native.h"
+#include <mutex>
 #include <condition_variable>
 
 #define MUTEX recursive_timed_mutex

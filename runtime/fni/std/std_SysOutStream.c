@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifndef _WIN64
+#include <unistd.h>
+#endif
+
 FILE * std_SysOutStream_getNativePeer(fr_Env env, fr_Obj obj) {
     static fr_Field field = NULL;
     if (field == NULL) field = fr_findField(env, fr_getObjType(env, obj), "handle");
@@ -29,7 +33,7 @@ fr_Obj std_SysOutStream_writeBytes(fr_Env env, fr_Obj self, fr_Obj ba, fr_Int of
 
     if (fr_arrayLen(env, ba) > off + len) {
         fr_throwNew(env, "sys", "IOErr", "readBytes out buffer");
-        return;
+        return self;
     }
 
     char *buf = (char*)fr_arrayData(env, ba);
