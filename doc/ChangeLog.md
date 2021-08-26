@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 4.0 (working)
+### Build 4.0 (2021-08-26)
 - new fanx compiler
 - fix fanrun vm and genc
 - std pod JNI like code
