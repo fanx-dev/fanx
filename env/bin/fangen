@@ -1,12 +1,17 @@
 #!/bin/bash
 
 # Operating system
+# Operating system
 cygwin=false;
 darwin=false;
 linux=false;
+mingw=false;
 case "`uname`" in
     CYGWIN*)
       cygwin=true
+      ;;
+    MINGW*)
+      mingw=true
       ;;
     Darwin*)
       darwin=true
@@ -22,7 +27,7 @@ mkdir $FAN_HOME/../runtime/gen/temp/
 
 if $darwin; then
   EXE=$FAN_HOME/bin/macos-arm64/fangen
-elif $cygwin; then
+elif $cygwin || $mingw; then
   EXE=$FAN_HOME/bin/win-x86_64-debug/fangen.exe
 fi
 

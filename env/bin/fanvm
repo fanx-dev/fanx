@@ -4,9 +4,13 @@
 cygwin=false;
 darwin=false;
 linux=false;
+mingw=false;
 case "`uname`" in
     CYGWIN*)
       cygwin=true
+      ;;
+    MINGW*)
+      mingw=true
       ;;
     Darwin*)
       darwin=true
@@ -22,7 +26,7 @@ FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
 if $darwin; then
   EXE=$FAN_HOME/bin/macos-arm64/fanvm
-elif $cygwin; then
+elif $cygwin || $mingw; then
   EXE=$FAN_HOME/bin/win-x86_64-debug/fanvm.exe
 fi
 

@@ -128,7 +128,7 @@ class FileTest : Test
     verify(file.toStr.startsWith(Env.cur.tempDir.uri.relToAuth.toStr))
 
     verifyErr(IOErr#) { File.createTemp("xyz", ".tmp", file) }
-    //verifyErr(IOErr#) { File.createTemp("xyz", ".tmp", FileTest#.pod.file(`/res/test.txt`)) }
+    //verifyErr(IOErr#) { File.createTemp("xyz", ".tmp", FileTest#.pod.file(`/res/test.b`)) }
   }
 
   Void testCreateAndDelete()

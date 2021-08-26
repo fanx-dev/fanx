@@ -62,6 +62,11 @@ FNI just like JNI, Fanx supports write native code by C/C++.
 
 Generate the C/C++ Header File:
 ```
-vmgen podname
+fni podname
 ```
+
+### Java FFI ###
+[Fantom Java FFI] (https://fantom.org/doc/docLang/JavaFFI)
+
+Please use 'fanb' instead of 'fanxb'.
 
