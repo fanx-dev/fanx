@@ -275,7 +275,7 @@ class ActorTest : Test
       actor := Actor(pool, #sleep.func)
 
       // send 6x 0ms - 50ms, max 600ms
-      6.times |Int i|
+      12.times |Int i|
       {
         dur := 1ms * Int.random(0..<50).toFloat
         futures.add(actor.send(dur))
@@ -300,7 +300,7 @@ class ActorTest : Test
     // join
     pool.join
     t2 := Duration.now
-    verify(t2-t1 < 50ms, (t2-t1).toLocale)
+    verify(t2-t1 < 150ms, (t2-t1).toLocale)
     verifyEq(pool.isStopped, true)
     verifyEq(pool.isDone, true)
 
@@ -813,6 +813,7 @@ class ActorTest : Test
     b := Actor(pool) |msg| { "ret: $msg" }
     t1 := Duration.now
     f := b.send("x")
+    Actor.sleep(20ms)
     verifyEq(a.threadState, "running")
     verifyEq(b.threadState, "pending")
     verifyEq(f.get, "ret: x")

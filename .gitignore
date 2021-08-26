@@ -13,3 +13,4 @@ release
 *.properties
 compiler/compilerx/compilerx.jar
 *.exe
+env/bin/macos-arm64
