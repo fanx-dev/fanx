@@ -81,7 +81,7 @@ class SlotNormalize : CompilerStep
       iInit.add(ReturnStmt.makeSynthetic(loc))
       ii := MethodDef.makeInstanceInit(iInit.loc, t, iInit)
       t.addSlot(ii)
-      callInstanceInit(t, ii)
+      //t.instanceInit = ii
     }
 
     // add static$init if needed
@@ -189,21 +189,6 @@ class SlotNormalize : CompilerStep
     retStmt := ReturnStmt.makeSynthetic(loc)
     retStmt.expr = f.makeAccessorExpr(loc, false)
     m.code.add(retStmt)
-  }
-
-  private Void callInstanceInit(TypeDef t, MethodDef ii)
-  {
-    // we call instance$init in every constructor
-    // unless the constructor chains to "this"
-    t.methodDefs.each |MethodDef m|
-    {
-      if (!m.isInstanceCtor) return
-      if (t.isNative) return
-      if (m.code == null) return
-      if (m.ctorChain != null && m.ctorChain.target.id === ExprId.thisExpr) return
-      call := CallExpr(m.loc, ThisExpr(m.loc), ii.name)
-      m.code.stmts.insert(0, call.toStmt)
-    }
   }
 
 //////////////////////////////////////////////////////////////////////////

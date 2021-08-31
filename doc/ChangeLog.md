@@ -1,5 +1,9 @@
 ## ChangeLog
 
+### Build 4.0.1 (2021-08-31)
+- java like constructor chain
+- static ctor is not supported
+
 ### Build 4.0 (2021-08-26)
 - new fanx compiler
 - fix fanrun vm and genc

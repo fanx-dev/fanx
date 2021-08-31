@@ -39,6 +39,12 @@ class StmtNormalize : CompilerStep
 // Type Normalization
 //////////////////////////////////////////////////////////////////////////
 
+  override Void visitTypeDef(TypeDef t)
+  {
+    if (t.instanceInit != null)
+      callInstanceInit(t, t.instanceInit)
+  }
+
   override Void visitMethodDef(MethodDef m)
   {
     normalizeMethod(m)
@@ -67,6 +73,8 @@ class StmtNormalize : CompilerStep
 
     // add implicit return
     if (!code.isExit) addImplicitReturn(m)
+
+    if (curUnit.isFanx && m.isInstanceCtor) setCtorChain(m)
 
     // insert super constructor call
     if (m.isInstanceCtor) insertSuperCtor(m)
@@ -112,6 +120,53 @@ class StmtNormalize : CompilerStep
     // if we find a ctor to use, then create an implicit super call
     m.ctorChain = CallExpr(m.loc, SuperExpr(m.loc), superCtor.name)
     m.ctorChain.isCtorChain = true
+  }
+
+  private Void callInstanceInit(TypeDef t, MethodDef ii)
+  {
+    // we call instance$init in every constructor
+    // unless the constructor chains to "this"
+    t.methodDefs.each |MethodDef m|
+    {
+      if (!m.isInstanceCtor) return
+      if (t.isNative) return
+      if (m.code == null) return
+      if (m.ctorChain != null && m.ctorChain.target.id === ExprId.thisExpr) return
+      call := CallExpr(m.loc, ThisExpr(m.loc), ii.name)
+      call.synthetic = true
+      m.code.stmts.insert(0, call.toStmt)
+    }
+  }
+
+  private Void setCtorChain(MethodDef method)
+  {
+    if (method.parent.isEnum) return
+    if (method.code == null || method.code.stmts.size == 0) return
+    pos := 0
+    stmt := method.code.stmts[pos] as ExprStmt
+    if (stmt == null) return
+    // if (stmt.expr.synthetic) ++pos;//instance$init
+    // stmt = method.code.stmts[pos] as ExprStmt
+    // if (stmt == null) return
+    
+    if (stmt.expr.id != ExprId.call) return
+
+    CallExpr call := stmt.expr
+    if (call.target == null) return
+    CMethod? found
+    if (call.target.id === ExprId.superExpr) {
+      found = method.parent.base.method(call.name)
+    }
+    else if (call.target.id === ExprId.thisExpr) {
+      found = method.parent.methodDef(call.name)
+    }
+    if (found == null) return
+
+    if (found.isInstanceCtor) {
+      call.isCtorChain = true
+      method.ctorChain = call
+      method.code.stmts.removeAt(pos)
+    }
   }
   
 //////////////////////////////////////////////////////////////////////////

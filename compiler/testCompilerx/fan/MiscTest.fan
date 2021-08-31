@@ -159,4 +159,60 @@ class MiscTest : Test {
     m := compile(code)
     verify(m.context.log.errs.size > 0)
   }
+
+  Void testClosureReturn() {
+    code := 
+    Str<| 
+            class Main {
+              fun main() {
+                10.times |x|{ return }
+              }
+            }
+        |>
+    
+    
+    m := compile(code)
+    verify(m.context.log.errs.size > 0)
+  }
+
+  Void testCtorChain() {
+    code := 
+    Str<| 
+            virtual class Base {
+              new makeX() {}
+            }
+            class Main : Base {
+              new make() {
+                super.makeX()
+              }
+            }
+        |>
+    
+    
+    m := compile(code)
+    verify(m.context.log.errs.size == 0)
+  }
+
+  Void testCtorChain2() {
+    code := 
+    Str<| 
+            virtual class Base {
+              new makeX() {}
+            }
+            class Main : Base {
+              var i :Int = 10
+              new make() {
+                this.make0()
+              }
+              new make0() {
+                super.makeX()
+              }
+            }
+        |>
+    
+    
+    m := compile(code)
+    m.context.pod.dump
+    verify(m.context.log.errs.size == 0)
+  }
 }

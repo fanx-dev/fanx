@@ -164,31 +164,6 @@ public class ParserX
     endLoc(u)
     unit.usings.add(u)
   }
-  
-  virtual CallExpr? ctorChain(MethodDef method)
-  {
-    consume(Token.colon)
-    
-    while (curt != Token.eof) {
-      if (isExprValue(curt)) {
-        consume
-        skipBracket(false)
-        if (isExprValue(curt)) break
-        continue
-      }
-      
-      if (isJoinToken(curt)) {
-        consume
-        if (skipBracket(false)) {
-          if (isExprValue(curt)) break
-        }
-        continue
-      }
-      //skipBracket
-      break
-    }
-    return null
-  }
 
 //////////////////////////////////////////////////////////////////////////
 // TypeDef
@@ -665,7 +640,7 @@ public class ParserX
     if (curt === Token.identifier && cur.val == parent.name && peekt == Token.lparen)
     {
       err("Invalid constructor syntax - use new keyword")
-      return methodDef(loc, parent, doc, facets, flags.or(FConst.Ctor), CType.voidType(loc), consumeId)
+      return methodDef(loc, parent, doc, facets, flags.or(FConst.Ctor), null, consumeId)
     }
 
     // check for constructor
@@ -679,15 +654,7 @@ public class ParserX
                  TypeRef(loc, ns.voidType) :
                  TypeRef(loc, parent) //remove 'toNullable' sine we don't want boxing for struct type
       */
-      returns := CType.voidType(loc)
-      if (flags.and(FConst.Static) != 0) {
-//        if (parent.isGeneric) {
-//          TypeDef gp := parent.deref
-//          params := gp.genericParameters
-//          returns = ParameterizedType.create(parent, params)
-//        }
-        returns = parent.asRef()
-      }
+      returns := null
       return methodDef(loc, parent, doc, facets, flags, returns, name)
     }
 
@@ -915,10 +882,17 @@ public class ParserX
 
     //retType decl
     if (ret == null) {
-      if((flags.and(FConst.Ctor) == 0) && (curt === Token.colon)) {
-        consume
-        ret = typeRef
-        method.ret = ret
+      if((curt === Token.colon)) {
+        if (flags.and(FConst.Ctor) == 0) {
+          consume
+          ret = typeRef
+          method.ret = ret
+        }
+        else {
+          err("cotr can not return type")
+          ret = CType.voidType(loc)
+          method.ret = ret
+        }
       }
       else {
         ret = CType.voidType(loc)
@@ -945,17 +919,14 @@ public class ParserX
       }
     }
     else {
-        // ctor chain
-        if ((flags.and(FConst.Ctor) != 0) && (curt === Token.colon))
-          method.ctorChain = ctorChain(method);
-
         // body
         if (curt != Token.lbrace) {
           if (!parent.isNative) err("Expecting method body")
           //method.code = Block(loc)
         }
-        else
+        else {
           method.code = block
+        }
     }
     // exit scope
     curSlot = null

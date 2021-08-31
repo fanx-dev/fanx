@@ -269,6 +269,11 @@ switch (x) {
 }
 ```
 
+#### Constructor ####
+- java like constructor chain
+- static ctor is not supported
+
+
 #### Literals ####
 
 Unsupport decimal and uri literals.

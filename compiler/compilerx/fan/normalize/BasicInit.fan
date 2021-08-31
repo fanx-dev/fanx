@@ -93,6 +93,10 @@ class BasicInit : CompilerStep {
     if (flags.and(FConst.Extension) != 0 && flags.and(FConst.Static) == 0) {
       err("Extension must static", loc)
     }
+
+    if (curUnit.isFanx && flags.and(FConst.Ctor) != 0 && flags.and(FConst.Static) != 0) {
+      err("Ctor can not be static", loc)
+    }
     
     protection := FConst.Internal.or(FConst.Private).or(FConst.Protected).or(FConst.Public)
     if (protection.and(flags) == 0) flags = flags.or(FConst.Public)

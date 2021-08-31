@@ -9,7 +9,7 @@ class DeepParserX : ParserX {
   {
   }
   
-  override CallExpr? ctorChain(MethodDef method)
+  private CallExpr? ctorChain(MethodDef method)
   {
     consume(Token.colon)
     loc := cur.loc

@@ -1252,7 +1252,7 @@ class CheckErrors : CompilerStep, Coerce
   {
     if (!call.method.isCtor)
     {
-      warn("Using static method '$call.method.qname' as constructor", call.loc)
+      //warn("Using static method '$call.method.qname' as constructor", call.loc)
 
       // check that ctor method is the expected type
       if (call.ctype.toNonNullable != call.method.returnType.toNonNullable)

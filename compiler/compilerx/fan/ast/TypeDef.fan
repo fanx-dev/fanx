@@ -174,6 +174,11 @@ class TypeDef : CTypeDef
     return slots["static\$init"]
   }
 
+  MethodDef? instanceInit()
+  {
+    return slots["instance\$init\$$pod.name\$$name"]
+  }
+
   **
   ** If during parse we added any static initializer methods,
   ** now is the time to remove them all and replace them with a
