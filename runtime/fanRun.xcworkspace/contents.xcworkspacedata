@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/yangjiandong/workspace/code/fanx/runtime/gen/fanrun.xcodeproj">
+      location = "group:gen/fanrun.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:/Users/yangjiandong/workspace/code/fanx/runtime/gen/fangen.xcodeproj">
+      location = "group:gen/fangen.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:vm/fanvm.xcodeproj">
