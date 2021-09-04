@@ -24,7 +24,7 @@ fan.sys.ObjUtil.hash = function(obj)
   return 0;
 }
 
-fan.sys.ObjUtil.equals = function(a, b, op)
+fan.sys.ObjUtil.equals = function(a, b)
 {
   if (a == null) return b == null;
   if (a instanceof fan.sys.Obj) return a.equals(b);

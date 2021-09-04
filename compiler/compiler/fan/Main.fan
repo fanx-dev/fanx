@@ -361,4 +361,38 @@ class Main
     return Compiler(input).compile.transientPod
   }
 
+  **
+  ** Compile the script file into JS source code.
+  ** See `sys::Env.compileScript` for option definitions.
+  **
+  static Str compileScriptToJs(Str podName, File file, [Str:Obj]? options := null)
+  {
+    input := CompilerInput.make
+    input.podName    = podName
+    input.summary    = "script"
+    input.version    = Version("0")
+    input.log.level  = LogLevel.warn
+    input.isScript   = true
+    input.srcStr     = file.readAllStr
+    input.srcStrLoc  = Loc.makeFile(file)
+    input.mode       = CompilerInputMode.str
+    input.output     = CompilerOutputMode.js
+
+    if (options != null)
+    {
+      log := options["log"]
+      if (log != null) input.log = log
+
+      logOut := options["logOut"]
+      if (logOut != null) input.log = CompilerLog(logOut)
+
+      logLevel := options["logLevel"]
+      if (logLevel != null) input.log.level = logLevel
+
+      fcodeDump := options["fcodeDump"]
+      if (fcodeDump == true) input.fcodeDump = true
+    }
+
+    return Compiler(input).compile.js
+  }
 }

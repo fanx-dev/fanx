@@ -30,6 +30,17 @@ fan.std.Env.prototype.$ctor = function()
 
   this.m_vars = fan.std.CaseInsensitiveMap.make(16);
   //this.m_vars.caseInsensitive$(true);
+  if (typeof fan$env !== 'undefined')
+  {
+    // fan$env is used to seed Env.var; it must be defined before sys.js
+    var keys = Object.keys(fan$env);
+    for (var i=0; i<keys.length; i++)
+    {
+      var k = keys[i];
+      var v = fan$env[k]
+      this.m_vars.set(k, v);
+    }
+  }
   this.m_vars = this.m_vars.toImmutable();
 
   // pod props map, keyed by pod.name
@@ -37,6 +48,18 @@ fan.std.Env.prototype.$ctor = function()
 
   // env.out
   this.m_out = new fan.std.ConsoleOutStream();
+}
+
+fan.sys.Env.$invokeMain = function(qname)
+{
+  // resolve qname to method
+  var dot = qname.indexOf('.');
+  if (dot < 0) qname += '.main';
+  var main = fan.sys.Slot.findMethod(qname);
+
+  // invoke main
+  if (main.isStatic()) main.call();
+  else main.callOn(main.parent().make());
 }
 
 fan.std.Env.prototype.$setIndex = function(index)

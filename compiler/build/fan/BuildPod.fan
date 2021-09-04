@@ -326,6 +326,14 @@ class BuildPod : BuildScript
       if (resDirs != null) resDirs = resDirs.dup.findAll |uri| { uri.path.first != "test" }
     }
 
+    // stripDocs overrides the configured docApi
+    if (config("stripDocs", "false") == "true")
+      docApi = false
+
+    // stripSrc overrides the configured docSrc
+    if (config("stripSrc", "false") == "true")
+      docSrc = false
+
     // map my config to CompilerInput structure
     ci := CompilerInput()
     ci.inputLoc    = Loc.makeFile(scriptFile)

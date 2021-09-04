@@ -9,17 +9,25 @@
 internal const class CachedScript {
   const TimePoint modified
   const Int size
-  const Str typeName
+  const Str? typeName
+  const Str? js
 
   new make(File file, Type t) {
     modified = file.modified
     size = file.size
     typeName = t.qname
   }
+
+  new makeJs(File file, Str js) {
+    modified = file.modified
+    size = file.size
+    typeName = js
+  }
 }
 
 internal const class ScriptCompiler {
   const ConcurrentMap<Str,CachedScript> cache := ConcurrentMap(16)
+  const ConcurrentMap<Str,CachedScript> cacheJs := ConcurrentMap(16)
   static const ScriptCompiler cur := ScriptCompiler()
 
   Type compile(File file, [Str:Obj]? options := null) {
@@ -46,6 +54,26 @@ internal const class ScriptCompiler {
     return t
   }
 
+  Str compileToJs(File f, [Str:Obj]? options := null) {
+    file = file.normalize
+    // unless force=true, check the cache
+    if (options == null || !options.get("force", false))
+    {
+      c := cacheJs.get(file.toStr)
+      // if cached, try to lookup type (it might have been GCed)
+      if (c != null && c.modified == file.modified && c.size == file.size)
+      {
+        t := c.js
+        if (t != null) return t
+      }
+    }
+
+    t := compileFileToJs(file, options)
+
+    cacheJs.set(file.toStr, CachedScript(file, t))
+    return t
+  }
+
   private Pod compileFile(File file, [Str:Obj]? options) {
     podName := file.basename + TimePoint.nowUnique
     Method? m
@@ -56,6 +84,18 @@ internal const class ScriptCompiler {
 
     pod := m.call(podName, file, options)
     return pod
+  }
+
+  private Str compileFileToJs(File file, [Str:Obj]? options) {
+    podName := file.basename + TimePoint.nowUnique
+    Method? m
+    if (file.ext == "fan")
+      m = Slot.findMethod("compiler::Main.compileScriptToJs", true)
+    else
+      m = Slot.findMethod("compilerx::Main.compileScriptToJs", true)
+
+    js := m.call(podName, file, options)
+    return js
   }
 
   Int execute(Str fileName, Str[]? args) {

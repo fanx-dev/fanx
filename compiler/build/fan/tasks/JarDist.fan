@@ -94,7 +94,7 @@ class JarDist : JdkTask
     donePods[podName] = true
 
     // open as zip and
-    podFile := script.devHomeDir + `lib/fan/${podName}.pod`
+    podFile := Env.cur.findPodFile(podName)
     if (!podFile.exists) throw Err("Pod not found: $podFile")
     podZip  := Zip.open(podFile)
     meta := podZip.contents[`/meta.props`].in.readProps
@@ -126,7 +126,7 @@ class JarDist : JdkTask
       Exec(script,
         [javaExe,
          "-cp", (script.devHomeDir + `lib/java/fanx.jar`).osPath,
-         "-Dfan.home=$Env.cur.workDir.pathStr",
+         "-Dfan.home=$script.devHomeDir.pathStr",
          "fanx.tools.Jstub",
          "-d", tempDir.osPath,
          podName]).run
@@ -159,7 +159,7 @@ class JarDist : JdkTask
   {
     copyOpts := ["overwrite":true]
     resources := Str[,]
-    zip := Zip.open(script.devHomeDir + `lib/fan/${podName}.pod`)
+    zip := Zip.open(Env.cur.findPodFile(podName))
     zip.contents.each |f|
     {
       if (f.isDir) return

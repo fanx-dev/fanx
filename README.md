@@ -2,7 +2,7 @@
 
 Fanx is a general purpose programming language base on Fantom.
 
-It is an object oriented, functional programming language designed to cross compile to JVM, JavaScript, C and Standalone VM.
+It is an object oriented, functional programming language designed to cross compile to JVM, JavaScript, C and VM.
 
 It features a familiar modern syntax, static (and dynamic) typing, elegant system library, closures/lambda, immutability, actor concurrency, async/await, generics type and much more.
 
