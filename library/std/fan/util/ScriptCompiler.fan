@@ -54,7 +54,7 @@ internal const class ScriptCompiler {
     return t
   }
 
-  Str compileToJs(File f, [Str:Obj]? options := null) {
+  Str compileToJs(File file, [Str:Obj]? options := null) {
     file = file.normalize
     // unless force=true, check the cache
     if (options == null || !options.get("force", false))

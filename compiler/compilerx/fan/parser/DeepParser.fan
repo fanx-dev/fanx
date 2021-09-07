@@ -128,11 +128,6 @@ class DeepParser : Parser {
     }
     reset(mark)
 
-    //type back local variable declaration
-    if (curt === Token.identifier && peekt === Token.colon) {
-      return localDefStmt(loc, null, isEndOfStmt)
-    }
-
     // identifier followed by def assign is inferred typed local var declaration
     if (curt === Token.identifier && peekt === Token.defAssign)
     {
@@ -190,19 +185,10 @@ class DeepParser : Parser {
   {
     // verify name doesn't conflict with an import type
     name := consumeId
-
-    hasColon := false
-    if (localType == null && curt === Token.colon) {
-      consume
-      localType = typeRef
-      hasColon = true
-    }
-
     stmt := LocalDefStmt(loc, localType, name)
 
     if (curt === Token.defAssign || curt === Token.assign)
     {
-      if (hasColon && curt === Token.defAssign) err("Must use = for assignments")
       //if (curt === Token.assign) err("Must use := for declaration assignments")
       consume
       stmt.init = expr

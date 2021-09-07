@@ -2430,13 +2430,6 @@ public class Parser : CompilerSupport
 
   private Bool funcTypeFormal(Bool isTypeRef, CType[] params, Str[] names, Bool[] unnamed)
   {
-    if (peekt === Token.colon) {
-      names.add(consumeId)
-      consume
-      params.add(ctype(isTypeRef))
-      return true
-    }
-
     t := isTypeRef ? ctype(true) : tryType
     if (t != null)
     {

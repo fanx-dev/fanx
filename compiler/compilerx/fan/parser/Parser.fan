@@ -747,44 +747,6 @@ public class Parser
       return methodDef(loc, parent, doc, facets, flags, returns, name)
     }
 
-    //modern field
-    if (curt === Token.varKeyword || curt === Token.letKeyword || tokens[pos-1].kind === Token.constKeyword) {
-      modernStyle := false
-      if (curt === Token.varKeyword) {
-        consume
-        modernStyle = true
-        if (flags.and(FConst.Const) != 0) {
-          err("var must not const", loc)
-        }
-      }
-      if (curt === Token.letKeyword) {
-        consume
-        flags = flags.or(FConst.Readonly)
-        modernStyle = true
-        if (flags.and(FConst.Const) != 0) {
-          err("var must not const", loc)
-        }
-      }
-
-      if (curt === Token.identifier && peekt === Token.colon) {
-        name := consumeId
-        consume(Token.colon)
-        type := typeRef
-        return fieldDef(loc, parent, doc, facets, flags, type, name)
-      }
-      if (modernStyle) {
-        err("expected colon for field def", loc)
-      }
-    }
-
-    //modern function
-    if (curt === Token.funKeyword) {
-      consume
-      CType? type := null
-      name := consumeId
-      return methodDef(loc, parent, doc, facets, flags, type, name)
-    }
-
     // otherwise must be field or method
     type := typeRef
     name := consumeId
@@ -982,19 +944,6 @@ public class Parser
     }
     consume(Token.rparen)
 
-    //retType decl
-    if (ret == null) {
-      if((flags.and(FConst.Ctor) == 0) && (curt === Token.colon)) {
-        consume
-        ret = typeRef
-        method.ret = ret
-      }
-      else {
-        ret = CType.voidType(loc)
-        method.ret = ret
-      }
-    }
-
     // if This is returned, then we configure inheritedRet
     // right off the bat (this is actual signature we will use)
     //if (ret.isThis) method.inheritedRet = parent.asRef
@@ -1034,20 +983,9 @@ public class Parser
 
   private ParamDef paramDef()
   {
-    ParamDef? param
-    hasColon := false
-    if (peekt === Token.colon) {
-      name := consumeId
-      consume(Token.colon)
-      type := typeRef
-      param = ParamDef(cur.loc, type, name)
-      hasColon = true
-    }
-    else
-      param = ParamDef(cur.loc, typeRef, consumeId)
+    param := ParamDef(cur.loc, typeRef, consumeId)
     if (curt === Token.defAssign || curt === Token.assign)
     {
-      if (hasColon && curt === Token.defAssign) err("Must use = for parameter default");
       //if (curt === Token.assign) err("Must use := for parameter default");
       consume
       param.def = expr
@@ -1402,13 +1340,6 @@ public class Parser
 
   private Bool funcTypeFormal(Bool isTypeRef, CType[] params, Str[] names, Bool[] unnamed)
   {
-    if (peekt === Token.colon) {
-      names.add(consumeId)
-      consume
-      params.add(ctype(isTypeRef))
-      return true
-    }
-
     t := isTypeRef ? ctype(true) : tryType
     if (t != null)
     {
