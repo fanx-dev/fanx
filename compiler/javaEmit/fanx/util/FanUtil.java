@@ -334,26 +334,31 @@ public class FanUtil {
   
   private static String arrayToJava(String podName, String typeName, String extName, boolean sig) {
 	  if (typeName.equals("Array")) {
-		  if (extName.charAt(extName.length()-1) == '?') {
-			  extName = extName.substring(0, extName.length()-1);
-		  }
+  		  if (extName.charAt(extName.length()-1) == '?') {
+  			  extName = extName.substring(0, extName.length()-1);
+  		  }
     	  if (extName.equals("<sys::Bool>"))         { return "[Z"; }
-          else if (extName.equals("<sys::Int8>"))    { return "[B"; }
-          else if (extName.equals("<sys::Int16>"))   { return "[S"; }
-          //else if (extName.equals("<sys::Char>"))   { return "[B"; }
-          else if (extName.equals("<sys::Int32>"))   { return "[I"; }
-          else if (extName.equals("<sys::Int64>"))   { return "[J"; }
-          else if (extName.equals("<sys::Int>"))     { return "[J"; }
-          else if (extName.equals("<sys::Float32>")) { return "[F"; }
-          else if (extName.equals("<sys::Float64>")) { return "[D"; }
-          else if (extName.equals("<sys::Float>"))   { return "[D"; }
-          else {
-        	  //System.out.println("extName:"+extName);
-        	  if (sig) {
-        		  return "[Ljava/lang/Object;";
-        	  }
-        	  return "[Ljava.lang.Object;";
-          }
+        else if (extName.equals("<sys::Int8>"))    { return "[B"; }
+        else if (extName.equals("<sys::Int16>"))   { return "[S"; }
+        //else if (extName.equals("<sys::Char>"))   { return "[B"; }
+        else if (extName.equals("<sys::Int32>"))   { return "[I"; }
+        else if (extName.equals("<sys::Int64>"))   { return "[J"; }
+        else if (extName.equals("<sys::Int>"))     { return "[J"; }
+        else if (extName.equals("<sys::Float32>")) { return "[F"; }
+        else if (extName.equals("<sys::Float64>")) { return "[D"; }
+        else if (extName.equals("<sys::Float>"))   { return "[D"; }
+        else if (extName.length() > 2 && extName.charAt(0) == '<') {
+          String subType = extName.substring(1, extName.length()-1);
+          return "[L"+toJavaTypeSig(subType)+";";
+        }
+        else {
+          
+      	  //System.out.println("extName:"+extName);
+      	  if (sig) {
+      		  return "[Ljava/lang/Object;";
+      	  }
+      	  return "[Ljava.lang.Object;";
+        }
       }
 	  return null;
   }

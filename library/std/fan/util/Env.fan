@@ -11,7 +11,8 @@
 ** Env defines a pluggable class used to boot and manage a Fantom
 ** runtime environment.  Use `cur` to access the current Env instance.
 **
-native rtconst class Env
+@JsNative
+rtconst class Env
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ native rtconst class Env
   **   - "hpux"
   **   - "qnx"
   **
-  Str os()
+  native Str os()
 
   **
   ** Microprocessor architecture name as one of the following constants:
@@ -65,7 +66,7 @@ native rtconst class Env
   **   - "ia64"
   **   - "ia64_32"
   **
-  Str arch()
+  native Str arch()
 
   **
   ** Virtual machine runtime as one of the following constants:
@@ -73,18 +74,18 @@ native rtconst class Env
   **   - "dotnet"
   **   - "js"
   **
-  Str runtime()
+  native Str runtime()
 
   **
   ** is Javascript runtime
   **
-  Bool isJs()
+  native Bool isJs()
 
   **
   ** Get the Java VM Version as a single integer (8, 9, etc.).
   ** If the `runtime` is not java, return 0.
   **
-  Int javaVersion()
+  native Int javaVersion()
 
   **
   ** Return the default hash code of `Obj.hash` for the
@@ -92,10 +93,7 @@ native rtconst class Env
   ** has overridden the 'hash' method.  If null then
   ** return 0.
   **
-  Int idHash(Obj? obj) {
-    if (obj == null) return 0
-    return NativeC.toId(obj)
-  }
+  native Int idHash(Obj? obj)
 
 //////////////////////////////////////////////////////////////////////////
 // Virtuals
@@ -106,7 +104,7 @@ native rtconst class Env
   ** as an immutable List of strings.  Default implementation
   ** delegates to `parent`.
   **
-  virtual Str[] args()
+  native virtual Str[] args()
 
   **
   ** Get the environment variables as a case insensitive, immutable
@@ -117,7 +115,7 @@ native rtconst class Env
   **
   ** Default implementation delegates to `parent`.
   **
-  virtual [Str:Str] vars()
+  native virtual [Str:Str] vars()
 
   **
   ** Poll for a platform dependent map of diagnostics name/value
@@ -125,53 +123,53 @@ native rtconst class Env
   ** key values from the 'java.lang.management' interface.
   ** Default implementation delegates to `parent`.
   **
-  virtual [Str:Obj]? diagnostics()
+  native virtual [Str:Obj]? diagnostics()
 
   **
   ** Run the garbage collector.  No guarantee is made
   ** to what the VM will actually do.  Default implementation
   ** delegates to `parent`.
   **
-  virtual Void gc()
+  native virtual Void gc()
 
   **
   ** Get the local host name of the machine running the
   ** virtual machine process.  Default implementation
   ** delegates to `parent`.
   **
-  virtual Str host()
+  native virtual Str host()
 
   **
   ** Get the user name of the user account used to run the
   ** virtual machine process.  Default implementation
   ** delegates to `parent`.
   **
-  virtual Str user()
+  native virtual Str user()
 
   **
   ** Standard input stream.
   ** Default implementation delegates to `parent`.
   **
-  virtual InStream in()
+  native virtual InStream in()
 
   **
   ** Standard output stream.
   ** Default implementation delegates to `parent`.
   **
-  virtual OutStream out()
+  native virtual OutStream out()
 
   **
   ** Standard error output stream.
   ** Default implementation delegates to `parent`.
   **
-  virtual OutStream err()
+  native virtual OutStream err()
 
   **
   ** Prompt the user to enter a password from standard input with echo
   ** disabled.  Return null if end of stream has been reached.
   ** Default implementation delegates to `parent`.
   **
-  virtual Str? promptPassword(Str msg := "")
+  native virtual Str? promptPassword(Str msg := "")
 
   **
   ** Get the home directory of Fantom installation.
@@ -186,7 +184,8 @@ native rtconst class Env
   ** delegates to `parent`.
   **
   virtual File workDir() {
-    File.os(envPaths[0])
+    Str path := envPaths[0]
+    return File.os(path)
   }
 
   **
@@ -334,6 +333,7 @@ native rtconst class Env
 
   private [Str:Str[]]? indexMap
   private [Str:Str[]]? keyToPodName
+  private Str[]? _indexKeys
 
   private Void loadIndex() {
     if (this.indexMap != null) return
@@ -349,11 +349,19 @@ native rtconst class Env
 
     this.indexMap = indexMap.toImmutable
     this.keyToPodName = keyToPodName.toImmutable
+    this._indexKeys = indexMap.keys.toImmutable
+    //echo("indexMap:$indexMap")
+    //echo("keyToPodName:$keyToPodName")
   }
 
   private Void addProps(File podFile, Str podName, [Str:Str[]]? indexMap, [Str:Str[]]? keyToPodName) {
     zip := Zip.open(podFile)
-    props := zip.contents("fcode")[`/index.props`].in.readProps
+    indexFile := zip.contents("fcode")[`/index.props`]
+    if (indexFile == null) {
+      zip.close
+      return
+    }
+    props := indexFile.in.readProps
     props.each |v,k| {
       res := indexMap.getOrAdd(k) { [,] }
       vals := v.split(',')
@@ -361,10 +369,11 @@ native rtconst class Env
         val = val.trim
         if (val.size > 0) res.add(val)
       }
+
+      pods := keyToPodName.getOrAdd(k) { [,] }
+      pods.add(podName)
     }
 
-    pods := keyToPodName.getOrAdd(podName) { [,] }
-    pods.add(podName)
     zip.close
   }
 
@@ -387,7 +396,7 @@ native rtconst class Env
   **
   virtual Str[] indexKeys() {
     loadIndex
-    return indexMap.keys
+    return _indexKeys
   }
 
   **
@@ -521,11 +530,4 @@ native rtconst class Env
   }
 
 }
-
-**************************************************************************
-** Env Implementations
-**************************************************************************
-
-//internal const class BootEnv : Env {}
-//internal const class JarDistEnv : Env {} // JVM only
 

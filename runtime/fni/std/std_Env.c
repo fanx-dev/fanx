@@ -218,3 +218,8 @@ void std_Env_exit(fr_Env env, fr_Obj self, fr_Int status) {
     exit((int)status);
 }
 
+fr_Int std_Env_idHash(fr_Env env, fr_Obj self, fr_Obj obj) {
+    if (!obj) return 0;
+    void *p = fr_getPtr(env, obj);
+    return (fr_Int)p;
+}

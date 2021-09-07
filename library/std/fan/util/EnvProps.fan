@@ -20,7 +20,7 @@ internal class EnvProps {
     uri := `etc/$pod.name/$path`
     FileProps? props := cache.get(uri)
 
-    if (props == null || TimePoint.now - props.readTime > maxAge) {
+    if (props == null || TimePoint.now - props.readTime >= maxAge) {
       File[] files := getFiles(pod, path, uri)
       if (props != null) {
         if (!props.isStale(files)) {

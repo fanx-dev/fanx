@@ -97,17 +97,21 @@ public File file()
  return file;
 }
 
-public Map contents()
+public Map contents() {
+  return contents(null);
+}
+
+public Map contents(String exclude)
 {
  if (contents == null)
  {
    if (zipFile == null) return null;
-   contents = contents(zipFile);
+   contents = contents(zipFile, exclude);
  }
  return contents.ro();
 }
 
-public static Map contents(ZipFile zipFile)
+public static Map contents(ZipFile zipFile, String exclude)
 {
  Map c = Map.make();
  Enumeration e = zipFile.entries();
