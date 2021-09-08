@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 4.1.0 (working)
+### Build 4.0.2 (2021-09-08)
 - update fantom
 - restore fantom syntax
 - use Env peer

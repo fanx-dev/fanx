@@ -25,3 +25,6 @@ echo 'build compiler test'
 $fanc testCompiler/pod.props
 $fanc testNative/pod.props
 $fanc testJava/pod.props
+
+fanxb='../env/bin/fanxb'
+$fanxb testCompilerx/pod.props

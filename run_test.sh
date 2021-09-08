@@ -11,3 +11,9 @@ $fant testJava
 $fant concurrent
 $fant util
 
+cd compiler/testCompilerx
+fant testCompilerx
+cd -
+
+
+

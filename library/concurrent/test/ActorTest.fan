@@ -237,7 +237,7 @@ class ActorTest : Test
     // stop again, join with no timeout
     pool.stop.join
     t2 = Duration.now
-    verify(t2 - t1 <= 340ms, (t2-t1).toLocale)
+    verify(t2 - t1 <= 650ms, (t2-t1).toLocale)
     verifyEq(pool.isStopped, true)
     verifyEq(pool.isDone, true)
 

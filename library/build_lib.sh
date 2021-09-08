@@ -9,7 +9,7 @@ set -e
 
 #-------------build
 export FAN_ENV_PATH=""
-fanc='../env/bin/fanb'
+fanc='../env/bin/fanxb'
 
 echo 'build sys test'
 #$fanc baseTest/pod.props
