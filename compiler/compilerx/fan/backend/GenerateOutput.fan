@@ -33,13 +33,15 @@ class GenerateOutput : CompilerStep
   ** Run the step
   **
   override Void run()
-  {    
-    if (compiler.input.isScript)
+  {
+    if (compiler.input.onlyJs) {
+       //compiler.js = compiler.js
+    }
+    else if (compiler.input.isScript)
         compiler.transientPod = LoadPod(compiler).load
-    else if (!compiler.input.onlyJs)
+    else
         compiler.podFile = WritePod(compiler).write
-//    if (compiler.input.onlyJs)
-//        compiler.js = compiler.js
+
   }
 
 }

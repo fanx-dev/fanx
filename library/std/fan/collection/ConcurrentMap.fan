@@ -153,5 +153,12 @@ native const final class ConcurrentMap<K,V>
     lock.unlock
     return res
   }
+
+  override Str toStr() {
+    lock.lock
+    res := map.toStr
+    lock.unlock
+    return res
+  }
 }
 

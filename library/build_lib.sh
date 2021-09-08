@@ -1,11 +1,11 @@
 #! /bin/sh
 set -e
 
-echo 'build sys and std'
-cd ../compiler
-sh bootstrap_build.sh ../library/sys
-sh bootstrap_build.sh ../library/std
-cd -
+# echo 'build sys and std'
+# cd ../compiler
+# sh bootstrap_build.sh ../library/sys
+# sh bootstrap_build.sh ../library/std
+# cd -
 
 #-------------build
 export FAN_ENV_PATH=""

@@ -1176,7 +1176,7 @@ class CodeAsm
     // otherwise perform coerce to ensure we
     // have right type to store back to variable
     if (coerce != null) coerceOp(coerce.check, var_v.ctype)
-    else coerceOp(c.ctype, var_v.ctype)
+    else if (!c.ctype.isVoid) coerceOp(c.ctype, var_v.ctype)
 
     // save the variable back
     switch (var_v.id)

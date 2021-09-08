@@ -31,7 +31,7 @@ virtual class LinkedList {
   ** Remove all items from the list and set size to 0
   Void clear() {
     head = null
-    head = null
+    tail = null
     _size = 0
   }
 

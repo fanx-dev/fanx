@@ -50,12 +50,12 @@ fan.std.Env.prototype.$ctor = function()
   this.m_out = new fan.std.ConsoleOutStream();
 }
 
-fan.sys.Env.$invokeMain = function(qname)
+fan.std.Env.$invokeMain = function(qname)
 {
   // resolve qname to method
   var dot = qname.indexOf('.');
   if (dot < 0) qname += '.main';
-  var main = fan.sys.Slot.findMethod(qname);
+  var main = fan.std.Slot.findMethod(qname);
 
   // invoke main
   if (main.isStatic()) main.call();

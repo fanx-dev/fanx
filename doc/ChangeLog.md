@@ -1,5 +1,13 @@
 ## ChangeLog
 
+### Build 4.1.0 (working)
+- update fantom
+- restore fantom syntax
+- use Env peer
+- fix assignment codeAsm
+- fix linklist clear
+- Env.compilerScriptToJs
+
 ### Build 4.0.1 (2021-08-31)
 - java like constructor chain
 - static ctor is not supported

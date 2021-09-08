@@ -21,7 +21,7 @@ internal const class CachedScript {
   new makeJs(File file, Str js) {
     modified = file.modified
     size = file.size
-    typeName = js
+    this.js = js
   }
 }
 
@@ -29,6 +29,7 @@ internal const class ScriptCompiler {
   const ConcurrentMap<Str,CachedScript> cache := ConcurrentMap(16)
   const ConcurrentMap<Str,CachedScript> cacheJs := ConcurrentMap(16)
   static const ScriptCompiler cur := ScriptCompiler()
+  const AtomicInt counter = AtomicInt();
 
   Type compile(File file, [Str:Obj]? options := null) {
     file = file.normalize
@@ -64,7 +65,10 @@ internal const class ScriptCompiler {
       if (c != null && c.modified == file.modified && c.size == file.size)
       {
         t := c.js
-        if (t != null) return t
+        if (t != null) {
+          //echo("hit cache: $file")
+          return t
+        }
       }
     }
 
@@ -74,10 +78,39 @@ internal const class ScriptCompiler {
     return t
   }
 
+  private Obj? getOptions([Str:Obj]? options, Str name, Obj? defV = null) {
+    if (options != null && options.get(name) != null) {
+      return options.get(name, defV)
+    }
+    return null
+  }
+
+  private Str generatePodName(File f, [Str:Obj]? options)
+  {
+    podName := getOptions(options, "podName")
+    if (podName != null) {
+      return podName
+    }
+
+    Str base = f.basename
+    StrBuf s = StrBuf(base.size+6);
+    s.add("pod_")
+    for (i:=0; i<base.size; ++i)
+    {
+      c := base[i];
+      if ('a' <= c && c <= 'z') { s.addChar(c); continue; }
+      if ('A' <= c && c <= 'Z') { s.addChar(c); continue; }
+      if (i > 0 && '0' <= c && c <= '9') { s.addChar(c); continue; }
+    }
+    s.addChar('_').add(counter.incrementAndGet);
+    podName = s.toStr;
+    return podName
+  }
+
   private Pod compileFile(File file, [Str:Obj]? options) {
-    podName := file.basename + TimePoint.nowUnique
+    podName := generatePodName(file, options)
     Method? m
-    if (file.ext == "fan")
+    if (file.ext == "fan" || (getOptions(options, "compiler") == "fan"))
       m = Slot.findMethod("compiler::Main.compileScript", true)
     else
       m = Slot.findMethod("compilerx::Main.compileScript", true)
@@ -87,9 +120,9 @@ internal const class ScriptCompiler {
   }
 
   private Str compileFileToJs(File file, [Str:Obj]? options) {
-    podName := file.basename + TimePoint.nowUnique
+    podName := generatePodName(file, options)
     Method? m
-    if (file.ext == "fan")
+    if (file.ext == "fan" || (getOptions(options, "compiler") == "fan"))
       m = Slot.findMethod("compiler::Main.compileScriptToJs", true)
     else
       m = Slot.findMethod("compilerx::Main.compileScriptToJs", true)

@@ -317,4 +317,11 @@ rtconst class HashMap<K,V> : Map<K,V>
     nmap.immutable = true
     return nmap
   }
+
+  private Void dump() {
+    for (i:=0; i<array.size; ++i) {
+      l := array[i]
+      echo(l)
+    }
+  }
 }

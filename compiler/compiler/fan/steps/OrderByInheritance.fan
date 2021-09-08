@@ -59,12 +59,18 @@ class OrderByInheritance : CompilerStep
     if (t.flags.and(FConst.Virtual) != 0 ||
         t.flags.and(FConst.Abstract) != 0 ||
         t.flags.and(FConst.Final) != 0) return
-    
-    vir := t.slotDefs.any |s| {
-      if (s.flags.and(FConst.Virtual) != 0 || t.flags.and(FConst.Abstract) != 0) {
-        return true
+
+    vir := false
+    if (!t.base.isObj) {
+      vir = true
+    }
+    if (!vir) {    
+      vir = t.slotDefs.any |s| {
+        if (s.flags.and(FConst.Virtual) != 0 || t.flags.and(FConst.Abstract) != 0) {
+          return true
+        }
+        return false
       }
-      return false
     }
     if (vir) t.flags = t.flags.or(FConst.Virtual)
   }

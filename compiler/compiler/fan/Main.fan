@@ -356,6 +356,11 @@ class Main
 
       fcodeDump := options["fcodeDump"]
       if (fcodeDump == true) input.fcodeDump = true
+
+      |Str->Str|? translate := options["translate"]
+      if (translate != null) {
+        input.srcStr = translate(input.srcStr)
+      }
     }
 
     return Compiler(input).compile.transientPod
@@ -391,6 +396,11 @@ class Main
 
       fcodeDump := options["fcodeDump"]
       if (fcodeDump == true) input.fcodeDump = true
+
+      |Str->Str|? translate := options["translate"]
+      if (translate != null) {
+        input.srcStr = translate(input.srcStr)
+      }
     }
 
     return Compiler(input).compile.js

@@ -7,9 +7,9 @@ mkdir -p $WORK_PATH/../env/lib/fan
 echo 'build fanx java'
 sh build_javaEmit.sh
 
-# echo 'build sys and std'
-# sh bootstrap_build.sh ../library/sys
-# sh bootstrap_build.sh ../library/std
+echo 'build sys and std'
+sh bootstrap_build.sh ../library/sys
+sh bootstrap_build.sh ../library/std
 
 echo 'build compiler self'
 sh bootstrap_build.sh compiler

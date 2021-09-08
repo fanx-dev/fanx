@@ -506,7 +506,7 @@ rtconst class Env
   private |->|[] shutdownHooks := [,]
   internal Void onExit() {
     shutdownHooks.each {
-      it.call
+      try { it.call } catch(Err e) {}
     }
   }
 
