@@ -52,13 +52,11 @@ internal rtconst class PodList {
       }
       else {
         pod = makePod(name)
-        echo("makePod:$pod")
         if (pod != null) {
           cur.podMap[name] = pod
         }
       }
     }
-    echo("cur.podMap:$cur.podMap")
     lock.unlock
     if (checked && pod == null) {
         throw UnknownPodErr(name)

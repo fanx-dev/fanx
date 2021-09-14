@@ -169,6 +169,7 @@ void fr_setInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *a
     //Env *e = (Env*)self;
     char *v = ((char*)fr_getPtr(self, bottom)) + field->offset;
     *((uint64_t*)v) = arg->i;
+    fr_setGcDirty(self, fr_getPtr(self, bottom));
 }
 bool fr_getInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *val) {
     //Env *e = (Env*)self;

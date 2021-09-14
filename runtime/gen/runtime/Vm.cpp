@@ -57,6 +57,22 @@ extern  "C" {
 }
 #endif
 
+void visitChildrenByType(Collector* gc, FObj* obj, fr_Type type) {
+    if (type->base) {
+        visitChildrenByType(gc, obj, type->base);
+    }
+    for (int i = 0; i < type->fieldCount; ++i) {
+        fr_Field_& f = type->fieldList[i];
+        if (!f.isStatic && !f.isValType && (f.flags & FFlags_Storage)) {
+            fr_Obj* objAddress = (fr_Obj*)(((char*)(obj)) + f.offset);
+            if (*objAddress == NULL) continue;
+            GcObj* gp = fr_toGcObj(*objAddress);
+            //list->push_back(gp);
+            gc->onVisit(gp);
+        }
+    }
+}
+
 void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
     FObj* obj = fr_fromGcObj(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
@@ -87,16 +103,7 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
         return;
     }
     
-    for (int i=0; i<type->fieldCount; ++i) {
-        fr_Field_ &f = type->fieldList[i];
-        if (!f.isStatic && !f.isValType) {
-            fr_Obj* objAddress = (fr_Obj*)(((char*)(obj)) + f.offset);
-            if (*objAddress == NULL) continue;
-            GcObj *gp = fr_toGcObj(*objAddress);
-            //list->push_back(gp);
-            gc->onVisit(gp);
-        }
-    }
+    visitChildrenByType(gc, obj, type);
 }
 
 void Vm::walkRoot(Collector *gc) {
@@ -217,6 +224,7 @@ void Vm::registerClass(const char *pod, const char *clz, fr_Type type) {
         if (f.isStatic && !f.isValType) {
             fr_Obj* objAddress = (fr_Obj*)(f.pointer);
             addStaticRef(objAddress);
+            //printf("addStaticRef: %s,%s\n", clz, f.name);
         }
     }
 }

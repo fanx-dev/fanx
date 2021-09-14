@@ -93,6 +93,31 @@ int Fvm::allocSize(GcObj* gcobj) {
     return ftype->c_allocSize + sizeof(struct GcObj_);
 }
 
+void Fvm::visitChildrenByType(Collector* gc, FObj* fobj, FType *ftype) {
+    Env* env = nullptr;
+    if (ftype->hasBase()) {
+        FType* base = podManager->getType(env, ftype->c_pod, ftype->meta.base);
+        visitChildrenByType(gc, fobj, base);
+    }
+    for (int i = 0; i < ftype->fields.size(); ++i) {
+        FField& f = ftype->fields[i];
+        if ((f.flags & FFlags::Storage) == 0) {
+            continue;
+        }
+        if (f.flags & FFlags::Static) {
+            //pass;
+        }
+        else {
+            fr_Value* val = podManager->getInstanceFieldValue(fobj, &f);
+            fr_ValueType vtype = podManager->getValueType(env, ftype->c_pod, f.type);
+            if (vtype == fr_vtObj) {
+                //list->push_back((FObj*)val->o);
+                gc->onVisit(fr_toGcObj((FObj*)(val->o)));
+            }
+        }
+    }
+}
+
 void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
     Env *env = nullptr;
     FObj *fobj = fr_fromGcObj(gcobj);
@@ -122,22 +147,7 @@ void Fvm::visitChildren(Collector *gc, GcObj* gcobj) {
         return;
     }
     
-    for (int i=0; i<ftype->fields.size(); ++i) {
-        FField &f = ftype->fields[i];
-        if ((f.flags & FFlags::Storage) == 0) {
-            continue;
-        }
-        if (f.flags & FFlags::Static) {
-            //pass;
-        } else {
-            fr_Value *val = podManager->getInstanceFieldValue(fobj, &f);
-            fr_ValueType vtype = podManager->getValueType(env, ftype->c_pod, f.type);
-            if (vtype == fr_vtObj) {
-                //list->push_back((FObj*)val->o);
-                gc->onVisit(fr_toGcObj((FObj*)(val->o)));
-            }
-        }
-    }
+    visitChildrenByType(gc, fobj, ftype);
 }
 void Fvm::walkRoot(Collector *gc) {
     //global ref

@@ -58,6 +58,8 @@ public:
     fr_Obj newGlobalRef(FObj * obj);
     void deleteGlobalRef(fr_Obj obj);
     void addStaticRef(fr_Obj obj);
+private:
+    void visitChildrenByType(Collector* gc, FObj* fobj, FType *ftype);
 };
 
 #endif /* defined(__vm__FVM__) */

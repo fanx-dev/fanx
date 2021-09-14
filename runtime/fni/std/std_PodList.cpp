@@ -30,4 +30,8 @@ fr_Obj std_PodList_makePod(fr_Env env, fr_Obj aname) {
     fr_Obj vpod = fr_newObjS(env, "std", "Pod", "make", 3, name, version, depends);
     return vpod;
 }
+#else
+fr_Obj std_PodList_makePod(fr_Env env, fr_Obj aname) {
+    return NULL;
+}
 #endif

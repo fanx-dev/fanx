@@ -7,7 +7,7 @@
 //
 
 
-native class Array<T> {
+final native class Array<T> {
   new make(Int size)
   Int size()
   @Operator T get(Int pos)
