@@ -774,7 +774,7 @@ native internal rtconst class BaseType : Type
   **   acme::Foo#.pod   => acme
   **   acme::Foo[]#.pod => sys
   **
-  override Pod? pod() { null }
+  override Pod? pod() { _pod }
 
   **
   ** Simple name of the type such as "Str".  For parameterized types derived

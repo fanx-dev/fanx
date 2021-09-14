@@ -9,7 +9,7 @@
 internal rtconst class PodList {
   private [Str:Pod] podMap := [:]
   private Lock lock := Lock()
-  private Bool inited := false
+  //private Bool inited := false
 
   internal const static PodList cur := PodList()
 
@@ -20,6 +20,7 @@ internal rtconst class PodList {
     return names.map { findPod(it) }
   }
 
+/*
   private native Void doInit()
   private Void init() {
     lock.lock
@@ -29,14 +30,16 @@ internal rtconst class PodList {
     }
     lock.unlock
   }
-
+*/
   //call in native
   internal static Void addPod(Pod pod) {
     cur.podMap[pod.name] = pod
   }
 
+  private static native Pod? makePod(Str name)
+
   Pod? findPod(Str name, Bool checked := true) {
-    init
+    //init
     lock.lock
     pod := podMap.getChecked(name, false)
     if (pod == null) {
@@ -47,7 +50,15 @@ internal rtconst class PodList {
             throw IOErr("Pod name mismatch " + name + " != " + pod.name);
         cur.podMap[name] = pod
       }
+      else {
+        pod = makePod(name)
+        echo("makePod:$pod")
+        if (pod != null) {
+          cur.podMap[name] = pod
+        }
+      }
     }
+    echo("cur.podMap:$cur.podMap")
     lock.unlock
     if (checked && pod == null) {
         throw UnknownPodErr(name)
@@ -236,7 +247,8 @@ native final rtconst class Pod
   ** or `Uri.get` to lookup a resource file.
   **
   File[] files() {
-    _file.contents("fcode").vals.findAll { it.ext != "fcode" && it.ext != "class" }
+    if (_file == null) return [,]
+    return _file.contents("fcode").vals.findAll { it.ext != "fcode" && it.ext != "class" }
   }
 
   **
@@ -251,6 +263,7 @@ native final rtconst class Pod
   **   `fan://icons/x16/cut.png`.get
   **
   File? file(Uri uri, Bool checked := true) {
+    if (_file == null) return null
     f := _file.contents("fcode")[uri]
     if (f.ext == "fcode" || f.ext == "class") {
       f = null

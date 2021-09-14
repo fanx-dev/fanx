@@ -135,7 +135,7 @@ fr_Obj fr_box_bool(fr_Env, sys_Bool_val val);
 #define FR_STR(bytes) fr_newStrUtf8(env__, bytes, -1)
     
 #define FR_TYPE_IS(obj, type) fr_isClass(__env, obj, type##_class__)
-#define FR_TYPE_AS(obj, type) (type)(FR_TYPE_IS(obj, type)?obj:NULL)
+#define FR_TYPE_AS(obj, type) (type##_null)(FR_TYPE_IS(obj, type)?obj:NULL)
 #define FR_CAST(pos, ret, obj, type, toType) do{ if (!obj || FR_TYPE_IS(obj, type)) ret = (toType)obj; \
     else FR_THROW(pos, fr_makeCastError(__env)); }while(0)
 

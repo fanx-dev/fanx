@@ -117,7 +117,7 @@ fr_Obj std_MethodFunc_call__4(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Ob
 fr_Obj std_MethodFunc_call__5(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e);
 fr_Obj std_MethodFunc_call__6(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f);
 fr_Obj std_MethodFunc_call__7(fr_Env env, fr_Obj self, fr_Obj a, fr_Obj b, fr_Obj c, fr_Obj d, fr_Obj e, fr_Obj f, fr_Obj g);
-void std_PodList_doInit(fr_Env env, fr_Obj self);
+fr_Obj std_PodList_makePod(fr_Env env, fr_Obj name);
 void std_Pod_doInit(fr_Env env, fr_Obj self);
 fr_Obj std_Type_typeof_(fr_Env env, fr_Obj obj);
 void std_BaseType_doInit(fr_Env env, fr_Obj self);
@@ -176,6 +176,7 @@ fr_Obj std_Env_arch(fr_Env env, fr_Obj self);
 fr_Obj std_Env_runtime(fr_Env env, fr_Obj self);
 fr_Bool std_Env_isJs(fr_Env env, fr_Obj self);
 fr_Int std_Env_javaVersion(fr_Env env, fr_Obj self);
+fr_Int std_Env_idHash(fr_Env env, fr_Obj self, fr_Obj obj);
 fr_Obj std_Env_args(fr_Env env, fr_Obj self);
 fr_Obj std_Env_vars(fr_Env env, fr_Obj self);
 fr_Obj std_Env_diagnostics(fr_Env env, fr_Obj self);

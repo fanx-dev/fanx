@@ -51,9 +51,10 @@ cstr keyword[] = {
     "and",
     "or",
     "xor",
+    "bool",
 };
 
-const int keywordCount = 28;
+const int keywordCount = sizeof(keyword)/sizeof(cstr);
 
 void escapeKeyword(std::string &astr) {
     for (int i=0; i<keywordCount; ++i) {

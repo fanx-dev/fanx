@@ -205,6 +205,18 @@ void PodGen::genStaticInit(Printer *printer) {
     printer->println("if (inited) { return; }");
     printer->println("inited = true;");
     
+    //resister pod first
+    printer->newLine();
+    printer->println("struct fr_Pod_ *pod = (struct fr_Pod_ *)malloc(sizeof(struct fr_Pod_));");
+    printer->println("pod->name = \"%s\";", podName.c_str());
+    printer->println("pod->version = \"%s\";", pod->version.c_str());
+    printer->println("pod->depends = \"%s\";", pod->depends.c_str());
+    printer->println("pod->metaCount = %d;", 0);
+    printer->println("pod->metas = NULL;");
+    printer->println("fr_registerPod(__env, pod);");
+
+    printer->newLine();
+
     for (int i=0; i<pod->c_dependPods.size(); ++i) {
         std::string& dep = pod->c_dependPods[i];
         if (dep == podName) continue;
@@ -240,18 +252,7 @@ void PodGen::genStaticInit(Printer *printer) {
         }
     }
     
-    printer->newLine();
-    printer->newLine();
-    
-    printer->println("struct fr_Pod_ *pod = (struct fr_Pod_ *)malloc(sizeof(struct fr_Pod_));");
-    printer->println("pod->name = \"%s\";", podName.c_str());
-    printer->println("pod->version = \"%s\";", pod->version.c_str());
-    printer->println("pod->depends = \"%s\";", pod->depends.c_str());
-    
-    printer->println("pod->metaCount = %d;", 0);
-    printer->println("pod->metas = NULL;");
-    
-    printer->println("fr_registerPod(__env, pod);");
+    //printer->newLine();
     
     printer->unindent();
     printer->println("}");

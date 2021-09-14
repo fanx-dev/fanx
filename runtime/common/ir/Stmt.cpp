@@ -987,6 +987,12 @@ void CoerceStmt::print(Printer& printer) {
     bool isVal2 = to.getType().isValueType();
     bool isNull1 = from.getType().isNullable;
     bool isNull2 = to.getType().isNullable;
+
+    //AS expr
+    if (checked == false) {
+        isVal2 = false;
+        isNull2 = true;
+    }
     
     if (!isVal1 && !isVal2) {
         if (isNull1 && !isNull2) {
@@ -1056,9 +1062,11 @@ void CoerceStmt::print(Printer& printer) {
     }
 }
 
+//IS expr
 void TypeCheckStmt::print(Printer& printer) {
     if (obj.getType().isValue) {
         bool isFit = FCodeUtil::isInheriteOf(obj.getType().pod, obj.getType().name, curPod, type);
+        /*
         if (isFit) {
             if (FCodeUtil::isValueTypeRef(curPod, type)) {
                 printer.printf("%s = %s;"
@@ -1070,7 +1078,8 @@ void TypeCheckStmt::print(Printer& printer) {
                                , result.getName().c_str(), obj.getName().c_str()
                                , typeName.c_str(), result.getTypeName().c_str());
             }
-        }
+        }*/
+        printer.printf("%s = %d;", result.getName().c_str(), isFit);
     } else {
         std::string typeName = FCodeUtil::getTypeNsName(curPod, type);
         printer.printf("%s = FR_TYPE_IS(%s, %s);"

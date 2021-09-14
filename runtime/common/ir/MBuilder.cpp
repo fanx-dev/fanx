@@ -906,6 +906,9 @@ void MBuilder::parseBlock(Block *block, Block *previous) {
                 stmt->from = block->pop();
                 stmt->toType = opObj.i1;
                 Var &var = block->newVar(opObj.i1);
+
+                //as expr is always nullable
+                var.type.isNullable = true;
                 
                 Expr value = var.asRef();
                 block->push(value);

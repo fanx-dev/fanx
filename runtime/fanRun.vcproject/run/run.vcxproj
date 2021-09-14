@@ -19,6 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\vase\native\thirdparty\glew.c" />
+    <ClCompile Include="..\..\..\..\vase\native\thirdparty\nanovg.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NClipboard.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NEditText.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NFont.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGfxEnv.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGraphics.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NImage.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NToolkit.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_Toolkit.c" />
     <ClCompile Include="..\..\common\gc\Gc.cpp" />
     <ClCompile Include="..\..\common\util\escape.cpp" />
     <ClCompile Include="..\..\common\util\LinkedList.c" />
@@ -68,6 +79,9 @@
     <ClCompile Include="..\..\fni\sys\sys_Num.c" />
     <ClCompile Include="..\..\fni\sys\sys_Obj.cpp" />
     <ClCompile Include="..\..\fni\sys\sys_Ptr.c" />
+    <ClCompile Include="..\..\fni\util\util_SecureRandom.c" />
+    <ClCompile Include="..\..\fni\util\util_SeededRandom.c" />
+    <ClCompile Include="..\..\fni\util\util_Unit.c" />
     <ClCompile Include="..\..\gen\runtime\Env.cpp" />
     <ClCompile Include="..\..\gen\runtime\fni_ext.cpp" />
     <ClCompile Include="..\..\gen\runtime\main.c" />
@@ -79,6 +93,10 @@
     <ClCompile Include="..\..\gen\temp\concurrent.c" />
     <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
+    <ClCompile Include="..\..\gen\temp\util.c" />
+    <ClCompile Include="..\..\gen\temp\vaseGraphics.c" />
+    <ClCompile Include="..\..\gen\temp\vaseMath.c" />
+    <ClCompile Include="..\..\gen\temp\vaseWindow.c" />
     <ClCompile Include="..\..\thirdparty\md5.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
     <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
@@ -105,6 +123,12 @@
     <ClCompile Include="..\..\thirdparty\zlib\zutil.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\fontstash.h" />
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg.h" />
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl.h" />
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl_utils.h" />
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_image.h" />
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_truetype.h" />
     <ClInclude Include="..\..\common\gc\Bitmap.hpp" />
     <ClInclude Include="..\..\common\gc\BitmapTest.h" />
     <ClInclude Include="..\..\common\gc\Gc.h" />
@@ -131,6 +155,10 @@
     <ClInclude Include="..\..\gen\temp\std_prototype.h" />
     <ClInclude Include="..\..\gen\temp\sys.h" />
     <ClInclude Include="..\..\gen\temp\sys_prototype.h" />
+    <ClInclude Include="..\..\gen\temp\util.h" />
+    <ClInclude Include="..\..\gen\temp\vaseGraphics.h" />
+    <ClInclude Include="..\..\gen\temp\vaseMath.h" />
+    <ClInclude Include="..\..\gen\temp\vaseWindow.h" />
     <ClInclude Include="..\..\thirdparty\minizip\crypt.h" />
     <ClInclude Include="..\..\thirdparty\minizip\ioapi.h" />
     <ClInclude Include="..\..\thirdparty\minizip\ioapi_buf.h" />
@@ -261,7 +289,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\include;$(ProjectDir)..\..\..\..\vase\native\thirdparty;$(ProjectDir)..\..\..\..\vase\native\vaseWindow;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -269,7 +297,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies);iphlpapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;DbgHelp.lib;%(AdditionalDependencies);iphlpapi.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\lib-vc2019</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

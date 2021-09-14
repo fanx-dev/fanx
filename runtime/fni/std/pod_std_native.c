@@ -2231,15 +2231,17 @@ void std_MethodFunc_call__7_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
-void std_PodList_doInit_v(fr_Env env, void *param, void *ret) {
+void std_PodList_makePod_v(fr_Env env, void *param, void *ret) {
     fr_Value value_0;
     fr_Obj arg_0; 
+    fr_Value retValue;
 
     fr_getParam(env, param, &value_0, 0, NULL);
     arg_0 = value_0.h;
 
 
-    std_PodList_doInit(env, arg_0);
+    retValue.h = std_PodList_makePod(env, arg_0);
+    *((fr_Value*)ret) = retValue;
 }
 
 void std_Pod_doInit_v(fr_Env env, void *param, void *ret) {
@@ -3148,6 +3150,24 @@ void std_Env_javaVersion_v(fr_Env env, void *param, void *ret) {
 
 
     retValue.i = std_Env_javaVersion(env, arg_0);
+    *((fr_Value*)ret) = retValue;
+}
+
+void std_Env_idHash_v(fr_Env env, void *param, void *ret) {
+    fr_Value value_0;
+    fr_Obj arg_0; 
+    fr_Value value_1;
+    fr_Obj arg_1; 
+    fr_Value retValue;
+
+    fr_getParam(env, param, &value_1, 1, NULL);
+    arg_1 = value_1.h;
+
+    fr_getParam(env, param, &value_0, 0, NULL);
+    arg_0 = value_0.h;
+
+
+    retValue.i = std_Env_idHash(env, arg_0, arg_1);
     *((fr_Value*)ret) = retValue;
 }
 

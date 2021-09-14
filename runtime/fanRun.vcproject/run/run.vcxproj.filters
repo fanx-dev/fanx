@@ -19,6 +19,9 @@
     <Filter Include="源文件\lib">
       <UniqueIdentifier>{de22afca-a993-4f56-b32d-9d68a857181b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\vase">
+      <UniqueIdentifier>{290dc8b6-0a8b-4a70-88d7-9599f0226f7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\gen\runtime\main.c">
@@ -273,6 +276,60 @@
     <ClCompile Include="..\..\fni\concurrent\concurrent_Thread.cpp">
       <Filter>源文件\lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NClipboard.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NEditText.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NFont.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGfxEnv.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGraphics.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NImage.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NToolkit.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_Toolkit.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\thirdparty\glew.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\thirdparty\nanovg.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\vaseGraphics.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\vaseMath.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\vaseWindow.c">
+      <Filter>源文件\vase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gen\temp\util.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\util\util_SecureRandom.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\util\util_SeededRandom.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fni\util\util_Unit.c">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\gen\runtime\runtime.h">
@@ -420,6 +477,36 @@
       <Filter>源文件\lib</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gen\temp\concurrent_prototype.h">
+      <Filter>源文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\fontstash.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl_utils.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_image.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_truetype.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\vaseGraphics.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\vaseMath.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\vaseWindow.h">
+      <Filter>源文件\vase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gen\temp\util.h">
       <Filter>源文件\lib</Filter>
     </ClInclude>
   </ItemGroup>

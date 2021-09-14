@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#define F_STR_BUF_SIZE 256
+#define F_STR_BUF_SIZE 1024
 
 class Printer {
     char buf[F_STR_BUF_SIZE];

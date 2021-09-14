@@ -76,13 +76,13 @@ void Block::print(IRMethod *method, Printer& printer, int pass) {
     for (int i=0; i<locals.size(); ++i) {
         Var &v = locals[i];
         if (!v.isExport) {
-            printer.printf("%s %s; ", v.type.getName().c_str(), v.name.c_str());
+            printer.println("%s %s;", v.type.getName().c_str(), v.name.c_str());
             has = true;
         }
     }
-    if (has) {
+    /*if (has) {
         printer.newLine();
-    }
+    }*/
 
     //print stmts
     for (int i=start; i<end; ++i) {
@@ -98,13 +98,13 @@ void Block::print(IRMethod *method, Printer& printer, int pass) {
             if (has == false) {
                 printer.println("//reset temp var");
             }
-            printer.printf("%s = NULL; ", v.name.c_str());
+            printer.println("%s = NULL;", v.name.c_str());
             has = true;
         }
     }
-    if (has) {
+    /*if (has) {
         printer.newLine();
-    }
+    }*/
     printer.println("}");
     
     //print last exception tryEnd stmt
