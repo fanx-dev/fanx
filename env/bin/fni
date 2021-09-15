@@ -22,7 +22,16 @@ esac
 
 FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
-mkdir $FAN_HOME/../runtime/fni/$1/
+args=""
+pod=""
+if [ $1 == "-c" ]; then
+  args=$1
+  pod=$2
+else
+  pod=$1
+fi
+
+mkdir $FAN_HOME/../runtime/fni/$pod/
 
 if $darwin; then
   EXE=$FAN_HOME/bin/macos-arm64/fni
@@ -30,4 +39,4 @@ elif $cygwin || $mingw; then
   EXE=$FAN_HOME/bin/win-x86_64-debug/fni.exe
 fi
 
-$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/fni/$1/ $1
+$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/fni/$pod/ $args $pod

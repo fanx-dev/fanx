@@ -14,3 +14,4 @@ release
 compiler/compilerx/compilerx.jar
 *.exe
 env/bin/macos-arm64
+runtime/fni/vaseWindow/

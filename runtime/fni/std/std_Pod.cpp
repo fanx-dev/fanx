@@ -28,13 +28,13 @@ static void addTypeToPod(fr_Env env, fr_Obj pod, fr_Type rtype) {
         args2[4].h = NULL;
     }
     std::string mixinsName;
-    if (rtype->base) {
-        for (int i = 0; rtype->mixinCount; ++i) {
+    if (rtype->mixinList) {
+        for (int i = 0; i<rtype->mixinCount; ++i) {
             if (i == 0) {
-                mixinsName += rtype->base[i + 1].name;
+                mixinsName += rtype->mixinList[i]->name;
             }
             else {
-                mixinsName += std::string(",") + rtype->base[i + 1].name;
+                mixinsName += std::string(",") + rtype->mixinList[i]->name;
             }
         }
     }

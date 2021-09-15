@@ -162,6 +162,7 @@ struct fr_Class_ {
     //fr_Obj typeObj;
   
     struct fr_Class_ *base;
+    struct fr_Class_ **mixinList;
     int mixinCount;
   
     int fieldCount;

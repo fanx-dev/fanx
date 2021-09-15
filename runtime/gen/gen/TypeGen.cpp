@@ -157,6 +157,9 @@ void TypeGen::genTypeMetadata(Printer *printer) {
     printer->println("type->allocSize = sizeof(struct %s_struct);", name.c_str());
     printer->println("type->staticInited = false;");
     
+    printer->println("type->mixinCount = %d;", type->meta.mixinCount);
+    printer->println("type->mixinList = (struct fr_Class_**)malloc(sizeof(struct fr_Class_*)*%d);", type->meta.mixinCount);
+
     std::string baseName = getTypeNsName(type->meta.base);
     //sys::Obj's base class is NULL
     if (baseName.size() == 0) {
@@ -165,6 +168,13 @@ void TypeGen::genTypeMetadata(Printer *printer) {
     else {
         printer->println("type->base = (fr_Type)%s_class__;", baseName.c_str());
     }
+
+    for (int i = 0; i < type->meta.mixinCount; ++i) {
+        baseName = getTypeNsName(type->meta.mixin[i]);
+        printer->println("type->mixinList[%d] = (fr_Type)%s_class__;", i, baseName.c_str());
+    }
+    
+
     printer->println("type->fieldCount = %d;", type->fields.size());
     printer->println("type->fieldList = (struct fr_Field_*)malloc(sizeof(struct fr_Field_)*%d);", type->fields.size());
     //int offset = 0;
@@ -269,7 +279,6 @@ void TypeGen::genVTableInit(Printer *printer) {
     }
 
     printer->newLine();
-    printer->println("memset(type, 0, sizeof(struct fr_Class_));");
     printer->println("type->interfaceVTableIndex[%d].type = NULL;", i-1);
     printer->println("type->interfaceVTableIndex[%d].vtableOffset = 0;", i-1);
 }
@@ -279,7 +288,8 @@ void TypeGen::genTypeInit(Printer *printer) {
     
     printer->println("void %s_initClass__(fr_Env __env, struct fr_Class_ *type) {", name.c_str());
     printer->indent();
-    
+    printer->println("memset(type, 0, sizeof(struct fr_Class_));");
+
     genVTableInit(printer);
     genTypeMetadata(printer);
     
