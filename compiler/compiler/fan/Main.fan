@@ -403,6 +403,13 @@ class Main
       }
     }
 
-    return Compiler(input).compile.js
+    compiler := Compiler(input)
+    compiler.compile
+    if (options != null) {
+      options["pod_name"] = podName
+      options["pod_main"] = compiler.types[0].qname
+      options["pod_depends"] = compiler.depends.map { it.name }
+    }
+    return compiler.js
   }
 }

@@ -76,6 +76,12 @@ class Main
 
     compiler := IncCompiler(pod, input).run
 
+    if (options != null) {
+      options["pod_name"] = podName
+      options["pod_main"] = pod.types[0].qname
+      options["pod_depends"] = pod.depends.map { it.name }
+    }
+
     return compiler.context.js
   }
 }
