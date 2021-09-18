@@ -871,7 +871,7 @@ class DeepParserX : ParserX {
       case Token.floatLiteral:    return LiteralExpr(loc, ExprId.floatLiteral, consume.val)
       case Token.decimalLiteral:  err("Unsupported Decimal literal"); return LiteralExpr(loc, ExprId.decimalLiteral, consume.val)
       case Token.strLiteral:      return LiteralExpr(loc, ExprId.strLiteral, consume.val)
-      case Token.durationLiteral: return LiteralExpr(loc, ExprId.durationLiteral, consume.val)
+      case Token.durationLiteral: err("Unsupported Duration literal"); return LiteralExpr(loc, ExprId.durationLiteral, consume.val)
       case Token.uriLiteral:      err("Unsupported Uri literal"); return LiteralExpr(loc, ExprId.uriLiteral, consume.val)
       case Token.localeLiteral:
         expr := LocaleLiteralExpr(loc, consume.val)

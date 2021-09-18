@@ -283,13 +283,8 @@ class CallResolver : CompilerSupport
       param := m.params.first
       if (param == null) return
       CType paramType := param.paramType
-      while (true) {
-        if (base.fits(paramType)) {
-          founds.add(m)
-          break
-        }
-        if (paramType.isObj) break
-        paramType = paramType.base
+      if (base.fits(paramType)) {
+        founds.add(m)
       }
     }
 
