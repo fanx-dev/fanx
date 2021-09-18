@@ -1,5 +1,14 @@
 ## ChangeLog
 
+### Build 4.1.0 (working)
+- genC: fix as Expr
+- fix gc visitChildren
+- fix pod reflect load
+- genC: support type's mixins meta
+- fni: find Field in base class
+- file read with 'rb'
+
+
 ### Build 4.0.2 (2021-09-08)
 - update fantom
 - restore fantom syntax

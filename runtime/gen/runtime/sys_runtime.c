@@ -38,6 +38,9 @@ fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) 
         vtype = fr_vtBool;
         elemSize = sizeof(bool);
     }
+    else {
+        assert(elemSize == sizeof(void*));
+    }
     
     size_t allocSize = sizeof(struct fr_Array_) + (elemSize * len) + 1;
     fr_Array *array = (fr_Array*)fr_allocObj(self, sys_Array_class__, allocSize);

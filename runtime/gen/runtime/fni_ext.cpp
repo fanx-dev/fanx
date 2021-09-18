@@ -143,6 +143,12 @@ fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
             return field;
         }
     }
+
+    //find in base class
+    fr_Type base = type->base;
+    if (base) {
+        return fr_findField(self, base, name);
+    }
     return NULL;
 }
 

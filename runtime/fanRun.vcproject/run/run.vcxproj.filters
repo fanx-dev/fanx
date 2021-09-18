@@ -297,9 +297,6 @@
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NToolkit.c">
       <Filter>源文件\vase</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.c">
-      <Filter>源文件\vase</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_Toolkit.c">
       <Filter>源文件\vase</Filter>
     </ClCompile>
@@ -329,6 +326,9 @@
     </ClCompile>
     <ClCompile Include="..\..\fni\util\util_Unit.c">
       <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.cpp">
+      <Filter>源文件\vase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

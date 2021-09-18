@@ -9,7 +9,7 @@ fr_Obj std_LocalFile_in(fr_Env env, fr_Obj self, fr_Int bufferSize) {
 
     fr_Obj path = fr_callOnObj(env, self, "osPath", 0).h;
     const char* pathStr = fr_getStrUtf8(env, path);
-    FILE* file = fopen(pathStr, "r");
+    FILE* file = fopen(pathStr, "rb");
 
     if (file == NULL) {
         fr_throwNew(env, "sys", "IOErr", "can not open file");

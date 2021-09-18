@@ -37,7 +37,9 @@ int main(int argc, const char* argv[]) {
 
     baseTest_Main_main(env);
     if (env->error) {
-        sys_Err_trace(env, env->error);
+        fr_Obj error = env->error;
+        fr_clearErr(env);
+        sys_Err_trace(env, error);
     }
 
     fr_onExit();

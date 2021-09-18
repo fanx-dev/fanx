@@ -28,7 +28,7 @@
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGraphics.c" />
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NImage.c" />
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NToolkit.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.c" />
+    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.cpp" />
     <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_Toolkit.c" />
     <ClCompile Include="..\..\common\gc\Gc.cpp" />
     <ClCompile Include="..\..\common\util\escape.cpp" />

@@ -100,7 +100,9 @@ void Gc::setDirty(GcObj *obj) {
     if (!isRef(obj)) {
         abort();
     }
+    lock.lock();
     dirtyList.push_back(obj);
+    lock.unlock();
 }
 
 GcObj* Gc::alloc(void *type, int asize) {
@@ -207,7 +209,7 @@ void Gc::doCollect() {
     resumeWorld();
     //concurrent mark
     mark();
-    mark();
+    //mark();
     
     //remark root
     puaseWorld();
