@@ -9,8 +9,11 @@
 #include "runtime.h"
 #include "system.h"
 
-//#if FR_RUN
+#ifdef FR_MAIN
 #include "../temp/baseTest.h"
+#else
+#include "../temp/std.h"
+#endif
 
 CF_BEGIN
 
@@ -21,19 +24,26 @@ void fr_onExit();
 const char* fr_homeDir = NULL;
 const char* fr_envPaths[32] = {0};
 
-CF_END
 
-int main(int argc, const char* argv[]) {
+void fr_init(int argc, const char* argv[]) {
     fr_homeDir = "./";
     fr_envPaths[0] = fr_homeDir;
 
     fr_Env env = fr_getEnv(NULL);
-    baseTest_init__(env);
+    std_init__(env);
 
     int i = 0;
     fr_Obj argsObj = fr_makeArgArray((fr_Env)env, i + 1, argc, argv);
-    FObj* args = fr_getPtr((fr_Env)env, argsObj);// makeArgArray(env, i + 1, argc, argv);
+    //FObj* args = fr_getPtr((fr_Env)env, argsObj);// makeArgArray(env, i + 1, argc, argv);
     fr_argsArray = fr_newGlobalRef((fr_Env)env, argsObj);
+}
+
+#ifdef FR_MAIN
+int main(int argc, const char* argv[]) {
+    fr_init(argc, argv);
+
+    fr_Env env = fr_getEnv(NULL);
+    baseTest_init__(env);
 
     baseTest_Main_main(env);
     if (env->error) {
@@ -53,5 +63,6 @@ int main(int argc, const char* argv[]) {
     //fr_gcQuit();
     //fr_releaseEnv(NULL, env);
 }
-
+#endif
+CF_END
 //#endif

@@ -813,7 +813,10 @@
 		3291F9191F6D40C200F12438 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "GC_REF_TABLE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FR_MAIN,
+					"GC_REF_TABLE=1",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 11.2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -822,7 +825,10 @@
 		3291F91A1F6D40C200F12438 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "GC_REF_TABLE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FR_MAIN,
+					"GC_REF_TABLE=1",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 11.2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

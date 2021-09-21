@@ -191,7 +191,7 @@ fr_Obj std_Env_promptPassword(fr_Env env, fr_Obj self, fr_Obj msg) {
     char buf[256];
     printf("%s\n", fr_getStrUtf8(env, msg));
     
-#if (__STDC_VERSION__ >= 201101L)
+#if (__STDC_VERSION__ >= 201101L) && _WIN64
     const char *str = gets_s(buf, 256);
 #else
     const char *str = gets(buf);
