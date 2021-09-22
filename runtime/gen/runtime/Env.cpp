@@ -15,6 +15,7 @@ Env::Env(Vm *vm) : vm(vm)//, error(0)
     //needStop = false;
     statckStart = NULL;
     statckEnd = statckStart;
+    error = NULL;
 }
 
 static bool isPointer(Vm *vm, Collector *gc, int64_t pointer) {

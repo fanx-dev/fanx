@@ -23,6 +23,15 @@ esac
 
 FAN_HOME=$(dirname $(cd `dirname $0`; pwd))
 
+args=""
+pod=""
+if [ $1 == "-r" ]; then
+  args=$1
+  pod=$2
+else
+  pod=$1
+fi
+
 mkdir $FAN_HOME/../runtime/gen/temp/
 
 if $darwin; then
@@ -31,4 +40,4 @@ elif $cygwin || $mingw; then
   EXE=$FAN_HOME/bin/win-x86_64-debug/fangen.exe
 fi
 
-$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/gen/temp/ -r $1
+$EXE -p$FAN_HOME -g$FAN_HOME/../runtime/gen/temp/ $args $pod

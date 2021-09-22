@@ -8,6 +8,7 @@
 - fni: find Field in base class
 - file read with 'rb'
 - compileToJs return pod info
+- fanx: disable Duration literals
 
 ### Build 4.0.2 (2021-09-08)
 - update fantom
