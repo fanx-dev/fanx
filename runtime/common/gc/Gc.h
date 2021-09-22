@@ -23,7 +23,7 @@
 #include <thread>
 #include <atomic>
 
-//#define GC_NO_BITMAP
+#define GC_NO_BITMAP
 
 class Gc : public Collector {
     std::list<GcObj*> pinObjs;
@@ -31,7 +31,7 @@ class Gc : public Collector {
 #ifndef GC_NO_BITMAP
     Bitmap allRefs;
 #else
-    std::map<void *, bool> allRefs;
+    std::map<uint64_t, bool> allRefs;
 #endif
     std::vector<GcObj*> markStack;
     
@@ -93,7 +93,7 @@ private:
     void getRoot();
     void sweep();
 //    bool remark();
-    void remove(GcObj* obj);
+    void remove(GcObj* obj, bool deleteFromAllRefs);
     
     bool markNode(GcObj* obj);
 };

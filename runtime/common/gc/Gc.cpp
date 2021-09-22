@@ -37,11 +37,7 @@ Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
 {
     lastAllocSize = 29;
     collectLimit = 1000000;
-#ifndef GC_NO_BITMAP
-    //pass
-#else
-    //allRefs = NULL;
-#endif
+
     //BitmapTest_run();
     gcThread = new std::thread(std::bind(&Gc::gcThreadRun, this));
     gcThread->detach();
@@ -66,8 +62,10 @@ bool Gc::isRef(void *p) {
 }
 #else
 bool Gc::isRef(void *p) {
+    uint64_t ip = (uint64_t)p;
+    ip = ip >> 3;
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
-    bool found = allRefs.find(p) != allRefs.end();
+    bool found = allRefs.find(ip) != allRefs.end();
     return found;
 }
 #endif
@@ -131,10 +129,9 @@ GcObj* Gc::alloc(void *type, int asize) {
         allRefs.putPtr(obj, true);
         //assert(allRefs.getPtr(obj));
     #else
-        //gc_setNext(obj, this->allRefs);
-        //allRefs = obj;
-        //allRefs.insert(obj);
-        allRefs[obj] = true;
+        uint64_t ip = (uint64_t)obj;
+        ip = ip >> 3;
+        allRefs[ip] = true;
     #endif
         //newAllocRef.push_back(obj);
         allocSize += size;
@@ -279,17 +276,19 @@ void Gc::sweep() {
         
         if (!obj) break;
         if (gc_getMark(obj) != marker) {
-            remove(obj);
+            remove(obj, true);
         }
         //System_sleep(10);
     }
 #else
     lock.lock();
     for (auto itr = allRefs.begin(); itr != allRefs.end();) {
-        GcObj *obj = (GcObj*)(itr->first);
+        uint64_t ip = (itr->first);
+        
+        GcObj *obj = (GcObj*)(ip << 3);
         if (!obj) break;
         if (gc_getMark(obj) != marker) {
-            remove(obj);
+            remove(obj, false);
             itr = allRefs.erase(itr);
         }
         else {
@@ -320,7 +319,7 @@ void Gc::sweep() {
     
 }
 
-void Gc::remove(GcObj* obj) {
+void Gc::remove(GcObj* obj, bool deleteFromAllRefs) {
     
     int size = gcSupport->allocSize(obj);
     
@@ -334,11 +333,15 @@ void Gc::remove(GcObj* obj) {
     
     lock.lock();
     allocSize -= size;
+    if (deleteFromAllRefs) {
 #ifndef GC_NO_BITMAP
-    allRefs.putPtr(obj, false);
+        allRefs.putPtr(obj, false);
 #else
-    //
+        uint64_t ip = (uint64_t)obj;
+        ip = ip >> 3;
+        allRefs.erase(allRefs.find(ip));
 #endif
+    }
     lock.unlock();
     
     obj->type = NULL;
