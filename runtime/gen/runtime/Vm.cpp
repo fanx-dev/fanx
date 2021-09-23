@@ -159,9 +159,8 @@ void Vm::onStartGc() {
 //    }
 }
 
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 void Vm::puaseWorld(bool bloking) {
-    void *statckVar = 0;
-
     while (true) {
         bool isAllStoped = true;
         lock.lock();
@@ -169,7 +168,7 @@ void Vm::puaseWorld(bool bloking) {
         for (auto it = threads.begin(); it != threads.end(); ++it) {
             Env* env = it->second;
             if (it->first == tid) {
-                env->statckEnd = &statckVar;
+                env->stackEnd = (void**)(&bloking);
                 continue;
             }
             

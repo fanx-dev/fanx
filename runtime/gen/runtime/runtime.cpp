@@ -13,15 +13,16 @@
 
 Vm *fvm = nullptr;
 
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 fr_Env fr_getEnv(fr_Fvm vm) {
-    void *statckVar = 0;
+    char buf[1024];
     if (vm == nullptr) {
         vm = fr_getVm();
     }
     Vm* fvm = (Vm*)vm;
     Env *env = fvm->getEnv();
-    if (env->statckStart == NULL) {
-        env->statckStart = &statckVar;
+    if (env->stackStart == NULL) {
+        env->stackStart = (void**)&vm;
     }
     return env;
 }
@@ -57,11 +58,12 @@ fr_Obj fr_fromGcObj(GcObj *g) {
     return obj;
 }
 */
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 void fr_checkPoint(fr_Env self) {
     Env *env = (Env*)self;
     if (env->vm->getGc()->isStopTheWorld()) {
         void *statckVar = 0;
-        env->statckEnd = &statckVar;
+        env->stackEnd = (void**)&self;
         env->isStoped = true;
         
         do {
@@ -71,10 +73,10 @@ void fr_checkPoint(fr_Env self) {
     }
 }
 
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 void fr_allowGc(fr_Env self) {
     Env *env = (Env*)self;
-    void *statckVar = 0;
-    env->statckEnd = &statckVar;
+    env->stackEnd = (void**)&self;
     env->isStoped = true;
 }
 

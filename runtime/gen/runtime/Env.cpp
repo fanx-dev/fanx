@@ -9,12 +9,18 @@
 #include "Env.hpp"
 #include "Vm.hpp"
 
+#if defined(__clang__) || defined (__GNUC__)
+# define ATTRIBUTE_NO_SANITIZE_ADDRESS __attribute__((no_sanitize_address))
+#else
+# define ATTRIBUTE_NO_SANITIZE_ADDRESS
+#endif
+
 Env::Env(Vm *vm) : vm(vm)//, error(0)
-, statckStart(NULL) {
+, stackStart(NULL) {
     isStoped = false;
     //needStop = false;
-    statckStart = NULL;
-    statckEnd = statckStart;
+    stackStart = NULL;
+    stackEnd = stackStart;
     error = NULL;
 }
 
@@ -27,13 +33,14 @@ static bool isPointer(Vm *vm, Collector *gc, int64_t pointer) {
     return gc->isRef(gcobj);
 }
 
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 void Env::walkLocalRoot(Collector *gc) {
 //    if (error) {
 //        gc->onRoot(fr_toGcObj(error));
 //    }
     
-    void **min = statckStart > statckEnd ? statckEnd : statckStart;
-    void **max = statckStart < statckEnd ? statckEnd : statckStart;
+    void **min = stackStart > stackEnd ? stackEnd : stackStart;
+    void **max = stackStart < stackEnd ? stackEnd : stackStart;
     for (void **ptr = min; ptr <= max; ++ptr) {
         if (isPointer(vm, gc, (int64_t)(*ptr))) {
             GcObj *obj = fr_toGcObj((fr_Obj)(*ptr));

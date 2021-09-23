@@ -89,7 +89,7 @@ private:
     void endGc();
     
     //void mergeNewAlloc();
-    bool mark();
+    bool mark(bool increment);
     void getRoot();
     void sweep();
 //    bool remark();

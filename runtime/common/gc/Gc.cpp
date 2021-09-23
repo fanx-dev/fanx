@@ -100,28 +100,24 @@ void Gc::setDirty(GcObj *obj) {
     }
     lock.lock();
     dirtyList.push_back(obj);
+    gc_setMark(obj, !marker);
     lock.unlock();
 }
 
 GcObj* Gc::alloc(void *type, int asize) {
     //int size = asize + sizeof(GcObj);
     int size = asize;
-    if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 2) ) {
-        collect();
-    } else {
-        lastAllocSize -= 1;
-    }
     
     GcObj* obj = (GcObj*)calloc(1, size);
-    if (obj == NULL) {
+    while (obj == NULL) {
         collect();
+        System_sleep(1);
         obj = (GcObj*)calloc(1, size);
     }
     
     assert(obj);
     obj->type = type;
     gc_setMark(obj, marker);
-    //gc_setDirty(obj, 1);
     
     {
         std::lock_guard<std::recursive_mutex> lock_guard(lock);
@@ -133,6 +129,13 @@ GcObj* Gc::alloc(void *type, int asize) {
         ip = ip >> 3;
         allRefs[ip] = true;
     #endif
+        
+        if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 2) ) {
+            collect();
+        } else {
+            lastAllocSize -= 1;
+        }
+        
         //newAllocRef.push_back(obj);
         allocSize += size;
     }
@@ -205,15 +208,15 @@ void Gc::doCollect() {
     setMarking(true);
     resumeWorld();
     //concurrent mark
-    mark();
+    mark(false);
     //mark();
     
     //remark root
     puaseWorld();
-    //gcSupport->walkDirtyList(this);
+    getRoot();
     
     //remark changed
-    mark();
+    mark(true);
     
     //concurrent sweep
     setMarking(false);
@@ -247,12 +250,13 @@ void Gc::getRoot() {
     }
 }
 
-bool Gc::mark() {
-    if (markStack.size() == 0) {
-        lock.lock();
-        markStack.swap(dirtyList);
-        lock.unlock();
+bool Gc::mark(bool increment) {
+    lock.lock();
+    if (dirtyList.size() > 0) {
+        markStack.insert(markStack.end(), dirtyList.begin(), dirtyList.end());
+        dirtyList.clear();
     }
+    lock.unlock();
     
     while (markStack.size() > 0) {
         GcObj *obj = markStack.back();
