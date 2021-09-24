@@ -101,6 +101,7 @@ void fr_gc(fr_Env self) {
 }
 
 void fr_setGcDirty(fr_Env self, FObj* obj) {
+    if (obj == NULL) return;
     Env *env = (Env*)self;
     Collector *gc = env->vm->getGc();
     GcObj *gcobj = fr_toGcObj(obj);

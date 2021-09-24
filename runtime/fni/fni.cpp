@@ -156,11 +156,11 @@ const char *fr_getTypeName(fr_Env self, fr_Obj obj) {
 }
 
 bool fr_fitType(fr_Env env, fr_Type tempType, fr_Type type) {
-    while (true) {
-        if (tempType == type) return true;
-        if (tempType == tempType->base) break;
-        tempType = tempType->base;
-        if (!tempType) break;
+    if (tempType == type) return true;
+    if (tempType->base && fr_fitType(env, tempType->base, type)) return true;
+    
+    for (int i=0; i<tempType->mixinCount; ++i) {
+        if (fr_fitType(env, tempType->mixinList[i], type)) return true;
     }
     return false;
 }

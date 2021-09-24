@@ -10,12 +10,12 @@ void sys_Array_make(fr_Env env, fr_Obj self, fr_Int size) {
     //fr_lock(env);
     array = (fr_Array *)fr_getPtr(env, self);
     
-    fr_Int len = sizeof(fr_Obj)*size;
     array->size = size;
     array->elemType = fr_findType(env, "sys", "Obj");
     array->elemSize = sizeof(void*);
+    array->valueType = fr_vtObj;
     //array->data = (FObj**)malloc(len);
-    memset(array->data, 0, len*array->elemSize);
+    memset(array->data, 0, size*array->elemSize);
     
     //fr_unlock(env);
     if (size < 0) {
@@ -112,28 +112,37 @@ void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, 
         return;
     }
     
-    memcpy(((char*)destArray->data)+destOffset, ((char*)srcArray->data) + srcOffset, length);
+    assert(destArray->elemSize == srcArray->elemSize);
     
+    char *destData = (char*)(destArray->data) + (destOffset*destArray->elemSize);
+    char *srcData = (char*)(srcArray->data) + (srcOffset*destArray->elemSize);
+    
+    if (destArray != srcArray) {
+        memcpy(destData, srcData, length*destArray->elemSize);
+    }
+    else {
+        memmove(destData, srcData, length*destArray->elemSize);
+    }
     fr_setGcDirty(env, destArray);
     //fr_unlock(env);
 }
-void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
-    fr_Array *array;
-    //fr_lock(env);
-    array = (fr_Array *)fr_getPtr(env, self);
-
-    if (times > array->size) {
-        fr_throwNew(self, "sys", "IndexErr", "out index");
-        return;
-    }
-
-    for (int i = 0; i < times; ++i) {
-        ((FObj**)array->data)[i] = fr_getPtr(env, obj);
-    }
-    //memset(array->data, (int64_t)obj, times);
-
-    fr_setGcDirty(env, array);
-}
+//void sys_Array_fill(fr_Env env, fr_Obj self, fr_Obj obj, fr_Int times) {
+//    fr_Array *array;
+//    //fr_lock(env);
+//    array = (fr_Array *)fr_getPtr(env, self);
+//
+//    if (times > array->size) {
+//        fr_throwNew(self, "sys", "IndexErr", "out index");
+//        return;
+//    }
+//
+//    for (int i = 0; i < times; ++i) {
+//        ((FObj**)array->data)[i] = fr_getPtr(env, obj);
+//    }
+//    //memset(array->data, (int64_t)obj, times);
+//
+//    fr_setGcDirty(env, array);
+//}
 
 void sys_Array_finalize(fr_Env env, fr_Obj self) {
 }

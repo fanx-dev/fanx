@@ -12,27 +12,10 @@
 #include "Vm.hpp"
 
 
-// bool fr_fitType(fr_Env env, fr_Type tempType, fr_Type type) {
-//     while (true) {
-//         if (tempType == type) return true;
-//         if (tempType == tempType->base) break;
-//         tempType = tempType->base;
-//         if (!tempType) break;
-//     }
-//     return false;
-// }
-
 bool fr_isClass(fr_Env env, fr_Obj obj, fr_Type type) {
     if (!obj) return false;
-
     fr_Type tempType = fr_getClass(env, obj);
-    while (true) {
-        if (tempType == type) return true;
-        if (tempType == tempType->base) break;
-        tempType = tempType->base;
-        if (!tempType) break;
-    }
-    return false;
+    return fr_fitType(env, tempType, type);
 }
 
 //void fr_VTable_init(fr_Env env, fr_Type type) {
