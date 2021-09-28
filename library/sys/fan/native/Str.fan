@@ -503,7 +503,8 @@ native const final class Str
   ** index is out of range.
   **
   @Operator Int get(Int index) {
-    //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
+    if (index < 0) index = size+index;
+
     if (isAscii) {
       return getByte(index)
     }
