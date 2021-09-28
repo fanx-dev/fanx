@@ -2,7 +2,7 @@
 #include "pod_concurrent_native.h"
 #include <thread>
 
-static std::thread* getRaw(fr_Env env, fr_Obj self) {
+static std::thread* concurrent_Thread_getRaw(fr_Env env, fr_Obj self) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
     fr_getInstanceField(env, self, f, &val);
@@ -10,7 +10,7 @@ static std::thread* getRaw(fr_Env env, fr_Obj self) {
     return raw;
 }
 
-static void setRaw(fr_Env env, fr_Obj self, std::thread* r) {
+static void concurrent_Thread_setRaw(fr_Env env, fr_Obj self, std::thread* r) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
     val.i = (fr_Int)r;
@@ -26,16 +26,16 @@ static void thread_run(fr_Obj self) {
 
 void concurrent_Thread__start(fr_Env env, fr_Obj self, fr_Obj name) {
     std::thread* thd = new std::thread(thread_run, self);
-    setRaw(env, self, thd);
+    concurrent_Thread_setRaw(env, self, thd);
     return;
 }
 fr_Bool concurrent_Thread_detach(fr_Env env, fr_Obj self) {
-    std::thread* thd = getRaw(env, self);
+    std::thread* thd = concurrent_Thread_getRaw(env, self);
     thd->detach();
     return true;
 }
 fr_Bool concurrent_Thread_join(fr_Env env, fr_Obj self) {
-    std::thread* thd = getRaw(env, self);
+    std::thread* thd = concurrent_Thread_getRaw(env, self);
     thd->join();
     return true;
 }
@@ -48,7 +48,7 @@ static fr_Int threadIdToInt(std::thread::id d) {
 }
 
 fr_Int concurrent_Thread_id(fr_Env env, fr_Obj self) {
-    std::thread* thd = getRaw(env, self);
+    std::thread* thd = concurrent_Thread_getRaw(env, self);
     std::thread::id d = thd->get_id();
     return threadIdToInt(d);
 }
@@ -65,7 +65,7 @@ fr_Bool concurrent_Thread_sleepNanos(fr_Env env, fr_Int nanos) {
     return true;
 }
 void concurrent_Thread_finalize(fr_Env env, fr_Obj self) {
-    std::thread* thd = getRaw(env, self);
+    std::thread* thd = concurrent_Thread_getRaw(env, self);
     delete thd;
-    setRaw(env, self, NULL);
+    concurrent_Thread_setRaw(env, self, NULL);
 }

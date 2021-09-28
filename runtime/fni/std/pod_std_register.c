@@ -1,3 +1,4 @@
+#ifdef FR_VM
 #include "fni_ext.h"
 
 void std_AtomicInt_init_v(fr_Env env, void *param, void *ret);
@@ -483,3 +484,5 @@ void std_register(fr_Fvm vm) {
     fr_registerMethod(vm, "std_DateTime_fromLocale", std_DateTime_fromLocale_v);
     fr_registerMethod(vm, "std_DateTime_weekdayInMonth", std_DateTime_weekdayInMonth_v);
 }
+
+#endif //FR_VM

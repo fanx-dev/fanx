@@ -1,9 +1,15 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
 
-#include "zip.h"
-#include "md5.h"
+#include "thirdparty/md5.h"
 #include <string.h>
+
+#define uLong               mz_ulong
+#define crc32                 mz_crc32
+#define adler32               mz_adler32
+typedef unsigned long mz_ulong;
+mz_ulong mz_adler32(mz_ulong adler, const unsigned char *ptr, size_t buf_len);
+mz_ulong mz_crc32(mz_ulong crc, const unsigned char *ptr, size_t buf_len);
 
 #define MIN(a, b)  ((a) < (b) ? (a) : (b))
 
@@ -47,7 +53,7 @@ fr_Obj std_BufCrypto_toDigest(fr_Env env, fr_Obj buf, fr_Obj algorithm) {
 fr_Int std_BufCrypto_crc(fr_Env env, fr_Obj buf, fr_Obj algorithm) {
     const char* name = fr_getStrUtf8(env, algorithm);
     if (strcmp(name, "CRC-32") == 0) {
-        uLong crc = crc32(0L, Z_NULL, 0);
+        uLong crc = crc32(0L, 0, 0);
 
         fr_Obj data = fr_callOnObj(env, buf, "unsafeArray", 0).h;
         if (!data) {
@@ -60,7 +66,7 @@ fr_Int std_BufCrypto_crc(fr_Env env, fr_Obj buf, fr_Obj algorithm) {
         return crc;
     }
     if (strcmp(name, "CRC-32-Adler") == 0) {
-        uLong crc = adler32(0L, Z_NULL, 0);
+        uLong crc = adler32(0L, 1, 0);
 
         fr_Obj data = fr_callOnObj(env, buf, "unsafeArray", 0).h;
         if (!data) {

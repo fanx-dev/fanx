@@ -12,7 +12,7 @@
 #include <assert.h>
 #include "runtime.h"
 #include "type.h"
-#include "system.h"
+#include "util/system.h"
 
 void fr_registerMethod(fr_Fvm vm, const char *name, fr_NativeFunc func) {
     //pass

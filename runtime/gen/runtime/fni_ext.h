@@ -11,7 +11,7 @@
 
 #include "fni_private.h"
 #include <assert.h>
-#include "gcobj.h"
+#include "gc/gcobj.h"
 
 CF_BEGIN
 

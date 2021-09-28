@@ -97,7 +97,7 @@ void PodGen::genHeader(Printer *printer) {
     printer->println("extern \"C\" {");
     printer->println("#endif //__cplusplus");
     
-    printer->println("#include \"runtime/runtime.h\"");
+    printer->println("#include \"runtime.h\"");
     for (int i=0; i<pod->c_dependPods.size(); ++i) {
         std::string& dep = pod->c_dependPods[i];
         printer->println("#include \"%s.h\"", dep.c_str());

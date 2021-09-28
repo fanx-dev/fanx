@@ -396,7 +396,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     //---------------------------register
     std::string initFile = path + "pod_" + podName + "_register.c";
     Printer printer(initFile.c_str());
-    
+    printer.println("#ifdef FR_VM");
     printer.println("#include \"fni_ext.h\"");
     printer.newLine();
     genNativePod(path, pod, &printer, PrintType::pRegisterDef);
@@ -408,6 +408,7 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     genNativePod(path, pod, &printer, PrintType::pRegisterCode);
     printer.unindent();
     printer.println("}");
+    printer.println("\n#endif //FR_VM");
     
     //---------------------------struct
     if (genStub) {
@@ -439,13 +440,14 @@ void NativeGen::genNative(std::string path, std::string podName, PodManager *pod
     //---------------------------native
     std::string initFile2 = path + "pod_" + podName + "_native.c";
     Printer printer2(initFile2.c_str());
+    printer2.println("#ifdef FR_VM");
     printer2.println("#include \"pod_%s_native.h\"", podName.c_str());
     //printer2.println("#include \"pod_%s_struct.h\"", podName.c_str());
     printer2.newLine();
     
     //gen methods implements
     genNativePod(path, pod, &printer2, PrintType::pNatiAll);
-    
+    printer2.println("\n#endif //FR_VM");
     //---------------------------stub
     if (genStub) {
         genNativePod(path, pod, nullptr, PrintType::pImpeStub);

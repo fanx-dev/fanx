@@ -1,3 +1,4 @@
+#ifdef FR_VM
 #include "pod_std_native.h"
 
 void std_AtomicInt_init_v(fr_Env env, void *param, void *ret) {
@@ -4094,3 +4095,5 @@ void std_DateTime_weekdayInMonth_v(fr_Env env, void *param, void *ret) {
     *((fr_Value*)ret) = retValue;
 }
 
+
+#endif //FR_VM

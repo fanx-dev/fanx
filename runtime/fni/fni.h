@@ -10,11 +10,13 @@
 #define __vm__fni__
 
 #include <stdio.h>
-#include "util/miss.h"
 #include <stdarg.h>
 
-CF_BEGIN
-
+#ifdef  __cplusplus
+extern "C" {
+#else
+#define bool    _Bool
+#endif
 
 /**
  * fr_Value union type
@@ -261,7 +263,8 @@ fr_Obj fr_newStrUtf8N(fr_Env env, const char *bytes, ssize_t size);
 const char *fr_getStrUtf8(fr_Env env, fr_Obj str);
 
 
-
-CF_END
+#ifdef  __cplusplus
+}//extern  "C" {
+#endif
 
 #endif /* defined(__vm__fni__) */
