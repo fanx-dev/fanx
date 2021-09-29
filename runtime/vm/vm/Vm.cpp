@@ -196,7 +196,7 @@ void Fvm::puaseWorld(bool bloking) {
         }
         lock.unlock();
         if (isAllStoped) return;
-        System_sleep(5);
+        System_sleep(2);
     }
 }
 

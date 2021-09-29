@@ -15,7 +15,7 @@
 native const final class ConcurrentMap<K,V>
 {
   private const Unsafe<Map<K,V>> store
-  private const Lock lock
+  private const Lock lock := Lock()
 
   ** Make with initial capacity
   new make(Int initialCapacity := 256) {

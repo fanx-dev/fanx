@@ -65,7 +65,11 @@ bool Gc::isRef(void *p) {
     uint64_t ip = (uint64_t)p;
     ip = ip >> 3;
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
-    bool found = allRefs.find(ip) != allRefs.end();
+    bool found = pendingRefs.find(ip) != pendingRefs.end();
+    if (!found) {
+        std::lock_guard<std::recursive_mutex> lock_guard(allRefsLock);
+        found = allRefs.find(ip) != allRefs.end();
+    }
     return found;
 }
 #endif
@@ -127,13 +131,13 @@ GcObj* Gc::alloc(void *type, int asize) {
     #else
         uint64_t ip = (uint64_t)obj;
         ip = ip >> 3;
-        allRefs[ip] = true;
+        pendingRefs[ip] = true;
     #endif
         
-        if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 2) ) {
+        if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 10) ) {
             collect();
         } else {
-            lastAllocSize -= 1;
+            //lastAllocSize -= 1;
         }
         
         //newAllocRef.push_back(obj);
@@ -169,7 +173,7 @@ void Gc::collect() {
     condition.notify_all();
 }
 
-void Gc::puaseWorld(bool bloking) {
+void Gc::pauseWorld(bool bloking) {
     isStopWorld.store(true);
     gcSupport->puaseWorld(bloking);
 //    if (trace) {
@@ -197,36 +201,53 @@ void Gc::doCollect() {
     }
     long beginSize = allocSize;
     
+    uint64_t t0 = System_currentTimeMillis();
+    
     //ready for gc
     gcSupport->onStartGc();
     beginGc();
     
     //get root
-    puaseWorld();
+    pauseWorld();
     getRoot();
     
     setMarking(true);
     resumeWorld();
+    
+    uint64_t t1 = System_currentTimeMillis();
+    
     //concurrent mark
     mark(false);
     //mark();
     
-    //remark root
-    puaseWorld();
-    getRoot();
+    uint64_t t2 = System_currentTimeMillis();
     
+    //remark root
+    pauseWorld();
+    getRoot();
+        
     //remark changed
     mark(true);
     
     //concurrent sweep
     setMarking(false);
     resumeWorld();
+    
+    uint64_t t3 = System_currentTimeMillis();
+    
     sweep();
     
     endGc();
     
+    uint64_t t4 = System_currentTimeMillis();
+    
     if (trace) {
-        printf("******* end gc: memory:%ld, free:%ld\n", allocSize, beginSize - allocSize);
+        uint64_t allTime = t4 - t0;
+        uint64_t pauseTime1 = t1 - t0;
+        uint64_t pauseTime2 = t3 - t2;
+        uint64_t markTime = t2 - t1;
+        uint64_t sweepTime = t4 - t3;
+        printf("******* end gc: memory:%ld -> %ld (%.2f); allTime:%lld, pause1:%lld, mark:%lld, pause2:%lld, sweep:%lld\n", beginSize, allocSize, allocSize/(double)beginSize, allTime, pauseTime1, markTime, pauseTime2, sweepTime);
     }
 }
 
@@ -285,7 +306,16 @@ void Gc::sweep() {
         //System_sleep(10);
     }
 #else
+    std::map<uint64_t, bool> pending;
     lock.lock();
+    pending.swap(pendingRefs);
+    lock.unlock();
+    
+    allRefsLock.lock();
+    for (auto itr = pending.begin(); itr != pending.end(); ++itr) {
+        allRefs[itr->first] = itr->second;
+    }
+    
     for (auto itr = allRefs.begin(); itr != allRefs.end();) {
         uint64_t ip = (itr->first);
         
@@ -300,7 +330,7 @@ void Gc::sweep() {
             ++itr;
         }
     }
-    lock.unlock();
+    allRefsLock.unlock();
 //    GcObj *pre = NULL;
 //    while (obj) {
 //        GcObj *next = (GcObj*)gc_getNext(obj);
@@ -343,7 +373,9 @@ void Gc::remove(GcObj* obj, bool deleteFromAllRefs) {
 #else
         uint64_t ip = (uint64_t)obj;
         ip = ip >> 3;
+        //allRefsLock.lock();
         allRefs.erase(allRefs.find(ip));
+        //allRefsLock.unlock();
 #endif
     }
     lock.unlock();

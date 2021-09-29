@@ -24,6 +24,7 @@ internal class EnvProps {
       File[] files := getFiles(pod, path, uri)
       if (props != null) {
         if (!props.isStale(files)) {
+          props.readTime = TimePoint.now
           return props.props
         }
       }

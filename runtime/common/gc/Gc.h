@@ -32,7 +32,9 @@ class Gc : public Collector {
     Bitmap allRefs;
 #else
     std::map<uint64_t, bool> allRefs;
+    std::map<uint64_t, bool> pendingRefs;
 #endif
+    std::recursive_mutex allRefsLock;
     std::vector<GcObj*> markStack;
     
     std::vector<GcObj*> dirtyList;
@@ -82,7 +84,7 @@ private:
     void setMarking(bool m);
     void doCollect();
     
-    void puaseWorld(bool bloking = true);
+    void pauseWorld(bool bloking = true);
     void resumeWorld();
     
     void beginGc();

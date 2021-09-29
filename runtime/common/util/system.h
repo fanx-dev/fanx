@@ -14,7 +14,7 @@ CF_BEGIN
 
 void System_sleep(uint32_t millitm);
 
-void System_barrier();
+int64_t System_currentTimeMillis();
 
 CF_END
 
