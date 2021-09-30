@@ -107,6 +107,7 @@ struct fr_Field_ {
     uint32_t flags;
     const char *type;
     int offset;
+    int size;
     bool isStatic;
     bool isValType;
     

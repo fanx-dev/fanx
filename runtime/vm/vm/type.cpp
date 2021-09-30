@@ -28,6 +28,7 @@ void convertFromFType(Env* env, FType* ftype, fr_Type type) {
         f->type = strdup(typeName.c_str());
         f->flags = field.flags;
         f->offset = field.c_offset;
+        f->size = sizeof(fr_Value);
         f->parent = type;
 
         bool isValType = FCodeUtil::isBuildinVal(typeName);

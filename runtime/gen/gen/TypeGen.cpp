@@ -193,19 +193,26 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         bool isValType = FCodeUtil::isBuildinVal(typeNsName);
         printer->println("type->fieldList[%d].isValType = %s;", i, isValType ? "true" : "false");
         
+        std::string fieldTypeDeclName = FCodeUtil::getTypeDeclName(type->c_pod, field.type);
+        
         if (field.flags & FFlags::Static) {
             printer->println("type->fieldList[%d].isStatic = true;", i);
             printer->println("type->fieldList[%d].pointer = (void*)(&%s_%s);"
                              , i, name.c_str(), fieldIdName.c_str());
             printer->println("type->fieldList[%d].offset = -1;//is static", i);
+            printer->println("type->fieldList[%d].size = sizeof(%s);"
+                         , i, fieldTypeDeclName.c_str());
         } else if ((field.flags & FFlags::Storage) == 0) {
             printer->println("type->fieldList[%d].isStatic = false;", i);
             printer->println("type->fieldList[%d].offset = -1;//no storage", i);
+            printer->println("type->fieldList[%d].size = 0;", i);
         } else {
             printer->println("type->fieldList[%d].isStatic = false;", i);
             
             printer->println("type->fieldList[%d].offset = offsetof(struct %s_struct, %s);"
                          , i, name.c_str(), fieldIdName.c_str());
+            printer->println("type->fieldList[%d].size = sizeof(%s);"
+                         , i, fieldTypeDeclName.c_str());
         }
         
         printer->println("type->fieldList[%d].parent = type;", i);

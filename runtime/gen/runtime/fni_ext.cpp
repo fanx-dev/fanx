@@ -153,34 +153,85 @@ fr_Field fr_findField(fr_Env self, fr_Type type, const char *name) {
 }
 
 void fr_setStaticField(fr_Env self, fr_Field field, fr_Value *arg) {
-    if (strcmp(field->type, "sys::Bool") == 0) {
-        fr_Bool *addr = ((fr_Bool*)field->pointer);
-        *addr = arg->b;
-        return;
+    void *v = (field->pointer);
+    switch (field->size) {
+        case 1:
+            *((uint8_t*)v) = arg->i;
+            break;
+        case 2:
+            *((uint16_t*)v) = arg->i;
+            break;
+        case 4:
+            *((uint32_t*)v) = (uint32_t)arg->i;
+            break;
+        case 8:
+            *((uint64_t*)v) = arg->i;
+            break;
+        default:
+            printf("ERROR: unkonw field size:%d\n", field->size);
     }
-    fr_Int *addr = ((fr_Int*)field->pointer);
-    *addr = arg->i;
 }
 
 bool fr_getStaticField(fr_Env self, fr_Field field, fr_Value *val) {
-    if (strcmp(field->type, "sys::Bool") == 0) {
-        fr_Bool *addr = ((fr_Bool*)field->pointer);
-        val->b = *addr;
-        return true;
+    void *v = (field->pointer);
+    switch (field->size) {
+        case 1:
+            val->i = *((uint8_t*)v);
+            break;
+        case 2:
+            val->i = *((uint16_t*)v);
+            break;
+        case 4:
+            val->i = *((uint32_t*)v);
+            break;
+        case 8:
+            val->i = *((uint64_t*)v);
+            break;
+        default:
+            printf("ERROR: unkonw field size:%d\n", field->size);
+            return false;
     }
-    val->i = *((fr_Int*)field->pointer);
     return true;
 }
 void fr_setInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *arg) {
-    //Env *e = (Env*)self;
     char *v = ((char*)fr_getPtr(self, bottom)) + field->offset;
-    *((uint64_t*)v) = arg->i;
+    switch (field->size) {
+        case 1:
+            *((uint8_t*)v) = arg->i;
+            break;
+        case 2:
+            *((uint16_t*)v) = arg->i;
+            break;
+        case 4:
+            *((uint32_t*)v) = (uint32_t)arg->i;
+            break;
+        case 8:
+            *((uint64_t*)v) = arg->i;
+            break;
+        default:
+            printf("ERROR: unkonw field size:%d\n", field->size);
+    }
     fr_setGcDirty(self, fr_getPtr(self, bottom));
 }
 bool fr_getInstanceField(fr_Env self, fr_Obj bottom, fr_Field field, fr_Value *val) {
-    //Env *e = (Env*)self;
     char *v = ((char*)fr_getPtr(self, bottom)) + field->offset;
-    val->i = *((uint64_t*)v);
+    switch (field->size) {
+        case 1:
+            val->i = *((uint8_t*)v);
+            break;
+        case 2:
+            val->i = *((uint16_t*)v);
+            break;
+        case 4:
+            val->i = *((uint32_t*)v);
+            break;
+        case 8:
+            val->i = *((uint64_t*)v);
+            break;
+        default:
+            printf("ERROR: unkonw field size:%d\n", field->size);
+            return false;
+    }
     return true;
 }
 
