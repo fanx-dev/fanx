@@ -262,6 +262,7 @@ fr_Obj fr_newStrUtf8N(fr_Env env, const char *bytes, ssize_t size);
  */
 const char *fr_getStrUtf8(fr_Env env, fr_Obj str);
 
+void fr_printObj(fr_Env env, fr_Obj obj);
 
 #ifdef  __cplusplus
 }//extern  "C" {

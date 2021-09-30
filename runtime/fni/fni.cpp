@@ -499,6 +499,12 @@ fr_Obj fr_objToStr(fr_Env env, fr_Obj x) {
     return str;
 }
 
+void fr_printObj(fr_Env env, fr_Obj obj) {
+    fr_Obj str = fr_objToStr(env, obj);
+    const char* cstr = fr_getStrUtf8(env, str);
+    puts(cstr);
+}
+
 ////////////////////////////
 // Util
 ////////////////////////////
