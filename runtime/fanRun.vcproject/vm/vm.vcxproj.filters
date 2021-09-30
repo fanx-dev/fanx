@@ -16,9 +16,6 @@
     <Filter Include="源文件\lib">
       <UniqueIdentifier>{60365c99-4fdb-4c8f-b2e6-582b457b64b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\zip">
-      <UniqueIdentifier>{99234e24-937b-4ec9-92a5-dc424d7c5824}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\fcode\Buffer.cpp">
@@ -237,78 +234,6 @@
     <ClCompile Include="..\..\fni\sys\sys_Ptr.c">
       <Filter>源文件\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\adler32.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\crc32.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\deflate.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\infback.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\inftrees.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\inflate.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\inffast.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\iowin32.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\trees.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\uncompr.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\unzip.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\zip.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\zutil.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zlib\compress.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\minizip.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\minizip\miniunz.c">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zipper\CDirEntry.cpp">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zipper\tools.cpp">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zipper\unzipper.cpp">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\zipper\zipper.cpp">
-      <Filter>源文件\zip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\md5.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\fni\std\std_Zip.cpp">
       <Filter>源文件\lib</Filter>
     </ClCompile>
@@ -323,6 +248,12 @@
     </ClCompile>
     <ClCompile Include="..\..\fni\concurrent\pod_concurrent_register.c">
       <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\thirdparty.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\thirdparty.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -487,21 +418,6 @@
     </ClInclude>
     <ClInclude Include="..\..\vm\vm\sys_runtime.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\zipper\CDirEntry.h">
-      <Filter>源文件\zip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\zipper\defs.h">
-      <Filter>源文件\zip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\zipper\tools.h">
-      <Filter>源文件\zip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\zipper\unzipper.h">
-      <Filter>源文件\zip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\zipper\zipper.h">
-      <Filter>源文件\zip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\fni\concurrent\pod_concurrent_native.h">
       <Filter>源文件\lib</Filter>

@@ -19,17 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\vase\native\thirdparty\glew.c" />
-    <ClCompile Include="..\..\..\..\vase\native\thirdparty\nanovg.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NClipboard.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NEditText.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NFont.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGfxEnv.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NGraphics.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NImage.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NToolkit.c" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_NWindow.cpp" />
-    <ClCompile Include="..\..\..\..\vase\native\vaseWindow\vaseWindow_Toolkit.c" />
     <ClCompile Include="..\..\common\gc\Gc.cpp" />
     <ClCompile Include="..\..\common\util\escape.cpp" />
     <ClCompile Include="..\..\common\util\LinkedList.c" />
@@ -94,41 +83,10 @@
     <ClCompile Include="..\..\gen\temp\std.c" />
     <ClCompile Include="..\..\gen\temp\sys.c" />
     <ClCompile Include="..\..\gen\temp\util.c" />
-    <ClCompile Include="..\..\gen\temp\vaseGraphics.c" />
-    <ClCompile Include="..\..\gen\temp\vaseMath.c" />
-    <ClCompile Include="..\..\gen\temp\vaseWindow.c" />
-    <ClCompile Include="..\..\thirdparty\md5.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\iowin32.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\miniunz.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\minizip.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\unzip.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\zip.c" />
-    <ClCompile Include="..\..\thirdparty\zipper\CDirEntry.cpp" />
-    <ClCompile Include="..\..\thirdparty\zipper\tools.cpp" />
-    <ClCompile Include="..\..\thirdparty\zipper\unzipper.cpp" />
-    <ClCompile Include="..\..\thirdparty\zipper\zipper.cpp" />
-    <ClCompile Include="..\..\thirdparty\zlib\adler32.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\compress.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\crc32.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\deflate.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\infback.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inffast.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inflate.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inftrees.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\trees.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\uncompr.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\zutil.c" />
+    <ClCompile Include="..\..\thirdparty\thirdparty.c" />
+    <ClCompile Include="..\..\thirdparty\thirdparty.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\fontstash.h" />
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg.h" />
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl.h" />
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\nanovg_gl_utils.h" />
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_image.h" />
-    <ClInclude Include="..\..\..\..\vase\native\thirdparty\stb_truetype.h" />
     <ClInclude Include="..\..\common\gc\Bitmap.hpp" />
     <ClInclude Include="..\..\common\gc\BitmapTest.h" />
     <ClInclude Include="..\..\common\gc\Gc.h" />
@@ -156,32 +114,7 @@
     <ClInclude Include="..\..\gen\temp\sys.h" />
     <ClInclude Include="..\..\gen\temp\sys_prototype.h" />
     <ClInclude Include="..\..\gen\temp\util.h" />
-    <ClInclude Include="..\..\gen\temp\vaseGraphics.h" />
-    <ClInclude Include="..\..\gen\temp\vaseMath.h" />
-    <ClInclude Include="..\..\gen\temp\vaseWindow.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\crypt.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi_buf.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi_mem.h" />
     <ClInclude Include="..\..\thirdparty\minizip\iowin32.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\unzip.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\zip.h" />
-    <ClInclude Include="..\..\thirdparty\zipper\CDirEntry.h" />
-    <ClInclude Include="..\..\thirdparty\zipper\defs.h" />
-    <ClInclude Include="..\..\thirdparty\zipper\tools.h" />
-    <ClInclude Include="..\..\thirdparty\zipper\unzipper.h" />
-    <ClInclude Include="..\..\thirdparty\zipper\zipper.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\crc32.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\deflate.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inffast.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inffixed.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inflate.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inftrees.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\trees.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zconf.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zconf.in.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zlib.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zutil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\thirdparty\zlib\README" />
@@ -287,19 +220,20 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN;FR_MAIN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\include;$(ProjectDir)..\..\..\..\vase\native\thirdparty;$(ProjectDir)..\..\..\..\vase\native\vaseWindow;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;$(ProjectDir)..\..\gen\runtime;$(ProjectDir)..\..\fni\sys;$(ProjectDir)..\..\gen\temp;$(ProjectDir)..\..\fni\;$(ProjectDir)..\..\common\util;$(ProjectDir)..\..\common\gc;$(ProjectDir)..\..\thirdparty\zipper;$(ProjectDir)..\..\thirdparty;D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\include;$(ProjectDir)..\..\..\..\vase\native\thirdparty;$(ProjectDir)..\..\..\..\vase\native\vaseWindow;$(ProjectDir)..\..\..\..\vase\native\skia;$(ProjectDir)..\..\..\..\vase\native\skia\include\core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;DbgHelp.lib;%(AdditionalDependencies);iphlpapi.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\lib-vc2019</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\workspace\source\glfw-3.3.2.bin.WIN64\glfw-3.3.2.bin.WIN64\lib-vc2019;D:\workspace\fanx-dev\vase\native\skia\out\Debug-x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

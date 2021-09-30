@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 4.1.0 (working)
+### Build 4.1.0 (2021-09-30)
 - genC: fix as Expr
 - fix gc visitChildren
 - fix pod reflect load
@@ -9,6 +9,12 @@
 - file read with 'rb'
 - compileToJs return pod info
 - fanx: disable Duration literals
+- normalize CRLF
+- test in AddressSanitizer
+- optimize GC
+- support amalgamation build
+- replace zlib
+- fix bug: Array.arraycopy, Str.get, EnvProps
 
 ### Build 4.0.2 (2021-09-08)
 - update fantom

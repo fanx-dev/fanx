@@ -47,24 +47,6 @@
     <ClInclude Include="..\..\gen\gen\MethodGen.h" />
     <ClInclude Include="..\..\gen\gen\PodGen.hpp" />
     <ClInclude Include="..\..\gen\gen\TypeGen.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\crypt.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi_buf.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\ioapi_mem.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\iowin32.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\unzip.h" />
-    <ClInclude Include="..\..\thirdparty\minizip\zip.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\crc32.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\deflate.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inffast.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inffixed.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inflate.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\inftrees.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\trees.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zconf.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zconf.in.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zlib.h" />
-    <ClInclude Include="..\..\thirdparty\zlib\zutil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\fcode\Buffer.cpp" />
@@ -90,25 +72,8 @@
     <ClCompile Include="..\..\gen\gen\MethodGen.cpp" />
     <ClCompile Include="..\..\gen\gen\PodGen.cpp" />
     <ClCompile Include="..\..\gen\gen\TypeGen.cpp" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_buf.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\ioapi_mem.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\iowin32.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\miniunz.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\minizip.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\unzip.c" />
-    <ClCompile Include="..\..\thirdparty\minizip\zip.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\adler32.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\compress.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\crc32.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\deflate.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\infback.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inffast.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inflate.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\inftrees.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\trees.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\uncompr.c" />
-    <ClCompile Include="..\..\thirdparty\zlib\zutil.c" />
+    <ClCompile Include="..\..\thirdparty\thirdparty.c" />
+    <ClCompile Include="..\..\thirdparty\thirdparty.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -208,7 +173,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;FR_NO_STD_POD</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\thirdparty\zlib;$(ProjectDir)..\..\thirdparty\minizip;$(ProjectDir)..\..\common;$(ProjectDir)..\..\gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

@@ -12,10 +12,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "util/miss.h"
+
 #ifdef  __cplusplus
 extern "C" {
-#else
-#define bool    _Bool
 #endif
 
 /**
