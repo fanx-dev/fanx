@@ -407,6 +407,23 @@ fr_Value fr_callMethodS(fr_Env self, const char *pod, const char *type, const ch
 // Field
 ////////////////////////////
 
+void fr_setField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val) {
+    if ((field->flags & FFlags_Static) != 0) {
+        fr_setStaticField(env, field, val);
+    }
+    else {
+        fr_setInstanceField(env, obj, field, val);
+    }
+}
+bool fr_getField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val) {
+    if ((field->flags & FFlags_Static) != 0) {
+        return fr_getStaticField(env, field, val);
+    }
+    else {
+        return fr_getInstanceField(env, obj, field, val);
+    }
+}
+
 bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val) {
     fr_Type type = fr_getObjType(env, obj);
     fr_Field field = fr_findField(env, type, name);

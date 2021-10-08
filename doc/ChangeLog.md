@@ -1,5 +1,11 @@
 ## ChangeLog
 
+### Build 4.1.2 (working)
+- genC: add Field.size
+- Uri field to method
+- new Duration literal
+- add fr_getField/fr_setField
+
 ### Build 4.1.0 (2021-09-30)
 - genC: fix as Expr
 - fix gc visitChildren

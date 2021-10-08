@@ -177,8 +177,6 @@ fr_Value fr_callMethod(fr_Env env, fr_Method method, int argCount, ...);
 void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value *arg, fr_Value *ret);
 
 //lower level
-void fr_callVirtual(fr_Env env, fr_Method method
-                        , int argCount, fr_Value* arg, fr_Value* ret);
 void fr_callNonVirtual(fr_Env env, fr_Method method
                        , int argCount, fr_Value *arg, fr_Value *ret);
 
@@ -205,10 +203,8 @@ fr_Value fr_callOnObj(fr_Env env, fr_Obj obj, const char* name, int argCount, ..
 
 fr_Field fr_findField(fr_Env env, fr_Type type, const char *name);
 
-void fr_setStaticField(fr_Env env, fr_Field field, fr_Value *val);
-bool fr_getStaticField(fr_Env env, fr_Field field, fr_Value *val);
-void fr_setInstanceField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
-bool fr_getInstanceField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
+void fr_setField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
+bool fr_getField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
 
 bool fr_setFieldS(fr_Env env, fr_Obj obj, const char *name, fr_Value val);
 fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name);

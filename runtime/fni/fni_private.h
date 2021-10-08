@@ -16,6 +16,14 @@
 
 CF_BEGIN
 
+void fr_callVirtual(fr_Env env, fr_Method method
+                        , int argCount, fr_Value* arg, fr_Value* ret);
+
+void fr_setStaticField(fr_Env env, fr_Field field, fr_Value *val);
+bool fr_getStaticField(fr_Env env, fr_Field field, fr_Value *val);
+void fr_setInstanceField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
+bool fr_getInstanceField(fr_Env env, fr_Obj obj, fr_Field field, fr_Value *val);
+
 /**
  * internal type
  */
