@@ -43,7 +43,7 @@ public class LocalFile extends fan.std.File {
 
 	// constructor implementation called by subclasses
 	public static void make$(LocalFile self, Uri uri, boolean checkSlash) {
-		String path = uri.pathStr;
+		String path = uri.pathStr();
 		java.io.File file = new java.io.File(path);
 		if (file.exists()) {
 			if (file.isDirectory()) {

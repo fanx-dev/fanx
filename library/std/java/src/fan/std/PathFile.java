@@ -165,7 +165,7 @@ public class PathFile
     final String uriStr = newUri.toString();
     String pathStr = uriStr.startsWith("file:///")
       ? uriStr.substring("file:///".length())
-      : newUri.pathStr;
+      : newUri.pathStr();
     Path p = this.path.getFileSystem().getPath(pathStr);
 
     // TODO: on windows we will eventually hit empty pathStr "", which is interpreted

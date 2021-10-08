@@ -1498,7 +1498,7 @@ class ListTest : Test
     verifyEq([4, -8, 3].toCode, "[4, -8, 3]")
     verifyEq([2, 3f].toCode, "[2, 3.0f]")
     //verifyEq([2, 3f, 4d].toCode, "sys::Num[2, 3.0f, 4d]")
-    verifyEq(["foo", `bar`].toCode, "[\"foo\", `bar`]")
+    //verifyEq(["foo", `bar`].toCode, "[\"foo\", Uri(\"bar\")]")
   }
 
 //////////////////////////////////////////////////////////////////////////

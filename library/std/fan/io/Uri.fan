@@ -23,7 +23,7 @@ internal class UriParser {
   }
 
   private Void normalize() {
-    if (pathStr.startsWith("./")) {
+    if (pathStr.size > 2 && pathStr.startsWith("./")) {
       pathStr = pathStr[2..-1]
     }
 
@@ -340,13 +340,13 @@ const final class Uri
   ** Private constructor
   **
   private new privateMake(Str? scheme, Str? userInfo, Str? host, Int? port, Str pathStr, [Str:Str]? query, Str? frag) {
-    this.scheme = scheme
-    this.userInfo = userInfo
-    this.host = host
-    this.port = port
-    this.pathStr = pathStr
-    this.query = query ?: Map.defVal
-    this.frag = frag
+    this._scheme = scheme
+    this._userInfo = userInfo
+    this._host = host
+    this._port = port
+    this._pathStr = pathStr
+    this._query = query ?: Map.defVal
+    this._frag = frag
     this.str = partsToStr(scheme, userInfo, host, port, pathStr, query, frag, false)
   }
 
@@ -684,7 +684,8 @@ const final class Uri
   **   `HTTP://foo/a/b/c`.scheme      =>  "http"
   **   `mailto:who@there.com`.scheme  =>  "mailto"
   **
-  const Str? scheme
+  Str? scheme() { _scheme }
+  private const Str? _scheme
 
   **
   ** The authority represents a network endpoint in the format:
@@ -723,7 +724,8 @@ const final class Uri
   **   `//foo/bar`.host                      =>  "foo"
   **   `/bar`.host                           =>  null
   **
-  const Str? host
+  Str? host() { _host }
+  private const Str? _host
 
   **
   ** User info is string information embedded in the authority using
@@ -733,7 +735,8 @@ const final class Uri
   **   `http://brian:pass@host/`.userInfo  =>  "brian:pass"
   **   `http://www.cool.com/`.userInfo     =>  null
   **
-  const Str? userInfo
+  Str? userInfo() { _userInfo }
+  private const Str? _userInfo
 
   **
   ** Return the IP port of the host for the network end point.  It is optionally
@@ -744,7 +747,8 @@ const final class Uri
   **   `http://foo:81/`.port        =>  81
   **   `http://www.cool.com/`.port  =>  null
   **
-  const Int? port
+  Int? port() { _port }
+  private const Int? _port
 
   **
   ** Return the path parsed into a list of simple names or
@@ -783,7 +787,8 @@ const final class Uri
   **   `/a/b`.pathStr         =>  "/a/b"
   **   `../a/b`.pathStr       =>  "../a/b"
   **
-  const Str pathStr
+  Str pathStr() { _pathStr }
+  private const Str _pathStr
 
   **
   ** Return if the path starts with a leading slash.  If
@@ -930,7 +935,8 @@ const final class Uri
   **   `?a=b;;c`.query                 =>  ["a":"b", "c":"true"]
   **   `?x=1&x=2&x=3`.query            =>  ["x":"1,2,3"]
   **
-  const [Str:Str] query
+  [Str:Str] query() { _query }
+  private const [Str:Str] _query
 
   **
   ** Return the query component of the Uri which is everything
@@ -959,7 +965,8 @@ const final class Uri
   **   `http://host/path`                  =>  null
   **   `#h1`                               =>  "h1"
   **
-  const Str? frag
+  Str? frag() { _frag }
+  private const Str? _frag
 
 //////////////////////////////////////////////////////////////////////////
 // Utils
@@ -1245,7 +1252,7 @@ const final class Uri
   ** Get this Uri as a Fantom code literal.  This method will
   ** escape the "$" interpolation character.
   **
-  Str toCode() { "`$this`" }
+  Str toCode() { "Uri("+toStr+")" }
 
   static extension Uri? toUri(Str? str) { str == null ? null : Uri(str) }
 }

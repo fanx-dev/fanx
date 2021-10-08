@@ -144,7 +144,7 @@ public OutStream writeNext(Uri path) { return writeNext(path, TimePoint.now(), n
   public OutStream writeNext(Uri path, TimePoint modifyTime, Map opts)
   {
     if (zipOut == null) throw UnsupportedErr.make("Zip not opened for writing");
-    if (path.frag != null) throw ArgErr.make("Path must not contain fragment: " + path);
+    if (path.frag() != null) throw ArgErr.make("Path must not contain fragment: " + path);
     if (path.queryStr() != null) throw ArgErr.make("Path must not contain query: " + path);
 
     // Java 1.7+ supports ZIP64 which supports over 65,535 files, but
