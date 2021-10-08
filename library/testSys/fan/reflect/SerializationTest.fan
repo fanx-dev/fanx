@@ -723,7 +723,7 @@ class SerializationTest : Test
         [
           testSys::SerA
           {
-            d=5min
+            d=5.mins
           }
         ]
       }")
@@ -740,7 +740,7 @@ class SerializationTest : Test
         [
           testSys::SerA
           {
-            d=5min
+            d=5.mins
           },
           testSys::SerB,
           testSys::SerA
@@ -758,7 +758,7 @@ class SerializationTest : Test
         [
           testSys::SerA
           {
-            d=5min
+            d=5.mins
           },
           testSys::SerB,
           testSys::SerA

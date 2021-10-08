@@ -107,7 +107,7 @@ class ConstantFoldingTest : CompilerTest
       }")
      verifyMethodReturns("plus", 1.5sec)
      verifyMethodReturns("ticks", 1_000_000_000)
-     verifyMethodReturns("toString", "5ms")
+     verifyMethodReturns("toString", "5.ms")
   }
 
 //////////////////////////////////////////////////////////////////////////

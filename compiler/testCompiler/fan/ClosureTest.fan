@@ -181,7 +181,7 @@ class ClosureTest : CompilerTest
         static
         {
           Str x := \"\";
-          [0ms, 1ms, 2ms].each|Duration d|
+          [0, 1, 2].each|Int d|
           {
             x += d.toStr
           }
@@ -191,7 +191,7 @@ class ClosureTest : CompilerTest
 
      t  := pod.types[0]
      verifyEq(t.field("f").get, 6)
-     verifyEq(t.field("g").get, "0ms1ms2ms")
+     verifyEq(t.field("g").get, "012")
   }
 
 //////////////////////////////////////////////////////////////////////////

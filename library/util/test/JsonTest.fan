@@ -117,7 +117,7 @@ class JsonTest : Test
 
 
     // simples
-    verifyWrite(5min, Str<|"5min"|>)
+    verifyWrite(5min, Str<|"5.mins"|>)
     verifyWrite(`/some/uri/`, Str<|"/some/uri/"|>)
     verifyWrite(TimeOfDay("23:45:01"), Str<|"23:45:01"|>)
     verifyWrite(Date("2009-12-21"), Str<|"2009-12-21"|>)

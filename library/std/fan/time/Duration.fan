@@ -90,6 +90,7 @@ const struct class Duration
       x1 := s.get(len-1)
       x2 := s.get(len-2)
       x3 := s.get(len-3)
+      x4 := s.get(len-4)
       dot := s.index(".") > 0
 
       Float mult := -1.0
@@ -99,6 +100,7 @@ const struct class Duration
         case 's':
           if (x2 == 'n') { mult=1.0/1000_000; suffixLen=2; } // ns
           if (x2 == 'm') { mult=1.0; suffixLen=2; } // ms
+          if (x2 == 'n' && x3 == 'i' && x4 == 'm') { mult=milliPerMin.toFloat; suffixLen=4; } // mins
           //break;
         case 'c':
           if (x2 == 'e' && x3 == 's') { mult=milliPerSec.toFloat; suffixLen=3; } // sec
@@ -115,6 +117,8 @@ const struct class Duration
       }
 
       if (mult < 0.0) throw Err()
+      
+      if (s.get(len-suffixLen-1) == '.') suffixLen++
 
       sf := s[0..<len-suffixLen].toFloat
       return make((sf*mult).toInt)
@@ -205,19 +209,19 @@ const struct class Duration
   ** duration literal format suitable for decoding via `fromStr`.
   **
   override Str toStr() {
-    if (ticks == 0) return "0ms"
+    if (ticks == 0) return "0.ms"
     // if clean millisecond boundary
     ns := toNanos
     if (ns % nsPerMilli == 0)
     {
-      if (ns % nsPerDay == 0) return "${ns/nsPerDay}day"
-      if (ns % nsPerHr  == 0) return "${ns/nsPerHr}hr"
-      if (ns % nsPerMin == 0) return "${ns/nsPerMin}min"
-      if (ns % nsPerSec == 0) return "${ns/nsPerSec}sec"
-      return "${ns/nsPerMilli}ms"
+      if (ns % nsPerDay == 0) return "${ns/nsPerDay}.day"
+      if (ns % nsPerHr  == 0) return "${ns/nsPerHr}.hr"
+      if (ns % nsPerMin == 0) return "${ns/nsPerMin}.mins"
+      if (ns % nsPerSec == 0) return "${ns/nsPerSec}.sec"
+      return "${ns/nsPerMilli}.ms"
     }
     // return in nanoseconds
-    return "${ns}ns"
+    return "${ns}.ns"
   }
 
 //////////////////////////////////////////////////////////////////////////

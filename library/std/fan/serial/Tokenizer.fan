@@ -160,6 +160,23 @@ internal class Tokenizer
 // Number
 //////////////////////////////////////////////////////////////////////////
 
+  private Int parseDuration() {
+    dur := -1
+    if (cur == 'n' && peek == 's') { consume; consume; dur = 1 }
+    if (cur == 'm' && peek == 's') { consume; consume; dur = 1000000 }
+    if (cur == 's' && peek == 'e') { consume; consume; if (cur != 'c') throw err("Expected 'sec' in Duration literal"); consume; dur = 1000000000 }
+    if (cur == 'm' && peek == 'i') {
+      consume; consume;
+      if (cur != 'n') throw err("Expected 'min' in Duration literal");
+      else consume;
+      if (cur == 's') consume
+      dur = 60000000000
+    }
+    if (cur == 'h' && peek == 'r') { consume; consume; dur = 3600000000000 }
+    if (cur == 'd' && peek == 'a') { consume; consume; if (cur != 'y') throw err("Expected 'day' in Duration literal"); consume; dur = 86400000000000 }
+    return dur
+  }
+
   /**
    * Parse a number literal token.
    */
@@ -228,12 +245,7 @@ internal class Tokenizer
     Int dur := -1
     if ('d' <= cur && cur <= 's')
     {
-      if (cur == 'n' && peek == 's') { consume; consume; dur = 1 }
-      if (cur == 'm' && peek == 's') { consume; consume; dur = 1000000 }
-      if (cur == 's' && peek == 'e') { consume; consume; if (cur != 'c') throw err("Expected 'sec' in Duration literal"); consume; dur = 1000000000 }
-      if (cur == 'm' && peek == 'i') { consume; consume; if (cur != 'n') throw err("Expected 'min' in Duration literal"); consume; dur = 60000000000 }
-      if (cur == 'h' && peek == 'r') { consume; consume; dur = 3600000000000 }
-      if (cur == 'd' && peek == 'a') { consume; consume; if (cur != 'y') throw err("Expected 'day' in Duration literal"); consume; dur = 86400000000000 }
+      dur = parseDuration()
     }
     if (cur == 'f' || cur == 'F')
     {
@@ -244,6 +256,10 @@ internal class Tokenizer
     {
       consume
       decimalSuffix = true
+    }
+    if (dur == -1 && cur == '.' && 'd' <= peek && peek <= 's') {
+      consume
+      dur = parseDuration()
     }
 
     if (neg) whole = -whole

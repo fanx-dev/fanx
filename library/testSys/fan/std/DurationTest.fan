@@ -211,21 +211,21 @@ class DurationTest : Test
     // whole numbers
     //verifyStr(1ns, "1ns")
     //verifyStr(7ns, "7ns")
-    verifyStr(-99ms, "-99ms")
-    verifyStr(61sec, "61sec")
-    verifyStr(60sec, "1min")
-    verifyStr(100min, "100min")
-    verifyStr(-5hr, "-5hr")
-    verifyStr(365day, "365day")
-    verifyStr(54750day, "54750day") // 150yr
+    verifyStr(-99ms, "-99.ms")
+    verifyStr(61sec, "61.sec")
+    verifyStr(60sec, "1.mins")
+    verifyStr(100min, "100.mins")
+    verifyStr(-5hr, "-5.hr")
+    verifyStr(365day, "365.day")
+    verifyStr(54750day, "54750.day") // 150yr
 
     // TODO - underbars?
 
     // fractions
-    verifyEq(0.5hr.toStr, "30min")
-    verifyEq(Duration.fromStr("0.5hr"), 0.5hr)
-    verifyEq((-1.5day).toStr, "-36hr")
-    verifyEq(Duration.fromStr("-1.5day"), -36hr)
+    verifyEq(0.5hr.toStr, "30.mins")
+    verifyEq(Duration.fromStr("0.5.hr"), 0.5hr)
+    verifyEq((-1.5day).toStr, "-36.hr")
+    verifyEq(Duration.fromStr("-1.5.day"), -36hr)
 
     // invalid
     verifyErr(ParseErr#) { x := Duration.fromStr("4") }
@@ -321,11 +321,11 @@ class DurationTest : Test
   {
     //verifyEq(0ns.toCode, "0ns")
     //verifyEq(3ns.toCode, "3ns")
-    verifyEq((-9ms).toCode, "-9ms")
-    verifyEq(40sec.toCode, "40sec")
-    verifyEq(1.5hr.toCode, "90min")
-    verifyEq(5hr.toCode, "5hr")
-    verifyEq(2day.toCode, "2day")
+    verifyEq((-9ms).toCode, "-9.ms")
+    verifyEq(40sec.toCode, "40.sec")
+    verifyEq(1.5hr.toCode, "90.mins")
+    verifyEq(5hr.toCode, "5.hr")
+    verifyEq(2day.toCode, "2.day")
   }
 
 }
