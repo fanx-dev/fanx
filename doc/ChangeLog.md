@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 4.1.2 (working)
+### Build 4.1.2 (2021-10-08)
 - genC: add Field.size
 - Uri field to method
 - new Duration literal
