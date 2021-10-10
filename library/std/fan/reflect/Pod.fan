@@ -257,11 +257,13 @@ native final rtconst class Pod
   **
   ** Examples:
   **   Pod.find("icons").file(`/x16/cut.png`)
-  **   Pod.find("icons").file(`fan://icons/x16/cut.png`)
   **   `fan://icons/x16/cut.png`.get
   **
   File? file(Uri uri, Bool checked := true) {
-    if (_file == null) return null
+    if (_file == null) {
+      path := uri.pathStr
+      return Env.cur.findFile(`res/$name/$path`, checked)
+    }
     f := _file.contents("fcode")[uri]
     if (f.ext == "fcode" || f.ext == "class") {
       f = null

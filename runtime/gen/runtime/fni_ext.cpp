@@ -125,6 +125,7 @@ void fr_callNonVirtual(fr_Env self, fr_Method method
     }
     if (methodArg != argCount) {
         printf("ERROR: %s args num not match: %d != %d\n", method->name, methodArg, argCount);
+        abort();
         return;
     }
     method->func(self, arg, ret);

@@ -248,6 +248,14 @@ void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value* arg, f
             printf("try new abstract class, please use callNonVirtual");
             abort();
         }
+        
+        if (method->paramsCount != argCount) {
+            method = fr_findMethodN(env, method->parent, method->name, argCount);
+            if (method == NULL) {
+                printf("ERROR: %s params num not match: %d != %d\n", method->name, method->paramsCount, argCount);
+                return;
+            }
+        }
 
         fr_Obj obj = fr_allocObj(env, method->parent, -1);
 
@@ -260,6 +268,19 @@ void fr_callMethodA(fr_Env env, fr_Method method, int argCount, fr_Value* arg, f
         //ctor is Void
         ret->h = obj;
         return;
+    }
+    
+    int paramsCount = method->paramsCount;
+    int offerParamsCount = argCount;
+    if ((method->flags & FFlags_Static) == 0) {
+        --offerParamsCount;
+    }
+    if (paramsCount != offerParamsCount) {
+        method = fr_findMethodN(env, method->parent, method->name, offerParamsCount);
+        if (method == NULL) {
+            printf("ERROR: %s params num not match: %d != %d\n", method->name, paramsCount, offerParamsCount);
+            return;
+        }
     }
 
     if (method->flags & FFlags_Virtual || method->flags & FFlags_Abstract) {

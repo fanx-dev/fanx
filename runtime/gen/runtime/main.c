@@ -25,8 +25,8 @@ const char* fr_homeDir = NULL;
 const char* fr_envPaths[32] = {0};
 
 
-void fr_init(int argc, const char* argv[]) {
-    fr_homeDir = "./";
+void fr_init(int argc, const char* argv[], const char *homeDir) {
+    fr_homeDir = homeDir != NULL ? strdup(homeDir) : "./";
     fr_envPaths[0] = fr_homeDir;
 
     fr_Env env = fr_getEnv(NULL);
@@ -40,7 +40,7 @@ void fr_init(int argc, const char* argv[]) {
 
 #ifdef FR_MAIN
 int main(int argc, const char* argv[]) {
-    fr_init(argc, argv);
+    fr_init(argc, argv, NULL);
 
     fr_Env env = fr_getEnv(NULL);
     baseTest_init__(env);
