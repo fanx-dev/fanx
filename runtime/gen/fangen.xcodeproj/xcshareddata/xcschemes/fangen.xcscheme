@@ -50,6 +50,12 @@
             ReferencedContainer = "container:fangen.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-p/Users/yangjiandong/workspace/code/fanx/env/ -g/Users/yangjiandong/workspace/code/fanx/runtime/gen/temp/ -r baseTest"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

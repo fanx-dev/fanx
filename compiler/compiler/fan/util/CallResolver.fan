@@ -530,7 +530,7 @@ class CallResolver : CompilerSupport
     if (call == null) return
 
     // skip constant folding for testSys
-    if (curType != null && compiler.pod.name == "testSys") return
+    if (curType != null && (compiler.pod.name == "testSys" || compiler.pod.name == "baseTest")) return
 
     result = ConstantFolder(compiler).fold(call)
   }

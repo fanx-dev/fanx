@@ -95,8 +95,11 @@ Expr Var::asRef() {
 
 void escapeStr(const std::string &from, std::string &str) {
     long pos = 0;
+    char buf[64];
     while (pos < from.length()) {
-        switch (from[pos]) {
+        unsigned char ch = from[pos];
+        bool miss = false;
+        switch (ch) {
             case 0x27:
                 str += "\\'";
                 break;
@@ -130,7 +133,16 @@ void escapeStr(const std::string &from, std::string &str) {
             case 0x0b:
                 str += "\\v";
             default:
+                miss = true;
+        }
+        if (miss) {
+            if (ch < ' ' || ch > 126) {
+                snprintf(buf, 64, "\\x%02x", ch);
+                str += buf;
+            }
+            else {
                 str += from[pos];
+            }
         }
         ++pos;
     }

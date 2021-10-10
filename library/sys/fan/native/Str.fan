@@ -816,7 +816,7 @@ native const final class Str
     sb := Array<Int8>(byteLen)
     for (i:=0; i<byteLen; ++i) {
       ch := this.getByte(i)
-      if ('A' <= ch && ch <= 'Z') {
+      if ('a' <= ch && ch <= 'z') {
         ch = ch.and(0x20.not)
         found = true
       }
@@ -1002,6 +1002,7 @@ native const final class Str
   **   "aababa".replace("ab", "-")   =>  "a--a"
   **
   Str replace(Str from, Str to) {
+    if (from.size == 0) return this
     StrBuf? buf
     i := 0
     while (i < size) {
@@ -1016,7 +1017,8 @@ native const final class Str
       buf.add(to)
       i = pos+from.size
     }
-    return this
+    if (buf == null) return this
+    return buf.toStr
   }
 
   **

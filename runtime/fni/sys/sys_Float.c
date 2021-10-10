@@ -23,7 +23,7 @@ fr_Float sys_Float_fromStr(fr_Env env, fr_Obj s, fr_Bool checked) {
     char *pos = NULL;
     fr_Float val = strtod(str, &pos);
     
-    if (checked && ((str-pos) != strlen(str)) ) {
+    if (checked && ((pos-str) != strlen(str)) ) {
         char buf[128];
         snprintf(buf, 128, "Invalid Float: %s", str);
         fr_throwNew(env, "sys", "ParseErr", buf);
