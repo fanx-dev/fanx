@@ -1,5 +1,11 @@
 ## ChangeLog
 
+### Build 4.1.3 (2021-10-12)
+- native: fix Method reflect with default param
+- native: Pod.file fallback
+- native: fix Str without ConstantFolder
+- compiler: check depends in compilerx
+
 ### Build 4.1.2 (2021-10-08)
 - genC: add Field.size
 - Uri field to method

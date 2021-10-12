@@ -79,7 +79,7 @@ class Main
     if (options != null) {
       options["pod_name"] = podName
       options["pod_main"] = pod.types[0].qname
-      options["pod_depends"] = pod.depends.map { it.name }
+      options["pod_depends"] = pod.resolvedDepends.keys
     }
 
     return compiler.context.js

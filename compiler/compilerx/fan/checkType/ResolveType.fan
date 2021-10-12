@@ -151,6 +151,7 @@ class ResolveType : CompilerStep {
           step.err("Unknow type '${type}'", type.loc)
           type.resolveTo(step.ns.objType.typeDef)
         }
+        ResolveImports.checkUsingPod(step.compiler, type.typeDef.podName, type.loc)
       }
       catch (Err e) {
         step.err("Unknow type '${type}'", type.loc)

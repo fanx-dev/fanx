@@ -330,7 +330,7 @@ class ResolveImports : CompilerStep
   **
   ** Check that a pod name is in the dependency list.
   **
-  private static Void checkUsingPod(CompilerContext cs, Str podName, Loc loc)
+  static Void checkUsingPod(CompilerContext cs, Str podName, Loc loc)
   {
     // scripts don't need dependencies
     if (cs.input.isScript) return

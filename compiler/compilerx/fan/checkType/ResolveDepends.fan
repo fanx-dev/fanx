@@ -45,39 +45,43 @@ class ResolveDepends : CompilerStep
     // assume a dependency on sys
     pod := compiler.pod
     isSys := pod.name == "sys"
-    if (pod.depends.isEmpty && !isSys)
-      pod.depends.add(Depend.fromStr("sys 2"))
+    if (pod.depends.isEmpty) {
+      if (!isSys) {
+        pod.depends.add(Depend.fromStr("sys 2"))
+        if (pod.name != "std") {
+          pod.depends.add(Depend.fromStr("std 1"))
+        }
+      }
+    }
 
     // we initialize the CNamespace.depends map
     // as we process each dependency
     compiler.pod.resolvedDepends = [Str:CPod][:]
 
     // process each dependency
-    resolvePodDepend(pod)
-
-    // check that everything has a dependency on sys
-    //if (!isSys && !ns.depends.containsKey("sys"))
-    //  err("All pods must have a dependency on 'sys'", loc)
-
-    // depends self
-    //ns.depends[pod.name] = pod
-  }
-  
-  private Void resolvePodDepend(CPod pod) {
     pod.depends.each |cdepend|
     {
       name := cdepend.name
       if (name == compiler.pod.name) {
         err("Cyclic dependency on self '$name' in ${pod.name}", loc)
       }
-      
-      dpod := compiler.pod.resolvedDepends[name]
-      if (dpod == null) {
-        dpod = resolveDepend(cdepend)
-        compiler.pod.resolvedDepends[name] = dpod
-        resolvePodDepend(pod)
+
+      dpod := resolveDepend(cdepend)
+      compiler.pod.resolvedDepends[name] = dpod
+
+      dpod.depends.each |podDepend|
+      {
+        if (podDepend.name == compiler.pod.name)
+          err("Cyclic dependency on '$compiler.pod.name'", loc)
       }
     }
+
+    // check that everything has a dependency on sys
+    if (!isSys && !compiler.pod.resolvedDepends.containsKey("sys"))
+      err("All pods must have a dependency on 'sys'", loc)
+
+    // depends self
+    //ns.depends[pod.name] = pod
   }
 
   **
