@@ -225,7 +225,10 @@ public final class FPod
     
     // if we have types, then ensure we have correct fcode
     if (FConst.FCodeVersion.equals(fcodeVersion)) {
-    	fcodeVer = 113;//add methodRef.arity
+    	fcodeVer = 114;//add methodVar.startPos
+    }
+    else if (fcodeVersion.equals("1.1.3")) {
+      fcodeVer = 113;//add methodRef.arity
     }
     else if (fcodeVersion.equals("1.1.2")) {
     	fcodeVer = 112;//overload for param default

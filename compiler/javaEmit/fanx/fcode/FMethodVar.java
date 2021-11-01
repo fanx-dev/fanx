@@ -33,6 +33,11 @@ public class FMethodVar
     type  = in.u2();
     flags = in.u1();
 
+    if (in.fpod.fcodeVer == 0 || in.fpod.fcodeVer > 113) {
+      startPos = in.u2();
+      scopeLen = in.u2();
+    }
+
     int attrCount = in.u2();
     for (int i=0; i<attrCount; ++i)
     {
@@ -55,4 +60,6 @@ public class FMethodVar
   public int flags;     // method variable flags
   public FBuf def;      // default expression or null (only for params)
 
+  public int startPos;   //start position in bytecode
+  public int scopeLen;
 }

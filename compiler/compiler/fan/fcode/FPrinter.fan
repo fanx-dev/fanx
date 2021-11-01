@@ -121,7 +121,7 @@ class FPrinter : FConst
     {
       role := v.isParam ?  "Param" : "Local"
       if (m.flags.and(FConst.Static) == 0) reg++
-      printLine("    [" + role + " " + reg + "] " + pod.n(v.nameIndex) + " -> " + typeRef(v.typeRef))
+      printLine("    [" + role + " " + reg + " start:" + v.startPos + "] " + pod.n(v.nameIndex) + " -> " + typeRef(v.typeRef))
       if (v.hasDefault) code(v.def)
     }
     if (m.code != null)

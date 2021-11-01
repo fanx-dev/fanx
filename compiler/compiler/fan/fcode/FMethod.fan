@@ -81,7 +81,7 @@ class FMethod : FSlot, CMethod
     paramCount = in.readU1
     localCount = in.readU1
     vars = FMethodVar[,];
-    (paramCount+localCount).times { vars.add(FMethodVar(this).read(in)) }
+    (paramCount+localCount).times { vars.add(FMethodVar(this).read(in, fparent.fpod.fcodeVersion)) }
     code = FUtil.readBuf(in)
     fattrs = FUtil.readAttrs(in)
     //genericParams
@@ -133,6 +133,8 @@ class FMethodVar : FConst, CParam
     out.writeI2(nameIndex)
     out.writeI2(typeRef)
     out.write(flags)
+    out.writeI2(startPos)
+    out.writeI2(scopeLen)
 
     // we currently only support the DefaultParam attr
     if (def == null) out.writeI2(0)
@@ -144,11 +146,16 @@ class FMethodVar : FConst, CParam
     }
   }
 
-  FMethodVar read(InStream in)
+  FMethodVar read(InStream in, Int version)
   {
     nameIndex = in.readU2
     typeRef   = in.readU2
     flags     = in.readU1
+
+    if (version == 0 || version > 113) {
+      startPos  = in.readU2
+      scopeLen  = in.readU2
+    }
 
     // we currently only support the DefaultParam attr
     in.readU2.times
@@ -173,4 +180,6 @@ class FMethodVar : FConst, CParam
   Int defNameIndex // name index of DefaultParamAttr
   Buf? def         // default expression or null (only for params)
 
+  Int startPos    //start position in bytecode
+  Int scopeLen
 }

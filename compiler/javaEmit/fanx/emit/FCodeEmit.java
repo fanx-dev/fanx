@@ -311,8 +311,10 @@ public class FCodeEmit
     for (int i=0; i<regs.length; ++i)
     {
       Reg reg = regs[i];
+      if (reg.startPos == 0) start = 0;
+      else start = reloc[reg.startPos];
       info.u2(start);
-      info.u2(end);
+      info.u2(end-start);
       info.u2(code.emit.utf(reg.name));
       info.u2(code.emit.utf(reg.typeRef.jsig()));
       info.u2(reg.jindex);
@@ -1386,6 +1388,7 @@ public class FCodeEmit
         FMethodVar var = vars[isStatic ? i : i - 1];
         r.typeRef = pod.typeRef(var.type);
         r.name = var.name;
+        r.startPos = var.startPos;
         r.stackType = r.typeRef.stackType;
         r.jindex = jindex;
         jindex += r.typeRef.isWide() ? 2 : 1;
@@ -1428,6 +1431,7 @@ public class FCodeEmit
     FTypeRef typeRef; // local variable type
     int stackType;    // FTypeRef.OBJ, LONG, INT, etc
     int jindex;       // Java register number to use (might shift for longs/doubles)
+    int startPos;
   }
 
 //////////////////////////////////////////////////////////////////////////

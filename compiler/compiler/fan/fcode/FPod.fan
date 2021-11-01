@@ -181,6 +181,17 @@ final class FPod : CPod, FConst
     depends = d.isEmpty ? CDepend[,] : d.split(';').map |s->CDepend| { CDepend.fromStr(s) }
     compileJs = meta.get("pod.compileJs", "") == "true"
 
+    fcodeVersionStr := meta.get("fcode.version")
+    if (fcodeVersionStr == "1.1.4") {
+      fcodeVersion = 114
+    }
+    else if (fcodeVersionStr == "1.1.3") {
+      fcodeVersion = 113
+    }
+    else {
+      throw Err("Invalid fcode version: " + fcodeVersionStr + " in $name")
+    }
+
     // read tables
     names.read(in(`/fcode/names.def`))
     typeRefs.read(in(`/fcode/typeRefs.def`))
@@ -400,4 +411,6 @@ final class FPod : CPod, FConst
   FTable uris               // Uri literals
   [Str:CType]? ftypesByName // if loaded
   CType[]? virtualType      // compiler hack for sized primitive Type
+
+  Int fcodeVersion
 }

@@ -214,6 +214,7 @@ class CodeAsm
       // store back to local register
       assert(var_v.register >= 0)
       op(FOp.StoreVar, var_v.register)
+      setVarStartPos(var_v)
     }
     else if (stmt.init != null)
     {
@@ -676,6 +677,7 @@ class CodeAsm
   private Void storeLocalVar(LocalVarExpr var_v)
   {
     op(FOp.StoreVar, var_v.register);
+    setVarStartPos(var_v.var_v)
   }
 
   private Void assignLocalVar(BinaryExpr assign)
@@ -785,8 +787,10 @@ class CodeAsm
     if (assign.leave)
     {
       opType(FOp.Dup, assign.ctype)
-      if (isInstanceField)
+      if (isInstanceField) {
         op(FOp.StoreVar, assign.tempVar.register)
+        setVarStartPos(assign.tempVar)
+      }
     }
     storeField(lhs)
     if (assign.leave && isInstanceField)
@@ -1138,9 +1142,11 @@ class CodeAsm
         expr(get.target)  // target
         opType(FOp.Dup, get.target.ctype)
         op(FOp.StoreVar, index.scratchA.register)
+        setVarStartPos(index.scratchA)
         expr(get.args[0]) // index expr
         opType(FOp.Dup, get.args[0].ctype)
         op(FOp.StoreVar, index.scratchB.register)
+        setVarStartPos(index.scratchB)
         op(FOp.LoadVar, index.scratchA.register)
         op(FOp.LoadVar, index.scratchB.register)
         invokeCall(get, true)
@@ -1156,8 +1162,10 @@ class CodeAsm
     if (c.leave && c.isPostfixLeave)
     {
       opType(FOp.Dup, c.ctype)
-      if (leaveUsingTemp)
+      if (leaveUsingTemp) {
         op(FOp.StoreVar, c.tempVar.register)
+        setVarStartPos(c.tempVar)
+      }
     }
 
     // load args and invoke call
@@ -1168,8 +1176,10 @@ class CodeAsm
     if (c.leave && !c.isPostfixLeave)
     {
       opType(FOp.Dup, c.ctype)
-      if (leaveUsingTemp)
+      if (leaveUsingTemp) {
         op(FOp.StoreVar, c.tempVar.register)
+        setVarStartPos(c.tempVar)
+      }
     }
 
     // if we have a coercion then uncoerce,
@@ -1348,6 +1358,11 @@ class CodeAsm
     lines.writeI2(line)
     lastLine = line
     lastOffset = offset
+  }
+
+  private Void setVarStartPos(MethodVar var_v) {
+    if (var_v.isParam) var_v.startPos = 0
+    else if (var_v.startPos == -1) var_v.startPos = code.size
   }
 
 //////////////////////////////////////////////////////////////////////////

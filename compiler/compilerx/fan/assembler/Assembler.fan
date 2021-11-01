@@ -135,12 +135,16 @@ class Assembler : FConst
       throw Err("localCount is $m.localCount, method:$def.qname, params:$m.paramCount")
     }
 
+    m.code = assembleCode(def, attrs)
+
     m.vars = allVars.map |MethodVar v->FMethodVar|
     {
       f := FMethodVar(m)
       f.nameIndex = name(v.name)
       f.typeRef   = typeRef(v.paramDef?.paramType ?: v.ctype)
       f.flags     = v.flags
+      f.startPos  = v.startPos
+      if (f.startPos == -1) f.startPos = 0
       if (v.paramDef != null)
       {
         
@@ -152,8 +156,6 @@ class Assembler : FConst
       }
       return f
     }
-
-    m.code = assembleCode(def, attrs)
 
     attrs.lineNumber(def.loc.line)
     attrs.facets(def.facets)

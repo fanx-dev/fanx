@@ -73,4 +73,5 @@ class MethodVar : Node
   Bool isReassigned   // keeps track of reassigment assignment (we don't count initial local assign)
   MethodVar? paramWrapper  // wrapper local var if param has to be wrapped
 
+  Int startPos := -1   //start position in bytecode
 }
