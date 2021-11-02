@@ -1,5 +1,8 @@
 ## ChangeLog
 
+### Build 4.2 (2021-11-02)
+- fcode: add methodVar.startPos for debugger
+
 ### Build 4.1.3 (2021-10-12)
 - native: fix Method reflect with default param
 - native: Pod.file fallback
