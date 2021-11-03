@@ -311,8 +311,10 @@ public class FCodeEmit
     for (int i=0; i<regs.length; ++i)
     {
       Reg reg = regs[i];
+      start = reg.scopeStart;
+      if (start == -1) start = 0;
       info.u2(start);
-      info.u2(end);
+      info.u2(end-start);
       info.u2(code.emit.utf(reg.name));
       info.u2(code.emit.utf(reg.typeRef.jsig()));
       info.u2(reg.jindex);
@@ -603,6 +605,7 @@ public class FCodeEmit
   {
     Reg reg = reg(u2());
     storeVar(reg.stackType, reg.jindex);
+    if (reg.scopeStart == -1) reg.scopeStart = code.pos();
   }
 
   private void storeVar(int stackType, int jindex)
@@ -1379,6 +1382,7 @@ public class FCodeEmit
         r.name = "this";
         r.stackType = FTypeRef.OBJ;
         r.jindex = jindex;
+        r.scopeStart = 0;
         ++jindex;
       }
       else
@@ -1388,6 +1392,8 @@ public class FCodeEmit
         r.name = var.name;
         r.stackType = r.typeRef.stackType;
         r.jindex = jindex;
+        if (var.isParam()) r.scopeStart = 0;
+        else r.scopeStart = -1;
         jindex += r.typeRef.isWide() ? 2 : 1;
       }
       regs[i] = r;
@@ -1428,6 +1434,7 @@ public class FCodeEmit
     FTypeRef typeRef; // local variable type
     int stackType;    // FTypeRef.OBJ, LONG, INT, etc
     int jindex;       // Java register number to use (might shift for longs/doubles)
+    int scopeStart;
   }
 
 //////////////////////////////////////////////////////////////////////////
