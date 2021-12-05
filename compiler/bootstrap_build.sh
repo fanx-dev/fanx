@@ -8,7 +8,7 @@ export FAN_ENV_PATH=""
 export FANX_DEV_HOME=$WORK_PATH/../env/
 export FAN_DEV_HOME=$FANX_DEV_HOME
 
-fanc='../release/fanx-4.1.2/bin/fanb'
+fanc='../release/fanx-4.1.3/bin/fanb'
 
 POD_DIR=$1
 

@@ -91,6 +91,8 @@ public class FanObj extends IObj implements Comparable {
 			return true;
 		else if (self instanceof Err)
 			return true;
+		else if (self instanceof Type)
+			return ((Type)self).isImmutable();
 		else
 			return FanUtil.isJavaImmutable(self.getClass());
 	}
@@ -118,6 +120,8 @@ public class FanObj extends IObj implements Comparable {
 			return ((FanObj) self).toImmutable();
 		else if (self instanceof Err)
 			return self;
+		else if (self instanceof Type)
+			return ((Type)self).toImmutable();
 		else if (FanUtil.isJavaImmutable(self.getClass()))
 			return self;
 		throw NotImmutableErr.make(self.getClass().getName());
