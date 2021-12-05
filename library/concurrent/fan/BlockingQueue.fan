@@ -49,7 +49,11 @@ rtconst class BlockingQueue {
 		while (list.isEmpty) {
 			if (cancelled) break
 			Duration? left
-			if (timeout != null) left = Duration.fromMillis(deadline - TimePoint.nowMillis());
+			if (timeout != null) {
+				leftMillis := deadline - TimePoint.nowMillis()
+				if (leftMillis < 0) break
+				left = Duration.fromMillis(leftMillis);
+			}
 			condVar.wait(left)
 		}
 		first := list.removeFirst

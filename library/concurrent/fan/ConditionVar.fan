@@ -15,7 +15,12 @@ class ConditionVar {
 	private native Void init(Lock lock)
 
 	Bool wait(Duration? timeout := null) {
-		doWait(lock, timeout != null ? timeout.toNanos : Int.maxVal)
+		t := Int.maxVal
+		if (timeout != null) {
+			t = timeout.toNanos
+			if (t < 0) throw ArgErr("wait time is negative: $timeout")
+		}
+		return doWait(lock, t)
 	}
 
 	private native Bool doWait(Lock lock, Int nanos)
