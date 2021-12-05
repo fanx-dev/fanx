@@ -47,12 +47,16 @@ class CompilationUnit : Node
     meths := [Str:CMethod[]][:]
     importedTypes.each |types|{
       types.each |type| {
-        type.methods.each |m| {
-          if (m.isStatic && (m.flags.and(FConst.Extension) != 0)) {
-             ms := meths[m.name]
-             if (ms == null) { ms = CMethod[,]; meths[m.name] = ms }
-             ms.add(m)
+        try {
+          type.methods.each |m| {
+            if (m.isStatic && (m.flags.and(FConst.Extension) != 0)) {
+               ms := meths[m.name]
+               if (ms == null) { ms = CMethod[,]; meths[m.name] = ms }
+               ms.add(m)
+            }
           }
+        } catch (Err e) {
+          e.trace
         }
       }
     }

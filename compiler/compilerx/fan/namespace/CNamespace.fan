@@ -111,7 +111,7 @@ abstract class CNamespace
   protected virtual CBridge findBridge(Str name, Loc? loc)
   {
     // resolve the compiler bridge using indexed props
-    t := Env.cur.index("compiler.bridge.${name}")
+    t := Env.cur.index("compilerx.bridge.${name}")
     if (t.size > 1)
       throw CompilerErr("Multiple FFI bridges available for '$name': $t", loc)
     if (t.size == 0)
@@ -188,6 +188,12 @@ abstract class CNamespace
     if (typeRef.isResolved) return
     if (typeRef.podName.isEmpty)
       throw Err("Invalid typeRef: $typeRef, ${loc?.toLocStr}")
+
+    //unspoort java FFI
+    if (typeRef.podName[0] == '[') {
+      typeRef.resolveTo(error.typeDef)
+      return
+    }
     
     pod := this.resolvePod(typeRef.podName, loc)
     
