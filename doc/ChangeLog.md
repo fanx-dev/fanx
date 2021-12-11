@@ -1,5 +1,13 @@
 ## ChangeLog
 
+### Build 4.1.4 (2021-12-11)
+- fix local var scpe start
+- fix Type toImmutable
+- fix read FFI fcode error
+- fix negative wait time
+- fix enclosingVars
+- Int.clamp,Float.clamp
+
 ### Build 4.1.3 (2021-10-12)
 - native: fix Method reflect with default param
 - native: Pod.file fallback

@@ -216,10 +216,17 @@ native const struct class Int : Num
   Int max(Int that) { this > that ? this : that }
 
   **
-  ** Clip this integer between the min and max.  If its less than min then
+  ** Clamp this integer between the min and max.  If its less than min then
   ** return min, if its greater than max return max, otherwise return this
   ** integer itself.
   **
+  Int clamp(Int min, Int max) {
+    if (this < min) return min
+    if (this > max) return max
+    return this
+  }
+
+  @NoDoc @Deprecated { msg = "Use clamp" }
   Int clip(Int min, Int max) {
     if (this < min) return min
     if (this > max) return max

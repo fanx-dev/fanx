@@ -42,10 +42,6 @@ abstract const class File
     File.make(path.toUri, checkSlash)
   }
 
-  static File fromOsPath(Str path) {
-    File.os(path)
-  }
-
   **
   ** Make a File for the specified operating system specific path
   ** on the local file system.
