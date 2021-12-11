@@ -325,7 +325,7 @@ class ClosureExpr : Expr
   MethodDef? doCall             // anonymous class's doCall() with code
 
   // ResolveExpr
-  [Str:MethodVar]? enclosingVars // my parent methods vars in scope
+  [Str:MethodVar]? enclosingVars := [:] // my parent methods vars in scope
   //Bool setsConst                 // sets one or more const fields (CheckErrors)
   CType? itType                  // type of implicit it
 
