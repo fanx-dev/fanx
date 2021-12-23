@@ -402,11 +402,11 @@ class SerializationTest : Test
     verifyEq(x.s, null)
     verifyEq(x.d, null)
 
-    x = "testSys::SerA {}".in.readObj(true, ["makeArgs":["foo"]])
+    x = "testSys::SerA {}".in.readObj(["makeArgs":["foo"]])
     verifyEq(x.s, "foo")
     verifyEq(x.d, null)
 
-    x = "testSys::SerA { s = \"!\" }".in.readObj(true, ["makeArgs":["foo", 5min]])
+    x = "testSys::SerA { s = \"!\" }".in.readObj(["makeArgs":["foo", 5min]])
     verifyEq(x.s, "!")
     verifyEq(x.d, 5min)
   }
@@ -776,7 +776,7 @@ class SerializationTest : Test
   Void verifyPrettyPrinting(Obj obj, Str expected)
   {
     opts := ["indent":2, "skipDefaults":true]
-    actual := Buf.make{ out.writeObj(obj, true, opts) }.flip.readAllStr
+    actual := Buf.make{ out.writeObj(obj, opts) }.flip.readAllStr
 //echo("================")
 //echo(actual)
     verifyEq(expected, actual)
@@ -803,7 +803,7 @@ class SerializationTest : Test
     verifyErr(IOErr#) { Buf.make.out.writeObj(obj) }
 
     opts := ["skipDefaults":true, "skipErrors":true]
-    actual := Buf.make {out.writeObj(obj, true, opts)}.flip.readAllStr
+    actual := Buf.make {out.writeObj(obj, opts)}.flip.readAllStr
     verifyEq(expectedStr, actual)
 
     x := actual.in.readObj
@@ -863,7 +863,7 @@ class SerializationTest : Test
     verifyEq(x, expected)
 
     // verify writeObj via round trip
-    doc := Buf.make{out.writeObj(expected, true, opts)}.flip.readAllStr
+    doc := Buf.make{out.writeObj(expected, opts)}.flip.readAllStr
 //echo("-------------------")
 //echo(doc)
     z := Buf.make.print(doc).flip.in.readObj
