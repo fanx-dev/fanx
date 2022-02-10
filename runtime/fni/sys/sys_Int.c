@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <wchar.h>
 #include <string.h>
+#include "util/utf8.h"
 
 fr_Int sys_Int_fromStr(fr_Env env, fr_Obj s, fr_Int radix, fr_Bool checked) {
     const char *str = fr_getStrUtf8(env, s);
@@ -176,7 +177,21 @@ fr_Obj sys_Int_toChar_val(fr_Env env, fr_Int self) {
     char buf[128];
     buf[0] = 0;
     fr_Obj str;
-    snprintf(buf, 128, "%c", (int)self);
+    if (self < 0) {
+        char buf2[128];
+        snprintf(buf2, 128, "Invalid unicode char: %d", (int)self);
+        fr_throwNew(env, "sys", "Err", buf2);
+        return NULL;
+    }
+    else if (self < 128) {
+        snprintf(buf, 128, "%c", (int)self);
+    }
+    else {
+        wchar_t w[2];
+        w[0] = (wchar_t)self;
+        w[1] = 0;
+        utf8encode(w, buf, 128, NULL);
+    }
     str = fr_newStrUtf8(env, buf);
     return str;
 }

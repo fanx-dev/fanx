@@ -529,12 +529,12 @@ native const final class Str
     //if (index < 0 || index < size) throw IndexErr("$index not in [0..$size]")
     charCount := 0
     for (i:=0; i<utf8.size; ++i) {
-      if (charCount == index) {
-        return i
-      }
       ch := utf8[i]
       if (ch.and(0xC0) != 0x80) {
         ++charCount
+        if (charCount == index+1) {
+          return i;
+        }
       }
     }
     throw IndexErr("$index not in [0..$size]") 
