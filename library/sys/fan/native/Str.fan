@@ -540,6 +540,20 @@ native const final class Str
     throw IndexErr("$index not in [0..$size]") 
   }
 
+  private Int toByteIndexEnd(Int index) {
+    charCount := 0
+    for (i:=0; i<utf8.size; ++i) {
+      ch := utf8[i]
+      if (ch.and(0xC0) != 0x80) {
+        ++charCount
+        if (charCount == index+2) {
+          return i;
+        }
+      }
+    }
+    return utf8.size
+  }
+
   internal Int decodeCharAt(Int i, Array<Int>? readSize := null) {
     c1 := getByte(i); ++i
     //if (c1 < 0) return -1
@@ -617,9 +631,9 @@ native const final class Str
     e := range.endIndex(size)
     if (e < 0 || s >= size) return ""
     bs := toByteIndex(s)
-    es := toByteIndex(e)
+    es := toByteIndexEnd(e)
     if (e+1 < s) throw IndexErr("range:$range, size:$size")
-    return substring(bs, es+1)
+    return substring(bs, es)
   }
 
   **
