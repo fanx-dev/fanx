@@ -48,6 +48,7 @@ void **fr_getInterfaceVTable(fr_Env env, fr_Obj obj, fr_Type itype) {
             void **base = (void**)((struct fr_Class_*)type+1);
             return (base + item->vtableOffset);
         }
+        ++i;
         if (item->type == NULL) break;
     }
     printf("ERROR: not found interface vtable %s\n", itype->name);
