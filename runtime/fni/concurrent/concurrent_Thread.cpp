@@ -66,6 +66,7 @@ fr_Bool concurrent_Thread_sleepNanos(fr_Env env, fr_Int nanos) {
 }
 void concurrent_Thread_finalize(fr_Env env, fr_Obj self) {
     std::thread* thd = concurrent_Thread_getRaw(env, self);
+    thd->detach();
     delete thd;
     concurrent_Thread_setRaw(env, self, NULL);
 }

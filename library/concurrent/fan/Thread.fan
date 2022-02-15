@@ -27,7 +27,7 @@ internal class Thread {
 	virtual Void run() { if (_runable != null) _runable() }
 
 	private native Void _start(Str name)
-	native Bool detach()
+	//private native Bool detach()
 	native Bool join()
 
 	native Int id()

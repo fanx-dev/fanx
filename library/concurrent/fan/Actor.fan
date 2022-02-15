@@ -15,7 +15,7 @@
 @Js @JsNative
 const class Actor
 {
-  static const Unsafe<Obj?> idleMsg = Unsafe<Obj?>("_idle_");
+  private static const Unsafe<Obj?> idleMsg = Unsafe<Obj?>("_idle_");
 
   private const Unsafe<Context> context = Unsafe<Context>(Context(this)); // mutable world state of actor
   private const ActorPool _pool;                // pooled controller
