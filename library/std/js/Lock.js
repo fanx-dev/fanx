@@ -6,7 +6,9 @@ fan.std.Lock.prototype.$ctor = function() {}
 fan.std.Lock.prototype.$typeof = function() { return fan.std.Lock.$type; }
 
 fan.std.Lock.make = function() {
-	this.m_lock = false;
+	var self = new fan.std.Lock();
+	self.m_lock = false;
+	return self;
 }
 
 fan.std.Lock.prototype.tryLock = function(nanoTime) {

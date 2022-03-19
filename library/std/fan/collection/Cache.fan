@@ -140,4 +140,6 @@ class Cache {
     }
   }
 
+  Bool containsKey(Obj key) { map.containsKey(key) }
+
 }

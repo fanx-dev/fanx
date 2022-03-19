@@ -115,6 +115,14 @@ fan.std.Pod.prototype.type = function(name, checked)
   return t;
 }
 
+fan.std.Pod.prototype.props = function(uri, maxAge) {
+  return fan.std.Env.cur().props(this, uri, maxAge);
+}
+
+fan.std.Pod.prototype.config = function(key, def) {
+  return fan.std.Env.cur().config(this, key, def);
+}
+
 fan.std.Pod.prototype.locale = function(key, def)
 {
   return fan.std.Env.cur().locale(this, key, def);

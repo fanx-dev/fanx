@@ -18,6 +18,7 @@ fan.sys.Sys.findType = function(sig, checked) {
   }
   if (last == '?') {
     var t = fan.sys.Sys.findType(sig.substring(0, len-1), checked);
+    if (t == null && !checked) return null;
     return t.toNullable();
   }
 
