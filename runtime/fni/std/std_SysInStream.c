@@ -51,7 +51,7 @@ fr_Int std_SysInStream_skip(fr_Env env, fr_Obj self, fr_Int n) {
 fr_Int std_SysInStream_readBytes(fr_Env env, fr_Obj self, fr_Obj ba, fr_Int off, fr_Int len) {
     FILE* file = std_SysInStream_getNativePeer(env, self);
 
-    if (fr_arrayLen(env, ba) > off + len) {
+    if (fr_arrayLen(env, ba) < off + len) {
         fr_throwNew(env, "sys", "IOErr", "readBytes out buffer");
         return -1;
     }

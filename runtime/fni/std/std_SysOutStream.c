@@ -31,8 +31,8 @@ fr_Obj std_SysOutStream_write(fr_Env env, fr_Obj self, fr_Int byte) {
 fr_Obj std_SysOutStream_writeBytes(fr_Env env, fr_Obj self, fr_Obj ba, fr_Int off, fr_Int len) {
     FILE* file = std_SysOutStream_getNativePeer(env, self);
 
-    if (fr_arrayLen(env, ba) > off + len) {
-        fr_throwNew(env, "sys", "IOErr", "readBytes out buffer");
+    if (fr_arrayLen(env, ba) < off + len) {
+        fr_throwNew(env, "sys", "IOErr", "writeBytes out buffer");
         return self;
     }
 
