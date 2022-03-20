@@ -36,7 +36,7 @@ fr_Obj std_DateTime_fromTicks(fr_Env env, fr_Int ticks, fr_Obj tz) {
     info = localtime(&timer);
 
     fr_Obj dt = fr_newObjS(env, "std", "DateTime", "privateMake", 11, 
-        (fr_Int)info->tm_year, (fr_Int)info->tm_mon, (fr_Int)info->tm_mday, (fr_Int)info->tm_hour, (fr_Int)info->tm_min, (fr_Int)info->tm_sec,
+        (fr_Int)info->tm_year+1900, (fr_Int)info->tm_mon, (fr_Int)info->tm_mday, (fr_Int)info->tm_hour, (fr_Int)info->tm_min, (fr_Int)info->tm_sec,
         ((fr_Int)(ticks % 1000)) * 1000000, //ns
         (fr_Int)ticks,  //ticks
         (fr_Int)info->tm_isdst, //dst
@@ -50,7 +50,7 @@ fr_Obj std_DateTime_make(fr_Env env, fr_Int year, fr_Obj month, fr_Int day, fr_I
     struct tm* info;
     std::lock_guard<std::recursive_mutex> guard(g_datetime_mutex);
 
-    int imonth = fr_getFieldS(env, month, "ordinal").i;
+    int imonth = fr_callOnObj(env, month, "ordinal", 0).i;
     tm_info.tm_year = year - 1900;
     tm_info.tm_mon = imonth;
     tm_info.tm_mday = day;

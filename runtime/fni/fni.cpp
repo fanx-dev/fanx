@@ -466,8 +466,10 @@ fr_Value fr_getFieldS(fr_Env env, fr_Obj obj, const char *name) {
     fr_Value ret;
     ret.i = 0;
     
-    if (field == NULL) return ret;
-    
+    if (field == NULL) {
+        printf("field not found: %s\n", name);
+        return ret;
+    }
     if ((field->flags & FFlags_Static) != 0) {
         fr_getStaticField(env, field, &ret);
     }
