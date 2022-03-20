@@ -1,5 +1,8 @@
 #include "fni_ext.h"
 #include "pod_std_native.h"
+#include <string>
+
+#ifndef NO_FILE_SYSTEM
 #include <filesystem>
 #include <chrono>
 #include <fstream>
@@ -155,6 +158,212 @@ fr_Obj std_FileSystem_tempDir(fr_Env env) {
     std::string path = tempDir.string();
     return fr_newStrUtf8(env, path.c_str());
 }
+
+#else
+
+
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#if !defined(__IOS__) && !defined(__ANDROID__)
+#include <sys/dir.h>
+#endif
+#include <dirent.h>
+
+
+fr_Bool std_FileSystem_exists(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    struct stat stbuf;
+    if (stat(str, &stbuf) == -1) {
+        return false;
+    }
+    return true;
+}
+
+fr_Int std_FileSystem_size(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    struct stat stbuf;
+    if (stat(str, &stbuf) == -1) {
+        return 0;
+    }
+    return stbuf.st_size;
+}
+fr_Int std_FileSystem_modified(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    struct stat stbuf;
+    if (stat(str, &stbuf) == -1) {
+        return 0;
+    }
+    return stbuf.st_mtime * 1000;
+}
+
+fr_Bool std_FileSystem_setModified(fr_Env env, fr_Obj path, fr_Int time) {
+    const char* str = fr_getStrUtf8(env, path);
+    //TODO
+    return false;
+}
+fr_Obj std_FileSystem_uriToPath(fr_Env env, fr_Obj path) {
+    std::string str = fr_getStrUtf8(env, path);
+
+#if _WIN64
+    //deal with Windows drive name
+    if (str.size() > 3 && str[2] == ':' && str[0] == '/') {
+        str = str.substr(1);
+    }
+#endif
+
+    return fr_newStrUtf8(env, str.c_str());
+}
+fr_Obj std_FileSystem_pathToUri(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    std::string ps = str;
+
+    //deal with Windows drive name
+    if (ps.size() > 2 && ps[1] == ':' && ps[0] != '/') {
+        ps = std::string("/") + ps;
+    }
+
+    return fr_newStrUtf8(env, ps.c_str());
+}
+fr_Obj std_FileSystem_list(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    DIR *dir = opendir(str);
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)8).h;
+    if (dir == NULL) return list;
+    
+    struct dirent *ent = NULL;
+    while (NULL != (ent = readdir(dir))) {
+        std::string pathstr = std::string(str)+ent->d_name;
+        fr_Obj s = fr_newStrUtf8(env, pathstr.c_str());
+        fr_callOnObj(env, list, "add", 1, s);
+    }
+
+    closedir(dir);
+    return list;
+}
+fr_Obj std_FileSystem_normalize(fr_Env env, fr_Obj path) {
+    const char* str = fr_getStrUtf8(env, path);
+    //std::string pathstr = p.string();
+    return fr_newStrUtf8(env, str);
+}
+fr_Bool std_FileSystem_createDirs(fr_Env env, fr_Obj apath) {
+    const char* path = fr_getStrUtf8(env, apath);
+    size_t len = strlen(path);
+    char temp[1024];
+    int lastSep = 0;
+    int i;
+    bool err = false;
+    strcpy(temp, path);
+    
+    for (i = 2; i < len; ++i) {
+      if (path[i] == '/' || path[i] == '\\'){
+        lastSep = i;
+        if(i > 0){
+          temp[i] = 0;
+          err = mkdir(temp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1;
+        }
+        temp[i] = '/';
+      }
+    }
+
+    //last dir
+    if (lastSep + 1 < len) {
+        err = mkdir(temp, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1;
+    }
+    return err == 0;
+}
+fr_Bool std_FileSystem_createFile(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    FILE *f = fopen(file, "w");
+    fclose(f);
+    return true;
+}
+fr_Bool std_FileSystem_moveTo(fr_Env env, fr_Obj path, fr_Obj to) {
+    const char* fromFile = fr_getStrUtf8(env, path);
+    const char* toFile = fr_getStrUtf8(env, to);
+    int rc = ::rename(fromFile, toFile);
+    return rc == 0;
+}
+fr_Bool std_FileSystem_copyTo(fr_Env env, fr_Obj path, fr_Obj to) {
+    const char* fromFile = fr_getStrUtf8(env, path);
+    const char* toFile = fr_getStrUtf8(env, to);
+    
+    FILE *fpbr = fopen(fromFile, "rb");
+    FILE *fpbw = fopen(toFile, "wb");
+    
+    if (fpbr == NULL || fpbw == NULL) {
+        if (fpbr != NULL) fclose(fpbr);
+        if (fpbw != NULL) fclose(fpbw);
+        return false;
+    }
+    
+    size_t len = 0;
+    char buffer[BUFSIZ] = {'\0'};  // BUFSIZ macro defined in <stdio.h>
+    while ((len = fread(buffer, sizeof(char), BUFSIZ, fpbr)) > 0)
+        fwrite(buffer, sizeof(char), len, fpbw);
+    
+    fclose(fpbr);
+    fclose(fpbw);
+    return true;
+}
+
+fr_Bool std_FileSystem_delete_(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    return ::remove(file) == 0;
+}
+//fr_Bool std_FileSystem_deleteOnExit(fr_Env env, fr_Obj path) {
+//    return 0;
+//}
+fr_Bool std_FileSystem_isReadable(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    return true;
+}
+fr_Bool std_FileSystem_isWritable(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    return true;
+}
+fr_Bool std_FileSystem_isExecutable(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    return true;
+}
+fr_Bool std_FileSystem_isDir(fr_Env env, fr_Obj path) {
+    const char* file = fr_getStrUtf8(env, path);
+    struct stat stbuf;
+    if (stat(file, &stbuf) == -1) {
+        return false;
+    }
+    return S_ISDIR(stbuf.st_mode);
+}
+fr_Bool std_FileSystem_getSpaceInfo(fr_Env env, fr_Obj path, fr_Obj out) {
+    const char* file = fr_getStrUtf8(env, path);
+    
+    return false;
+}
+fr_Obj std_FileSystem_osRoots(fr_Env env) {
+    fr_Obj list = fr_callMethodS(env, "sys", "List", "make", 1, (fr_Int)8).h;
+    fr_callOnObj(env, list, "add", 1, fr_newStrUtf8(env, "/"));
+    return list;
+}
+fr_Obj std_FileSystem_tempDir(fr_Env env) {
+    const char* name1 = tmpnam(NULL);
+    int len = strlen(name1);
+    char buf[1024] = {0};
+    snprintf(buf, 1024, "%s", name1);
+    
+    for (int i=len-2; i>=0; --i) {
+        if (buf[i] == '/') {
+            buf[i] = 0;
+            break;
+        }
+    }
+    
+    return fr_newStrUtf8(env, buf);
+}
+
+#endif
+
+
+
 fr_Obj std_FileSystem_fileSep(fr_Env env) {
     static fr_Obj pathSep = NULL;
     if (!pathSep) {

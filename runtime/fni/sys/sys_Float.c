@@ -133,8 +133,63 @@ void sys_Float_make_val(fr_Env env, fr_Float self) {
     return;
 }
 
-fr_Obj sys_Float_toLocale_val(fr_Env env, fr_Float selfj, fr_Obj pattern){
-    return sys_Float_toStr_val(env, selfj);
+static const char* toDefaultLocalePattern(fr_Env env, double self)
+{
+    double abs  = fabs(self);
+    double fabs = floor(abs);
+
+    if (fabs >= 10) return "#0.0#";
+    if (fabs >= 1)  return "#0.0##";
+
+    // format a fractional number (no decimal part)
+    double frac = abs - fabs;
+    if (frac < 0.00000001) return "0.0";
+    if (frac < 0.0000001)  return "0.0000000##";
+    if (frac < 0.000001)   return "0.000000##";
+    if (frac < 0.00001)    return "0.00000##";
+    if (frac < 0.0001)     return "0.0000##";
+    if (frac < 0.001)      return "0.000##";
+    return "0.0##";
+}
+
+fr_Obj sys_Float_toLocale_val(fr_Env env, fr_Float self, fr_Obj pattern) {
+    char buf[256];
+    buf[0] = 0;
+    static fr_Type type = NULL;
+    static fr_Method formatIntM;
+    static fr_Method formatDigitsM;
+    if (type == NULL) {
+        type = fr_findType(env, "sys", "NumFormat");
+        formatIntM = fr_findMethod(env, type, "formatInt");
+        formatDigitsM = fr_findMethod(env, type, "formatDigits");
+    }
+    
+    if (self == -0.0) {
+        self = 0.0;
+    }
+    else if (isnan(self)) {
+        return fr_newStrUtf8(env, "NaN");
+    }
+    else if (isinf(self)) {
+        if (self > 0) {
+            return fr_newStrUtf8(env, "INF");
+        }
+        else {
+            return fr_newStrUtf8(env, "-INF");
+        }
+    }
+    
+    if (pattern == NULL) {
+        if (fabs(self) >= 100.0) {
+            return fr_callMethod(env, formatIntM, 2, (fr_Int)round(self), NULL).h;
+        }
+        
+        const char* cpattern = toDefaultLocalePattern(env, self);
+        pattern = fr_newStrUtf8(env, cpattern);
+    }
+    
+    snprintf(buf, 256, "%f", self);
+    return fr_callMethod(env, formatDigitsM, 2, fr_newStrUtf8(env, buf), pattern).h;
 }
 
 fr_Int sys_Float_toInt_val(fr_Env env, fr_Float self) { return (fr_Int)self; }
