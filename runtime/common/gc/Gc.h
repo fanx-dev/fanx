@@ -48,6 +48,8 @@ class Gc : public Collector {
     std::thread *gcThread;
     std::mutex cdLock;
     std::condition_variable condition;
+    
+    uint64_t lastGcTime;
 public:
     //GcSupport *gcSupport;
     

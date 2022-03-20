@@ -93,7 +93,7 @@ class MemBuf : Buf
   }
   protected override Int pipeFrom(InStream in, Int len) {
     if (capacity < pos+len) {
-      capacity = pos + len
+      capacity = capacity * 2 + len
     }
     a := in.readBytes(buf, pos, len)
     if (a > 0) {

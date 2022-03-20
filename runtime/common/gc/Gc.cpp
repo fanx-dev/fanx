@@ -37,6 +37,7 @@ Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
 {
     lastAllocSize = 29;
     collectLimit = 1000000;
+    lastGcTime = 0;
 
     //BitmapTest_run();
     gcThread = new std::thread(std::bind(&Gc::gcThreadRun, this));
@@ -134,10 +135,17 @@ GcObj* Gc::alloc(void *type, int asize) {
         pendingRefs[ip] = true;
     #endif
         
-        if ((allocSize + size - lastAllocSize > collectLimit) && (allocSize + size > lastAllocSize * 10) ) {
-            collect();
-        } else {
-            //lastAllocSize -= 1;
+        if ((allocSize + size - lastAllocSize) > collectLimit) {
+            if ((allocSize + size) > lastAllocSize * 10) {
+                collect();
+            }
+            else {
+                uint64_t now = System_currentTimeMillis();
+                if (now - lastGcTime > 60*1000) {
+                    lastGcTime = now;
+                    collect();
+                }
+            }
         }
         
         //newAllocRef.push_back(obj);
