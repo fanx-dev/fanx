@@ -91,7 +91,7 @@ fr_Obj fr_allocObj(fr_Env self, fr_Type vtable, int size) {
     int allocSize = vtable->allocSize;
     if (allocSize < (int)size) allocSize = (int)size;
     GcObj *gcobj = env->vm->getGc()->alloc(vtable, allocSize+sizeof(GcObj));
-    fr_Obj obj = fr_fromGcObj(gcobj);
+    fr_Obj obj = fr_fromGcObj_(gcobj);
     return obj;
 }
 
@@ -104,19 +104,21 @@ void fr_setGcDirty(fr_Env self, FObj* obj) {
     if (obj == NULL) return;
     Env *env = (Env*)self;
     Collector *gc = env->vm->getGc();
-    GcObj *gcobj = fr_toGcObj(obj);
+    GcObj *gcobj = fr_toGcObj_(obj);
     gc->setDirty(gcobj);
 }
 
 fr_Obj fr_newGlobalRef(fr_Env self, fr_Obj obj) {
+    if (obj == NULL) return NULL;
     Env* env = (Env*)self;
-    env->vm->getGc()->pinObj(fr_toGcObj(obj));
+    env->vm->getGc()->pinObj(fr_toGcObj_o(obj));
     return obj;
 }
 
 void fr_deleteGlobalRef(fr_Env self, fr_Obj obj) {
+    if (obj == NULL) return;
     Env *env = (Env*)self;
-    env->vm->getGc()->unpinObj(fr_toGcObj(obj));
+    env->vm->getGc()->unpinObj(fr_toGcObj_o(obj));
 }
 //void fr_addStaticRef(fr_Env self, fr_Obj *obj) {
 //    Env *env = (Env*)self;

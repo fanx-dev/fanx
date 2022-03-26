@@ -27,7 +27,7 @@ Env::Env(Vm *vm) : vm(vm)//, error(0)
 static bool isPointer(Vm *vm, Collector *gc, int64_t pointer) {
     if (pointer == 0) return false;
     if (pointer % 8 != 0) return false;
-    GcObj *gcobj = fr_toGcObj((fr_Obj)(pointer));
+    GcObj *gcobj = fr_toGcObj_o((fr_Obj)(pointer));
     
     //must is heaer of pointer
     return gc->isRef(gcobj);
@@ -43,7 +43,7 @@ void Env::walkLocalRoot(Collector *gc) {
     void **max = stackStart < stackEnd ? stackEnd : stackStart;
     for (void **ptr = min; ptr <= max; ++ptr) {
         if (isPointer(vm, gc, (int64_t)(*ptr))) {
-            GcObj *obj = fr_toGcObj((fr_Obj)(*ptr));
+            GcObj *obj = fr_toGcObj_o((fr_Obj)(*ptr));
             //gc->onRoot(obj);
             gc->onVisit(obj);
         }

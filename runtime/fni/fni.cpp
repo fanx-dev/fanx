@@ -33,7 +33,9 @@ GcObj *fr_toGcObj(FObj *obj) {
     
 }
 FObj *fr_fromGcObj(GcObj *g) {
-    if (g == nullptr) return nullptr;
+    if (g == nullptr) {
+        return nullptr;
+    }
     FObj *obj = (FObj*)(++g);
     return obj;
 }
@@ -201,8 +203,11 @@ fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
 
 
 void fr_registerDestructor(fr_Env, fr_Type type, fr_Destructor funcPtr) {
-    if (!type->destructor) {
+    if (type->destructor == NULL) {
         type->destructor = funcPtr;
+    }
+    else {
+        assert(type->destructor == funcPtr);
     }
 }
 

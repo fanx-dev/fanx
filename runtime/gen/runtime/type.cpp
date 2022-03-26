@@ -33,7 +33,7 @@ fr_Type fr_getClass(fr_Env env, fr_Obj obj) {
     if (!obj) {
         return NULL;
     }
-    GcObj *g = fr_toGcObj(obj);
+    GcObj *g = fr_toGcObj_o(obj);
     //return obj->super.header;
     fr_Type type = (fr_Type)gc_getType(g);
     return type;

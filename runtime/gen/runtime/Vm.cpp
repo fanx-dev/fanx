@@ -66,7 +66,7 @@ void visitChildrenByType(Collector* gc, FObj* obj, fr_Type type) {
         if (!f.isStatic && !f.isValType && (f.flags & FFlags_Storage)) {
             fr_Obj* objAddress = (fr_Obj*)(((char*)(obj)) + f.offset);
             if (*objAddress == NULL) continue;
-            GcObj* gp = fr_toGcObj(*objAddress);
+            GcObj* gp = fr_toGcObj_o(*objAddress);
             //list->push_back(gp);
             gc->onVisit(gp);
         }
@@ -74,7 +74,7 @@ void visitChildrenByType(Collector* gc, FObj* obj, fr_Type type) {
 }
 
 void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
-    FObj* obj = fr_fromGcObj(gcobj);
+    FObj* obj = fr_fromGcObj_(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
     
     if (type == sys_Array_class__) {
@@ -83,7 +83,7 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
             for (int i=0; i<array->size; ++i) {
                 FObj* elem = ((FObj**)(array->data))[i];
                 if (elem) {
-                    GcObj *gp = fr_toGcObj(elem);
+                    GcObj *gp = fr_toGcObj_(elem);
                     //list->push_back(gp);
                     gc->onVisit(gp);
                 }
@@ -96,7 +96,7 @@ void Vm::visitChildren(Collector *gc, GcObj *gcobj) {
         FObj **valptr = (FObj**)obj;
         FObj *val = *valptr;
         if (val) {
-            GcObj* gp = fr_toGcObj(val);
+            GcObj* gp = fr_toGcObj_(val);
             //list->push_back(gp);
             gc->onVisit(gp);
         }
@@ -112,7 +112,7 @@ void Vm::walkRoot(Collector *gc) {
     for (auto it = staticFieldRef.begin(); it != staticFieldRef.end(); ++it) {
         fr_Obj *obj = *it;
         if (*obj == NULL) continue;
-        GcObj *gobj = fr_toGcObj(*obj);
+        GcObj *gobj = fr_toGcObj_o(*obj);
         //gc->onRoot(gobj);
         gc->onVisit(gobj);
     }
@@ -138,7 +138,7 @@ void Vm::walkRoot(Collector *gc) {
 //}
 
 void Vm::finalizeObj(GcObj *gcobj) {
-    fr_Obj obj = fr_fromGcObj(gcobj);
+    fr_Obj obj = fr_fromGcObj_(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
     //printf("release %s %p\n", type->name, obj);
     if (type->destructor) {
@@ -192,13 +192,13 @@ void Vm::resumeWorld() {
 //    }
 }
 void Vm::printObj(GcObj *gcobj) {
-    fr_Obj obj = fr_fromGcObj(gcobj);
+    fr_Obj obj = fr_fromGcObj_(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
     printf("%s %p", type->name, obj);
 }
 
 int Vm::allocSize(GcObj* gcobj) {
-    FObj* obj = fr_fromGcObj(gcobj);
+    FObj* obj = fr_fromGcObj_(gcobj);
     fr_Type type = (fr_Type)gc_getType(gcobj);
 
     if (type == sys_Array_class__) {

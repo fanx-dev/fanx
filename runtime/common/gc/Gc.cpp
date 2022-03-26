@@ -81,10 +81,12 @@ void Gc::setMarking(bool m) {
 }
 
 void Gc::pinObj(GcObj* obj) {
+    if (!obj) return;
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     pinObjs.push_back(obj);
 }
 void Gc::unpinObj(GcObj* obj) {
+    if (!obj) return;
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     pinObjs.remove(obj);
 }
@@ -325,7 +327,11 @@ void Gc::sweep() {
         uint64_t ip = (itr->first);
         
         GcObj *obj = (GcObj*)(ip << 3);
-        if (!obj) break;
+        if (!obj) {
+            ++itr;
+            continue;
+        }
+        
         if (gc_getMark(obj) != marker) {
             remove(obj, false);
             itr = allRefs.erase(itr);

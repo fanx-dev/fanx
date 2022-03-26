@@ -66,8 +66,12 @@ void fr_setErr(fr_Env self, fr_Err err);
 void fr_gc(fr_Env self);
 //GcObj *fr_toGcObj(fr_Obj obj);
 //fr_Obj fr_fromGcObj(GcObj *g);
-#define fr_toGcObj(obj) (((GcObj*)(obj))-1)
-#define fr_fromGcObj(g) ((FObj*)(((GcObj*)(g))+1))
+#define fr_toGcObj_(obj) (((GcObj*)(obj))-1)
+#define fr_fromGcObj_(g) ((FObj*)(((GcObj*)(g))+1))
+
+#define fr_toGcObj_o(obj) fr_toGcObj_((FObj*)(obj))
+#define fr_fromGcObj_o(g) ((FObj*)fr_toGcObj_(g))
+
 void fr_checkPoint(fr_Env self);
 void fr_allowGc(fr_Env self);
 void fr_endAllowGc(fr_Env self);
