@@ -4,6 +4,8 @@
 #include <new>
 
 #define TYPE int64_t
+void std_AtomicInt_finalize(fr_Env env, fr_Obj self);
+
 static std::atomic<TYPE>* std_AtomicInt_getRaw(fr_Env env, fr_Obj self) {
     static_assert(sizeof(std::atomic<TYPE>) <= (sizeof(fr_Int) * 2));
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle0");
@@ -16,6 +18,10 @@ static std::atomic<TYPE>* std_AtomicInt_getRaw(fr_Env env, fr_Obj self) {
 void std_AtomicInt_init(fr_Env env, fr_Obj self, fr_Int val) {
     std::atomic<TYPE> *r = std_AtomicInt_getRaw(env, self);
     new (r) std::atomic<TYPE>(val);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_AtomicInt_finalize);
+    
     return;
 }
 fr_Int std_AtomicInt_val(fr_Env env, fr_Obj self) {

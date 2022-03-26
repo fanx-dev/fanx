@@ -5,11 +5,17 @@
 
 #define TYPE bool
 static_assert(sizeof(std::atomic<TYPE>) <= (sizeof(fr_Int) * 2));
+void std_AtomicBool_finalize(fr_Env env, fr_Obj self);
+
 static std::atomic<TYPE>* std_AtomicBool_getRaw(fr_Env env, fr_Obj self) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle0");
     char* p = (char*)fr_getPtr(env, self);
 
     std::atomic<TYPE>* raw = (std::atomic<TYPE>*)(p + f->offset);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_AtomicBool_finalize);
+    
     return raw;
 }
 

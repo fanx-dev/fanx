@@ -140,11 +140,6 @@ native rtconst abstract class Obj
   **
   //Type typeof()
 
-  **
-  ** Called by the garbage collector on an object when garbage collection determines
-  ** that there are no more references to the object.
-  **
-  protected virtual Void finalize() {}
 
 //////////////////////////////////////////////////////////////////////////
 // Utils

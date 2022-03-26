@@ -16,6 +16,5 @@ final native class Array<T> {
   static Obj realloc(Obj array, Int newSize)
   static Void arraycopy(Obj src, Int srcOffset, Obj dest, Int destOffset, Int length)
   //static Void fill(Obj array, Obj? val, Int times)
-  protected override Void finalize()
 }
 

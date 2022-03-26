@@ -34,5 +34,5 @@ class ConditionVar {
 	private native Void doSignal(Lock lock)
 	private native Void doSignalAll(Lock lock)
 
-	protected native override Void finalize()
+	//protected native override Void finalize()
 }

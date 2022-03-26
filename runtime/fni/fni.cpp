@@ -199,6 +199,13 @@ fr_Type fr_getInstanceType(fr_Env self, fr_Value *obj, fr_ValueType vtype) {
     return fr_toType(self, vtype);
 }
 
+
+void fr_registerDestructor(fr_Env, fr_Type type, fr_Destructor funcPtr) {
+    if (!type->destructor) {
+        type->destructor = funcPtr;
+    }
+}
+
 ////////////////////////////
 // call
 ////////////////////////////

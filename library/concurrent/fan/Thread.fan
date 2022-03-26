@@ -35,7 +35,7 @@ internal class Thread {
 	static Bool sleep(Duration timeout) { sleepNanos(timeout.toNanos) }
 	native static Bool sleepNanos(Int nanos)
 
-	protected native override Void finalize()
+	//protected native override Void finalize()
 
 	override Str toStr() { "Thread:$_name" }
 }

@@ -5,6 +5,9 @@
 
 #define TYPE void*
 static_assert(sizeof(std::atomic<TYPE>) <= (sizeof(fr_Int) * 2));
+
+void std_AtomicRef_finalize(fr_Env env, fr_Obj self);
+
 static std::atomic<TYPE>* std_AtomicRef_getRaw(fr_Env env, fr_Obj self) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle0");
     char* p = (char*)fr_getPtr(env, self);
@@ -17,6 +20,9 @@ void std_AtomicRef_init(fr_Env env, fr_Obj self, fr_Obj val) {
     std::atomic<TYPE>* r = std_AtomicRef_getRaw(env, self);
     void *ref = fr_getPtr(env, val);
     new (r) std::atomic<TYPE>(ref);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_AtomicRef_finalize);
     return;
 }
 fr_Obj std_AtomicRef_val(fr_Env env, fr_Obj self) {

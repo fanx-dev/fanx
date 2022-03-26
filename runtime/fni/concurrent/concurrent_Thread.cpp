@@ -9,12 +9,15 @@ static std::thread* concurrent_Thread_getRaw(fr_Env env, fr_Obj self) {
     std::thread* raw = (std::thread*)(val.i);
     return raw;
 }
-
+void concurrent_Thread_finalize(fr_Env env, fr_Obj self);
 static void concurrent_Thread_setRaw(fr_Env env, fr_Obj self, std::thread* r) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
     val.i = (fr_Int)r;
     fr_setInstanceField(env, self, f, &val);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, concurrent_Thread_finalize);
 }
 
 static void thread_run(fr_Obj self) {

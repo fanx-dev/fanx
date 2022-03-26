@@ -1290,8 +1290,6 @@ native const final class Str
     return make(bytes)
   }
 
-  protected override Void finalize() {
-  }
 
   **
   ** Returns a formatted string using the specified format string and arguments.

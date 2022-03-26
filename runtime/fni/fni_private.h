@@ -137,6 +137,7 @@ struct fr_MethodParam_ {
 
 typedef void* (*fr_Function)(fr_Env env__, void *param, void *retValue);
 
+
 struct fr_Method_ {
     const char *name;
     uint32_t flags;
@@ -187,7 +188,7 @@ struct fr_Class_ {
     
     fr_Obj reflectObj;
   
-    //fr_Function finalize;
+    fr_Destructor destructor;
     void* internalType;
     
     struct fr_IVTableMapItem interfaceVTableIndex[MAX_INTERFACE_SIZE];

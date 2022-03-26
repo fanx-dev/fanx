@@ -169,16 +169,25 @@ void Fvm::walkRoot(Collector *gc) {
         env->walkLocalRoot(gc);
     }
 }
+
 void Fvm::finalizeObj(GcObj* obj) {
-    Env *env = getEnv();
     
-    fr_TagValue val;
-    val.type = fr_vtObj;
-    val.any.o = fr_fromGcObj(obj);
-    env->push(&val);
+    fr_Env env = fr_getEnv(this);
+    FObj *fobj = fr_fromGcObj(obj);
+    fr_Obj aobj = &(fobj);
+    fr_Type type = fr_getObjType(env, aobj);
+    if (type->destructor) {
+        type->destructor(env, aobj);
+    }
     
-    FMethod *m = env->findMethod("sys", "Obj", "finalize");
-    env->callVirtual(m, 0);
+//    Env *env = getEnv();
+//    fr_TagValue val;
+//    val.type = fr_vtObj;
+//    val.any.o = fr_fromGcObj(obj);
+//    env->push(&val);
+//
+    //FMethod *m = env->findMethod("sys", "Obj", "finalize");
+    //env->callVirtual(m, 0);
     //env->callVirtualMethod("finalize", 0);
 }
 void Fvm::puaseWorld(bool bloking) {

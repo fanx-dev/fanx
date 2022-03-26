@@ -165,7 +165,7 @@ native final class Zip
     return super.toStr
   }
 
-  protected native override Void finalize()
+  //protected native override Void finalize()
 
 //////////////////////////////////////////////////////////////////////////
 // GZIP

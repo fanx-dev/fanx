@@ -44,6 +44,6 @@ final const native class AtomicBool
   override Str toStr() { val.toStr }
 
 
-  protected native override Void finalize()
+  //protected native override Void finalize()
 
 }

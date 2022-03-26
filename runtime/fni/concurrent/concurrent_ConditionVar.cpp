@@ -14,11 +14,16 @@ static std::condition_variable_any* concurrent_ConditionVar_getRaw(fr_Env env, f
     return raw;
 }
 
+void concurrent_ConditionVar_finalize(fr_Env env, fr_Obj self);
+
 static void concurrent_ConditionVar_setRaw(fr_Env env, fr_Obj self, std::condition_variable_any* r) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
     val.i = (fr_Int)r;
     fr_setInstanceField(env, self, f, &val);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, concurrent_ConditionVar_finalize);
 }
 
 void concurrent_ConditionVar_init(fr_Env env, fr_Obj self, fr_Obj lock) {

@@ -52,5 +52,5 @@ final native const class Lock
     return null
   }
 
-  protected native override Void finalize()
+  //protected native override Void finalize()
 }

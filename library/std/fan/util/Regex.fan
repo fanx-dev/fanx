@@ -129,5 +129,5 @@ const final class Regex
 
   // TODO: flags support
   // TODO: examples in fandoc
-  protected native override Void finalize()
+  //protected native override Void finalize()
 }

@@ -2,6 +2,9 @@
 #include "pod_std_native.h"
 #include <regex>
 
+void std_Regex_finalize(fr_Env env, fr_Obj self);
+void std_RegexMatcher_finalize(fr_Env env, fr_Obj self);
+
 static std::regex* getRegex(fr_Env env, fr_Obj self) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
@@ -21,7 +24,11 @@ void std_Regex_init(fr_Env env, fr_Obj self, fr_Obj src) {
     const char* str = fr_getStrUtf8(env, src);
     std::regex* r = new std::regex(str);
     setRegex(env, self, r);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_Regex_finalize);
 }
+
 fr_Bool std_Regex_matches(fr_Env env, fr_Obj self, fr_Obj s) {
     const char* str = fr_getStrUtf8(env, s);
     std::regex* r = getRegex(env, self);
@@ -38,6 +45,10 @@ fr_Obj std_Regex_matcher(fr_Env env, fr_Obj self, fr_Obj s) {
     fr_Value val;
     val.i = (fr_Int)cm;
     fr_setFieldS(env, matcher, "handle", val);
+    
+    fr_Type type = fr_getObjType(env, matcher);
+    fr_registerDestructor(env, type, std_RegexMatcher_finalize);
+    
     return matcher;
 }
 fr_Obj std_Regex_split(fr_Env env, fr_Obj self, fr_Obj s, fr_Int limit) {

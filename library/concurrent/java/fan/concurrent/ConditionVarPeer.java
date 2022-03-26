@@ -36,5 +36,5 @@ class ConditionVarPeer {
 		lock.unlock();
 	}
 
-	protected void finalize(ConditionVar self) {}
+	//protected void finalize(ConditionVar self) {}
 }

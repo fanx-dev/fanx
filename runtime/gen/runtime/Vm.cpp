@@ -137,12 +137,13 @@ void Vm::walkRoot(Collector *gc) {
 //    }
 //}
 
-extern "C" { void fr_finalizeObj(fr_Env __env, fr_Obj _obj); }
 void Vm::finalizeObj(GcObj *gcobj) {
     fr_Obj obj = fr_fromGcObj(gcobj);
-    //fr_Class type = (fr_Class)gc_getType(gcobj);
+    fr_Type type = (fr_Type)gc_getType(gcobj);
     //printf("release %s %p\n", type->name, obj);
-    fr_finalizeObj(getEnv(), obj);
+    if (type->destructor) {
+        type->destructor(getEnv(), obj);
+    }
 }
 
 void Vm::onStartGc() {

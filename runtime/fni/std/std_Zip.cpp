@@ -79,11 +79,16 @@ static ZipFileHandle *getZipFileHandle(fr_Env env, fr_Obj self) {
     return raw;
 }
 
+void std_Zip_finalize(fr_Env env, fr_Obj self);
+
 static void setZipFileHandle(fr_Env env, fr_Obj self, ZipFileHandle* zh) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle");
     fr_Value val;
     val.i = (fr_Int)zh;
     fr_setInstanceField(env, self, f, &val);
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_Zip_finalize);
 }
 
 static fr_Obj makeZipEntryFile(fr_Env env, zip_info &entry, fr_Obj self) {
@@ -119,6 +124,7 @@ fr_Obj std_Zip_open(fr_Env env, fr_Obj file) {
     zh->zipper = new zip_file(pathStr);
 
     setZipFileHandle(env, self, zh);
+    
     return self;
 }
 fr_Obj std_Zip_read(fr_Env env, fr_Obj in) {

@@ -142,6 +142,9 @@ void fr_deleteGlobalRef(fr_Env env, fr_Obj obj);
  */
 fr_Obj fr_allocObj(fr_Env env, fr_Type type, int size);
 
+typedef void (*fr_Destructor)(fr_Env env, fr_Obj self);
+void fr_registerDestructor(fr_Env, fr_Type type, fr_Destructor funcPtr);
+
 ////////////////////////////
 // Type
 ////////////////////////////

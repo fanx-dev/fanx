@@ -95,6 +95,6 @@ final const native class AtomicInt
   override Str toStr() { val.toStr }
 
 
-  protected native override Void finalize()
+  //protected native override Void finalize()
 
 }

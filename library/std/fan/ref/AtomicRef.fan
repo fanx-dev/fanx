@@ -49,6 +49,6 @@ final const native class AtomicRef<T>
   override Str toStr() { val.toStr }
 
 
-  protected native override Void finalize()
+  //protected native override Void finalize()
 
 }

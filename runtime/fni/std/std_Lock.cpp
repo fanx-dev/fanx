@@ -5,6 +5,8 @@
 #define MUTEX recursive_timed_mutex
 
 static_assert(sizeof(std::MUTEX) <= (sizeof(fr_Int) * 20));
+void std_Lock_finalize(fr_Env env, fr_Obj self);
+
 std::MUTEX* std_Lock_getRaw(fr_Env env, fr_Obj self) {
     static fr_Field f = fr_findField(env, fr_getObjType(env, self), "handle0");
     char* p = (char*)fr_getPtr(env, self);
@@ -16,6 +18,9 @@ std::MUTEX* std_Lock_getRaw(fr_Env env, fr_Obj self) {
 void std_Lock_init(fr_Env env, fr_Obj self) {
     std::MUTEX* m = std_Lock_getRaw(env, self);
     new (m) std::MUTEX();
+    
+    fr_Type type = fr_getObjType(env, self);
+    fr_registerDestructor(env, type, std_Lock_finalize);
     //printf("%p:init\n", m);
 }
 fr_Bool std_Lock_tryLock(fr_Env env, fr_Obj self, fr_Int nanoTime) {

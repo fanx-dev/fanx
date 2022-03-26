@@ -50,5 +50,5 @@ class ThreadPeer {
 		}
 	}
 
-	protected void finalize(Thread self) {}
+	//protected void finalize(Thread self) {}
 }

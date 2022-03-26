@@ -21,10 +21,7 @@ extern  "C" {
 
 //////////////////////////////////////////////////////////
 
-void fr_finalizeObj(fr_Env __env, fr_Obj _obj) {
-    sys_Obj obj = (sys_Obj)_obj;
-    _FR_VTABLE(sys_Obj, obj)->finalize(__env, obj);
-}
+
 fr_Obj fr_arrayNew(fr_Env self, fr_Type elemType, int32_t elemSize, size_t len) {
     if (elemSize <= 0) elemSize = sizeof(void*);
     fr_ValueType vtype = fr_vtObj;

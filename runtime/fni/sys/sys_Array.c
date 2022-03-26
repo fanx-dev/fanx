@@ -146,6 +146,6 @@ void sys_Array_arraycopy(fr_Env env, fr_Obj src, fr_Int srcOffset, fr_Obj dest, 
 
 void sys_Array_finalize(fr_Env env, fr_Obj self) {
 }
-void sys_Array_static__init(fr_Env env) {
-    return;
-}
+//void sys_Array_static__init(fr_Env env) {
+//    return;
+//}
