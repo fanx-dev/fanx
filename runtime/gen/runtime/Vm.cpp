@@ -165,10 +165,10 @@ void Vm::puaseWorld(bool bloking) {
     while (true) {
         bool isAllStoped = true;
         lock.lock();
-        std::thread::id tid = std::this_thread::get_id();
+        std::thread::id curId = std::this_thread::get_id();
         for (auto it = threads.begin(); it != threads.end(); ++it) {
             Env* env = it->second;
-            if (it->first == tid) {
+            if (it->first == curId) {
                 env->stackEnd = (void**)(&bloking);
                 continue;
             }
@@ -180,7 +180,7 @@ void Vm::puaseWorld(bool bloking) {
         }
         lock.unlock();
         if (isAllStoped) return;
-        System_sleep(2);
+        System_sleep(1);
     }
 }
 

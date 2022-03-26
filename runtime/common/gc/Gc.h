@@ -21,7 +21,7 @@
 #include <map>
 #include "Bitmap.hpp"
 #include <thread>
-#include <atomic>
+
 
 #define GC_NO_BITMAP
 
@@ -40,7 +40,6 @@ class Gc : public Collector {
     std::vector<GcObj*> dirtyList;
     
     std::recursive_mutex lock;
-    std::atomic<bool> isStopWorld;
     int marker;
     bool running;
     bool isQuit;
@@ -81,7 +80,6 @@ public:
     
     void gcThreadRun();
     
-    bool isStopTheWorld();
 private:
     void setMarking(bool m);
     void doCollect();

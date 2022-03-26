@@ -9,7 +9,7 @@
 #ifndef gci_h
 #define gci_h
 
-
+#include <atomic>
 
 class Collector;
 
@@ -31,9 +31,10 @@ public:
 
 class Collector {
 public:
+    volatile bool stopWorldState;
     GcSupport *gcSupport;
 public:
-    Collector(GcSupport *support) : gcSupport(support) {}
+    Collector(GcSupport *support) : stopWorldState(false), gcSupport(support) {}
     
     virtual ~Collector() {}
 
@@ -54,7 +55,7 @@ public:
     
     virtual void gcThreadRun() = 0;
     
-    virtual bool isStopTheWorld() = 0;
+    bool isStopTheWorld() { return stopWorldState; }
 };
 
 

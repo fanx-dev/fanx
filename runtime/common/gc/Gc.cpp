@@ -33,7 +33,7 @@ void Gc::gcThreadRun() {
 }
 
 Gc::Gc(GcSupport *support) : Collector(support), allocSize(0)
-    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), isStopWorld(false), enable(true), isQuit(false)
+    , running(false), marker(0), trace(1), gcThread(NULL), isMarking(false), enable(true), isQuit(false)
 {
     lastAllocSize = 29;
     collectLimit = 1000000;
@@ -182,7 +182,7 @@ void Gc::collect() {
 }
 
 void Gc::pauseWorld(bool bloking) {
-    isStopWorld.store(true);
+    stopWorldState = true;
     gcSupport->puaseWorld(bloking);
 //    if (trace) {
 //        printf("puaseWorld\n");
@@ -191,15 +191,12 @@ void Gc::pauseWorld(bool bloking) {
 
 void Gc::resumeWorld() {
     gcSupport->resumeWorld();
-    isStopWorld.store(false);
+    stopWorldState = false;
 //    if (trace) {
 //        printf("resumeWorld\n");
 //    }
 }
 
-bool Gc::isStopTheWorld() {
-    return isStopWorld.load();
-}
 
 void Gc::doCollect() {
     if (!enable) return;
