@@ -337,9 +337,12 @@ abstract class AbstractMain
     services.each |Service s| { s.start }
 
     while (true) {
-      r := Env.cur.in.readLine()
-      //echo("debug $r")
-      if (r == "exit") break
+      try {
+        r := Env.cur.in.readLine()
+        //echo("debug $r")
+        if (r == "exit") break
+      }
+      catch {}
       Actor.sleep(500ms)
     }
     shutdownServices
