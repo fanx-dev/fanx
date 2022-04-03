@@ -3,21 +3,24 @@
 #include <locale>
 
 thread_local fr_Obj curLocale = NULL;
-static fr_Obj defaultLocale = NULL;
+fr_Obj std_Locale_defaultLocale = NULL;
 
-fr_Obj getDefaultLocale(fr_Env env) {
-    if (defaultLocale == NULL) {
-        std::string name = std::locale("").name();
-        fr_Obj c = fr_newObjS(env, "std", "Locale", "make", 2, fr_newStrUtf8(env, name.c_str()), NULL);
-        defaultLocale = fr_newGlobalRef(env, c);
-    }
-    return defaultLocale;
+
+fr_Obj std_Locale_getDefaultLocale(fr_Env env) {
+    std::string name = std::locale("").name();
+    //printf("locale:%s\n", name.c_str());
+    fr_Obj c = fr_newObjS(env, "std", "Locale", "make", 2, fr_newStrUtf8(env, name.c_str()), NULL);
+    return c;
 }
 
 fr_Obj std_Locale_cur(fr_Env env) {
     fr_Obj cur = curLocale;
     if (cur == NULL) {
-        return getDefaultLocale(env);
+        if (std_Locale_defaultLocale == NULL) {
+            fr_Obj c = std_Locale_getDefaultLocale(env);
+            std_Locale_defaultLocale = fr_newGlobalRef(env, c);
+        }
+        return std_Locale_defaultLocale;
     }
     return cur;
 }
