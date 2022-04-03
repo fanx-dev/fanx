@@ -13,6 +13,7 @@ native final rtconst class Param
 {
   private const Str _name
   private const Str _typeName
+  private const Bool _isNullable
   private Type? _type
   private const Int _mask
 
@@ -25,7 +26,15 @@ native final rtconst class Param
   **
   internal new make(Str name, Str typeName, Int mask) {
     _name = name
-    _typeName = typeName
+
+    _isNullable = typeName[typeName.size-1] == '?'
+    if (_isNullable) {
+      _typeName = typeName[0..<-1]
+    }
+    else {
+      _typeName = typeName
+    }
+
     _mask = mask
   }
 
@@ -43,7 +52,8 @@ native final rtconst class Param
   **
   Type type() {
     if (_type == null) {
-      _type = Type.find(_typeName)
+      t := Type.find(_typeName)
+      _type = _isNullable ? t.toNullable : t
     }
     return _type
   }

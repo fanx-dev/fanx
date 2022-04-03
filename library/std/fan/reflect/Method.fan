@@ -13,6 +13,7 @@
 native rtconst class Method : Slot
 {
   private const Str _returnsName
+  private const Bool _isNullable
   private Type? _returns
   private const Int _id
   private Param[] _params := [,]
@@ -28,7 +29,15 @@ native rtconst class Method : Slot
   internal new privateMake(Type parent, Str name, Str? doc, Int flags, 
       Str returnsName, Int id)
     : super.make(parent, name, doc, flags) {
-    _returnsName = returnsName
+
+    _isNullable = returnsName[returnsName.size-1] == '?'
+    if (_isNullable) {
+      _returnsName = returnsName[0..<-1]
+    }
+    else {
+      _returnsName = returnsName
+    }
+
     _id = id
     _func = MethodFunc(this)
   }
@@ -48,7 +57,8 @@ native rtconst class Method : Slot
   **
   Type returns() {
     if (_returns == null) {
-      _returns = Type.find(_returnsName)
+      t := Type.find(_returnsName)
+      _returns = _isNullable ? t.toNullable : t
     }
     return _returns
   }

@@ -65,6 +65,11 @@ namespace FCodeUtil {
             return getTypeRawName(curPod, ttid);
         }
         std::string res = podName + "::" + typeName;
+        
+        std::string &sig = typeRef.extName;
+        if (sig.size() > 0 && sig[sig.size()-1] == '?') {
+            res += "?";
+        }
         return res;
     }
     

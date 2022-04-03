@@ -183,14 +183,13 @@ void TypeGen::genTypeMetadata(Printer *printer) {
         std::string fieldName = type->c_pod->names[field.name];
         std::string fieldIdName = fieldName;
         FCodeUtil::escapeIdentifierName(fieldIdName);
-        
         printer->println("type->fieldList[%d].name = \"%s\";", i, fieldName.c_str());
         std::string typeName = FCodeUtil::getTypeRawName(type->c_pod, field.type);
         printer->println("type->fieldList[%d].type = \"%s\";", i, typeName.c_str());
         printer->println("type->fieldList[%d].flags = %d;", i, field.flags);
     
-        std::string typeNsName = FCodeUtil::getTypeNsName(type->c_pod, field.type);
-        bool isValType = FCodeUtil::isBuildinVal(typeNsName);
+        //std::string typeNsName = FCodeUtil::getTypeNsName(type->c_pod, field.type);
+        bool isValType = FCodeUtil::isValueTypeRef(type->c_pod, field.type);
         printer->println("type->fieldList[%d].isValType = %s;", i, isValType ? "true" : "false");
         
         std::string fieldTypeDeclName = FCodeUtil::getTypeDeclName(type->c_pod, field.type);

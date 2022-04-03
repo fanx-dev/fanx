@@ -14,6 +14,7 @@ native rtconst class Field : Slot
   private const Str _typeName
   private Type? _type
   private const Int _id
+  private const Bool _isNullable
 
   internal Method? getter
   internal Method? setter
@@ -50,7 +51,14 @@ native rtconst class Field : Slot
   **
   internal new privateMake(Type parent, Str name, Str? doc, Int flags, Str typeName, Int id)
     : super.make(parent, name, doc, flags) {
-    _typeName = typeName
+
+    _isNullable = typeName[typeName.size-1] == '?'
+    if (_isNullable) {
+      _typeName = typeName[0..<-1]
+    }
+    else {
+      _typeName = typeName
+    }
     _id = id
   }
 
@@ -63,7 +71,8 @@ native rtconst class Field : Slot
   **
   Type type() {
     if (_type == null) {
-      _type = Type.find(_typeName)
+      t := Type.find(_typeName)
+      _type = _isNullable ? t.toNullable : t
     }
     return _type
   }

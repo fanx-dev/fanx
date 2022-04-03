@@ -17,7 +17,7 @@ fr_Obj std_Field_getDirectly(fr_Env env, fr_Obj self, fr_Obj instance) {
         
         
         fr_ValueType vt;
-        if (isBuildValueType(m->type, &vt)) {
+        if (m->isValType &&isBuildValueType(m->type, &vt)) {
             args[1].h = fr_box(env, args+1, vt);
         }
         return args[1].h;
@@ -27,7 +27,7 @@ fr_Obj std_Field_getDirectly(fr_Env env, fr_Obj self, fr_Obj instance) {
         fr_getStaticField(env, m, &ret);
         
         fr_ValueType vt;
-        if (isBuildValueType(m->type, &vt)) {
+        if (m->isValType &&isBuildValueType(m->type, &vt)) {
             ret.h = fr_box(env, &ret, vt);
         }
         return ret.h;
@@ -43,7 +43,7 @@ void std_Field_setDirectly(fr_Env env, fr_Obj self, fr_Obj instance, fr_Obj valu
     
     fr_Value args;
     
-    if (isBuildValueType(m->type, NULL)) {
+    if (m->isValType && isBuildValueType(m->type, NULL)) {
         fr_unbox(env, value, &args);
     }
     else {
