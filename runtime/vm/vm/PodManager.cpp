@@ -323,7 +323,7 @@ void PodManager::initTypeAllocSize(Env *env, FType *type) {
     
     //call static init
     if (env == nullptr && vm) {
-        env = vm->getEnv();
+        env = vm->getEnv(NULL);
     }
     if (env) {
         auto itr = type->c_methodMap.find("static$init");

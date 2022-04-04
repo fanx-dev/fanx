@@ -40,7 +40,7 @@ public:
     void start();
     void stop();
     
-    Env *getEnv();
+    Env *getEnv(bool *isNew);
     void releaseEnv(Env *env);
     
     void registerMethod(const char *name, fr_NativeFunc func);

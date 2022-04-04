@@ -47,16 +47,18 @@ void Fvm::start() {
 void Fvm::stop() {
 }
 
-Env *Fvm::getEnv() {
+Env *Fvm::getEnv(bool *isNew) {
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     std::thread::id tid = std::this_thread::get_id();
     auto found = threads.find(tid);
     Env *env;
     if (found != threads.end()) {
         env = found->second;
+        if (isNew) *isNew = false;
     } else {
         env = new Env(this);
         threads[tid] = env;
+        if (isNew) *isNew = true;
     }
     return env;
 }
@@ -172,7 +174,7 @@ void Fvm::walkRoot(Collector *gc) {
 
 void Fvm::finalizeObj(GcObj* obj) {
     
-    fr_Env env = fr_getEnv(this);
+    fr_Env env = fr_getEnv(this, NULL);
     FObj *fobj = fr_fromGcObj(obj);
     fr_Obj aobj = &(fobj);
     fr_Type type = fr_getObjType(env, aobj);

@@ -29,7 +29,7 @@ void fr_init(int argc, const char* argv[], const char *homeDir) {
     fr_homeDir = homeDir != NULL ? strdup(homeDir) : "./";
     fr_envPaths[0] = fr_homeDir;
 
-    fr_Env env = fr_getEnv(NULL);
+    fr_Env env = fr_getEnv(NULL, NULL);
     std_init__(env);
 
     int i = 0;
@@ -42,7 +42,7 @@ void fr_init(int argc, const char* argv[], const char *homeDir) {
 int main(int argc, const char* argv[]) {
     fr_init(argc, argv, NULL);
 
-    fr_Env env = fr_getEnv(NULL);
+    fr_Env env = fr_getEnv(NULL, NULL);
     baseTest_init__(env);
 
     baseTest_Main_main(env);

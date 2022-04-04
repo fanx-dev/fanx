@@ -15,10 +15,10 @@
 // VM
 ////////////////////////////
 
-fr_Env fr_getEnv(fr_Fvm vm) {
+fr_Env fr_getEnv(fr_Fvm vm, bool *isNew) {
     Fvm *v = (Fvm*)vm;
     if (vm == NULL) v = Fvm::getCur();
-    return (fr_Env)v->getEnv();
+    return (fr_Env)v->getEnv(isNew);
 }
 
 fr_Fvm fr_getVm() {

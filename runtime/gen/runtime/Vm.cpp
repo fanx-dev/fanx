@@ -24,7 +24,7 @@ void Vm::start() {
 void Vm::stop() {
 }
 
-Env *Vm::getEnv() {
+Env *Vm::getEnv(bool *isNew) {
     std::lock_guard<std::recursive_mutex> lock_guard(lock);
     
     std::thread::id tid = std::this_thread::get_id();
@@ -32,9 +32,11 @@ Env *Vm::getEnv() {
     Env *env;
     if (found != threads.end()) {
         env = found->second;
+        if (isNew) *isNew = false;
     } else {
         env = new Env(this);
         threads[tid] = env;
+        if (isNew) *isNew = true;
     }
     return env;
 }
@@ -142,7 +144,7 @@ void Vm::finalizeObj(GcObj *gcobj) {
     fr_Type type = (fr_Type)gc_getType(gcobj);
     //printf("release %s %p\n", type->name, obj);
     if (type->destructor) {
-        type->destructor(getEnv(), obj);
+        type->destructor(getEnv(NULL), obj);
     }
 }
 

@@ -50,7 +50,7 @@ public:
     void stop();
     
     Collector *getGc() { return gc; }
-    Env *getEnv();
+    Env *getEnv(bool *isNew);
     void releaseEnv(Env *env);
     void addStaticRef(fr_Obj *obj);
     

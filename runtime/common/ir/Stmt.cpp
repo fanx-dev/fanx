@@ -136,8 +136,8 @@ void escapeStr(const std::string &from, std::string &str) {
                 miss = true;
         }
         if (miss) {
-            if (ch < ' ' || ch > 126) {
-                snprintf(buf, 64, "\\x%02x", ch);
+            if (ch < ' ') {
+                snprintf(buf, 64, "\\x%02x\" \"", ch);
                 str += buf;
             }
             else {

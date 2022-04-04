@@ -38,7 +38,7 @@ typedef void *fr_Fvm;
 // VM
 ////////////////////////////
 
-fr_Env fr_getEnv(fr_Fvm vm);
+fr_Env fr_getEnv(fr_Fvm vm, bool *isNew);
 void fr_releaseEnv(fr_Env env);
 
 ////////////////////////////

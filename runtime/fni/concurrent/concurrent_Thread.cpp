@@ -21,7 +21,7 @@ static void concurrent_Thread_setRaw(fr_Env env, fr_Obj self, std::thread* r) {
 }
 
 static void thread_run(fr_Obj self) {
-    fr_Env env = fr_getEnv(NULL);
+    fr_Env env = fr_getEnv(NULL, NULL);
     static fr_Method f = fr_findMethod(env, fr_getObjType(env, self), "run");
     fr_callMethod(env, f, 1, self);
     fr_releaseEnv(env);

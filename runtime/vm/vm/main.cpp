@@ -148,7 +148,7 @@ int main(int argc, const char * argv[]) {
     podMgr->podLoader.setEnvPath(fr_envPaths);
 
     Fvm *vm = new Fvm(podMgr);
-    Env *env = vm->getEnv();
+    Env *env = vm->getEnv(NULL);
     
     sys_register(vm);
     std_register(vm);

@@ -14,13 +14,13 @@
 Vm *fvm = nullptr;
 
 ATTRIBUTE_NO_SANITIZE_ADDRESS
-fr_Env fr_getEnv(fr_Fvm vm) {
-    char buf[1024];
+fr_Env fr_getEnv(fr_Fvm vm, bool *isNew) {
+    //char buf[1024];
     if (vm == nullptr) {
         vm = fr_getVm();
     }
     Vm* fvm = (Vm*)vm;
-    Env *env = fvm->getEnv();
+    Env *env = fvm->getEnv(isNew);
     if (env->stackStart == NULL) {
         env->stackStart = (void**)&vm;
     }
