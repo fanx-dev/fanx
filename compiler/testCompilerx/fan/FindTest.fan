@@ -132,6 +132,24 @@ class FindTest : Test
     node := findAt(code, 73)
     verifyType(node, CallExpr#)
   }
+
+  Void test9() {
+    code := 
+    Str<|
+          class Main
+          {
+            **
+            ** Main method
+            **
+            static Void main()
+            {
+              App().show
+            }
+          }
+          |>
+    node := findAt(code, 79)
+    verifyType(node, CallExpr#)
+  }
   
   private CNode findAt(Str code, Int pos) {
     pod := PodDef(Loc.makeUnknow, "testPod")

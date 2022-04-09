@@ -396,6 +396,7 @@ class CallResolver
     if (call == null)
     {
       call = CallExpr(loc)
+      call.len = expr.len
       call.name   = name
       call.args   = args
     }
