@@ -14,6 +14,8 @@
 @JsNative
 rtconst class Env
 {
+  @NoDoc
+  |Uri->File?|? fileResolver
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
@@ -215,6 +217,11 @@ rtconst class Env
   virtual File? findFile(Uri uri, Bool checked := true) {
     if (uri.isPathAbs())
       throw ArgErr.make("Uri must be relative: " + uri);
+
+    if (fileResolver != null) {
+      f := fileResolver.call(uri)
+      if (f != null) return f
+    }
 
     ps := envPaths
     for (i:=0; i<ps.size; ++i) {

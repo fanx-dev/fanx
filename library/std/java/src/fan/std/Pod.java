@@ -208,6 +208,11 @@ public class Pod extends FanObj {
 	}
 
 	public final fan.std.File file(Uri uri, boolean checked) {
+
+		String path = uri.pathStr();
+    fan.std.File found = Env.cur().findFile(Uri.fromStr("res/"+this.name()+path), false);
+    if (found != null) return found;
+
 		loadFiles();
 		if (!uri.isPathAbs())
 			throw ArgErr.make("Pod.files Uri must be path abs: " + uri);

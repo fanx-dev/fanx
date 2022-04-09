@@ -92,35 +92,59 @@ public class FanUtil {
    * Return if the specified Java class represents an immutable type.
    */
   public static boolean isJavaImmutable(Class cls) {
-    return javaImmutables.get(cls.getName()) != null;
+    return javaImmutables.get(cls) != null;
   }
 
   // map all the basic types in the JDK which are immutable
-  private static HashMap<String, Boolean> javaImmutables = new HashMap<String, Boolean>();
+  private static HashMap<Class, Boolean> javaImmutables = new HashMap<Class, Boolean>();
+  //private static HashMap<String, Boolean> javaImmutables = new HashMap<String, Boolean>();
   static {
     // java.lang
-    javaImmutables.put("java.lang.Boolean", Boolean.TRUE);
-    javaImmutables.put("java.lang.Byte", Boolean.TRUE);
-    javaImmutables.put("java.lang.Character", Boolean.TRUE);
-    javaImmutables.put("java.lang.Class", Boolean.TRUE);
-    javaImmutables.put("java.lang.Double", Boolean.TRUE);
-    javaImmutables.put("java.lang.Float", Boolean.TRUE);
-    javaImmutables.put("java.lang.Integer", Boolean.TRUE);
-    javaImmutables.put("java.lang.Long", Boolean.TRUE);
-    javaImmutables.put("java.lang.Package", Boolean.TRUE);
-    javaImmutables.put("java.lang.Short", Boolean.TRUE);
-    javaImmutables.put("java.lang.String", Boolean.TRUE);
-    // java.lang.reflect
-    javaImmutables.put("java.lang.reflect.Constructor", Boolean.TRUE);
-    javaImmutables.put("java.lang.reflect.Field", Boolean.TRUE);
-    javaImmutables.put("java.lang.reflect.Method", Boolean.TRUE);
-    // java.math
-    javaImmutables.put("java.math.BigDecimal", Boolean.TRUE);
-    javaImmutables.put("java.math.BigInteger", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Boolean", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Byte", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Character", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Class", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Double", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Float", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Integer", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Long", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Package", Boolean.TRUE);
+    // javaImmutables.put("java.lang.Short", Boolean.TRUE);
+    // javaImmutables.put("java.lang.String", Boolean.TRUE);
+    // // java.lang.reflect
+    // javaImmutables.put("java.lang.reflect.Constructor", Boolean.TRUE);
+    // javaImmutables.put("java.lang.reflect.Field", Boolean.TRUE);
+    // javaImmutables.put("java.lang.reflect.Method", Boolean.TRUE);
+    // // java.math
+    // javaImmutables.put("java.math.BigDecimal", Boolean.TRUE);
+    // javaImmutables.put("java.math.BigInteger", Boolean.TRUE);
 
-    javaImmutables.put("fanx.main.ClassType", Boolean.TRUE);
-    javaImmutables.put("fanx.main.JavaType", Boolean.TRUE);
-    javaImmutables.put("fanx.main.Type", Boolean.TRUE);
+    // javaImmutables.put("fanx.main.ClassType", Boolean.TRUE);
+    // javaImmutables.put("fanx.main.JavaType", Boolean.TRUE);
+    // javaImmutables.put("fanx.main.Type", Boolean.TRUE);
+
+    javaImmutables.put(java.lang.Boolean.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Byte.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Character.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Class.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Double.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Float.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Integer.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Long.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Package.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.Short.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.String.class, Boolean.TRUE);
+    // java.lang.reflect
+    javaImmutables.put(java.lang.reflect.Constructor.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.reflect.Field.class, Boolean.TRUE);
+    javaImmutables.put(java.lang.reflect.Method.class, Boolean.TRUE);
+    // java.math
+    javaImmutables.put(java.math.BigDecimal.class, Boolean.TRUE);
+    javaImmutables.put(java.math.BigInteger.class, Boolean.TRUE);
+
+    javaImmutables.put(fanx.main.ClassType.class, Boolean.TRUE);
+    javaImmutables.put(fanx.main.JavaType.class, Boolean.TRUE);
+    javaImmutables.put(fanx.main.Type.class, Boolean.TRUE);
   }
 
   /**

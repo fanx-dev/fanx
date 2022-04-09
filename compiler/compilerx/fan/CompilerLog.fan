@@ -50,7 +50,7 @@ class CompilerLog {
   OutStream out
   
   ** Max severity of log entries to report
-  LogLevel level := LogLevel.info
+  LogLevel level
   
   Bool suppressErr := false    // throw SuppressedErr instead of CompilerErr
   
@@ -59,6 +59,7 @@ class CompilerLog {
     this.errs       = CompilerErr[,]
     this.warns      = CompilerErr[,]
     this.out = out
+    this.level = Log.get(CompilerLog#.pod.name).level
   }
 
   Void clearByFile(Str file) {

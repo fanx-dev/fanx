@@ -260,18 +260,21 @@ native final rtconst class Pod
   **   `fan://icons/x16/cut.png`.get
   **
   File? file(Uri uri, Bool checked := true) {
-    if (_file == null) {
-      path := uri.pathStr
-      return Env.cur.findFile(`res/$name/$path`, checked)
+    path := uri.pathStr
+    found := Env.cur.findFile(`res/$name/$path`, false)
+    if (found != null) return found
+
+    if (_file != null) {
+      found = _file.contents("fcode")[uri]
+      if (found.ext == "fcode" || found.ext == "class") {
+        found = null
+      }
     }
-    f := _file.contents("fcode")[uri]
-    if (f.ext == "fcode" || f.ext == "class") {
-      f = null
-    }
-    if (checked && f == null) {
+
+    if (checked && found == null) {
       throw UnresolvedErr("$name, $uri")
     }
-    return f
+    return found
   }
 
 //////////////////////////////////////////////////////////////////////////

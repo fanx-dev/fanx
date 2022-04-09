@@ -164,8 +164,19 @@ class IncCompiler {
   }
   
   This run() {
+    t0 := TimePoint.nowMillis
     parseAll
-    pipelines.each |pass| { pass.run }
+    t1 := TimePoint.nowMillis
+
+    context.log.debug("parse: ${t1-t0}")
+
+    t2 := TimePoint.nowMillis
+    pipelines.each |pass| {
+      pass.run
+      t3 := TimePoint.nowMillis
+      context.log.debug("pass ${pass.typeof}: ${t3-t2}")
+      t2 = t3
+    }
     return this
   }
 
