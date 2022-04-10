@@ -807,8 +807,8 @@ class UriTest : Test
   {
     x := a + b
     verifyUriEq(x, r)
-    verify(x.path.isRO)
-    verify(x.query.isRO)
+    verify(x.path.isImmutable)
+    verify(x.query.isImmutable)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -922,7 +922,7 @@ class UriTest : Test
     }
     r := (expectedBase + queryStr).toUri
 
-    verify(a.query.isRO)
+    verify(a.query.isImmutable)
     if (q.isEmpty)
     {
       verifySame(a, r)
@@ -1236,9 +1236,9 @@ class UriTest : Test
     verifyEq(a.frag,      b.frag)
     verifyEq(a.isPathAbs, b.isPathAbs)
     verifyEq(a.toStr,     b.toStr)
-    verify(a.path.isRO);   verify(b.path.isRO)
-    verify(a.query.isRO)
-    verify(b.query.isRO)
+    verify(a.path.isImmutable);   verify(b.path.isRO)
+    verify(a.query.isImmutable)
+    verify(b.query.isImmutable)
 
     if (roundtrip)
     {

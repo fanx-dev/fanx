@@ -345,7 +345,7 @@ const final class Uri
     this._host = host
     this._port = port
     this._pathStr = pathStr
-    this._query = query ?: Map.defVal
+    this._query = (query ?: Map.defVal).toImmutable
     this._frag = frag
     this.str = partsToStr(scheme, userInfo, host, port, pathStr, query, frag, false)
   }

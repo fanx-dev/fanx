@@ -785,7 +785,7 @@ native const final class Str
   **   Str.spaces(2)  =>  "  "
   **
   static Str spaces(Int n) {
-    if (n < 20) return spacesCache[n]
+    if (n < spacesCache.size) return spacesCache[n]
 
     sb := StrBuf()
     for (i:=0; i<n; ++i) {
