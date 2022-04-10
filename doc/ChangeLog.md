@@ -1,5 +1,27 @@
 ## ChangeLog
 
+### Build 4.2 (2022-04-10)
+- add Env.fileResolver
+- remove finalize
+- optimze Gc
+- fix funServices
+- fix CallExpr.len for IDE
+- reflect nullable type
+- Uri.query immutable
+- add Cache.containsKey
+- C: fix Str.toByteIndex Str.getRange
+- C: fix getInterfaceVTable
+- C: auto detach thread
+- C: fix SysInStream.readBytes
+- C: fix Float.toLocale
+- C: fix MemBuf.pipFrom
+- C: fix DateTime.fromTicks
+- C: fix str literal
+- JS: fix Lock
+- JS: fix unchecked Sys.findType
+- JS: add Pod.config, Pod.props
+
+
 ### Build 4.1.4 (2021-12-11)
 - fix local var scpe start
 - fix Type toImmutable
