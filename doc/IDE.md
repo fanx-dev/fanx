@@ -1,5 +1,11 @@
 
 
+
+## IDEs
+
+Sublime Text and Netbeans plugin are bundled with Fanx in the 'tools' folder.
+
+
 ### Netbeans Plugin
 
 * [FanIDE](https://github.com/fanx-dev/fanIDE)

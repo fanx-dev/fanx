@@ -17,3 +17,4 @@ env/bin/macos-arm64
 runtime/fni/vaseWindow/
 runtime/fni
 env/res
+env/tools
