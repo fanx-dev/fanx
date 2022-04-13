@@ -21,8 +21,7 @@ fr_Int sys_Int_fromStr(fr_Env env, fr_Obj s, fr_Int radix, fr_Bool checked) {
     }
     return val;
 }
-fr_Int sys_Int_random(fr_Env env, fr_Obj r) {
-    //TODO
+fr_Int sys_Int_randomNext(fr_Env env) {
     return rand();
 }
 void sys_Int_privateMake_val(fr_Env env, fr_Int self) {

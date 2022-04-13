@@ -36,7 +36,18 @@ native const struct class Int : Num
   **   r := Int.random
   **   r := Int.random(0..100)
   **
-  static Int random(Range? r := null)
+  static Int random(Range? r := null) {
+    v := randomNext();
+    if (r == null) return v;
+    if (v < 0) v = -v;
+    Int start = r.start();
+    Int end   = r.end();
+    if (r.inclusive()) ++end;
+    if (end <= start) throw ArgErr.make("Range end < start: " + r);
+    return start + (v % (end-start));
+  }
+
+  private static Int randomNext()
 
   **
   ** Private constructor.
