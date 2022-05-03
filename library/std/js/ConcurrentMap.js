@@ -44,7 +44,12 @@ fan.std.ConcurrentMap.prototype.set = function(key, val)
 {
   this.m_map.set(key, this.$checkImmutable(val));
 }
-
+fan.std.ConcurrentMap.prototype.getAndSet = function(key, val)
+{
+  var old = this.m_map.get(key);
+  this.m_map.set(key, this.$checkImmutable(val));
+  return old;
+}
 fan.std.ConcurrentMap.prototype.add = function(key, val)
 {
   if (this.containsKey(key)) throw fan.sys.Err("Key already mapped: " + key);

@@ -43,6 +43,10 @@ virtual class LinkedList {
     prev := e.previous
     next := e.next
 
+    if (prev == null && next == null && e != head) {
+      return
+    }
+
     if (prev != null) {
       prev.next = next
       e.previous = null

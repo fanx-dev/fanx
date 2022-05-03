@@ -7,7 +7,6 @@
 
 internal class CacheItem : LinkedElem {
   Obj? key
-  Int cacheCount := 0
 
   new make() : super() {}
 }
@@ -19,13 +18,11 @@ class Cache {
   private [Obj:CacheItem] map := [Obj:CacheItem][:]
   private LinkedList list := LinkedList()
 
-  private Int max
+  Int maxSize
   |Obj|? onRemoveItem
   |Obj->Bool|? canRemoveItem
 
-  private Int maxCount := 4
-
-  new make(Int size) { max = size }
+  new make(Int size) { maxSize = size }
 
   internal CacheItem? getItem(Obj key) {
     item := map[key]
@@ -35,6 +32,8 @@ class Cache {
     }
     return null
   }
+
+  Int size() { list.size }
 
   Void each(|Obj| f) {
     item := list.first
@@ -60,39 +59,28 @@ class Cache {
   }
 
   private Void update(CacheItem item) {
-    if (item.previous != null) {
-      if (item.cacheCount < maxCount) {
-        item.cacheCount++
-      }
-      list.remove(item)
-    }
-
+    list.remove(item)
     list.insertBefore(item)
   }
 
   private CacheItem? clean() {
-    if (map.size <= max) return null
+    if (map.size <= maxSize) return null
     item := list.last
     while (item != null) {
       pre := item.previous
       CacheItem citem := item
-      if (citem.cacheCount > 0) {
-        citem.cacheCount = citem.cacheCount - 1
-        list.remove(item)
-        list.insertBefore(item)
-      } else {
-        canRemove := true
-        if (canRemoveItem != null && item.val != null) {
-          canRemove = canRemoveItem(item.val)
-        }
-        if (canRemove) {
-          map.remove(citem.key)
-          list.remove(item)
-          onReomove(item)
-          citem.cacheCount = 0
-          return item
-        }
+
+      canRemove := true
+      if (canRemoveItem != null && item.val != null) {
+        canRemove = canRemoveItem(item.val)
       }
+      if (canRemove) {
+        map.remove(citem.key)
+        list.remove(item)
+        onReomove(item)
+        return item
+      }
+
       item = pre
     }
     return null
@@ -112,17 +100,21 @@ class Cache {
 
   Void set(Obj key, Obj? val) {
     item := map[key]
-    if (item == null) {
-      item = clean()
-      if (item == null) {
-        item = newItem
-      }
+    if (item != null) {
+      item.val = val
+      item.key = key
+      update(item)
+      return
     }
 
+    item = clean()
+    if (item == null) {
+      item = newItem
+    }
     item.val = val
     item.key = key
 
-    update(item)
+    list.insertBefore(item)
     map[key] = item
   }
 

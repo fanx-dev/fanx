@@ -52,6 +52,17 @@ native const final class ConcurrentMap<K,V>
     lock.unlock
   }
 
+  ** Set a value by key and return old value.  Return the old value
+  ** mapped by the key or null if it is not currently mapped.
+  Obj? getAndSet(Obj key, Obj val) {
+    res := null
+    lock.lock
+    res = map.get(key)
+    map.set(key, val)
+    lock.unlock
+    return res
+  }
+
   ** Add a value by key, raise exception if key was already mapped
   Void add(K key, V val) {
     lock.lock
