@@ -235,3 +235,8 @@ fan.sys.ObjUtil.echo = function(obj)
   }
 }
 
+fan.sys.ObjUtil.assert = function(condition, msg)
+{
+  if (msg === undefined) msg = "";
+  if (!condition) throw AssertErr.make(msg);
+}
