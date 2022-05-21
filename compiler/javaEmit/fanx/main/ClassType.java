@@ -116,7 +116,7 @@ public class ClassType extends Type
 	}
 	
 	@Override
-	public Type[] mixins() {
+	public synchronized Type[] mixins() {
 		if (mixins != null) return mixins;
 		Type[] ms = new Type[ftype.mixins.length];
 		for (int i=0; i<ftype.mixins.length; ++i) {

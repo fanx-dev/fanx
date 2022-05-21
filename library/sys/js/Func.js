@@ -23,9 +23,9 @@ fan.sys.Func.prototype.$ctor = function()
 fan.sys.Func.make$closure = function(spec, func)
 {
   var self = new fan.sys.Func();
-  self.m_params = spec.m_params;
-  self.m_return = spec.m_type.ret;
-  self.m_type   = spec.m_type;
+  // self.m_params = spec.m_params;
+  // self.m_return = spec.m_type.ret;
+  // self.m_type   = spec.m_type;
   self.m_func   = func;
   return self;
 }
@@ -43,9 +43,9 @@ fan.sys.Func.make$ = function(self, params, ret, func)
   // for (var i=0; i<params.size(); i++)
   //   types.push(params.get(i).m_type);
 
-  self.m_params = params;
-  self.m_return = ret;
-  self.m_type   = fan.sys.Sys.find("sys", "Func", true);
+  // self.m_params = params;
+  // self.m_return = ret;
+  // self.m_type   = fan.sys.Sys.find("sys", "Func", true);
   self.m_func   = func;
 }
 

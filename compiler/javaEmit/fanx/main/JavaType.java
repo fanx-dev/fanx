@@ -129,7 +129,7 @@ public class JavaType extends Type {
 	 * Init is responsible for lazily initialization of type level information:
 	 * flags, base, mixins, and iinheritance.
 	 */
-	private JavaType init() {
+	private synchronized JavaType init() {
 		if (flags != -1)
 			return this;
 		try {

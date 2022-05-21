@@ -366,44 +366,46 @@ public class FanType {
 	}
 	
 	private static java.util.Map<Type, Object> getFacets(Type self) {
-		if (self instanceof NullableType) {
-			return getFacets(((NullableType)self).root);
-		}
-		if (self instanceof ParameterizedType) {
-			return getFacets(((ParameterizedType)self).root);
-		}
-		
-		if (self.factesMap == null) {
-			java.util.Map<Type, Object> map = new java.util.HashMap<Type, Object>();
+		synchronized(self) {
+			if (self instanceof NullableType) {
+				return getFacets(((NullableType)self).root);
+			}
+			if (self instanceof ParameterizedType) {
+				return getFacets(((ParameterizedType)self).root);
+			}
 			
-			FType ftype = self.ftype();
-			if (ftype != null) {
-				if (ftype.attrs == null) {
-					ftype.load();
-				}
-				if (ftype.attrs.facets != null) {
-					for (FFacet facet : ftype.attrs.facets) {
-						Facet f = tryDecodeFacet(facet, ftype.pod);
-						if (f != null) {
-							map.put(FanType.of(f), f);
+			if (self.factesMap == null) {
+				java.util.Map<Type, Object> map = new java.util.HashMap<Type, Object>();
+				
+				FType ftype = self.ftype();
+				if (ftype != null) {
+					if (ftype.attrs == null) {
+						ftype.load();
+					}
+					if (ftype.attrs.facets != null) {
+						for (FFacet facet : ftype.attrs.facets) {
+							Facet f = tryDecodeFacet(facet, ftype.pod);
+							if (f != null) {
+								map.put(FanType.of(f), f);
+							}
 						}
 					}
 				}
+				
+				// get inheritance slots
+				if (!self.isObj() && !FanType.isMixin(self)) {
+					mergeFacets(self.base(), map);
+				}
+				List mixins = FanType.mixins(self);
+				for (int i = 0; i < mixins.size(); ++i) {
+					Type t = (Type) mixins.get(i);
+					mergeFacets(t, map);
+				}
+				
+				self.factesMap = map;
 			}
-			
-			// get inheritance slots
-			if (!self.isObj() && !FanType.isMixin(self)) {
-				mergeFacets(self.base(), map);
-			}
-			List mixins = FanType.mixins(self);
-			for (int i = 0; i < mixins.size(); ++i) {
-				Type t = (Type) mixins.get(i);
-				mergeFacets(t, map);
-			}
-			
-			self.factesMap = map;
+			return self.factesMap;
 		}
-		return self.factesMap;
 	}
 
 	private static void mergeFacets(Type self, java.util.Map<Type, Object> map) {
@@ -603,145 +605,147 @@ public class FanType {
 	}
 
 	private static java.util.Map<String, Object> getSlots(Type type) {
-		if (type instanceof NullableType) {
-			return getSlots(((NullableType)type).root);
-		}
-		if (type instanceof ParameterizedType) {
-			return getSlots(((ParameterizedType)type).root);
-		}
-		
-		if (type.slots != null)
-			return type.slots;
-		java.util.Map<String, Object> slots = new java.util.LinkedHashMap<String, Object>();
+		synchronized(type) {
+			if (type instanceof NullableType) {
+				return getSlots(((NullableType)type).root);
+			}
+			if (type instanceof ParameterizedType) {
+				return getSlots(((ParameterizedType)type).root);
+			}
+			
+			if (type.slots != null)
+				return type.slots;
+			java.util.Map<String, Object> slots = new java.util.LinkedHashMap<String, Object>();
 
-		// get inheritance slots
-		if (!type.isObj() && !FanType.isMixin(type)) {
-			mergeSlots(slots, type.base());
-		}
-		List mixins = FanType.mixins(type);
-		for (int i = 0; i < mixins.size(); ++i) {
-			Type t = (Type) mixins.get(i);
-			mergeSlots(slots, t);
-		}
-
-		// get self type slots
-		FType ftype = type.ftype();
-		if (ftype != null) {
-			ftype.load();
-			for (FField f : ftype.fields) {
-				if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
-					continue;
-				}
-				slots.put(f.name, Field.fromFCode(f, type));
+			// get inheritance slots
+			if (!type.isObj() && !FanType.isMixin(type)) {
+				mergeSlots(slots, type.base());
+			}
+			List mixins = FanType.mixins(type);
+			for (int i = 0; i < mixins.size(); ++i) {
+				Type t = (Type) mixins.get(i);
+				mergeSlots(slots, t);
 			}
 
-			for (FMethod f : ftype.methods) {
-				if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
-					continue;
+			// get self type slots
+			FType ftype = type.ftype();
+			if (ftype != null) {
+				ftype.load();
+				for (FField f : ftype.fields) {
+					if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
+						continue;
+					}
+					slots.put(f.name, Field.fromFCode(f, type));
+				}
+
+				for (FMethod f : ftype.methods) {
+					if (ftype.isNative() && (f.flags & FConst.Private) != 0) {
+						continue;
+					}
+					
+					if ((f.flags & FConst.Getter) != 0) {
+						Field field = (Field) slots.get(f.name);
+						field.getter = Method.fromFCode(f, type);
+						continue;
+					}
+					if ((f.flags & FConst.Setter) != 0) {
+						Field field = (Field) slots.get(f.name);
+						field.setter = Method.fromFCode(f, type);
+						continue;
+					}
+					if ((f.flags & FConst.Overload) != 0) {
+						continue;
+					}
+
+					slots.put(f.name, Method.fromFCode(f, type));
+				}
+			
+				// link java reflect
+				Class<?> jclz = type.getJavaImplClass();
+				Class<?> aclz = type.getJavaActualClass();
+				boolean specialImpl = jclz != aclz;
+				
+				java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
+				for (java.lang.reflect.Method jmth : jmths) {
+					linkMethod(type, slots, specialImpl, jmth, false);
 				}
 				
-				if ((f.flags & FConst.Getter) != 0) {
-					Field field = (Field) slots.get(f.name);
-					field.getter = Method.fromFCode(f, type);
-					continue;
-				}
-				if ((f.flags & FConst.Setter) != 0) {
-					Field field = (Field) slots.get(f.name);
-					field.setter = Method.fromFCode(f, type);
-					continue;
-				}
-				if ((f.flags & FConst.Overload) != 0) {
-					continue;
-				}
-
-				slots.put(f.name, Method.fromFCode(f, type));
-			}
-		
-			// link java reflect
-			Class<?> jclz = type.getJavaImplClass();
-			Class<?> aclz = type.getJavaActualClass();
-			boolean specialImpl = jclz != aclz;
-			
-			java.lang.reflect.Method[] jmths = jclz.getDeclaredMethods();
-			for (java.lang.reflect.Method jmth : jmths) {
-				linkMethod(type, slots, specialImpl, jmth, false);
-			}
-			
-			//bind mixin imple
-			if (jclz.isInterface()) {
-				try {
-					Class<?> clz = Class.forName(jclz.getName()+"$");
-					java.lang.reflect.Method[] jmths2 = clz.getDeclaredMethods();
-					for (java.lang.reflect.Method jmth : jmths2) {
-						linkMethod(type, slots, true, jmth, true);
+				//bind mixin imple
+				if (jclz.isInterface()) {
+					try {
+						Class<?> clz = Class.forName(jclz.getName()+"$");
+						java.lang.reflect.Method[] jmths2 = clz.getDeclaredMethods();
+						for (java.lang.reflect.Method jmth : jmths2) {
+							linkMethod(type, slots, true, jmth, true);
+						}
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
 					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
 				}
 			}
-		}
-		else {
-			// reflect Java members
-		    java.lang.reflect.Field[] jfields = type.getJavaActualClass().getDeclaredFields();
-		    java.lang.reflect.Method[] jmethods = type.getJavaActualClass().getDeclaredMethods();
-		    
-		    // map the fields
-		    for (int i=0; i<jfields.length; ++i)
-		    {
-		      if ((jfields[i].getModifiers() & Modifier.PRIVATE) != 0) continue;
-		      Field f = Field.fromJava(jfields[i]);
-		      slots.put(f.name, f);
-		    }
-		    
-		    // map the methods
-		    for (int i=0; i<jmethods.length; ++i)
-		    {
-		      // check if we already have a slot by this name
-		      java.lang.reflect.Method j = jmethods[i];
-		      if ((j.getModifiers() & Modifier.PRIVATE) != 0) continue;
-		      
-		      try {
-			    	j.setAccessible(true);
-			    } catch (Throwable e) {
+			else {
+				// reflect Java members
+			    java.lang.reflect.Field[] jfields = type.getJavaActualClass().getDeclaredFields();
+			    java.lang.reflect.Method[] jmethods = type.getJavaActualClass().getDeclaredMethods();
+			    
+			    // map the fields
+			    for (int i=0; i<jfields.length; ++i)
+			    {
+			      if ((jfields[i].getModifiers() & Modifier.PRIVATE) != 0) continue;
+			      Field f = Field.fromJava(jfields[i]);
+			      slots.put(f.name, f);
 			    }
-		      Method m = Method.fromJava(j);
-		      
-		      Slot existing = (Slot)slots.get(j.getName());
+			    
+			    // map the methods
+			    for (int i=0; i<jmethods.length; ++i)
+			    {
+			      // check if we already have a slot by this name
+			      java.lang.reflect.Method j = jmethods[i];
+			      if ((j.getModifiers() & Modifier.PRIVATE) != 0) continue;
+			      
+			      try {
+				    	j.setAccessible(true);
+				    } catch (Throwable e) {
+				    }
+			      Method m = Method.fromJava(j);
+			      
+			      Slot existing = (Slot)slots.get(j.getName());
 
-		      // if this method overloads a field
-		      if (existing instanceof Field)
-		      {
-		        // if this is the first method overload over
-		        // the field then create a link via Field.overload
-		        Field x = (Field)existing;
-		        if (x.overload == null)
-		        {
-		          x.overload = m;
-		          continue;
-		        }
+			      // if this method overloads a field
+			      if (existing instanceof Field)
+			      {
+			        // if this is the first method overload over
+			        // the field then create a link via Field.overload
+			        Field x = (Field)existing;
+			        if (x.overload == null)
+			        {
+			          x.overload = m;
+			          continue;
+			        }
 
-		        // otherwise set existing to first method and fall-thru to next check
-		        existing = x.overload;
-		      }
+			        // otherwise set existing to first method and fall-thru to next check
+			        existing = x.overload;
+			      }
 
-		      // if this method overloads another method then all
-		      // we do is add this version to our Method.reflect
-		      if (existing instanceof Method)
-		      {
-		        Method x = (Method)existing;
-		        java.lang.reflect.Method [] temp = new java.lang.reflect.Method[x.reflect.length+1];
-		        System.arraycopy(x.reflect, 0, temp, 0, x.reflect.length);
-		        temp[x.reflect.length] = j;
-		        x.reflect = temp;
-		        continue;
-		      }
-		      
-		      slots.put(m.name, m);
-		    }
+			      // if this method overloads another method then all
+			      // we do is add this version to our Method.reflect
+			      if (existing instanceof Method)
+			      {
+			        Method x = (Method)existing;
+			        java.lang.reflect.Method [] temp = new java.lang.reflect.Method[x.reflect.length+1];
+			        System.arraycopy(x.reflect, 0, temp, 0, x.reflect.length);
+			        temp[x.reflect.length] = j;
+			        x.reflect = temp;
+			        continue;
+			      }
+			      
+			      slots.put(m.name, m);
+			    }
+			}
+
+			type.slots = slots;
+			return type.slots;
 		}
-
-		type.slots = slots;
-		return type.slots;
 	}
 
 	private static void linkMethod(Type type, java.util.Map<String, Object> slots, boolean specialImpl,
