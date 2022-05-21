@@ -122,7 +122,7 @@ fan.std.Method.prototype.callList = function(args)
   if (!this.isCtor() && !this.isStatic())
   {
     instance = args.get(0);
-    args = args.getRange(new fan.sys.Range(1, -1));
+    args = args.getRange(new fan.sys.Range.make(1, -1));
   }
   return this.invoke(instance, args);
 }
@@ -176,22 +176,22 @@ fan.std.MethodFunc.prototype.params = function()
 fan.std.MethodFunc.prototype.method = function() { return this.m_method; }
 fan.std.MethodFunc.prototype.isImmutable = function() { return true; }
 
-fan.std.MethodFunc.prototype.$typeof = function()
-{
-  // lazy load type and params
-  if (this.m_type == null)
-  {
-    this.m_type = fan.Sys.find("sys", "Func", true);
-    /*
-    var params = this.params();
-    var types = [];
-    for (var i=0; i<params.size(); i++)
-      types.push(params.get(i).m_type);
-    this.m_type = new fan.sys.FuncType(types, this.m_returns);
-    */
-  }
-  return this.m_type;
-}
+// fan.std.MethodFunc.prototype.$typeof = function()
+// {
+//   // lazy load type and params
+//   if (this.m_type == null)
+//   {
+//     this.m_type = fan.Sys.find("sys", "Func", true);
+    
+//     var params = this.params();
+//     var types = [];
+//     for (var i=0; i<params.size(); i++)
+//       types.push(params.get(i).m_type);
+//     this.m_type = new fan.sys.FuncType(types, this.m_returns);
+    
+//   }
+//   return this.m_type;
+// }
 
 fan.std.MethodFunc.prototype.call = function()
 {

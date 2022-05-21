@@ -39,9 +39,9 @@ fan.sys.Func.make = function(params, ret, func)
 
 fan.sys.Func.make$ = function(self, params, ret, func)
 {
-  var types = [];
-  for (var i=0; i<params.size(); i++)
-    types.push(params.get(i).m_type);
+  // var types = [];
+  // for (var i=0; i<params.size(); i++)
+  //   types.push(params.get(i).m_type);
 
   self.m_params = params;
   self.m_return = ret;
@@ -53,7 +53,7 @@ fan.sys.Func.make$ = function(self, params, ret, func)
 // Identity
 //////////////////////////////////////////////////////////////////////////
 
-fan.sys.Func.prototype.$typeof = function() { return this.m_type; }
+fan.sys.Func.prototype.$typeof = function() { return fan.sys.Func.$type; }
 
 fan.sys.Func.prototype.isImmutable = function()
 {
@@ -101,6 +101,22 @@ fan.sys.Func.prototype.retype = function(t)
 }
 */
 
+fan.sys.Func.prototype.bind = function(args) {
+  if (args.size() == 0) return this;
+  return fan.sys.BindFunc.make(this, args);
+}
+
+fan.sys.BindFuncPeer = function() {};
+fan.sys.BindFuncPeer.call = function(self) {
+  var args = fan.sys.List.make(8);
+  for(var i=1; i<arguments.length; i++) {
+    var a = arguments[i];
+    args.add(a);
+  }
+  return self.callList(args);
+}
+
+
 /*************************************************************************
  * ClosureFuncSpec
  ************************************************************************/
@@ -127,3 +143,4 @@ fan.sys.ClosureFuncSpec$ = function(name, ret, params)
   var type = new fan.std.Type(name, "sys::Func", [], "", 0);
   this.m_type = type;//fan.sys.ObjUtil.toImmutable(new fan.sys.FuncType(types, ret));
 }
+

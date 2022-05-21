@@ -187,9 +187,10 @@ rtconst native class Func<R,A,B,C,D,E,F,G,H>
   //internal native Void checkInCtor(Obj obj)
 }
 
+@NoPeer
 internal rtconst class BindFunc<R,A,B,C,D,E,F,G,H> : Func<R,A,B,C,D,E,F,G,H> {
     const Func orig
-    const Obj?[] bound
+    private Obj?[] bound
     private Bool? _isImmutable
 
     new make(Func orig, Obj?[] bound) {
