@@ -27,7 +27,7 @@ internal rtconst class ConstBuf : Buf
 
   override Int size { private set { throw err } }
   override Int capacity { get{ throw err } set{ throw err } }
-  override Int pos { set { throw err } get { 0 } }
+  override Int pos { set { if (it != 0) throw err } get { 0 } }
 
   override Int getBytes(Int pos, Array<Int8> dst, Int off, Int len) {
     Array.arraycopy(buf, pos, dst, off, len)

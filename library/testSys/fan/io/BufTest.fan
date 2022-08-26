@@ -982,7 +982,8 @@ if (!isJs) verifyErr(e) { buf.readS8 }
     verifyErr(e) { buf.readU2 }
     verifyErr(e) { buf.readU4 }
     verifyErr(e) { buf.readUtf }
-    verifyErr(e) { buf.seek(0) }
+    buf.seek(0) // ok
+    verifyErr(e) { buf.seek(2) }
     verifyErr(e) { buf[0] = 'x' }
     verifyErr(e) { buf.size = 2 }
     verifyErr(e) { buf.sync }
