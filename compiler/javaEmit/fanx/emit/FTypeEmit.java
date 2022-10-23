@@ -457,9 +457,9 @@ public abstract class FTypeEmit
 			  if (slot.isStatic()) continue;
 			  if (t != type && slot.isAbstract()) continue;
 			  String name = entry.getKey();
-			  if ("isMixin".equals(name)) {
-				  System.out.print(name);
-			  }
+			  // if ("isMixin".equals(name)) {
+				 //  System.out.print(name);
+			  // }
 			  methods.put(name, null);
 		  }
 	  }
