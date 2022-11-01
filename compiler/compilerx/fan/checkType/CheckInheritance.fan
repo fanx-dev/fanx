@@ -101,7 +101,7 @@ class CheckInheritance : CompilerStep
       err("Class '$t.name' cannot extend final class '$base'", t.loc)
 
     // check extends internal scoped outside my pod
-    if (base.isInternal && t.podName != base.podName)
+    if (!t.isClosure && base.isInternal && t.podName != base.podName)
       err("Class '$t.name' cannot access internal scoped class '$base'", t.loc)
   }
 
