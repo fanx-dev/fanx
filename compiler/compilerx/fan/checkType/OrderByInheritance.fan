@@ -58,7 +58,7 @@ class OrderByInheritance : CompilerStep
 // Process
 //////////////////////////////////////////////////////////////////////////
 
-  private Void process(TypeDef t)
+  private Void process(CTypeDef t)
   {
     // check that this type is still in the todo
     // list, otherwise we've already processed it
