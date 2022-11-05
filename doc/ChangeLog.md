@@ -1,5 +1,17 @@
 ## ChangeLog
 
+### Build 4.3 (working)
+- C: add Int.random
+- fix Cache size
+- add ConcurrentMap.getAndSet
+- JS: fix misssed Obj.assert
+- JS: support Func.bind
+- java reflection thread safe
+- allow ConstBuf to seek(0)
+- remove debug print
+- fix closure error check
+- compile order by inheritance
+
 ### Build 4.2 (2022-04-10)
 - add Env.fileResolver
 - remove finalize

@@ -49,7 +49,7 @@ class CheckInheritance : CompilerStep
     t.mixins.each |CType m| { checkMixin(t, m) }
     
     
-    checkCyclicInheritance(t)
+    //checkCyclicInheritance(t)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,6 +121,7 @@ class CheckInheritance : CompilerStep
       err("Type '$t.name' cannot access internal scoped mixin '$m'", t.loc)
   }
   
+  /*
   private Void checkCyclicInheritance(TypeDef t) {
     allInheritances := [Str:CType][:]
     getInheritances(allInheritances, t.asRef())
@@ -140,5 +141,6 @@ class CheckInheritance : CompilerStep
       }
     }
   }
+  */
 
 }

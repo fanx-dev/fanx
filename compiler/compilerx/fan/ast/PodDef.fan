@@ -106,7 +106,7 @@ class PodDef : Node, CPod
   [Str:TypeDef] typeDefs           // ScanForUsingsAndTypes
   ClosureExpr[]? closures := [,]           // Parse
 //  TypeDef[]? orderedTypeDefs
-  override CTypeDef[] types := [,] { private set }
+  override CTypeDef[] types := [,]
 
   Str? summary
 }
