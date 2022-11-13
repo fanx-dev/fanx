@@ -36,6 +36,8 @@ class OrderByInheritance : CompilerStep
     //log.debug("OrderByInheritance")
     types := compiler.pod.types
     ordered.capacity = types.size
+    processing.clear
+    todo.clear
 
     // create the todo map which is our working input,
     // check for duplicate type names in this loop
@@ -52,6 +54,7 @@ class OrderByInheritance : CompilerStep
     // use ordered types for rest of pipeline
     if (ordered.size != types.size) throw Err("Internal error")
     compiler.pod.types = ordered
+    ordered = TypeDef[,]
   }
 
 //////////////////////////////////////////////////////////////////////////
