@@ -762,7 +762,7 @@ void CompareStmt::print(Printer& printer) {
         //if (a == NULL) { if (b == NULL) { ... } else { ... } }
         printer.printf("if (%s == NULL) { if (%s == NULL) {", param1.getName().c_str(), param2.getName().c_str());
         if (isCompare) {
-            printer.printf("int __cmpRes = 0;");
+            printer.printf("int64_t __cmpRes = 0;");
             if (opObj.opcode ==  FOp::Compare) {
                 printer.printf("%s = __cmpRes;", result.getName().c_str());
             }
@@ -782,7 +782,7 @@ void CompareStmt::print(Printer& printer) {
         
         printer.printf("} else {");
         if (isCompare) {
-            printer.printf("int __cmpRes = -1;");
+            printer.printf("int64_t __cmpRes = -1;");
             if (opObj.opcode ==  FOp::Compare) {
                 printer.printf("%s = __cmpRes;", result.getName().c_str());
             }
@@ -801,7 +801,7 @@ void CompareStmt::print(Printer& printer) {
         //else if (b == NULL) {}
         printer.println("else if (%s == NULL) {", param2.getName().c_str());
         if (isCompare) {
-            printer.printf("int __cmpRes = 1;");
+            printer.printf("int64_t __cmpRes = 1;");
             if (opObj.opcode ==  FOp::Compare) {
                 printer.printf("%s = __cmpRes;", result.getName().c_str());
             }
@@ -821,7 +821,7 @@ void CompareStmt::print(Printer& printer) {
         if (!isVal1) {
             printer.printf("if (%s == NULL || !FR_TYPE_IS(%s, %s) ) {", param1.getName().c_str(), param1.getName().c_str(), param2.getTypeName().c_str());
             if (isCompare) {
-                printer.printf("int __cmpRes = -1;");
+                printer.printf("int64_t __cmpRes = -1;");
                 if (opObj.opcode ==  FOp::Compare) {
                     printer.printf("%s = __cmpRes;", result.getName().c_str());
                 }
@@ -843,7 +843,7 @@ void CompareStmt::print(Printer& printer) {
         else if (!isVal2) {
             printer.printf("if (%s == NULL || !FR_TYPE_IS(%s, %s) ) {", param2.getName().c_str(), param2.getName().c_str(), param1.getTypeName().c_str());
             if (isCompare) {
-                printer.printf("int __cmpRes = 1;");
+                printer.printf("int64_t __cmpRes = 1;");
                 if (opObj.opcode ==  FOp::Compare) {
                     printer.printf("%s = __cmpRes;", result.getName().c_str());
                 }
@@ -870,7 +870,7 @@ void CompareStmt::print(Printer& printer) {
     }
     
     if (isCompare) {
-        printer.printf("int __cmpRes = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);",
+        printer.printf("int64_t __cmpRes = FR_VCALL(sys_Obj, compare, (sys_Obj)%s, (sys_Obj)%s);FR_CHECK_ERR(%d);",
                        param1.getName().c_str(), param2.getName().c_str()
                        , this->pos);
         if (opObj.opcode ==  FOp::Compare) {
