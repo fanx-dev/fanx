@@ -1,0 +1,37 @@
+//
+// Syntax rules for XML
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // bracket symbols
+  brackets = "<>"
+
+  // list of end of line comment tokens
+  comments = null
+
+  // block comments
+  blockCommentStart = "<!--"
+  blockCommentEnd   = "-->"
+  blockCommentsNest = false
+
+  // string and character literals
+  // the problem with using these in XML is that the single quote
+  // char is often used as an apostrophe such as foo's
+  strs = null
+  //[
+  //  SyntaxStr { delimiter = "'"; multiLine = false },
+  //  SyntaxStr { delimiter = "\""; multiLine = false },
+  //]
+
+  // keyword list
+  keywords = null
+}
+
+
+

@@ -1,0 +1,112 @@
+//
+// Syntax rules for C#
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["//"]
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false },  // char
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false }, // String
+    SyntaxStr { delimiter = "@\""; delimiterEnd="\""; multiLine = true }, // verbatim String
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "abstract",
+    "as",
+    "base",
+    "bool",
+    "break",
+    "byte",
+    "case",
+    "catch",
+    "char",
+    "checked",
+    "class",
+    "const",
+    "continue",
+    "decimal",
+    "default",
+    "delegate",
+    "do",
+    "double",
+    "else",
+    "enum",
+    "event",
+    "explicit",
+    "extern",
+    "false",
+    "finally",
+    "fixed",
+    "float",
+    "for",
+    "foreach",
+    "goto",
+    "if",
+    "implicit",
+    "in",
+    "int",
+    "interface",
+    "internal",
+    "is",
+    "lock",
+    "long",
+    "namespace",
+    "new",
+    "null",
+    "object",
+    "operator",
+    "out",
+    "override",
+    "params",
+    "private",
+    "protected",
+    "public",
+    "readonly",
+    "ref",
+    "return",
+    "sbyte",
+    "sealed",
+    "short",
+    "sizeof",
+    "stackalloc",
+    "static",
+    "string",
+    "struct",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "uint",
+    "ulong",
+    "unchecked",
+    "unsafe",
+    "ushort",
+    "using",
+    "virtual",
+    "volatile",
+    "void",
+    "while",
+  ]
+}
+
+
+

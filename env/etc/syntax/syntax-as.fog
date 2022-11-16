@@ -1,0 +1,80 @@
+//
+// Syntax rules for ActionScript
+//
+// History:
+//   13 Feb 09  Andy Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["//"]
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false }, // String
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false }   // char
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "as",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "default",
+    "do",
+    "dynamic",
+    "each",
+    "else",
+    "extends",
+    "false",
+    "final",
+    "finally",
+    "for",
+    "function",
+    "get",
+    "if",
+    "in",
+    "is",
+    "implements",
+    "import",
+    "include",
+    "interface",
+    "internal",
+    "label",
+    "namespace",
+    "native",
+    "new",
+    "null",
+    "override",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "return",
+    "set",
+    "static",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "var",
+    "with",
+    "while",
+  ]
+}

@@ -1,0 +1,32 @@
+//
+// Syntax rules for Unix Shells
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["#"]
+
+  // block comments
+  blockCommentStart = null
+  blockCommentEnd   = null
+  blockCommentsNest = true
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false },
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false }
+  ]
+
+  // keyword list
+  keywords = null
+}
+
+
+

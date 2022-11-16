@@ -1,0 +1,32 @@
+//
+// Syntax rules for Cascading Style Sheets
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = null
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false },
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false }
+  ]
+
+  // keyword list
+  keywords = null
+}
+
+
+

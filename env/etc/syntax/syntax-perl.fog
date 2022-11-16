@@ -1,0 +1,50 @@
+//
+// Syntax rules for Perl
+//
+// History:
+//   15 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["#"]
+
+  // block comments (perl6)
+  blockCommentStart = "=begin"
+  blockCommentEnd   = "=end"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = true },
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false },
+    SyntaxStr { delimiter = "`"; escape = '\\'; multiLine = false },
+  ]
+
+  // keyword list (just control keywords)
+  keywords =
+  [
+    "continue",
+    "else",
+    "elsif",
+    "for",
+    "foreach",
+    "goto",
+    "if",
+    "last",
+    "next",
+    "redo",
+    "unless",
+    "until",
+    "while",
+    "BEGIN",
+    "END",
+  ]
+}
+
+
+

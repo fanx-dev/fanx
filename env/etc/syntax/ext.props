@@ -1,0 +1,71 @@
+//
+// Map extension names to rule files "syntax-{rule}.fog"
+//
+// History:
+//   09 Aug 08  Brian Frank  Creation
+//   30 Aug 11  Brian Frank  Rework from fluxText fog to props
+//
+
+
+// batch rules
+bat=batch
+
+// action script rules
+as=as
+
+// axon
+axon=axon
+
+// C++ rules
+h=cpp
+c=cpp
+cpp=cpp
+hpp=cpp
+cxx=cpp
+sc=cpp
+
+// C# rules
+cs=csharp
+
+// css rules
+css=css
+
+// fan rules
+fan=fan
+fog=fan
+fansubstitute=fan
+fwt=fan
+fanx=fan
+fwtx=fan
+props=props
+
+// java rules
+java=java
+
+// javascript rules
+js=javascript
+json=javascript
+
+// perl rules
+pl=perl
+
+// python rules
+py=python
+
+// ruby rules
+rb=ruby
+
+// sedona rules
+sedona=sedona
+
+// shell rules
+sh=shell
+bash=shell
+ksh=shell
+zsh=shell
+
+// xml rules
+xml=xml
+htm=xml
+html=xml
+

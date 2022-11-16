@@ -1,0 +1,92 @@
+//
+// Syntax rules for Fan
+//
+// History:
+//   10 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["**", "//"]
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = true
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\"\"\""; escape = '\\'; multiLine = true }, // triple quote Str
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = true }, // normal Str
+    SyntaxStr { delimiter = "`"; escape = '\\'; multiLine = false }, // Uri
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false },  // Int
+    SyntaxStr { delimiter = "<|"; delimiterEnd = "|>"; multiLine = true }  // DSL
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "abstract",
+    "as",
+    "assert",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "default",
+    "do",
+    "else",
+    "false",
+    "final",
+    "finally",
+    "for",
+    "foreach",
+    "if",
+    "internal",
+    "is",
+    "isnot",
+    "it",
+    "mixin",
+    "native",
+    "new",
+    "null",
+    "once",
+    "override",
+    "private",
+    "protected",
+    "public",
+    "readonly",
+    "return",
+    "static",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "using",
+    "virtual",
+    "volatile",
+    "void",
+    "while",
+    "fun",
+    "var",
+    "let",
+    "lret",
+    "struct",
+    "extension",
+    "rtconst",
+    "async",
+    "await",
+    "inline",
+    "yield",
+  ]
+}
+
+

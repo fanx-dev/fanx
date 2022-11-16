@@ -1,0 +1,108 @@
+//
+// Syntax rules for C++
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["//"]
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false }, // String
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false }   // char
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "#define",
+    "#elif",
+    "#endif",
+    "#error",
+    "#if",
+    "#ifdef",
+    "#ifndef",
+    "#include",
+    "#line",
+    "#warning",
+    "#undef",
+    "asm",
+    "auto",
+    "bool",
+    "break",
+    "case",
+    "catch",
+    "char",
+    "class",
+    "const",
+    "const_cast",
+    "continue",
+    "default",
+    "delete",
+    "do",
+    "double",
+    "dynamic_cast",
+    "else",
+    "enum",
+    "explicit",
+    "export",
+    "extern",
+    "false",
+    "float",
+    "for",
+    "friend",
+    "goto",
+    "if",
+    "inline",
+    "int",
+    "long",
+    "mutable",
+    "namespace",
+    "new",
+    "operator",
+    "private",
+    "protected",
+    "public",
+    "register",
+    "reinterpret_cast",
+    "return",
+    "short",
+    "signed",
+    "sizeof",
+    "static",
+    "static_cast",
+    "struct",
+    "switch",
+    "template",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typedef",
+    "typeid",
+    "typename",
+    "union",
+    "unsigned",
+    "using",
+    "virtual",
+    "void",
+    "volatile",
+    "wchar_t",
+    "while",
+  ]
+}
+
+
+

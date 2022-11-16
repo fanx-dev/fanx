@@ -1,0 +1,28 @@
+//
+// Syntax rules for DOS Batch
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["REM", "rem"]
+
+  // block comments
+  blockCommentStart = null
+  blockCommentEnd   = null
+  blockCommentsNest = false
+
+  // string and character literals
+  strs = null
+
+  // keyword list
+  keywords = null
+}
+
+
+

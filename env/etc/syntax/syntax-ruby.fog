@@ -1,0 +1,73 @@
+//
+// Syntax rules for Ruby
+//
+// History:
+//   15 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["#"]
+
+  // block comments
+  blockCommentStart = "=begin"
+  blockCommentEnd   = "=end"
+  blockCommentsNest = false
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false },  // no interpolation
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false }, // interpolation
+    SyntaxStr { delimiter = "`"; escape = '\\'; multiLine = false },  // command
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "alias",
+    "and",
+    "BEGIN",
+    "begin",
+    "break",
+    "case",
+    "class",
+    "def",
+    "defined",
+    "do",
+    "else",
+    "elsif",
+    "END",
+    "end",
+    "ensure",
+    "false",
+    "for",
+    "if",
+    "in",
+    "module",
+    "next",
+    "nil",
+    "not",
+    "or",
+    "redo",
+    "rescue",
+    "retry",
+    "return",
+    "self",
+    "super",
+    "then",
+    "true",
+    "undef",
+    "unless",
+    "until",
+    "when",
+    "while",
+    "yield",
+  ]
+}
+
+
+

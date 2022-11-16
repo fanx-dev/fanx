@@ -1,0 +1,85 @@
+//
+// Syntax rules for Sedona
+//
+// History:
+//   14 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["//", "**"]
+
+  // block comments
+  blockCommentStart = "/*"
+  blockCommentEnd   = "*/"
+  blockCommentsNest = true
+
+  // string and character literals
+  strs =
+  [
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false }, // Str
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false }   // char
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "abstract",
+    "action",
+    "assert",
+    "bool",
+    "break",
+    "byte",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "default",
+    "define",
+    "do",
+    "else",
+    "enum",
+    "extends",
+    "false",
+    "final",
+    "finally",
+    "float",
+    "for",
+    "foreach",
+    "if",
+    "inline",
+    "int",
+    "internal",
+    "is",
+    "native",
+    "new",
+    "null",
+    "override",
+    "private",
+    "property",
+    "protected",
+    "public",
+    "readonly",
+    "return",
+    "short",
+    "static",
+    "super",
+    "switch",
+    "synchronized",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "using",
+    "virtual",
+    "void",
+    "while",
+  ]
+}
+
+
+

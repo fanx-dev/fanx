@@ -1,0 +1,67 @@
+//
+// Syntax rules for Python
+//
+// History:
+//   15 Aug 08  Brian Frank  Creation
+//
+
+using syntax
+
+SyntaxRules
+{
+  // list of end of line comment tokens
+  comments = ["#"]
+
+  // block comments
+  blockCommentStart = null
+  blockCommentEnd   = null
+  blockCommentsNest = false
+
+  // string and character literals, multi-lines must come first
+  strs =
+  [
+    SyntaxStr { delimiter = "'''"; escape = '\\'; multiLine = true },    // long '''
+    SyntaxStr { delimiter = "\"\"\""; escape = '\\'; multiLine = true }, // long """
+    SyntaxStr { delimiter = "'"; escape = '\\'; multiLine = false },     // short '
+    SyntaxStr { delimiter = "\""; escape = '\\'; multiLine = false },    // short "
+  ]
+
+  // keyword list
+  keywords =
+  [
+    "and",
+    "as",
+    "assert",
+    "break",
+    "class",
+    "continue",
+    "def",
+    "del",
+    "elif",
+    "else",
+    "except",
+    "exec",
+    "finally",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
+    "in",
+    "is",
+    "lambda",
+    "not",
+    "or",
+    "pass",
+    "print",
+    "raise",
+    "return",
+    "try",
+    "while",
+    "with",
+    "yield",
+  ]
+}
+
+
+
