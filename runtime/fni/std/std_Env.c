@@ -201,6 +201,9 @@ fr_Obj std_Env_promptPassword(fr_Env env, fr_Obj self, fr_Obj msg) {
 fr_Obj std_Env_homeDirPath(fr_Env env, fr_Obj self) {
     return fr_newStrUtf8(env, fr_homeDir);
 }
+fr_Obj std_Env_userDirPath(fr_Env env, fr_Obj self) {
+    return fr_newStrUtf8(env, "");
+}
 fr_Obj std_Env_getEnvPaths(fr_Env env, fr_Obj self) {
     fr_Obj list = fr_arrayNew(env, fr_findType(env, "sys", "Str"), sizeof(fr_Obj), 64);
     for (int i = 0; fr_envPaths[i] != NULL; ++i) {

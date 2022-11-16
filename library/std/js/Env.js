@@ -125,6 +125,8 @@ fan.std.Env.prototype.out = function() { return this.m_out; }
 
 fan.std.Env.prototype.homeDir = function() { return this.m_homeDir; }
 
+fan.std.Env.prototype.userDir = function() { return ""; }
+
 fan.std.Env.prototype.workDir = function() { return this.m_workDir; }
 
 fan.std.Env.prototype.tempDir = function() { return this.m_tempDir; }

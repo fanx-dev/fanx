@@ -324,6 +324,9 @@ public class EnvPeer {
     return sysEnv().homeDir();
   }
 
+  public String userDirPath(Env self) {
+    return System.getProperty("user.home", "unknown");
+  }
 
   public String[] getEnvPaths(Env self) {
     java.util.List<String> list = sysEnv().envPaths();

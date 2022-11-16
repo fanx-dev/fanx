@@ -198,6 +198,12 @@ rtconst class Env
     workDir.plus(Uri.fromStr("temp/"), false);
   }
 
+  **
+  ** user home directory
+  **
+  virtual File userDir() { File.os(userDirPath) }
+  private native Str userDirPath()
+
 //////////////////////////////////////////////////////////////////////////
 // Resolution : pod file and config file
 //////////////////////////////////////////////////////////////////////////
