@@ -107,7 +107,7 @@ native final class Zip
   ** may not be available. Throw UnsupportedErr if not reading from an input
   ** stream.
   **
-  Void readEach(|File| c) {
+  Void readEach(|File| f) {
     File? file
     while ((file = readNext) != null) {
       f.call(file)
