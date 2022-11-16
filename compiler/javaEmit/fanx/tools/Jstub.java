@@ -169,6 +169,10 @@ public class Jstub {
 			}
 		}
 
+		if (outDir == null) {
+			outDir = new File(Sys.env.homeDir()+"lib/java/stub");
+		}
+
 		if (pods.size() == 0) {
 			help();
 			return -1;
@@ -219,7 +223,7 @@ public class Jstub {
 	//////////////////////////////////////////////////////////////////////////
 
 	boolean verbose;
-	File outDir = new File(".");
+	File outDir = null;
 	boolean nozip = false;
 
 }
