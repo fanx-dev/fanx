@@ -184,65 +184,33 @@ fan.sys.Str.indexrIgnoreCase = function(self, s, off)
 fan.sys.Str.each = function(self, f)
 {
   var len = self.length;
-  if (f.m_params.size() == 1)
-  {
-    for (var i=0; i<len; i++)
-      f.call(self.charCodeAt(i), i);
-  }
-  else
-  {
-    for (var i=0; i<len; i++)
-      f.call(self.charCodeAt(i), i);
-  }
+  for (var i=0; i<len; i++)
+    f.call(self.charCodeAt(i), i);
 }
 
 fan.sys.Str.eachr = function(self, f)
 {
-  if (f.m_params.size() == 1)
-  {
-    for (var i=self.length-1; i>=0; i--)
-      f.call(self.charCodeAt(i), i);
-  }
-  else
-  {
-    for (var i=self.length-1; i>=0; i--)
-      f.call(self.charCodeAt(i), i);
-  }
+  for (var i=self.length-1; i>=0; i--)
+    f.call(self.charCodeAt(i), i);
 }
 
 fan.sys.Str.any = function(self, f)
 {
   var len = self.length;
-  if (f.m_params.size() == 1)
-  {
-    for (var i=0; i<len; ++i)
-      if (f.call(self.charCodeAt(i)) == true)
-        return true;
-  }
-  else
-  {
-    for (var i=0; i<len; ++i)
-      if (f.call(self.charCodeAt(i), i) == true)
-        return true;
-  }
+  for (var i=0; i<len; ++i)
+    if (f.call(self.charCodeAt(i), i) == true)
+      return true;
   return false;
 }
 
 fan.sys.Str.all = function(self, f)
 {
   var len = self.length;
-  if (f.m_params.size() == 1)
-  {
-    for (var i=0; i<len; ++i)
-      if (f.call(self.charCodeAt(i)) == false)
-        return false;
-  }
-  else
-  {
-    for (var i=0; i<len; ++i)
-      if (f.call(self.charCodeAt(i), i) == false)
-        return false;
-  }
+
+  for (var i=0; i<len; ++i)
+    if (f.call(self.charCodeAt(i), i) == false)
+      return false;
+  
   return true;
 }
 
