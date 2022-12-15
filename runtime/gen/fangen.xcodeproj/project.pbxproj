@@ -244,6 +244,7 @@
 				TargetAttributes = {
 					327844771F49149E00481704 = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = DU2B8RW9DL;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -345,7 +346,6 @@
 					../common/,
 					../,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -390,7 +390,6 @@
 					../common/,
 					../,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -399,16 +398,22 @@
 		327844801F49149E00481704 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = DU2B8RW9DL;
 				GCC_PREPROCESSOR_DEFINITIONS = FR_NO_STD_POD;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		327844811F49149E00481704 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = DU2B8RW9DL;
 				GCC_PREPROCESSOR_DEFINITIONS = FR_NO_STD_POD;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
