@@ -409,7 +409,7 @@ native const final class Str
   **   "abcabc".indexr("b", -3) => 1
   **   "abcabc".indexr("b", 0)  => -1
   **
-  Int findr(Str s, Int offset := s.size-1) {
+  Int findr(Str s, Int offset := this.size-1) {
     if (s.isEmpty) return 0
     if (offset < 0) offset += size
     if (s.size > offset+1) return -1
