@@ -26,6 +26,8 @@ const char* fr_envPaths[32] = {0};
 
 
 void fr_init(int argc, const char* argv[], const char *homeDir) {
+    srand((int)time(0));
+    
     fr_homeDir = homeDir != NULL ? strdup(homeDir) : "./";
     fr_envPaths[0] = fr_homeDir;
 
