@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### Build 4.3 (working)
+### Build 4.3 (2022-11-17)
 - C: add Int.random
 - fix Cache size
 - add ConcurrentMap.getAndSet
@@ -11,6 +11,11 @@
 - remove debug print
 - fix closure error check
 - compile order by inheritance
+- add Env.userDir
+- default path of jstub
+- add syntax file
+- C: fix compare stmt
+- JS: fix Str.each
 
 ### Build 4.2 (2022-04-10)
 - add Env.fileResolver

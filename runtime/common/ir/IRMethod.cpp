@@ -135,6 +135,9 @@ void IRMethod::print(Printer& printer, int pass) {
     }
     printer.newLine();
     
+    printer.println("FR_CHECK_POINT();");
+    printer.newLine();
+    
     for (int i=0; i<blocks.size(); ++i) {
         Block *b = blocks[i];
         b->print(this, printer, 0);
