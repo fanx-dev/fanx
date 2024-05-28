@@ -23,6 +23,7 @@ public class FileUtil
         path = "/"+path;
       
   	if (java.io.File.separatorChar == '\\') {
+      path = path.replace("\\\\", "/");
   		path = path.replace("\\", "/");
   	}
   	
